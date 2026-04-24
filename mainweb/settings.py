@@ -201,3 +201,6 @@ LOGOUT_REDIRECT_URL = '/login/'
 
 # Login-Seite URL
 LOGIN_URL = '/login/'
+
+# Standard-Primärschlüssel-Typ
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

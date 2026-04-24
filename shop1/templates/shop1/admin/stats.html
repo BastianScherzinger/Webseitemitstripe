@@ -39,8 +39,7 @@
               <tr>
                 <td class="ps-4 py-3">
                   <div class="fw-bold">{{ user.username }}</div>
-                  <div class="text-muted small">{{ user.email }}</div>
-                  <div class="text-muted extra-small">Beigetreten: {{ user.date_joined|date:"d.m.Y" }}</div>
+                  <div class="text-muted small">📅 {{ user.date_joined|date:"d.m.Y H:i" }} Uhr</div>
                 </td>
                 <td class="py-3">
                   {% if user.profile.email_verified %}
@@ -51,7 +50,7 @@
                 </td>
                 <td class="py-3 small">
                   {% if user.first_name or user.last_name %}
-                    👤 <strong>{{ user.first_name }} {{ user.last_name }}</strong><br>
+                  👤 <strong>{{ user.first_name }} {{ user.last_name }}</strong><br>
                   {% endif %}
                   {% if user.profile.adresse %}
                     📍 <span class="text-muted">{{ user.profile.adresse }}, {{ user.profile.postleitzahl }} {{ user.profile.stadt }}</span>
@@ -61,13 +60,13 @@
                 </td>
                 <td class="text-center py-3">
                   {% if user.is_staff %}
-                    <span class="text-primary" title="Administrator">🛠️</span>
+                    <span class="text-primary" title="Administrator">💎</span>
                   {% endif %}
                   {% if user.is_superuser %}
-                    <span class="text-danger" title="Mitarbeiter">💎</span>
+                    <span class="text-danger" title="Mitarbeiter">🛠️</span>
                   {% endif %}
                   {% if not user.is_staff and not user.is_superuser %}
-                    <span class="text-muted">👤</span>
+                  <span class="text-muted">👤</span>
                   {% endif %}
                 </td>
                 <td class="text-center py-3">
