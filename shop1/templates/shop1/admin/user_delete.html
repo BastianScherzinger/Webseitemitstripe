@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Benutzer löschen – Admin{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 mx-auto">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'admin_stats' %}">Statistiken</a></li>
+        <li class="breadcrumb-item active">Benutzer löschen</li>
+      </ol>
+    </nav>
+
+    <div class="card border-danger shadow-sm mt-4">
+      <div class="card-header bg-danger text-white py-3">
+        <h4 class="mb-0 fw-bold">⚠️ Benutzer unwiderruflich löschen</h4>
+      </div>
+      <div class="card-body p-4 text-center">
+        <div class="mb-4">
+          <h1 class="display-1">🗑️</h1>
+        </div>
+        <p class="lead mb-4">
+          Bist du sicher, dass du den Benutzer <strong>"{{ delete_user.username }}"</strong> löschen möchtest?<br>
+          <span class="text-danger small">Alle zugehörigen Daten wie Warenkörbe und Profile werden ebenfalls entfernt.</span>
+        </p>
+        
+        <form method="post">
+          {% csrf_token %}
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-danger btn-lg fw-bold">
+              Ja, Benutzer endgültig löschen
+            </button>
+            <a href="{% url 'admin_stats' %}" class="btn btn-outline-secondary">
+              Nein, Abbrechen
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Benutzer bearbeiten – Admin{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8 mx-auto">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'admin_stats' %}">Statistiken</a></li>
+        <li class="breadcrumb-item active">Benutzer bearbeiten</li>
+      </ol>
+    </nav>
+
+    <div class="card border-light shadow-sm">
+      <div class="card-header bg-white py-3">
+        <h4 class="mb-0 fw-bold">✏️ Benutzer "{{ edit_user.username }}" bearbeiten</h4>
+      </div>
+      <div class="card-body p-4">
+        <form method="post">
+          {% csrf_token %}
+          
+          <h5 class="fw-bold mb-3">Konto-Status</h5>
+          <div class="row mb-4">
+            <div class="col-md-4">
+              <div class="form-check">
+                {{ form.is_staff }}
+                <label class="form-check-label fw-bold">{{ form.is_staff.label }}</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check">
+                {{ form.is_superuser }}
+                <label class="form-check-label fw-bold">{{ form.is_superuser.label }}</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check">
+                {{ form.email_verified }}
+                <label class="form-check-label fw-bold">{{ form.email_verified.label }}</label>
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-4">
+          
+          <h5 class="fw-bold mb-3">Persönliche Daten</h5>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Benutzername</label>
+            {{ form.username }}
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Vorname</label>
+              {{ form.first_name }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Nachname</label>
+              {{ form.last_name }}
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">E-Mail</label>
+            {{ form.email }}
+          </div>
+
+          <hr class="my-4">
+
+          <h5 class="fw-bold mb-3">Adressdaten</h5>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Telefon</label>
+            {{ form.telefon }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Straße & Hausnummer</label>
+            {{ form.adresse }}
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Postleitzahl</label>
+              {{ form.postleitzahl }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Stadt</label>
+              {{ form.stadt }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Land</label>
+              {{ form.land }}
+            </div>
+          </div>
+
+          <div class="d-grid gap-2 mt-5">
+            <button type="submit" class="btn btn-primary btn-lg fw-bold">
+              ✓ Änderungen speichern
+            </button>
+            <a href="{% url 'admin_stats' %}" class="btn btn-outline-secondary">
+              Abbrechen
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

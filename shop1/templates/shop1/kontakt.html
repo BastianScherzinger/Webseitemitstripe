@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}Kontakt{% endblock %}
+
+{% block content %}
+  <div>
+    <h1 class="mb-4">📧 Kontakt</h1>
+    
+    <div class="row">
+      <!-- Kontaktformular -->
+      <div class="col-md-8">
+        <div class="card border-light shadow-sm">
+          <div class="card-header bg-light text-dark border-bottom">
+            <h4 class="mb-0">✉️ Schreib uns eine Nachricht</h4>
+          </div>
+          <div class="card-body p-4">
+            <form method="post">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label class="form-label fw-bold">Dein Name</label>
+                <input type="text" class="form-control" name="name" placeholder="z.B. Max Mustermann" required>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label fw-bold">Deine E-Mail</label>
+                <input type="email" class="form-control" name="email" placeholder="max@beispiel.de" required>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label fw-bold">Betreff</label>
+                <input type="text" class="form-control" name="betreff" placeholder="Worum geht es?" required>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label fw-bold">Nachricht</label>
+                <textarea class="form-control" name="nachricht" rows="5" placeholder="Schreib deine Nachricht hier..." required></textarea>
+              </div>
+              
+              <button type="submit" class="btn btn-primary btn-lg fw-bold">📤 Senden</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Kontaktdaten vom Unternehmen -->
+      <div class="col-md-4">
+        <div class="card border-light shadow-sm mb-3">
+          <div class="card-header bg-light text-dark border-bottom">
+            <h5 class="mb-0">📍 Adresse</h5>
+          </div>
+          <div class="card-body">
+            <p class="mb-0">
+              <strong>MeinShop GmbH</strong><br>
+              Musterstraße 123<br>
+              12345 Berlin<br>
+              Deutschland
+            </p>
+          </div>
+        </div>
+        
+        <div class="card border-light shadow-sm mb-3">
+          <div class="card-header bg-light text-dark border-bottom">
+            <h5 class="mb-0">📞 Telefon</h5>
+          </div>
+          <div class="card-body">
+            <a href="tel:+491234567890" class="btn btn-outline-primary btn-sm w-100 fw-bold">
+              +49 (0) 30 123456
+            </a>
+          </div>
+        </div>
+        
+        <div class="card border-light shadow-sm mb-3">
+          <div class="card-header bg-light text-dark border-bottom">
+            <h5 class="mb-0">📧 E-Mail</h5>
+          </div>
+          <div class="card-body">
+            <a href="mailto:info@meinshop.de" class="btn btn-outline-primary btn-sm w-100 fw-bold">
+              info@meinshop.de
+            </a>
+          </div>
+        </div>
+        
+        <div class="card border-light shadow-sm">
+          <div class="card-header bg-light text-dark border-bottom">
+            <h5 class="mb-0">⏰ Öffnungszeiten</h5>
+          </div>
+          <div class="card-body">
+            <p class="mb-0 small">
+              <strong>Mo - Fr:</strong> 09:00 - 18:00<br>
+              <strong>Sa:</strong> 10:00 - 16:00<br>
+              <strong>So:</strong> Geschlossen
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="row mt-5">
+      <div class="col-md-12">
+        <h3 class="mb-4">❓ Häufig gestellte Fragen</h3>
+        <div class="accordion" id="faqAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                Wie lange dauert die Lieferung?
+              </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Die Lieferung dauert normalerweise 2-3 Werktage. Bei Bestellungen ab 18:00 Uhr beginnt die Bearbeitung am nächsten Werktag.
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                Wie kann ich eine Bestellung stornieren?
+              </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Kontaktiere uns innerhalb von 24 Stunden nach der Bestellung. Wir kümmern uns schnell darum!
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                Welche Zahlungsmethoden akzeptiert ihr?
+              </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Wir akzeptieren: Kreditkarte, PayPal, Banküberweisung und Apple Pay. Alle Zahlungen sind verschlüsselt.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

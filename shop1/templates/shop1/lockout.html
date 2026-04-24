@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Account gesperrt{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card border-danger shadow-sm p-5 text-center">
+      <h1 class="display-4 text-danger mb-4">⛔ Zugriff gesperrt</h1>
+      <p class="lead">Zu viele fehlerhafte Login-Versuche.</p>
+      <p class="text-muted">Dein Account wurde aus Sicherheitsgründen für eine Stunde gesperrt. Bitte versuche es später erneut oder kontaktiere den Support.</p>
+      <div class="mt-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Zur Startseite</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

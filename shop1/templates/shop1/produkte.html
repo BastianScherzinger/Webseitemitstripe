@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Produkte{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-4">🛍️ Unsere Produkte</h1>
+
+<!-- 3 Spalten auf Desktop, 1 auf Mobile -->
+<div class="row row-cols-1 row-cols-md-3 g-4">
+
+  <!-- Wenn Produkte aus der Datenbank kommen: -->
+  {% for produkt in produkte_liste %}
+  <div class="col">
+    <div class="card h-100 border-light shadow-sm">
+
+      <!-- BILD: exakt 280px hoch, egal wie groß das Original -->
+      <a href="{% url 'produkt_detail' produkt.id %}">
+        {% if produkt.bild %}
+          <img
+            src="{{ produkt.bild.url }}"
+            class="card-img-top"
+            alt="{{ produkt.name }}"
+            style="height: 280px; object-fit: cover;"
+          >
+        {% else %}
+          <div style="height: 280px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+            <span class="text-muted">Kein Bild</span>
+          </div>
+        {% endif %}
+      </a>
+
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title fw-bold">
+          <a href="{% url 'produkt_detail' produkt.id %}" class="text-decoration-none text-dark">{{ produkt.name }}</a>
+        </h5>
+        <p class="card-text text-muted small">{{ produkt.beschreibung|truncatewords:15 }}</p>
+        <p class="fw-bold fs-5 mt-auto text-primary">{{ produkt.preis|floatformat:2 }} €</p>
+        <div class="d-flex gap-2 mt-2">
+          <a href="{% url 'produkt_detail' produkt.id %}" class="btn btn-outline-primary fw-bold w-50">👀 Ansehen</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'add_to_cart' produkt.id %}" class="btn btn-primary fw-bold w-50">🛒 In den Warenkorb</a>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary fw-bold w-50">🛒 In den Warenkorb</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+    <div class="col-12">
+      <div class="alert alert-info border-light p-4" role="alert">
+        <h5 class="mb-2">ℹ️ Keine Produkte verfügbar</h5>
+        <p class="mb-0">Es sind derzeit keine Produkte im Shop verfügbar. Bitte besuchen Sie uns später erneut!</p>
+      </div>
+    </div>
+  {% endfor %}
+
+</div>
+
+{% endblock %}

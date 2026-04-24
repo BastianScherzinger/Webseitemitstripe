@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Statistiken – Admin{% endblock %}
+
+{% block content %}
+<div>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Admin</a></li>
+      <li class="breadcrumb-item active">Statistiken</li>
+    </ol>
+  </nav>
+
+  <div class="stats-container">
+    <!-- BLOCK 1: Benutzerverwaltung -->
+    <div class="card border-light shadow-sm mb-5">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0 fw-bold">👥 Benutzerverwaltung</h5>
+        <a href="{% url 'admin_user_create' %}" class="btn btn-primary btn-sm fw-bold">
+          ➕ Benutzer hinzufügen
+        </a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-4">Benutzer</th>
+                <th>Status</th>
+                <th>Persönliche Daten</th>
+                <th class="text-center">Admin</th>
+                <th class="text-center">Aktionen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in users %}
+              <tr>
+                <td class="ps-4 py-3">
+                  <div class="fw-bold">{{ user.username }}</div>
+                  <div class="text-muted small">{{ user.email }}</div>
+                  <div class="text-muted extra-small">Beigetreten: {{ user.date_joined|date:"d.m.Y" }}</div>
+                </td>
+                <td class="py-3">
+                  {% if user.profile.email_verified %}
+                  <span class="badge bg-success-soft text-success border border-success-subtle">✅ Verifiziert</span>
+                  {% else %}
+                  <span class="badge bg-warning-soft text-warning border border-warning-subtle">⏳ Wartet</span>
+                  {% endif %}
+                </td>
+                <td class="py-3 small">
+                  {% if user.first_name or user.last_name %}
+                    👤 <strong>{{ user.first_name }} {{ user.last_name }}</strong><br>
+                  {% endif %}
+                  {% if user.profile.adresse %}
+                    📍 <span class="text-muted">{{ user.profile.adresse }}, {{ user.profile.postleitzahl }} {{ user.profile.stadt }}</span>
+                  {% else %}
+                    ❓ <span class="text-muted italic">Keine Adresse</span>
+                  {% endif %}
+                </td>
+                <td class="text-center py-3">
+                  {% if user.is_staff %}
+                    <span class="text-primary" title="Administrator">🛠️</span>
+                  {% endif %}
+                  {% if user.is_superuser %}
+                    <span class="text-danger" title="Mitarbeiter">💎</span>
+                  {% endif %}
+                  {% if not user.is_staff and not user.is_superuser %}
+                    <span class="text-muted">👤</span>
+                  {% endif %}
+                </td>
+                <td class="text-center py-3">
+                  <div class="btn-group">
+                    <a href="{% url 'admin_user_cart' user.id %}" class="btn btn-sm btn-outline-info"
+                      title="Warenkorb einsehen">
+                      🛒
+                    </a>
+                    <a href="{% url 'admin_user_edit' user.id %}" class="btn btn-sm btn-outline-primary">
+                      ✏️
+                    </a>
+                    <a href="{% url 'admin_user_delete' user.id %}" class="btn btn-sm btn-outline-danger">
+                      🗑️
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLATZHALTER FÜR BLOCK 2: Verkaufs-Statistiken -->
+    <div class="card border-light shadow-sm mb-5 bg-light-subtle">
+      <div class="card-body text-center py-5">
+        <h5 class="text-muted mb-0">📈 Verkaufs-Statistiken (In Arbeit)</h5>
+        <p class="text-muted small">Hier werden bald deine Umsätze und Bestellmengen angezeigt.</p>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .bg-success-soft {
+      background-color: rgba(25, 135, 84, 0.1);
+    }
+
+    .bg-warning-soft {
+      background-color: rgba(255, 193, 7, 0.1);
+    }
+
+    .extra-small {
+      font-size: 0.75rem;
+    }
+  </style>
+</div>
+{% endblock %}

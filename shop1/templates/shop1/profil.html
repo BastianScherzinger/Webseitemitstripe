@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+
+{% block title %}Mein Profil{% endblock %}
+
+{% block content %}
+<div>
+  
+
+
+  <div class="row">
+    <!-- Profil-Header -->
+    <div class="col-md-8">
+      <h1 class="mb-4">👤 Mein Profil</h1>
+      
+      <!-- Email-Verifikation Status -->
+      {% if profil.email_verified %}
+        <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
+          <span class="me-2">✅</span>
+          <div>
+            <strong>E-Mail bestätigt</strong> – Dein Account ist vollständig verifiziert.
+          </div>
+        </div>
+      {% else %}
+        <div class="alert alert-warning d-flex align-items-center justify-content-between mb-4" role="alert">
+          <div>
+            <span class="me-2">⚠️</span>
+            <strong>E-Mail nicht bestätigt</strong> – Bitte prüfe dein Postfach und bestätige deine E-Mail-Adresse.
+          </div>
+          <a href="{% url 'resend_verification' %}" class="btn btn-sm btn-warning fw-bold ms-3">
+            📧 Erneut senden
+          </a>
+        </div>
+      {% endif %}
+
+      <!-- Persönliche Daten -->
+      <div class="card border-light shadow-sm mb-4">
+        <div class="card-header bg-light text-dark border-bottom">
+          <h5 class="mb-0">📋 Persönliche Daten</h5>
+        </div>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <p class="text-muted small mb-1"><strong>Vorname</strong></p>
+              <p class="fs-6">{{ profil.vorname }}</p>
+            </div>
+            <div class="col-md-6">
+              <p class="text-muted small mb-1"><strong>Nachname</strong></p>
+              <p class="fs-6">{{ profil.nachname }}</p>
+            </div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <p class="text-muted small mb-1"><strong>Benutzername</strong></p>
+              <p class="fs-6">{{ profil.username }}</p>
+            </div>
+            <div class="col-md-6">
+              <p class="text-muted small mb-1"><strong>E-Mail</strong></p>
+              <p class="fs-6">{{ profil.email }}</p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <p class="text-muted small mb-1"><strong>Telefon</strong></p>
+              <p class="fs-6">{{ profil.telefon }}</p>
+            </div>
+            <div class="col-md-6">
+              <p class="text-muted small mb-1"><strong>Geburtsdatum</strong></p>
+              <p class="fs-6">{{ profil.geburtsdatum }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Adresse -->
+      <div class="card border-light shadow-sm mb-4">
+        <div class="card-header bg-light text-dark border-bottom">
+          <h5 class="mb-0">🏠 Lieferadresse</h5>
+        </div>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <p class="text-muted small mb-1"><strong>Straße & Hausnummer</strong></p>
+              <p class="fs-6">{{ profil.adresse }}</p>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <p class="text-muted small mb-1"><strong>Postleitzahl</strong></p>
+              <p class="fs-6">{{ profil.postleitzahl }}</p>
+            </div>
+            <div class="col-md-4">
+              <p class="text-muted small mb-1"><strong>Stadt</strong></p>
+              <p class="fs-6">{{ profil.stadt }}</p>
+            </div>
+            <div class="col-md-4">
+              <p class="text-muted small mb-1"><strong>Land</strong></p>
+              <p class="fs-6">{{ profil.land }}</p>
+            </div>
+          </div>
+
+          <a href="#editProfile" class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse">
+            ✎ Bearbeiten
+          </a>
+        </div>
+      </div>
+      
+      <!-- Bestellungen -->
+      <div class="card border-light shadow-sm">
+        <div class="card-header bg-light text-dark border-bottom">
+          <h5 class="mb-0">📦 Bestellungen</h5>
+        </div>
+        <div class="card-body">
+          <p class="mb-3"><strong>Gesamte Bestellungen:</strong> {{ profil.bestellungen }}</p>
+          <a href="#" class="btn btn-sm btn-outline-primary">
+            Bestellverlauf anschauen
+          </a>
+        </div>
+      </div>
+
+      <!-- Bearbeitungsformular (Collapse) -->
+      <div class="collapse mt-4" id="editProfile">
+        <div class="card border-light shadow-sm">
+          <div class="card-header bg-light text-dark border-bottom">
+            <h5 class="mb-0">✎ Profil bearbeiten</h5>
+          </div>
+          <div class="card-body">
+            <form method="post">
+              {% csrf_token %}
+              
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Vorname</label>
+                  {{ form.first_name }}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Nachname</label>
+                  {{ form.last_name }}
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold">E-Mail</label>
+                {{ form.email }}
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Telefon</label>
+                  {{ form.telefon }}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Geburtsdatum</label>
+                  {{ form.geburtsdatum }}
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold">Straße & Hausnummer</label>
+                {{ form.adresse }}
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label class="form-label fw-bold">Postleitzahl</label>
+                  {{ form.postleitzahl }}
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-bold">Stadt</label>
+                  {{ form.stadt }}
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-bold">Land</label>
+                  {{ form.land }}
+                </div>
+              </div>
+
+              <div class="d-grid gap-2 mb-2">
+                <button type="submit" class="btn btn-primary fw-bold">
+                  ✓ Speichern
+                </button>
+              </div>
+              <a href="#editProfile" class="btn btn-outline-secondary w-100" data-bs-toggle="collapse">
+                Abbrechen
+              </a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-md-4">
+      <div class="card border-light shadow-sm mb-3">
+        <div class="card-header bg-light text-dark border-bottom">
+          <h5 class="mb-0">⚙️ Kontoeinstellungen</h5>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info mb-3">
+            <strong>👤 Account-Status:</strong><br>
+            {{ profil.status }}
+          </div>
+          
+          <div class="d-grid gap-2">
+            <a href="{% url 'change_password' %}" class="btn btn-outline-primary btn-sm">
+              🔑 Passwort ändern
+            </a>
+            <form method="post" action="{% url 'delete_account' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-danger btn-sm w-100" 
+                      onclick="return confirm('Möchtest du deinen Account wirklich unwiderruflich löschen? Alle Daten gehen verloren!');">
+                🗑️ Konto löschen
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schnellzugriffe -->
+      <div class="card border-light shadow-sm">
+        <div class="card-header bg-light text-dark border-bottom">
+          <h5 class="mb-0">🔗 Schnellzugriffe</h5>
+        </div>
+        <div class="card-body">
+          <ul class="list-unstyled">
+            <li class="mb-2">
+              <a href="{% url 'home' %}" class="text-decoration-none">
+                🏠 Zur Startseite
+              </a>
+            </li>
+            <li class="mb-2">
+              <a href="{% url 'produkte' %}" class="text-decoration-none">
+                🛍️ Zu den Produkten
+              </a>
+            </li>
+            <li class="mb-2">
+              <a href="{% url 'warenkorb' %}" class="text-decoration-none">
+                🛒 Zum Warenkorb
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'logout' %}" class="text-decoration-none text-danger fw-bold">
+                🚪 Abmelden
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

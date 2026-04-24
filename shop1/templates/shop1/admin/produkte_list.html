@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Produkte verwalten – Admin{% endblock %}
+
+{% block content %}
+<div>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Admin</a></li>
+      <li class="breadcrumb-item active">Produkte</li>
+    </ol>
+  </nav>
+  
+  <div class="mb-4 d-flex justify-content-between align-items-center">
+    <h1 class="fw-bold mb-0">📋 Alle Produkte verwalten</h1>
+    <a href="{% url 'admin_produkt_upload' %}" class="btn btn-primary fw-bold">
+      ➕ Neues Produkt
+    </a>
+  </div>
+  
+  {% if produkte %}
+    <form method="post" action="{% url 'admin_produkte_list' %}">
+      {% csrf_token %}
+      <div class="mb-3 d-flex gap-2">
+        <select name="action" class="form-select w-auto">
+          <option value="">Aktion auswählen...</option>
+          <option value="activate">Ausgewählte aktivieren</option>
+          <option value="deactivate">Ausgewählte deaktivieren</option>
+          <option value="delete">Ausgewählte löschen</option>
+        </select>
+        <button type="submit" class="btn btn-outline-primary fw-bold" onclick="return confirm('Sicher, dass du diese Aktion auf die ausgewählten Produkte anwenden möchtest?');">
+          Anwenden
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover border-light">
+          <thead class="table-light">
+            <tr>
+              <th class="fw-bold" style="width: 40px;">
+                <input class="form-check-input" type="checkbox" id="selectAll">
+              </th>
+              <th class="fw-bold">🏷️ Name</th>
+              <th class="fw-bold">📝 Beschreibung</th>
+              <th class="fw-bold text-end">💵 Preis</th>
+              <th class="fw-bold text-center">✅ Status</th>
+              <th class="fw-bold text-center">📅 Erstellt</th>
+              <th class="fw-bold text-center">Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for produkt in produkte %}
+              <tr>
+                <td class="align-middle">
+                  <input class="form-check-input produkt-checkbox" type="checkbox" name="selected_produkte" value="{{ produkt.id }}">
+                </td>
+                <td class="fw-bold align-middle">
+                  {% if produkt.bild %}
+                    <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" 
+                         style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 10px;">
+                  {% endif %}
+                  {{ produkt.name }}
+                </td>
+                <td class="align-middle">
+                  <small>{{ produkt.beschreibung|truncatewords:10 }}</small>
+                </td>
+                <td class="text-end align-middle fw-bold text-primary">
+                  {{ produkt.preis|floatformat:2 }} €
+                </td>
+                <td class="text-center align-middle">
+                  {% if produkt.aktiv %}
+                    <span class="badge bg-success">Aktiv</span>
+                  {% else %}
+                    <span class="badge bg-secondary">Inaktiv</span>
+                  {% endif %}
+                </td>
+                <td class="text-center align-middle small text-muted">
+                  {{ produkt.erstellt_am|date:"d.m.Y" }}
+                </td>
+                <td class="text-center align-middle">
+                  <a href="{% url 'admin_produkt_edit' produkt.id %}" class="btn btn-sm btn-outline-primary">
+                    ✏️ Bearbeiten
+                  </a>
+                  <a href="{% url 'admin_produkt_delete' produkt.id %}" class="btn btn-sm btn-outline-danger">
+                    🗑️ Löschen
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </form>
+    
+    <script>
+      // Script für "Alle auswählen" Checkbox
+      document.getElementById('selectAll').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.produkt-checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+      });
+    </script>
+  {% else %}
+    <div class="alert alert-info p-4">
+      <h5 class="mb-2">📦 Keine Produkte vorhanden</h5>
+      <p class="mb-3">Es gibt noch keine Produkte im Shop.</p>
+      <a href="{% url 'admin_produkt_upload' %}" class="btn btn-primary fw-bold">
+        ➕ Erstes Produkt hochladen
+      </a>
+    </div>
+  {% endif %}
+  
+  <div class="mt-4">
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary fw-bold">
+      ← Zurück zum Dashboard
+    </a>
+  </div>
+</div>
+{% endblock %}

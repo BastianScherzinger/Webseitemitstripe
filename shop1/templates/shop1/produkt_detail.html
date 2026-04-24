@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ produkt.name }} – Mein Shop{% endblock %}
+
+{% block content %}
+  <div>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'produkte' %}">Produkte</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ produkt.name }}</li>
+      </ol>
+    </nav>
+
+    <div class="row mt-4">
+      <!-- Produktbild -->
+      <div class="col-md-6 mb-4">
+        <div class="card border-light shadow-sm h-100 overflow-hidden">
+          {% if produkt.bild %}
+            <img 
+              src="{{ produkt.bild.url }}"
+              class="img-fluid w-100" 
+              alt="{{ produkt.name }}"
+              style="object-fit: cover; max-height: 500px;"
+            >
+          {% else %}
+            <div style="height: 500px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+              <span class="text-muted">Kein Bild verfügbar</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Produktdetails -->
+      <div class="col-md-6 mb-4">
+        <div class="card border-light shadow-sm h-100">
+          <div class="card-body p-5 d-flex flex-column">
+            <h1 class="fw-bold mb-3">{{ produkt.name }}</h1>
+            <h2 class="text-primary fw-bold mb-4">{{ produkt.preis|floatformat:2 }} €</h2>
+            
+            <h5 class="fw-bold mb-2">Beschreibung</h5>
+            <p class="text-secondary lead fs-6 mb-5" style="line-height: 1.8;">
+              {{ produkt.beschreibung }}
+            </p>
+            
+            <!-- Features (Stilecht) -->
+            <ul class="list-unstyled mb-5">
+              <li class="mb-2">✅ Auf Lager - sofort lieferbar</li>
+              <li class="mb-2">🚚 Kostenloser Versand ab 50€</li>
+              <li class="mb-2">↩️ 30 Tage Rückgaberecht</li>
+            </ul>
+
+            <!-- Buttons -->
+            <div class="mt-auto">
+              <div class="d-grid gap-3 d-md-flex">
+                {% if user.is_authenticated %}
+                  <form method="GET" action="{% url 'add_to_cart' produkt.id %}" style="flex: 1;">
+                    <button type="submit" class="btn btn-outline-primary btn-lg fw-bold w-100">
+                      🛒 In den Warenkorb
+                    </button>
+                  </form>
+                  
+                  <form method="GET" action="{% url 'add_to_cart' produkt.id %}" style="flex: 1;">
+                    <input type="hidden" name="next" value="warenkorb">
+                    <button type="submit" class="btn btn-primary btn-lg fw-bold w-100">
+                      💳 Direkt kaufen
+                    </button>
+                  </form>
+                {% else %}
+                  <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg fw-bold flex-grow-1">
+                    🛒 In den Warenkorb
+                  </a>
+                  
+                  <a href="{% url 'login' %}" class="btn btn-primary btn-lg fw-bold flex-grow-1">
+                    💳 Direkt kaufen
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

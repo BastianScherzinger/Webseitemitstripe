@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard – Mein Shop{% endblock %}
+
+{% block content %}
+<div>
+  <h1 class="mb-4">⚙️ Admin Dashboard</h1>
+  
+  <div class="row mb-4">
+    <div class="col-md-{% if is_admin %}4{% else %}6{% endif %}">
+      <div class="card border-light shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">📦 Produkte gesamt</h5>
+          <p class="card-text display-4 text-primary">{{ produkte_count }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-{% if is_admin %}4{% else %}6{% endif %}">
+      <div class="card border-light shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">✅ Aktive Produkte</h5>
+          <p class="card-text display-4 text-success">{{ aktive_count }}</p>
+        </div>
+      </div>
+    </div>
+    {% if is_admin %}
+    <div class="col-md-4">
+      <div class="card border-light shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">👥 Benutzer</h5>
+          <p class="card-text display-4 text-info">{{ user_count }}</p>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  
+  <div class="card border-light shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title fw-bold mb-4">🛠️ Admin-Funktionen</h5>
+      
+      <div class="list-group">
+        <a href="{% url 'admin_produkt_upload' %}" class="list-group-item list-group-item-action">
+          <h6 class="mb-1">➕ Neues Produkt hochladen</h6>
+          <p class="mb-0 text-muted small">Füge ein neues Produkt zum Shop hinzu</p>
+        </a>
+        
+        <a href="{% url 'admin_produkte_list' %}" class="list-group-item list-group-item-action">
+          <h6 class="mb-1">📋 Alle Produkte verwalten</h6>
+          <p class="mb-0 text-muted small">Bearbeite oder lösche bestehende Produkte</p>
+        </a>
+
+        {% if is_admin %}
+        <a href="{% url 'admin_stats' %}" class="list-group-item list-group-item-action">
+          <h6 class="mb-1">📊 Statistiken & Benutzerverwaltung</h6>
+          <p class="mb-0 text-muted small">Umfassende Übersicht und Userverwaltung</p>
+        </a>
+        {% endif %}
+        
+        <a href="{% url 'home' %}" class="list-group-item list-group-item-action">
+          <h6 class="mb-1">🏠 Zur Startseite</h6>
+          <p class="mb-0 text-muted small">Zurück zum Shop</p>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

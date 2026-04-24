@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Warenkorb{% endblock %}
+
+{% block content %}
+  <div>
+    <h1 class="mb-4">🛒 Warenkorb</h1>
+    
+    {% if warenkorb_items %}
+      <div class="card border-light shadow-sm">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th class="fw-bold">🏷️ Produkt</th>
+                <th class="fw-bold text-end">💵 Preis</th>
+                <th class="fw-bold text-center">📦 Menge</th>
+                <th class="fw-bold text-end">💰 Gesamt</th>
+                <th class="fw-bold text-center">Aktion</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in warenkorb_items %}
+                <tr>
+                  <td class="fw-bold align-middle">{{ item.name }}</td>
+                  <td class="text-end align-middle">{{ item.preis|floatformat:2 }} €</td>
+                  <td class="text-center align-middle">
+                    <form method="post" action="{% url 'update_cart' item.name %}" class="d-inline-flex align-items-center gap-1">
+                      {% csrf_token %}
+                      <input type="number" name="menge" value="{{ item.menge }}" min="1" max="99" 
+                             class="form-control form-control-sm text-center" style="width: 70px;">
+                      <button type="submit" class="btn btn-sm btn-outline-primary">↻</button>
+                    </form>
+                  </td>
+                  <td class="text-end fw-bold align-middle" style="color: var(--primary);">{{ item.gesamt|floatformat:2 }} €</td>
+                  <td class="text-center align-middle">
+                    <a href="{% url 'remove_from_cart' item.name %}" class="btn btn-sm btn-outline-danger">
+                      🗑️ Entfernen
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="card border-light shadow-sm mt-4 p-4">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h4 class="mb-0 fw-bold">💰 Gesamtsumme:</h4>
+          </div>
+          <div class="col-md-4 text-end">
+            <h3 class="mb-0 fw-bold" style="color: var(--primary);">{{ gesamt|floatformat:2 }} €</h3>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-4 d-flex gap-2 justify-content-end">
+        <a href="{% url 'produkte' %}" class="btn btn-outline-primary fw-bold">👈 Weiter einkaufen</a>
+        <button class="btn btn-primary fw-bold px-4">✓ Zur Kasse</button>
+      </div>
+    {% else %}
+      <div class="alert alert-info p-4">
+        <h5 class="mb-2">🛒 Warenkorb ist leer</h5>
+        <p class="mb-3">Dein Warenkorb enthält derzeit keine Produkte.</p>
+        <a href="{% url 'produkte' %}" class="btn btn-primary fw-bold">🛍️ Produkte ansehen</a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

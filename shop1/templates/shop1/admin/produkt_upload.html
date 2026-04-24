@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Produkt hochladen – Admin{% endblock %}
+
+{% block content %}
+<div>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Admin</a></li>
+      <li class="breadcrumb-item active">Produkt hochladen</li>
+    </ol>
+  </nav>
+  
+  <div class="row mt-4">
+    <div class="col-md-8 mx-auto">
+      <div class="card border-light shadow-sm">
+        <div class="card-body p-5">
+          <h1 class="fw-bold mb-4">➕ Neues Produkt hochladen</h1>
+          
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+              <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">
+                {{ form.name.label }}
+              </label>
+              {{ form.name }}
+              {% if form.name.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.name.errors.0 }}
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="mb-3">
+              <label for="{{ form.beschreibung.id_for_label }}" class="form-label fw-bold">
+                {{ form.beschreibung.label }}
+              </label>
+              {{ form.beschreibung }}
+              {% if form.beschreibung.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.beschreibung.errors.0 }}
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.preis.id_for_label }}" class="form-label fw-bold">
+                  {{ form.preis.label }}
+                </label>
+                {{ form.preis }}
+                {% if form.preis.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.preis.errors.0 }}
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.aktiv.id_for_label }}" class="form-label fw-bold">
+                  {{ form.aktiv.label }}
+                </label>
+                <div class="form-check">
+                  {{ form.aktiv }}
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <label for="{{ form.bild.id_for_label }}" class="form-label fw-bold">
+                {{ form.bild.label }}
+              </label>
+              {{ form.bild }}
+              {% if form.bild.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.bild.errors.0 }}
+                </div>
+              {% endif %}
+              <small class="form-text text-muted">PNG, JPG, GIF – max. 5 MB</small>
+            </div>
+            
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary fw-bold px-4">
+                ✅ Produkt erstellen
+              </button>
+              <a href="{% url 'admin_produkte_list' %}" class="btn btn-outline-secondary fw-bold">
+                ← Zurück
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

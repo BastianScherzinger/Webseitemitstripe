@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrieren{% endblock %}
+
+{% block content %}
+
+<div>
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm border-light">
+        <div class="card-header bg-light text-dark border-bottom">
+          <h3 class="mb-0">📋 Neuen Account erstellen</h3>
+        </div>
+        <div class="card-body p-4">
+          
+
+
+          <form method="post">
+            {% csrf_token %}
+
+            <!-- Benutzerdaten -->
+            <fieldset class="mb-4">
+              <legend class="fs-6 fw-bold mb-3">👤 Benutzerdaten</legend>
+              
+              {% if form.username.errors %}
+                <div class="alert alert-danger alert-sm">{{ form.username.errors }}</div>
+              {% endif %}
+              <div class="mb-3">
+                {{ form.username }}
+              </div>
+
+              {% if form.email.errors %}
+                <div class="alert alert-danger alert-sm">{{ form.email.errors }}</div>
+              {% endif %}
+              <div class="mb-3">
+                {{ form.email }}
+              </div>
+
+              {% if form.password1.errors %}
+                <div class="alert alert-danger alert-sm">{{ form.password1.errors }}</div>
+              {% endif %}
+              <div class="mb-3">
+                {{ form.password1 }}
+                <small class="form-text text-muted d-block mt-2">
+                  ✓ Mindestens 8 Zeichen<br>
+                  ✓ Nicht nur Zahlen<br>
+                  ✓ Keine trivalen Passwörter
+                </small>
+              </div>
+
+              {% if form.password2.errors %}
+                <div class="alert alert-danger alert-sm">{{ form.password2.errors }}</div>
+              {% endif %}
+              <div class="mb-3">
+                {{ form.password2 }}
+              </div>
+            </fieldset>
+
+            <!-- Persönliche Daten -->
+            <fieldset class="mb-4">
+              <legend class="fs-6 fw-bold mb-3">ℹ️ Persönliche Daten</legend>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    {{ form.first_name }}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    {{ form.last_name }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    {{ form.telefon }}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    {{ form.land }}
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Adressdaten -->
+            <fieldset class="mb-4">
+              <legend class="fs-6 fw-bold mb-3">🏠 Adressdaten</legend>
+              
+              <div class="mb-3">
+                {{ form.adresse }}
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    {{ form.postleitzahl }}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    {{ form.stadt }}
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Buttons -->
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary fw-bold">
+                ✓ Account erstellen
+              </button>
+              <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                Abbrechen
+              </a>
+            </div>
+
+            <hr class="my-4">
+            <p class="text-center mb-0">
+              Bereits ein Account?
+              <a href="{% url 'login' %}" class="fw-bold">Jetzt anmelden</a>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

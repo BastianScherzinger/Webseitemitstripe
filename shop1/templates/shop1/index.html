@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home – Mein Shop{% endblock %}
+
+{% block content %}
+  <!-- Hero Section (Full Width) -->
+  <div class="row mb-5">
+    <div class="col-md-12">
+      <div class="p-5 bg-surface rounded shadow-sm border border-light text-center" style="background: linear-gradient(135deg, var(--bg-surface) 0%, var(--primary-50) 100%);">
+        <h1 class="mb-3">🎉 Willkommen im MeinShop!</h1>
+        <p class="lead mb-4 text-secondary mx-auto" style="max-width: 600px;">
+          Entdecke unsere exklusiven Produkte und werde Teil unserer Community. Finde alles, was dein Herz begehrt.
+        </p>
+        <a href="{% url 'produkte' %}" class="btn btn-primary btn-lg fw-bold px-5">🛍️ Jetzt einkaufen</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features (3 Boxen) -->
+  <div class="row mb-5">
+    <div class="col-md-4 mb-3">
+      <div class="card border-light text-center shadow-sm h-100">
+        <div class="card-body p-4">
+          <h2 style="font-size: 48px;">🚀</h2>
+          <h5 class="card-title fw-bold">Schnelle Lieferung</h5>
+          <p class="card-text text-muted">Kostenlos ab 50€ Bestellwert</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+      <div class="card border-light text-center shadow-sm h-100">
+        <div class="card-body p-4">
+          <h2 style="font-size: 48px;">💳</h2>
+          <h5 class="card-title fw-bold">Sichere Zahlung</h5>
+          <p class="card-text text-muted">Alle gängigen Zahlungsmethoden</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+      <div class="card border-light text-center shadow-sm h-100">
+        <div class="card-body p-4">
+          <h2 style="font-size: 48px;">↩️</h2>
+          <h5 class="card-title fw-bold">30 Tage Rückgabe</h5>
+          <p class="card-text text-muted">Komplett risikofrei einkaufen</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platzhalter für Videos / Bilder -->
+  <div class="row mb-5">
+    <div class="col-md-12">
+      <div class="card border-light shadow-sm">
+        <div class="card-body p-5 text-center bg-muted rounded" style="min-height: 300px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+          <h3 class="text-secondary mb-3">📸 Platzhalter für Media</h3>
+          <p class="text-muted">Hier kannst du später ein Produktvideo oder Galerie-Bilder einfügen.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Section -->
+  <div class="alert alert-info p-4 mb-5 border-light">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h4 class="fw-bold">🎁 Spezialangebot!</h4>
+        <p class="mb-0">Neu im Shop? Hole dir 10% Rabatt auf deine erste Bestellung!</p>
+      </div>
+      <div class="col-md-4 text-end">
+        <a href="{% url 'register' %}" class="btn btn-primary fw-bold">Registrieren & sparen</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Newsletter -->
+  <div class="row mb-5">
+    <div class="col-md-8 mx-auto">
+      <div class="card border-light shadow-sm">
+        <div class="card-body p-4">
+          <h4 class="mb-3 fw-bold">📮 Newsletter abonnieren</h4>
+          <p class="text-muted">Erhalte die neuesten Produkte und Angebote direkt in dein Postfach!</p>
+          <form class="d-flex gap-2 mt-3">
+            <input type="email" class="form-control" placeholder="Deine Email..." required>
+            <button type="submit" class="btn btn-primary fw-bold">Abonnieren</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer-Info -->
+  <div class="row text-center mt-5 pt-4 border-top border-light">
+    <div class="col-md-12">
+      <p class="text-muted">
+        Fragen? <a href="{% url 'kontakt' %}" class="fw-bold">Kontaktiere uns</a> oder besuche unsere <a href="{% url 'ueber_uns' %}" class="fw-bold">Über uns</a> Seite.
+      </p>
+    </div>
+  </div>
+{% endblock %}

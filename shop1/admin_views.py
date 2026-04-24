@@ -1,0 +1,242 @@
+"""Admin/Shopbesitzer-Views"""
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.conf import settings
+from functools import wraps
+import os
+from .forms import ProduktForm, AdminUserEditForm, AdminUserCreationForm
+from .models import Produkt, UserProfile
+
+
+def is_admin(user):
+    """Prüft ob Benutzer 'Admin' Rechte hat (Statistiken & alles)"""
+    return user.is_authenticated and user.is_staff
+
+
+def is_superuser(user):
+    """Prüft ob Benutzer 'Mitarbeiter' Rechte hat (Nur Produktverwaltung)"""
+    return user.is_authenticated and user.is_superuser
+
+
+def admin_required(view_func):
+    """Decorator - nur 'Admins' (is_staff) können zugreifen"""
+    @wraps(view_func)
+    def wrapped(request, *args, **kwargs):
+        if not is_admin(request.user):
+            messages.error(request, 'Du hast keine Berechtigung für diese Admin-Seite.')
+            return redirect('home')
+        return view_func(request, *args, **kwargs)
+    return wrapped
+
+
+def product_manager_required(view_func):
+    """Decorator - 'Admins' (is_staff) ODER 'Superuser' (is_superuser) können zugreifen"""
+    @wraps(view_func)
+    def wrapped(request, *args, **kwargs):
+        if not (is_admin(request.user) or is_superuser(request.user)):
+            messages.error(request, 'Du hast keine Berechtigung für die Produktverwaltung.')
+            return redirect('home')
+        return view_func(request, *args, **kwargs)
+    return wrapped
+
+
+@product_manager_required
+def admin_dashboard(request):
+    """Admin/Superuser Dashboard - Übersicht"""
+    produkte_count = Produkt.objects.count()
+    aktive_count = Produkt.objects.filter(aktiv=True).count()
+    user_count = User.objects.count()
+    
+    context = {
+        'produkte_count': produkte_count,
+        'aktive_count': aktive_count,
+        'user_count': user_count,
+        'is_admin': is_admin(request.user),
+        'is_superuser': is_superuser(request.user),
+    }
+    return render(request, 'shop1/admin/dashboard.html', context)
+
+
+@product_manager_required
+def admin_produkte_list(request):
+    """Admin/Mitarbeiter - Liste aller Produkte"""
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        selected_ids = request.POST.getlist('selected_produkte')
+        
+        if selected_ids and action:
+            if action == 'activate':
+                Produkt.objects.filter(id__in=selected_ids).update(aktiv=True)
+                messages.success(request, f'✅ {len(selected_ids)} Produkte wurden aktiviert!')
+            elif action == 'deactivate':
+                Produkt.objects.filter(id__in=selected_ids).update(aktiv=False)
+                messages.success(request, f'✅ {len(selected_ids)} Produkte wurden deaktiviert!')
+            elif action == 'delete':
+                count, _ = Produkt.objects.filter(id__in=selected_ids).delete()
+                messages.success(request, f'✅ {count} Produkte wurden gelöscht!')
+        return redirect('admin_produkte_list')
+
+    produkte = Produkt.objects.all().order_by('-erstellt_am')
+    
+    context = {
+        'produkte': produkte,
+    }
+    return render(request, 'shop1/admin/produkte_list.html', context)
+
+
+@admin_required
+def admin_stats(request):
+    """Statistik-Seite mit Benutzerverwaltung als erstem Block"""
+    users = User.objects.all().order_by('-date_joined')
+    
+    context = {
+        'users': users,
+    }
+    return render(request, 'shop1/admin/stats.html', context)
+
+
+@admin_required
+def admin_user_create(request):
+    """Admin - Neuen Benutzer anlegen"""
+    if request.method == 'POST':
+        form = AdminUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, f'✅ Benutzer "{user.username}" erfolgreich erstellt!')
+            return redirect('admin_stats')
+    else:
+        form = AdminUserCreationForm()
+    
+    return render(request, 'shop1/admin/user_create.html', {'form': form})
+
+
+@admin_required
+def admin_user_edit(request, user_id):
+    """Admin - Benutzer bearbeiten"""
+    user_to_edit = get_object_or_404(User, id=user_id)
+    
+    if request.method == 'POST':
+        form = AdminUserEditForm(request.POST, instance=user_to_edit)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'✅ Benutzer "{user_to_edit.username}" erfolgreich aktualisiert!')
+            return redirect('admin_stats')
+    else:
+        form = AdminUserEditForm(instance=user_to_edit)
+    
+    return render(request, 'shop1/admin/user_edit.html', {'form': form, 'edit_user': user_to_edit})
+
+
+@admin_required
+def admin_user_delete(request, user_id):
+    """Admin - Benutzer löschen"""
+    user_to_delete = get_object_or_404(User, id=user_id)
+    
+    # Verhindern, dass man sich selbst löscht
+    if user_to_delete == request.user:
+        messages.error(request, '❌ Du kannst dich nicht selbst löschen!')
+        return redirect('admin_stats')
+        
+    if request.method == 'POST':
+        username = user_to_delete.username
+        user_to_delete.delete()
+        messages.success(request, f'✅ Benutzer "{username}" erfolgreich gelöscht!')
+        return redirect('admin_stats')
+    
+    return render(request, 'shop1/admin/user_delete.html', {'delete_user': user_to_delete})
+
+
+@admin_required
+def admin_user_cart(request, user_id):
+    """Admin - Warenkorb eines Benutzers einsehen"""
+    user_to_view = get_object_or_404(User, id=user_id)
+    from .models import Cart, Produkt
+    cart, created = Cart.objects.get_or_create(user=user_to_view)
+    items = cart.items.all()
+    
+    # Ergänze die Items um die echten Produkt-Objekte aus der DB für die Bilder
+    enriched_items = []
+    for item in items:
+        # Versuche das Produkt anhand des Namens zu finden
+        db_produkt = Produkt.objects.filter(name=item.produkt_name).first()
+        enriched_items.append({
+            'item': item,
+            'db_produkt': db_produkt
+        })
+    
+    total = sum(item.produkt_preis * item.menge for item in items)
+    
+    context = {
+        'view_user': user_to_view,
+        'enriched_items': enriched_items,
+        'total': total,
+    }
+    return render(request, 'shop1/admin/user_cart_detail.html', context)
+
+
+@product_manager_required
+def admin_produkt_upload(request):
+    """Admin/Superuser - Neues Produkt hochladen"""
+    if request.method == 'POST':
+        form = ProduktForm(request.POST, request.FILES)
+        if form.is_valid():
+            produkt = form.save(commit=False)
+            produkt.ersteller = request.user
+            produkt.save()
+            messages.success(request, f'✅ Produkt "{produkt.name}" erfolgreich erstellt!')
+            return redirect('admin_produkte_list')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = ProduktForm()
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'shop1/admin/produkt_upload.html', context)
+
+
+@product_manager_required
+def admin_produkt_edit(request, produkt_id):
+    """Admin/Superuser - Produkt bearbeiten"""
+    produkt = get_object_or_404(Produkt, id=produkt_id)
+    
+    if request.method == 'POST':
+        form = ProduktForm(request.POST, request.FILES, instance=produkt)
+        if form.is_valid():
+            produkt = form.save()
+            messages.success(request, f'✅ Produkt "{produkt.name}" erfolgreich aktualisiert!')
+            return redirect('admin_produkte_list')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = ProduktForm(instance=produkt)
+    
+    context = {
+        'form': form,
+        'produkt': produkt,
+    }
+    return render(request, 'shop1/admin/produkt_edit.html', context)
+
+
+@product_manager_required
+def admin_produkt_delete(request, produkt_id):
+    """Admin/Superuser - Produkt löschen"""
+    produkt = get_object_or_404(Produkt, id=produkt_id)
+    
+    if request.method == 'POST':
+        produkt_name = produkt.name
+        produkt.delete()
+        messages.success(request, f'✅ Produkt "{produkt_name}" erfolgreich gelöscht!')
+        return redirect('admin_produkte_list')
+    
+    context = {
+        'produkt': produkt,
+    }
+    return render(request, 'shop1/admin/produkt_delete.html', context)

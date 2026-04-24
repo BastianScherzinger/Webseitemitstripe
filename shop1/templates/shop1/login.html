@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-4">
+
+    <div class="card shadow-sm border-light mt-5">
+      <div class="card-header bg-light text-dark border-bottom">
+        <h3 class="mb-0 text-center">🔐 Anmelden</h3>
+      </div>
+      <div class="card-body p-4">
+
+        <form method="post">
+          {% csrf_token %}  <!-- IMMER! Sicherheit -->
+
+          <!-- Benutzername -->
+          <div class="mb-3">
+            <label class="form-label fw-bold">👤 Benutzername</label>
+            <input
+              type="text"
+              name="username"
+              class="form-control"
+              placeholder="Dein Benutzername"
+              required
+            >
+          </div>
+
+          <!-- Passwort -->
+          <div class="mb-3">
+            <label class="form-label fw-bold">🔒 Passwort</label>
+            <input
+              type="password"
+              name="password"
+              class="form-control"
+              placeholder="Dein Passwort"
+              required
+            >
+          </div>
+
+          <!-- Fehler anzeigen -->
+          {% if error %}
+            <div class="alert alert-danger border-light">
+              ⚠️ {{ error }}
+            </div>
+          {% endif %}
+          {% if form.errors %}
+            <div class="alert alert-danger border-light">
+              ⚠️ Fehler beim Anmelden. Bitte versuchen Sie es erneut.
+            </div>
+          {% endif %}
+
+          <button type="submit" class="btn btn-primary w-100 fw-bold">
+            ✓ Einloggen
+          </button>
+        </form>
+
+        <hr class="my-4">
+        <p class="text-center mb-0">
+          Noch kein Account?
+          <a href="{% url 'register' %}" class="fw-bold">Jetzt registrieren</a>
+        </p>
+        
+        <p class="text-center mt-3 mb-0">
+          <a href="#" class="text-muted small">Passwort vergessen?</a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
