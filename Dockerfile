@@ -14,9 +14,13 @@ COPY . .
 # Umgebungsvariablen setzen
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV PORT=8000
 
-# Port freigeben
+# Start-Skript ausführbar machen
+RUN chmod +x /app/start.sh
+
+# Port freigeben (für Railway informativ)
 EXPOSE 8000
 
-# Server starten (lokaler Modus für Testen)
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Start-Skript ausführen
+CMD ["/app/start.sh"]

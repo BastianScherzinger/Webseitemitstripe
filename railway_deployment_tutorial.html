@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Railway Deployment Guide – Mein Shop</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 40px; background-color: #f8f9fa; }
+        .container { background: white; padding: 40px; border-radius: 12px; shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #0b5ed7; border-bottom: 2px solid #0b5ed7; padding-bottom: 10px; }
+        h2 { color: #198754; margin-top: 30px; }
+        .step { background: #e9ecef; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 5px solid #0b5ed7; }
+        code { background: #212529; color: #f8f9fa; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; }
+        pre { background: #212529; color: #f8f9fa; padding: 15px; border-radius: 8px; overflow-x: auto; }
+        .warning { background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; border-radius: 8px; }
+        .success { background: #d1e7dd; border-left: 5px solid #198754; padding: 15px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Railway Deployment Guide (Kostenlos & Professionell)</h1>
+        
+        <p>Dieses Tutorial hilft dir, deinen Shop auf <strong>Railway.app</strong> zu hosten. Wir haben das Projekt so vorbereitet, dass es automatisch migriert und stabil läuft.</p>
+
+        <h2>1. Vorbereitung (Lokal)</h2>
+        <div class="step">
+            Stelle sicher, dass alle Änderungen gespeichert sind. Ich habe bereits folgende Dateien für dich erstellt:
+            <ul>
+                <li><code>Dockerfile</code>: Konfiguriert den Container.</li>
+                <li><code>start.sh</code>: Führt <code>migrate</code> und <code>collectstatic</code> automatisch beim Start aus.</li>
+                <li><code>requirements.txt</code>: Enthält jetzt auch <code>gunicorn</code> und <code>whitenoise</code>.</li>
+            </ul>
+        </div>
+
+        <h2>2. GitHub Repository erstellen</h2>
+        <div class="step">
+            1. Erstelle ein neues <strong>privates</strong> Repository auf GitHub.<br>
+            2. Lade deinen Code hoch (<code>git add .</code>, <code>git commit</code>, <code>git push</code>).<br>
+            <span class="warning">⚠️ Wichtig: Deine <code>db.sqlite3</code> und <code>.env</code> werden durch die <code>.gitignore</code> ignoriert. Das ist gut so! Wir setzen die Variablen gleich in Railway.</span>
+        </div>
+
+        <h2>3. Deployment auf Railway</h2>
+        <div class="step">
+            1. Gehe auf <a href="https://railway.app" target="_blank">railway.app</a> und logge dich mit GitHub ein.<br>
+            2. Klicke auf <strong>+ New Project</strong> -> <strong>Deploy from GitHub repo</strong>.<br>
+            3. Wähle dein Repository aus.<br>
+            4. Railway erkennt das <code>Dockerfile</code> automatisch.
+        </div>
+
+        <h2>4. Variablen setzen (Wichtig!)</h2>
+        <div class="step">
+            Klicke in Railway auf dein Projekt -> <strong>Variables</strong> und füge folgende hinzu:
+            <pre>
+DEBUG = False
+SECRET_KEY = (Dein geheimer Schlüssel)
+ALLOWED_HOSTS = *
+PYTHON_VERSION = 3.11</pre>
+            <em>Railway vergibt den Port automatisch über die Variable <code>$PORT</code>, die ich bereits im Start-Skript eingebaut habe.</em>
+        </div>
+
+        <h2>5. Domain erhalten</h2>
+        <div class="step">
+            1. Gehe zu <strong>Settings</strong> -> <strong>Networking</strong>.<br>
+            2. Klicke auf <strong>Generate Domain</strong>.<br>
+            3. Deine Website ist nun unter <code>https://dein-projekt.up.railway.app</code> erreichbar!
+        </div>
+
+        <div class="success">
+            <h3>✅ Warum ist das jetzt besser?</h3>
+            <ul>
+                <li><strong>Automatisches Migrate:</strong> Das System führt <code>python manage.py migrate</code> bei jedem Start selbst aus.</li>
+                <li><strong>Gunicorn:</strong> Wir nutzen nicht mehr den Test-Server, sondern einen echten Web-Server für Production.</li>
+                <li><strong>WhiteNoise:</strong> Deine Bilder und CSS-Dateien werden nun auch auf Railway korrekt geladen.</li>
+            </ul>
+        </div>
+
+        <h2>6. Kostenlos hosten</h2>
+        <p>Railway bietet ein <strong>Free Tier</strong> (Hobby Plan) an. Solange dein Projekt innerhalb der Limits bleibt (Trial Credits), ist es kostenlos. Für dauerhaftes kostenloses Hosting ohne Kreditkarte sind Dienste wie <strong>Render.com</strong> oder <strong>Fly.io</strong> Alternativen, Railway ist jedoch am einfachsten zu bedienen.</p>
+    </div>
+</body>
+</html>
