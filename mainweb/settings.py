@@ -29,6 +29,13 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 # Erlaubte Hosts - für Production anpassen!
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+# CSRF-Sicherheit für Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.up.railway.app',
+    'http://localhost',
+    'http://127.0.0.1'
+]
+
 
 # Application definition
 
