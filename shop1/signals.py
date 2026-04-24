@@ -13,8 +13,9 @@ def create_profile(sender, instance, created, **kwargs):
     """
     if created:
         profile = UserProfile.objects.create(user=instance)
-        # Verifikations-Email senden
-        send_verification_email(instance, profile)
+        # Verifikations-Email senden (aber nicht für Superuser)
+        if not instance.is_superuser:
+            send_verification_email(instance, profile)
 
 
 @receiver(post_save, sender=User)

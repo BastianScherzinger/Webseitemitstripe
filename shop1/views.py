@@ -155,9 +155,6 @@ def kontakt(request):
 
 def login(request):
     if request.method == 'POST':
-        # Admin-User aus .env synchronisieren (verhindert RuntimeWarning beim Start)
-        _setup_admin_user()
-        
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
