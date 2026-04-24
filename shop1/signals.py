@@ -29,35 +29,38 @@ def save_profile(sender, instance, **kwargs):
         UserProfile.objects.create(user=instance)
 
 
+import threading
+
 def send_verification_email(user, profile):
     """
-    Sendet eine Verifikations-Email an den neuen User.
-    Im DEBUG-Modus wird die Email in der Konsole angezeigt.
+    Sendet eine Verifikations-Email an den neuen User asynchron in einem Thread.
     """
     if not user.email:
         return
     
-    verification_url = f"{settings.SITE_URL}/verify/{profile.verification_token}/"
-    
-    subject = "MeinShop – Bitte bestätige deine E-Mail-Adresse"
-    message = (
-        f"Hallo {user.first_name or user.username},\n\n"
-        f"vielen Dank für deine Registrierung bei MeinShop!\n\n"
-        f"Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Link klickst:\n\n"
-        f"{verification_url}\n\n"
-        f"Falls du dich nicht registriert hast, ignoriere diese E-Mail einfach.\n\n"
-        f"Viele Grüße,\n"
-        f"Dein MeinShop-Team"
-    )
-    
-    try:
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            fail_silently=True,
+    def _send():
+        verification_url = f"{settings.SITE_URL}/verify/{profile.verification_token}/"
+        subject = "MeinShop – Bitte bestätige deine E-Mail-Adresse"
+        message = (
+            f"Hallo {user.first_name or user.username},\n\n"
+            f"vielen Dank für deine Registrierung bei MeinShop!\n\n"
+            f"Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Link klickst:\n\n"
+            f"{verification_url}\n\n"
+            f"Falls du dich nicht registriert hast, ignoriere diese E-Mail einfach.\n\n"
+            f"Viele Grüße,\n"
+            f"Dein MeinShop-Team"
         )
-    except Exception:
-        # Im Fehlerfall einfach weitermachen - Verifikation ist optional
-        pass
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=True,
+            )
+        except Exception:
+            pass
+
+    # Starte den E-Mail-Versand in einem Hintergrund-Thread
+    thread = threading.Thread(target=_send)
+    thread.start()

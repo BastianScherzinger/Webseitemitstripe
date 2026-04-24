@@ -163,6 +163,7 @@ if USE_SMTP_EMAIL or not DEBUG:
     EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
     EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
     EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+    EMAIL_TIMEOUT = 10  # Sekunden bis zum Abbruch
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
