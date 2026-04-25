@@ -640,10 +640,14 @@ def payment_cancel(request):
 
 
 @csrf_exempt
-@require_http_methods(["POST"])
+@require_http_methods(["GET", "POST"])
 def stripe_webhook(request):
     """Stripe Webhook für Payment-Status-Updates"""
     print(">>> STRIPE WEBHOOK ANGERUFEN!")
+    
+    if request.method == "GET":
+        return JsonResponse({'message': 'Webhook-Endpoint ist erreichbar! Bitte nutze POST für Stripe.'})
+    
     payload = request.body
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE', '')
     
