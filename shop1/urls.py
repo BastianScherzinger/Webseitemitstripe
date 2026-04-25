@@ -5,6 +5,8 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     path('', views.startseite, name='home'),
+    path('stripe-test/', views.stripe_webhook), # Test-Pfad
+    path('webhook/stripe/', views.stripe_webhook, name='stripe_webhook'), # Original-Pfad
     path('produkte/', views.produkte, name='produkte'),
     path('produkt/<int:produkt_id>/', views.produkt_detail, name='produkt_detail'),
     path('kontakt/', views.kontakt, name='kontakt'),
@@ -21,7 +23,6 @@ urlpatterns = [
     path('payment/<int:order_id>/', views.payment, name='payment'),
     path('payment/success/<int:order_id>/', views.payment_success, name='payment_success'),
     path('payment/cancel/', views.payment_cancel, name='payment_cancel'),
-    path('webhook/stripe/', views.stripe_webhook, name='stripe_webhook'),
     path('profil/', views.profil, name='profil'),
     path('profil/change-password/', views.change_password, name='change_password'),
     path('verify/<str:token>', views.verify_email, name='verify_email_no_slash'),
