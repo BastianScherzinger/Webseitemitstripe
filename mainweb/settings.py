@@ -39,8 +39,13 @@ CSRF_TRUSTED_ORIGINS = [
 # Dynamische SITE_URL für korrekte Weiterleitungen
 SITE_URL = os.getenv('SITE_URL')
 if not SITE_URL:
-    # Falls auf Railway, versuche die Domain zu raten oder bleibe lokal
-    SITE_URL = "https://webseite2-production.up.railway.app" # Hier deine echte Domain eintragen falls bekannt
+    SITE_URL = "https://webseite2-production.up.railway.app"
+
+# SSL/HTTPS Einstellungen für Railway Proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = os.getenv('DEBUG', 'True') == 'False' # Nur in Production umleiten
+SESSION_COOKIE_SECURE = os.getenv('DEBUG', 'True') == 'False'
+CSRF_COOKIE_SECURE = os.getenv('DEBUG', 'True') == 'False'
 
 
 # Application definition
