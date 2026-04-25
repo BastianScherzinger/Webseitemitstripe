@@ -10,7 +10,11 @@ from django.conf import settings
 from functools import wraps
 import os
 from .forms import CustomUserCreationForm, UserProfileForm, ProduktForm
-from .models import UserProfile, Cart, CartItem, Produkt
+from .models import UserProfile, Cart, CartItem, Produkt, Order, OrderItem
+import stripe
+import json
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 
 
 # ═══ HILFSFUNKTIONEN ═══
@@ -365,6 +369,12 @@ def profil(request):
     elif user.is_superuser:
         status = "Mitarbeiter (Produktverwaltung)"
         
+    # Echte Bestellungszahl berechnen
+    bestellungen_count = Order.objects.filter(user=user).count()
+    
+    # Bestellungen für Anzeige holen
+    bestellungen = Order.objects.filter(user=user).prefetch_related('items').order_by('-erstellt_am')
+    
     profil_data = {
         'username': user.username,
         'email': user.email,
@@ -376,7 +386,7 @@ def profil(request):
         'stadt': profile.stadt or 'Nicht angegeben',
         'land': profile.land or 'Deutschland',
         'geburtsdatum': profile.geburtsdatum or 'Nicht angegeben',
-        'bestellungen': 3,  # Platzhalter
+        'bestellungen': bestellungen_count,
         'ist_admin': user.is_staff,
         'ist_superuser': user.is_superuser,
         'status': status,
@@ -387,6 +397,7 @@ def profil(request):
         'profil': profil_data,
         'form': form,
         'user': user,
+        'bestellungen': bestellungen,
     })
 
 
@@ -460,3 +471,277 @@ def delete_account(request):
     
     # Falls versehentlich über GET aufgerufen, zurück zum Profil
     return redirect('profil')
+
+
+# ═══ CHECKOUT & ZAHLUNG (STRIPE) ═══
+
+@login_required(login_url='login')
+def checkout(request):
+    """Checkout-Seite mit Adressdaten"""
+    cart = _get_or_create_cart(request.user)
+    
+    # Warenkorb ist leer
+    if not cart.items.exists():
+        messages.warning(request, 'Dein Warenkorb ist leer.')
+        return redirect('warenkorb')
+    
+    # Gesamtbetrag berechnen
+    gesamt_betrag = sum(float(item.produkt_preis * item.menge) for item in cart.items.all())
+    
+    # Stripe Public Key laden
+    stripe_public_key = settings.STRIPE_PUBLIC_KEY
+    
+    if request.method == 'POST':
+        # Formular-Daten sammeln
+        vorname = request.POST.get('vorname', '').strip()
+        nachname = request.POST.get('nachname', '').strip()
+        email = request.POST.get('email', '').strip()
+        adresse = request.POST.get('adresse', '').strip()
+        stadt = request.POST.get('stadt', '').strip()
+        postleitzahl = request.POST.get('postleitzahl', '').strip()
+        land = request.POST.get('land', 'Deutschland').strip()
+        telefon = request.POST.get('telefon', '').strip()
+        
+        # Validierung
+        if not all([vorname, nachname, email, adresse, stadt, postleitzahl, land]):
+            messages.error(request, 'Bitte fülle alle erforderlichen Felder aus.')
+            return redirect('checkout')
+        
+        # Bestellung erstellen
+        try:
+            stripe.api_key = settings.STRIPE_SECRET_KEY
+            
+            # Payment Intent erstellen
+            intent = stripe.PaymentIntent.create(
+                amount=int(gesamt_betrag * 100),  # In Cents
+                currency='eur',
+                metadata={
+                    'user_id': request.user.id,
+                    'username': request.user.username,
+                }
+            )
+            
+            # Order in Datenbank speichern
+            order = Order.objects.create(
+                user=request.user,
+                stripe_payment_intent_id=intent['id'],
+                status='pending',
+                vorname=vorname,
+                nachname=nachname,
+                email=email,
+                adresse=adresse,
+                stadt=stadt,
+                postleitzahl=postleitzahl,
+                land=land,
+                telefon=telefon,
+                gesamt_betrag=gesamt_betrag,
+            )
+            
+            # Order Items erstellen
+            for item in cart.items.all():
+                OrderItem.objects.create(
+                    order=order,
+                    produkt_name=item.produkt_name,
+                    produkt_preis=item.produkt_preis,
+                    menge=item.menge,
+                )
+            
+            # Auf Payment-Seite weiterleiten
+            return redirect('payment', order_id=order.id)
+            
+        except stripe.error.StripeError as e:
+            messages.error(request, f'Stripe-Fehler: {str(e)}')
+            return redirect('checkout')
+        except Exception as e:
+            messages.error(request, f'Ein Fehler ist aufgetreten: {str(e)}')
+            return redirect('checkout')
+    
+    # GET Request - Checkout-Formular anzeigen
+    # Profile-Daten pre-füllen wenn vorhanden
+    profile_data = {}
+    if hasattr(request.user, 'profile'):
+        profile = request.user.profile
+        profile_data = {
+            'vorname': request.user.first_name or '',
+            'nachname': request.user.last_name or '',
+            'email': request.user.email,
+            'adresse': profile.adresse or '',
+            'stadt': profile.stadt or '',
+            'postleitzahl': profile.postleitzahl or '',
+            'land': profile.land or 'Deutschland',
+            'telefon': profile.telefon or '',
+        }
+    
+    context = {
+        'gesamt_betrag': gesamt_betrag,
+        'profile_data': profile_data,
+        'stripe_public_key': stripe_public_key,
+    }
+    return render(request, 'shop1/checkout.html', context)
+
+
+@login_required(login_url='login')
+def payment(request, order_id):
+    """Payment-Seite mit Stripe Elements"""
+    try:
+        order = Order.objects.get(id=order_id, user=request.user)
+    except Order.DoesNotExist:
+        messages.error(request, 'Bestellung nicht gefunden.')
+        return redirect('warenkorb')
+    
+    # Nur unbezahlte Bestellungen können bezahlt werden
+    if order.status == 'paid':
+        messages.info(request, 'Diese Bestellung wurde bereits bezahlt.')
+        return redirect('payment_success', order_id=order.id)
+    
+    stripe_public_key = settings.STRIPE_PUBLIC_KEY
+    client_secret = order.stripe_payment_intent_id.split('_secret_')[1] if '_secret_' in order.stripe_payment_intent_id else ''
+    
+    # Payment Intent aktualisieren
+    try:
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        intent = stripe.PaymentIntent.retrieve(order.stripe_payment_intent_id)
+        client_secret = intent['client_secret']
+    except:
+        pass
+    
+    context = {
+        'order': order,
+        'stripe_public_key': stripe_public_key,
+        'client_secret': client_secret,
+    }
+    return render(request, 'shop1/payment.html', context)
+
+
+@login_required(login_url='login')
+def payment_success(request, order_id):
+    """Erfolgreiche Zahlung"""
+    try:
+        order = Order.objects.get(id=order_id, user=request.user)
+    except Order.DoesNotExist:
+        messages.error(request, 'Bestellung nicht gefunden.')
+        return redirect('warenkorb')
+    
+    # Warenkorb leeren nach erfolgreicher Zahlung
+    cart = _get_or_create_cart(request.user)
+    cart.items.all().delete()
+    
+    context = {
+        'order': order,
+    }
+    return render(request, 'shop1/payment_success.html', context)
+
+
+@login_required(login_url='login')
+def payment_cancel(request):
+    """Zahlung abgebrochen"""
+    messages.warning(request, 'Die Zahlung wurde abgebrochen. Dein Warenkorb ist noch vorhanden.')
+    return redirect('warenkorb')
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def stripe_webhook(request):
+    """Stripe Webhook für Payment-Status-Updates"""
+    try:
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        
+        # Webhook-Signatur verifikation
+        sig_header = request.META.get('HTTP_STRIPE_SIGNATURE', '')
+        webhook_secret = settings.STRIPE_WEBHOOK_SECRET
+        
+        try:
+            event = stripe.Webhook.construct_event(
+                request.body,
+                sig_header,
+                webhook_secret
+            )
+        except ValueError:
+            return JsonResponse({'error': 'Invalid payload'}, status=400)
+        except stripe.error.SignatureVerificationError:
+            return JsonResponse({'error': 'Invalid signature'}, status=400)
+        
+        # Payment Intent Events
+        if event['type'] == 'payment_intent.succeeded':
+            intent = event['data']['object']
+            payment_intent_id = intent['id']
+            
+            # Bestellung aktualisieren
+            try:
+                order = Order.objects.get(stripe_payment_intent_id=payment_intent_id)
+                order.status = 'paid'
+                order.save()
+                
+                # Email-Bestätigung senden (optional)
+                send_order_confirmation_email(order)
+                
+            except Order.DoesNotExist:
+                pass
+        
+        elif event['type'] == 'payment_intent.payment_failed':
+            intent = event['data']['object']
+            payment_intent_id = intent['id']
+            
+            # Bestellung aktualisieren
+            try:
+                order = Order.objects.get(stripe_payment_intent_id=payment_intent_id)
+                order.status = 'failed'
+                order.save()
+            except Order.DoesNotExist:
+                pass
+        
+        return JsonResponse({'status': 'success'})
+    
+    except Exception as e:
+        import logging
+        logging.error(f'Stripe Webhook Error: {str(e)}')
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def send_order_confirmation_email(order):
+    """Sendet eine Bestellbestätigung per E-Mail"""
+    try:
+        from django.core.mail import send_mail
+        
+        subject = f'Bestellbestätigung #{order.id}'
+        items_text = '\n'.join([
+            f"- {item.menge}x {item.produkt_name}: {float(item.produkt_preis) * item.menge:.2f} €"
+            for item in order.items.all()
+        ])
+        
+        message = f"""
+Hallo {order.vorname} {order.nachname},
+
+vielen Dank für deine Bestellung! Deine Zahlung wurde erfolgreich verarbeitet.
+
+Bestellnummer: #{order.id}
+Datum: {order.erstellt_am.strftime('%d.%m.%Y %H:%M')}
+
+Bestellte Artikel:
+{items_text}
+
+Gesamtbetrag: {float(order.gesamt_betrag):.2f} €
+
+Lieferadresse:
+{order.adresse}
+{order.postleitzahl} {order.stadt}
+{order.land}
+
+Kontakt: {order.telefon}
+
+Vielen Dank für deinen Einkauf!
+
+Mit freundlichen Grüßen,
+Dein Shop-Team
+        """
+        
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [order.email],
+            fail_silently=True
+        )
+    except Exception as e:
+        import logging
+        logging.error(f'Error sending order confirmation email: {str(e)}')

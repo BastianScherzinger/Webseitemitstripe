@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="mb-4">🛍️ Checkout</h1>
+    
+    <div class="row">
+      <div class="col-lg-8">
+        <!-- Bestellübersicht -->
+        <div class="card border-light shadow-sm mb-4">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">📦 Bestellübersicht</h5>
+          </div>
+          <div class="card-body">
+            <p class="text-muted">Summe: <strong class="text-dark" style="color: var(--primary);">{{ gesamt_betrag|floatformat:2 }} €</strong></p>
+            <p class="small text-muted mb-0">Die genauen Artikel siehst du auf der nächsten Seite.</p>
+          </div>
+        </div>
+
+        <!-- Lieferdaten-Formular -->
+        <div class="card border-light shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">📍 Lieferdaten</h5>
+          </div>
+          <form method="POST" class="card-body">
+            {% csrf_token %}
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="vorname" class="form-label fw-bold">Vorname *</label>
+                <input type="text" class="form-control" id="vorname" name="vorname" 
+                       value="{{ profile_data.vorname }}" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="nachname" class="form-label fw-bold">Nachname *</label>
+                <input type="text" class="form-control" id="nachname" name="nachname" 
+                       value="{{ profile_data.nachname }}" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label fw-bold">E-Mail *</label>
+              <input type="email" class="form-control" id="email" name="email" 
+                     value="{{ profile_data.email }}" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="telefon" class="form-label fw-bold">Telefon</label>
+              <input type="tel" class="form-control" id="telefon" name="telefon" 
+                     value="{{ profile_data.telefon }}">
+            </div>
+
+            <div class="mb-3">
+              <label for="adresse" class="form-label fw-bold">Straße & Hausnummer *</label>
+              <input type="text" class="form-control" id="adresse" name="adresse" 
+                     value="{{ profile_data.adresse }}" required>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label for="postleitzahl" class="form-label fw-bold">PLZ *</label>
+                <input type="text" class="form-control" id="postleitzahl" name="postleitzahl" 
+                       value="{{ profile_data.postleitzahl }}" required>
+              </div>
+              <div class="col-md-8 mb-3">
+                <label for="stadt" class="form-label fw-bold">Stadt *</label>
+                <input type="text" class="form-control" id="stadt" name="stadt" 
+                       value="{{ profile_data.stadt }}" required>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="land" class="form-label fw-bold">Land *</label>
+              <input type="text" class="form-control" id="land" name="land" 
+                     value="{{ profile_data.land }}" required>
+            </div>
+
+            <div class="d-flex gap-2 justify-content-between">
+              <a href="{% url 'warenkorb' %}" class="btn btn-outline-secondary fw-bold">← Zurück</a>
+              <button type="submit" class="btn btn-primary fw-bold px-4">Weiter zur Zahlung →</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Bestellzusammenfassung (Sidebar) -->
+      <div class="col-lg-4">
+        <div class="card border-light shadow-sm sticky-top" style="top: 20px;">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">💰 Zusammenfassung</h5>
+          </div>
+          <div class="card-body">
+            <p class="mb-2"><strong>Gesamtbetrag:</strong></p>
+            <h3 class="mb-4" style="color: var(--primary);">{{ gesamt_betrag|floatformat:2 }} €</h3>
+            
+            <div class="alert alert-info small mb-0">
+              <i class="bi bi-info-circle"></i>
+              <strong>Info:</strong> Nach Klick auf „Weiter zur Zahlung" kannst du deine Zahlungsmethode wählen.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

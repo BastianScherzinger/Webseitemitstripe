@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Zahlung Erfolgreich{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <!-- Erfolgs-Message -->
+    <div class="text-center mb-5">
+      <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+      <h1 class="mb-2">Zahlung erfolgreich!</h1>
+      <p class="lead text-muted mb-4">Danke für deine Bestellung!</p>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2">
+        <!-- Bestellbestätigung -->
+        <div class="card border-light shadow-sm mb-4">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">✓ Bestellbestätigung</h5>
+          </div>
+          <div class="card-body">
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <p class="text-muted small">Bestellnummer</p>
+                <h5 class="fw-bold">#{{ order.id }}</h5>
+              </div>
+              <div class="col-md-6">
+                <p class="text-muted small">Bestelldatum</p>
+                <h5 class="fw-bold">{{ order.erstellt_am|date:"d.m.Y H:i" }}</h5>
+              </div>
+            </div>
+
+            <hr>
+
+            <!-- Bestellte Artikel -->
+            <h6 class="fw-bold mb-3">📦 Bestellte Artikel:</h6>
+            <table class="table table-sm">
+              <tbody>
+                {% for item in order.items.all %}
+                  <tr>
+                    <td>{{ item.menge }}x {{ item.produkt_name }}</td>
+                    <td class="text-end">{{ item.produkt_preis|floatformat:2 }} €</td>
+                    <td class="text-end fw-bold">{{ item.gesamt_preis|floatformat:2 }} €</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <div class="row mt-4 pt-3 border-top">
+              <div class="col-md-6">
+                <p class="text-muted small">Gesamtbetrag</p>
+                <h4 class="fw-bold" style="color: var(--primary);">{{ order.gesamt_betrag|floatformat:2 }} €</h4>
+              </div>
+              <div class="col-md-6">
+                <p class="text-muted small">Status</p>
+                <h5><span class="badge bg-success">Bezahlt</span></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lieferadresse -->
+        <div class="card border-light shadow-sm mb-4">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">📍 Lieferadresse</h5>
+          </div>
+          <div class="card-body">
+            <p class="mb-0">
+              <strong>{{ order.vorname }} {{ order.nachname }}</strong><br>
+              {{ order.adresse }}<br>
+              {{ order.postleitzahl }} {{ order.stadt }}<br>
+              {{ order.land }}<br>
+              {% if order.telefon %}
+                <small class="text-muted">Tel: {{ order.telefon }}</small>
+              {% endif %}
+            </p>
+          </div>
+        </div>
+
+        <!-- Kontaktinformationen -->
+        <div class="card border-light shadow-sm mb-4">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">📧 Bestätigungsdaten</h5>
+          </div>
+          <div class="card-body">
+            <p class="text-muted small">
+              Eine Bestätigungsemail wurde an <strong>{{ order.email }}</strong> gesendet. 
+              Bitte überprüfe auch deinen Spam-Ordner.
+            </p>
+          </div>
+        </div>
+
+        <!-- Nächste Schritte -->
+        <div class="alert alert-info">
+          <h6 class="alert-heading">📋 Nächste Schritte:</h6>
+          <ul class="mb-0">
+            <li>Wir bearbeiten deine Bestellung in Kürze</li>
+            <li>Du erhältst weitere Informationen per E-Mail</li>
+            <li>Versandbenachrichtigung folgt zeitnah</li>
+          </ul>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex gap-2 justify-content-center mb-4">
+          <a href="{% url 'profil' %}" class="btn btn-outline-primary fw-bold">👤 Meine Bestellungen</a>
+          <a href="{% url 'produkte' %}" class="btn btn-primary fw-bold">🛍️ Weiter einkaufen</a>
+        </div>
+
+        <!-- FAQ -->
+        <div class="card border-light shadow-sm">
+          <div class="card-header bg-light">
+            <h6 class="mb-0">❓ Fragen?</h6>
+          </div>
+          <div class="card-body">
+            <p class="mb-2">
+              <strong>Versand:</strong> Die Bearbeitung erfolgt innerhalb von 1-2 Werktagen. Der Versand erfolgt per Standard-Paketdienst.
+            </p>
+            <p class="mb-0">
+              <strong>Kontakt:</strong> Bei Fragen wende dich bitte über unser <a href="{% url 'kontakt' %}">Kontaktformular</a> an uns.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

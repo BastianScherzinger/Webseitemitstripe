@@ -8,7 +8,7 @@
   <h1 class="mb-4">⚙️ Admin Dashboard</h1>
   
   <div class="row mb-4">
-    <div class="col-md-{% if is_admin %}4{% else %}6{% endif %}">
+    <div class="col-md-{% if is_admin %}3{% else %}6{% endif %}">
       <div class="card border-light shadow-sm">
         <div class="card-body">
           <h5 class="card-title fw-bold">📦 Produkte gesamt</h5>
@@ -16,7 +16,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-{% if is_admin %}4{% else %}6{% endif %}">
+    <div class="col-md-{% if is_admin %}3{% else %}6{% endif %}">
       <div class="card border-light shadow-sm">
         <div class="card-body">
           <h5 class="card-title fw-bold">✅ Aktive Produkte</h5>
@@ -25,7 +25,7 @@
       </div>
     </div>
     {% if is_admin %}
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card border-light shadow-sm">
         <div class="card-body">
           <h5 class="card-title fw-bold">👥 Benutzer</h5>
@@ -33,8 +33,46 @@
         </div>
       </div>
     </div>
+    <div class="col-md-3">
+      <div class="card border-light shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">📦 Bestellungen</h5>
+          <p class="card-text display-4 text-warning">{{ orders_count }}</p>
+        </div>
+      </div>
+    </div>
     {% endif %}
   </div>
+
+  <!-- Zahlungs-Status Übersicht (nur für Admin) -->
+  {% if is_admin %}
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card border-success border-2 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">✅ Bezahlt</h5>
+          <p class="card-text display-5 text-success">{{ orders_paid }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-warning border-2 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">⏳ Ausstehend</h5>
+          <p class="card-text display-5 text-warning">{{ orders_pending }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-danger border-2 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">❌ Fehlgeschlagen</h5>
+          <p class="card-text display-5 text-danger">{{ orders_failed }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
   
   <div class="card border-light shadow-sm">
     <div class="card-body">

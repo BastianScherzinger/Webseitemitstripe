@@ -91,11 +91,115 @@
       </div>
     </div>
 
-    <!-- PLATZHALTER FÜR BLOCK 2: Verkaufs-Statistiken -->
-    <div class="card border-light shadow-sm mb-5 bg-light-subtle">
-      <div class="card-body text-center py-5">
-        <h5 class="text-muted mb-0">📈 Verkaufs-Statistiken (In Arbeit)</h5>
-        <p class="text-muted small">Hier werden bald deine Umsätze und Bestellmengen angezeigt.</p>
+    <!-- BLOCK 2: Bestellungen & Verkaufs-Statistiken -->
+    <div class="card border-light shadow-sm mb-5">
+      <div class="card-header bg-white py-3">
+        <h5 class="mb-3 fw-bold">📦 Bestellungen & Verkaufs-Statistiken</h5>
+        
+        <!-- Status-Übersicht -->
+        <div class="row">
+          <div class="col-md-3">
+            <div class="bg-light p-3 rounded text-center">
+              <p class="text-muted small mb-1">Gesamtbestellungen</p>
+              <h4 class="mb-0 text-primary fw-bold">{{ total_orders }}</h4>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="bg-success bg-opacity-10 p-3 rounded text-center">
+              <p class="text-muted small mb-1">Bezahlt ✅</p>
+              <h4 class="mb-0 text-success fw-bold">{{ orders_paid|length }}</h4>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="bg-warning bg-opacity-10 p-3 rounded text-center">
+              <p class="text-muted small mb-1">Ausstehend ⏳</p>
+              <h4 class="mb-0 text-warning fw-bold">{{ orders_pending|length }}</h4>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="bg-danger bg-opacity-10 p-3 rounded text-center">
+              <p class="text-muted small mb-1">Fehlgeschlagen ❌</p>
+              <h4 class="mb-0 text-danger fw-bold">{{ orders_failed|length }}</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-body p-0">
+        <!-- Umsatz -->
+        <div class="bg-light p-4 border-bottom">
+          <p class="text-muted mb-2">💰 Gesamtumsatz (bezahlte Bestellungen)</p>
+          <h3 class="text-success fw-bold mb-0">{{ total_revenue|floatformat:2 }} €</h3>
+        </div>
+        
+        <!-- Bestellungen Tabelle -->
+        {% if orders %}
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-4">Bestellung</th>
+                <th>Kunde</th>
+                <th>Status</th>
+                <th>Artikel</th>
+                <th class="text-end">Betrag</th>
+                <th class="text-center">Datum</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders|slice:":20" %}
+              <tr>
+                <td class="ps-4 py-3 fw-bold">
+                  #{{ order.id }}
+                </td>
+                <td class="py-3">
+                  <div class="fw-bold">{{ order.user.username }}</div>
+                  <div class="small text-muted">{{ order.email }}</div>
+                </td>
+                <td class="py-3">
+                  {% if order.status == 'paid' %}
+                    <span class="badge bg-success">✅ Bezahlt</span>
+                  {% elif order.status == 'pending' %}
+                    <span class="badge bg-warning">⏳ Ausstehend</span>
+                  {% elif order.status == 'failed' %}
+                    <span class="badge bg-danger">❌ Fehlgeschlagen</span>
+                  {% elif order.status == 'cancelled' %}
+                    <span class="badge bg-secondary">🚫 Abgebrochen</span>
+                  {% endif %}
+                </td>
+                <td class="py-3">
+                  <small>
+                    {% for item in order.items.all|slice:":2" %}
+                      {{ item.menge }}x {{ item.produkt_name }}<br>
+                    {% endfor %}
+                    {% if order.items.all|length > 2 %}
+                      <em class="text-muted">+{{ order.items.all|length|add:"-2" }} mehr</em>
+                    {% endif %}
+                  </small>
+                </td>
+                <td class="text-end py-3 fw-bold">
+                  {{ order.gesamt_betrag|floatformat:2 }} €
+                </td>
+                <td class="text-center py-3 small text-muted">
+                  {{ order.erstellt_am|date:"d.m.Y" }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        
+        {% if orders|length > 20 %}
+        <div class="text-center p-3 border-top text-muted small">
+          ... und {{ orders|length|add:"-20" }} weitere Bestellungen
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <div class="text-center p-5 text-muted">
+          <p>📦 Noch keine Bestellungen vorhanden</p>
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>

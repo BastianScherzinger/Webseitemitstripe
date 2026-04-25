@@ -100,3 +100,61 @@ class CartItem(models.Model):
     class Meta:
         verbose_name = "Warenkorb-Artikel"
         verbose_name_plural = "Warenkorb-Artikel"
+
+
+class Order(models.Model):
+    """Bestellung mit Zahlungsinformationen"""
+    STATUS_CHOICES = [
+        ('pending', 'Ausstehend'),
+        ('paid', 'Bezahlt'),
+        ('failed', 'Fehlgeschlagen'),
+        ('cancelled', 'Abgebrochen'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    stripe_payment_intent_id = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    
+    # Lieferdaten
+    vorname = models.CharField(max_length=100)
+    nachname = models.CharField(max_length=100)
+    email = models.EmailField()
+    adresse = models.CharField(max_length=255)
+    stadt = models.CharField(max_length=100)
+    postleitzahl = models.CharField(max_length=10)
+    land = models.CharField(max_length=100)
+    telefon = models.CharField(max_length=20, blank=True)
+    
+    # Gesamtbetrag
+    gesamt_betrag = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # Zeitstempel
+    erstellt_am = models.DateTimeField(auto_now_add=True)
+    aktualisiert_am = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Bestellung #{self.id} - {self.user.username}"
+    
+    class Meta:
+        verbose_name = "Bestellung"
+        verbose_name_plural = "Bestellungen"
+        ordering = ['-erstellt_am']
+
+
+class OrderItem(models.Model):
+    """Einzelne Artikel in einer Bestellung"""
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    produkt_name = models.CharField(max_length=200)
+    produkt_preis = models.DecimalField(max_digits=10, decimal_places=2)
+    menge = models.PositiveIntegerField(default=1)
+    
+    def __str__(self):
+        return f"{self.menge}x {self.produkt_name} (Bestellung #{self.order.id})"
+    
+    @property
+    def gesamt_preis(self):
+        return self.produkt_preis * self.menge
+    
+    class Meta:
+        verbose_name = "Bestellungs-Artikel"
+        verbose_name_plural = "Bestellungs-Artikel"

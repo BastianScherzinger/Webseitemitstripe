@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Zahlung{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="mb-4">💳 Zahlung</h1>
+    
+    <div class="row">
+      <div class="col-lg-8">
+        <!-- Zahlungsformular -->
+        <div class="card border-light shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">💳 Zahlungsmethode</h5>
+          </div>
+          <div class="card-body">
+            <form id="payment-form">
+              {% csrf_token %}
+              
+              <!-- Stripe Card Element -->
+              <div class="mb-4">
+                <label for="card-element" class="form-label fw-bold">Kreditkarte</label>
+                <div id="card-element" class="form-control" style="height: 40px; padding: 10px; border: 1px solid #dee2e6; border-radius: 0.25rem;"></div>
+                <div id="card-errors" class="alert alert-danger mt-2" style="display: none;"></div>
+              </div>
+
+              <!-- Lieferadressen-Übersicht -->
+              <div class="mb-4">
+                <h6 class="fw-bold mb-3">📍 Lieferadresse</h6>
+                <p class="mb-1">
+                  <strong>{{ order.vorname }} {{ order.nachname }}</strong><br>
+                  {{ order.adresse }}<br>
+                  {{ order.postleitzahl }} {{ order.stadt }}<br>
+                  {{ order.land }}<br>
+                  {% if order.telefon %}
+                    <small class="text-muted">Tel: {{ order.telefon }}</small>
+                  {% endif %}
+                </p>
+              </div>
+
+              <!-- Bestellübersicht -->
+              <div class="mb-4">
+                <h6 class="fw-bold mb-3">📦 Bestellübersicht</h6>
+                <table class="table table-sm table-borderless">
+                  <tbody>
+                    {% for item in order.items.all %}
+                      <tr>
+                        <td>{{ item.menge }}x {{ item.produkt_name }}</td>
+                        <td class="text-end">{{ item.gesamt_preis|floatformat:2 }} €</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                  <tfoot>
+                    <tr class="border-top">
+                      <td><strong>Gesamt:</strong></td>
+                      <td class="text-end"><strong style="color: var(--primary); font-size: 1.1em;">{{ order.gesamt_betrag|floatformat:2 }} €</strong></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <!-- Sicherheitshinweis -->
+              <div class="alert alert-info small mb-4">
+                <i class="bi bi-shield-check"></i>
+                <strong>Sicher:</strong> Deine Zahlungsdaten werden verschlüsselt übertragen. Wir speichern keine Kartendaten.
+              </div>
+
+              <!-- Sende-Button -->
+              <button type="submit" id="submit-btn" class="btn btn-primary fw-bold w-100 py-2" style="font-size: 1.1em;">
+                💳 {{ order.gesamt_betrag|floatformat:2 }} € Bezahlen
+              </button>
+
+              <!-- Abbrechen-Link -->
+              <a href="{% url 'payment_cancel' %}" class="btn btn-outline-secondary fw-bold w-100 mt-2">← Zahlung Abbrechen</a>
+            </form>
+
+            <!-- Verarbeitungs-Spinner -->
+            <div id="loading" style="display: none;" class="text-center mt-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Wird verarbeitet...</span>
+              </div>
+              <p class="mt-2 text-muted">Zahlungsprozess läuft...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bestellzusammenfassung (Sidebar) -->
+      <div class="col-lg-4">
+        <div class="card border-light shadow-sm sticky-top" style="top: 20px;">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">💰 Zahlungsdetails</h5>
+          </div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">
+              <strong>Bestellnummer:</strong><br>
+              #{{ order.id }}
+            </p>
+            
+            <hr>
+            
+            <p class="small text-muted mb-3">
+              <strong>Betrag:</strong><br>
+              <span style="color: var(--primary); font-size: 1.3em;" class="fw-bold">{{ order.gesamt_betrag|floatformat:2 }} €</span>
+            </p>
+
+            <hr>
+
+            <p class="small text-muted mb-0">
+              <strong>Status:</strong><br>
+              <span class="badge bg-warning">Ausstehend</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
+  
+  <script>
+    // Stripe-Initialization
+    const stripe = Stripe('{{ stripe_public_key }}');
+    const elements = stripe.elements();
+    const cardElement = elements.create('card');
+    cardElement.mount('#card-element');
+
+    // Fehlerbehandlung
+    cardElement.on('change', function(event) {
+      const displayError = document.getElementById('card-errors');
+      if (event.error) {
+        displayError.textContent = event.error.message;
+        displayError.style.display = 'block';
+      } else {
+        displayError.style.display = 'none';
+      }
+    });
+
+    // Formular-Submission
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async function(event) {
+      event.preventDefault();
+      
+      // Buttons deaktivieren
+      document.getElementById('submit-btn').disabled = true;
+      document.getElementById('loading').style.display = 'block';
+
+      // Payment confirmieren
+      const result = await stripe.confirmCardPayment('{{ client_secret }}', {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: '{{ order.vorname }} {{ order.nachname }}',
+            email: '{{ order.email }}',
+            phone: '{{ order.telefon }}',
+            address: {
+              line1: '{{ order.adresse }}',
+              city: '{{ order.stadt }}',
+              postal_code: '{{ order.postleitzahl }}',
+              country: 'DE'
+            }
+          }
+        }
+      });
+
+      if (result.error) {
+        // Payment fehlgeschlagen
+        document.getElementById('card-errors').textContent = result.error.message;
+        document.getElementById('card-errors').style.display = 'block';
+        document.getElementById('submit-btn').disabled = false;
+        document.getElementById('loading').style.display = 'none';
+      } else if (result.paymentIntent.status === 'succeeded') {
+        // Payment erfolgreich
+        window.location.href = "{% url 'payment_success' order.id %}";
+      }
+    });
+  </script>
+{% endblock %}

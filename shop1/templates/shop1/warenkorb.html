@@ -59,7 +59,7 @@
       
       <div class="mt-4 d-flex gap-2 justify-content-end">
         <a href="{% url 'produkte' %}" class="btn btn-outline-primary fw-bold">👈 Weiter einkaufen</a>
-        <button class="btn btn-primary fw-bold px-4">✓ Zur Kasse</button>
+        <a href="{% url 'checkout' %}" class="btn btn-primary fw-bold px-4">✓ Zur Kasse</a>
       </div>
     {% else %}
       <div class="alert alert-info p-4">

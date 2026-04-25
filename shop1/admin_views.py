@@ -5,9 +5,10 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.conf import settings
 from functools import wraps
+from django.db.models import Count, Q
 import os
 from .forms import ProduktForm, AdminUserEditForm, AdminUserCreationForm
-from .models import Produkt, UserProfile
+from .models import Produkt, UserProfile, Order, OrderItem
 
 
 def is_admin(user):
@@ -49,10 +50,20 @@ def admin_dashboard(request):
     aktive_count = Produkt.objects.filter(aktiv=True).count()
     user_count = User.objects.count()
     
+    # Order-Statistiken
+    orders_count = Order.objects.count()
+    orders_paid = Order.objects.filter(status='paid').count()
+    orders_pending = Order.objects.filter(status='pending').count()
+    orders_failed = Order.objects.filter(status='failed').count()
+    
     context = {
         'produkte_count': produkte_count,
         'aktive_count': aktive_count,
         'user_count': user_count,
+        'orders_count': orders_count,
+        'orders_paid': orders_paid,
+        'orders_pending': orders_pending,
+        'orders_failed': orders_failed,
         'is_admin': is_admin(request.user),
         'is_superuser': is_superuser(request.user),
     }
@@ -88,11 +99,26 @@ def admin_produkte_list(request):
 
 @admin_required
 def admin_stats(request):
-    """Statistik-Seite mit Benutzerverwaltung als erstem Block"""
+    """Statistik-Seite mit Benutzerverwaltung und Bestellungen"""
     users = User.objects.all().order_by('-date_joined')
+    
+    # Order-Statistiken
+    orders = Order.objects.select_related('user').prefetch_related('items').order_by('-erstellt_am')
+    orders_paid = orders.filter(status='paid')
+    orders_pending = orders.filter(status='pending')
+    orders_failed = orders.filter(status='failed')
+    
+    # Umsatz berechnen
+    total_revenue = sum(float(order.gesamt_betrag) for order in orders_paid)
     
     context = {
         'users': users,
+        'orders': orders,
+        'orders_paid': orders_paid,
+        'orders_pending': orders_pending,
+        'orders_failed': orders_failed,
+        'total_orders': orders.count(),
+        'total_revenue': total_revenue,
     }
     return render(request, 'shop1/admin/stats.html', context)
 

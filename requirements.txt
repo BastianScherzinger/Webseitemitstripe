@@ -5,3 +5,4 @@ django-axes
 gunicorn
 whitenoise
 requests
+stripe

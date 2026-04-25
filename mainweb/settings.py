@@ -29,12 +29,18 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 # Erlaubte Hosts - '*' erlaubt alles auf Railway
 ALLOWED_HOSTS = ['*']
 
-# CSRF-Sicherheit für Railway
+# CSRF-Sicherheit für Railway & Stripe
 CSRF_TRUSTED_ORIGINS = [
     'https://*.up.railway.app',
+    'https://webseite2-production.up.railway.app',
     'http://localhost',
     'http://127.0.0.1'
 ]
+
+# CSRF Einstellungen für Proxy-Umgebungen
+CSRF_COOKIE_HTTPONLY = False
+CSRF_USE_SESSIONS = False
+CSRF_COOKIE_SECURE = not DEBUG # Sicherstellen, dass Cookies nur über HTTPS gesendet werden
 
 # Dynamische SITE_URL für korrekte Weiterleitungen
 SITE_URL = os.getenv('SITE_URL')
@@ -208,6 +214,19 @@ SITE_URL = os.getenv('SITE_URL', 'http://127.0.0.1:8000')
 SESSION_COOKIE_SECURE = not DEBUG  # HTTPS only in Production
 SESSION_COOKIE_HTTPONLY = True     # JS kann nicht auf Session zugreifen
 SESSION_COOKIE_SAMESITE = 'Strict' # CSRF-Schutz
+
+
+# ═══ STRIPE-KONFIGURATION ═══
+
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
+
+# Webhook endpoint (für lokales Testen)
+if DEBUG:
+    STRIPE_WEBHOOK_ENDPOINT = 'http://localhost:8000/webhook/stripe/'
+else:
+    STRIPE_WEBHOOK_ENDPOINT = os.getenv('STRIPE_WEBHOOK_ENDPOINT', f'{SITE_URL}/webhook/stripe/')
 
 # Cookie-Sicherheit
 CSRF_COOKIE_SECURE = not DEBUG     # HTTPS only in Production
