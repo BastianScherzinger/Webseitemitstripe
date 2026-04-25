@@ -29,6 +29,7 @@ def save_profile(sender, instance, **kwargs):
         UserProfile.objects.create(user=instance)
 
 
+import os
 import threading
 import requests
 import json
