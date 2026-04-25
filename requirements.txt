@@ -4,3 +4,4 @@ pillow
 django-axes
 gunicorn
 whitenoise
+requests

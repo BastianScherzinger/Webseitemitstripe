@@ -30,43 +30,77 @@ def save_profile(sender, instance, **kwargs):
 
 
 import threading
+import requests
+import json
 
 def send_verification_email(user, profile):
     """
-    Sendet eine Verifikations-Email an den neuen User asynchron in einem Thread.
+    Sendet eine Verifikations-Email an den neuen User asynchron.
+    Nutzt vorrangig die Brevo API (stabil auf Railway), sonst SMTP.
     """
     if not user.email:
         return
     
     def _send():
+        api_key = os.getenv('BREVO_API_KEY')
         verification_url = f"{settings.SITE_URL}/verify/{profile.verification_token}/"
-        print(f"DEBUG: Versuche E-Mail zu senden...")
-        print(f"DEBUG: Host={settings.EMAIL_HOST}, Port={settings.EMAIL_PORT}, TLS={settings.EMAIL_USE_TLS}, SSL={settings.EMAIL_USE_SSL}")
-        print(f"DEBUG: User={settings.EMAIL_HOST_USER}")
-        
         subject = "MeinShop – Bitte bestätige deine E-Mail-Adresse"
-        message = (
-            f"Hallo {user.first_name or user.username},\n\n"
-            f"vielen Dank für deine Registrierung bei MeinShop!\n\n"
-            f"Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Link klickst:\n\n"
-            f"{verification_url}\n\n"
-            f"Falls du dich nicht registriert hast, ignoriere diese E-Mail einfach.\n\n"
-            f"Viele Grüße,\n"
-            f"Dein MeinShop-Team"
-        )
-        try:
-            sent = send_mail(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                [user.email],
-                fail_silently=False, # Wir fangen es selbst ab um zu loggen
-            )
-            if sent:
-                print(f"✅ E-Mail erfolgreich an {user.email} gesendet.")
-        except Exception as e:
-            print(f"❌ E-Mail Fehler an {user.email}: {str(e)}")
+        sender_name = "MeinShop"
+        sender_email = settings.DEFAULT_FROM_EMAIL
+        
+        # HTML Nachricht für besseres Aussehen
+        html_content = f"""
+        <html>
+            <body>
+                <h2>Hallo {user.first_name or user.username},</h2>
+                <p>vielen Dank für deine Registrierung bei MeinShop!</p>
+                <p>Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Button klickst:</p>
+                <a href="{verification_url}" style="background-color: #0d6efd; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">E-Mail bestätigen</a>
+                <p>Oder kopiere diesen Link in deinen Browser:<br>{verification_url}</p>
+                <p>Viele Grüße,<br>Dein MeinShop-Team</p>
+            </body>
+        </html>
+        """
+        
+        if api_key:
+            # --- WEG A: BREVO API (Beste Lösung für Railway) ---
+            print(f"DEBUG: Versuche E-Mail via Brevo API zu senden...")
+            url = "https://api.brevo.com/v3/smtp/email"
+            headers = {
+                "accept": "application/json",
+                "content-type": "application/json",
+                "api-key": api_key
+            }
+            payload = {
+                "sender": {"name": sender_name, "email": sender_email},
+                "to": [{"email": user.email, "name": user.username}],
+                "subject": subject,
+                "htmlContent": html_content
+            }
+            try:
+                response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=10)
+                if response.status_code < 300:
+                    print(f"✅ E-Mail via API erfolgreich an {user.email} gesendet.")
+                else:
+                    print(f"❌ API Fehler: {response.text}")
+            except Exception as e:
+                print(f"❌ API Verbindungsfehler: {str(e)}")
+        else:
+            # --- WEG B: KLASSISCHES SMTP (Fallback) ---
+            print(f"DEBUG: Versuche E-Mail via SMTP zu senden...")
+            try:
+                from django.core.mail import send_mail
+                sent = send_mail(
+                    subject,
+                    f"Bitte bestätige deine E-Mail: {verification_url}",
+                    sender_email,
+                    [user.email],
+                    fail_silently=False,
+                )
+                if sent:
+                    print(f"✅ E-Mail via SMTP erfolgreich an {user.email} gesendet.")
+            except Exception as e:
+                print(f"❌ SMTP Fehler: {str(e)}")
 
-    # Starte den E-Mail-Versand in einem Hintergrund-Thread
-    thread = threading.Thread(target=_send)
-    thread.start()
+    # Hintergrund-Thread starten
+    threading.Thread(target=_send).start()
