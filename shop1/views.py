@@ -643,22 +643,25 @@ def payment_cancel(request):
 @require_http_methods(["POST"])
 def stripe_webhook(request):
     """Stripe Webhook für Payment-Status-Updates"""
+    print(">>> STRIPE WEBHOOK ANGERUFEN!")
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE', '')
+    
     try:
         stripe.api_key = settings.STRIPE_SECRET_KEY
-        
-        # Webhook-Signatur verifikation
-        sig_header = request.META.get('HTTP_STRIPE_SIGNATURE', '')
         webhook_secret = settings.STRIPE_WEBHOOK_SECRET
+        
+        print(f"DEBUG: Payload-Länge: {len(payload)}, Signature vorhanden: {bool(sig_header)}")
         
         try:
             event = stripe.Webhook.construct_event(
-                request.body,
-                sig_header,
-                webhook_secret
+                payload, sig_header, webhook_secret
             )
         except ValueError:
+            print("DEBUG: Ungültiger Payload!")
             return JsonResponse({'error': 'Invalid payload'}, status=400)
         except stripe.error.SignatureVerificationError:
+            print("DEBUG: Ungültige Signatur! (Prüfe STRIPE_WEBHOOK_SECRET)")
             return JsonResponse({'error': 'Invalid signature'}, status=400)
         
         # Payment Intent Events
