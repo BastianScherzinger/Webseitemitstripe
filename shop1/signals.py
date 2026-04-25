@@ -40,6 +40,10 @@ def send_verification_email(user, profile):
     
     def _send():
         verification_url = f"{settings.SITE_URL}/verify/{profile.verification_token}/"
+        print(f"DEBUG: Versuche E-Mail zu senden...")
+        print(f"DEBUG: Host={settings.EMAIL_HOST}, Port={settings.EMAIL_PORT}, TLS={settings.EMAIL_USE_TLS}, SSL={settings.EMAIL_USE_SSL}")
+        print(f"DEBUG: User={settings.EMAIL_HOST_USER}")
+        
         subject = "MeinShop – Bitte bestätige deine E-Mail-Adresse"
         message = (
             f"Hallo {user.first_name or user.username},\n\n"

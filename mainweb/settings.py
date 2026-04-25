@@ -186,7 +186,7 @@ if USE_SMTP_EMAIL or not DEBUG:
     EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
     EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
     EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-    EMAIL_TIMEOUT = 10
+    EMAIL_TIMEOUT = 30 # Höheres Zeitlimit für Cloud-Server
 
     # TLS/SSL Logik: 465 nutzt SSL, 587 nutzt TLS
     if EMAIL_PORT == 465:
