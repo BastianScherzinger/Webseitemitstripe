@@ -655,6 +655,12 @@ def stripe_webhook(request):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         webhook_secret = settings.STRIPE_WEBHOOK_SECRET
         
+        # Logging für uns zur Fehlersuche
+        if webhook_secret:
+            print(f"DEBUG: Webhook-Secret geladen (Anfang: {webhook_secret[:8]}...)")
+        else:
+            print("❌ FEHLER: STRIPE_WEBHOOK_SECRET IST LEER IN DEN RAILWAY VARIABLEN!")
+            
         print(f"DEBUG: Payload-Länge: {len(payload)}, Signature vorhanden: {bool(sig_header)}")
         
         try:
@@ -662,10 +668,11 @@ def stripe_webhook(request):
                 payload, sig_header, webhook_secret
             )
         except ValueError:
-            print("DEBUG: Ungültiger Payload!")
+            print("❌ FEHLER: Ungültiger Payload!")
             return JsonResponse({'error': 'Invalid payload'}, status=400)
-        except stripe.error.SignatureVerificationError:
-            print("DEBUG: Ungültige Signatur! (Prüfe STRIPE_WEBHOOK_SECRET)")
+        except stripe.error.SignatureVerificationError as e:
+            print(f"❌ FEHLER: Signatur-Verifikation fehlgeschlagen: {str(e)}")
+            print("🚨 BITTE PRÜFE: Hast du den SIGNING SECRET (whsec_...) genommen und nicht den API Key?")
             return JsonResponse({'error': 'Invalid signature'}, status=400)
         
         # Payment Intent Events
