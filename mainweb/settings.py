@@ -26,8 +26,8 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-CHANGE_THIS_IN_PRODUCTION'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-# Erlaubte Hosts - für Production anpassen!
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# Erlaubte Hosts - für Railway optimiert
+ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', '.up.railway.app']
 
 # CSRF-Sicherheit für Railway
 CSRF_TRUSTED_ORIGINS = [
@@ -145,6 +145,16 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else []
+
+# WhiteNoise Optimierung für Production
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Media files (User-uploaded content)
 MEDIA_URL = '/media/'
