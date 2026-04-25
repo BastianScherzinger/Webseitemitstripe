@@ -655,38 +655,23 @@ def stripe_webhook(request):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         webhook_secret = settings.STRIPE_WEBHOOK_SECRET
         
-        # Logging für uns zur Fehlersuche
-        if webhook_secret:
-            print(f"DEBUG: Webhook-Secret geladen (Anfang: {webhook_secret[:8]}...)")
-        else:
-            print("❌ FEHLER: STRIPE_WEBHOOK_SECRET IST LEER IN DEN RAILWAY VARIABLEN!")
-            
-        print(f"DEBUG: Payload-Länge: {len(payload)}, Signature vorhanden: {bool(sig_header)}")
-        
         try:
             event = stripe.Webhook.construct_event(
                 payload, sig_header, webhook_secret
             )
         except ValueError:
-            print("❌ FEHLER: Ungültiger Payload!")
             return JsonResponse({'error': 'Invalid payload'}, status=400)
-        except stripe.error.SignatureVerificationError as e:
-            print(f"❌ FEHLER: Signatur-Verifikation fehlgeschlagen: {str(e)}")
-            print("🚨 BITTE PRÜFE: Hast du den SIGNING SECRET (whsec_...) genommen und nicht den API Key?")
+        except stripe.error.SignatureVerificationError:
             return JsonResponse({'error': 'Invalid signature'}, status=400)
         
         # Payment Intent Events
-        print(f"DEBUG: Stripe Event empfangen: {event['type']}")
-        
         if event['type'] == 'payment_intent.succeeded':
             intent = event['data']['object']
             payment_intent_id = intent['id']
-            print(f"DEBUG: Zahlung erfolgreich für Intent ID: {payment_intent_id}")
             
             # Bestellung aktualisieren
             try:
                 order = Order.objects.get(stripe_payment_intent_id=payment_intent_id)
-                print(f"DEBUG: Bestellung {order.id} gefunden. Markiere als bezahlt...")
                 order.status = 'paid'
                 order.save()
                 
