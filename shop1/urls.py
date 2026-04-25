@@ -19,6 +19,7 @@ urlpatterns = [
     path('warenkorb/update/<str:produkt_name>/', views.update_cart, name='update_cart'),
     path('profil/', views.profil, name='profil'),
     path('profil/change-password/', views.change_password, name='change_password'),
+    path('verify/<str:token>', views.verify_email, name='verify_email_no_slash'),
     path('verify/<str:token>/', views.verify_email, name='verify_email'),
     path('resend-verification/', views.resend_verification, name='resend_verification'),
     path('delete-account/', views.delete_account, name='delete_account'),

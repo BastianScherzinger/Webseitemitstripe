@@ -415,6 +415,7 @@ def change_password(request):
 
 def verify_email(request, token):
     """Verifiziert die E-Mail-Adresse eines Users anhand des Tokens."""
+    print(f">>> VERIFY VIEW AUFGERUFEN MIT TOKEN: {token}")
     try:
         profile = UserProfile.objects.get(verification_token=token)
         if profile.email_verified:
