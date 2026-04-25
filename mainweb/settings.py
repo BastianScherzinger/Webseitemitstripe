@@ -236,20 +236,20 @@ CSRF_COOKIE_SAMESITE = 'Strict'
 # Clickjacking-Schutz
 X_FRAME_OPTIONS = 'DENY'
 
-# Content Security Policy (optional, für erweiterten Schutz)
-SECURE_CONTENT_SECURITY_POLICY = {
-    "default-src": ("'self'",),
-    "script-src": ("'self'", "cdn.jsdelivr.net"),
-    "style-src": ("'self'", "cdn.jsdelivr.net", "'unsafe-inline'"),
-    "font-src": ("'self'", "cdn.jsdelivr.net"),
-}
+# ═══ SICHERHEITSEINSTELLUNGEN (DEBUG) ═══
+APPEND_SLASH = True
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'Lax'
 
-# HTTPS in Production erzwingen
-if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
+# HTTPS Umleitung temporär deaktivieren
+SECURE_SSL_REDIRECT = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
 
 
 # ═══ LOGIN/LOGOUT URLS ═══
