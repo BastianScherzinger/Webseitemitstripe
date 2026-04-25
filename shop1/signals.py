@@ -51,15 +51,17 @@ def send_verification_email(user, profile):
             f"Dein MeinShop-Team"
         )
         try:
-            send_mail(
+            sent = send_mail(
                 subject,
                 message,
                 settings.DEFAULT_FROM_EMAIL,
                 [user.email],
-                fail_silently=True,
+                fail_silently=False, # Wir fangen es selbst ab um zu loggen
             )
-        except Exception:
-            pass
+            if sent:
+                print(f"✅ E-Mail erfolgreich an {user.email} gesendet.")
+        except Exception as e:
+            print(f"❌ E-Mail Fehler an {user.email}: {str(e)}")
 
     # Starte den E-Mail-Versand in einem Hintergrund-Thread
     thread = threading.Thread(target=_send)
