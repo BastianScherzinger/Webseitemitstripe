@@ -20,11 +20,8 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from shop1 import views as shop1_views
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('final-test/', shop1_views.final_test_view),
     path('', include('shop1.urls')),
 ]
 

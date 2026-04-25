@@ -115,9 +115,6 @@ def _sync_session_to_db(request, user):
 
 # ═══ SEITEN ═══
 
-def final_test_view(request):
-    return HttpResponse("GLÜCKWUNSCH: DIE ROUTE FUNKTIONIERT!")
-
 def startseite(request):
     context = {
         'titel': 'Mein Shop',

@@ -5,8 +5,7 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     path('', views.startseite, name='home'),
-    path('stripe-test/', views.stripe_webhook), # Test-Pfad
-    path('webhook/stripe/', views.stripe_webhook, name='stripe_webhook'), # Original-Pfad
+    path('webhook/stripe/', views.stripe_webhook, name='stripe_webhook'),
     path('produkte/', views.produkte, name='produkte'),
     path('produkt/<int:produkt_id>/', views.produkt_detail, name='produkt_detail'),
     path('kontakt/', views.kontakt, name='kontakt'),
