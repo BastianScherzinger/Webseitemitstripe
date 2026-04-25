@@ -418,19 +418,15 @@ def verify_email(request, token):
     try:
         profile = UserProfile.objects.get(verification_token=token)
         if profile.email_verified:
-            # Nachricht nur anzeigen wenn eingeloggt
-            if request.user.is_authenticated:
-                messages.info(request, 'Deine E-Mail-Adresse wurde bereits bestätigt.')
+            messages.info(request, 'Deine E-Mail-Adresse wurde bereits bestätigt.')
         else:
             profile.email_verified = True
             profile.save(update_fields=['email_verified'])
-            # Nachricht nur anzeigen wenn eingeloggt
-            if request.user.is_authenticated:
-                messages.success(request, '✅ Deine E-Mail-Adresse wurde erfolgreich bestätigt!')
+            messages.success(request, '✅ Deine E-Mail-Adresse wurde erfolgreich bestätigt! Du kannst dich jetzt einloggen.')
+        return redirect('login')
+    except (UserProfile.DoesNotExist, ValueError, ValidationError):
+        messages.error(request, '❌ Ungültiger oder abgelaufener Bestätigungslink.')
         return redirect('home')
-    except UserProfile.DoesNotExist:
-        messages.error(request, '❌ Ungültiger Bestätigungslink.')
-        return redirect('register')
 
 
 @login_required(login_url='login')
