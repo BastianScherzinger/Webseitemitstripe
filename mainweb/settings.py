@@ -26,8 +26,8 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-CHANGE_THIS_IN_PRODUCTION'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-# Erlaubte Hosts - für Railway optimiert
-ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', '.up.railway.app']
+# Erlaubte Hosts - '*' erlaubt alles auf Railway
+ALLOWED_HOSTS = ['*']
 
 # CSRF-Sicherheit für Railway
 CSRF_TRUSTED_ORIGINS = [
@@ -35,6 +35,12 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost',
     'http://127.0.0.1'
 ]
+
+# Dynamische SITE_URL für korrekte Weiterleitungen
+SITE_URL = os.getenv('SITE_URL')
+if not SITE_URL:
+    # Falls auf Railway, versuche die Domain zu raten oder bleibe lokal
+    SITE_URL = "https://webseite2-production.up.railway.app" # Hier deine echte Domain eintragen falls bekannt
 
 
 # Application definition
@@ -152,7 +158,7 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
