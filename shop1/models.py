@@ -112,7 +112,7 @@ class Order(models.Model):
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
-    stripe_payment_intent_id = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    paypal_order_id = models.CharField(max_length=255, unique=True, blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     
     # Lieferdaten

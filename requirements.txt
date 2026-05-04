@@ -5,4 +5,7 @@ django-axes
 gunicorn
 whitenoise
 requests
-stripe
+dj-database-url
+psycopg2-binary
+cloudinary
+django-cloudinary-storage

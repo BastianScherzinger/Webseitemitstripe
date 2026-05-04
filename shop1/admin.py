@@ -62,14 +62,14 @@ class OrderItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'status', 'gesamt_betrag', 'erstellt_am')
-    search_fields = ('user__username', 'email', 'stripe_payment_intent_id')
+    search_fields = ('user__username', 'email', 'paypal_order_id')
     list_filter = ('status', 'erstellt_am', 'land')
-    readonly_fields = ('stripe_payment_intent_id', 'erstellt_am', 'aktualisiert_am')
+    readonly_fields = ('paypal_order_id', 'erstellt_am', 'aktualisiert_am')
     inlines = [OrderItemInline]
     
     fieldsets = (
         ('Bestellung', {
-            'fields': ('user', 'status', 'stripe_payment_intent_id')
+            'fields': ('user', 'status', 'paypal_order_id')
         }),
         ('Lieferdaten', {
             'fields': ('vorname', 'nachname', 'email', 'adresse', 'postleitzahl', 'stadt', 'land', 'telefon')

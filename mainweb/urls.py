@@ -25,6 +25,10 @@ urlpatterns = [
     path('', include('shop1.urls')),
 ]
 
-# Media files (nur in Development)
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+from django.urls import re_path
+from django.views.static import serve
+
+# Media files - auch in Production servieren (Railway hat keinen separaten Nginx)
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]

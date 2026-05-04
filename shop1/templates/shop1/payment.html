@@ -15,15 +15,15 @@
             <h5 class="mb-0">💳 Zahlungsmethode</h5>
           </div>
           <div class="card-body">
-            <form id="payment-form">
-              {% csrf_token %}
               
-              <!-- Stripe Card Element -->
+              <!-- PayPal Button Container -->
               <div class="mb-4">
-                <label for="card-element" class="form-label fw-bold">Kreditkarte</label>
-                <div id="card-element" class="form-control" style="height: 40px; padding: 10px; border: 1px solid #dee2e6; border-radius: 0.25rem;"></div>
-                <div id="card-errors" class="alert alert-danger mt-2" style="display: none;"></div>
+                <label class="form-label fw-bold">Bezahlen mit PayPal oder Kreditkarte</label>
+                <div id="paypal-button-container"></div>
               </div>
+
+              <!-- Fehleranzeige -->
+              <div id="payment-errors" class="alert alert-danger mt-2" style="display: none;"></div>
 
               <!-- Lieferadressen-Übersicht -->
               <div class="mb-4">
@@ -63,17 +63,11 @@
               <!-- Sicherheitshinweis -->
               <div class="alert alert-info small mb-4">
                 <i class="bi bi-shield-check"></i>
-                <strong>Sicher:</strong> Deine Zahlungsdaten werden verschlüsselt übertragen. Wir speichern keine Kartendaten.
+                <strong>Sicher:</strong> Deine Zahlungsdaten werden direkt von PayPal verarbeitet. Wir speichern keine Zahlungsdaten.
               </div>
-
-              <!-- Sende-Button -->
-              <button type="submit" id="submit-btn" class="btn btn-primary fw-bold w-100 py-2" style="font-size: 1.1em;">
-                💳 {{ order.gesamt_betrag|floatformat:2 }} € Bezahlen
-              </button>
 
               <!-- Abbrechen-Link -->
               <a href="{% url 'payment_cancel' %}" class="btn btn-outline-secondary fw-bold w-100 mt-2">← Zahlung Abbrechen</a>
-            </form>
 
             <!-- Verarbeitungs-Spinner -->
             <div id="loading" style="display: none;" class="text-center mt-4">
@@ -117,64 +111,75 @@
     </div>
   </div>
 
-  <!-- Stripe.js -->
-  <script src="https://js.stripe.com/v3/"></script>
+  <!-- PayPal JavaScript SDK -->
+  <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR"></script>
   
   <script>
-    // Stripe-Initialization
-    const stripe = Stripe('{{ stripe_public_key }}');
-    const elements = stripe.elements();
-    const cardElement = elements.create('card');
-    cardElement.mount('#card-element');
+    paypal.Buttons({
+      style: {
+        layout: 'vertical',
+        color: 'blue',
+        shape: 'rect',
+        label: 'paypal'
+      },
 
-    // Fehlerbehandlung
-    cardElement.on('change', function(event) {
-      const displayError = document.getElementById('card-errors');
-      if (event.error) {
-        displayError.textContent = event.error.message;
-        displayError.style.display = 'block';
-      } else {
-        displayError.style.display = 'none';
-      }
-    });
+      // Bestellung bei PayPal erstellen
+      createOrder: function(data, actions) {
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: '{{ order.gesamt_betrag|floatformat:"2u" }}',
+              currency_code: 'EUR'
+            },
+            description: 'Bestellung #{{ order.id }}'
+          }]
+        });
+      },
 
-    // Formular-Submission
-    const form = document.getElementById('payment-form');
-    form.addEventListener('submit', async function(event) {
-      event.preventDefault();
-      
-      // Buttons deaktivieren
-      document.getElementById('submit-btn').disabled = true;
-      document.getElementById('loading').style.display = 'block';
-
-      // Payment confirmieren
-      const result = await stripe.confirmCardPayment('{{ client_secret }}', {
-        payment_method: {
-          card: cardElement,
-          billing_details: {
-            name: '{{ order.vorname }} {{ order.nachname }}',
-            email: '{{ order.email }}',
-            phone: '{{ order.telefon }}',
-            address: {
-              line1: '{{ order.adresse }}',
-              city: '{{ order.stadt }}',
-              postal_code: '{{ order.postleitzahl }}',
-              country: 'DE'
+      // Zahlung wurde genehmigt
+      onApprove: function(data, actions) {
+        document.getElementById('loading').style.display = 'block';
+        
+        return actions.order.capture().then(function(details) {
+          // Zahlung an unseren Server melden
+          fetch('/paypal/capture/{{ order.id }}/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              paypal_order_id: data.orderID
+            })
+          })
+          .then(response => response.json())
+          .then(result => {
+            if (result.status === 'success') {
+              window.location.href = result.redirect;
+            } else {
+              document.getElementById('payment-errors').textContent = 'Fehler: ' + result.error;
+              document.getElementById('payment-errors').style.display = 'block';
+              document.getElementById('loading').style.display = 'none';
             }
-          }
-        }
-      });
+          })
+          .catch(error => {
+            document.getElementById('payment-errors').textContent = 'Verbindungsfehler. Bitte versuche es erneut.';
+            document.getElementById('payment-errors').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+          });
+        });
+      },
 
-      if (result.error) {
-        // Payment fehlgeschlagen
-        document.getElementById('card-errors').textContent = result.error.message;
-        document.getElementById('card-errors').style.display = 'block';
-        document.getElementById('submit-btn').disabled = false;
-        document.getElementById('loading').style.display = 'none';
-      } else if (result.paymentIntent.status === 'succeeded') {
-        // Payment erfolgreich
-        window.location.href = "{% url 'payment_success' order.id %}";
+      // Fehlerbehandlung
+      onError: function(err) {
+        document.getElementById('payment-errors').textContent = 'PayPal-Fehler: ' + err;
+        document.getElementById('payment-errors').style.display = 'block';
+      },
+
+      // Abbruch
+      onCancel: function(data) {
+        document.getElementById('payment-errors').textContent = 'Zahlung wurde abgebrochen.';
+        document.getElementById('payment-errors').style.display = 'block';
       }
-    });
+    }).render('#paypal-button-container');
   </script>
 {% endblock %}

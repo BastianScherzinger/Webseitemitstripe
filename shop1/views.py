@@ -11,7 +11,7 @@ from functools import wraps
 import os
 from .forms import CustomUserCreationForm, UserProfileForm, ProduktForm
 from .models import UserProfile, Cart, CartItem, Produkt, Order, OrderItem
-import stripe
+
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -127,7 +127,7 @@ def kontakte(request, produkt_id):
     return HttpResponse(f"Kontakt für Produkt {produkt_id}")
 
 
-from django.core.mail import send_mail
+from .utils import send_brevo_email
 
 def kontakt(request):
     if request.method == 'POST':
@@ -142,15 +142,14 @@ def kontakt(request):
             message = f"Neue Nachricht von {name} ({email}):\n\n{nachricht}"
             from_email = settings.DEFAULT_FROM_EMAIL
             # E-Mail an dich (Shop-Betreiber) senden
-            recipient_list = [settings.EMAIL_HOST_USER]  # Oder eine andere Ziel-Email eintragen
+            # Wir nutzen ADMIN_EMAIL aus der .env, sonst DEFAULT_FROM_EMAIL
+            recipient = os.getenv('ADMIN_EMAIL', settings.DEFAULT_FROM_EMAIL)
             
             try:
-                send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+                send_brevo_email(subject, message, recipient, recipient_name="Shop Admin", text_content=message)
                 messages.success(request, 'Deine Nachricht wurde erfolgreich gesendet! Wir melden uns in Kürze.')
-            except Exception as e:
-                import logging
-                logging.error(f"Fehler beim Senden der Kontakt-Email: {str(e)}")
-                messages.error(request, 'Entschuldigung, es gab ein Problem beim Senden deiner Nachricht. Bitte versuche es später noch einmal.')
+            except Exception:
+                messages.error(request, 'Entschuldigung, es gab ein Problem beim Senden deiner Nachricht.')
         else:
             messages.error(request, 'Bitte fülle alle Felder aus.')
     
@@ -473,7 +472,7 @@ def delete_account(request):
     return redirect('profil')
 
 
-# ═══ CHECKOUT & ZAHLUNG (STRIPE) ═══
+# ═══ CHECKOUT & ZAHLUNG (PAYPAL) ═══
 
 @login_required(login_url='login')
 def checkout(request):
@@ -487,9 +486,6 @@ def checkout(request):
     
     # Gesamtbetrag berechnen
     gesamt_betrag = sum(float(item.produkt_preis * item.menge) for item in cart.items.all())
-    
-    # Stripe Public Key laden
-    stripe_public_key = settings.STRIPE_PUBLIC_KEY
     
     if request.method == 'POST':
         # Formular-Daten sammeln
@@ -507,24 +503,10 @@ def checkout(request):
             messages.error(request, 'Bitte fülle alle erforderlichen Felder aus.')
             return redirect('checkout')
         
-        # Bestellung erstellen
+        # Bestellung erstellen (ohne Payment-ID, die kommt nach PayPal-Zahlung)
         try:
-            stripe.api_key = settings.STRIPE_SECRET_KEY
-            
-            # Payment Intent erstellen
-            intent = stripe.PaymentIntent.create(
-                amount=int(gesamt_betrag * 100),  # In Cents
-                currency='eur',
-                metadata={
-                    'user_id': request.user.id,
-                    'username': request.user.username,
-                }
-            )
-            
-            # Order in Datenbank speichern
             order = Order.objects.create(
                 user=request.user,
-                stripe_payment_intent_id=intent['id'],
                 status='pending',
                 vorname=vorname,
                 nachname=nachname,
@@ -549,15 +531,11 @@ def checkout(request):
             # Auf Payment-Seite weiterleiten
             return redirect('payment', order_id=order.id)
             
-        except stripe.error.StripeError as e:
-            messages.error(request, f'Stripe-Fehler: {str(e)}')
-            return redirect('checkout')
         except Exception as e:
             messages.error(request, f'Ein Fehler ist aufgetreten: {str(e)}')
             return redirect('checkout')
     
     # GET Request - Checkout-Formular anzeigen
-    # Profile-Daten pre-füllen wenn vorhanden
     profile_data = {}
     if hasattr(request.user, 'profile'):
         profile = request.user.profile
@@ -575,14 +553,13 @@ def checkout(request):
     context = {
         'gesamt_betrag': gesamt_betrag,
         'profile_data': profile_data,
-        'stripe_public_key': stripe_public_key,
     }
     return render(request, 'shop1/checkout.html', context)
 
 
 @login_required(login_url='login')
 def payment(request, order_id):
-    """Payment-Seite mit Stripe Elements"""
+    """Payment-Seite mit PayPal Smart Buttons"""
     try:
         order = Order.objects.get(id=order_id, user=request.user)
     except Order.DoesNotExist:
@@ -594,23 +571,47 @@ def payment(request, order_id):
         messages.info(request, 'Diese Bestellung wurde bereits bezahlt.')
         return redirect('payment_success', order_id=order.id)
     
-    stripe_public_key = settings.STRIPE_PUBLIC_KEY
-    client_secret = order.stripe_payment_intent_id.split('_secret_')[1] if '_secret_' in order.stripe_payment_intent_id else ''
-    
-    # Payment Intent aktualisieren
-    try:
-        stripe.api_key = settings.STRIPE_SECRET_KEY
-        intent = stripe.PaymentIntent.retrieve(order.stripe_payment_intent_id)
-        client_secret = intent['client_secret']
-    except:
-        pass
+    paypal_client_id = settings.PAYPAL_CLIENT_ID
     
     context = {
         'order': order,
-        'stripe_public_key': stripe_public_key,
-        'client_secret': client_secret,
+        'paypal_client_id': paypal_client_id,
     }
     return render(request, 'shop1/payment.html', context)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@login_required(login_url='login')
+def paypal_capture(request, order_id):
+    """Wird nach erfolgreicher PayPal-Zahlung aufgerufen (AJAX)"""
+    try:
+        order = Order.objects.get(id=order_id, user=request.user)
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Bestellung nicht gefunden'}, status=404)
+    
+    try:
+        data = json.loads(request.body)
+        paypal_order_id = data.get('paypal_order_id', '')
+        
+        if not paypal_order_id:
+            return JsonResponse({'error': 'Keine PayPal Order ID'}, status=400)
+        
+        # Bestellung als bezahlt markieren
+        order.paypal_order_id = paypal_order_id
+        order.status = 'paid'
+        order.save()
+        
+        # Bestätigungs-Email senden
+        try:
+            send_order_confirmation_email(order)
+        except Exception:
+            pass  # Email-Fehler sollten den Zahlungsprozess nicht blockieren
+        
+        return JsonResponse({'status': 'success', 'redirect': f'/payment/success/{order.id}/'})
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 @login_required(login_url='login')
@@ -639,115 +640,31 @@ def payment_cancel(request):
     return redirect('warenkorb')
 
 
-@csrf_exempt
-@require_http_methods(["GET", "POST"])
-def stripe_webhook(request):
-    """Stripe Webhook für Payment-Status-Updates"""
-    print(">>> STRIPE WEBHOOK ANGERUFEN!")
-    
-    if request.method == "GET":
-        return JsonResponse({'message': 'Webhook-Endpoint ist erreichbar! Bitte nutze POST für Stripe.'})
-    
-    payload = request.body
-    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE', '')
-    
-    try:
-        stripe.api_key = settings.STRIPE_SECRET_KEY
-        webhook_secret = settings.STRIPE_WEBHOOK_SECRET
-        
-        try:
-            event = stripe.Webhook.construct_event(
-                payload, sig_header, webhook_secret
-            )
-        except ValueError:
-            return JsonResponse({'error': 'Invalid payload'}, status=400)
-        except stripe.error.SignatureVerificationError:
-            return JsonResponse({'error': 'Invalid signature'}, status=400)
-        
-        # Payment Intent Events
-        if event['type'] == 'payment_intent.succeeded':
-            intent = event['data']['object']
-            payment_intent_id = intent['id']
-            
-            # Bestellung aktualisieren
-            try:
-                order = Order.objects.get(stripe_payment_intent_id=payment_intent_id)
-                order.status = 'paid'
-                order.save()
-                
-                # Email-Bestätigung senden (optional)
-                try:
-                    send_order_confirmation_email(order)
-                except:
-                    print("DEBUG: E-Mail Bestätigung konnte nicht gesendet werden.")
-                
-            except Order.DoesNotExist:
-                print(f"DEBUG: Fehler - Bestellung mit Intent ID {payment_intent_id} nicht gefunden!")
-        
-        elif event['type'] == 'payment_intent.payment_failed':
-            intent = event['data']['object']
-            payment_intent_id = intent['id']
-            
-            # Bestellung aktualisieren
-            try:
-                order = Order.objects.get(stripe_payment_intent_id=payment_intent_id)
-                order.status = 'failed'
-                order.save()
-            except Order.DoesNotExist:
-                pass
-        
-        return JsonResponse({'status': 'success'})
-    
-    except Exception as e:
-        import logging
-        logging.error(f'Stripe Webhook Error: {str(e)}')
-        return JsonResponse({'error': str(e)}, status=500)
-
-
 def send_order_confirmation_email(order):
-    """Sendet eine Bestellbestätigung per E-Mail"""
-    try:
-        from django.core.mail import send_mail
-        
-        subject = f'Bestellbestätigung #{order.id}'
-        items_text = '\n'.join([
-            f"- {item.menge}x {item.produkt_name}: {float(item.produkt_preis) * item.menge:.2f} €"
-            for item in order.items.all()
-        ])
-        
-        message = f"""
-Hallo {order.vorname} {order.nachname},
+    """Sendet eine Bestellbestätigung per E-Mail via Brevo API"""
+    items_text = '\n'.join([
+        f"- {item.menge}x {item.produkt_name}: {float(item.produkt_preis) * item.menge:.2f} €"
+        for item in order.items.all()
+    ])
+    
+    subject = f'Bestellbestätigung #{order.id}'
+    html_content = f"""
+    <html>
+        <body>
+            <h2>Hallo {order.vorname} {order.nachname},</h2>
+            <p>vielen Dank für deine Bestellung! Deine Zahlung wurde erfolgreich verarbeitet.</p>
+            <h3>Bestellnummer: #{order.id}</h3>
+            <p><strong>Bestellte Artikel:</strong></p>
+            <pre>{items_text}</pre>
+            <p><strong>Gesamtbetrag: {float(order.gesamt_betrag):.2f} €</strong></p>
+            <h4>Lieferadresse:</h4>
+            <p>{order.adresse}<br>{order.postleitzahl} {order.stadt}<br>{order.land}</p>
+            <p>Vielen Dank für deinen Einkauf!</p>
+            <p>Mit freundlichen Grüßen,<br>Dein Shop-Team</p>
+        </body>
+    </html>
+    """
+    text_content = f"Bestellbestätigung #{order.id}\n\n{items_text}\n\nGesamt: {float(order.gesamt_betrag):.2f} €"
+    
 
-vielen Dank für deine Bestellung! Deine Zahlung wurde erfolgreich verarbeitet.
-
-Bestellnummer: #{order.id}
-Datum: {order.erstellt_am.strftime('%d.%m.%Y %H:%M')}
-
-Bestellte Artikel:
-{items_text}
-
-Gesamtbetrag: {float(order.gesamt_betrag):.2f} €
-
-Lieferadresse:
-{order.adresse}
-{order.postleitzahl} {order.stadt}
-{order.land}
-
-Kontakt: {order.telefon}
-
-Vielen Dank für deinen Einkauf!
-
-Mit freundlichen Grüßen,
-Dein Shop-Team
-        """
-        
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [order.email],
-            fail_silently=True
-        )
-    except Exception as e:
-        import logging
-        logging.error(f'Error sending order confirmation email: {str(e)}')
+    send_brevo_email(subject, html_content, order.email, recipient_name=f"{order.vorname} {order.nachname}", text_content=text_content)

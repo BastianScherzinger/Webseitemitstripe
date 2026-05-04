@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +30,7 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 # Erlaubte Hosts - '*' erlaubt alles auf Railway
 ALLOWED_HOSTS = ['*']
 
-# CSRF-Sicherheit für Railway & Stripe
+# CSRF-Sicherheit für Railway & PayPal
 CSRF_TRUSTED_ORIGINS = [
     'https://*.up.railway.app',
     'https://webseitemitstripe-production.up.railway.app',
@@ -62,7 +63,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary',
     'axes', # Brute-Force Schutz
     'shop1', # Add your app here
 ]
@@ -115,10 +118,10 @@ WSGI_APPLICATION = 'mainweb.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600
+    )
 }
 
 
@@ -177,6 +180,12 @@ STORAGES = {
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Cloudinary Setup for persistent media storage
+if os.getenv('CLOUDINARY_URL'):
+    STORAGES["default"] = {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    }
+
 
 # ═══ EMAIL-KONFIGURATION ═══
 
@@ -211,45 +220,20 @@ SITE_URL = os.getenv('SITE_URL', 'http://127.0.0.1:8000')
 # ═══ SICHERHEITSEINSTELLUNGEN ═══
 
 # Session-Sicherheit
-SESSION_COOKIE_SECURE = not DEBUG  # HTTPS only in Production
-SESSION_COOKIE_HTTPONLY = True     # JS kann nicht auf Session zugreifen
-SESSION_COOKIE_SAMESITE = 'Strict' # CSRF-Schutz
-
-
-# ═══ STRIPE-KONFIGURATION ═══
-
-STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
-STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
-
-# Webhook endpoint (für lokales Testen)
-if DEBUG:
-    STRIPE_WEBHOOK_ENDPOINT = 'http://localhost:8000/webhook/stripe/'
-else:
-    STRIPE_WEBHOOK_ENDPOINT = os.getenv('STRIPE_WEBHOOK_ENDPOINT', f'{SITE_URL}/webhook/stripe/')
-
-# Cookie-Sicherheit
-CSRF_COOKIE_SECURE = not DEBUG     # HTTPS only in Production
-CSRF_COOKIE_HTTPONLY = True        # JS kann nicht auf CSRF-Token zugreifen
-CSRF_COOKIE_SAMESITE = 'Strict'
-
-# Clickjacking-Schutz
-X_FRAME_OPTIONS = 'DENY'
-
-# ═══ SICHERHEITSEINSTELLUNGEN ═══
-
-# Schrägstrich-Handling
-APPEND_SLASH = True
-
-# Session-Sicherheit
 SESSION_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Strict'
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Cookie-Sicherheit
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = 'Strict'
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Clickjacking-Schutz
+X_FRAME_OPTIONS = 'DENY'
+
+# Schrägstrich-Handling
+APPEND_SLASH = True
 
 # HTTPS Umleitung in Production
 if not DEBUG:
@@ -257,6 +241,11 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+
+# ═══ PAYPAL-KONFIGURATION ═══
+
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', 'sb')
 
 
 # ═══ LOGIN/LOGOUT URLS ═══
