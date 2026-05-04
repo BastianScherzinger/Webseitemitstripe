@@ -41,7 +41,7 @@ def send_verification_email(user, profile):
     # Sicherstellen, dass SITE_URL keinen Schrägstrich am Ende hat
     base_url = settings.SITE_URL.rstrip('/')
     verification_url = f"{base_url}/verify/{profile.verification_token}/"
-    subject = "MeinShop – Bitte bestätige deine E-Mail-Adresse"
+    subject = "Luviq-Shop – Bitte bestätige deine E-Mail-Adresse"
     
     # HTML Nachricht
     html_content = f"""

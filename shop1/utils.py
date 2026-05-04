@@ -12,7 +12,7 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
     """
     def _send():
         api_key = os.getenv('BREVO_API_KEY')
-        sender_name = "MeinShop"
+        sender_name = "Luviq-Shop"
         sender_email = settings.DEFAULT_FROM_EMAIL
         
         if api_key:

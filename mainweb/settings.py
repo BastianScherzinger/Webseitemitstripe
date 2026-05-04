@@ -216,7 +216,7 @@ if USE_SMTP_EMAIL or not DEBUG:
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@meinshop.de')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@luviq-shop.de')
 SITE_URL = os.getenv('SITE_URL', 'http://127.0.0.1:8000')
 
 

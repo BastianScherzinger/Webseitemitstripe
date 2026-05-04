@@ -58,6 +58,8 @@ urlpatterns = [
     # ═══ ADMIN ROUTES ═══
     path('shop-admin/dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),
     path('shop-admin/stats/', admin_views.admin_stats, name='admin_stats'),
+    path('shop-admin/stats/reset-visits/', admin_views.admin_reset_visits, name='admin_reset_visits'),
+    path('shop-admin/stats/reset-orders/', admin_views.admin_reset_orders, name='admin_reset_orders'),
     path('shop-admin/users/create/', admin_views.admin_user_create, name='admin_user_create'),
     path('shop-admin/users/<int:user_id>/edit/', admin_views.admin_user_edit, name='admin_user_edit'),
     path('shop-admin/users/<int:user_id>/delete/', admin_views.admin_user_delete, name='admin_user_delete'),

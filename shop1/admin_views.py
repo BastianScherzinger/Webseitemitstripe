@@ -150,6 +150,24 @@ def admin_stats(request):
 
 
 @admin_required
+def admin_reset_visits(request):
+    """Löscht alle Seitenbesuche aus der Statistik"""
+    if request.method == 'POST':
+        PageVisit.objects.all().delete()
+        messages.success(request, '✅ Seitenbesuche-Statistik wurde erfolgreich zurückgesetzt.')
+    return redirect('admin_stats')
+
+
+@admin_required
+def admin_reset_orders(request):
+    """Löscht alle Bestellungen aus der Statistik"""
+    if request.method == 'POST':
+        Order.objects.all().delete()
+        messages.success(request, '✅ Alle Bestellungen wurden erfolgreich gelöscht.')
+    return redirect('admin_stats')
+
+
+@admin_required
 def admin_user_create(request):
     """Admin - Neuen Benutzer anlegen"""
     if request.method == 'POST':

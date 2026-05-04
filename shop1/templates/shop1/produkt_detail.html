@@ -40,9 +40,9 @@
             <h2 class="text-primary fw-bold mb-4">{{ produkt.preis|floatformat:2 }} €</h2>
             
             <h5 class="fw-bold mb-2">Beschreibung</h5>
-            <p class="text-secondary lead fs-6 mb-5" style="line-height: 1.8;">
-              {{ produkt.beschreibung }}
-            </p>
+            <div class="text-secondary lead fs-6 mb-5" style="line-height: 1.8;">
+              {{ produkt.beschreibung|linebreaksbr }}
+            </div>
             
             <!-- Features (Stilecht) -->
             <ul class="list-unstyled mb-5">
