@@ -80,6 +80,7 @@ MIDDLEWARE = [
     'axes.middleware.AxesMiddleware', # Brute-Force Schutz
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'shop1.middleware.PageVisitMiddleware', # Statistik-Tracking
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -165,6 +166,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else []
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
+
 
 # WhiteNoise Optimierung für Production
 STORAGES = {

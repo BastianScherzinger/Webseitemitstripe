@@ -97,10 +97,35 @@ def admin_produkte_list(request):
     return render(request, 'shop1/admin/produkte_list.html', context)
 
 
+from django.utils import timezone
+from datetime import timedelta
+import json
+from .models import PageVisit
+
 @admin_required
 def admin_stats(request):
     """Statistik-Seite mit Benutzerverwaltung und Bestellungen"""
     users = User.objects.all().order_by('-date_joined')
+    
+    # --- CHART DATA: Besuche der letzten 30 Tage ---
+    today = timezone.localdate()
+    start_date = today - timedelta(days=29)
+    
+    # Lade existierende Besuche aus der Datenbank
+    visits_qs = PageVisit.objects.filter(date__gte=start_date).order_by('date')
+    visits_dict = {v.date: v.visits for v in visits_qs}
+    
+    labels = []
+    data = []
+    
+    # Fülle Lücken für Tage ohne Besuche mit 0 auf
+    for i in range(30):
+        current_date = start_date + timedelta(days=i)
+        labels.append(current_date.strftime("%d.%m."))
+        data.append(visits_dict.get(current_date, 0))
+        
+    chart_data_json = json.dumps({'labels': labels, 'data': data})
+
     
     # Order-Statistiken
     orders = Order.objects.select_related('user').prefetch_related('items').order_by('-erstellt_am')
@@ -119,6 +144,7 @@ def admin_stats(request):
         'orders_failed': orders_failed,
         'total_orders': orders.count(),
         'total_revenue': total_revenue,
+        'chart_data_json': chart_data_json,
     }
     return render(request, 'shop1/admin/stats.html', context)
 

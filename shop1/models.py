@@ -158,3 +158,17 @@ class OrderItem(models.Model):
     class Meta:
         verbose_name = "Bestellungs-Artikel"
         verbose_name_plural = "Bestellungs-Artikel"
+
+
+class PageVisit(models.Model):
+    """Speichert die Anzahl der Seitenbesuche pro Tag"""
+    date = models.DateField(unique=True, verbose_name="Datum")
+    visits = models.PositiveIntegerField(default=0, verbose_name="Besuche")
+
+    class Meta:
+        verbose_name = "Seitenbesuch"
+        verbose_name_plural = "Seitenbesuche"
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.date}: {self.visits} Besuche"
