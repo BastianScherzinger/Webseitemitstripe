@@ -23,7 +23,18 @@
             <tbody>
               {% for item in warenkorb_items %}
                 <tr>
-                  <td class="fw-bold align-middle">{{ item.name }}</td>
+                  <td class="align-middle">
+                    <div class="d-flex align-items-center gap-3">
+                      {% if item.bild %}
+                        <img src="{{ item.bild }}" alt="{{ item.name }}" class="rounded shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
+                      {% else %}
+                        <div class="rounded shadow-sm bg-light d-flex align-items-center justify-content-center text-muted" style="width: 50px; height: 50px;">
+                          <i class="bi bi-image"></i>
+                        </div>
+                      {% endif %}
+                      <span class="fw-bold">{{ item.name }}</span>
+                    </div>
+                  </td>
                   <td class="text-end align-middle">{{ item.preis|floatformat:2 }} €</td>
                   <td class="text-center align-middle">
                     <form method="post" action="{% url 'update_cart' item.name %}" class="d-inline-flex align-items-center gap-1">

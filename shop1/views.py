@@ -117,7 +117,7 @@ def _sync_session_to_db(request, user):
 
 def startseite(request):
     context = {
-        'titel': 'Mein Shop',
+        'titel': 'Luviq-Shop',
         'anzahl': 42,
     }
     return render(request, 'shop1/index.html', context)
