@@ -77,7 +77,7 @@
                                     <div class="text-[10px] text-white/20 uppercase tracking-widest mt-1">Joined: {{ user.date_joined|date:"d.m.Y" }}</div>
                                 </td>
                                 <td>
-                                    {% if user.profile.email_verified %}
+                                    {% if user.profile and user.profile.email_verified %}
                                         <span class="text-[10px] font-black uppercase text-emerald-400">Verified</span>
                                     {% else %}
                                         <span class="text-[10px] font-black uppercase text-glow-orange">Unverified</span>

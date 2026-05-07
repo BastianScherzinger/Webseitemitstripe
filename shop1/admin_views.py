@@ -105,30 +105,34 @@ from .models import PageVisit
 @admin_required
 def admin_stats(request):
     """Statistik-Seite mit Benutzerverwaltung und Bestellungen"""
-    users = User.objects.all().order_by('-date_joined')
+    users = User.objects.select_related('profile').all().order_by('-date_joined')
     
     # --- CHART DATA: Besuche der letzten 30 Tage ---
-    today = timezone.localdate()
-    start_date = today - timedelta(days=29)
-    
-    # Lade existierende Besuche aus der Datenbank
-    visits_qs = PageVisit.objects.filter(date__gte=start_date).order_by('date')
-    visits_dict = {v.date: v.visits for v in visits_qs}
-    
-    labels = []
-    data = []
-    
-    # Fülle Lücken für Tage ohne Besuche mit 0 auf
-    for i in range(30):
-        current_date = start_date + timedelta(days=i)
-        labels.append(current_date.strftime("%d.%m."))
-        data.append(visits_dict.get(current_date, 0))
+    try:
+        today = timezone.localdate()
+        start_date = today - timedelta(days=29)
         
-    chart_data_json = json.dumps({'labels': labels, 'data': data})
+        # Lade existierende Besuche aus der Datenbank
+        visits_qs = PageVisit.objects.filter(date__gte=start_date).order_by('date')
+        visits_dict = {v.date: v.visits for v in visits_qs}
+        
+        labels = []
+        data = []
+        
+        # Fülle Lücken für Tage ohne Besuche mit 0 auf
+        for i in range(30):
+            current_date = start_date + timedelta(days=i)
+            labels.append(current_date.strftime("%d.%m."))
+            data.append(visits_dict.get(current_date, 0))
+            
+        chart_data_json = json.dumps({'labels': labels, 'data': data})
+    except Exception as e:
+        print(f"Error in chart calculation: {e}")
+        chart_data_json = json.dumps({'labels': [], 'data': []})
 
     
     # Order-Statistiken
-    orders = Order.objects.select_related('user').prefetch_related('items').order_by('-erstellt_am')
+    orders = Order.objects.select_related('user').prefetch_related('items').all().order_by('-erstellt_am')
     orders_paid = orders.filter(status='paid')
     orders_pending = orders.filter(status='pending')
     orders_failed = orders.filter(status='failed')
@@ -136,10 +140,17 @@ def admin_stats(request):
     # Umsatz & Rabatte berechnen
     total_revenue = 0
     total_discounts = 0
-    for order in orders_paid:
-        total_revenue += float(order.gesamt_betrag)
-        items_sum = sum(float(item.produkt_preis * item.menge) for item in order.items.all())
-        total_discounts += (items_sum - float(order.gesamt_betrag))
+    try:
+        for order in orders_paid:
+            rev = float(order.gesamt_betrag or 0)
+            total_revenue += rev
+            
+            # Berechne Rabatt basierend auf Item-Summe vs Bezahltem Betrag
+            items_sum = sum(float((item.produkt_preis or 0) * (item.menge or 1)) for item in order.items.all())
+            if items_sum > rev:
+                total_discounts += (items_sum - rev)
+    except Exception as e:
+        print(f"Error in revenue calculation: {e}")
     
     context = {
         'users': users,
@@ -191,10 +202,10 @@ def admin_user_create(request):
 @admin_required
 def admin_user_edit(request, user_id):
     """Admin - Benutzer bearbeiten"""
-    user_to_edit = get_object_or_404(User, id=user_id)
+    edit_user = get_object_or_404(User, id=user_id)
     
     if request.method == 'POST':
-        form = AdminUserEditForm(request.POST, instance=user_to_edit)
+        form = AdminUserEditForm(request.POST, instance=edit_user)
         if form.is_valid():
             form.save()
             messages.success(request, f'✅ Benutzer "{edit_user.username}" erfolgreich aktualisiert!')
