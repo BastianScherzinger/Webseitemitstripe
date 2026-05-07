@@ -379,3 +379,48 @@ def admin_produkt_delete(request, produkt_id):
         'produkt': produkt,
     }
     return render(request, 'shop1/admin/produkt_delete.html', context)
+@admin_required
+def admin_orders_list(request):
+    """Admin - Liste aller Bestellungen"""
+    status_filter = request.GET.get('status')
+    orders = Order.objects.select_related('user').prefetch_related('items').all().order_by('-erstellt_am')
+    
+    if status_filter:
+        orders = orders.filter(status=status_filter)
+        
+    context = {
+        'orders': orders,
+        'status_choices': Order.STATUS_CHOICES,
+        'current_status': status_filter,
+    }
+    return render(request, 'shop1/admin/orders_list.html', context)
+
+
+@admin_required
+def admin_order_detail(request, order_id):
+    """Admin - Detailansicht einer Bestellung mit Status-Update"""
+    order = get_object_or_404(Order.objects.prefetch_related('items'), id=order_id)
+    
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        if new_status in dict(Order.STATUS_CHOICES):
+            order.status = new_status
+            order.save()
+            messages.success(request, f'✅ Status für Bestellung #{order.id} wurde auf "{order.get_status_display()}" aktualisiert!')
+            return redirect('admin_order_detail', order_id=order.id)
+            
+    # Produkte in der DB finden für Bilder
+    items_with_products = []
+    for item in order.items.all():
+        db_produkt = Produkt.objects.filter(name=item.produkt_name).first()
+        items_with_products.append({
+            'item': item,
+            'db_produkt': db_produkt
+        })
+        
+    context = {
+        'order': order,
+        'items_with_products': items_with_products,
+        'status_choices': Order.STATUS_CHOICES,
+    }
+    return render(request, 'shop1/admin/order_detail.html', context)

@@ -66,8 +66,14 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
 def send_newsletter_email(produkt, subscribers):
     """Sendet ein wunderschönes Newsletter-Update an alle Abonnenten."""
     subject = f"✨ NEW DROP: {produkt.name} is online!"
-    site_url = settings.SITE_URL
-    image_url = f"{site_url}{produkt.bild.url}" if produkt.bild else ""
+    site_url = settings.SITE_URL.rstrip('/')
+    # Wenn das Bild auf einem externen Speicher (Cloudinary) liegt, ist die URL bereits absolut
+    if produkt.bild and (produkt.bild.url.startswith('http://') or produkt.bild.url.startswith('https://')):
+        image_url = produkt.bild.url
+    elif produkt.bild:
+        image_url = f"{site_url}{produkt.bild.url}"
+    else:
+        image_url = ""
     
     for sub in subscribers:
         html_content = f"""

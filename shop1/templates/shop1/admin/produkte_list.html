@@ -14,6 +14,9 @@
             <a href="{% url 'admin_dashboard' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
                 Overview
             </a>
+            <a href="{% url 'admin_orders_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Mission Control
+            </a>
             <a href="{% url 'admin_produkte_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all {% if request.resolver_match.url_name == 'admin_produkte_list' %}bg-glow-orange{% endif %}">
                 Inventory
             </a>

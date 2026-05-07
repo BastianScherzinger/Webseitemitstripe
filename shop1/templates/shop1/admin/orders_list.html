@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mission Control – Luviq Admin{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <!-- Quick Category Nav -->
+        <div class="flex flex-wrap gap-4 mb-12">
+            <a href="{% url 'admin_dashboard' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Overview
+            </a>
+            <a href="{% url 'admin_orders_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all {% if request.resolver_match.url_name == 'admin_orders_list' %}bg-glow-orange{% endif %}">
+                Mission Control
+            </a>
+            <a href="{% url 'admin_produkte_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Inventory
+            </a>
+            <a href="{% url 'admin_stats' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Analytics & Members
+            </a>
+            <a href="{% url 'admin_produkt_upload' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                New Drop
+            </a>
+        </div>
+
+        <!-- Header -->
+        <div class="mb-12 flex flex-col md:flex-row justify-between items-end gap-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <div>
+                <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                    Mission <span class="text-glow">Control</span>
+                </h1>
+                <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Bestellungs-Management & Logistik</p>
+                <div class="h-1 w-24 bg-glow-orange mt-8 rounded-full"></div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <form method="GET" class="flex items-center gap-2">
+                    <select name="status" class="glass px-6 py-3 rounded-xl text-[10px] font-bold text-white uppercase tracking-widest outline-none border-white/10" onchange="this.form.submit()">
+                        <option value="">Alle Stati</option>
+                        {% for code, label in status_choices %}
+                            <option value="{{ code }}" {% if current_status == code %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="glass-card rounded-[3.5rem] overflow-hidden shadow-2xl scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Identity</th>
+                            <th>Mission Date</th>
+                            <th>Payload (Summe)</th>
+                            <th>Status</th>
+                            <th class="text-center">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr class="group">
+                            <td class="font-black text-glow">#{{ order.id }}</td>
+                            <td>
+                                <div class="font-bold text-white">{{ order.vorname }} {{ order.nachname }}</div>
+                                <div class="text-[9px] text-white/20 uppercase tracking-widest mt-1">{{ order.email }}</div>
+                            </td>
+                            <td class="text-white/60 font-light">{{ order.erstellt_am|date:"d.m.Y H:i" }}</td>
+                            <td class="font-black text-white">{{ order.gesamt_betrag }} €</td>
+                            <td>
+                                {% if order.status == 'paid' %}
+                                    <span class="text-[9px] font-black uppercase text-emerald-400 bg-emerald-400/5 px-3 py-1 rounded-full border border-emerald-400/20">{{ order.get_status_display }}</span>
+                                {% elif order.status == 'shipped' %}
+                                    <span class="text-[9px] font-black uppercase text-blue-400 bg-blue-400/5 px-3 py-1 rounded-full border border-blue-400/20">{{ order.get_status_display }}</span>
+                                {% elif order.status == 'processing' %}
+                                    <span class="text-[9px] font-black uppercase text-glow-orange bg-glow-orange/5 px-3 py-1 rounded-full border border-glow-orange/20">{{ order.get_status_display }}</span>
+                                {% else %}
+                                    <span class="text-[9px] font-black uppercase text-white/20 bg-white/5 px-3 py-1 rounded-full border border-white/10">{{ order.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'admin_order_detail' order.id %}" class="inline-flex w-10 h-10 glass rounded-xl items-center justify-center hover:bg-glow-orange transition-all transform group-hover:scale-110">
+                                    👁️
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-20">
+                                <p class="text-white/20 uppercase tracking-[0.3em] font-black">Keine Missionen gefunden.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

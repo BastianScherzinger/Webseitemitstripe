@@ -14,6 +14,9 @@
             <a href="{% url 'admin_dashboard' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
                 Overview
             </a>
+            <a href="{% url 'admin_orders_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Mission Control
+            </a>
             <a href="{% url 'admin_produkte_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
                 Inventory
             </a>
@@ -135,6 +138,11 @@
                                         </span>
                                     </td>
                                     <td class="text-right font-black text-glow">{{ order.gesamt_betrag|floatformat:2 }} €</td>
+                                    <td class="text-right">
+                                        <a href="{% url 'admin_order_detail' order.id %}" class="inline-flex w-8 h-8 glass rounded-lg items-center justify-center hover:bg-glow-orange transition-all text-xs">
+                                            👁️
+                                        </a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

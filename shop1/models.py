@@ -119,10 +119,13 @@ class CartItem(models.Model):
 class Order(models.Model):
     """Bestellung mit Zahlungsinformationen"""
     STATUS_CHOICES = [
-        ('pending', 'Ausstehend'),
-        ('paid', 'Bezahlt'),
-        ('failed', 'Fehlgeschlagen'),
-        ('cancelled', 'Abgebrochen'),
+        ('pending', 'Ausstehend / Unbezahlt'),
+        ('paid', 'Bezahlt (Gesehen)'),
+        ('processing', 'In Bearbeitung'),
+        ('ready_for_shipping', 'Zum Versand bereit'),
+        ('shipped', 'Versendet'),
+        ('failed', 'Zahlung Fehlgeschlagen'),
+        ('cancelled', 'Abgebrochen / Storniert'),
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')

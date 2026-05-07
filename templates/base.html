@@ -134,6 +134,7 @@
                                 {% if user.is_staff %}
                                 <div class="px-4 py-2 text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mt-2">Control Room</div>
                                 <a href="{% url 'admin_dashboard' %}" class="block px-4 py-2 text-sm text-glow-orange hover:bg-white/5 transition-colors font-bold">Overview</a>
+                                <a href="{% url 'admin_orders_list' %}" class="block px-4 py-2 text-xs text-white/60 hover:text-white transition-colors pl-6">Mission Control</a>
                                 <a href="{% url 'admin_produkte_list' %}" class="block px-4 py-2 text-xs text-white/60 hover:text-white transition-colors pl-6">Inventory</a>
                                 <a href="{% url 'admin_stats' %}" class="block px-4 py-2 text-xs text-white/60 hover:text-white transition-colors pl-6">Analytics & Members</a>
                                 <a href="{% url 'admin_produkt_upload' %}" class="block px-4 py-2 text-xs text-white/60 hover:text-white transition-colors pl-6">New Drop</a>

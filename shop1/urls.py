@@ -71,4 +71,6 @@ urlpatterns = [
     path('shop-admin/produkte/<int:produkt_id>/delete/', admin_views.admin_produkt_delete, name='admin_produkt_delete'),
     path('shop-admin/produkte/<int:produkt_id>/resend-newsletter/', admin_views.admin_resend_newsletter, name='admin_resend_newsletter'),
     path('shop-admin/produkte/<int:produkt_id>/toggle/', admin_views.admin_produkt_toggle, name='admin_produkt_toggle'),
+    path('shop-admin/orders/', admin_views.admin_orders_list, name='admin_orders_list'),
+    path('shop-admin/orders/<int:order_id>/', admin_views.admin_order_detail, name='admin_order_detail'),
 ]

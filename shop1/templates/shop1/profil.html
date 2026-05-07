@@ -132,9 +132,15 @@
                                                 <td class="py-6 text-white/40">{{ order.erstellt_am|date:"d.m.Y" }}</td>
                                                 <td class="py-6">
                                                     {% if order.status == 'paid' %}
-                                                        <span class="text-emerald-400 font-bold uppercase text-[10px] tracking-widest">Paid</span>
+                                                        <span class="text-emerald-400 font-black uppercase text-[9px] tracking-widest bg-emerald-400/5 px-3 py-1 rounded-full border border-emerald-400/10">Bezahlt / Gesehen</span>
+                                                    {% elif order.status == 'shipped' %}
+                                                        <span class="text-blue-400 font-black uppercase text-[9px] tracking-widest bg-blue-400/5 px-3 py-1 rounded-full border border-blue-400/10">Im Anflug (Versendet)</span>
+                                                    {% elif order.status == 'processing' %}
+                                                        <span class="text-glow-orange font-black uppercase text-[9px] tracking-widest bg-glow-orange/5 px-3 py-1 rounded-full border border-glow-orange/10">In Bearbeitung</span>
+                                                    {% elif order.status == 'ready_for_shipping' %}
+                                                        <span class="text-emerald-500 font-black uppercase text-[9px] tracking-widest bg-emerald-500/5 px-3 py-1 rounded-full border border-emerald-500/10">Bereit zum Versand</span>
                                                     {% else %}
-                                                        <span class="text-glow-orange font-bold uppercase text-[10px] tracking-widest">{{ order.status }}</span>
+                                                        <span class="text-white/20 font-black uppercase text-[9px] tracking-widest">{{ order.get_status_display }}</span>
                                                     {% endif %}
                                                 </td>
                                                 <td class="py-6 text-right font-black text-glow">{{ order.gesamt_betrag|floatformat:2 }} €</td>
