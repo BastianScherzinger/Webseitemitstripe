@@ -209,6 +209,17 @@ def admin_user_edit(request, user_id):
 
 
 @admin_required
+def admin_produkt_toggle(request, produkt_id):
+    """Schaltet den Aktiv-Status eines Produkts um."""
+    produkt = get_object_or_404(Produkt, id=produkt_id)
+    produkt.aktiv = not produkt.aktiv
+    produkt.save()
+    status_str = "aktiviert" if produkt.aktiv else "deaktiviert"
+    messages.success(request, f'✅ Produkt "{produkt.name}" wurde erfolgreich {status_str}!')
+    return redirect('admin_produkte_list')
+
+
+@admin_required
 def admin_resend_newsletter(request, produkt_id):
     """Ermöglicht das manuelle erneute Senden eines Newsletters für ein Produkt."""
     produkt = get_object_or_404(Produkt, id=produkt_id)

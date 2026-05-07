@@ -87,7 +87,7 @@
                                     <div class="font-bold text-white">{{ produkt.name }}</div>
                                     <div class="text-[9px] text-white/20 uppercase tracking-widest mt-1">ID: #{{ produkt.id }}</div>
                                 </td>
-                                <td class="font-black text-glow">{{ produkt.preis }} €</td>
+                                <td class="font-bold text-white">{{ produkt.preis }} €</td>
                                 <td>
                                     <span class="{% if produkt.lagerbestand == 0 %}text-red-400{% elif produkt.lagerbestand < 3 %}text-glow-orange{% else %}text-white{% endif %} font-bold">
                                         {{ produkt.lagerbestand }}
@@ -95,25 +95,33 @@
                                 </td>
                                 <td>
                                     {% if produkt.aktiv %}
-                                        <span class="text-[9px] font-black uppercase text-emerald-400">Online</span>
+                                        <span class="text-[9px] font-black uppercase text-emerald-400 flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                            Online
+                                        </span>
                                     {% else %}
-                                        <span class="text-[9px] font-black uppercase text-white/20">Offline</span>
+                                        <span class="text-[9px] font-black uppercase text-white/20 flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white/20"></span>
+                                            Offline
+                                        </span>
                                     {% endif %}
                                 </td>
                                 <td class="text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <a href="{% url 'admin_produkt_edit' produkt.id %}" class="w-10 h-10 glass rounded-xl flex items-center justify-center hover:bg-glow-orange transition-all" title="Bearbeiten">
+                                        <!-- Edit -->
+                                        <a href="{% url 'admin_produkt_edit' produkt.id %}" class="w-9 h-9 glass rounded-lg flex items-center justify-center hover:bg-white/10 transition-all" title="Edit">
                                             ✏️
                                         </a>
-                                        {% if produkt.newsletter_gesendet %}
-                                        <a href="{% url 'admin_resend_newsletter' produkt.id %}" class="w-10 h-10 glass rounded-xl flex items-center justify-center hover:bg-emerald-500 transition-all" title="Newsletter erneut senden">
+                                        
+                                        <!-- Newsletter (Always) -->
+                                        <a href="{% url 'admin_resend_newsletter' produkt.id %}" class="w-9 h-9 glass rounded-lg flex items-center justify-center hover:bg-glow-orange/20 transition-all {% if not produkt.newsletter_gesendet %}opacity-40{% endif %}" title="Send/Resend Newsletter">
                                             📧
                                         </a>
-                                        {% else %}
-                                        <span class="w-10 h-10 flex items-center justify-center opacity-10" title="Kein Newsletter gesendet">
-                                            🔇
-                                        </span>
-                                        {% endif %}
+
+                                        <!-- Toggle Status -->
+                                        <a href="{% url 'admin_produkt_toggle' produkt.id %}" class="w-9 h-9 glass rounded-lg flex items-center justify-center transition-all {% if produkt.aktiv %}hover:bg-red-500/20 text-red-400{% else %}hover:bg-emerald-500/20 text-emerald-400{% endif %}" title="{% if produkt.aktiv %}Deaktivieren{% else %}Aktivieren{% endif %}">
+                                            {% if produkt.aktiv %}🚫{% else %}👁️{% endif %}
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
