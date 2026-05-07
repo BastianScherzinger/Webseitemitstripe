@@ -67,6 +67,7 @@ urlpatterns = [
     path('shop-admin/users/<int:user_id>/cart/', admin_views.admin_user_cart, name='admin_user_cart'),
     path('shop-admin/produkte/', admin_views.admin_produkte_list, name='admin_produkte_list'),
     path('shop-admin/produkte/upload/', admin_views.admin_produkt_upload, name='admin_produkt_upload'),
-    path('shop-admin/produkte/<int:produkt_id>/edit/', admin_views.admin_produkt_edit, name='admin_produkt_edit'),
-    path('shop-admin/produkte/<int:produkt_id>/delete/', admin_views.admin_produkt_delete, name='admin_produkt_delete'),
+    path('admin/produkte/<int:produkt_id>/edit/', admin_views.admin_produkt_edit, name='admin_produkt_edit'),
+    path('admin/produkte/<int:produkt_id>/delete/', admin_views.admin_produkt_delete, name='admin_produkt_delete'),
+    path('admin/produkte/<int:produkt_id>/resend-newsletter/', admin_views.admin_resend_newsletter, name='admin_resend_newsletter'),
 ]

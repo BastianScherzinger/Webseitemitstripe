@@ -9,19 +9,20 @@
     <div class="energy-nebula"></div>
 
     <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <!-- Header -->
-        <div class="mb-12 flex flex-col md:flex-row justify-between items-end gap-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-            <div>
-                <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
-                    Shop <span class="text-glow">Stats</span>
-                </h1>
-                <div class="h-1 w-24 bg-glow-orange rounded-full"></div>
-            </div>
-            <div class="flex gap-4">
-                <a href="{% url 'admin_user_create' %}" class="btn-glow px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest">
-                    ➕ New Member
-                </a>
-            </div>
+        <!-- Quick Category Nav -->
+        <div class="flex flex-wrap gap-4 mb-12">
+            <a href="{% url 'admin_dashboard' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Overview
+            </a>
+            <a href="{% url 'admin_produkte_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Inventory
+            </a>
+            <a href="{% url 'admin_stats' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all {% if request.resolver_match.url_name == 'admin_stats' %}bg-glow-orange{% endif %}">
+                Analytics & Members
+            </a>
+            <a href="{% url 'admin_produkt_upload' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                New Drop
+            </a>
         </div>
 
         <!-- Quick Stats Overview -->

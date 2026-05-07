@@ -9,6 +9,22 @@
     <div class="energy-nebula"></div>
 
     <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <!-- Quick Category Nav -->
+        <div class="flex flex-wrap gap-4 mb-12">
+            <a href="{% url 'admin_dashboard' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Overview
+            </a>
+            <a href="{% url 'admin_produkte_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all {% if request.resolver_match.url_name == 'admin_produkte_list' %}bg-glow-orange{% endif %}">
+                Inventory
+            </a>
+            <a href="{% url 'admin_stats' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Analytics & Members
+            </a>
+            <a href="{% url 'admin_produkt_upload' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                New Drop
+            </a>
+        </div>
+
         <!-- Header -->
         <div class="mb-12 flex flex-col md:flex-row justify-between items-end gap-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
             <div>
@@ -85,9 +101,20 @@
                                     {% endif %}
                                 </td>
                                 <td class="text-center">
-                                    <a href="{% url 'admin_produkt_edit' produkt.id %}" class="inline-flex w-10 h-10 glass rounded-xl items-center justify-center hover:bg-glow-orange transition-all transform group-hover:rotate-12">
-                                        ✏️
-                                    </a>
+                                    <div class="flex items-center justify-center gap-2">
+                                        <a href="{% url 'admin_produkt_edit' produkt.id %}" class="w-10 h-10 glass rounded-xl flex items-center justify-center hover:bg-glow-orange transition-all" title="Bearbeiten">
+                                            ✏️
+                                        </a>
+                                        {% if produkt.newsletter_gesendet %}
+                                        <a href="{% url 'admin_resend_newsletter' produkt.id %}" class="w-10 h-10 glass rounded-xl flex items-center justify-center hover:bg-emerald-500 transition-all" title="Newsletter erneut senden">
+                                            📧
+                                        </a>
+                                        {% else %}
+                                        <span class="w-10 h-10 flex items-center justify-center opacity-10" title="Kein Newsletter gesendet">
+                                            🔇
+                                        </span>
+                                        {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}

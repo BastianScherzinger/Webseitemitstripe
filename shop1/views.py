@@ -408,6 +408,7 @@ def profil(request):
         'ist_superuser': user.is_superuser,
         'status': status,
         'email_verified': profile.email_verified,
+        'is_main_admin': _is_admin(user),
     }
     
     return render(request, 'shop1/profil.html', {
@@ -481,6 +482,12 @@ def delete_account(request):
     """Löscht das gesamte Benutzerkonto und alle dazugehörigen Daten."""
     if request.method == 'POST':
         user = request.user
+        
+        # SCHUTZ: Shopbesitzer/Admin darf nicht gelöscht werden
+        if _is_admin(user):
+            messages.error(request, '⛔ Der Shopbesitzer-Account kann nicht gelöscht werden. Kontaktiere den System-Administrator für manuelle Änderungen.')
+            return redirect('profil')
+            
         # Durch CASCADE-Deletion werden auch UserProfile, Cart und CartItems gelöscht
         user.delete()
         messages.success(request, 'Dein Account und alle dazugehörigen Daten wurden erfolgreich gelöscht. Schade, dass du gehst!')

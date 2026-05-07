@@ -163,10 +163,18 @@
                         </a>
                         <form method="post" action="{% url 'delete_account' %}">
                             {% csrf_token %}
-                            <button type="submit" class="w-full py-4 glass border-red-500/10 text-red-400 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest hover:bg-red-500/10 transition-all" 
-                                    onclick="return confirm('DANGER: Permanent deletion. Confirm?');">
-                                🗑️ Purge Account
-                            </button>
+                            {% if profil.is_main_admin %}
+                                <button type="button" class="w-full py-4 glass border-white/5 text-white/20 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest cursor-not-allowed" 
+                                        title="Der Shopbesitzer-Account ist geschützt.">
+                                    🛡️ Account Protected
+                                </button>
+                                <p class="text-[9px] text-white/20 mt-2 text-center uppercase tracking-widest">Shopbesitzer-Account kann nicht gelöscht werden.</p>
+                            {% else %}
+                                <button type="submit" class="w-full py-4 glass border-red-500/10 text-red-400 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest hover:bg-red-500/10 transition-all" 
+                                        onclick="return confirm('DANGER: Permanent deletion. Confirm?');">
+                                    🗑️ Purge Account
+                                </button>
+                            {% endif %}
                         </form>
                     </div>
                 </div>

@@ -168,6 +168,8 @@ class UserProfileForm(forms.ModelForm):
             'postleitzahl': forms.TextInput(attrs={'class': 'form-control'}),
             'stadt': forms.TextInput(attrs={'class': 'form-control'}),
             'land': forms.TextInput(attrs={'class': 'form-control'}),
+            'aktiv': forms.CheckboxInput(attrs={'class': 'w-6 h-6 rounded-lg bg-white/5 border-white/10 text-glow-orange focus:ring-glow-orange'}),
+            'lagerbestand': forms.NumberInput(attrs={'class': 'form-input w-full p-4 rounded-xl', 'min': '0'}),
             'geburtsdatum': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
@@ -238,9 +240,18 @@ class ProduktForm(forms.ModelForm):
                 'accept': 'image/*'
             }),
             'aktiv': forms.CheckboxInput(attrs={
-                'class': 'form-check-input'
+                'class': 'w-6 h-6 rounded-lg bg-white/5 border-white/10 text-glow-orange focus:ring-glow-orange'
             }),
         }
+
+    send_newsletter = forms.BooleanField(
+        required=False,
+        initial=True,
+        label="Newsletter an alle Abonnenten verschicken?",
+        widget=forms.CheckboxInput(attrs={
+            'class': 'w-6 h-6 rounded-lg bg-white/5 border-white/10 text-glow-orange focus:ring-glow-orange'
+        })
+    )
 
 
 class AdminUserEditForm(forms.ModelForm):

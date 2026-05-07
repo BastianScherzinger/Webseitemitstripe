@@ -197,12 +197,34 @@ def admin_user_edit(request, user_id):
         form = AdminUserEditForm(request.POST, instance=user_to_edit)
         if form.is_valid():
             form.save()
-            messages.success(request, f'✅ Benutzer "{user_to_edit.username}" erfolgreich aktualisiert!')
+            messages.success(request, f'✅ Benutzer "{edit_user.username}" erfolgreich aktualisiert!')
             return redirect('admin_stats')
     else:
-        form = AdminUserEditForm(instance=user_to_edit)
+        form = AdminUserEditForm(instance=edit_user)
     
-    return render(request, 'shop1/admin/user_edit.html', {'form': form, 'edit_user': user_to_edit})
+    return render(request, 'shop1/admin/user_edit.html', {
+        'edit_user': edit_user,
+        'form': form,
+    })
+
+
+@admin_required
+def admin_resend_newsletter(request, produkt_id):
+    """Ermöglicht das manuelle erneute Senden eines Newsletters für ein Produkt."""
+    produkt = get_object_or_404(Produkt, id=produkt_id)
+    from .models import Subscriber
+    from .utils import send_newsletter_email
+    
+    subscribers = Subscriber.objects.all()
+    if subscribers.exists():
+        send_newsletter_email(produkt, subscribers)
+        produkt.newsletter_gesendet = True
+        produkt.save()
+        messages.success(request, f'🚀 Newsletter für "{produkt.name}" wurde erfolgreich an alle Abonnenten gesendet!')
+    else:
+        messages.warning(request, 'Es gibt aktuell keine Newsletter-Abonnenten.')
+        
+    return redirect('admin_produkte_list')
 
 
 @admin_required
@@ -269,28 +291,16 @@ def admin_produkt_upload(request):
             produkt.save()
             messages.success(request, f'✅ Produkt "{produkt.name}" erfolgreich erstellt!')
             
-            # NEWSLETTER: Benachrichtigung an alle Abonnenten
-            from .models import Subscriber
-            from .utils import send_brevo_email
-            subscribers = Subscriber.objects.all()
-            if subscribers.exists():
-                subject = f"NEW DROP: {produkt.name} is online!"
-                site_url = settings.SITE_URL
-                for sub in subscribers:
-                    html_content = f"""
-                    <html>
-                        <body style="font-family: sans-serif; background: #050816; color: white; padding: 40px; text-align: center;">
-                            <h1 style="color: #ff6a00; text-transform: uppercase; letter-spacing: 2px;">New Art Drop</h1>
-                            <p style="font-size: 18px; color: #f4f7fb;">"{produkt.name}" wurde soeben im Orbit gesichtet.</p>
-                            <p style="color: rgba(255,255,255,0.5);">Ein neues handbemaltes Unikat wartet auf dich.</p>
-                            <a href="{site_url}/produkte/" style="display: inline-block; background: #ff6a00; color: white; padding: 15px 30px; text-decoration: none; border-radius: 10px; font-weight: bold; margin-top: 20px;">Jetzt ansehen</a>
-                        </body>
-                    </html>
-                    """
-                    try:
-                        send_brevo_email(subject, html_content, sub.email)
-                    except:
-                        pass
+            # NEWSLETTER: Nur wenn Checkbox aktiviert ist
+            if form.cleaned_data.get('send_newsletter'):
+                from .models import Subscriber
+                from .utils import send_newsletter_email
+                subscribers = Subscriber.objects.all()
+                if subscribers.exists():
+                    send_newsletter_email(produkt, subscribers)
+                    produkt.newsletter_gesendet = True
+                    produkt.save()
+                    messages.info(request, '📧 Newsletter-Update wurde an alle Abonnenten gesendet.')
             
             return redirect('admin_produkte_list')
         else:
@@ -315,7 +325,19 @@ def admin_produkt_edit(request, produkt_id):
         form = ProduktForm(request.POST, request.FILES, instance=produkt)
         if form.is_valid():
             produkt = form.save()
-            messages.success(request, f'✅ Produkt "{produkt.name}" erfolgreich aktualisiert!')
+            messages.success(request, f'✅ Produkt "{produkt.name}" wurde aktualisiert!')
+            
+            # Optional: Erneut Newsletter schicken wenn Checkbox in Edit-Form (falls wir sie dort auch wollen)
+            if form.cleaned_data.get('send_newsletter'):
+                from .models import Subscriber
+                from .utils import send_newsletter_email
+                subscribers = Subscriber.objects.all()
+                if subscribers.exists():
+                    send_newsletter_email(produkt, subscribers)
+                    produkt.newsletter_gesendet = True
+                    produkt.save()
+                    messages.info(request, '📧 Newsletter-Update wurde erneut gesendet.')
+            
             return redirect('admin_produkte_list')
         else:
             for field, errors in form.errors.items():
