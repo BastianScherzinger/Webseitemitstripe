@@ -116,9 +116,12 @@ def _sync_session_to_db(request, user):
 # ═══ SEITEN ═══
 
 def startseite(request):
+    # Fetch some active products for the animated gallery
+    produkte_galerie = Produkt.objects.filter(aktiv=True)[:8]
     context = {
         'titel': 'Luviq-Shop',
         'anzahl': 42,
+        'produkte_galerie': produkte_galerie,
     }
     return render(request, 'shop1/index.html', context)
 

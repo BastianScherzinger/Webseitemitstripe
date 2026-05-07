@@ -4,84 +4,107 @@
 {% block title %}{{ produkt.name }} – Luviq-Shop{% endblock %}
 
 {% block content %}
-  <div>
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'produkte' %}">Produkte</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ produkt.name }}</li>
-      </ol>
+<div class="animate-reveal">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-8 text-sm font-medium text-gray-500" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li><a href="{% url 'home' %}" class="hover:text-blue-600 transition-colors">Home</a></li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                    <a href="{% url 'produkte' %}" class="ml-1 hover:text-blue-600 transition-colors md:ml-2">Produkte</a>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                    <span class="ml-1 text-gray-900 md:ml-2">{{ produkt.name }}</span>
+                </div>
+            </li>
+        </ol>
     </nav>
 
-    <div class="row mt-4">
-      <!-- Produktbild -->
-      <div class="col-md-6 mb-4">
-        <div class="card border-light shadow-sm h-100 overflow-hidden">
-          {% if produkt.bild %}
-            <img 
-              src="{{ produkt.bild.url }}"
-              class="img-fluid w-100" 
-              alt="{{ produkt.name }}"
-              style="object-fit: cover; max-height: 500px;"
-            >
-          {% else %}
-            <div style="height: 500px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
-              <span class="text-muted">Kein Bild verfügbar</span>
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Produktdetails -->
-      <div class="col-md-6 mb-4">
-        <div class="card border-light shadow-sm h-100">
-          <div class="card-body p-5 d-flex flex-column">
-            <h1 class="fw-bold mb-3">{{ produkt.name }}</h1>
-            <h2 class="text-primary fw-bold mb-4">{{ produkt.preis|floatformat:2 }} €</h2>
-            
-            <h5 class="fw-bold mb-2">Beschreibung</h5>
-            <div class="text-secondary lead fs-6 mb-5" style="line-height: 1.8;">
-              {{ produkt.beschreibung|linebreaksbr }}
-            </div>
-            
-            <!-- Features (Stilecht) -->
-            <ul class="list-unstyled mb-5">
-              <li class="mb-2">✅ Auf Lager - sofort lieferbar</li>
-              <li class="mb-2">🚚 Kostenloser Versand ab 50€</li>
-              <li class="mb-2">↩️ 30 Tage Rückgaberecht</li>
-            </ul>
-
-            <!-- Buttons -->
-            <div class="mt-auto">
-              <div class="d-grid gap-3 d-md-flex">
-                {% if user.is_authenticated %}
-                  <form method="GET" action="{% url 'add_to_cart' produkt.id %}" style="flex: 1;">
-                    <button type="submit" class="btn btn-outline-primary btn-lg fw-bold w-100">
-                      🛒 In den Warenkorb
-                    </button>
-                  </form>
-                  
-                  <form method="GET" action="{% url 'add_to_cart' produkt.id %}" style="flex: 1;">
-                    <input type="hidden" name="next" value="warenkorb">
-                    <button type="submit" class="btn btn-primary btn-lg fw-bold w-100">
-                      💳 Direkt kaufen
-                    </button>
-                  </form>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Produktbild -->
+        <div class="relative group">
+            <div class="glass rounded-3xl overflow-hidden shadow-2xl premium-card">
+                {% if produkt.bild %}
+                    <img 
+                      src="{{ produkt.bild.url }}"
+                      class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105" 
+                      alt="{{ produkt.name }}"
+                    >
                 {% else %}
-                  <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg fw-bold flex-grow-1">
-                    🛒 In den Warenkorb
-                  </a>
-                  
-                  <a href="{% url 'login' %}" class="btn btn-primary btn-lg fw-bold flex-grow-1">
-                    💳 Direkt kaufen
-                  </a>
+                    <div class="h-[500px] bg-gray-50 flex items-center justify-center text-gray-400">
+                        <svg class="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
                 {% endif %}
-              </div>
             </div>
-            
-          </div>
+            <!-- Floating Badge -->
+            <div class="absolute top-6 left-6 px-4 py-2 bg-blue-600 text-white rounded-full font-bold text-sm shadow-lg">
+                Premium Qualität
+            </div>
         </div>
-      </div>
+
+        <!-- Produktdetails -->
+        <div class="flex flex-col">
+            <div class="glass rounded-3xl p-10 shadow-xl flex-grow flex flex-col">
+                <h1 class="text-4xl md:text-5xl font-extrabold heading-font text-gray-900 mb-4 leading-tight">
+                    {{ produkt.name }}
+                </h1>
+                
+                <div class="flex items-center mb-8">
+                    <span class="text-3xl font-bold text-blue-600 mr-4">{{ produkt.preis|floatformat:2 }} €</span>
+                    <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">Auf Lager</span>
+                </div>
+                
+                <div class="mb-10">
+                    <h3 class="text-xl font-bold heading-font mb-4 text-gray-900">Beschreibung</h3>
+                    <p class="text-gray-600 leading-relaxed text-lg">
+                        {{ produkt.beschreibung|linebreaksbr }}
+                    </p>
+                </div>
+                
+                <!-- Features -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+                    <div class="flex items-center p-4 glass rounded-2xl">
+                        <span class="text-2xl mr-3">🚚</span>
+                        <span class="text-sm font-medium text-gray-700">Kostenloser Versand ab 50€</span>
+                    </div>
+                    <div class="flex items-center p-4 glass rounded-2xl">
+                        <span class="text-2xl mr-3">↩️</span>
+                        <span class="text-sm font-medium text-gray-700">30 Tage Rückgaberecht</span>
+                    </div>
+                    <div class="flex items-center p-4 glass rounded-2xl">
+                        <span class="text-2xl mr-3">🛡️</span>
+                        <span class="text-sm font-medium text-gray-700">Sichere PayPal-Zahlung</span>
+                    </div>
+                    <div class="flex items-center p-4 glass rounded-2xl">
+                        <span class="text-2xl mr-3">✨</span>
+                        <span class="text-sm font-medium text-gray-700">Geprüfte Originalware</span>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="mt-auto pt-8 border-t border-white/30 flex flex-col sm:flex-row gap-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'add_to_cart' produkt.id %}" class="flex-1 py-4 px-6 border-2 border-blue-600 text-blue-600 rounded-2xl font-bold text-center hover:bg-blue-50 transition-all flex items-center justify-center">
+                            🛒 Warenkorb
+                        </a>
+                        <a href="{% url 'add_to_cart' produkt.id %}?next=warenkorb" class="flex-1 py-4 px-6 bg-gray-900 text-white rounded-2xl font-bold text-center hover:bg-blue-600 shadow-lg transition-all transform hover:scale-105 flex items-center justify-center">
+                            💳 Direkt kaufen
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="flex-1 py-4 px-6 border-2 border-blue-600 text-blue-600 rounded-2xl font-bold text-center hover:bg-blue-50 transition-all flex items-center justify-center">
+                            🔐 Login zum Kaufen
+                        </a>
+                        <a href="{% url 'register' %}" class="flex-1 py-4 px-6 bg-gray-900 text-white rounded-2xl font-bold text-center hover:bg-blue-600 shadow-lg transition-all transform hover:scale-105 flex items-center justify-center">
+                            📝 Registrieren
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
 {% endblock %}

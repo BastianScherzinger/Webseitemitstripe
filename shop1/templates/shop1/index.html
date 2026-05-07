@@ -4,102 +4,125 @@
 {% block title %}Home – Luviq-Shop{% endblock %}
 
 {% block content %}
-<!-- Hero Section (Full Width) -->
-<div class="row mb-5">
-  <div class="col-md-12">
-    <div class="p-5 bg-surface rounded shadow-sm border border-light text-center"
-      style="background: linear-gradient(135deg, var(--bg-surface) 0%, var(--primary-50) 100%);">
-      <h1 class="mb-3">🎉 Willkommen im Luviq-Shop!</h1>
-      <p class="lead mb-4 text-secondary mx-auto" style="max-width: 600px;">
-        Entdecke unsere exklusiven Produkte und werde Teil unserer Community. Finde alles, was dein Herz begehrt.
-      </p>
-      <a href="{% url 'produkte' %}" class="btn btn-primary btn-lg fw-bold px-5">🛍️ Jetzt einkaufen</a>
+<!-- Hero Section -->
+<div class="relative overflow-hidden mb-20 rounded-3xl shadow-2xl glass p-8 md:p-16 animate-reveal">
+    <div class="relative z-10 max-w-2xl">
+        <h1 class="text-5xl md:text-7xl font-extrabold heading-font text-gray-900 mb-6 leading-tight">
+            🎉 Willkommen im <span class="text-gradient">Luviq-Shop!</span>
+        </h1>
+        <p class="text-xl text-gray-700 mb-10 leading-relaxed">
+            Entdecke unsere exklusiven Produkte und werde Teil unserer Community. Finde alles, was dein Herz begehrt – in höchster Qualität.
+        </p>
+        <div class="flex flex-wrap gap-4">
+            <a href="{% url 'produkte' %}" class="px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-lg shadow-lg hover:bg-blue-700 transition-all transform hover:scale-105 flex items-center">
+                🛍️ Jetzt einkaufen
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </a>
+            <a href="{% url 'register' %}" class="px-8 py-4 glass border-white text-gray-900 rounded-full font-bold text-lg hover:bg-white transition-all transform hover:scale-105">
+                📝 Registrieren
+            </a>
+        </div>
     </div>
-  </div>
+    
+    <!-- Floating Decor -->
+    <div class="absolute top-10 right-10 w-64 h-64 bg-blue-400 opacity-10 rounded-full filter blur-3xl animate-float"></div>
+    <div class="absolute bottom-10 left-10 w-48 h-48 bg-emerald-400 opacity-10 rounded-full filter blur-3xl animate-float" style="animation-delay: 1s;"></div>
 </div>
 
-<!-- Features (3 Boxen) -->
-<div class="row mb-5">
-  <div class="col-md-4 mb-3">
-    <div class="card border-light text-center shadow-sm h-100">
-      <div class="card-body p-4">
-        <h2 style="font-size: 48px;">🚀</h2>
-        <h5 class="card-title fw-bold">Schnelle Lieferung</h5>
-        <p class="card-text text-muted">Kostenlos ab 50€ Bestellwert</p>
-      </div>
+<!-- Features Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+    <div class="glass p-8 rounded-3xl premium-card text-center group" x-data="{ shown: false }" x-intersect="shown = true" :class="shown ? 'visible' : 'scroll-reveal'">
+        <div class="w-20 h-20 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-transform group-hover:rotate-12">
+            <span class="text-5xl">🚀</span>
+        </div>
+        <h3 class="text-2xl font-bold heading-font mb-3">Schnelle Lieferung</h3>
+        <p class="text-gray-600">Kostenlos ab 50€ Bestellwert – sicher und zuverlässig zu dir nach Hause.</p>
     </div>
-  </div>
 
-  <div class="col-md-4 mb-3">
-    <div class="card border-light text-center shadow-sm h-100">
-      <div class="card-body p-4">
-        <h2 style="font-size: 48px;">💳</h2>
-        <h5 class="card-title fw-bold">Sichere Zahlung</h5>
-        <p class="card-text text-muted">Alle gängigen Zahlungsmethoden</p>
-      </div>
+    <div class="glass p-8 rounded-3xl premium-card text-center group" x-data="{ shown: false }" x-intersect.margin.-100px="shown = true" :class="shown ? 'visible' : 'scroll-reveal'" style="transition-delay: 0.1s;">
+        <div class="w-20 h-20 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-transform group-hover:rotate-12">
+            <span class="text-5xl">💳</span>
+        </div>
+        <h3 class="text-2xl font-bold heading-font mb-3">Sichere Zahlung</h3>
+        <p class="text-gray-600">Alle gängigen Zahlungsmethoden inklusive PayPal für deinen Käuferschutz.</p>
     </div>
-  </div>
 
-  <div class="col-md-4 mb-3">
-    <div class="card border-light text-center shadow-sm h-100">
-      <div class="card-body p-4">
-        <h2 style="font-size: 48px;">✨</h2>
-        <h5 class="card-title fw-bold">Top Qualität</h5>
-        <p class="card-text text-muted">Nur das Beste für dich</p>
-      </div>
+    <div class="glass p-8 rounded-3xl premium-card text-center group" x-data="{ shown: false }" x-intersect.margin.-200px="shown = true" :class="shown ? 'visible' : 'scroll-reveal'" style="transition-delay: 0.2s;">
+        <div class="w-20 h-20 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-transform group-hover:rotate-12">
+            <span class="text-5xl">✨</span>
+        </div>
+        <h3 class="text-2xl font-bold heading-font mb-3">Top Qualität</h3>
+        <p class="text-gray-600">Nur sorgfältig ausgewählte Produkte, die unseren hohen Standards entsprechen.</p>
     </div>
-  </div>
 </div>
 
-<!-- Platzhalter für Videos / Bilder -->
-<div class="row mb-5">
-  <div class="col-md-12">
-    <div class="card border-light shadow-sm">
-      <div class="card-body p-5 text-center bg-muted rounded"
-        style="min-height: 300px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-        <h3 class="text-secondary mb-3">📸 Platzhalter für Media</h3>
-        <p class="text-muted">Hier kannst du später ein Produktvideo oder Galerie-Bilder einfügen.</p>
-      </div>
+<!-- Animated Product Gallery (Supabase / Articles) -->
+<div class="mb-24">
+    <div class="flex items-end justify-between mb-12">
+        <div>
+            <h2 class="text-4xl font-bold heading-font text-gray-900 mb-2">📸 Unsere Highlights</h2>
+            <p class="text-gray-600">Frisch aus unserer Datenbank – direkt aus Supabase geladen.</p>
+        </div>
+        <a href="{% url 'produkte' %}" class="text-blue-600 font-bold flex items-center hover:underline">
+            Alle ansehen
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+        </a>
     </div>
-  </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {% for produkt in produkte_galerie %}
+        <div class="glass rounded-3xl premium-card overflow-hidden" 
+             x-data="{ shown: false }" 
+             x-intersect.margin.-50px="shown = true" 
+             :class="shown ? 'visible' : 'scroll-reveal'"
+             style="transition-delay: 0.{{ forloop.counter0 }}s">
+            <div class="product-image-container h-64 bg-gray-100">
+                {% if produkt.bild %}
+                    <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover">
+                {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-gray-400">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="p-6">
+                <h4 class="text-xl font-bold heading-font mb-2">{{ produkt.name }}</h4>
+                <div class="flex items-center justify-between mt-4">
+                    <span class="text-blue-600 font-bold text-lg">{{ produkt.preis }} €</span>
+                    <a href="{% url 'produkt_detail' produkt.id %}" class="p-2 bg-gray-900 text-white rounded-xl hover:bg-blue-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full glass p-12 text-center rounded-3xl">
+            <p class="text-gray-500 italic">Noch keine Highlights in der Datenbank...</p>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
-<!-- CTA Section -->
-<div class="alert alert-info p-4 mb-5 border-light">
-  <div class="row align-items-center">
-    <div class="col-md-8">
-      <h4 class="fw-bold">🎁 Spezialangebot!</h4>
-      <p class="mb-0">Neu im Shop? Hole dir 10% Rabatt auf deine erste Bestellung!</p>
-    </div>
-    <div class="col-md-4 text-end">
-      <a href="{% url 'register' %}" class="btn btn-primary fw-bold">Registrieren & sparen</a>
-    </div>
-  </div>
-</div>
-
-<!-- Newsletter -->
-<div class="row mb-5">
-  <div class="col-md-8 mx-auto">
-    <div class="card border-light shadow-sm">
-      <div class="card-body p-4">
-        <h4 class="mb-3 fw-bold">📮 Newsletter abonnieren</h4>
-        <p class="text-muted">Erhalte die neuesten Produkte und Angebote direkt in dein Postfach!</p>
-        <form class="d-flex gap-2 mt-3">
-          <input type="email" class="form-control" placeholder="Deine Email..." required>
-          <button type="submit" class="btn btn-primary fw-bold">Abonnieren</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Footer-Info -->
-<div class="row text-center mt-5 pt-4 border-top border-light">
-  <div class="col-md-12">
-    <p class="text-muted">
-      Fragen? <a href="{% url 'kontakt' %}" class="fw-bold">Kontaktiere uns</a> oder besuche unsere <a
-        href="{% url 'ueber_uns' %}" class="fw-bold">Über uns</a> Seite.
+<!-- Newsletter & CTA -->
+<div class="relative overflow-hidden glass p-10 md:p-20 rounded-3xl shadow-xl text-center mb-20" x-data="{ shown: false }" x-intersect="shown = true" :class="shown ? 'visible' : 'scroll-reveal'">
+    <h2 class="text-4xl font-bold heading-font mb-6">🎁 Spezialangebot!</h2>
+    <p class="text-xl text-gray-700 mb-10 max-w-2xl mx-auto">
+        Neu im Shop? Registriere dich jetzt und sichere dir <strong>10% Rabatt</strong> auf deine erste Bestellung!
     </p>
-  </div>
+    <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
+        <input type="email" placeholder="Deine Email..." class="flex-grow px-6 py-4 rounded-full border-2 border-gray-200 focus:border-blue-600 outline-none transition-colors">
+        <button class="px-8 py-4 bg-gray-900 text-white rounded-full font-bold hover:bg-blue-600 transition-all transform hover:scale-105 shadow-lg">
+            Abonnieren
+        </button>
+    </div>
 </div>
-{% endblock %}
+
+<!-- Support Info -->
+<div class="text-center pb-12" x-data="{ shown: false }" x-intersect="shown = true" :class="shown ? 'visible' : 'scroll-reveal'">
+    <p class="text-gray-500 font-medium">
+        Fragen? <a href="{% url 'kontakt' %}" class="text-blue-600 hover:underline">Kontaktiere uns</a> oder besuche unsere <a href="{% url 'ueber_uns' %}" class="text-blue-600 hover:underline">Über uns</a> Seite.
+    </p>
+</div>
+{% endblock %}
