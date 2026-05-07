@@ -27,6 +27,9 @@ class UserProfile(models.Model):
     email_verified = models.BooleanField(default=False)
     verification_token = models.UUIDField(default=uuid.uuid4, unique=True)
     
+    # Marketing
+    has_welcome_discount = models.BooleanField(default=True)
+    
     def __str__(self):
         return f"Profile von {self.user.username}"
     
@@ -38,6 +41,15 @@ class UserProfile(models.Model):
     
     class Meta:
         verbose_name_plural = "User Profiles"
+
+
+class Subscriber(models.Model):
+    """Newsletter Abonnenten"""
+    email = models.EmailField(unique=True)
+    erstellt_am = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email
 
 
 class Produkt(models.Model):

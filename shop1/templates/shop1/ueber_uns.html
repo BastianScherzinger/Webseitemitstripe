@@ -9,70 +9,64 @@
     <div class="energy-nebula"></div>
 
     <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <!-- Header -->
-        <div class="mb-16 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-            <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
-                The <span class="text-glow">Vision</span>
+        <!-- Hero -->
+        <div class="mb-24 animate-reveal text-center">
+            <h1 class="text-5xl md:text-8xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-tight">
+                VOM VINTAGE ZUM <br><span class="text-glow">MASTERPIECE</span>
             </h1>
-            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">Tragbare Kunst statt Fast Fashion.</p>
-            <div class="h-1 w-32 bg-glow-orange mt-8 rounded-full"></div>
+            <p class="text-white/40 text-lg md:text-xl font-light tracking-[0.3em] uppercase max-w-4xl mx-auto">Mode ist vergänglich. Kunst ist ewig. Wir vereinen beides.</p>
+            <div class="h-1 w-32 bg-glow-orange mt-12 rounded-full mx-auto"></div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                <div class="glass-card p-10 md:p-14 rounded-[3.5rem]">
-                    <h2 class="text-3xl font-bold heading-font text-white mb-8">Second-Hand, First-Class Art</h2>
-                    <p class="text-white/50 leading-relaxed text-lg mb-8 font-light">
-                        Luviq entstand aus der Leidenschaft für Mode und der Ablehnung von Massenproduktion. Wir glauben, dass jedes Kleidungsstück eine Geschichte hat, die es wert ist, weitererzählt zu werden – aber in einem neuen, künstlerischen Gewand.
+        <!-- The Artist Section (New) -->
+        <section class="py-24 mb-24">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div class="scroll-reveal relative" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                    <div class="relative z-10 rounded-[4rem] overflow-hidden glass border-white/5 p-4 shadow-2xl transform hover:scale-[1.02] transition-transform duration-700">
+                        <img src="{% static 'shop1/images/ich.png' %}" alt="Bastian Scherzinger" class="w-full h-auto rounded-[3.5rem] object-cover grayscale hover:grayscale-0 transition-all duration-1000">
+                    </div>
+                    <div class="absolute -top-10 -left-10 w-40 h-40 bg-glow-orange/20 blur-[80px] rounded-full"></div>
+                </div>
+
+                <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+                    <h3 class="text-[10px] font-black uppercase tracking-[0.4em] text-glow-orange mb-6">The Artist</h3>
+                    <h2 class="text-4xl md:text-5xl font-black heading-font text-white uppercase tracking-tighter mb-8">Bastian <span class="text-glow">Scherzinger</span></h2>
+                    <p class="text-white/50 text-lg leading-relaxed font-light mb-8">
+                        Was als Leidenschaft für Vintage-Kleidung begann, entwickelte sich schnell zu einer kreativen Mission. Für mich ist jedes Kleidungsstück mehr als nur Stoff – es ist eine Geschichte, die darauf wartet, neu erzählt zu werden.
+                        <br><br>
+                        Mit Pinsel und Textilfarbe verwandle ich handverlesene Second-Hand Klassiker in tragbare Kunst. Jedes Design entsteht spontan im Flow, inspiriert von Musik, Natur und dem Moment.
                     </p>
-                    
-                    <p class="text-white/50 leading-relaxed text-lg mb-10 font-light">
-                        Wir kuratieren hochwertige Vintage-Teile und veredeln sie in unserem Atelier von Hand. Jedes Pinselstrich, jedes Design ist ein Statement gegen die Wegwerfgesellschaft.
-                    </p>
-                    
-                    <div class="space-y-6">
-                        <div class="flex items-start space-x-6">
-                            <span class="text-3xl">🎨</span>
-                            <div>
-                                <h4 class="text-white font-bold mb-2">Unikate</h4>
-                                <p class="text-white/40 text-sm">Kein Design wird zweimal gemalt. Dein Teil gehört nur dir.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-6">
-                            <span class="text-3xl">🌿</span>
-                            <div>
-                                <h4 class="text-white font-bold mb-2">Nachhaltigkeit</h4>
-                                <p class="text-white/40 text-sm">Durch Upcycling geben wir Kleidung ein zweites, längeres Leben.</p>
-                            </div>
-                        </div>
+                    <div class="p-8 glass rounded-[2.5rem] border-white/5 bg-white/[0.02]">
+                        <p class="text-white/70 italic font-light">"Ein Unikat zu tragen bedeutet, ein Statement gegen die Fast-Fashion-Industrie zu setzen und die eigene Individualität zu feiern."</p>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <div class="grid grid-cols-2 gap-6 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
-                <div class="glass-card p-8 rounded-[2.5rem] text-center border-white/5">
-                    <div class="text-4xl mb-4">🖐️</div>
-                    <h4 class="text-white font-bold mb-2 text-[10px] uppercase tracking-widest">Handmade</h4>
-                </div>
-                <div class="glass-card p-8 rounded-[2.5rem] text-center border-white/5">
-                    <div class="text-4xl mb-4">✨</div>
-                    <h4 class="text-white font-bold mb-2 text-[10px] uppercase tracking-widest">Premium Art</h4>
-                </div>
-                <div class="glass-card p-8 rounded-[2.5rem] text-center border-white/5">
-                    <div class="text-4xl mb-4">🌍</div>
-                    <h4 class="text-white font-bold mb-2 text-[10px] uppercase tracking-widest">Upcycling</h4>
-                </div>
-                <div class="glass-card p-8 rounded-[2.5rem] text-center border-white/5">
-                    <div class="text-4xl mb-4">🎨</div>
-                    <h4 class="text-white font-bold mb-2 text-[10px] uppercase tracking-widest">Design</h4>
-                </div>
+        <!-- Values -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-32">
+            <div class="scroll-reveal glass-card p-12 rounded-[3.5rem] product-card" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <div class="text-5xl mb-8">🌱</div>
+                <h3 class="text-2xl font-bold heading-font text-white mb-6 uppercase tracking-tight">Kuration</h3>
+                <p class="text-white/40 leading-relaxed font-light">Wir suchen nur die hochwertigsten Vintage-Basics aus, die eine perfekte Leinwand für unsere Kunst bieten.</p>
+            </div>
+            <div class="scroll-reveal glass-card p-12 rounded-[3.5rem] product-card" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
+                <div class="text-5xl mb-8">🖌️</div>
+                <h3 class="text-2xl font-bold heading-font text-white mb-6 uppercase tracking-tight">Veredelung</h3>
+                <p class="text-white/40 leading-relaxed font-light">Jedes Teil wird einzeln von Hand bemalt. Keine Drucke, keine Massenware. Pure Handarbeit.</p>
+            </div>
+            <div class="scroll-reveal glass-card p-12 rounded-[3.5rem] product-card" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+                <div class="text-5xl mb-8">⚡</div>
+                <h3 class="text-2xl font-bold heading-font text-white mb-6 uppercase tracking-tight">Exklusivität</h3>
+                <p class="text-white/40 leading-relaxed font-light">Ein Luviq-Piece ist immer ein 1-of-1. Sobald es weg ist, gibt es kein zweites Exemplar mehr.</p>
             </div>
         </div>
 
-        <div class="mt-24 glass-card p-12 rounded-[3.5rem] text-center scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-            <h3 class="text-2xl font-bold heading-font text-white mb-6 uppercase tracking-widest">Unsere Philosophie</h3>
-            <p class="text-white/50 max-w-2xl mx-auto leading-relaxed font-light">
-                "Mode ist vergänglich, Kunst ist ewig." Wir verschmelzen beides zu einer Brand, die für Individualität, Kreativität und Verantwortung steht.
+        <!-- Vision -->
+        <div class="scroll-reveal glass-card p-12 md:p-24 rounded-[4rem] text-center" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <h2 class="text-3xl md:text-5xl font-black heading-font text-white uppercase tracking-tighter mb-10">Unsere <span class="text-glow">Vision</span></h2>
+            <p class="text-white/50 text-xl md:text-2xl font-light leading-relaxed max-w-4xl mx-auto">
+                Wir wollen den Status Quo der Modeindustrie herausfordern. Weg von der Wegwerfgesellschaft, hin zu Kleidung, die man sammelt, liebt und als Ausdruck seiner selbst trägt. Luviq ist nicht nur ein Shop – es ist ein Kollektiv für Individualisten.
             </p>
         </div>
     </div>

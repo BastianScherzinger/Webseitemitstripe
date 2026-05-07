@@ -267,6 +267,11 @@ def add_to_cart(request, produkt_id):
     """Fügt ein Produkt zum Warenkorb hinzu. Nur für eingeloggte User."""
     produkt = get_object_or_404(Produkt, id=produkt_id)
     
+    # Stock Check
+    if produkt.lagerbestand < 1:
+        messages.error(request, f'Entschuldigung, "{produkt.name}" ist leider ausverkauft.')
+        return redirect('home')
+
     # DB-Warenkorb
     cart = _get_or_create_cart(request.user)
     item, created = cart.items.get_or_create(
@@ -278,10 +283,14 @@ def add_to_cart(request, produkt_id):
         }
     )
     if not created:
-        item.menge += 1
-        item.save()
-    
-    messages.success(request, f'"{produkt.name}" wurde zum Warenkorb hinzugefügt!')
+        if item.menge < produkt.lagerbestand:
+            item.menge += 1
+            item.save()
+            messages.success(request, f'"{produkt.name}" wurde zum Warenkorb hinzugefügt!')
+        else:
+            messages.warning(request, f'Du hast bereits alle verfügbaren Einheiten ({produkt.lagerbestand}) im Warenkorb.')
+    else:
+        messages.success(request, f'"{produkt.name}" wurde zum Warenkorb hinzugefügt!')
     
     # Redirect handling
     next_url = request.GET.get('next', None)
@@ -313,6 +322,12 @@ def update_cart(request, produkt_name):
     cart = _get_or_create_cart(request.user)
     item = cart.items.filter(produkt_name=produkt_name).first()
     if item:
+        # Stock Check für Update
+        db_produkt = Produkt.objects.filter(name=produkt_name).first()
+        if db_produkt and menge > db_produkt.lagerbestand:
+            menge = db_produkt.lagerbestand
+            messages.warning(request, f'Nur {menge} Einheiten verfügbar. Menge wurde angepasst.')
+        
         item.menge = menge
         item.save()
     
@@ -488,10 +503,19 @@ def checkout(request):
         return redirect('warenkorb')
     
     # Gesamtbetrag berechnen
-    gesamt_betrag = sum(float(item.produkt_preis * item.menge) for item in cart.items.all())
+    gesamt_betrag_original = sum(float(item.produkt_preis * item.menge) for item in cart.items.all())
     
+    # Rabatt Check (Erste Bestellung)
+    hat_rabatt = False
+    rabatt_wert = 0
+    if hasattr(request.user, 'profile') and request.user.profile.has_welcome_discount:
+        hat_rabatt = True
+        rabatt_wert = gesamt_betrag_original * 0.10
+        
+    gesamt_betrag = gesamt_betrag_original - rabatt_wert
+
     if request.method == 'POST':
-        # Formular-Daten sammeln
+        # ... (Formular Daten sammeln)
         vorname = request.POST.get('vorname', '').strip()
         nachname = request.POST.get('nachname', '').strip()
         email = request.POST.get('email', '').strip()
@@ -506,7 +530,7 @@ def checkout(request):
             messages.error(request, 'Bitte fülle alle erforderlichen Felder aus.')
             return redirect('checkout')
         
-        # Bestellung erstellen (ohne Payment-ID, die kommt nach PayPal-Zahlung)
+        # Bestellung erstellen
         try:
             order = Order.objects.create(
                 user=request.user,
@@ -521,6 +545,9 @@ def checkout(request):
                 telefon=telefon,
                 gesamt_betrag=gesamt_betrag,
             )
+            
+            # Merke ob Rabatt genutzt wurde in der Session für PayPal-Anzeige (optional)
+            request.session['order_rabatt'] = float(rabatt_wert) if hat_rabatt else 0
             
             # Order Items erstellen
             for item in cart.items.all():
@@ -555,6 +582,9 @@ def checkout(request):
     
     context = {
         'gesamt_betrag': gesamt_betrag,
+        'gesamt_betrag_original': gesamt_betrag_original,
+        'hat_rabatt': hat_rabatt,
+        'rabatt_wert': rabatt_wert,
         'profile_data': profile_data,
     }
     return render(request, 'shop1/checkout.html', context)
@@ -604,6 +634,18 @@ def paypal_capture(request, order_id):
         order.paypal_order_id = paypal_order_id
         order.status = 'paid'
         order.save()
+        
+        # Rabatt verbrauchen
+        if hasattr(request.user, 'profile'):
+            request.user.profile.has_welcome_discount = False
+            request.user.profile.save()
+
+        # Lagerbestand reduzieren
+        for item in order.items.all():
+            db_produkt = Produkt.objects.filter(name=item.produkt_name).first()
+            if db_produkt:
+                db_produkt.lagerbestand = max(0, db_produkt.lagerbestand - item.menge)
+                db_produkt.save()
         
         # Bestätigungs-Email senden
         try:
@@ -671,3 +713,26 @@ def send_order_confirmation_email(order):
     
 
     send_brevo_email(subject, html_content, order.email, recipient_name=f"{order.vorname} {order.nachname}", text_content=text_content)
+
+
+@csrf_exempt
+def newsletter_subscribe(request):
+    """Abonniert den Newsletter."""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email', '').strip()
+        except:
+            email = request.POST.get('email', '').strip()
+            
+        if not email:
+            return JsonResponse({'error': 'Bitte gib eine gültige Email an.'}, status=400)
+            
+        from .models import Subscriber
+        if Subscriber.objects.filter(email=email).exists():
+            return JsonResponse({'message': 'Du bist bereits im Orbit angemeldet!'}, status=200)
+            
+        Subscriber.objects.create(email=email)
+        return JsonResponse({'message': 'Erfolgreich zum Newsletter angemeldet!'}, status=200)
+        
+    return JsonResponse({'error': 'Invalid request'}, status=405)

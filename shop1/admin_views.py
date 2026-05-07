@@ -133,8 +133,13 @@ def admin_stats(request):
     orders_pending = orders.filter(status='pending')
     orders_failed = orders.filter(status='failed')
     
-    # Umsatz berechnen
-    total_revenue = sum(float(order.gesamt_betrag) for order in orders_paid)
+    # Umsatz & Rabatte berechnen
+    total_revenue = 0
+    total_discounts = 0
+    for order in orders_paid:
+        total_revenue += float(order.gesamt_betrag)
+        items_sum = sum(float(item.produkt_preis * item.menge) for item in order.items.all())
+        total_discounts += (items_sum - float(order.gesamt_betrag))
     
     context = {
         'users': users,
@@ -144,6 +149,7 @@ def admin_stats(request):
         'orders_failed': orders_failed,
         'total_orders': orders.count(),
         'total_revenue': total_revenue,
+        'total_discounts': total_discounts,
         'chart_data_json': chart_data_json,
     }
     return render(request, 'shop1/admin/stats.html', context)
@@ -209,6 +215,12 @@ def admin_user_delete(request, user_id):
         messages.error(request, '❌ Du kannst dich nicht selbst löschen!')
         return redirect('admin_stats')
         
+    # Verhindern, dass der Haupt-Admin (Shopbesitzer) gelöscht wird
+    admin_username = os.getenv('ADMIN_USERNAME', 'shopbesitzer')
+    if user_to_delete.username == admin_username:
+        messages.error(request, '❌ Der Haupt-Admin Account kann nicht gelöscht werden!')
+        return redirect('admin_stats')
+
     if request.method == 'POST':
         username = user_to_delete.username
         user_to_delete.delete()
@@ -256,6 +268,30 @@ def admin_produkt_upload(request):
             produkt.ersteller = request.user
             produkt.save()
             messages.success(request, f'✅ Produkt "{produkt.name}" erfolgreich erstellt!')
+            
+            # NEWSLETTER: Benachrichtigung an alle Abonnenten
+            from .models import Subscriber
+            from .utils import send_brevo_email
+            subscribers = Subscriber.objects.all()
+            if subscribers.exists():
+                subject = f"NEW DROP: {produkt.name} is online!"
+                site_url = settings.SITE_URL
+                for sub in subscribers:
+                    html_content = f"""
+                    <html>
+                        <body style="font-family: sans-serif; background: #050816; color: white; padding: 40px; text-align: center;">
+                            <h1 style="color: #ff6a00; text-transform: uppercase; letter-spacing: 2px;">New Art Drop</h1>
+                            <p style="font-size: 18px; color: #f4f7fb;">"{produkt.name}" wurde soeben im Orbit gesichtet.</p>
+                            <p style="color: rgba(255,255,255,0.5);">Ein neues handbemaltes Unikat wartet auf dich.</p>
+                            <a href="{site_url}/produkte/" style="display: inline-block; background: #ff6a00; color: white; padding: 15px 30px; text-decoration: none; border-radius: 10px; font-weight: bold; margin-top: 20px;">Jetzt ansehen</a>
+                        </body>
+                    </html>
+                    """
+                    try:
+                        send_brevo_email(subject, html_content, sub.email)
+                    except:
+                        pass
+            
             return redirect('admin_produkte_list')
         else:
             for field, errors in form.errors.items():

@@ -117,7 +117,12 @@
                      style="transition-delay: 0.{{ forloop.counter0 }}s">
                     <div class="relative h-80 overflow-hidden bg-space-dark/50">
                         {% if produkt.bild %}
-                            <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            <div class="absolute top-4 right-4 z-20">
+                                <span class="glass px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white/50">
+                                    {% if produkt.lagerbestand > 0 %}{{ produkt.lagerbestand }} Left{% else %}Sold Out{% endif %}
+                                </span>
+                            </div>
+                            <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000">
                         {% else %}
                             <div class="w-full h-full flex items-center justify-center text-white/10">
                                 <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
@@ -145,18 +150,47 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="py-32 relative overflow-hidden">
-        <div class="max-w-4xl mx-auto px-4 relative z-10">
-            <div class="scroll-reveal glass-card p-12 md:p-20 rounded-[3.5rem] text-center shadow-[0_0_100px_rgba(255,106,0,0.1)]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                <h2 class="text-3xl md:text-5xl font-black heading-font text-white mb-8">JOIN THE <span class="text-glow">COLLECTIVE</span></h2>
-                <p class="text-white/50 mb-10 max-w-lg mx-auto font-light leading-relaxed">Werde Teil der Luviq-Family und erhalte exklusiven Zugriff auf neue Drops und Unikate.</p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <input type="email" placeholder="EMAIL ADRESSE" class="flex-grow bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-glow-orange transition-all uppercase tracking-widest text-[10px] font-bold">
-                    <button class="btn-glow px-10 py-5 rounded-2xl text-white font-black uppercase tracking-widest text-[10px]">Jetzt Registrieren</button>
-                </div>
+    <!-- Newsletter Section -->
+    <section class="py-24 relative overflow-hidden border-t border-white/5">
+        <div class="max-w-4xl mx-auto px-4 relative z-10 text-center">
+            <div class="scroll-reveal glass-card p-12 md:p-20 rounded-[3.5rem] shadow-[0_0_100px_rgba(255,106,0,0.1)]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-3xl md:text-5xl font-black heading-font text-white mb-8 uppercase tracking-tighter">JOIN THE <span class="text-glow">ORBIT</span></h2>
+                <p class="text-white/50 mb-10 max-w-lg mx-auto font-light leading-relaxed">Melde dich an und erfahre als Erster von neuen Drops und exklusiven handbemalten Unikaten.</p>
+                
+                <form id="newsletter-form" class="flex flex-col sm:flex-row gap-4">
+                    <input type="email" id="newsletter-email" placeholder="DEINE EMAIL ADRESSE" class="flex-grow bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-glow-orange transition-all uppercase tracking-widest text-[10px] font-bold">
+                    <button type="submit" class="btn-glow px-10 py-5 rounded-2xl text-white font-black uppercase tracking-widest text-[10px]">Subscribe</button>
+                </form>
+                <p id="newsletter-message" class="mt-6 text-[10px] font-bold uppercase tracking-widest hidden"></p>
             </div>
         </div>
     </section>
 </div>
+
+<script>
+    document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('newsletter-email').value;
+        const message = document.getElementById('newsletter-message');
+        
+        try {
+            const response = await fetch('/newsletter/subscribe/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await response.json();
+            
+            message.textContent = data.message || data.error;
+            message.classList.remove('hidden');
+            message.classList.add(response.ok ? 'text-emerald-400' : 'text-red-400');
+            
+            if(response.ok) document.getElementById('newsletter-form').reset();
+        } catch (err) {
+            message.textContent = "Fehler bei der Verbindung zum Orbit.";
+            message.classList.remove('hidden');
+            message.classList.add('text-red-400');
+        }
+    });
+</script>
 {% endblock %}

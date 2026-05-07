@@ -97,6 +97,20 @@
                 <div class="glass-card p-10 rounded-[3rem] sticky top-28">
                     <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-8">Summary</h3>
                     <div class="space-y-6">
+                        <div class="flex justify-between items-center text-white/50 text-[10px] uppercase tracking-widest">
+                            <span>Subtotal</span>
+                            <span>{{ gesamt_betrag_original|floatformat:2 }} €</span>
+                        </div>
+                        
+                        {% if hat_rabatt %}
+                        <div class="flex justify-between items-center text-emerald-400 text-[10px] uppercase tracking-widest font-black">
+                            <span>Welcome Discount (10%)</span>
+                            <span>- {{ rabatt_wert|floatformat:2 }} €</span>
+                        </div>
+                        {% endif %}
+
+                        <div class="h-px bg-white/10 my-4"></div>
+
                         <div class="flex justify-between items-center">
                             <span class="text-[10px] font-black uppercase tracking-widest text-white/30">Total Transfer</span>
                             <span class="text-3xl font-black text-glow">{{ gesamt_betrag|floatformat:2 }} €</span>

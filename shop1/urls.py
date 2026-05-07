@@ -50,6 +50,7 @@ urlpatterns = [
     path('impressum/', views.impressum, name='impressum'),
     path('datenschutz/', views.datenschutz, name='datenschutz'),
     path('agb/', views.agb, name='agb'),
+    path('newsletter/subscribe/', views.newsletter_subscribe, name='newsletter_subscribe'),
 
     # Favicon Fix
     path('favicon.ico', RedirectView.as_view(url='/static/shop1/favicon.ico')),

@@ -25,21 +25,25 @@
         </div>
 
         <!-- Quick Stats Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-12 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
             <div class="glass-card p-8 rounded-[2rem] border-white/5">
                 <p class="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Total Orders</p>
                 <h4 class="text-3xl font-black text-white">{{ total_orders }}</h4>
             </div>
-            <div class="glass-card p-8 rounded-[2rem] border-white/5">
-                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Revenue (Paid)</p>
-                <h4 class="text-3xl font-black text-emerald-400">{{ total_revenue|floatformat:2 }} €</h4>
+            <div class="glass-card p-8 rounded-[2.5rem] border-emerald-500/10 border bg-emerald-500/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Total Revenue</p>
+                <h4 class="text-3xl font-black text-white">{{ total_revenue|floatformat:2 }} €</h4>
+            </div>
+            <div class="glass-card p-8 rounded-[2.5rem] border-glow-orange/10 border bg-glow-orange/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-2">Discounts Given</p>
+                <h4 class="text-3xl font-black text-white">{{ total_discounts|floatformat:2 }} €</h4>
             </div>
             <div class="glass-card p-8 rounded-[2rem] border-white/5">
-                <p class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-2">Pending Trans.</p>
+                <p class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-2">Pending</p>
                 <h4 class="text-3xl font-black text-glow-orange">{{ orders_pending|length }}</h4>
             </div>
             <div class="glass-card p-8 rounded-[2rem] border-white/5">
-                <p class="text-[10px] font-black uppercase tracking-widest text-red-400 mb-2">Failed Trans.</p>
+                <p class="text-[10px] font-black uppercase tracking-widest text-red-400 mb-2">Failed</p>
                 <h4 class="text-3xl font-black text-red-400">{{ orders_failed|length }}</h4>
             </div>
         </div>
