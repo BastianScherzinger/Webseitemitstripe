@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Über uns – Luviq Universe{% endblock %}
+{% block title %}Unsere Story – Luviq Universe{% endblock %}
 
 {% block content %}
 <div class="relative min-h-screen pt-20 pb-32">
@@ -10,65 +10,69 @@
 
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <!-- Header -->
-        <div class="mb-20 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+        <div class="mb-16 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
             <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
-                Our <span class="text-glow">Mission</span>
+                The <span class="text-glow">Vision</span>
             </h1>
-            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">Pioniere im digitalen Orbit.</p>
+            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">Tragbare Kunst statt Fast Fashion.</p>
             <div class="h-1 w-32 bg-glow-orange mt-8 rounded-full"></div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                <div class="glass-card p-12 md:p-16 rounded-[4rem]">
-                    <h2 class="text-3xl font-bold heading-font text-white mb-8">Willkommen im Luviq Universe</h2>
+                <div class="glass-card p-10 md:p-14 rounded-[3.5rem]">
+                    <h2 class="text-3xl font-bold heading-font text-white mb-8">Second-Hand, First-Class Art</h2>
                     <p class="text-white/50 leading-relaxed text-lg mb-8 font-light">
-                        Wir sind mehr als nur ein Shop. Wir sind eine Vision von Qualität und futuristischem Design. Mit über 10 Jahren Erfahrung im digitalen Handel kuratieren wir Objekte, die exklusiv, langlebig und einzigartig sind.
+                        Luviq entstand aus der Leidenschaft für Mode und der Ablehnung von Massenproduktion. Wir glauben, dass jedes Kleidungsstück eine Geschichte hat, die es wert ist, weitererzählt zu werden – aber in einem neuen, künstlerischen Gewand.
+                    </p>
+                    
+                    <p class="text-white/50 leading-relaxed text-lg mb-10 font-light">
+                        Wir kuratieren hochwertige Vintage-Teile und veredeln sie in unserem Atelier von Hand. Jedes Pinselstrich, jedes Design ist ein Statement gegen die Wegwerfgesellschaft.
                     </p>
                     
                     <div class="space-y-6">
                         <div class="flex items-start space-x-6">
-                            <span class="text-3xl">🎯</span>
+                            <span class="text-3xl">🎨</span>
                             <div>
-                                <h4 class="text-white font-bold mb-2">Unsere Vision</h4>
-                                <p class="text-white/40 text-sm">Jedem Kunden ein transzendentes Einkaufserlebnis zu ermöglichen.</p>
+                                <h4 class="text-white font-bold mb-2">Unikate</h4>
+                                <p class="text-white/40 text-sm">Kein Design wird zweimal gemalt. Dein Teil gehört nur dir.</p>
                             </div>
                         </div>
                         <div class="flex items-start space-x-6">
-                            <span class="text-3xl">⭐</span>
+                            <span class="text-3xl">🌿</span>
                             <div>
-                                <h4 class="text-white font-bold mb-2">Exzellenz</h4>
-                                <p class="text-white/40 text-sm">Nur handverlesene Premium-Produkte schaffen es in unseren Orbit.</p>
+                                <h4 class="text-white font-bold mb-2">Nachhaltigkeit</h4>
+                                <p class="text-white/40 text-sm">Durch Upcycling geben wir Kleidung ein zweites, längeres Leben.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
-                <div class="glass-card p-8 rounded-[2.5rem] text-center">
-                    <div class="text-4xl mb-4">💎</div>
-                    <h4 class="text-white font-bold mb-2 text-sm uppercase tracking-widest">Qualität</h4>
+            <div class="grid grid-cols-2 gap-6 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+                <div class="glass-card p-8 rounded-[2.5rem] text-center border-white/5">
+                    <div class="text-4xl mb-4">🖐️</div>
+                    <h4 class="text-white font-bold mb-2 text-[10px] uppercase tracking-widest">Handmade</h4>
                 </div>
-                <div class="glass-card p-8 rounded-[2.5rem] text-center">
-                    <div class="text-4xl mb-4">🚀</div>
-                    <h4 class="text-white font-bold mb-2 text-sm uppercase tracking-widest">Speed</h4>
-                </div>
-                <div class="glass-card p-8 rounded-[2.5rem] text-center">
-                    <div class="text-4xl mb-4">🛡️</div>
-                    <h4 class="text-white font-bold mb-2 text-sm uppercase tracking-widest">Security</h4>
-                </div>
-                <div class="glass-card p-8 rounded-[2.5rem] text-center">
+                <div class="glass-card p-8 rounded-[2.5rem] text-center border-white/5">
                     <div class="text-4xl mb-4">✨</div>
-                    <h4 class="text-white font-bold mb-2 text-sm uppercase tracking-widest">Magic</h4>
+                    <h4 class="text-white font-bold mb-2 text-[10px] uppercase tracking-widest">Premium Art</h4>
+                </div>
+                <div class="glass-card p-8 rounded-[2.5rem] text-center border-white/5">
+                    <div class="text-4xl mb-4">🌍</div>
+                    <h4 class="text-white font-bold mb-2 text-[10px] uppercase tracking-widest">Upcycling</h4>
+                </div>
+                <div class="glass-card p-8 rounded-[2.5rem] text-center border-white/5">
+                    <div class="text-4xl mb-4">🎨</div>
+                    <h4 class="text-white font-bold mb-2 text-[10px] uppercase tracking-widest">Design</h4>
                 </div>
             </div>
         </div>
 
-        <div class="mt-32 glass-card p-16 rounded-[4rem] text-center scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-            <h3 class="text-3xl font-bold heading-font text-white mb-8 uppercase tracking-widest">Unser Team</h3>
-            <p class="text-white/50 max-w-2xl mx-auto leading-relaxed">
-                Hinter Luviq steht ein internationales Team aus Designern, Entwicklern und Visionären, die täglich daran arbeiten, die Grenzen des Möglichen zu verschieben.
+        <div class="mt-24 glass-card p-12 rounded-[3.5rem] text-center scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <h3 class="text-2xl font-bold heading-font text-white mb-6 uppercase tracking-widest">Unsere Philosophie</h3>
+            <p class="text-white/50 max-w-2xl mx-auto leading-relaxed font-light">
+                "Mode ist vergänglich, Kunst ist ewig." Wir verschmelzen beides zu einer Brand, die für Individualität, Kreativität und Verantwortung steht.
             </p>
         </div>
     </div>

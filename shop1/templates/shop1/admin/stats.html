@@ -1,328 +1,206 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Statistiken – Admin{% endblock %}
+{% block title %}Shop Stats – Admin Orbit{% endblock %}
 
 {% block content %}
-<div>
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Admin</a></li>
-      <li class="breadcrumb-item active">Statistiken</li>
-    </ol>
-  </nav>
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
 
-  <div class="stats-container">
-    <!-- BLOCK 1: Benutzerverwaltung -->
-    <div class="card border-light shadow-sm mb-5">
-      <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-        <h5 class="mb-0 fw-bold">👥 Benutzerverwaltung</h5>
-        <a href="{% url 'admin_user_create' %}" class="btn btn-primary btn-sm fw-bold">
-          ➕ Benutzer hinzufügen
-        </a>
-      </div>
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead class="table-light">
-              <tr>
-                <th class="ps-4">Benutzer</th>
-                <th>Status</th>
-                <th>Persönliche Daten</th>
-                <th class="text-center">Admin</th>
-                <th class="text-center">Aktionen</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for user in users %}
-              <tr>
-                <td class="ps-4 py-3">
-                  <div class="fw-bold">{{ user.username }}</div>
-                  <div class="text-muted small">📅 {{ user.date_joined|date:"d.m.Y H:i" }} Uhr</div>
-                </td>
-                <td class="py-3">
-                  {% if user.profile.email_verified %}
-                  <span class="badge bg-success-soft text-success border border-success-subtle">✅ Verifiziert</span>
-                  {% else %}
-                  <span class="badge bg-warning-soft text-warning border border-warning-subtle">⏳ Wartet</span>
-                  {% endif %}
-                </td>
-                <td class="py-3 small">
-                  {% if user.first_name or user.last_name %}
-                  👤 <strong>{{ user.first_name }} {{ user.last_name }}</strong><br>
-                  {% endif %}
-                  {% if user.profile.adresse %}
-                    📍 <span class="text-muted">{{ user.profile.adresse }}, {{ user.profile.postleitzahl }} {{ user.profile.stadt }}</span>
-                  {% else %}
-                    ❓ <span class="text-muted italic">Keine Adresse</span>
-                  {% endif %}
-                </td>
-                <td class="text-center py-3">
-                  {% if user.is_staff %}
-                    <span class="text-primary" title="Administrator">💎</span>
-                  {% endif %}
-                  {% if user.is_superuser %}
-                    <span class="text-danger" title="Mitarbeiter">🛠️</span>
-                  {% endif %}
-                  {% if not user.is_staff and not user.is_superuser %}
-                  <span class="text-muted">👤</span>
-                  {% endif %}
-                </td>
-                <td class="text-center py-3">
-                  <div class="btn-group">
-                    <a href="{% url 'admin_user_cart' user.id %}" class="btn btn-sm btn-outline-info"
-                      title="Warenkorb einsehen">
-                      🛒
-                    </a>
-                    <a href="{% url 'admin_user_edit' user.id %}" class="btn btn-sm btn-outline-primary">
-                      ✏️
-                    </a>
-                    <a href="{% url 'admin_user_delete' user.id %}" class="btn btn-sm btn-outline-danger">
-                      🗑️
-                    </a>
-                  </div>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <!-- Header -->
+        <div class="mb-12 flex flex-col md:flex-row justify-between items-end gap-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <div>
+                <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                    Shop <span class="text-glow">Stats</span>
+                </h1>
+                <div class="h-1 w-24 bg-glow-orange rounded-full"></div>
+            </div>
+            <div class="flex gap-4">
+                <a href="{% url 'admin_user_create' %}" class="btn-glow px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                    ➕ New Member
+                </a>
+            </div>
         </div>
-      </div>
+
+        <!-- Quick Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
+            <div class="glass-card p-8 rounded-[2rem] border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Total Orders</p>
+                <h4 class="text-3xl font-black text-white">{{ total_orders }}</h4>
+            </div>
+            <div class="glass-card p-8 rounded-[2rem] border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Revenue (Paid)</p>
+                <h4 class="text-3xl font-black text-emerald-400">{{ total_revenue|floatformat:2 }} €</h4>
+            </div>
+            <div class="glass-card p-8 rounded-[2rem] border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-2">Pending Trans.</p>
+                <h4 class="text-3xl font-black text-glow-orange">{{ orders_pending|length }}</h4>
+            </div>
+            <div class="glass-card p-8 rounded-[2rem] border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-red-400 mb-2">Failed Trans.</p>
+                <h4 class="text-3xl font-black text-red-400">{{ orders_failed|length }}</h4>
+            </div>
+        </div>
+
+        <!-- User Management -->
+        <div class="scroll-reveal mb-12" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+            <div class="glass-card rounded-[3rem] overflow-hidden">
+                <div class="px-10 py-8 border-b border-white/5 flex justify-between items-center">
+                    <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Member Directory</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Identity</th>
+                                <th>Status</th>
+                                <th>Bio-Data</th>
+                                <th class="text-center">Admin</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>
+                                    <div class="font-bold text-white">{{ user.username }}</div>
+                                    <div class="text-[10px] text-white/20 uppercase tracking-widest mt-1">Joined: {{ user.date_joined|date:"d.m.Y" }}</div>
+                                </td>
+                                <td>
+                                    {% if user.profile.email_verified %}
+                                        <span class="text-[10px] font-black uppercase text-emerald-400">Verified</span>
+                                    {% else %}
+                                        <span class="text-[10px] font-black uppercase text-glow-orange">Unverified</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="text-xs text-white/50">
+                                        {% if user.first_name or user.last_name %}{{ user.first_name }} {{ user.last_name }}{% else %}N/A{% endif %}
+                                    </div>
+                                    <div class="text-[10px] text-white/30 mt-1">{{ user.profile.stadt|default:"Unknown Sector" }}</div>
+                                </td>
+                                <td class="text-center">
+                                    {% if user.is_staff %}<span class="text-glow-orange text-lg">💎</span>{% else %}<span class="opacity-20">👤</span>{% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <div class="flex items-center justify-center gap-3">
+                                        <a href="{% url 'admin_user_cart' user.id %}" class="p-2 glass rounded-lg hover:bg-white/5" title="Cart">🛒</a>
+                                        <a href="{% url 'admin_user_edit' user.id %}" class="p-2 glass rounded-lg hover:bg-white/5" title="Edit">✏️</a>
+                                        <a href="{% url 'admin_user_delete' user.id %}" class="p-2 glass rounded-lg hover:text-red-400" title="Delete">🗑️</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders & Chart Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Recent Orders -->
+            <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <div class="glass-card rounded-[3rem] overflow-hidden h-full">
+                    <div class="px-10 py-8 border-b border-white/5 flex justify-between items-center">
+                        <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Recent Orders</h3>
+                        <form method="POST" action="{% url 'admin_reset_orders' %}" onsubmit="return confirm('WARNING: Permanent deletion of all order data. Continue?');">
+                            {% csrf_token %}
+                            <button type="submit" class="text-[10px] font-black uppercase text-red-400/50 hover:text-red-400 transition-colors">Reset All</button>
+                        </form>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Status</th>
+                                    <th class="text-right">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders|slice:":10" %}
+                                <tr>
+                                    <td class="font-bold text-white">#{{ order.id }}</td>
+                                    <td>
+                                        <span class="text-[10px] font-black uppercase {% if order.status == 'paid' %}text-emerald-400{% else %}text-glow-orange{% endif %}">
+                                            {{ order.status }}
+                                        </span>
+                                    </td>
+                                    <td class="text-right font-black text-glow">{{ order.gesamt_betrag|floatformat:2 }} €</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visits Chart -->
+            <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+                <div class="glass-card p-10 rounded-[3rem] h-full">
+                    <div class="flex justify-between items-center mb-10">
+                        <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Visit Activity</h3>
+                        <form method="POST" action="{% url 'admin_reset_visits' %}" onsubmit="return confirm('Reset visit data?');">
+                            {% csrf_token %}
+                            <button type="submit" class="text-[10px] font-black uppercase text-red-400/50 hover:text-red-400 transition-colors">Reset</button>
+                        </form>
+                    </div>
+                    <div style="height: 300px; width: 100%;">
+                        <canvas id="visitsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <!-- BLOCK 2: Bestellungen & Verkaufs-Statistiken -->
-    <div class="card border-light shadow-sm mb-5">
-      <div class="card-header bg-white py-3">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="mb-0 fw-bold">📦 Bestellungen & Verkaufs-Statistiken</h5>
-          <form method="POST" action="{% url 'admin_reset_orders' %}" onsubmit="return confirm('Möchtest du wirklich ALLE Bestellungen löschen? Dies kann nicht rückgängig gemacht werden!');">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline-danger">🗑️ Zurücksetzen</button>
-          </form>
-        </div>
-        
-        <!-- Status-Übersicht -->
-        <div class="row">
-          <div class="col-md-3">
-            <div class="bg-light p-3 rounded text-center">
-              <p class="text-muted small mb-1">Gesamtbestellungen</p>
-              <h4 class="mb-0 text-primary fw-bold">{{ total_orders }}</h4>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="bg-success bg-opacity-10 p-3 rounded text-center">
-              <p class="text-muted small mb-1">Bezahlt ✅</p>
-              <h4 class="mb-0 text-success fw-bold">{{ orders_paid|length }}</h4>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="bg-warning bg-opacity-10 p-3 rounded text-center">
-              <p class="text-muted small mb-1">Ausstehend ⏳</p>
-              <h4 class="mb-0 text-warning fw-bold">{{ orders_pending|length }}</h4>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="bg-danger bg-opacity-10 p-3 rounded text-center">
-              <p class="text-muted small mb-1">Fehlgeschlagen ❌</p>
-              <h4 class="mb-0 text-danger fw-bold">{{ orders_failed|length }}</h4>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="card-body p-0">
-        <!-- Umsatz -->
-        <div class="bg-light p-4 border-bottom">
-          <p class="text-muted mb-2">💰 Gesamtumsatz (bezahlte Bestellungen)</p>
-          <h3 class="text-success fw-bold mb-0">{{ total_revenue|floatformat:2 }} €</h3>
-        </div>
-        
-        <!-- Bestellungen Tabelle -->
-        {% if orders %}
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead class="table-light">
-              <tr>
-                <th class="ps-4">Bestellung</th>
-                <th>Kunde</th>
-                <th>Status</th>
-                <th>Artikel</th>
-                <th class="text-end">Betrag</th>
-                <th class="text-center">Datum</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for order in orders|slice:":20" %}
-              <tr>
-                <td class="ps-4 py-3 fw-bold">
-                  #{{ order.id }}
-                </td>
-                <td class="py-3">
-                  <div class="fw-bold">{{ order.user.username }}</div>
-                  <div class="small text-muted">{{ order.email }}</div>
-                </td>
-                <td class="py-3">
-                  {% if order.status == 'paid' %}
-                    <span class="badge bg-success">✅ Bezahlt</span>
-                  {% elif order.status == 'pending' %}
-                    <span class="badge bg-warning">⏳ Ausstehend</span>
-                  {% elif order.status == 'failed' %}
-                    <span class="badge bg-danger">❌ Fehlgeschlagen</span>
-                  {% elif order.status == 'cancelled' %}
-                    <span class="badge bg-secondary">🚫 Abgebrochen</span>
-                  {% endif %}
-                </td>
-                <td class="py-3">
-                  <small>
-                    {% for item in order.items.all|slice:":2" %}
-                      {{ item.menge }}x {{ item.produkt_name }}<br>
-                    {% endfor %}
-                    {% if order.items.all|length > 2 %}
-                      <em class="text-muted">+{{ order.items.all|length|add:"-2" }} mehr</em>
-                    {% endif %}
-                  </small>
-                </td>
-                <td class="text-end py-3 fw-bold">
-                  {{ order.gesamt_betrag|floatformat:2 }} €
-                </td>
-                <td class="text-center py-3 small text-muted">
-                  {{ order.erstellt_am|date:"d.m.Y" }}
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        
-        {% if orders|length > 20 %}
-        <div class="text-center p-3 border-top text-muted small">
-          ... und {{ orders|length|add:"-20" }} weitere Bestellungen
-        </div>
-        {% endif %}
-        
-        {% else %}
-        <div class="text-center p-5 text-muted">
-          <p>📦 Noch keine Bestellungen vorhanden</p>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-
-  <!-- BLOCK 3: Besucher-Statistik (Chart) -->
-  <div class="row mt-4">
-    <div class="col-12">
-      <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body p-4">
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 class="mb-0 fw-bold">📈 Seitenaufrufe (Letzte 30 Tage)</h5>
-            <form method="POST" action="{% url 'admin_reset_visits' %}" onsubmit="return confirm('Möchtest du wirklich die Besuchs-Statistik zurücksetzen?');">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-sm btn-outline-danger">🗑️ Zurücksetzen</button>
-            </form>
-          </div>
-          <div style="height: 300px; width: 100%;">
-            <canvas id="visitsChart"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
     document.addEventListener("DOMContentLoaded", function() {
         const rawData = '{{ chart_data_json|escapejs }}';
         const parsedData = JSON.parse(rawData);
-        
         const ctx = document.getElementById('visitsChart').getContext('2d');
-        
-        // Erstelle einen Farbverlauf (Gradient) für den Bereich unter der Linie
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(13, 110, 253, 0.4)'); // Bootstrap Primary Blau, halbtransparent
-        gradient.addColorStop(1, 'rgba(13, 110, 253, 0.0)'); // Nach unten hin transparent
+        gradient.addColorStop(0, 'rgba(255, 106, 0, 0.2)');
+        gradient.addColorStop(1, 'rgba(255, 106, 0, 0)');
         
         new Chart(ctx, {
             type: 'line',
             data: {
                 labels: parsedData.labels,
                 datasets: [{
-                    label: 'Seitenbesuche',
+                    label: 'Visits',
                     data: parsedData.data,
-                    borderColor: '#0d6efd',
+                    borderColor: '#FF6A00',
                     backgroundColor: gradient,
                     borderWidth: 3,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#0d6efd',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
+                    pointBackgroundColor: '#FF6A00',
+                    pointRadius: 0,
                     pointHoverRadius: 6,
                     fill: true,
-                    tension: 0.4 // Macht die Linie schön geschwungen
+                    tension: 0.4
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false // Versteckt die Legende oben (brauchen wir bei nur einer Linie nicht)
-                    },
-                    tooltip: {
-                        backgroundColor: '#212529',
-                        titleFont: { size: 14, family: "'Inter', sans-serif" },
-                        bodyFont: { size: 14, family: "'Inter', sans-serif" },
-                        padding: 12,
-                        displayColors: false,
-                        callbacks: {
-                            label: function(context) {
-                                return context.parsed.y + ' Besuche';
-                            }
-                        }
-                    }
-                },
+                plugins: { legend: { display: false } },
                 scales: {
                     x: {
-                        grid: {
-                            display: false,
-                            drawBorder: false
-                        },
-                        ticks: {
-                            font: { family: "'Inter', sans-serif", size: 12 },
-                            color: '#6c757d'
-                        }
+                        grid: { display: false },
+                        ticks: { color: 'rgba(255,255,255,0.2)', font: { size: 10 } }
                     },
                     y: {
                         beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)',
-                            drawBorder: false
-                        },
-                        ticks: {
-                            stepSize: 1, // Zeige nur ganze Zahlen an
-                            font: { family: "'Inter', sans-serif", size: 12 },
-                            color: '#6c757d'
-                        }
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: 'rgba(255,255,255,0.2)', font: { size: 10 } }
                     }
                 }
             }
         });
     });
-  </script>
-
-  <style>
-    .bg-success-soft {
-      background-color: rgba(25, 135, 84, 0.1);
-    }
-
-    .bg-warning-soft {
-      background-color: rgba(255, 193, 7, 0.1);
-    }
-
-    .extra-small {
-      font-size: 0.75rem;
-    }
-  </style>
-</div>
+</script>
 {% endblock %}

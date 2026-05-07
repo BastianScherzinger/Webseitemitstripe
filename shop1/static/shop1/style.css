@@ -147,3 +147,50 @@ body {
     box-shadow: 0 0 15px rgba(255, 106, 0, 0.1);
     outline: none;
 }
+
+/* Tighten global spacing */
+section {
+    padding-top: 5rem !important;
+    padding-bottom: 5rem !important;
+}
+
+.py-32 { padding-top: 6rem !important; padding-bottom: 6rem !important; }
+.py-48 { padding-top: 8rem !important; padding-bottom: 8rem !important; }
+.mb-20 { margin-bottom: 4rem !important; }
+.mb-16 { margin-bottom: 3rem !important; }
+
+/* Redesign Stats / Admin Tables */
+.admin-table-container {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 2rem;
+    overflow: hidden;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.admin-table th {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.25rem 1.5rem;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    color: var(--accent-orange);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-table td {
+    padding: 1.25rem 1.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    font-size: 0.85rem;
+}
+
+.admin-table tr:hover td {
+    background: rgba(255, 255, 255, 0.01);
+}

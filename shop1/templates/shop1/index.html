@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Luviq Universe – Premium E-Commerce{% endblock %}
+{% block title %}Luviq – Upcycled Art & Fashion{% endblock %}
 
 {% block content %}
 <div class="relative min-h-screen">
@@ -9,64 +9,64 @@
     <div class="energy-nebula"></div>
 
     <!-- Hero Section -->
-    <section class="relative pt-32 pb-48 px-4 overflow-hidden">
+    <section class="relative pt-24 pb-32 px-4 overflow-hidden">
         <div class="max-w-7xl mx-auto text-center animate-reveal">
             <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass border-white/5 mb-8">
                 <span class="w-2 h-2 rounded-full bg-glow-orange animate-pulse"></span>
-                <span class="text-xs font-bold uppercase tracking-widest text-white/60">New Collection Live</span>
+                <span class="text-xs font-bold uppercase tracking-widest text-white/60">Sustainable Art Drop</span>
             </div>
             
-            <h1 class="text-6xl md:text-9xl font-black heading-font tracking-tighter text-white mb-8 leading-[0.9]">
-                LUVIQ <span class="text-glow">UNIVERSE</span>
+            <h1 class="text-6xl md:text-8xl font-black heading-font tracking-tighter text-white mb-8 leading-[0.9]">
+                UPCYCLED <span class="text-glow">ART</span>
             </h1>
             
-            <p class="text-lg md:text-2xl text-white/60 max-w-2xl mx-auto mb-12 leading-relaxed font-light">
-                Erlebe die nächste Stufe des Online-Shoppings. Minimalistisch, kraftvoll und exklusiv für dich kuratiert.
+            <p class="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+                Wir finden vergessene Klassiker, geben ihnen durch handbemalte Designs eine neue Seele und machen sie zu tragbaren Kunstwerken.
             </p>
             
             <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
                 <a href="{% url 'produkte' %}" class="btn-glow px-12 py-5 rounded-full text-white font-black uppercase tracking-widest text-sm shadow-2xl">
-                    Kollektion Entdecken
+                    Drop Entdecken
                 </a>
-                <a href="{% url 'register' %}" class="px-12 py-5 rounded-full glass border-white/10 text-white font-bold uppercase tracking-widest text-sm hover:bg-white/5 transition-all">
-                    Member werden
+                <a href="{% url 'ueber_uns' %}" class="px-12 py-5 rounded-full glass border-white/10 text-white font-bold uppercase tracking-widest text-sm hover:bg-white/5 transition-all">
+                    Unsere Story
                 </a>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section class="py-32 relative z-10">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div class="scroll-reveal glass-card p-12 rounded-[2rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                <div class="text-4xl mb-8 group-hover:scale-125 transition-transform duration-500">🚀</div>
-                <h3 class="text-2xl font-bold heading-font text-white mb-4">Hyper-Speed Delivery</h3>
-                <p class="text-white/40 leading-relaxed">Versand in Lichtgeschwindigkeit. Kostenlos ab einem Bestellwert von 50€.</p>
+    <section class="py-20 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="scroll-reveal glass-card p-10 rounded-[2.5rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <div class="text-4xl mb-6 group-hover:scale-125 transition-transform duration-500">🎨</div>
+                <h3 class="text-xl font-bold heading-font text-white mb-4">Hand-Painted</h3>
+                <p class="text-white/40 text-sm leading-relaxed">Jedes Stück ist ein Unikat. Von Hand bemalt und mit Liebe zum Detail veredelt.</p>
             </div>
 
-            <div class="scroll-reveal glass-card p-12 rounded-[2rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
-                <div class="text-4xl mb-8 group-hover:scale-125 transition-transform duration-500">🔒</div>
-                <h3 class="text-2xl font-bold heading-font text-white mb-4">Secure Network</h3>
-                <p class="text-white/40 leading-relaxed">Verschlüsselte Zahlungen und absoluter Datenschutz in unserem Shop.</p>
+            <div class="scroll-reveal glass-card p-10 rounded-[2.5rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
+                <div class="text-4xl mb-6 group-hover:scale-125 transition-transform duration-500">♻️</div>
+                <h3 class="text-xl font-bold heading-font text-white mb-4">Eco-Conscious</h3>
+                <p class="text-white/40 text-sm leading-relaxed">Second-Hand ist die Zukunft. Wir reduzieren Müll und schaffen bleibende Werte.</p>
             </div>
 
-            <div class="scroll-reveal glass-card p-12 rounded-[2rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
-                <div class="text-4xl mb-8 group-hover:scale-125 transition-transform duration-500">💎</div>
-                <h3 class="text-2xl font-bold heading-font text-white mb-4">Exzellenz</h3>
-                <p class="text-white/40 leading-relaxed">Jedes Stück in unserem Sortiment wird nach höchsten Standards geprüft.</p>
+            <div class="scroll-reveal glass-card p-10 rounded-[2.5rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+                <div class="text-4xl mb-6 group-hover:scale-125 transition-transform duration-500">💎</div>
+                <h3 class="text-xl font-bold heading-font text-white mb-4">Curated Style</h3>
+                <p class="text-white/40 text-sm leading-relaxed">Nur die besten Vintage-Teile schaffen es in unseren Veredelungsprozess.</p>
             </div>
         </div>
     </section>
 
     <!-- Products Gallery Section -->
-    <section class="py-32 relative z-10">
+    <section class="py-24 relative z-10">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
                 <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                    <h2 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">Unsere Highlights</h2>
-                    <div class="h-1 w-24 bg-glow-orange rounded-full"></div>
+                    <h2 class="text-4xl md:text-5xl font-black heading-font text-white uppercase tracking-tighter mb-4">Aktuelle <span class="text-glow">Unikate</span></h2>
+                    <div class="h-1 w-20 bg-glow-orange rounded-full"></div>
                 </div>
-                <a href="{% url 'produkte' %}" class="text-glow font-bold uppercase tracking-widest text-xs border-b border-glow-orange/30 pb-2 hover:border-glow-orange transition-all">Alle Produkte</a>
+                <a href="{% url 'produkte' %}" class="text-glow font-bold uppercase tracking-widest text-[10px] border-b border-glow-orange/30 pb-2 hover:border-glow-orange transition-all">Alle Unikate ansehen</a>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -78,16 +78,17 @@
                      style="transition-delay: 0.{{ forloop.counter0 }}s">
                     <div class="relative h-80 overflow-hidden bg-space-dark/50">
                         {% if produkt.bild %}
-                            <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover">
+                            <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                         {% else %}
                             <div class="w-full h-full flex items-center justify-center text-white/10">
                                 <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             </div>
                         {% endif %}
                         <div class="absolute inset-0 bg-gradient-to-t from-space-black to-transparent opacity-60"></div>
+                        <div class="absolute top-4 right-4 glass px-3 py-1 rounded-full text-[10px] font-black uppercase text-white/70">1 of 1</div>
                     </div>
                     <div class="p-8">
-                        <h4 class="text-xl font-bold heading-font text-white mb-4">{{ produkt.name }}</h4>
+                        <h4 class="text-lg font-bold heading-font text-white mb-4">{{ produkt.name }}</h4>
                         <div class="flex items-center justify-between">
                             <span class="text-glow font-black text-xl">{{ produkt.preis }} €</span>
                             <a href="{% url 'produkt_detail' produkt.id %}" class="w-12 h-12 glass rounded-2xl flex items-center justify-center hover:bg-glow-orange hover:text-white transition-all transform hover:rotate-12 group">
@@ -98,7 +99,7 @@
                 </div>
                 {% empty %}
                 <div class="col-span-full glass-card p-20 text-center rounded-[3rem]">
-                    <p class="text-white/20 italic font-light tracking-widest uppercase">Keine Daten im Orbit gefunden...</p>
+                    <p class="text-white/20 italic font-light tracking-widest uppercase">Der Orbit ist momentan leer...</p>
                 </div>
                 {% endfor %}
             </div>
@@ -106,20 +107,17 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-48 relative overflow-hidden">
+    <section class="py-32 relative overflow-hidden">
         <div class="max-w-4xl mx-auto px-4 relative z-10">
-            <div class="scroll-reveal glass-card p-16 md:p-24 rounded-[4rem] text-center shadow-[0_0_100px_rgba(255,106,0,0.1)]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                <h2 class="text-4xl md:text-6xl font-black heading-font text-white mb-8">INITIATE <span class="text-glow">MEMBERSHIP</span></h2>
-                <p class="text-lg text-white/50 mb-12 max-w-xl mx-auto">Sichere dir 10% Rabatt auf dein erstes Shopping-Erlebnis im Luviq Universe.</p>
+            <div class="scroll-reveal glass-card p-12 md:p-20 rounded-[3.5rem] text-center shadow-[0_0_100px_rgba(255,106,0,0.1)]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-3xl md:text-5xl font-black heading-font text-white mb-8">JOIN THE <span class="text-glow">COLLECTIVE</span></h2>
+                <p class="text-white/50 mb-10 max-w-lg mx-auto font-light leading-relaxed">Werde Teil der Luviq-Family und erhalte exklusiven Zugriff auf neue Drops und Unikate.</p>
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <input type="email" placeholder="DEINE EMAIL ADRESSE" class="flex-grow bg-white/5 border border-white/10 rounded-full px-8 py-5 text-white focus:outline-none focus:border-glow-orange transition-all uppercase tracking-widest text-xs font-bold">
-                    <button class="btn-glow px-12 py-5 rounded-full text-white font-black uppercase tracking-widest text-sm">Jetzt Registrieren</button>
+                    <input type="email" placeholder="EMAIL ADRESSE" class="flex-grow bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-white focus:outline-none focus:border-glow-orange transition-all uppercase tracking-widest text-[10px] font-bold">
+                    <button class="btn-glow px-10 py-5 rounded-2xl text-white font-black uppercase tracking-widest text-[10px]">Jetzt Registrieren</button>
                 </div>
             </div>
         </div>
-        
-        <!-- Background Decoration -->
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-glow-orange/5 rounded-full filter blur-[120px]"></div>
     </section>
 </div>
 {% endblock %}

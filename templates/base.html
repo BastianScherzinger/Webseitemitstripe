@@ -109,6 +109,9 @@
                         <a href="{% url 'produkte' %}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-white/70 hover:text-glow-orange transition-colors">Produkte</a>
                         <a href="{% url 'kontakt' %}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-white/70 hover:text-glow-orange transition-colors">Kontakt</a>
                         <a href="{% url 'ueber_uns' %}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-white/70 hover:text-glow-orange transition-colors">Über uns</a>
+                        {% if user.is_staff %}
+                        <a href="/admin/" class="inline-flex items-center px-1 pt-1 text-sm font-black text-glow-orange hover:text-white transition-colors uppercase tracking-widest text-[10px]">Admin Area</a>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="hidden md:flex items-center space-x-6">
@@ -125,7 +128,12 @@
                             </button>
                             <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-4 w-48 rounded-2xl glass shadow-2xl py-2 z-50">
                                 <a href="{% url 'profil' %}" class="block px-4 py-2 text-sm text-white/80 hover:bg-white/5 hover:text-white transition-colors">Profil</a>
-                                <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-glow-orange hover:bg-white/5 transition-colors">Logout</a>
+                                {% if user.is_staff %}
+                                <a href="{% url 'admin_stats' %}" class="block px-4 py-2 text-sm text-white/80 hover:bg-white/5 hover:text-white transition-colors">Shop Stats</a>
+                                <a href="/admin/" class="block px-4 py-2 text-sm text-glow-orange hover:bg-white/5 transition-colors">Django Admin</a>
+                                {% endif %}
+                                <hr class="border-white/5 my-2">
+                                <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-red-400 hover:bg-white/5 transition-colors">Logout</a>
                             </div>
                         </div>
                     {% else %}

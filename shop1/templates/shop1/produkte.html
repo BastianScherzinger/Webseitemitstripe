@@ -1,25 +1,25 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Produkte – Luviq Universe{% endblock %}
+{% block title %}Kollektion – Luviq Universe{% endblock %}
 
 {% block content %}
-<div class="relative min-h-screen pt-12 pb-24">
+<div class="relative min-h-screen pt-20 pb-32">
     <!-- Nebula Background Layer -->
     <div class="energy-nebula"></div>
 
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <!-- Header -->
-        <div class="mb-20 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+        <div class="mb-16 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
             <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
-                Unsere <span class="text-glow">Kollektion</span>
+                The <span class="text-glow">Drop</span>
             </h1>
-            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">Exklusive Auswahl im Luviq Universe</p>
+            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">Handverlesene Vintage-Unikate, neu interpretiert.</p>
             <div class="h-1 w-32 bg-glow-orange mt-8 rounded-full"></div>
         </div>
 
         <!-- Product Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {% for produkt in produkte_liste %}
             <div class="scroll-reveal glass-card rounded-[3rem] product-card flex flex-col group"
                  x-data="{ shown: false }" 
@@ -28,53 +28,50 @@
                  style="transition-delay: 0.{{ forloop.counter0 }}s">
 
                 <!-- Image Container -->
-                <a href="{% url 'produkt_detail' produkt.id %}" class="relative h-96 block overflow-hidden rounded-t-[3rem] bg-space-dark/50">
+                <div class="relative h-[450px] overflow-hidden bg-space-dark/50">
                     {% if produkt.bild %}
-                        <img
-                          src="{{ produkt.bild.url }}"
-                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
-                          alt="{{ produkt.name }}"
-                        >
+                        <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
                     {% else %}
                         <div class="w-full h-full flex items-center justify-center text-white/5">
-                          <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                         </div>
                     {% endif %}
-                    <div class="absolute inset-0 bg-gradient-to-t from-space-black/80 to-transparent opacity-60"></div>
-                </a>
-
-                <!-- Body -->
-                <div class="p-10 flex flex-col flex-grow">
-                    <h3 class="text-3xl font-bold heading-font text-white mb-4 group-hover:text-glow-orange transition-colors">
-                        <a href="{% url 'produkt_detail' produkt.id %}">{{ produkt.name }}</a>
-                    </h3>
-                    <p class="text-white/40 mb-8 flex-grow leading-relaxed font-light">{{ produkt.beschreibung|truncatewords:15 }}</p>
                     
-                    <div class="flex items-center justify-between pt-8 border-t border-white/5">
-                        <span class="text-3xl font-black text-glow">{{ produkt.preis|floatformat:2 }} €</span>
-                        <div class="flex gap-4">
-                            <a href="{% url 'produkt_detail' produkt.id %}" class="w-14 h-14 glass rounded-2xl flex items-center justify-center hover:bg-white/5 transition-all transform hover:scale-110" title="Details ansehen">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                            </a>
-                            {% if user.is_authenticated %}
-                                <a href="{% url 'add_to_cart' produkt.id %}" class="w-14 h-14 btn-glow rounded-2xl flex items-center justify-center text-white transform hover:scale-110 shadow-lg" title="In den Warenkorb">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                                </a>
-                            {% else %}
-                                <a href="{% url 'login' %}" class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-white/70 hover:bg-white/20 transition-all transform hover:scale-110 shadow-lg" title="Login zum Einkaufen">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                </a>
-                            {% endif %}
+                    <!-- Overlay Badges -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-space-black via-transparent to-transparent opacity-60"></div>
+                    <div class="absolute top-6 left-6 flex flex-col gap-2">
+                        <span class="glass px-4 py-1.5 rounded-full text-[10px] font-black uppercase text-white/80 tracking-widest border-white/5">Unique</span>
+                        {% if produkt.lagerbestand < 3 %}
+                            <span class="glass px-4 py-1.5 rounded-full text-[10px] font-black uppercase text-glow-orange tracking-widest border-white/5">Limited</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Info Container -->
+                <div class="p-10 flex flex-col flex-grow">
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-bold heading-font text-white mb-2">{{ produkt.name }}</h3>
+                        <p class="text-white/30 text-xs font-light tracking-widest uppercase">Vintage Custom Art</p>
+                    </div>
+                    
+                    <div class="mt-auto flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-white/30 uppercase tracking-widest mb-1">Investition</span>
+                            <span class="text-2xl font-black text-glow">{{ produkt.preis }} €</span>
                         </div>
+                        <a href="{% url 'produkt_detail' produkt.id %}" class="w-14 h-14 btn-glow rounded-2xl flex items-center justify-center text-white transition-all transform hover:rotate-12 group shadow-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </a>
                     </div>
                 </div>
             </div>
             {% empty %}
-                <div class="col-span-full glass-card p-32 text-center rounded-[4rem]">
-                    <h3 class="text-4xl font-black heading-font mb-6 text-white/20 uppercase tracking-tighter">Keine Daten verfügbar</h3>
-                    <p class="text-white/30 text-lg font-light tracking-widest uppercase mb-12">Es befinden sich derzeit keine Objekte im Orbit.</p>
-                    <a href="{% url 'home' %}" class="btn-glow px-12 py-5 rounded-full text-white font-black uppercase tracking-widest text-sm inline-block">Zurück zur Basis</a>
+            <div class="col-span-full py-32 text-center">
+                <div class="glass-card p-20 rounded-[4rem] border-dashed border-white/10 max-w-2xl mx-auto">
+                    <p class="text-white/20 italic font-light tracking-widest uppercase mb-8">Momentan befinden sich keine Unikate im Orbit...</p>
+                    <a href="{% url 'home' %}" class="text-glow-orange font-bold uppercase tracking-widest text-[10px]">Zurück zur Basis</a>
                 </div>
+            </div>
             {% endfor %}
         </div>
     </div>
