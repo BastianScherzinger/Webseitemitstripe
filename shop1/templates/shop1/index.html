@@ -58,6 +58,45 @@
         </div>
     </section>
 
+    <!-- About Artist Section -->
+    <section class="py-24 relative z-10 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div class="scroll-reveal relative" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                    <div class="relative z-10 rounded-[4rem] overflow-hidden glass border-white/5 p-4 shadow-2xl transform hover:scale-[1.02] transition-transform duration-700">
+                        <img src="{% static 'shop1/images/ich.png' %}" alt="Bastian Scherzinger" class="w-full h-auto rounded-[3.5rem] object-cover grayscale hover:grayscale-0 transition-all duration-1000">
+                    </div>
+                    <!-- Decorative elements -->
+                    <div class="absolute -top-10 -left-10 w-40 h-40 bg-glow-orange/20 blur-[80px] rounded-full animate-pulse"></div>
+                    <div class="absolute -bottom-10 -right-10 w-60 h-60 bg-blue-500/10 blur-[100px] rounded-full"></div>
+                </div>
+
+                <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+                    <h3 class="text-[10px] font-black uppercase tracking-[0.4em] text-glow-orange mb-6">The Soul Behind Luviq</h3>
+                    <h2 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-tight">
+                        Vom Klassiker <br>zum <span class="text-glow">Statement</span>.
+                    </h2>
+                    <p class="text-white/50 text-lg leading-relaxed font-light mb-10">
+                        Hi, ich bin Bastian. Meine Mission ist es, Mode als Leinwand zu nutzen. Jedes Teil, das du hier siehst, wurde von mir handverlesen und mit einem einzigartigen Design versehen. 
+                        <br><br>
+                        In einer Welt der Massenware setze ich auf Individualität. Jedes Stück ist ein Unikat – ein 1-of-1, das es so nie wieder geben wird.
+                    </p>
+                    <div class="flex items-center space-x-8">
+                        <div class="text-center">
+                            <span class="block text-2xl font-black text-white">100%</span>
+                            <span class="text-[10px] text-white/30 uppercase tracking-widest">Handgemalt</span>
+                        </div>
+                        <div class="w-px h-10 bg-white/10"></div>
+                        <div class="text-center">
+                            <span class="block text-2xl font-black text-white">Unikat</span>
+                            <span class="text-[10px] text-white/30 uppercase tracking-widest">Garantie</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Products Gallery Section -->
     <section class="py-24 relative z-10">
         <div class="max-w-7xl mx-auto px-4">

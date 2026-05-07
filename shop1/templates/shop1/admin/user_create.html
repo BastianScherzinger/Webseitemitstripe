@@ -1,94 +1,92 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Benutzer hinzufügen – Admin{% endblock %}
+{% block title %}Create Member – Luviq Admin{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-8 mx-auto">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Admin</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'admin_stats' %}">Statistiken</a></li>
-        <li class="breadcrumb-item active">Benutzer hinzufügen</li>
-      </ol>
-    </nav>
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
 
-    <div class="card border-light shadow-sm">
-      <div class="card-header bg-white py-3">
-        <h4 class="mb-0 fw-bold">➕ Neuen Benutzer anlegen</h4>
-      </div>
-      <div class="card-body p-4">
-        <form method="post">
-          {% csrf_token %}
-          
-          <h5 class="fw-bold mb-3">Konto-Daten</h5>
-          <div class="mb-3">
-            <label class="form-label fw-bold">Benutzername</label>
-            {{ form.username }}
-          </div>
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label class="form-label fw-bold">Passwort</label>
-              {{ form.password1 }}
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-bold">Passwort wiederholen</label>
-              {{ form.password2 }}
-            </div>
-          </div>
+    <div class="max-w-4xl mx-auto px-4 relative z-10 animate-reveal">
+        <!-- Header -->
+        <div class="mb-12">
+            <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                New <span class="text-glow">Member</span>
+            </h1>
+            <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Einen neuen Benutzer zum Orbit hinzufügen.</p>
+            <div class="h-1 w-24 bg-glow-orange mt-8 rounded-full"></div>
+        </div>
 
-          <hr class="my-4">
-          
-          <h5 class="fw-bold mb-3">Persönliche Daten & Status</h5>
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label class="form-label fw-bold">Vorname</label>
-              {{ form.first_name }}
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-bold">Nachname</label>
-              {{ form.last_name }}
-            </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-bold">E-Mail</label>
-            {{ form.email }}
-          </div>
+        <div class="glass-card p-10 md:p-16 rounded-[4rem] shadow-2xl">
+            <form method="post" class="space-y-12">
+                {% csrf_token %}
+                
+                <!-- Account Data -->
+                <section class="space-y-8">
+                    <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange">Access Credentials</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="md:col-span-2">
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Username</label>
+                            {{ form.username }}
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Master Key (Password)</label>
+                            {{ form.password1 }}
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Confirm Key</label>
+                            {{ form.password2 }}
+                        </div>
+                    </div>
+                </section>
 
-          <div class="row mb-4">
-            <div class="col-md-4">
-              <div class="form-check">
-                {{ form.is_staff }}
-                <label class="form-check-label fw-bold">{{ form.is_staff.label }}</label>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-check">
-                {{ form.is_superuser }}
-                <label class="form-check-label fw-bold">{{ form.is_superuser.label }}</label>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-check">
-                {{ form.email_verified }}
-                <label class="form-check-label fw-bold">{{ form.email_verified.label }}</label>
-              </div>
-            </div>
-          </div>
+                <hr class="border-white/5">
 
-          <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-primary btn-lg fw-bold">
-              ✓ Benutzer erstellen
-            </button>
-            <a href="{% url 'admin_stats' %}" class="btn btn-outline-secondary">
-              Abbrechen
-            </a>
-          </div>
-        </form>
-      </div>
+                <!-- Profile & Status -->
+                <section class="space-y-8">
+                    <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange">Identity & Status</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">First Name</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Last Name</label>
+                            {{ form.last_name }}
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Email Address</label>
+                            {{ form.email }}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+                        <div class="flex items-center space-x-4 p-6 glass rounded-2xl border-white/5 bg-white/[0.02]">
+                            {{ form.is_staff }}
+                            <label class="text-[10px] font-bold text-white uppercase tracking-widest">Admin</label>
+                        </div>
+                        <div class="flex items-center space-x-4 p-6 glass rounded-2xl border-white/5 bg-white/[0.02]">
+                            {{ form.is_superuser }}
+                            <label class="text-[10px] font-bold text-white uppercase tracking-widest">Staff</label>
+                        </div>
+                        <div class="flex items-center space-x-4 p-6 glass rounded-2xl border-white/5 bg-white/[0.02]">
+                            {{ form.email_verified }}
+                            <label class="text-[10px] font-bold text-white uppercase tracking-widest">Verified</label>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="pt-10 flex flex-col sm:flex-row gap-6">
+                    <button type="submit" class="btn-glow flex-grow py-5 rounded-2xl text-white font-black uppercase tracking-widest text-xs">
+                        🚀 Create Identity
+                    </button>
+                    <a href="{% url 'admin_stats' %}" class="px-10 py-5 glass border-white/5 rounded-2xl text-center text-white/30 hover:text-white transition-all text-xs font-bold uppercase tracking-widest">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}

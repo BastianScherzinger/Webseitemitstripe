@@ -1,57 +1,44 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Produkt löschen – Admin{% endblock %}
+{% block title %}Delete Drop – Luviq Admin{% endblock %}
 
 {% block content %}
-<div>
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Admin</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'admin_produkte_list' %}">Produkte</a></li>
-      <li class="breadcrumb-item active">{{ produkt.name }} löschen</li>
-    </ol>
-  </nav>
-  
-  <div class="row mt-4">
-    <div class="col-md-6 mx-auto">
-      <div class="card border-danger shadow-sm">
-        <div class="card-body p-5">
-          <h1 class="fw-bold text-danger mb-4">🗑️ Produkt löschen?</h1>
-          
-          <div class="alert alert-warning" role="alert">
-            <strong>⚠️ Warnung!</strong> Diese Aktion kann nicht rückgängig gemacht werden!
-          </div>
-          
-          <div class="card bg-light mb-4">
-            <div class="card-body">
-              <h5 class="card-title fw-bold">{{ produkt.name }}</h5>
-              <p class="card-text">{{ produkt.beschreibung|truncatewords:20 }}</p>
-              <p class="mb-0">
-                <strong>Preis:</strong> {{ produkt.preis|floatformat:2 }} €
-              </p>
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-2xl mx-auto px-4 relative z-10 animate-reveal">
+        <div class="glass-card p-12 md:p-20 rounded-[4rem] border-red-500/10 text-center shadow-[0_0_100px_rgba(239,68,68,0.1)]">
+            <div class="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-10">
+                <span class="text-5xl">🗑️</span>
             </div>
-          </div>
-          
-          <p class="text-muted mb-4">
-            Bist du sicher, dass du das Produkt "{{ produkt.name }}" löschen möchtest?
-          </p>
-          
-          <form method="post">
-            {% csrf_token %}
-            <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-danger fw-bold px-4">
-                ✓ Ja, löschen
-              </button>
-              <a href="{% url 'admin_produkte_list' %}" class="btn btn-outline-secondary fw-bold">
-                ← Abbrechen
-              </a>
+            
+            <h1 class="text-3xl md:text-4xl font-black heading-font text-white uppercase tracking-tighter mb-6">
+                Remove <span class="text-red-500">Drop</span>
+            </h1>
+            
+            <div class="glass p-6 rounded-2xl border-white/5 bg-white/[0.02] mb-10 text-left">
+                <h4 class="text-white font-bold mb-2">{{ produkt.name }}</h4>
+                <p class="text-white/30 text-[10px] uppercase tracking-widest">{{ produkt.preis }} €</p>
             </div>
-          </form>
+
+            <p class="text-white/50 leading-relaxed font-light mb-12">
+                Bist du sicher, dass du das Unikat <strong class="text-white">"{{ produkt.name }}"</strong> dauerhaft aus der Kollektion entfernen möchtest? 
+                <br><br>
+                <span class="text-[10px] uppercase tracking-[0.2em] text-red-400/60 font-bold">Diese Aktion ist endgültig.</span>
+            </p>
+            
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                <button type="submit" class="w-full py-5 rounded-2xl bg-red-500 text-white font-black uppercase tracking-widest text-xs hover:bg-red-600 transition-all shadow-2xl">
+                    ✓ Ja, Drop entfernen
+                </button>
+                <a href="{% url 'admin_produkte_list' %}" class="block w-full py-5 glass border-white/5 rounded-2xl text-white/30 hover:text-white transition-all text-xs font-bold uppercase tracking-widest">
+                    Abbrechen
+                </a>
+            </form>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 {% endblock %}

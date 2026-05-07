@@ -2,81 +2,84 @@
 {% load static %}
 {% load custom_tags %}
 
-{% block title %}Warenkorb von {{ view_user.username }} – Admin{% endblock %}
+{% block title %}Warenkorb: {{ view_user.username }} – Luviq Admin{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-10 mx-auto">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Admin</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'admin_stats' %}">Statistiken</a></li>
-        <li class="breadcrumb-item active">Warenkorb: {{ view_user.username }}</li>
-      </ol>
-    </nav>
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
 
-    <div class="card border-light shadow-sm">
-      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-        <h4 class="mb-0 fw-bold">🛒 Warenkorb von "{{ view_user.username }}"</h4>
-        <span class="badge bg-primary px-3 py-2">Total: {{ total|stringformat:".2f" }} €</span>
-      </div>
-      <div class="card-body p-0">
-        {% if enriched_items %}
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th class="ps-4">Produkt</th>
-                  <th class="text-center">Menge</th>
-                  <th class="text-end pe-4">Preis gesamt</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for entry in enriched_items %}
-                  <tr>
-                    <td class="ps-4 py-3">
-                      <div class="d-flex align-items-center">
-                        {% if entry.db_produkt and entry.db_produkt.bild %}
-                          <img src="{{ entry.db_produkt.bild.url }}" alt="{{ entry.item.produkt_name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 15px;">
-                        {% elif entry.item.produkt_bild %}
-                          {# Fallback zum gecachten Bild-String, stellen sicher dass es absolut ist #}
-                          <img src="{% if not entry.item.produkt_bild|slice:':1' == '/' %}/{% endif %}{{ entry.item.produkt_bild }}" alt="{{ entry.item.produkt_name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 15px;">
-                        {% else %}
-                          <div class="bg-light d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 5px; margin-right: 15px;">
-                            <small class="text-muted">N/A</small>
-                          </div>
-                        {% endif %}
-                        <div>
-                          <div class="fw-bold">{{ entry.item.produkt_name }}</div>
-                          <div class="text-muted small">Einzelpreis: {{ entry.item.produkt_preis }} €</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="text-center py-3">
-                      <span class="badge bg-light text-dark border">{{ entry.item.menge }}x</span>
-                    </td>
-                    <td class="text-end py-3 pe-4">
-                      <span class="fw-bold">{{ entry.item.produkt_preis|add:0|mul:entry.item.menge|stringformat:".2f" }} €</span>
-                    </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        {% else %}
-          <div class="text-center py-5">
-            <h1 class="display-1 text-muted">💨</h1>
-            <p class="lead text-muted">Dieser Warenkorb ist aktuell leer.</p>
-          </div>
-        {% endif %}
-      </div>
-      <div class="card-footer bg-white py-3 text-center">
-        <a href="{% url 'admin_stats' %}" class="btn btn-outline-secondary px-4">
-          ← Zurück zur Benutzerverwaltung
-        </a>
-      </div>
+    <div class="max-w-4xl mx-auto px-4 relative z-10 animate-reveal">
+        <!-- Header -->
+        <div class="mb-12 flex flex-col md:flex-row justify-between items-end gap-8">
+            <div>
+                <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                    Member <span class="text-glow">Cart</span>
+                </h1>
+                <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Inhalt von: {{ view_user.username }}</p>
+                <div class="h-1 w-24 bg-glow-orange mt-8 rounded-full"></div>
+            </div>
+            <div class="glass px-8 py-4 rounded-2xl border-white/5">
+                <span class="text-[10px] font-black uppercase tracking-widest text-white/30 block mb-1">Total Value</span>
+                <span class="text-2xl font-black text-glow">{{ total|stringformat:".2f" }} €</span>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-[4rem] overflow-hidden shadow-2xl">
+            {% if enriched_items %}
+                <div class="overflow-x-auto">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in enriched_items %}
+                            <tr class="group">
+                                <td>
+                                    <div class="flex items-center space-x-6">
+                                        <div class="w-16 h-16 rounded-xl overflow-hidden glass border-white/5">
+                                            {% if entry.db_produkt and entry.db_produkt.bild %}
+                                                <img src="{{ entry.db_produkt.bild.url }}" class="w-full h-full object-cover">
+                                            {% elif entry.item.produkt_bild %}
+                                                <img src="{% if not entry.item.produkt_bild|slice:':1' == '/' %}/{% endif %}{{ entry.item.produkt_bild }}" class="w-full h-full object-cover">
+                                            {% else %}
+                                                <div class="w-full h-full flex items-center justify-center text-white/10 text-xs">N/A</div>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-white">{{ entry.item.produkt_name }}</div>
+                                            <div class="text-[10px] text-white/20 uppercase tracking-widest mt-1">{{ entry.item.produkt_preis }} € / unit</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="glass px-4 py-2 rounded-xl text-xs font-bold text-white">{{ entry.item.menge }}x</span>
+                                </td>
+                                <td class="text-right">
+                                    <span class="font-black text-glow">{{ entry.item.produkt_preis|add:0|mul:entry.item.menge|stringformat:".2f" }} €</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="p-32 text-center">
+                    <div class="text-6xl mb-8 opacity-20">💨</div>
+                    <p class="text-white/20 italic font-light tracking-widest uppercase">Dieser Orbit ist aktuell leer...</p>
+                </div>
+            {% endif %}
+
+            <div class="p-10 border-t border-white/5 bg-white/[0.02]">
+                <a href="{% url 'admin_stats' %}" class="block w-full py-5 glass border-white/5 rounded-2xl text-center text-white/30 hover:text-white transition-all text-xs font-bold uppercase tracking-widest">
+                    ← Back to Management
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}
