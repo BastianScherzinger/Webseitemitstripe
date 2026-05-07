@@ -203,32 +203,38 @@ class ProduktForm(forms.ModelForm):
     
     class Meta:
         model = Produkt
-        fields = ('name', 'beschreibung', 'preis', 'bild', 'aktiv')
+        fields = ('name', 'beschreibung', 'preis', 'lagerbestand', 'bild', 'aktiv')
         labels = {
             'name': 'Produktname',
             'beschreibung': 'Beschreibung',
             'preis': 'Preis (€)',
+            'lagerbestand': 'Verfügbare Anzahl (Stock)',
             'bild': 'Produktbild',
             'aktiv': 'Aktiv (sichtbar im Shop)',
         }
         widgets = {
             'name': forms.TextInput(attrs={
-                'class': 'form-control',
+                'class': 'form-input',
                 'placeholder': 'z.B. Premium T-Shirt'
             }),
             'beschreibung': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'form-input',
                 'placeholder': 'Detaillierte Produktbeschreibung...',
                 'rows': 5
             }),
             'preis': forms.NumberInput(attrs={
-                'class': 'form-control',
+                'class': 'form-input',
                 'placeholder': '19.99',
                 'step': '0.01',
                 'min': '0'
             }),
+            'lagerbestand': forms.NumberInput(attrs={
+                'class': 'form-input',
+                'placeholder': '1',
+                'min': '0'
+            }),
             'bild': forms.FileInput(attrs={
-                'class': 'form-control',
+                'class': 'form-input',
                 'accept': 'image/*'
             }),
             'aktiv': forms.CheckboxInput(attrs={

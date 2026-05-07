@@ -110,7 +110,7 @@
                         <a href="{% url 'kontakt' %}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-white/70 hover:text-glow-orange transition-colors">Kontakt</a>
                         <a href="{% url 'ueber_uns' %}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-white/70 hover:text-glow-orange transition-colors">Über uns</a>
                         {% if user.is_staff %}
-                        <a href="/admin/" class="inline-flex items-center px-1 pt-1 text-sm font-black text-glow-orange hover:text-white transition-colors uppercase tracking-widest text-[10px]">Admin Area</a>
+                        <a href="{% url 'admin_dashboard' %}" class="inline-flex items-center px-1 pt-1 text-sm font-black text-glow-orange hover:text-white transition-colors uppercase tracking-widest text-[10px]">Dashboard</a>
                         {% endif %}
                     </div>
                 </div>

@@ -1,107 +1,95 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Admin Dashboard – Luviq-Shop{% endblock %}
+{% block title %}Admin Dashboard – Luviq Universe{% endblock %}
 
 {% block content %}
-<div>
-  <h1 class="mb-4">⚙️ Admin Dashboard</h1>
-  
-  <div class="row mb-4">
-    <div class="col-md-{% if is_admin %}3{% else %}6{% endif %}">
-      <div class="card border-light shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title fw-bold">📦 Produkte gesamt</h5>
-          <p class="card-text display-4 text-primary">{{ produkte_count }}</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-{% if is_admin %}3{% else %}6{% endif %}">
-      <div class="card border-light shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title fw-bold">✅ Aktive Produkte</h5>
-          <p class="card-text display-4 text-success">{{ aktive_count }}</p>
-        </div>
-      </div>
-    </div>
-    {% if is_admin %}
-    <div class="col-md-3">
-      <div class="card border-light shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title fw-bold">👥 Benutzer</h5>
-          <p class="card-text display-4 text-info">{{ user_count }}</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card border-light shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title fw-bold">📦 Bestellungen</h5>
-          <p class="card-text display-4 text-warning">{{ orders_count }}</p>
-        </div>
-      </div>
-    </div>
-    {% endif %}
-  </div>
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
 
-  <!-- Zahlungs-Status Übersicht (nur für Admin) -->
-  {% if is_admin %}
-  <div class="row mb-4">
-    <div class="col-md-4">
-      <div class="card border-success border-2 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title fw-bold">✅ Bezahlt</h5>
-          <p class="card-text display-5 text-success">{{ orders_paid }}</p>
+    <div class="max-w-7xl mx-auto px-4 relative z-10 animate-reveal">
+        <!-- Header -->
+        <div class="mb-12">
+            <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                Command <span class="text-glow">Center</span>
+            </h1>
+            <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Statusbericht & Kontrolle</p>
+            <div class="h-1 w-24 bg-glow-orange mt-8 rounded-full"></div>
         </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card border-warning border-2 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title fw-bold">⏳ Ausstehend</h5>
-          <p class="card-text display-5 text-warning">{{ orders_pending }}</p>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+            <div class="glass-card p-8 rounded-[2.5rem] border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Total Inventory</p>
+                <h4 class="text-3xl font-black text-white">{{ produkte_count }}</h4>
+            </div>
+            <div class="glass-card p-8 rounded-[2.5rem] border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Active Drops</p>
+                <h4 class="text-3xl font-black text-emerald-400">{{ aktive_count }}</h4>
+            </div>
+            {% if is_admin %}
+            <div class="glass-card p-8 rounded-[2.5rem] border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-2">Total Orders</p>
+                <h4 class="text-3xl font-black text-glow-orange">{{ orders_count }}</h4>
+            </div>
+            <div class="glass-card p-8 rounded-[2.5rem] border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Member Base</p>
+                <h4 class="text-3xl font-black text-white">{{ user_count }}</h4>
+            </div>
+            {% endif %}
         </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card border-danger border-2 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title fw-bold">❌ Fehlgeschlagen</h5>
-          <p class="card-text display-5 text-danger">{{ orders_failed }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-  
-  <div class="card border-light shadow-sm">
-    <div class="card-body">
-      <h5 class="card-title fw-bold mb-4">🛠️ Admin-Funktionen</h5>
-      
-      <div class="list-group">
-        <a href="{% url 'admin_produkt_upload' %}" class="list-group-item list-group-item-action">
-          <h6 class="mb-1">➕ Neues Produkt hochladen</h6>
-          <p class="mb-0 text-muted small">Füge ein neues Produkt zum Shop hinzu</p>
-        </a>
-        
-        <a href="{% url 'admin_produkte_list' %}" class="list-group-item list-group-item-action">
-          <h6 class="mb-1">📋 Alle Produkte verwalten</h6>
-          <p class="mb-0 text-muted small">Bearbeite oder lösche bestehende Produkte</p>
-        </a>
 
         {% if is_admin %}
-        <a href="{% url 'admin_stats' %}" class="list-group-item list-group-item-action">
-          <h6 class="mb-1">📊 Statistiken & Benutzerverwaltung</h6>
-          <p class="mb-0 text-muted small">Umfassende Übersicht und Userverwaltung</p>
-        </a>
+        <!-- Order Status -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="glass-card p-8 rounded-[2.5rem] border-emerald-500/10 border bg-emerald-500/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Bezahlt</p>
+                <h4 class="text-2xl font-black text-white">{{ orders_paid }}</h4>
+            </div>
+            <div class="glass-card p-8 rounded-[2.5rem] border-glow-orange/10 border bg-glow-orange/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-2">Ausstehend</p>
+                <h4 class="text-2xl font-black text-white">{{ orders_pending }}</h4>
+            </div>
+            <div class="glass-card p-8 rounded-[2.5rem] border-red-500/10 border bg-red-500/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-red-400 mb-2">Fehlgeschlagen</p>
+                <h4 class="text-2xl font-black text-white">{{ orders_failed }}</h4>
+            </div>
+        </div>
         {% endif %}
-        
-        <a href="{% url 'home' %}" class="list-group-item list-group-item-action">
-          <h6 class="mb-1">🏠 Zur Startseite</h6>
-          <p class="mb-0 text-muted small">Zurück zum Shop</p>
-        </a>
-      </div>
+
+        <!-- Navigation Hub -->
+        <div class="glass-card p-10 md:p-14 rounded-[4rem] shadow-2xl">
+            <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-10">Control Interface</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <a href="{% url 'admin_produkt_upload' %}" class="group p-8 glass rounded-[2.5rem] border-white/5 hover:bg-white/5 transition-all">
+                    <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">➕</div>
+                    <h4 class="text-lg font-bold text-white mb-2">New Product Drop</h4>
+                    <p class="text-white/30 text-[10px] uppercase tracking-widest leading-relaxed">Füge ein neues handbemaltes Unikat zum Katalog hinzu.</p>
+                </a>
+
+                <a href="{% url 'admin_produkte_list' %}" class="group p-8 glass rounded-[2.5rem] border-white/5 hover:bg-white/5 transition-all">
+                    <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">📋</div>
+                    <h4 class="text-lg font-bold text-white mb-2">Inventory Sync</h4>
+                    <p class="text-white/30 text-[10px] uppercase tracking-widest leading-relaxed">Verwalte, bearbeite oder deaktiviere bestehende Kollektionen.</p>
+                </a>
+
+                {% if is_admin %}
+                <a href="{% url 'admin_stats' %}" class="group p-8 glass rounded-[2.5rem] border-white/5 hover:bg-white/5 transition-all">
+                    <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">📊</div>
+                    <h4 class="text-lg font-bold text-white mb-2">Deep Analytics</h4>
+                    <p class="text-white/30 text-[10px] uppercase tracking-widest leading-relaxed">Benutzerverwaltung & detaillierte Verkaufsstatistiken.</p>
+                </a>
+                {% endif %}
+
+                <a href="{% url 'home' %}" class="group p-8 glass rounded-[2.5rem] border-white/5 hover:bg-white/5 transition-all">
+                    <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">🏠</div>
+                    <h4 class="text-lg font-bold text-white mb-2">Public View</h4>
+                    <p class="text-white/30 text-[10px] uppercase tracking-widest leading-relaxed">Zurück zur öffentlichen Shop-Ansicht.</p>
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}
