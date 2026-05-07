@@ -131,9 +131,14 @@
                                         </a>
                                         
                                         <!-- Newsletter (Always) -->
-                                        <a href="{% url 'admin_resend_newsletter' produkt.id %}" class="w-9 h-9 glass rounded-lg flex items-center justify-center hover:bg-glow-orange/20 transition-all {% if not produkt.newsletter_gesendet %}opacity-40{% endif %}" title="Send/Resend Newsletter">
-                                            📧
-                                        </a>
+                                        <div class="flex flex-col gap-1">
+                                            <a href="{% url 'admin_resend_newsletter' produkt.id %}" class="w-9 h-9 glass rounded-lg flex items-center justify-center hover:bg-glow-orange/20 transition-all {% if not produkt.newsletter_gesendet %}opacity-40{% endif %}" title="Send/Resend Newsletter">
+                                                📧
+                                            </a>
+                                            {% if produkt.newsletter_gesendet %}
+                                            <a href="{% url 'admin_newsletter_reset' produkt.id %}" class="text-[7px] text-white/20 uppercase font-bold hover:text-red-400 transition-colors text-center">Reset</a>
+                                            {% endif %}
+                                        </div>
 
                                         <!-- Toggle Status -->
                                         <a href="{% url 'admin_produkt_toggle' produkt.id %}" class="w-9 h-9 glass rounded-lg flex items-center justify-center transition-all {% if produkt.aktiv %}hover:bg-red-500/20 text-red-400{% else %}hover:bg-emerald-500/20 text-emerald-400{% endif %}" title="{% if produkt.aktiv %}Deaktivieren{% else %}Aktivieren{% endif %}">

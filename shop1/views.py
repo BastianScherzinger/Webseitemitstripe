@@ -539,9 +539,12 @@ def checkout(request):
         
         # Bestellung erstellen
         try:
+            payment_method = request.POST.get('payment_method', 'paypal')
+            
             order = Order.objects.create(
                 user=request.user,
                 status='pending',
+                payment_method=payment_method,
                 vorname=vorname,
                 nachname=nachname,
                 email=email,
@@ -553,7 +556,7 @@ def checkout(request):
                 gesamt_betrag=gesamt_betrag,
             )
             
-            # Merke ob Rabatt genutzt wurde in der Session für PayPal-Anzeige (optional)
+            # Merke ob Rabatt genutzt wurde
             request.session['order_rabatt'] = float(rabatt_wert) if hat_rabatt else 0
             
             # Order Items erstellen
@@ -565,7 +568,33 @@ def checkout(request):
                     menge=item.menge,
                 )
             
-            # Auf Payment-Seite weiterleiten
+            # Spezielle Logik für Abholung (Friend-Mode)
+            if payment_method == 'pickup':
+                order.status = 'processing' # Sofort in Bearbeitung
+                order.save()
+                
+                # Artikel deaktivieren (1-of-1)
+                for item in order.items.all():
+                    db_produkt = Produkt.objects.filter(name=item.produkt_name).first()
+                    if db_produkt:
+                        db_produkt.aktiv = False
+                        db_produkt.save()
+                
+                messages.success(request, '🤝 Mission gestartet! (Abholung gewählt)')
+                return redirect('payment_success', order_id=order.id)
+                
+            # Spezielle Logik für Überweisung
+            elif payment_method == 'bank_transfer':
+                # Email mit Bankverbindung senden
+                try:
+                    send_bank_details_email(order)
+                except:
+                    pass
+                
+                messages.info(request, '🏛️ Mission gestartet! Bitte schließe die Überweisung ab.')
+                return redirect('payment_success', order_id=order.id)
+
+            # Standard: PayPal
             return redirect('payment', order_id=order.id)
             
         except Exception as e:
@@ -652,6 +681,7 @@ def paypal_capture(request, order_id):
             db_produkt = Produkt.objects.filter(name=item.produkt_name).first()
             if db_produkt:
                 db_produkt.lagerbestand = max(0, db_produkt.lagerbestand - item.menge)
+                db_produkt.aktiv = False # Artikel nach Verkauf deaktivieren (1-of-1)
                 db_produkt.save()
         
         # Bestätigungs-Email senden
@@ -720,6 +750,30 @@ def send_order_confirmation_email(order):
     
 
     send_brevo_email(subject, html_content, order.email, recipient_name=f"{order.vorname} {order.nachname}", text_content=text_content)
+
+
+def send_bank_details_email(order):
+    """Sendet Bankverbindung bei Wahl von Überweisung"""
+    subject = f'Zahlungsinformationen für Bestellung #{order.id}'
+    html_content = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif;">
+            <h2>Hallo {order.vorname},</h2>
+            <p>vielen Dank für deine Bestellung bei Luviq!</p>
+            <p>Du hast <strong>Überweisung</strong> als Zahlungsart gewählt. Bitte überweise den Gesamtbetrag auf folgendes Konto:</p>
+            <div style="background: #f4f4f4; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <p><strong>Kontoinhaber:</strong> Luisa Brehler</p>
+                <p><strong>IBAN:</strong> DE12 3456 7890 1234 5678 90 (BEISPIEL)</p>
+                <p><strong>BIC:</strong> XXXXXXXXXXX</p>
+                <p><strong>Verwendungszweck:</strong> Bestellung #{order.id}</p>
+                <p><strong>Betrag:</strong> {float(order.gesamt_betrag):.2f} €</p>
+            </div>
+            <p>Sobald die Zahlung eingegangen ist, wird dein Unikat für den Versand vorbereitet.</p>
+            <p>Herzliche Grüße,<br>Luisa Brehler</p>
+        </body>
+    </html>
+    """
+    send_brevo_email(subject, html_content, order.email, recipient_name=f"{order.vorname} {order.nachname}")
 
 
 @csrf_exempt

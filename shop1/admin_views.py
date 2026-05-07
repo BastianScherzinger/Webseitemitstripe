@@ -220,6 +220,16 @@ def admin_produkt_toggle(request, produkt_id):
 
 
 @admin_required
+def admin_newsletter_reset(request, produkt_id):
+    """Setzt den Newsletter-Status eines Produkts zurück."""
+    produkt = get_object_or_404(Produkt, id=produkt_id)
+    produkt.newsletter_gesendet = False
+    produkt.save()
+    messages.success(request, f'✅ Newsletter-Status für "{produkt.name}" wurde zurückgesetzt.')
+    return redirect('admin_produkte_list')
+
+
+@admin_required
 def admin_resend_newsletter(request, produkt_id):
     """Ermöglicht das manuelle erneute Senden eines Newsletters für ein Produkt."""
     produkt = get_object_or_404(Produkt, id=produkt_id)
@@ -406,6 +416,15 @@ def admin_order_detail(request, order_id):
         if new_status in dict(Order.STATUS_CHOICES):
             order.status = new_status
             order.save()
+            
+            # Wenn auf "Bezahlt" gesetzt wird -> Artikel deaktivieren
+            if new_status == 'paid':
+                for item in order.items.all():
+                    db_produkt = Produkt.objects.filter(name=item.produkt_name).first()
+                    if db_produkt:
+                        db_produkt.aktiv = False
+                        db_produkt.save()
+            
             messages.success(request, f'✅ Status für Bestellung #{order.id} wurde auf "{order.get_status_display()}" aktualisiert!')
             return redirect('admin_order_detail', order_id=order.id)
             

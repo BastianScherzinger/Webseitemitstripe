@@ -128,8 +128,15 @@ class Order(models.Model):
         ('cancelled', 'Abgebrochen / Storniert'),
     ]
     
+    PAYMENT_METHODS = [
+        ('paypal', 'PayPal'),
+        ('bank_transfer', 'Überweisung'),
+        ('pickup', 'Abholung (Lokal)'),
+    ]
+    
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     paypal_order_id = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS, default='paypal')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     
     # Lieferdaten
