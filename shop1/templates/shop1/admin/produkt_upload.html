@@ -9,6 +9,22 @@
     <div class="energy-nebula"></div>
 
     <div class="max-w-4xl mx-auto px-4 relative z-10 animate-reveal">
+        <!-- Quick Category Nav -->
+        <div class="flex flex-wrap gap-4 mb-12">
+            <a href="{% url 'admin_dashboard' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Overview
+            </a>
+            <a href="{% url 'admin_produkte_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Inventory
+            </a>
+            <a href="{% url 'admin_stats' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Analytics & Members
+            </a>
+            <a href="{% url 'admin_produkt_upload' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all {% if request.resolver_match.url_name == 'admin_produkt_upload' %}bg-glow-orange{% endif %}">
+                New Drop
+            </a>
+        </div>
+
         <!-- Header -->
         <div class="mb-12">
             <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">

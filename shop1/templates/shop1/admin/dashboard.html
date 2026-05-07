@@ -72,20 +72,20 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <a href="{% url 'admin_produkt_upload' %}" class="group p-8 glass rounded-[2.5rem] border-white/5 hover:bg-white/5 transition-all">
                     <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">➕</div>
-                    <h4 class="text-lg font-bold text-white mb-2">New Product Drop</h4>
+                    <h4 class="text-lg font-bold text-white mb-2">New Drop</h4>
                     <p class="text-white/30 text-[10px] uppercase tracking-widest leading-relaxed">Füge ein neues handbemaltes Unikat zum Katalog hinzu.</p>
                 </a>
 
                 <a href="{% url 'admin_produkte_list' %}" class="group p-8 glass rounded-[2.5rem] border-white/5 hover:bg-white/5 transition-all">
                     <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">📋</div>
-                    <h4 class="text-lg font-bold text-white mb-2">Inventory Sync</h4>
+                    <h4 class="text-lg font-bold text-white mb-2">Inventory</h4>
                     <p class="text-white/30 text-[10px] uppercase tracking-widest leading-relaxed">Verwalte, bearbeite oder deaktiviere bestehende Kollektionen.</p>
                 </a>
 
                 {% if is_admin %}
                 <a href="{% url 'admin_stats' %}" class="group p-8 glass rounded-[2.5rem] border-white/5 hover:bg-white/5 transition-all">
                     <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">📊</div>
-                    <h4 class="text-lg font-bold text-white mb-2">Deep Analytics</h4>
+                    <h4 class="text-lg font-bold text-white mb-2">Analytics & Members</h4>
                     <p class="text-white/30 text-[10px] uppercase tracking-widest leading-relaxed">Benutzerverwaltung & detaillierte Verkaufsstatistiken.</p>
                 </a>
                 {% endif %}

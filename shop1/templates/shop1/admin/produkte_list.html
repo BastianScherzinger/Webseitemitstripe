@@ -67,6 +67,7 @@
                                 <th>Price</th>
                                 <th>Stock</th>
                                 <th>Status</th>
+                                <th>Newsletter</th>
                                 <th class="text-center">Edit</th>
                             </tr>
                         </thead>
@@ -103,6 +104,19 @@
                                         <span class="text-[9px] font-black uppercase text-white/20 flex items-center gap-2">
                                             <span class="w-1.5 h-1.5 rounded-full bg-white/20"></span>
                                             Offline
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if produkt.newsletter_gesendet %}
+                                        <span class="text-[9px] font-black uppercase text-glow-orange flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-glow-orange shadow-[0_0_8px_rgba(255,106,0,0.5)]"></span>
+                                            Sent
+                                        </span>
+                                    {% else %}
+                                        <span class="text-[9px] font-black uppercase text-white/10 flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white/10"></span>
+                                            Not Sent
                                         </span>
                                     {% endif %}
                                 </td>
