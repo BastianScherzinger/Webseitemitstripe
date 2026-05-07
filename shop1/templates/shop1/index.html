@@ -38,19 +38,19 @@
     <!-- Features Section -->
     <section class="py-32 relative z-10">
         <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div class="glass-card p-12 rounded-[2rem] product-card group" x-data="{ shown: false }" x-intersect="shown = true" :class="shown ? 'visible' : 'scroll-reveal'">
+            <div class="scroll-reveal glass-card p-12 rounded-[2rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                 <div class="text-4xl mb-8 group-hover:scale-125 transition-transform duration-500">🚀</div>
                 <h3 class="text-2xl font-bold heading-font text-white mb-4">Hyper-Speed Delivery</h3>
                 <p class="text-white/40 leading-relaxed">Versand in Lichtgeschwindigkeit. Kostenlos ab einem Bestellwert von 50€.</p>
             </div>
 
-            <div class="glass-card p-12 rounded-[2rem] product-card group" x-data="{ shown: false }" x-intersect.margin.-100px="shown = true" :class="shown ? 'visible' : 'scroll-reveal'" style="transition-delay: 0.1s;">
+            <div class="scroll-reveal glass-card p-12 rounded-[2rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
                 <div class="text-4xl mb-8 group-hover:scale-125 transition-transform duration-500">🔒</div>
                 <h3 class="text-2xl font-bold heading-font text-white mb-4">Secure Network</h3>
                 <p class="text-white/40 leading-relaxed">Verschlüsselte Zahlungen und absoluter Datenschutz in unserem Shop.</p>
             </div>
 
-            <div class="glass-card p-12 rounded-[2rem] product-card group" x-data="{ shown: false }" x-intersect.margin.-200px="shown = true" :class="shown ? 'visible' : 'scroll-reveal'" style="transition-delay: 0.2s;">
+            <div class="scroll-reveal glass-card p-12 rounded-[2rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
                 <div class="text-4xl mb-8 group-hover:scale-125 transition-transform duration-500">💎</div>
                 <h3 class="text-2xl font-bold heading-font text-white mb-4">Exzellenz</h3>
                 <p class="text-white/40 leading-relaxed">Jedes Stück in unserem Sortiment wird nach höchsten Standards geprüft.</p>
@@ -62,7 +62,7 @@
     <section class="py-32 relative z-10">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-                <div x-data="{ shown: false }" x-intersect="shown = true" :class="shown ? 'visible' : 'scroll-reveal'">
+                <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                     <h2 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">Unsere Highlights</h2>
                     <div class="h-1 w-24 bg-glow-orange rounded-full"></div>
                 </div>
@@ -71,10 +71,10 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {% for produkt in produkte_galerie %}
-                <div class="glass-card rounded-[2.5rem] product-card overflow-hidden" 
+                <div class="scroll-reveal glass-card rounded-[2.5rem] product-card overflow-hidden" 
                      x-data="{ shown: false }" 
-                     x-intersect.margin.-50px="shown = true" 
-                     :class="shown ? 'visible' : 'scroll-reveal'"
+                     x-intersect.once="shown = true" 
+                     :class="{ 'visible': shown }"
                      style="transition-delay: 0.{{ forloop.counter0 }}s">
                     <div class="relative h-80 overflow-hidden bg-space-dark/50">
                         {% if produkt.bild %}
@@ -108,7 +108,7 @@
     <!-- CTA Section -->
     <section class="py-48 relative overflow-hidden">
         <div class="max-w-4xl mx-auto px-4 relative z-10">
-            <div class="glass-card p-16 md:p-24 rounded-[4rem] text-center shadow-[0_0_100px_rgba(255,106,0,0.1)]" x-data="{ shown: false }" x-intersect="shown = true" :class="shown ? 'visible' : 'scroll-reveal'">
+            <div class="scroll-reveal glass-card p-16 md:p-24 rounded-[4rem] text-center shadow-[0_0_100px_rgba(255,106,0,0.1)]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                 <h2 class="text-4xl md:text-6xl font-black heading-font text-white mb-8">INITIATE <span class="text-glow">MEMBERSHIP</span></h2>
                 <p class="text-lg text-white/50 mb-12 max-w-xl mx-auto">Sichere dir 10% Rabatt auf dein erstes Shopping-Erlebnis im Luviq Universe.</p>
                 <div class="flex flex-col sm:flex-row gap-4">

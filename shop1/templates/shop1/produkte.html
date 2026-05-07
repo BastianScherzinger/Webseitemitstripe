@@ -10,7 +10,7 @@
 
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <!-- Header -->
-        <div class="mb-20 animate-reveal">
+        <div class="mb-20 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
             <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                 Unsere <span class="text-glow">Kollektion</span>
             </h1>
@@ -21,10 +21,10 @@
         <!-- Product Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
             {% for produkt in produkte_liste %}
-            <div class="glass-card rounded-[3rem] product-card flex flex-col group"
+            <div class="scroll-reveal glass-card rounded-[3rem] product-card flex flex-col group"
                  x-data="{ shown: false }" 
-                 x-intersect.margin.-50px="shown = true" 
-                 :class="shown ? 'visible' : 'scroll-reveal'"
+                 x-intersect.once="shown = true" 
+                 :class="{ 'visible': shown }"
                  style="transition-delay: 0.{{ forloop.counter0 }}s">
 
                 <!-- Image Container -->
