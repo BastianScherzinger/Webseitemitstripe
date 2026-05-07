@@ -1,129 +1,114 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Zahlung{% endblock %}
+{% block title %}Payment – Luviq Universe{% endblock %}
 
 {% block content %}
-  <div class="container">
-    <h1 class="mb-4">💳 Zahlung</h1>
-    
-    <div class="row">
-      <div class="col-lg-8">
-        <!-- Zahlungsformular -->
-        <div class="card border-light shadow-sm">
-          <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">💳 Zahlungsmethode</h5>
-          </div>
-          <div class="card-body">
-              
-              <!-- PayPal Button Container -->
-              <div class="mb-4">
-                <label class="form-label fw-bold">Bezahlen mit PayPal oder Kreditkarte</label>
-                <div id="paypal-button-container"></div>
-              </div>
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
 
-              <!-- Fehleranzeige -->
-              <div id="payment-errors" class="alert alert-danger mt-2" style="display: none;"></div>
+    <div class="max-w-7xl mx-auto px-4 relative z-10 animate-reveal">
+        <!-- Header -->
+        <div class="mb-16">
+            <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                Secure <span class="text-glow">Transfer</span>
+            </h1>
+            <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Verschlüsselung der Transaktion.</p>
+        </div>
 
-              <!-- Lieferadressen-Übersicht -->
-              <div class="mb-4">
-                <h6 class="fw-bold mb-3">📍 Lieferadresse</h6>
-                <p class="mb-1">
-                  <strong>{{ order.vorname }} {{ order.nachname }}</strong><br>
-                  {{ order.adresse }}<br>
-                  {{ order.postleitzahl }} {{ order.stadt }}<br>
-                  {{ order.land }}<br>
-                  {% if order.telefon %}
-                    <small class="text-muted">Tel: {{ order.telefon }}</small>
-                  {% endif %}
-                </p>
-              </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Payment Section -->
+            <div class="lg:col-span-2 space-y-8">
+                <div class="glass-card rounded-[3.5rem] p-10 md:p-12 shadow-2xl">
+                    <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-10">💳 Auth Method</h3>
+                    
+                    <!-- PayPal Container -->
+                    <div class="p-8 glass rounded-[2.5rem] border-white/5 mb-10 bg-white/[0.02]">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-6 text-center">PayPal Security Gateway</label>
+                        <div id="paypal-button-container" class="relative z-10"></div>
+                        <div id="payment-errors" class="mt-6 p-4 rounded-xl glass border-red-500/30 text-red-400 text-xs text-center font-medium" style="display: none;"></div>
+                    </div>
 
-              <!-- Bestellübersicht -->
-              <div class="mb-4">
-                <h6 class="fw-bold mb-3">📦 Bestellübersicht</h6>
-                <table class="table table-sm table-borderless">
-                  <tbody>
-                    {% for item in order.items.all %}
-                      <tr>
-                        <td>{{ item.menge }}x {{ item.produkt_name }}</td>
-                        <td class="text-end">{{ item.gesamt_preis|floatformat:2 }} €</td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                  <tfoot>
-                    <tr class="border-top">
-                      <td><strong>Gesamt:</strong></td>
-                      <td class="text-end"><strong style="color: var(--primary); font-size: 1.1em;">{{ order.gesamt_betrag|floatformat:2 }} €</strong></td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
+                    <!-- Summary Info -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 pt-10 border-t border-white/5">
+                        <div>
+                            <h4 class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-4">📍 Destination</h4>
+                            <p class="text-white/60 text-xs leading-relaxed">
+                                <strong class="text-white">{{ order.vorname }} {{ order.nachname }}</strong><br>
+                                {{ order.adresse }}<br>
+                                {{ order.postleitzahl }} {{ order.stadt }}<br>
+                                {{ order.land }}
+                            </p>
+                        </div>
+                        <div>
+                            <h4 class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-4">🛡️ Security</h4>
+                            <p class="text-white/40 text-[10px] leading-relaxed uppercase tracking-widest">
+                                Deine Daten werden direkt über das PayPal-Netzwerk verschlüsselt. Wir speichern keine sensiblen Informationen.
+                            </p>
+                        </div>
+                    </div>
 
-              <!-- Sicherheitshinweis -->
-              <div class="alert alert-info small mb-4">
-                <i class="bi bi-shield-check"></i>
-                <strong>Sicher:</strong> Deine Zahlungsdaten werden direkt von PayPal verarbeitet. Wir speichern keine Zahlungsdaten.
-              </div>
+                    <div class="mt-12">
+                        <a href="{% url 'payment_cancel' %}" class="block w-full py-4 glass border-white/5 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest text-white/30 hover:text-white hover:bg-white/5 transition-all">
+                            ← Cancel Transaction
+                        </a>
+                    </div>
 
-              <!-- Abbrechen-Link -->
-              <a href="{% url 'payment_cancel' %}" class="btn btn-outline-secondary fw-bold w-100 mt-2">← Zahlung Abbrechen</a>
-
-            <!-- Verarbeitungs-Spinner -->
-            <div id="loading" style="display: none;" class="text-center mt-4">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Wird verarbeitet...</span>
-              </div>
-              <p class="mt-2 text-muted">Zahlungsprozess läuft...</p>
+                    <!-- Processing Spinner -->
+                    <div id="loading" style="display: none;" class="mt-12 text-center">
+                        <div class="inline-block w-12 h-12 border-4 border-glow-orange border-t-transparent rounded-full animate-spin"></div>
+                        <p class="mt-4 text-[10px] font-black uppercase tracking-widest text-glow-orange">Syncing with Orbit...</p>
+                    </div>
+                </div>
             </div>
-          </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-8">
+                <div class="glass-card p-10 rounded-[3rem] sticky top-28">
+                    <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-8">Mission Details</h3>
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-white/30 uppercase tracking-widest">Mission ID</span>
+                            <span class="text-white font-bold">#{{ order.id }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-white/30 uppercase tracking-widest">Status</span>
+                            <span class="text-glow-orange font-bold uppercase tracking-widest">Awaiting Auth</span>
+                        </div>
+                        <hr class="border-white/5">
+                        <div class="space-y-4">
+                            {% for item in order.items.all %}
+                                <div class="flex justify-between items-center text-[10px]">
+                                    <span class="text-white/50 uppercase tracking-widest">{{ item.menge }}x {{ item.produkt_name }}</span>
+                                    <span class="text-white font-bold">{{ item.gesamt_preis|floatformat:2 }} €</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <hr class="border-white/5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/30">Total Value</span>
+                            <span class="text-3xl font-black text-glow">{{ order.gesamt_betrag|floatformat:2 }} €</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <!-- Bestellzusammenfassung (Sidebar) -->
-      <div class="col-lg-4">
-        <div class="card border-light shadow-sm sticky-top" style="top: 20px;">
-          <div class="card-header bg-light">
-            <h5 class="mb-0">💰 Zahlungsdetails</h5>
-          </div>
-          <div class="card-body">
-            <p class="small text-muted mb-3">
-              <strong>Bestellnummer:</strong><br>
-              #{{ order.id }}
-            </p>
-            
-            <hr>
-            
-            <p class="small text-muted mb-3">
-              <strong>Betrag:</strong><br>
-              <span style="color: var(--primary); font-size: 1.3em;" class="fw-bold">{{ order.gesamt_betrag|floatformat:2 }} €</span>
-            </p>
-
-            <hr>
-
-            <p class="small text-muted mb-0">
-              <strong>Status:</strong><br>
-              <span class="badge bg-warning">Ausstehend</span>
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <!-- PayPal JavaScript SDK -->
-  <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR"></script>
-  
-  <script>
+<!-- PayPal JavaScript SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR"></script>
+
+<script>
     paypal.Buttons({
       style: {
         layout: 'vertical',
-        color: 'blue',
-        shape: 'rect',
+        color: 'gold',
+        shape: 'pill',
         label: 'paypal'
       },
 
-      // Bestellung bei PayPal erstellen
       createOrder: function(data, actions) {
         return actions.order.create({
           purchase_units: [{
@@ -131,17 +116,15 @@
               value: '{{ order.gesamt_betrag|floatformat:"2u" }}',
               currency_code: 'EUR'
             },
-            description: 'Bestellung #{{ order.id }}'
+            description: 'Mission #{{ order.id }}'
           }]
         });
       },
 
-      // Zahlung wurde genehmigt
       onApprove: function(data, actions) {
         document.getElementById('loading').style.display = 'block';
         
         return actions.order.capture().then(function(details) {
-          // Zahlung an unseren Server melden
           fetch('/paypal/capture/{{ order.id }}/', {
             method: 'POST',
             headers: {
@@ -162,24 +145,22 @@
             }
           })
           .catch(error => {
-            document.getElementById('payment-errors').textContent = 'Verbindungsfehler. Bitte versuche es erneut.';
+            document.getElementById('payment-errors').textContent = 'Sync Error. Please retry.';
             document.getElementById('payment-errors').style.display = 'block';
             document.getElementById('loading').style.display = 'none';
           });
         });
       },
 
-      // Fehlerbehandlung
       onError: function(err) {
-        document.getElementById('payment-errors').textContent = 'PayPal-Fehler: ' + err;
+        document.getElementById('payment-errors').textContent = 'Gateway Error: ' + err;
         document.getElementById('payment-errors').style.display = 'block';
       },
 
-      // Abbruch
       onCancel: function(data) {
-        document.getElementById('payment-errors').textContent = 'Zahlung wurde abgebrochen.';
+        document.getElementById('payment-errors').textContent = 'Transmission cancelled.';
         document.getElementById('payment-errors').style.display = 'block';
       }
     }).render('#paypal-button-container');
-  </script>
+</script>
 {% endblock %}

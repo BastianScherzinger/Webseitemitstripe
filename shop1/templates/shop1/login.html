@@ -1,73 +1,59 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Login – Luviq Universe{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-4">
+<div class="relative min-h-[80vh] flex items-center justify-center pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
 
-    <div class="card shadow-sm border-light mt-5">
-      <div class="card-header bg-light text-dark border-bottom">
-        <h3 class="mb-0 text-center">🔐 Anmelden</h3>
-      </div>
-      <div class="card-body p-4">
-
-        <form method="post">
-          {% csrf_token %}  <!-- IMMER! Sicherheit -->
-
-          <!-- Benutzername -->
-          <div class="mb-3">
-            <label class="form-label fw-bold">👤 Benutzername</label>
-            <input
-              type="text"
-              name="username"
-              class="form-control"
-              placeholder="Dein Benutzername"
-              required
-            >
-          </div>
-
-          <!-- Passwort -->
-          <div class="mb-3">
-            <label class="form-label fw-bold">🔒 Passwort</label>
-            <input
-              type="password"
-              name="password"
-              class="form-control"
-              placeholder="Dein Passwort"
-              required
-            >
-          </div>
-
-          <!-- Fehler anzeigen -->
-          {% if error %}
-            <div class="alert alert-danger border-light">
-              ⚠️ {{ error }}
+    <div class="max-w-md w-full px-4 relative z-10 animate-reveal">
+        <div class="text-center mb-12">
+            <div class="h-20 w-20 rounded-full glass mx-auto flex items-center justify-center p-4 mb-8 shadow-[0_0_40px_rgba(255,106,0,0.2)]">
+                <img class="h-full w-auto" src="{% static 'shop1/images/logo-luviq.jpeg' %}" alt="Logo">
             </div>
-          {% endif %}
-          {% if form.errors %}
-            <div class="alert alert-danger border-light">
-              ⚠️ Fehler beim Anmelden. Bitte versuchen Sie es erneut.
+            <h1 class="text-4xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                Initiate <span class="text-glow">Access</span>
+            </h1>
+            <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Willkommen zurück im Orbit.</p>
+        </div>
+
+        <div class="glass-card p-10 md:p-12 rounded-[3.5rem] shadow-2xl relative">
+            <form method="post" class="space-y-8">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange mb-4">Identity</label>
+                    <input type="text" name="username" placeholder="BENUTZERNAME" class="w-full form-input rounded-2xl px-6 py-4 text-sm" required>
+                </div>
+                
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange mb-4">Security Key</label>
+                    <input type="password" name="password" placeholder="PASSWORT" class="w-full form-input rounded-2xl px-6 py-4 text-sm" required>
+                </div>
+
+                {% if error or form.errors %}
+                <div class="glass p-4 rounded-2xl border-red-500/30 text-red-400 text-xs text-center font-medium">
+                    ⚠️ Authentifizierung fehlgeschlagen.
+                </div>
+                {% endif %}
+
+                <button type="submit" class="w-full btn-glow py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm shadow-2xl">
+                    ✓ Authorize Access
+                </button>
+            </form>
+
+            <div class="mt-12 pt-8 border-t border-white/5 space-y-4">
+                <p class="text-center text-[10px] uppercase tracking-widest text-white/30">
+                    Noch keine ID? 
+                    <a href="{% url 'register' %}" class="text-glow-orange font-black ml-1 hover:underline">Registrieren</a>
+                </p>
+                <p class="text-center">
+                    <a href="{% url 'password_reset' %}" class="text-[10px] uppercase tracking-widest text-white/20 hover:text-white transition-colors">Key vergessen?</a>
+                </p>
             </div>
-          {% endif %}
-
-          <button type="submit" class="btn btn-primary w-100 fw-bold">
-            ✓ Einloggen
-          </button>
-        </form>
-
-        <hr class="my-4">
-        <p class="text-center mb-0">
-          Noch kein Account?
-          <a href="{% url 'register' %}" class="fw-bold">Jetzt registrieren</a>
-        </p>
-        
-        <p class="text-center mt-3 mb-0">
-          <a href="{% url 'password_reset' %}" class="text-muted small">Passwort vergessen?</a>
-        </p>
-
-      </div>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}

@@ -1,90 +1,76 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Über uns{% endblock %}
+{% block title %}Über uns – Luviq Universe{% endblock %}
 
 {% block content %}
-  <div>
-    <h1 class="mb-4">ℹ️ Über uns</h1>
-    
-    <div class="row mt-4">
-      <div class="col-md-8">
-        <div class="card border-light shadow-sm mb-4">
-          <div class="card-header bg-light text-dark border-bottom">
-            <h4 class="mb-0 fw-bold">🏢 Willkommen bei Luviq-Shop</h4>
-          </div>
-          <div class="card-body">
-            <p>
-              Wir sind ein moderner Online-Shop, der sich auf hochwertige Produkte spezialisiert hat. 
-              Mit über 10 Jahren Erfahrung in der Branche bieten wir unseren Kunden nur das Beste.
-            </p>
-            
-            <h5 class="mt-4 fw-bold">🎯 Unsere Mission</h5>
-            <p>
-              Unsere Mission ist es, jedem Kunden ein einzigartiges Einkaufserlebnis zu bieten. 
-              Dabei legen wir Wert auf Qualität, Service und Nachhaltigkeit.
-            </p>
-            
-            <h5 class="mt-4 fw-bold">⭐ Warum uns vertrauen?</h5>
-            <ul class="list-unstyled">
-              <li class="mb-2">✅ Hochwertige Produkte von namhaften Herstellern</li>
-              <li class="mb-2">✅ Schnelle und kostenlose Lieferung ab 50€</li>
-              <li class="mb-2">✅ 30 Tage Rückgaberecht</li>
-              <li class="mb-2">✅ Zertifiziert und sicher</li>
-              <li class="mb-2">✅ 24/7 Kundenservice</li>
-            </ul>
-          </div>
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <!-- Header -->
+        <div class="mb-20 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                Our <span class="text-glow">Mission</span>
+            </h1>
+            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">Pioniere im digitalen Orbit.</p>
+            <div class="h-1 w-32 bg-glow-orange mt-8 rounded-full"></div>
         </div>
 
-        <div class="card border-light shadow-sm">
-          <div class="card-header bg-light text-dark border-bottom">
-            <h5 class="mb-0 fw-bold">👥 Unser Team</h5>
-          </div>
-          <div class="card-body">
-            <p>
-              Unser engagiertes Team arbeitet täglich daran, deinen Einkauf zu einer angenehmen Erfahrung zu machen. 
-              Wir sind leidenschaftlich bei dem, was wir tun, und freuen uns, dir helfen zu können.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="card border-light shadow-sm mb-3">
-          <div class="card-header bg-light text-dark border-bottom">
-            <h5 class="mb-0 fw-bold">📍 Kontakt</h5>
-          </div>
-          <div class="card-body">
-            <p class="mb-3">
-              <strong>📧 E-Mail:</strong><br>
-              <a href="mailto:info@luviq-shop.de" class="fw-bold">info@luviq-shop.de</a>
-            </p>
-            <p class="mb-3">
-              <strong>📞 Telefon:</strong><br>
-              <a href="tel:+491234567890" class="fw-bold">+49 (0) 30 123456</a>
-            </p>
-            <p class="mb-0">
-              <strong>🏠 Adresse:</strong><br>
-              Luviq-Shop GmbH<br>
-              Musterstraße 123<br>
-              12345 Berlin<br>
-              Deutschland
-            </p>
-          </div>
-        </div>
-
-        <div class="card border-light shadow-sm">
-          <div class="card-header bg-light text-dark border-bottom">
-            <h5 class="mb-0 fw-bold">🔗 Folge uns</h5>
-          </div>
-          <div class="card-body">
-            <div class="d-grid gap-2">
-              <a href="#" class="btn btn-outline-primary btn-sm fw-bold">Facebook</a>
-              <a href="#" class="btn btn-outline-primary btn-sm fw-bold">Instagram</a>
-              <a href="#" class="btn btn-outline-primary btn-sm fw-bold">Twitter</a>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <div class="glass-card p-12 md:p-16 rounded-[4rem]">
+                    <h2 class="text-3xl font-bold heading-font text-white mb-8">Willkommen im Luviq Universe</h2>
+                    <p class="text-white/50 leading-relaxed text-lg mb-8 font-light">
+                        Wir sind mehr als nur ein Shop. Wir sind eine Vision von Qualität und futuristischem Design. Mit über 10 Jahren Erfahrung im digitalen Handel kuratieren wir Objekte, die exklusiv, langlebig und einzigartig sind.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-6">
+                            <span class="text-3xl">🎯</span>
+                            <div>
+                                <h4 class="text-white font-bold mb-2">Unsere Vision</h4>
+                                <p class="text-white/40 text-sm">Jedem Kunden ein transzendentes Einkaufserlebnis zu ermöglichen.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-6">
+                            <span class="text-3xl">⭐</span>
+                            <div>
+                                <h4 class="text-white font-bold mb-2">Exzellenz</h4>
+                                <p class="text-white/40 text-sm">Nur handverlesene Premium-Produkte schaffen es in unseren Orbit.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+
+            <div class="grid grid-cols-2 gap-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+                <div class="glass-card p-8 rounded-[2.5rem] text-center">
+                    <div class="text-4xl mb-4">💎</div>
+                    <h4 class="text-white font-bold mb-2 text-sm uppercase tracking-widest">Qualität</h4>
+                </div>
+                <div class="glass-card p-8 rounded-[2.5rem] text-center">
+                    <div class="text-4xl mb-4">🚀</div>
+                    <h4 class="text-white font-bold mb-2 text-sm uppercase tracking-widest">Speed</h4>
+                </div>
+                <div class="glass-card p-8 rounded-[2.5rem] text-center">
+                    <div class="text-4xl mb-4">🛡️</div>
+                    <h4 class="text-white font-bold mb-2 text-sm uppercase tracking-widest">Security</h4>
+                </div>
+                <div class="glass-card p-8 rounded-[2.5rem] text-center">
+                    <div class="text-4xl mb-4">✨</div>
+                    <h4 class="text-white font-bold mb-2 text-sm uppercase tracking-widest">Magic</h4>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <div class="mt-32 glass-card p-16 rounded-[4rem] text-center scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <h3 class="text-3xl font-bold heading-font text-white mb-8 uppercase tracking-widest">Unser Team</h3>
+            <p class="text-white/50 max-w-2xl mx-auto leading-relaxed">
+                Hinter Luviq steht ein internationales Team aus Designern, Entwicklern und Visionären, die täglich daran arbeiten, die Grenzen des Möglichen zu verschieben.
+            </p>
+        </div>
     </div>
-  </div>
+</div>
 {% endblock %}

@@ -1,83 +1,110 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Warenkorb{% endblock %}
+{% block title %}Warenkorb – Luviq Universe{% endblock %}
 
 {% block content %}
-  <div>
-    <h1 class="mb-4">🛒 Warenkorb</h1>
-    
-    {% if warenkorb_items %}
-      <div class="card border-light shadow-sm">
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead>
-              <tr>
-                <th class="fw-bold">🏷️ Produkt</th>
-                <th class="fw-bold text-end">💵 Preis</th>
-                <th class="fw-bold text-center">📦 Menge</th>
-                <th class="fw-bold text-end">💰 Gesamt</th>
-                <th class="fw-bold text-center">Aktion</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in warenkorb_items %}
-                <tr>
-                  <td class="align-middle">
-                    <div class="d-flex align-items-center gap-3">
-                      {% if item.bild %}
-                        <img src="{{ item.bild }}" alt="{{ item.name }}" class="rounded shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
-                      {% else %}
-                        <div class="rounded shadow-sm bg-light d-flex align-items-center justify-content-center text-muted" style="width: 50px; height: 50px;">
-                          <i class="bi bi-image"></i>
-                        </div>
-                      {% endif %}
-                      <span class="fw-bold">{{ item.name }}</span>
-                    </div>
-                  </td>
-                  <td class="text-end align-middle">{{ item.preis|floatformat:2 }} €</td>
-                  <td class="text-center align-middle">
-                    <form method="post" action="{% url 'update_cart' item.name %}" class="d-inline-flex align-items-center gap-1">
-                      {% csrf_token %}
-                      <input type="number" name="menge" value="{{ item.menge }}" min="1" max="99" 
-                             class="form-control form-control-sm text-center" style="width: 70px;">
-                      <button type="submit" class="btn btn-sm btn-outline-primary">↻</button>
-                    </form>
-                  </td>
-                  <td class="text-end fw-bold align-middle" style="color: var(--primary);">{{ item.gesamt|floatformat:2 }} €</td>
-                  <td class="text-center align-middle">
-                    <a href="{% url 'remove_from_cart' item.name %}" class="btn btn-sm btn-outline-danger">
-                      🗑️ Entfernen
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-6xl mx-auto px-4 relative z-10 animate-reveal">
+        <!-- Header -->
+        <div class="mb-16">
+            <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                Your <span class="text-glow">Orbit</span>
+            </h1>
+            <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Bereit zum Checkout?</p>
+        </div>
+
+        {% if warenkorb_items %}
+            <div class="glass-card rounded-[3rem] overflow-hidden shadow-2xl mb-12">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-white/5">
+                                <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-glow-orange">Produkt</th>
+                                <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-glow-orange text-center">Menge</th>
+                                <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-glow-orange text-right">Gesamt</th>
+                                <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-glow-orange text-center">Aktion</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            {% for item in warenkorb_items %}
+                                <tr class="group hover:bg-white/[0.02] transition-colors">
+                                    <td class="px-8 py-8">
+                                        <div class="flex items-center space-x-6">
+                                            {% if item.bild %}
+                                                <div class="w-20 h-20 rounded-2xl overflow-hidden glass">
+                                                    <img src="{{ item.bild }}" alt="{{ item.name }}" class="w-full h-full object-cover">
+                                                </div>
+                                            {% else %}
+                                                <div class="w-20 h-20 rounded-2xl glass flex items-center justify-center text-white/10">
+                                                    📦
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <h4 class="text-white font-bold heading-font">{{ item.name }}</h4>
+                                                <p class="text-white/30 text-xs mt-1">{{ item.preis|floatformat:2 }} € / Stück</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-8 py-8">
+                                        <form method="post" action="{% url 'update_cart' item.name %}" class="flex items-center justify-center space-x-3">
+                                            {% csrf_token %}
+                                            <input type="number" name="menge" value="{{ item.menge }}" min="1" max="99" 
+                                                   class="w-16 bg-white/5 border border-white/10 rounded-xl px-2 py-2 text-center text-white text-sm focus:outline-none focus:border-glow-orange">
+                                            <button type="submit" class="p-2 glass rounded-xl hover:bg-glow-orange transition-all" title="Aktualisieren">
+                                                ↻
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td class="px-8 py-8 text-right">
+                                        <span class="text-xl font-black text-glow">{{ item.gesamt|floatformat:2 }} €</span>
+                                    </td>
+                                    <td class="px-8 py-8 text-center">
+                                        <a href="{% url 'remove_from_cart' item.name %}" class="text-white/30 hover:text-red-400 transition-colors" title="Entfernen">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-end">
+                <div>
+                    <a href="{% url 'produkte' %}" class="inline-flex items-center px-8 py-4 glass border-white/10 rounded-2xl text-white font-bold uppercase tracking-widest text-xs hover:bg-white/5 transition-all">
+                        ← Weiter einkaufen
                     </a>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      
-      <div class="card border-light shadow-sm mt-4 p-4">
-        <div class="row align-items-center">
-          <div class="col-md-8">
-            <h4 class="mb-0 fw-bold">💰 Gesamtsumme:</h4>
-          </div>
-          <div class="col-md-4 text-end">
-            <h3 class="mb-0 fw-bold" style="color: var(--primary);">{{ gesamt|floatformat:2 }} €</h3>
-          </div>
-        </div>
-      </div>
-      
-      <div class="mt-4 d-flex gap-2 justify-content-end">
-        <a href="{% url 'produkte' %}" class="btn btn-outline-primary fw-bold">👈 Weiter einkaufen</a>
-        <a href="{% url 'checkout' %}" class="btn btn-primary fw-bold px-4">✓ Zur Kasse</a>
-      </div>
-    {% else %}
-      <div class="alert alert-info p-4">
-        <h5 class="mb-2">🛒 Warenkorb ist leer</h5>
-        <p class="mb-3">Dein Warenkorb enthält derzeit keine Produkte.</p>
-        <a href="{% url 'produkte' %}" class="btn btn-primary fw-bold">🛍️ Produkte ansehen</a>
-      </div>
-    {% endif %}
-  </div>
+                </div>
+                <div class="glass-card p-10 md:p-12 rounded-[3.5rem] shadow-2xl">
+                    <div class="flex justify-between items-center mb-8">
+                        <span class="text-xs font-black uppercase tracking-widest text-white/40">Gesamtsumme</span>
+                        <span class="text-4xl font-black text-glow">{{ gesamt|floatformat:2 }} €</span>
+                    </div>
+                    <a href="{% url 'checkout' %}" class="block w-full btn-glow py-5 rounded-[2rem] text-white font-black uppercase tracking-widest text-sm text-center shadow-2xl">
+                        ✓ Proceed to Checkout
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="glass-card p-24 rounded-[4rem] text-center shadow-2xl">
+                <div class="text-6xl mb-8 opacity-20">🛒</div>
+                <h2 class="text-3xl font-bold heading-font text-white mb-6 uppercase tracking-widest">Orbit ist leer</h2>
+                <p class="text-white/30 mb-12 max-w-sm mx-auto font-light leading-relaxed">
+                    Deine Mission hat noch keine Objekte erfasst. Entdecke unsere Kollektion.
+                </p>
+                <a href="{% url 'produkte' %}" class="btn-glow px-12 py-5 rounded-full text-white font-black uppercase tracking-widest text-sm inline-block shadow-2xl">
+                    Kollektion ansehen
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

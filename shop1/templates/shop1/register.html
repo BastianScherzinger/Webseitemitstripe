@@ -1,134 +1,152 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Registrieren{% endblock %}
+{% block title %}Registrieren – Luviq Universe{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Ensure Django form fields match our theme */
+    input, select, textarea {
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border-radius: 1rem !important;
+        padding: 0.75rem 1rem !important;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+        border-color: var(--accent-orange) !important;
+        box-shadow: 0 0 15px rgba(255, 106, 0, 0.1) !important;
+        outline: none !important;
+    }
+    label {
+        display: block;
+        font-size: 10px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--accent-orange);
+        margin-bottom: 0.5rem;
+    }
+    legend {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 1.5rem;
+        font-size: 1.25rem;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
 
-<div>
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow-sm border-light">
-        <div class="card-header bg-light text-dark border-bottom">
-          <h3 class="mb-0">📋 Neuen Account erstellen</h3>
+    <div class="max-w-3xl mx-auto px-4 relative z-10 animate-reveal">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                Join the <span class="text-glow">Mission</span>
+            </h1>
+            <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Erstelle deine Luviq ID.</p>
         </div>
-        <div class="card-body p-4">
-          
 
+        <div class="glass-card p-8 md:p-16 rounded-[4rem] shadow-2xl">
+            <form method="post" class="space-y-12">
+                {% csrf_token %}
 
-          <form method="post">
-            {% csrf_token %}
+                <!-- Benutzerdaten -->
+                <fieldset>
+                    <legend>👤 Identity Base</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            {{ form.username.label_tag }}
+                            {{ form.username }}
+                            {% if form.username.errors %}<p class="text-red-400 text-[10px] mt-2 uppercase">{{ form.username.errors.as_text }}</p>{% endif %}
+                        </div>
+                        <div>
+                            {{ form.email.label_tag }}
+                            {{ form.email }}
+                            {% if form.email.errors %}<p class="text-red-400 text-[10px] mt-2 uppercase">{{ form.email.errors.as_text }}</p>{% endif %}
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <div>
+                            {{ form.password1.label_tag }}
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}<p class="text-red-400 text-[10px] mt-2 uppercase">{{ form.password1.errors.as_text }}</p>{% endif %}
+                        </div>
+                        <div>
+                            {{ form.password2.label_tag }}
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}<p class="text-red-400 text-[10px] mt-2 uppercase">{{ form.password2.errors.as_text }}</p>{% endif %}
+                        </div>
+                    </div>
+                </fieldset>
 
-            <!-- Benutzerdaten -->
-            <fieldset class="mb-4">
-              <legend class="fs-6 fw-bold mb-3">👤 Benutzerdaten</legend>
-              
-              {% if form.username.errors %}
-                <div class="alert alert-danger alert-sm">{{ form.username.errors }}</div>
-              {% endif %}
-              <div class="mb-3">
-                {{ form.username }}
-              </div>
+                <!-- Persönliche Daten -->
+                <fieldset>
+                    <legend>ℹ️ Biometric Data</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            {{ form.first_name.label_tag }}
+                            {{ form.first_name }}
+                        </div>
+                        <div>
+                            {{ form.last_name.label_tag }}
+                            {{ form.last_name }}
+                        </div>
+                        <div>
+                            {{ form.telefon.label_tag }}
+                            {{ form.telefon }}
+                        </div>
+                        <div>
+                            {{ form.land.label_tag }}
+                            {{ form.land }}
+                        </div>
+                    </div>
+                </fieldset>
 
-              {% if form.email.errors %}
-                <div class="alert alert-danger alert-sm">{{ form.email.errors }}</div>
-              {% endif %}
-              <div class="mb-3">
-                {{ form.email }}
-              </div>
+                <!-- Adressdaten -->
+                <fieldset>
+                    <legend>🏠 Location Sync</legend>
+                    <div class="space-y-6">
+                        <div>
+                            {{ form.adresse.label_tag }}
+                            {{ form.adresse }}
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                {{ form.postleitzahl.label_tag }}
+                                {{ form.postleitzahl }}
+                            </div>
+                            <div>
+                                {{ form.stadt.label_tag }}
+                                {{ form.stadt }}
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
 
-              {% if form.password1.errors %}
-                <div class="alert alert-danger alert-sm">{{ form.password1.errors }}</div>
-              {% endif %}
-              <div class="mb-3">
-                {{ form.password1 }}
-                <small class="form-text text-muted d-block mt-2">
-                  ✓ Mindestens 8 Zeichen<br>
-                  ✓ Nicht nur Zahlen<br>
-                  ✓ Keine trivalen Passwörter
-                </small>
-              </div>
-
-              {% if form.password2.errors %}
-                <div class="alert alert-danger alert-sm">{{ form.password2.errors }}</div>
-              {% endif %}
-              <div class="mb-3">
-                {{ form.password2 }}
-              </div>
-            </fieldset>
-
-            <!-- Persönliche Daten -->
-            <fieldset class="mb-4">
-              <legend class="fs-6 fw-bold mb-3">ℹ️ Persönliche Daten</legend>
-              
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    {{ form.first_name }}
-                  </div>
+                <!-- Buttons -->
+                <div class="flex flex-col sm:flex-row gap-6 pt-8 border-t border-white/5">
+                    <button type="submit" class="flex-1 btn-glow py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm shadow-2xl">
+                        ✓ Create Account
+                    </button>
+                    <a href="{% url 'home' %}" class="flex-1 py-5 rounded-2xl glass border-white/10 text-white font-bold uppercase tracking-widest text-sm hover:bg-white/5 transition-all text-center flex items-center justify-center">
+                        Abort
+                    </a>
                 </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    {{ form.last_name }}
-                  </div>
-                </div>
-              </div>
 
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    {{ form.telefon }}
-                  </div>
+                <div class="text-center pt-8">
+                    <p class="text-[10px] uppercase tracking-widest text-white/30">
+                        Bereits Teil des Universums? 
+                        <a href="{% url 'login' %}" class="text-glow-orange font-black ml-1 hover:underline">Login</a>
+                    </p>
                 </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    {{ form.land }}
-                  </div>
-                </div>
-              </div>
-            </fieldset>
-
-            <!-- Adressdaten -->
-            <fieldset class="mb-4">
-              <legend class="fs-6 fw-bold mb-3">🏠 Adressdaten</legend>
-              
-              <div class="mb-3">
-                {{ form.adresse }}
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    {{ form.postleitzahl }}
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    {{ form.stadt }}
-                  </div>
-                </div>
-              </div>
-            </fieldset>
-
-            <!-- Buttons -->
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-primary fw-bold">
-                ✓ Account erstellen
-              </button>
-              <a href="{% url 'home' %}" class="btn btn-outline-secondary">
-                Abbrechen
-              </a>
-            </div>
-
-            <hr class="my-4">
-            <p class="text-center mb-0">
-              Bereits ein Account?
-              <a href="{% url 'login' %}" class="fw-bold">Jetzt anmelden</a>
-            </p>
-          </form>
+            </form>
         </div>
-      </div>
     </div>
-  </div>
 </div>
-
 {% endblock %}

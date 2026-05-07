@@ -1,145 +1,107 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Kontakt{% endblock %}
+{% block title %}Kontakt – Luviq Universe{% endblock %}
 
 {% block content %}
-  <div>
-    <h1 class="mb-4">📧 Kontakt</h1>
-    
-    <div class="row">
-      <!-- Kontaktformular -->
-      <div class="col-md-8">
-        <div class="card border-light shadow-sm">
-          <div class="card-header bg-light text-dark border-bottom">
-            <h4 class="mb-0">✉️ Schreib uns eine Nachricht</h4>
-          </div>
-          <div class="card-body p-4">
-            <form method="post">
-              {% csrf_token %}
-              <div class="mb-3">
-                <label class="form-label fw-bold">Dein Name</label>
-                <input type="text" class="form-control" name="name" placeholder="z.B. Max Mustermann" required>
-              </div>
-              
-              <div class="mb-3">
-                <label class="form-label fw-bold">Deine E-Mail</label>
-                <input type="email" class="form-control" name="email" placeholder="max@beispiel.de" required>
-              </div>
-              
-              <div class="mb-3">
-                <label class="form-label fw-bold">Betreff</label>
-                <input type="text" class="form-control" name="betreff" placeholder="Worum geht es?" required>
-              </div>
-              
-              <div class="mb-3">
-                <label class="form-label fw-bold">Nachricht</label>
-                <textarea class="form-control" name="nachricht" rows="5" placeholder="Schreib deine Nachricht hier..." required></textarea>
-              </div>
-              
-              <button type="submit" class="btn btn-primary btn-lg fw-bold">📤 Senden</button>
-            </form>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Kontaktdaten vom Unternehmen -->
-      <div class="col-md-4">
-        <div class="card border-light shadow-sm mb-3">
-          <div class="card-header bg-light text-dark border-bottom">
-            <h5 class="mb-0">📍 Adresse</h5>
-          </div>
-          <div class="card-body">
-            <p class="mb-0">
-              <strong>Luviq-Shop GmbH</strong><br>
-              Musterstraße 123<br>
-              12345 Berlin<br>
-              Deutschland
-            </p>
-          </div>
-        </div>
-        
-        <div class="card border-light shadow-sm mb-3">
-          <div class="card-header bg-light text-dark border-bottom">
-            <h5 class="mb-0">📞 Telefon</h5>
-          </div>
-          <div class="card-body">
-            <a href="tel:+491234567890" class="btn btn-outline-primary btn-sm w-100 fw-bold">
-              +49 (0) 30 123456
-            </a>
-          </div>
-        </div>
-        
-        <div class="card border-light shadow-sm mb-3">
-          <div class="card-header bg-light text-dark border-bottom">
-            <h5 class="mb-0">📧 E-Mail</h5>
-          </div>
-          <div class="card-body">
-            <a href="mailto:info@luviq-shop.de" class="btn btn-outline-primary btn-sm w-100 fw-bold">
-              info@luviq-shop.de
-            </a>
-          </div>
-        </div>
-        
-        <div class="card border-light shadow-sm">
-          <div class="card-header bg-light text-dark border-bottom">
-            <h5 class="mb-0">⏰ Öffnungszeiten</h5>
-          </div>
-          <div class="card-body">
-            <p class="mb-0 small">
-              <strong>Mo - Fr:</strong> 09:00 - 18:00<br>
-              <strong>Sa:</strong> 10:00 - 16:00<br>
-              <strong>So:</strong> Geschlossen
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
 
-    <!-- FAQ Section -->
-    <div class="row mt-5">
-      <div class="col-md-12">
-        <h3 class="mb-4">❓ Häufig gestellte Fragen</h3>
-        <div class="accordion" id="faqAccordion">
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                Wie lange dauert die Lieferung?
-              </button>
-            </h2>
-            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                Die Lieferung dauert normalerweise 2-3 Werktage. Bei Bestellungen ab 18:00 Uhr beginnt die Bearbeitung am nächsten Werktag.
-              </div>
-            </div>
-          </div>
-          
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                Wie kann ich eine Bestellung stornieren?
-              </button>
-            </h2>
-            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                Kontaktiere uns innerhalb von 24 Stunden nach der Bestellung. Wir kümmern uns schnell darum!
-              </div>
-            </div>
-          </div>
-          
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                Welche Zahlungsmethoden akzeptiert ihr?
-              </button>
-            </h2>
-            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                Wir akzeptieren: Kreditkarte, PayPal, Banküberweisung und Apple Pay. Alle Zahlungen sind verschlüsselt.
-              </div>
-            </div>
-          </div>
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <!-- Header -->
+        <div class="mb-20 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                Get in <span class="text-glow">Touch</span>
+            </h1>
+            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">Wir antworten schneller als das Licht.</p>
+            <div class="h-1 w-32 bg-glow-orange mt-8 rounded-full"></div>
         </div>
-      </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
+            <!-- Contact Form -->
+            <div class="lg:col-span-2 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
+                <div class="glass-card rounded-[3.5rem] p-10 md:p-16">
+                    <form method="post" class="space-y-8">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Dein Name</label>
+                                <input type="text" name="name" placeholder="Eingabe..." class="w-full form-input rounded-2xl px-6 py-4" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Deine E-Mail</label>
+                                <input type="email" name="email" placeholder="Eingabe..." class="w-full form-input rounded-2xl px-6 py-4" required>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Betreff</label>
+                            <input type="text" name="betreff" placeholder="Worum geht es?" class="w-full form-input rounded-2xl px-6 py-4" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Nachricht</label>
+                            <textarea name="nachricht" rows="6" placeholder="Schreib uns..." class="w-full form-input rounded-2xl px-6 py-4 resize-none" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="w-full btn-glow py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm shadow-2xl">
+                            📤 Nachricht Absenden
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sidebar Info -->
+            <div class="space-y-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+                <div class="glass-card p-10 rounded-[3rem] border-white/5">
+                    <h4 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Zentrale</h4>
+                    <p class="text-white/60 leading-relaxed font-light">
+                        <strong class="text-white">Luviq Universe HQ</strong><br>
+                        Musterstraße 123<br>
+                        12345 Berlin, DE
+                    </p>
+                </div>
+
+                <div class="glass-card p-10 rounded-[3rem] border-white/5">
+                    <h4 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Channels</h4>
+                    <div class="space-y-4">
+                        <a href="tel:+4930123456" class="block text-white/60 hover:text-white transition-colors flex items-center group">
+                            <span class="mr-3 p-3 glass rounded-xl group-hover:bg-glow-orange transition-all">📞</span>
+                            +49 (0) 30 123456
+                        </a>
+                        <a href="mailto:info@luviq.universe" class="block text-white/60 hover:text-white transition-colors flex items-center group">
+                            <span class="mr-3 p-3 glass rounded-xl group-hover:bg-glow-orange transition-all">📧</span>
+                            info@luviq.universe
+                        </a>
+                    </div>
+                </div>
+
+                <div class="glass-card p-10 rounded-[3rem] border-white/5">
+                    <h4 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Status</h4>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Operationell: 24/7</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="mt-32 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <h3 class="text-3xl font-black heading-font text-white uppercase tracking-tighter mb-12">Frequent <span class="text-glow">Queries</span></h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="glass-card p-10 rounded-[2.5rem]">
+                    <h4 class="text-lg font-bold text-white mb-4">Wie lange dauert die Lieferung?</h4>
+                    <p class="text-white/40 leading-relaxed font-light">Normalerweise 2-3 Werktage innerhalb der lokalen Galaxie.</p>
+                </div>
+                <div class="glass-card p-10 rounded-[2.5rem]">
+                    <h4 class="text-lg font-bold text-white mb-4">Zahlungsmethoden?</h4>
+                    <p class="text-white/40 leading-relaxed font-light">PayPal, Kreditkarte, und Krypto-Transfers werden akzeptiert.</p>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
 {% endblock %}
