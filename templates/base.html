@@ -5,7 +5,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Luviq-Shop{% endblock %}</title>
+    <title>{% block title %}Luviq Universe – Unique Upcycling Art{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Luviq Universe: Handbemalte 1-of-1 Unikate. Nachhaltige Upcycling-Mode und exklusive Kunst aus dem Orbit. Entdecke einzigartige Designs.{% endblock %}">
+    <meta name="keywords" content="Luviq, Upcycling, Art, Fashion, 1-of-1, Nachhaltigkeit, Kunst, Mode, Unikate, Luisa Brehler">
+    <meta name="author" content="Luisa Brehler">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="Luviq Universe – Unique Upcycling Art">
+    <meta property="og:description" content="Entdecke handbemalte Unikate und exklusive Upcycling-Mode. Jedes Teil ein Einzelstück aus dem Luviq Orbit.">
+    <meta property="og:image" content="{% static 'shop1/images/logo-luviq.jpeg' %}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Luviq Universe">
+    <meta property="twitter:description" content="Unique Upcycling Art & Fashion. Explore the Luviq Orbit.">
+
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="{% static 'shop1/images/flavicon.jpeg' %}">
     <link rel="shortcut icon" type="image/jpeg" href="{% static 'shop1/images/flavicon.jpeg' %}">

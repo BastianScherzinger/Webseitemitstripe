@@ -832,6 +832,64 @@ def newsletter_subscribe(request):
     return JsonResponse({'error': 'Invalid request'}, status=405)
 
 
+# ═══ SEO & TECHNISCHES SEO ═══
+
+from django.contrib.sitemaps import Sitemap
+from django.urls import reverse
+
+def robots_txt(request):
+    """Erzeugt die robots.txt Datei für Suchmaschinen."""
+    lines = [
+        "User-agent: *",
+        "Disallow: /shop-admin/",
+        "Disallow: /profil/",
+        "Disallow: /warenkorb/",
+        "Disallow: /checkout/",
+        "Disallow: /verify/",
+        f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}"
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
+def sitemap_xml(request):
+    """Erzeugt eine dynamische sitemap.xml."""
+    base_url = request.build_absolute_uri('/')[:-1]
+    
+    # Statische Seiten
+    pages = [
+        {'loc': '', 'priority': '1.0', 'changefreq': 'daily'},
+        {'loc': reverse('produkte'), 'priority': '0.9', 'changefreq': 'daily'},
+        {'loc': reverse('gaestebuch'), 'priority': '0.8', 'changefreq': 'daily'},
+        {'loc': reverse('kontakt'), 'priority': '0.7', 'changefreq': 'monthly'},
+        {'loc': reverse('ueber_uns'), 'priority': '0.7', 'changefreq': 'monthly'},
+        {'loc': reverse('impressum'), 'priority': '0.3', 'changefreq': 'yearly'},
+        {'loc': reverse('datenschutz'), 'priority': '0.3', 'changefreq': 'yearly'},
+        {'loc': reverse('agb'), 'priority': '0.3', 'changefreq': 'yearly'},
+    ]
+    
+    # Dynamische Produkte
+    for produkt in Produkt.objects.filter(aktiv=True):
+        pages.append({
+            'loc': reverse('produkt_detail', args=[produkt.id]),
+            'priority': '0.8',
+            'changefreq': 'weekly'
+        })
+
+    xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    
+    for page in pages:
+        xml_content += '  <url>\n'
+        xml_content += f'    <loc>{base_url}{page["loc"]}</loc>\n'
+        xml_content += f'    <priority>{page["priority"]}</priority>\n'
+        xml_content += f'    <changefreq>{page["changefreq"]}</changefreq>\n'
+        xml_content += '  </url>\n'
+        
+    xml_content += '</urlset>'
+    
+    return HttpResponse(xml_content, content_type="application/xml")
+
+
 # ═══ GÄSTEBUCH & KOMMENTARE ═══
 
 from .models import Comment

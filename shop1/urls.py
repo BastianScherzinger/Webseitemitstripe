@@ -52,6 +52,10 @@ urlpatterns = [
     path('agb/', views.agb, name='agb'),
     path('newsletter/subscribe/', views.newsletter_subscribe, name='newsletter_subscribe'),
     
+    # ═══ SEO ═══
+    path('robots.txt', views.robots_txt, name='robots_txt'),
+    path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
+
     # ═══ GÄSTEBUCH & KOMMENTARE ═══
     path('gaestebuch/', views.gaestebuch, name='gaestebuch'),
     path('comment/add/', views.comment_add, name='comment_add'),

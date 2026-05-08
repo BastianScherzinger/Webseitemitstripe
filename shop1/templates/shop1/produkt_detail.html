@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block title %}{{ produkt.name }} – Luviq Universe{% endblock %}
+{% block meta_description %}{{ produkt.beschreibung|truncatewords:25 }}{% endblock %}
 
 {% block content %}
 <div class="relative min-h-screen pt-20 pb-32">
