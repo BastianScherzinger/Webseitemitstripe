@@ -39,7 +39,7 @@ def product_manager_required(view_func):
     """Decorator - 'Admins' (is_staff) ODER 'Superuser' (is_superuser) können zugreifen"""
     @wraps(view_func)
     def wrapped(request, *args, **kwargs):
-        if not (is_admin(request.user) or is_superuser(request.user)):
+        if not (is_admin(request.user) or is_staff_member(request.user)):
             messages.error(request, 'Du hast keine Berechtigung für die Produktverwaltung.')
             return redirect('home')
         return view_func(request, *args, **kwargs)

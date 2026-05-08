@@ -15,16 +15,16 @@
                 Overview
             </a>
             <a href="{% url 'admin_orders_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
-                Mission Control
+                Bestellungen verwalten
             </a>
             <a href="{% url 'admin_produkte_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
-                Inventory
+                Inventar
             </a>
             <a href="{% url 'admin_stats' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all {% if request.resolver_match.url_name == 'admin_stats' %}bg-glow-orange{% endif %}">
-                Analytics & Members
+                Statistiken & User
             </a>
             <a href="{% url 'admin_produkt_upload' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
-                New Drop
+                Neuer Drop
             </a>
         </div>
 
@@ -166,6 +166,19 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Admin Footer Nav -->
+        <div class="mt-20 pt-10 border-t border-white/5 flex flex-wrap justify-center gap-12">
+            <a href="{% url 'admin_orders_list' %}" class="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-glow-orange transition-all">
+                📦 Bestellungen verwalten
+            </a>
+            <a href="{% url 'admin_produkte_list' %}" class="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-glow-orange transition-all">
+                📋 Inventar
+            </a>
+            <a href="{% url 'admin_dashboard' %}" class="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-glow-orange transition-all">
+                🏠 Dashboard Übersicht
+            </a>
         </div>
     </div>
 </div>

@@ -15,7 +15,7 @@
                 Overview
             </a>
             <a href="{% url 'admin_orders_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
-                Mission Control
+                Bestellungen verwalten
             </a>
             <a href="{% url 'admin_produkte_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
                 Inventory
@@ -93,12 +93,37 @@
                 </a>
                 {% endif %}
 
+                <a href="{% url 'admin_orders_list' %}" class="group p-8 glass rounded-[2.5rem] border-white/5 hover:bg-white/5 transition-all">
+                    <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">📦</div>
+                    <h4 class="text-lg font-bold text-white mb-2">Bestellungen verwalten</h4>
+                    <p class="text-white/30 text-[10px] uppercase tracking-widest leading-relaxed">Status prüfen, Versand vorbereiten oder Bestellungen löschen.</p>
+                </a>
+
                 <a href="{% url 'home' %}" class="group p-8 glass rounded-[2.5rem] border-white/5 hover:bg-white/5 transition-all">
                     <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">🏠</div>
                     <h4 class="text-lg font-bold text-white mb-2">Public View</h4>
                     <p class="text-white/30 text-[10px] uppercase tracking-widest leading-relaxed">Zurück zur öffentlichen Shop-Ansicht.</p>
                 </a>
             </div>
+            
+            <div class="mt-12 pt-8 border-t border-white/5 text-center">
+                <a href="{% url 'admin_orders_list' %}" class="text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange hover:underline transition-all">
+                    → Go to Order Management
+                </a>
+            </div>
+        </div>
+
+        <!-- Secondary Admin Footer Nav -->
+        <div class="mt-16 pt-8 border-t border-white/5 flex flex-wrap justify-center gap-12">
+            <a href="{% url 'admin_orders_list' %}" class="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-glow-orange transition-all">
+                Bestellungen verwalten
+            </a>
+            <a href="{% url 'admin_produkte_list' %}" class="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-glow-orange transition-all">
+                Inventar
+            </a>
+            <a href="{% url 'admin_stats' %}" class="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-glow-orange transition-all">
+                Analytics
+            </a>
         </div>
     </div>
 </div>
