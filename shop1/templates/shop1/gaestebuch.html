@@ -49,7 +49,8 @@
         <div class="space-y-12">
             {% for comment in comments %}
             <div class="scroll-reveal glass-card p-10 md:p-12 rounded-[3.5rem] border-white/5 relative" 
-                 x-data="{ showReply: false }"
+                 x-data="{ shown: false, showReply: false }"
+                 x-init="setTimeout(() => { if(!$el.isConnected) return; }, 100)"
                  x-intersect.once="shown = true" :class="{ 'visible': shown }">
                 
                 <div class="flex justify-between items-start mb-8">
