@@ -162,15 +162,12 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else []
-STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
 
-
-# WhiteNoise Optimierung für Production
+# WhiteNoise Optimierung für Production (Statische Dateien)
+# Cloudinary nutzen wir nur für MEDIA (Produktbilder), nicht für STATIC (CSS/JS)
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
