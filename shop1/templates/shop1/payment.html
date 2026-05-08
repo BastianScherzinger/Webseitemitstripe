@@ -98,9 +98,18 @@
 </div>
 
 <!-- PayPal JavaScript SDK -->
-<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR"></script>
+{% if paypal_client_id and paypal_client_id != 'sb' %}
+    <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR&disable-funding=credit,card"></script>
+{% else %}
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR"></script>
+{% endif %}
 
 <script>
+    if (!window.paypal) {
+        document.getElementById('payment-errors').textContent = '⚠️ PayPal SDK konnte nicht geladen werden. Prüfe deine Client-ID oder Internetverbindung.';
+        document.getElementById('payment-errors').style.display = 'block';
+    }
+
     paypal.Buttons({
       style: {
         layout: 'vertical',
@@ -116,8 +125,12 @@
               value: '{{ order.gesamt_betrag|floatformat:"2u" }}',
               currency_code: 'EUR'
             },
-            description: 'Mission #{{ order.id }}'
+            description: 'Luviq Mission #{{ order.id }}'
           }]
+        }).catch(err => {
+            console.error("PayPal CreateOrder Error:", err);
+            document.getElementById('payment-errors').textContent = 'PayPal Fehler: ' + err;
+            document.getElementById('payment-errors').style.display = 'block';
         });
       },
 
@@ -125,10 +138,11 @@
         document.getElementById('loading').style.display = 'block';
         
         return actions.order.capture().then(function(details) {
-          fetch('/paypal/capture/{{ order.id }}/', {
+          return fetch('/paypal/capture/{{ order.id }}/', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'X-CSRFToken': '{{ csrf_token }}'
             },
             body: JSON.stringify({
               paypal_order_id: data.orderID
@@ -139,26 +153,25 @@
             if (result.status === 'success') {
               window.location.href = result.redirect;
             } else {
-              document.getElementById('payment-errors').textContent = 'Fehler: ' + result.error;
-              document.getElementById('payment-errors').style.display = 'block';
-              document.getElementById('loading').style.display = 'none';
+              throw new Error(result.error || 'Server Sync failed');
             }
-          })
-          .catch(error => {
-            document.getElementById('payment-errors').textContent = 'Sync Error. Please retry.';
+          });
+        }).catch(error => {
+            console.error("PayPal Capture/Sync Error:", error);
+            document.getElementById('payment-errors').innerHTML = '❌ Zahlung fehlgeschlagen: ' + error + '<br><small>Hinweis: Im Sandbox-Modus funktionieren keine echten Karten!</small>';
             document.getElementById('payment-errors').style.display = 'block';
             document.getElementById('loading').style.display = 'none';
-          });
         });
       },
 
       onError: function(err) {
-        document.getElementById('payment-errors').textContent = 'Gateway Error: ' + err;
+        console.error("PayPal Global Error:", err);
+        document.getElementById('payment-errors').innerHTML = '🚨 PayPal Gateway Fehler!<br>Stelle sicher, dass du im Sandbox-Modus einen <b>Sandbox-Account</b> nutzt und KEINE echten Karten.';
         document.getElementById('payment-errors').style.display = 'block';
       },
 
       onCancel: function(data) {
-        document.getElementById('payment-errors').textContent = 'Transmission cancelled.';
+        document.getElementById('payment-errors').textContent = 'Übertragung vom Benutzer abgebrochen.';
         document.getElementById('payment-errors').style.display = 'block';
       }
     }).render('#paypal-button-container');
