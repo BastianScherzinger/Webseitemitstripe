@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gästebuch – Luviq Universe{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen pt-32 pb-40">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-5xl mx-auto px-4 relative z-10 animate-reveal">
+        <!-- Header -->
+        <header class="mb-20 text-center">
+            <div class="h-px w-12 bg-glow-orange mx-auto mb-10"></div>
+            <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                Guest <span class="text-glow">Book</span>
+            </h1>
+            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Teile deine Gedanken mit dem Orbit</p>
+        </header>
+
+        <!-- New Comment Form -->
+        {% if user.is_authenticated %}
+        <div class="glass-card p-10 md:p-16 rounded-[4rem] mb-24 border-white/5 relative overflow-hidden group">
+            <div class="absolute -top-24 -right-24 w-64 h-64 bg-glow-orange/5 blur-[80px] rounded-full group-hover:bg-glow-orange/10 transition-all duration-1000"></div>
+            
+            <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-10">Neuer Beitrag</h3>
+            <form action="{% url 'comment_add' %}" method="POST">
+                {% csrf_token %}
+                <textarea name="text" rows="4" required
+                    class="w-full bg-white/5 border border-white/10 rounded-3xl p-8 text-white focus:outline-none focus:border-glow-orange transition-all font-light tracking-wide placeholder:text-white/10 mb-8"
+                    placeholder="Wie gefällt dir dein Unikat?"></textarea>
+                
+                <div class="flex justify-end">
+                    <button type="submit" class="btn-glow px-12 py-5 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] shadow-2xl hover:scale-105 transition-transform">
+                        In den Orbit senden
+                    </button>
+                </div>
+            </form>
+        </div>
+        {% else %}
+        <div class="glass-card p-10 text-center rounded-[3rem] mb-24 border-white/5">
+            <p class="text-white/30 text-xs uppercase tracking-widest">
+                Bitte <a href="{% url 'login' %}" class="text-glow-orange hover:underline">logge dich ein</a>, um einen Beitrag zu schreiben.
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Comments List -->
+        <div class="space-y-12">
+            {% for comment in comments %}
+            <div class="scroll-reveal glass-card p-10 md:p-12 rounded-[3.5rem] border-white/5 relative" 
+                 x-data="{ showReply: false }"
+                 x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                
+                <div class="flex justify-between items-start mb-8">
+                    <div class="flex items-center gap-5">
+                        <div class="w-12 h-12 rounded-2xl glass flex items-center justify-center text-xl shadow-xl">👤</div>
+                        <div>
+                            <h4 class="text-white font-black uppercase tracking-tighter">{{ comment.user.username }}</h4>
+                            <p class="text-[9px] text-white/20 uppercase tracking-widest">{{ comment.erstellt_am|date:"d.m.Y H:i" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <!-- Likes -->
+                        <a href="{% url 'comment_like' comment.id %}" class="flex items-center gap-2 glass px-4 py-2 rounded-full text-[10px] font-black transition-all {% if user in comment.likes.all %}text-glow-orange border-glow-orange/30 bg-glow-orange/5{% else %}text-white/30 border-white/5 hover:text-white{% endif %}">
+                            <span>🔥</span> {{ comment.total_likes }}
+                        </a>
+                        
+                        <!-- Admin Delete -->
+                        {% if is_shop_owner or comment.user == user %}
+                        <a href="{% url 'comment_delete' comment.id %}" class="w-10 h-10 glass rounded-xl flex items-center justify-center text-xs hover:bg-red-500/20 hover:text-red-400 border-white/5 transition-all" title="Löschen">
+                            🗑️
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <p class="text-white/60 leading-relaxed font-light tracking-wide mb-10 pl-1">
+                    {{ comment.text|linebreaksbr }}
+                </p>
+
+                <!-- Replies -->
+                {% if comment.replies.all %}
+                <div class="mt-10 ml-6 md:ml-12 space-y-8 border-l border-white/5 pl-8">
+                    {% for reply in comment.replies.all %}
+                    <div class="relative">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-8 h-8 rounded-xl glass flex items-center justify-center text-sm shadow-lg {% if reply.is_admin_reply %}border-glow-orange/30 bg-glow-orange/5{% endif %}">
+                                    {% if reply.is_admin_reply %}✨{% else %}👤{% endif %}
+                                </div>
+                                <div>
+                                    <h5 class="text-xs font-black uppercase tracking-widest {% if reply.is_admin_reply %}text-glow-orange{% else %}text-white/80{% endif %}">
+                                        {{ reply.user.username }} {% if reply.is_admin_reply %}<span class="text-[8px] opacity-50 ml-2">Shopbesitzer</span>{% endif %}
+                                    </h5>
+                                </div>
+                            </div>
+                            
+                            {% if is_shop_owner or reply.user == user %}
+                            <a href="{% url 'comment_delete' reply.id %}" class="text-[10px] text-white/10 hover:text-red-400 transition-colors">Löschen</a>
+                            {% endif %}
+                        </div>
+                        <p class="text-white/40 text-xs leading-relaxed font-light">{{ reply.text }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Reply Form (Toggle) -->
+                {% if user.is_authenticated %}
+                <div class="mt-10 pt-8 border-t border-white/5">
+                    <button @click="showReply = !showReply" class="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-glow-orange transition-all">
+                        ← Antworten
+                    </button>
+                    
+                    <div x-show="showReply" x-collapse class="mt-6">
+                        <form action="{% url 'comment_add' %}" method="POST" class="flex gap-4">
+                            {% csrf_token %}
+                            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                            <input type="text" name="text" required
+                                class="flex-grow bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-xs text-white focus:outline-none focus:border-glow-orange transition-all font-light"
+                                placeholder="Deine Antwort...">
+                            <button type="submit" class="btn-glow px-6 py-4 rounded-2xl text-white font-black uppercase tracking-widest text-[8px]">Send</button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="text-center py-24">
+                <p class="text-white/10 italic font-light tracking-[0.5em] uppercase text-xs">Noch keine Echos im Orbit...</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

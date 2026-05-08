@@ -196,3 +196,35 @@ class PageVisit(models.Model):
 
     def __str__(self):
         return f"{self.date}: {self.visits} Besuche"
+
+
+class Comment(models.Model):
+    """Bewertungs- und Kommentar-Modell"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField(verbose_name="Nachricht")
+    
+    # Für Antworten (Verschachtelung)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
+    
+    # Likes
+    likes = models.ManyToManyField(User, related_name='liked_comments', blank=True)
+    
+    # Metadaten
+    is_admin_reply = models.BooleanField(default=False)
+    erstellt_am = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = "Kommentar"
+        verbose_name_plural = "Kommentare"
+        ordering = ['-erstellt_am']
+
+    def __str__(self):
+        return f"Kommentar von {self.user.username} ({self.erstellt_am.strftime('%d.%m.%Y')})"
+    
+    @property
+    def total_likes(self):
+        return self.likes.count()
+
+    @property
+    def is_parent(self):
+        return self.parent is None

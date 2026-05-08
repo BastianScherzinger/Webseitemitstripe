@@ -830,3 +830,75 @@ def newsletter_subscribe(request):
         return JsonResponse({'message': 'Erfolgreich zum Newsletter angemeldet!'}, status=200)
         
     return JsonResponse({'error': 'Invalid request'}, status=405)
+
+
+# ═══ GÄSTEBUCH & KOMMENTARE ═══
+
+from .models import Comment
+
+def gaestebuch(request):
+    """Zeigt alle Haupt-Kommentare und deren Antworten an."""
+    # Nur Haupt-Kommentare (parent=None) laden
+    comments = Comment.objects.filter(parent=None).select_related('user').prefetch_related('replies', 'likes').order_by('-erstellt_am')
+    
+    return render(request, 'shop1/gaestebuch.html', {
+        'comments': comments,
+    })
+
+
+@login_required(login_url='login')
+def comment_add(request):
+    """Fügt einen neuen Kommentar oder eine Antwort hinzu."""
+    if request.method == 'POST':
+        text = request.POST.get('text', '').strip()
+        parent_id = request.POST.get('parent_id')
+        
+        if not text:
+            messages.error(request, 'Bitte gib eine Nachricht ein.')
+            return redirect(request.META.get('HTTP_REFERER', 'gaestebuch'))
+            
+        parent = None
+        is_admin_reply = False
+        
+        if parent_id:
+            parent = get_object_or_404(Comment, id=parent_id)
+            # Prüfen ob der antwortende User ein Admin ist
+            if _is_admin(request.user):
+                is_admin_reply = True
+        
+        Comment.objects.create(
+            user=request.user,
+            text=text,
+            parent=parent,
+            is_admin_reply=is_admin_reply
+        )
+        
+        messages.success(request, 'Dein Beitrag wurde im Orbit veröffentlicht!')
+    return redirect(request.META.get('HTTP_REFERER', 'gaestebuch'))
+
+
+@login_required(login_url='login')
+def comment_like(request, comment_id):
+    """Liked oder ent-liked einen Kommentar."""
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.user in comment.likes.all():
+        comment.likes.remove(request.user)
+    else:
+        comment.likes.add(request.user)
+    
+    return redirect(request.META.get('HTTP_REFERER', 'gaestebuch'))
+
+
+@login_required(login_url='login')
+def comment_delete(request, comment_id):
+    """Löscht einen Kommentar (nur Admin oder Ersteller)."""
+    comment = get_object_or_404(Comment, id=comment_id)
+    
+    # Nur Admin oder der Verfasser dürfen löschen
+    if _is_admin(request.user) or comment.user == request.user:
+        comment.delete()
+        messages.success(request, 'Beitrag wurde gelöscht.')
+    else:
+        messages.error(request, 'Keine Berechtigung zum Löschen.')
+        
+    return redirect(request.META.get('HTTP_REFERER', 'gaestebuch'))

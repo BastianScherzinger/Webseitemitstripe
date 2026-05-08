@@ -51,6 +51,12 @@ urlpatterns = [
     path('datenschutz/', views.datenschutz, name='datenschutz'),
     path('agb/', views.agb, name='agb'),
     path('newsletter/subscribe/', views.newsletter_subscribe, name='newsletter_subscribe'),
+    
+    # ═══ GÄSTEBUCH & KOMMENTARE ═══
+    path('gaestebuch/', views.gaestebuch, name='gaestebuch'),
+    path('comment/add/', views.comment_add, name='comment_add'),
+    path('comment/<int:comment_id>/like/', views.comment_like, name='comment_like'),
+    path('comment/<int:comment_id>/delete/', views.comment_delete, name='comment_delete'),
 
     # Favicon Fix
     path('favicon.ico', RedirectView.as_view(url='/static/shop1/favicon.ico')),

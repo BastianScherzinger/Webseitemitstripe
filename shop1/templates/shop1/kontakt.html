@@ -111,6 +111,43 @@
                 </div>
             </div>
         </div>
+        <!-- Feedback Section -->
+        <div class="mt-32 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <h3 class="text-3xl font-black heading-font text-white uppercase tracking-tighter mb-12">Echo <span class="text-glow">Feedback</span></h3>
+            
+            <div class="glass-card p-10 md:p-16 rounded-[4rem] border-white/5 relative overflow-hidden group">
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-glow-orange/5 blur-[80px] rounded-full group-hover:bg-glow-orange/10 transition-all duration-1000"></div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h4 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-6">Öffentliches Feedback</h4>
+                        <p class="text-white/40 leading-relaxed font-light mb-8">
+                            Möchtest du uns öffentlich bewerten oder einen Kommentar hinterlassen? Dein Feedback erscheint direkt in unserem <a href="{% url 'gaestebuch' %}" class="text-glow-orange hover:underline">Gästebuch</a>.
+                        </p>
+                        <a href="{% url 'gaestebuch' %}" class="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-white transition-all">
+                            → Alle Kommentare ansehen
+                        </a>
+                    </div>
+                    
+                    {% if user.is_authenticated %}
+                    <form action="{% url 'comment_add' %}" method="POST" class="space-y-6">
+                        {% csrf_token %}
+                        <textarea name="text" rows="4" required
+                            class="w-full bg-white/5 border border-white/10 rounded-3xl p-6 text-white focus:outline-none focus:border-glow-orange transition-all font-light text-sm"
+                            placeholder="Schreib ein kurzes Feedback..."></textarea>
+                        <button type="submit" class="w-full btn-glow py-4 rounded-2xl text-white font-black uppercase tracking-widest text-[10px]">
+                            Post to Orbit
+                        </button>
+                    </form>
+                    {% else %}
+                    <div class="text-center p-8 glass rounded-[2.5rem] border-white/5">
+                        <p class="text-white/30 text-xs uppercase tracking-widest mb-6">Login erforderlich für Feedback</p>
+                        <a href="{% url 'login' %}" class="btn-glow px-8 py-3 rounded-xl text-white font-black uppercase tracking-widest text-[9px]">Login</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
