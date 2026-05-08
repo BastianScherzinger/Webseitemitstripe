@@ -569,7 +569,7 @@ def checkout(request):
                 )
             
             # Spezielle Logik für Überweisung
-            elif payment_method == 'bank_transfer':
+            if payment_method == 'bank_transfer':
                 # Email mit Bankverbindung senden
                 try:
                     send_bank_details_email(order)
