@@ -181,6 +181,7 @@ STORAGES = {
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+#nichts
 # Cloudinary Setup for persistent media storage
 if os.getenv('CLOUDINARY_URL'):
     STORAGES["default"] = {
