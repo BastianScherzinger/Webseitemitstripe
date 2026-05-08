@@ -1,27 +1,71 @@
 {% extends 'base.html' %}
-{% block title %}Datenschutz – Luviq-Shop{% endblock %}
+{% block title %}Datenschutz – Luviq Universe{% endblock %}
 {% block content %}
-<div class="row">
-  <div class="col-md-10 mx-auto">
-    <div class="card border-light shadow-sm p-4 p-md-5">
-      <h1 class="fw-bold mb-4">Datenschutzerklärung</h1>
-      
-      <h5 class="fw-bold">1. Datenschutz auf einen Blick</h5>
-      <p>Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website besuchen.</p>
+<div class="relative min-h-screen pt-32 pb-40">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
 
-      <h5 class="fw-bold">2. Hosting und Content Delivery Networks (CDN)</h5>
-      <p>Wir hosten die Inhalte unserer Website bei folgendem Anbieter: <strong>Railway</strong> (oder Ihr gewählter Hoster).</p>
+    <div class="max-w-5xl mx-auto px-4 relative z-10 animate-reveal">
+        <div class="glass-card p-12 md:p-24 rounded-[4.5rem] shadow-[0_0_100px_rgba(255,106,0,0.05)] border-white/5 relative overflow-hidden">
+            <!-- Decorative Glows -->
+            <div class="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px]"></div>
+            
+            <header class="mb-20 text-center">
+                <div class="h-px w-12 bg-glow-orange mx-auto mb-10"></div>
+                <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                    Data <span class="text-glow">Privacy</span>
+                </h1>
+                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Datenschutzerklärung & Security</p>
+            </header>
 
-      <h5 class="fw-bold">3. Allgemeine Hinweise und Pflichtinformationen</h5>
-      <p>Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend den gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.</p>
+            <div class="space-y-20 text-white/60 leading-relaxed font-light">
+                <section class="group">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-glow-orange mb-6 flex items-center gap-3">
+                        <span class="w-2 h-2 rounded-full bg-glow-orange"></span>
+                        1. Datenschutz auf einen Blick
+                    </h3>
+                    <div class="pl-5 border-l border-white/5">
+                        <p>Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website besuchen. Personenbezogene Daten sind alle Daten, mit denen Sie persönlich identifiziert werden können.</p>
+                    </div>
+                </section>
 
-      <h5 class="fw-bold">4. Datenerfassung auf dieser Website</h5>
-      <p><strong>Cookies:</strong> Unsere Internetseiten verwenden teilweise so genannte „Cookies“. Cookies richten auf Ihrem Rechner keinen Schaden an und enthalten keine Viren.</p>
-      <p><strong>Server-Log-Dateien:</strong> Der Provider der Seiten erhebt und speichert automatisch Informationen in so genannten Server-Log-Dateien, die Ihr Browser automatisch an uns übermittelt.</p>
+                <section class="group">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-glow-orange mb-6 flex items-center gap-3">
+                        <span class="w-2 h-2 rounded-full bg-glow-orange"></span>
+                        2. Hosting & Infrastruktur
+                    </h3>
+                    <div class="pl-5 border-l border-white/5">
+                        <p>Wir hosten die Inhalte unserer Website bei folgendem Anbieter: <strong>Railway / Supabase</strong>. Die Datenübertragung erfolgt verschlüsselt (SSL/TLS), um die Sicherheit Ihrer Informationen im digitalen Orbit zu gewährleisten.</p>
+                    </div>
+                </section>
 
-      <h5 class="fw-bold">5. Registrierung auf dieser Website</h5>
-      <p>Sie können sich auf dieser Website registrieren, um zusätzliche Funktionen auf der Seite zu nutzen. Die dazu eingegebenen Daten verwenden wir nur zum Zwecke der Nutzung des jeweiligen Angebotes oder Dienstes, für den Sie sich registriert haben.</p>
+                <section class="group">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-glow-orange mb-6 flex items-center gap-3">
+                        <span class="w-2 h-2 rounded-full bg-glow-orange"></span>
+                        3. Datenerfassung im Shop
+                    </h3>
+                    <div class="pl-5 border-l border-white/5 space-y-4">
+                        <p><strong>Registrierung:</strong> Wenn Sie ein Konto erstellen, speichern wir Ihre E-Mail, Ihren Namen und Ihre Adresse, um Ihre Bestellungen (Missions) abzuwickeln.</p>
+                        <p><strong>Cookies:</strong> Wir nutzen funktionale Cookies, um Ihren Warenkorb und Ihren Login-Status zu speichern. Ohne diese "Anker" könnte der Shop nicht funktionieren.</p>
+                        <p><strong>Zahlungsdaten:</strong> Bei Zahlungen über PayPal werden Ihre Daten verschlüsselt an den Zahlungsdienstleister übertragen. Wir speichern keine Kreditkarteninformationen auf unseren Servern.</p>
+                    </div>
+                </section>
+
+                <section class="group">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-glow-orange mb-6 flex items-center gap-3">
+                        <span class="w-2 h-2 rounded-full bg-glow-orange"></span>
+                        4. Ihre Rechte
+                    </h3>
+                    <div class="pl-5 border-l border-white/5">
+                        <p>Sie haben jederzeit das Recht, unentgeltlich Auskunft über Herkunft, Empfänger und Zweck Ihrer gespeicherten personenbezogenen Daten zu erhalten. Sie haben außerdem ein Recht, die Berichtigung oder Löschung dieser Daten zu verlangen. Kontaktieren Sie uns hierzu einfach unter <a href="mailto:brehlerluisa@gmail.com" class="text-glow-orange hover:underline">brehlerluisa@gmail.com</a>.</p>
+                    </div>
+                </section>
+            </div>
+
+            <div class="mt-24 pt-12 border-t border-white/5 text-center">
+                <p class="text-[9px] text-white/10 uppercase tracking-[0.4em]">Stand: Mai 2026 – Protect your Art, Protect your Data.</p>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}

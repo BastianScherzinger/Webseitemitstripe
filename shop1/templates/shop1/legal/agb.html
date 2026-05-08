@@ -1,26 +1,54 @@
 {% extends 'base.html' %}
-{% block title %}AGB – Luviq-Shop{% endblock %}
+{% block title %}AGB – Luviq Universe{% endblock %}
 {% block content %}
-<div class="row">
-  <div class="col-md-10 mx-auto">
-    <div class="card border-light shadow-sm p-4 p-md-5">
-      <h1 class="fw-bold mb-4">Allgemeine Geschäftsbedingungen</h1>
-      
-      <h5 class="fw-bold">§ 1 Geltungsbereich</h5>
-      <p>Für die Geschäftsbeziehung zwischen Luviq-Shop und dem Besteller gelten ausschließlich die nachfolgenden Allgemeinen Geschäftsbedingungen.</p>
+<div class="relative min-h-screen pt-32 pb-40">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
 
-      <h5 class="fw-bold">§ 2 Vertragsschluss</h5>
-      <p>Die Darstellung der Produkte im Online-Shop stellt kein rechtlich bindendes Angebot, sondern einen unverbindlichen Online-Katalog dar. Durch Anklicken des Buttons „Kaufen“ geben Sie eine verbindliche Bestellung der im Warenkorb enthaltenen Waren ab.</p>
+    <div class="max-w-5xl mx-auto px-4 relative z-10 animate-reveal">
+        <div class="glass-card p-12 md:p-24 rounded-[4.5rem] shadow-[0_0_100px_rgba(255,106,0,0.05)] border-white/5 relative overflow-hidden">
+            <!-- Decorative Glows -->
+            <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-glow-orange/5 rounded-full blur-[120px]"></div>
+            
+            <header class="mb-20 text-center">
+                <div class="h-px w-12 bg-glow-orange mx-auto mb-10"></div>
+                <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                    Terms of <span class="text-glow">Service</span>
+                </h1>
+                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Allgemeine Geschäftsbedingungen</p>
+            </header>
 
-      <h5 class="fw-bold">§ 3 Preise und Versandkosten</h5>
-      <p>Die ausgezeichneten Preise sind Endpreise inkl. Umsatzsteuer. Es fallen ggf. zusätzlich Versandkosten an, die vor Abschluss der Bestellung angezeigt werden.</p>
+            <div class="space-y-16 text-white/60 leading-relaxed font-light">
+                <section>
+                    <h3 class="text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5">§ 1 Geltungsbereich</h3>
+                    <p>Für die Geschäftsbeziehung zwischen <strong>Luviq (Luisa Brehler)</strong> und dem Besteller gelten ausschließlich die nachfolgenden Allgemeinen Geschäftsbedingungen in ihrer zum Zeitpunkt der Bestellung gültigen Fassung.</p>
+                </section>
 
-      <h5 class="fw-bold">§ 4 Zahlungsbedingungen</h5>
-      <p>Die Zahlung erfolgt wahlweise per Vorkasse, Kreditkarte oder PayPal (je nach technischer Einbindung).</p>
+                <section>
+                    <h3 class="text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5">§ 2 Vertragsschluss</h3>
+                    <p>Jedes Produkt bei Luviq ist ein handbemaltes Unikat (1-of-1). Die Darstellung im Online-Shop stellt kein rechtlich bindendes Angebot dar, sondern eine Einladung zur Abgabe einer Bestellung. Durch den Klick auf "Zahlungspflichtig bestellen" gibst du ein verbindliches Angebot ab.</p>
+                </section>
 
-      <h5 class="fw-bold">§ 5 Eigentumsvorbehalt</h5>
-      <p>Die Ware bleibt bis zur vollständigen Zahlung unser Eigentum.</p>
+                <section>
+                    <h3 class="text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5">§ 3 Beschaffenheit der Unikate</h3>
+                    <p>Da es sich um handbemalte Upcycling-Produkte handelt, sind leichte Unregelmäßigkeiten in der Bemalung oder minimale Gebrauchsspuren des Basis-Textils (Vintage) Teil des künstlerischen Konzepts und stellen keinen Mangel dar.</p>
+                </section>
+
+                <section>
+                    <h3 class="text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5">§ 4 Preise und Zahlung</h3>
+                    <p>Die angegebenen Preise sind Endpreise. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerstatus). Die Zahlung kann per PayPal oder Vorab-Überweisung erfolgen. Die Ware bleibt bis zur vollständigen Bezahlung Eigentum von Luviq.</p>
+                </section>
+
+                <section>
+                    <h3 class="text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5">§ 5 Widerrufsrecht</h3>
+                    <p>Du hast das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Frist beginnt ab dem Tag, an dem du die Ware in Besitz genommen hast.</p>
+                </section>
+            </div>
+
+            <div class="mt-24 pt-12 border-t border-white/5 text-center">
+                <p class="text-[9px] text-white/10 uppercase tracking-[0.4em]">Luviq Universe – Unique Art for Unique People.</p>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}

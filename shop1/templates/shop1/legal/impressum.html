@@ -1,46 +1,80 @@
 {% extends 'base.html' %}
 {% block title %}Impressum – Luviq Universe{% endblock %}
 {% block content %}
-<div class="relative min-h-screen pt-20 pb-32">
+<div class="relative min-h-screen pt-32 pb-40">
+    <!-- Nebula Background Layer -->
     <div class="energy-nebula"></div>
-    <div class="max-w-4xl mx-auto px-4 relative z-10 animate-reveal">
-        <div class="glass-card p-12 md:p-20 rounded-[4rem]">
-            <h1 class="text-4xl font-black heading-font text-white uppercase tracking-tighter mb-12">Impressum</h1>
+
+    <div class="max-w-5xl mx-auto px-4 relative z-10 animate-reveal">
+        <div class="glass-card p-12 md:p-24 rounded-[4.5rem] shadow-[0_0_100px_rgba(255,106,0,0.05)] border-white/5 relative overflow-hidden">
+            <!-- Decorative Glows -->
+            <div class="absolute -top-40 -left-40 w-96 h-96 bg-glow-orange/5 rounded-full blur-[120px]"></div>
             
-            <div class="space-y-12 text-white/60 leading-relaxed font-light">
-                <section>
-                    <h5 class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-4">Angaben gemäß § 5 TMG</h5>
-                    <p>
-                        Luisa Brehler<br>
-                        Musterstraße 123<br>
-                        12345 Musterstadt
-                    </p>
-                </section>
+            <header class="mb-20 text-center">
+                <div class="h-px w-12 bg-glow-orange mx-auto mb-10"></div>
+                <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+                    Legal <span class="text-glow">Notice</span>
+                </h1>
+                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Impressum & Transparency</p>
+            </header>
 
-                <section>
-                    <h5 class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-4">Kontakt</h5>
-                    <p>
-                        Telefon: +49 (0) 123 456789<br>
-                        E-Mail: info@luviq-shop.de
-                    </p>
-                </section>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-20">
+                <div class="space-y-16">
+                    <section class="group">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-8 h-8 rounded-xl glass border-glow-orange/20 flex items-center justify-center text-xs group-hover:bg-glow-orange group-hover:text-white transition-all">📍</div>
+                            <h3 class="text-xs font-black uppercase tracking-widest text-white/80">Angaben gemäß § 5 TMG</h3>
+                        </div>
+                        <div class="text-white/40 leading-relaxed font-light pl-12">
+                            <p class="text-white font-bold mb-2">Luisa Brehler</p>
+                            <p>An der Schmiede 4</p>
+                            <p>91325 Adelsdorf</p>
+                            <p>Deutschland</p>
+                        </div>
+                    </section>
 
-                <section>
-                    <h5 class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-4">Umsatzsteuer-ID</h5>
-                    <p>
-                        Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:<br>
-                        DE 999 999 999
-                    </p>
-                </section>
+                    <section class="group">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-8 h-8 rounded-xl glass border-glow-orange/20 flex items-center justify-center text-xs group-hover:bg-glow-orange group-hover:text-white transition-all">📧</div>
+                            <h3 class="text-xs font-black uppercase tracking-widest text-white/80">Kontakt</h3>
+                        </div>
+                        <div class="text-white/40 leading-relaxed font-light pl-12">
+                            <p>E-Mail: <a href="mailto:brehlerluisa@gmail.com" class="text-glow-orange hover:underline">brehlerluisa@gmail.com</a></p>
+                            <p>Website: <a href="https://luviq.de" class="hover:text-white transition-colors">www.luviq.de</a></p>
+                        </div>
+                    </section>
+                </div>
 
-                <section>
-                    <h5 class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-4">EU-Streitschlichtung</h5>
-                    <p>
-                        Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: 
-                        <a href="https://ec.europa.eu/consumers/odr/" target="_blank" class="text-glow-orange hover:underline">https://ec.europa.eu/consumers/odr/</a>.<br>
-                        Unsere E-Mail-Adresse finden Sie oben im Impressum.
-                    </p>
-                </section>
+                <div class="space-y-16">
+                    <section class="group">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-8 h-8 rounded-xl glass border-glow-orange/20 flex items-center justify-center text-xs group-hover:bg-glow-orange group-hover:text-white transition-all">⚖️</div>
+                            <h3 class="text-xs font-black uppercase tracking-widest text-white/80">Redaktionell verantwortlich</h3>
+                        </div>
+                        <div class="text-white/40 leading-relaxed font-light pl-12">
+                            <p>Luisa Brehler</p>
+                            <p>An der Schmiede 4</p>
+                            <p>91325 Adelsdorf</p>
+                        </div>
+                    </section>
+
+                    <section class="group">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-8 h-8 rounded-xl glass border-glow-orange/20 flex items-center justify-center text-xs group-hover:bg-glow-orange group-hover:text-white transition-all">🌍</div>
+                            <h3 class="text-xs font-black uppercase tracking-widest text-white/80">Streitschlichtung</h3>
+                        </div>
+                        <div class="text-white/40 leading-relaxed font-light pl-12 text-xs">
+                            <p class="mb-4">Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:</p>
+                            <a href="https://ec.europa.eu/consumers/odr/" target="_blank" class="glass px-4 py-2 rounded-lg text-glow-orange border-glow-orange/20 hover:bg-glow-orange hover:text-white transition-all inline-block">
+                                OS-Plattform öffnen
+                            </a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="mt-24 pt-12 border-t border-white/5 text-center">
+                <p class="text-[9px] text-white/10 uppercase tracking-[0.4em]">Luviq Universe – Art is not a luxury, it's a necessity.</p>
             </div>
         </div>
     </div>

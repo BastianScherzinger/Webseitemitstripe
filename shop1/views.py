@@ -738,23 +738,71 @@ def send_order_confirmation_email(order):
 
 
 def send_bank_details_email(order):
-    """Sendet Bankverbindung bei Wahl von Überweisung"""
-    subject = f'Zahlungsinformationen für Bestellung #{order.id}'
+    """Sendet wunderschöne Bankverbindung & PayPal Option bei Wahl von Überweisung"""
+    subject = f'Zahlungsinformationen für deine Mission #{order.id}'
+    
+    # Items Liste generieren
+    items_html = ""
+    for item in order.items.all():
+        db_produkt = Produkt.objects.filter(name=item.produkt_name).first()
+        bild_html = ""
+        if db_produkt and db_produkt.bild:
+            bild_html = f'<img src="{db_produkt.bild.url}" width="80" style="border-radius: 10px; margin-right: 15px;">'
+        
+        items_html += f"""
+        <div style="display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #eeeeee;">
+            {bild_html}
+            <div>
+                <p style="margin: 0; font-weight: bold; color: #050816;">{item.produkt_name}</p>
+                <p style="margin: 5px 0 0 0; color: #888888; font-size: 12px;">{item.menge}x {item.produkt_preis:.2f} €</p>
+            </div>
+        </div>
+        """
+
     html_content = f"""
     <html>
-        <body style="font-family: Arial, sans-serif;">
-            <h2>Hallo {order.vorname},</h2>
-            <p>vielen Dank für deine Bestellung bei Luviq!</p>
-            <p>Du hast <strong>Überweisung</strong> als Zahlungsart gewählt. Bitte überweise den Gesamtbetrag auf folgendes Konto:</p>
-            <div style="background: #f4f4f4; padding: 20px; border-radius: 10px; margin: 20px 0;">
-                <p><strong>Kontoinhaber:</strong> Luisa Brehler</p>
-                <p><strong>IBAN:</strong> DE12 3456 7890 1234 5678 90 (BEISPIEL)</p>
-                <p><strong>BIC:</strong> XXXXXXXXXXX</p>
-                <p><strong>Verwendungszweck:</strong> Bestellung #{order.id}</p>
-                <p><strong>Betrag:</strong> {float(order.gesamt_betrag):.2f} €</p>
+        <body style="font-family: 'Inter', Arial, sans-serif; background-color: #f9fafb; color: #111827; margin: 0; padding: 40px;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); border: 1px solid #eeeeee;">
+                
+                <!-- Header -->
+                <div style="background: #050816; padding: 40px; text-align: center;">
+                    <h1 style="color: white; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 5px;">Luviq</h1>
+                    <p style="color: #ff6a00; margin-top: 10px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;">Mission: Payment Pending</p>
+                </div>
+
+                <div style="padding: 40px;">
+                    <h2 style="font-size: 20px; font-weight: 900; margin-bottom: 20px;">Hallo {order.vorname},</h2>
+                    <p style="line-height: 1.6; color: #4b5563;">vielen Dank für deine Bestellung! Du hast dich für eine manuelle Zahlung entschieden. Bitte begleiche den Betrag zeitnah, damit wir dein Unikat versenden können.</p>
+
+                    <div style="margin: 30px 0; padding: 30px; background: #fdf2f2; border-radius: 20px; border-left: 5px solid #ff6a00;">
+                        <h3 style="margin-top: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #ff6a00;">Zahlungsoption A: Überweisung</h3>
+                        <p style="margin: 15px 0 5px 0; font-size: 13px;"><strong>Inhaber:</strong> Luisa Brehler</p>
+                        <p style="margin: 5px 0; font-size: 13px;"><strong>IBAN:</strong> DE05 51 85 0079 1028 1367 37</p>
+                        <p style="margin: 5px 0; font-size: 13px;"><strong>Verwendungszweck:</strong> Mission #{order.id}</p>
+                        <p style="margin: 5px 0; font-size: 13px;"><strong>Betrag:</strong> <span style="font-size: 18px; font-weight: 900;">{float(order.gesamt_betrag):.2f} €</span></p>
+                    </div>
+
+                    <div style="margin: 30px 0; padding: 30px; background: #eff6ff; border-radius: 20px; border-left: 5px solid #2563eb;">
+                        <h3 style="margin-top: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #2563eb;">Zahlungsoption B: PayPal</h3>
+                        <p style="margin: 15px 0; font-size: 13px;">Sende das Geld einfach per PayPal an:</p>
+                        <p style="margin: 5px 0; font-size: 16px; font-weight: bold; color: #2563eb;">brehlerluisa@gmail.com</p>
+                        <p style="margin: 10px 0 0 0; font-size: 11px; color: #6b7280;">(Bitte bestelle als "Freunde & Familie" oder übernehme die Gebühren, damit der volle Betrag ankommt.)</p>
+                    </div>
+
+                    <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; border-top: 1px solid #eeeeee; pt: 20px;">Deine Auswahl:</h3>
+                    {items_html}
+
+                    <div style="margin-top: 40px; text-align: center; color: #9ca3af; font-size: 12px;">
+                        <p>Sobald die Zahlung eingegangen ist, erhältst du eine Bestätigung.</p>
+                        <p style="margin-top: 20px;">Herzliche Grüße,<br><strong style="color: #050816;">Luisa Brehler</strong></p>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div style="background: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #eeeeee;">
+                    <p style="font-size: 10px; color: #9ca3af; text-transform: uppercase; letter-spacing: 2px;">Luviq Universe &copy; 2026</p>
+                </div>
             </div>
-            <p>Sobald die Zahlung eingegangen ist, wird dein Unikat für den Versand vorbereitet.</p>
-            <p>Herzliche Grüße,<br>Luisa Brehler</p>
         </body>
     </html>
     """
