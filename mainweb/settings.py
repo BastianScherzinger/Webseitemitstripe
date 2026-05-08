@@ -162,12 +162,12 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else []
 
-# WhiteNoise Optimierung für Production (Statische Dateien)
-# Cloudinary nutzen wir nur für MEDIA (Produktbilder), nicht für STATIC (CSS/JS)
+# Whitenoise für statische Dateien in Produktion
+# Cloudinary nutzen wir NUR für MEDIA (hochgeladene Produktbilder)
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -177,16 +177,14 @@ STORAGES = {
     },
 }
 
-# Media files (User-uploaded content)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
-#nichts
-# Cloudinary Setup for persistent media storage
 if os.getenv('CLOUDINARY_URL'):
     STORAGES["default"] = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     }
+
+# Media files (User-uploaded content)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # ═══ EMAIL-KONFIGURATION ═══
