@@ -11,11 +11,11 @@
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <!-- Header -->
         <div class="mb-16 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-            <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
+            <h1 class="text-5xl md:text-[7rem] font-black heading-font text-white uppercase tracking-tighter mb-4 animate-float">
                 The <span class="text-glow">Drop</span>
             </h1>
-            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">Handverlesene Vintage-Unikate, neu interpretiert.</p>
-            <div class="h-1 w-32 bg-glow-orange mt-8 rounded-full"></div>
+            <p class="text-white/40 text-lg md:text-xl font-light tracking-[0.4em] uppercase">Handverlesene Vintage-Unikate, neu interpretiert.</p>
+            <div class="h-1 w-32 bg-glow-orange mt-12 rounded-full"></div>
         </div>
 
         <!-- Product Grid -->
@@ -28,19 +28,11 @@
                  style="transition-delay: 0.{{ forloop.counter0 }}s">
 
                 <!-- Image Container -->
-                <div class="relative h-80 overflow-hidden bg-space-dark/50">
+                <div class="relative h-[28rem] overflow-hidden group">
                     {% if produkt.bild %}
-                        <div class="absolute top-4 right-4 z-20">
-                            <span class="glass px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white/50">
-                                {% if produkt.lagerbestand > 0 %}{{ produkt.lagerbestand }} Left{% else %}Sold Out{% endif %}
-                            </span>
-                        </div>
-                        <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    {% else %}
-                        <div class="w-full h-full flex items-center justify-center text-white/5">
-                            <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                        </div>
+                        <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[10%] group-hover:grayscale-0">
                     {% endif %}
+                    <div class="shimmer-mask absolute inset-0 opacity-20"></div>
                     
                     <!-- Overlay Badges -->
                     <div class="absolute inset-0 bg-gradient-to-t from-space-black via-transparent to-transparent opacity-60"></div>

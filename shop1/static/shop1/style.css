@@ -194,3 +194,76 @@ section {
 .admin-table tr:hover td {
     background: rgba(255, 255, 255, 0.01);
 }
+
+/* ═══ PREMIUM ANIMATIONS ═══ */
+
+/* Float Animation */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Glow Pulse */
+@keyframes glow-pulse {
+    0% { box-shadow: 0 0 10px rgba(255, 106, 0, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(255, 106, 0, 0.5); }
+    100% { box-shadow: 0 0 10px rgba(255, 106, 0, 0.2); }
+}
+
+.glow-pulse {
+    animation: glow-pulse 3s infinite;
+}
+
+/* Shimmer Effect */
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.shimmer-mask {
+    position: relative;
+    overflow: hidden;
+}
+
+.shimmer-mask::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.05),
+        transparent
+    );
+    animation: shimmer 2s infinite;
+}
+
+/* Page Transitions */
+.fade-in-blur {
+    animation: fadeInBlur 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInBlur {
+    0% { opacity: 0; filter: blur(10px); transform: scale(0.95); }
+    100% { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+
+/* Scroll Reveal Tweaks */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(5px);
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+}

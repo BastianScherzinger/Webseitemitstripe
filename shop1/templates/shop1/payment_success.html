@@ -1,127 +1,89 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Zahlung Erfolgreich{% endblock %}
+{% block title %}Mission Success – Luviq Universe{% endblock %}
 
 {% block content %}
-  <div class="container">
-    <!-- Erfolgs-Message -->
-    <div class="text-center mb-5">
-      <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
-      <h1 class="mb-2">Zahlung erfolgreich!</h1>
-      <p class="lead text-muted mb-4">Danke für deine Bestellung!</p>
-    </div>
+<div class="relative min-h-screen pt-20 pb-32 flex items-center justify-center">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
 
-    <div class="row">
-      <div class="col-lg-8 offset-lg-2">
-        <!-- Bestellbestätigung -->
-        <div class="card border-light shadow-sm mb-4">
-          <div class="card-header bg-success text-white">
-            <h5 class="mb-0">✓ Bestellbestätigung</h5>
-          </div>
-          <div class="card-body">
-            <div class="row mb-4">
-              <div class="col-md-6">
-                <p class="text-muted small">Bestellnummer</p>
-                <h5 class="fw-bold">#{{ order.id }}</h5>
-              </div>
-              <div class="col-md-6">
-                <p class="text-muted small">Bestelldatum</p>
-                <h5 class="fw-bold">{{ order.erstellt_am|date:"d.m.Y H:i" }}</h5>
-              </div>
+    <div class="max-w-3xl w-full mx-auto px-4 relative z-10 fade-in-blur">
+        
+        <div class="glass-card p-12 md:p-20 rounded-[4rem] shadow-2xl text-center border-glow-orange/20 relative overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute -top-20 -left-20 w-64 h-64 bg-glow-orange/10 rounded-full blur-[80px]"></div>
+            <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-glow-orange/5 rounded-full blur-[80px]"></div>
+            
+            <!-- Icon with Glow Pulse -->
+            <div class="w-24 h-24 bg-glow-orange/10 rounded-full flex items-center justify-center mx-auto mb-12 glow-pulse">
+                {% if order.payment_method == 'pickup' %}
+                    <span class="text-5xl">🤝</span>
+                {% else %}
+                    <span class="text-5xl">🚀</span>
+                {% endif %}
             </div>
 
-            <hr>
+            <!-- Heading -->
+            <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-6">
+                Mission <span class="text-glow">Complete</span>
+            </h1>
 
-            <!-- Bestellte Artikel -->
-            <h6 class="fw-bold mb-3">📦 Bestellte Artikel:</h6>
-            <table class="table table-sm">
-              <tbody>
-                {% for item in order.items.all %}
-                  <tr>
-                    <td>{{ item.menge }}x {{ item.produkt_name }}</td>
-                    <td class="text-end">{{ item.produkt_preis|floatformat:2 }} €</td>
-                    <td class="text-end fw-bold">{{ item.gesamt_preis|floatformat:2 }} €</td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-
-            <div class="row mt-4 pt-3 border-top">
-              <div class="col-md-6">
-                <p class="text-muted small">Gesamtbetrag</p>
-                <h4 class="fw-bold" style="color: var(--primary);">{{ order.gesamt_betrag|floatformat:2 }} €</h4>
-              </div>
-              <div class="col-md-6">
-                <p class="text-muted small">Status</p>
-                <h5><span class="badge bg-success">Bezahlt</span></h5>
-              </div>
+            <!-- Dynamic Subtext -->
+            <div class="space-y-4 mb-12">
+                {% if order.payment_method == 'pickup' %}
+                    <p class="text-xl font-bold text-white uppercase tracking-tight">Bestellung für Abholung reserviert!</p>
+                    <p class="text-white/40 text-sm font-light tracking-[0.1em] leading-relaxed">
+                        Hey! Dein Unikat ist sicher für dich hinterlegt. <br>
+                        Wir klären alles Weitere persönlich. Bis bald!
+                    </p>
+                {% elif order.payment_method == 'bank_transfer' %}
+                    <p class="text-xl font-bold text-white uppercase tracking-tight">Vorbereitung für Überweisung</p>
+                    <p class="text-white/40 text-sm font-light tracking-[0.1em] leading-relaxed">
+                        Mission gestartet! Bitte checke deine E-Mails <br>
+                        für die Zahlungsdaten. Sobald das Signal (Geld) eingeht, <br>
+                        startet der Versand.
+                    </p>
+                {% else %}
+                    <p class="text-xl font-bold text-white uppercase tracking-tight">Transfer erfolgreich verarbeitet.</p>
+                    <p class="text-white/40 text-sm font-light tracking-[0.1em] leading-relaxed">
+                        Vielen Dank für deine Bestellung. <br>
+                        Dein Paket wird nun für den Deep-Space-Versand vorbereitet.
+                    </p>
+                {% endif %}
             </div>
-          </div>
+
+            <!-- Order Identification -->
+            <div class="py-8 border-y border-white/5 flex flex-col md:flex-row justify-center gap-8 md:gap-16 mb-12">
+                <div>
+                    <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Order ID</p>
+                    <p class="text-xl font-bold text-white">#{{ order.id }}</p>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Identity</p>
+                    <p class="text-xl font-bold text-white">{{ order.vorname }} {{ order.nachname|slice:":1" }}.</p>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Payload</p>
+                    <p class="text-xl font-bold text-white">{{ order.gesamt_betrag|floatformat:2 }} €</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                <a href="{% url 'profil' %}" class="px-10 py-5 rounded-2xl glass border-white/10 text-white font-bold uppercase tracking-widest text-[10px] hover:bg-white/5 transition-all text-center">
+                    Mission Log (Profil)
+                </a>
+                <a href="{% url 'produkte' %}" class="px-10 py-5 rounded-2xl btn-glow text-white font-black uppercase tracking-widest text-[10px] shadow-2xl text-center">
+                    Back to Gallery
+                </a>
+            </div>
         </div>
 
-        <!-- Lieferadresse -->
-        <div class="card border-light shadow-sm mb-4">
-          <div class="card-header bg-light">
-            <h5 class="mb-0">📍 Lieferadresse</h5>
-          </div>
-          <div class="card-body">
-            <p class="mb-0">
-              <strong>{{ order.vorname }} {{ order.nachname }}</strong><br>
-              {{ order.adresse }}<br>
-              {{ order.postleitzahl }} {{ order.stadt }}<br>
-              {{ order.land }}<br>
-              {% if order.telefon %}
-                <small class="text-muted">Tel: {{ order.telefon }}</small>
-              {% endif %}
-            </p>
-          </div>
-        </div>
-
-        <!-- Kontaktinformationen -->
-        <div class="card border-light shadow-sm mb-4">
-          <div class="card-header bg-light">
-            <h5 class="mb-0">📧 Bestätigungsdaten</h5>
-          </div>
-          <div class="card-body">
-            <p class="text-muted small">
-              Eine Bestätigungsemail wurde an <strong>{{ order.email }}</strong> gesendet. 
-              Bitte überprüfe auch deinen Spam-Ordner.
-            </p>
-          </div>
-        </div>
-
-        <!-- Nächste Schritte -->
-        <div class="alert alert-info">
-          <h6 class="alert-heading">📋 Nächste Schritte:</h6>
-          <ul class="mb-0">
-            <li>Wir bearbeiten deine Bestellung in Kürze</li>
-            <li>Du erhältst weitere Informationen per E-Mail</li>
-            <li>Versandbenachrichtigung folgt zeitnah</li>
-          </ul>
-        </div>
-
-        <!-- Buttons -->
-        <div class="d-flex gap-2 justify-content-center mb-4">
-          <a href="{% url 'profil' %}" class="btn btn-outline-primary fw-bold">👤 Meine Bestellungen</a>
-          <a href="{% url 'produkte' %}" class="btn btn-primary fw-bold">🛍️ Weiter einkaufen</a>
-        </div>
-
-        <!-- FAQ -->
-        <div class="card border-light shadow-sm">
-          <div class="card-header bg-light">
-            <h6 class="mb-0">❓ Fragen?</h6>
-          </div>
-          <div class="card-body">
-            <p class="mb-2">
-              <strong>Versand:</strong> Die Bearbeitung erfolgt innerhalb von 1-2 Werktagen. Der Versand erfolgt per Standard-Paketdienst.
-            </p>
-            <p class="mb-0">
-              <strong>Kontakt:</strong> Bei Fragen wende dich bitte über unser <a href="{% url 'kontakt' %}">Kontaktformular</a> an uns.
-            </p>
-          </div>
-        </div>
-      </div>
+        <!-- Secondary Info (Optional) -->
+        <p class="text-center mt-12 text-[10px] text-white/20 uppercase tracking-[0.4em] font-light">
+            Luviq Universe – Unique Pieces for Unique Souls
+        </p>
     </div>
-  </div>
+</div>
 {% endblock %}
