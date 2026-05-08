@@ -46,15 +46,19 @@ def product_manager_required(view_func):
 @product_manager_required
 def admin_dashboard(request):
     """Admin/Superuser Dashboard - Übersicht"""
-    produkte_count = Produkt.objects.count()
-    aktive_count = Produkt.objects.filter(aktiv=True).count()
-    user_count = User.objects.count()
-    
-    # Order-Statistiken
-    orders_count = Order.objects.count()
-    orders_paid = Order.objects.filter(status='paid').count()
-    orders_pending = Order.objects.filter(status='pending').count()
-    orders_failed = Order.objects.filter(status='failed').count()
+    try:
+        produkte_count = Produkt.objects.count()
+        aktive_count = Produkt.objects.filter(aktiv=True).count()
+        user_count = User.objects.count()
+        
+        # Order-Statistiken
+        orders_count = Order.objects.count()
+        orders_paid = Order.objects.filter(status='paid').count()
+        orders_pending = Order.objects.filter(status='pending').count()
+        orders_failed = Order.objects.filter(status='failed').count()
+    except Exception as e:
+        print(f"Dashboard query error: {e}")
+        produkte_count = aktive_count = user_count = orders_count = orders_paid = orders_pending = orders_failed = 0
     
     context = {
         'produkte_count': produkte_count,
@@ -404,10 +408,14 @@ def admin_produkt_delete(request, produkt_id):
 def admin_orders_list(request):
     """Admin - Liste aller Bestellungen"""
     status_filter = request.GET.get('status')
-    orders = Order.objects.select_related('user').prefetch_related('items').all().order_by('-erstellt_am')
-    
-    if status_filter:
-        orders = orders.filter(status=status_filter)
+    try:
+        orders = Order.objects.select_related('user').prefetch_related('items').all().order_by('-erstellt_am')
+        
+        if status_filter:
+            orders = orders.filter(status=status_filter)
+    except Exception as e:
+        print(f"Orders list error: {e}")
+        orders = []
         
     context = {
         'orders': orders,
@@ -420,7 +428,11 @@ def admin_orders_list(request):
 @admin_required
 def admin_order_detail(request, order_id):
     """Admin - Detailansicht einer Bestellung mit Status-Update"""
-    order = get_object_or_404(Order.objects.prefetch_related('items'), id=order_id)
+    try:
+        order = get_object_or_404(Order.objects.prefetch_related('items'), id=order_id)
+    except Exception as e:
+        messages.error(request, f"Fehler beim Laden der Bestellung: {e}")
+        return redirect('admin_orders_list')
     
     if request.method == 'POST':
         new_status = request.POST.get('status')

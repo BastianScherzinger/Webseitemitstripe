@@ -28,17 +28,12 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-CHANGE_THIS_IN_PRODUCTION'
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 # Erlaubte Hosts - '*' erlaubt alles auf Railway
-ALLOWED_HOSTS = [
-    'luviq.de',
-    'www.luviq.de',
-    'luviq-luisa-production.up.railway.app', # Deine normale Railway-URL
-    'localhost',
-    '127.0.0.1'
-]
+ALLOWED_HOSTS = ['*']
+
 # CSRF-Sicherheit für Railway & PayPal
 CSRF_TRUSTED_ORIGINS = [
     'https://*.up.railway.app',
-    'https://webseitemitstripe-production.up.railway.app',
+    'https://luviq-luisa-production.up.railway.app',
     'http://localhost',
     'http://127.0.0.1'
 ]
