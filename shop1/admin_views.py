@@ -72,7 +72,7 @@ def admin_dashboard(request):
         'orders_pending': orders_pending,
         'orders_failed': orders_failed,
         'is_admin': is_admin(request.user),
-        'is_superuser': is_superuser(request.user),
+        'is_staff_member': is_staff_member(request.user),
     }
     return render(request, 'shop1/admin/dashboard.html', context)
 
