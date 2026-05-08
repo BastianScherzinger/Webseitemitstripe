@@ -568,28 +568,13 @@ def checkout(request):
                     menge=item.menge,
                 )
             
-            # Spezielle Logik für Abholung (Friend-Mode)
-            if payment_method == 'pickup':
-                order.status = 'processing' # Sofort in Bearbeitung
-                order.save()
-                
-                # Artikel deaktivieren (1-of-1)
-                for item in order.items.all():
-                    db_produkt = Produkt.objects.filter(name=item.produkt_name).first()
-                    if db_produkt:
-                        db_produkt.aktiv = False
-                        db_produkt.save()
-                
-                messages.success(request, '🤝 Mission gestartet! (Abholung gewählt)')
-                return redirect('payment_success', order_id=order.id)
-                
             # Spezielle Logik für Überweisung
             elif payment_method == 'bank_transfer':
                 # Email mit Bankverbindung senden
                 try:
                     send_bank_details_email(order)
-                except:
-                    pass
+                except Exception as e:
+                    print(f"Email error: {e}")
                 
                 messages.info(request, '🏛️ Mission gestartet! Bitte schließe die Überweisung ab.')
                 return redirect('payment_success', order_id=order.id)

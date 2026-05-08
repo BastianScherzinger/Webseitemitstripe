@@ -12,13 +12,16 @@ from .models import Produkt, UserProfile, Order, OrderItem
 
 
 def is_admin(user):
-    """Prüft ob Benutzer 'Admin' Rechte hat (Statistiken & alles)"""
-    return user.is_authenticated and user.is_staff
+    """Prüft ob Benutzer der echte Shopbesitzer (Admin) ist"""
+    if not user.is_authenticated:
+        return False
+    admin_username = os.getenv('ADMIN_USERNAME', 'shopbesitzer')
+    return user.username == admin_username or user.is_superuser
 
 
-def is_superuser(user):
-    """Prüft ob Benutzer 'Mitarbeiter' Rechte hat (Nur Produktverwaltung)"""
-    return user.is_authenticated and user.is_superuser
+def is_staff_member(user):
+    """Prüft ob Benutzer 'Mitarbeiter' Rechte hat (Produktverwaltung)"""
+    return user.is_authenticated and (user.is_staff or user.is_superuser)
 
 
 def admin_required(view_func):
@@ -435,20 +438,23 @@ def admin_order_detail(request, order_id):
         return redirect('admin_orders_list')
     
     if request.method == 'POST':
-        new_status = request.POST.get('status')
-        if new_status in dict(Order.STATUS_CHOICES):
-            order.status = new_status
-            order.save()
-            
-            # Wenn auf "Bezahlt" gesetzt wird -> Artikel deaktivieren
-            if new_status == 'paid':
-                for item in order.items.all():
-                    db_produkt = Produkt.objects.filter(name=item.produkt_name).first()
-                    if db_produkt:
-                        db_produkt.aktiv = False
-                        db_produkt.save()
-            
-            messages.success(request, f'✅ Status für Bestellung #{order.id} wurde auf "{order.get_status_display()}" aktualisiert!')
+        action = request.POST.get('action')
+        
+        if action == 'update_status':
+            new_status = request.POST.get('status')
+            if new_status in dict(Order.STATUS_CHOICES):
+                order.status = new_status
+                order.save()
+                
+                # Wenn auf "Bezahlt" gesetzt wird -> Artikel deaktivieren
+                if new_status == 'paid':
+                    for item in order.items.all():
+                        db_produkt = Produkt.objects.filter(name=item.produkt_name).first()
+                        if db_produkt:
+                            db_produkt.aktiv = False
+                            db_produkt.save()
+                
+                messages.success(request, f'✅ Status für Bestellung #{order.id} wurde auf "{order.get_status_display()}" aktualisiert!')
             return redirect('admin_order_detail', order_id=order.id)
             
     # Produkte in der DB finden für Bilder
@@ -466,3 +472,17 @@ def admin_order_detail(request, order_id):
         'status_choices': Order.STATUS_CHOICES,
     }
     return render(request, 'shop1/admin/order_detail.html', context)
+
+
+@admin_required
+def admin_order_delete(request, order_id):
+    """Admin - Bestellung löschen"""
+    order = get_object_or_404(Order, id=order_id)
+    
+    if request.method == 'POST':
+        order_id_display = order.id
+        order.delete()
+        messages.success(request, f'✅ Bestellung #{order_id_display} wurde dauerhaft gelöscht.')
+        return redirect('admin_orders_list')
+    
+    return render(request, 'shop1/admin/order_delete.html', {'order': order})

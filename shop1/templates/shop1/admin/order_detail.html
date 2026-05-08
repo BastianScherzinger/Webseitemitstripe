@@ -75,22 +75,39 @@
             <!-- Right: Shipping & Action -->
             <div class="space-y-8">
                 <!-- Status Update -->
-                <div class="glass-card p-8 rounded-[3rem] border-glow-orange/20">
-                    <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Mission Command</h3>
+                <div class="glass-card p-8 rounded-[3rem] border-glow-orange/20 relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-glow-orange/5 rounded-full blur-2xl"></div>
+                    
+                    <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-8">Mission Command</h3>
+                    
                     <form method="POST" class="space-y-6">
                         {% csrf_token %}
-                        <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/40 mb-3 pl-2">Update Status</label>
-                            <select name="status" class="w-full glass px-6 py-4 rounded-2xl text-xs font-bold text-white uppercase tracking-widest outline-none border-white/10 bg-white/[0.02]">
-                                {% for code, label in status_choices %}
-                                    <option value="{{ code }}" {% if order.status == code %}selected{% endif %}>{{ label }}</option>
-                                {% endfor %}
-                            </select>
+                        <input type="hidden" name="action" value="update_status">
+                        
+                        <div class="space-y-3">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/20 pl-2">Modify Status</label>
+                            <div class="relative">
+                                <select name="status" class="w-full glass px-6 py-5 rounded-2xl text-[10px] font-black text-white uppercase tracking-widest outline-none border-white/10 bg-white/[0.05] appearance-none cursor-pointer hover:border-glow-orange/50 transition-all">
+                                    {% for code, label in status_choices %}
+                                        <option value="{{ code }}" {% if order.status == code %}selected{% endif %} class="bg-bg-base text-white py-4">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-glow-orange">
+                                    ▼
+                                </div>
+                            </div>
                         </div>
-                        <button type="submit" class="w-full btn-glow py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest">
-                            Update Mission Status
+                        
+                        <button type="submit" class="w-full btn-glow py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg transform active:scale-95 transition-all">
+                            Commit Changes
                         </button>
                     </form>
+
+                    <div class="mt-8 pt-8 border-t border-white/5">
+                        <a href="{% url 'admin_order_delete' order.id %}" class="block w-full py-4 glass border-red-500/10 text-red-400/60 hover:text-red-400 hover:bg-red-500/5 rounded-2xl text-center text-[9px] font-black uppercase tracking-[0.2em] transition-all">
+                            🗑️ Purge Mission Data
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Delivery Address -->

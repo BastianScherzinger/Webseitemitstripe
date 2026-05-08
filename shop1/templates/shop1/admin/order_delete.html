@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Purge Mission #{{ order.id }} – Luviq Admin{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen pt-20 pb-32 flex items-center justify-center">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-xl w-full mx-auto px-4 relative z-10 animate-reveal">
+        <div class="glass-card p-12 md:p-16 rounded-[4rem] shadow-2xl text-center border-red-500/20">
+            
+            <div class="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-10 text-4xl">
+                ⚠️
+            </div>
+
+            <h1 class="text-3xl md:text-5xl font-black heading-font text-white uppercase tracking-tighter mb-6">
+                Purge <span class="text-red-500">Mission</span>
+            </h1>
+
+            <p class="text-white/40 text-sm font-light tracking-widest leading-relaxed mb-10 uppercase">
+                Bist du sicher, dass du die Bestellung <span class="text-white font-bold">#{{ order.id }}</span> dauerhaft aus dem System löschen möchtest? <br>
+                Dieser Vorgang kann nicht rückgängig gemacht werden.
+            </p>
+
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                <button type="submit" class="w-full py-5 rounded-2xl bg-red-500 text-white font-black uppercase tracking-widest text-[10px] shadow-[0_10px_40px_rgba(239,68,68,0.3)] hover:scale-105 transition-all">
+                    Confirm Permanent Purge
+                </button>
+                <a href="{% url 'admin_order_detail' order.id %}" class="block w-full py-5 rounded-2xl glass border-white/10 text-white font-bold uppercase tracking-widest text-[10px] hover:bg-white/5 transition-all">
+                    Abort Mission
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

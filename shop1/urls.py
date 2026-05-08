@@ -74,4 +74,5 @@ urlpatterns = [
     path('shop-admin/produkte/<int:produkt_id>/toggle/', admin_views.admin_produkt_toggle, name='admin_produkt_toggle'),
     path('shop-admin/orders/', admin_views.admin_orders_list, name='admin_orders_list'),
     path('shop-admin/orders/<int:order_id>/', admin_views.admin_order_detail, name='admin_order_detail'),
+    path('shop-admin/orders/<int:order_id>/delete/', admin_views.admin_order_delete, name='admin_order_delete'),
 ]
