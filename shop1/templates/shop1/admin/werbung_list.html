@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Werbung verwalten – Admin{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen pt-20 pb-32">
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+
+        <!-- Nav -->
+        <div class="flex flex-wrap gap-4 mb-12">
+            <a href="{% url 'admin_dashboard' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">Overview</a>
+            <a href="{% url 'admin_orders_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">Bestellungen</a>
+            <a href="{% url 'admin_produkte_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">Inventar</a>
+            <a href="{% url 'admin_stats' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">Analytics</a>
+            <a href="{% url 'admin_werbung_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest bg-glow-orange transition-all">Werbung</a>
+        </div>
+
+        <!-- Header -->
+        <div class="mb-10">
+            <h1 class="text-4xl font-black text-white mb-1">Werbung <span class="text-glow-orange">Dashboard</span></h1>
+            <p class="text-white/30 text-xs uppercase tracking-widest">Budget · Klicks · Views · Cross-Site Auswertung</p>
+        </div>
+
+        <!-- Messages -->
+        {% for msg in messages %}
+        <div class="mb-4 px-5 py-3 rounded-xl text-sm font-semibold
+            {% if msg.tags == 'success' %}bg-emerald-500/15 border border-emerald-500/30 text-emerald-300
+            {% elif msg.tags == 'error' %}bg-red-500/15 border border-red-500/30 text-red-300
+            {% else %}bg-white/10 border border-white/10 text-white/80{% endif %}">
+            {{ msg }}
+        </div>
+        {% endfor %}
+
+        {% if werbungen %}
+
+        <!-- KPI Row -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            <div class="glass-card p-6 rounded-[2rem] border-white/5">
+                <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Werbungen Gesamt</p>
+                <h4 class="text-2xl font-black text-white">{{ werbungen|length }}</h4>
+            </div>
+            <div class="glass-card p-6 rounded-[2rem] border-emerald-500/10 border bg-emerald-500/5">
+                <p class="text-[9px] font-black uppercase tracking-widest text-emerald-400 mb-1">Aktiv</p>
+                <h4 class="text-2xl font-black text-emerald-400">{% with count=0 %}{% for w in werbungen %}{% if w.aktiv %}{% with count=count|add:1 %}{% endwith %}{% endif %}{% endfor %}{{ werbungen|length }}{% endwith %}</h4>
+            </div>
+            <div class="glass-card p-6 rounded-[2rem] border-white/5">
+                <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Views Gesamt</p>
+                <h4 class="text-2xl font-black text-white" id="total-views">–</h4>
+            </div>
+            <div class="glass-card p-6 rounded-[2rem] border-glow-orange/10 border bg-glow-orange/5">
+                <p class="text-[9px] font-black uppercase tracking-widest text-glow-orange mb-1">Klicks Gesamt</p>
+                <h4 class="text-2xl font-black text-glow-orange" id="total-clicks">–</h4>
+            </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="glass-card rounded-[3rem] overflow-hidden mb-10">
+            <div class="px-10 py-8 border-b border-white/5">
+                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Performance Chart – Alle Werbungen</h3>
+            </div>
+            <div class="p-8">
+                <canvas id="werbungChart" height="90"></canvas>
+            </div>
+        </div>
+
+        <!-- Werbung Cards -->
+        <div class="flex flex-col gap-6">
+            {% for w in werbungen %}
+            <div class="glass-card rounded-[2.5rem] overflow-hidden border {% if w.aktiv %}border-emerald-500/20{% else %}border-white/5{% endif %}">
+
+                <!-- Top row: image + info + actions -->
+                <div class="flex flex-col md:flex-row">
+                    <!-- Bild -->
+                    {% if w.bild %}
+                    <div class="w-full md:w-24 md:flex-shrink-0 bg-black/30 flex items-center justify-center overflow-hidden" style="min-height:100px;">
+                        <img src="{{ w.bild }}" alt="{{ w.titel }}" class="w-full h-full object-cover">
+                    </div>
+                    {% endif %}
+
+                    <!-- Info -->
+                    <div class="flex-1 p-8">
+                        <div class="flex items-center gap-3 flex-wrap mb-2">
+                            <span class="text-lg font-black text-white">{{ w.titel }}</span>
+                            {% if w.aktiv %}
+                            <span class="text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">● LIVE</span>
+                            {% else %}
+                            <span class="text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-white/5 text-white/30 border border-white/10">Pausiert</span>
+                            {% endif %}
+                        </div>
+
+                        {% if w.beschreibung %}
+                        <p class="text-white/40 text-xs mb-2">{{ w.beschreibung|truncatewords:15 }}</p>
+                        {% endif %}
+
+                        <a href="{{ w.link }}" target="_blank" class="text-glow-orange text-[11px] truncate block mb-4" style="max-width:400px;">{{ w.link|truncatechars:60 }} ↗</a>
+
+                        <!-- Budget Bar -->
+                        <div class="mb-4">
+                            <div class="flex justify-between text-[10px] text-white/40 mb-1">
+                                <span>Ausgegeben: <strong class="text-red-400">€{{ w.ausgegeben|floatformat:2 }}</strong></span>
+                                <span>Verbleibend: <strong class="text-emerald-400">€{{ w.verbleibendes_budget|floatformat:2 }}</strong> / €{{ w.budget|floatformat:2 }}</span>
+                            </div>
+                            <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                                <div class="h-full rounded-full transition-all duration-700
+                                    {% if w.budget_prozent_genutzt > 80 %}bg-red-500
+                                    {% elif w.budget_prozent_genutzt > 50 %}bg-glow-orange
+                                    {% else %}bg-emerald-500{% endif %}"
+                                    style="width:{{ w.budget_prozent_genutzt }}%"></div>
+                            </div>
+                            <div class="text-[9px] text-white/20 mt-1">{{ w.budget_prozent_genutzt }}% verbraucht</div>
+                        </div>
+
+                        <!-- Stats Row -->
+                        <div class="flex gap-8 flex-wrap">
+                            <div>
+                                <p class="text-[9px] uppercase tracking-widest text-white/30 font-black mb-0.5">Views</p>
+                                <p class="text-xl font-black text-white">{{ w.impressionen }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] uppercase tracking-widest text-white/30 font-black mb-0.5">Klicks</p>
+                                <p class="text-xl font-black text-glow-orange">{{ w.klicks }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] uppercase tracking-widest text-white/30 font-black mb-1.5">Per Webseite</p>
+                                <div class="flex flex-wrap gap-2">
+                                    {% for s in w.site_stats %}
+                                    <span class="text-[9px] font-black px-2.5 py-1 rounded-full
+                                        {% if s.seite == 'pystore' %}bg-sky-500/15 text-sky-300 border border-sky-500/30
+                                        {% elif s.seite == 'tutorials' %}bg-violet-500/15 text-violet-300 border border-violet-500/30
+                                        {% else %}bg-white/10 text-white/50 border border-white/10{% endif %}">
+                                        {{ s.seite }}: {{ s.v }}v / {{ s.k }}k
+                                    </span>
+                                    {% empty %}
+                                    <span class="text-white/20 text-[10px]">noch keine Daten</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="p-6 flex flex-col gap-3 justify-center border-t md:border-t-0 md:border-l border-white/5 md:min-w-[140px]">
+                        <button onclick="toggleEdit({{ w.id }})"
+                            class="px-4 py-2 rounded-xl bg-violet-500/15 border border-violet-500/30 text-violet-300 text-[11px] font-black uppercase tracking-widest hover:bg-violet-500/25 transition-all cursor-pointer">
+                            ✏ Bearbeiten
+                        </button>
+                        <form method="post" action="{% url 'admin_werbung_toggle' werbung_id=w.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="w-full px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all cursor-pointer
+                                {% if w.aktiv %}bg-glow-orange/15 border border-glow-orange/30 text-glow-orange hover:bg-glow-orange/25
+                                {% else %}bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25{% endif %}">
+                                {% if w.aktiv %}Pausieren{% else %}Aktivieren{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Edit Form (hidden) -->
+                <div id="edit-{{ w.id }}" class="hidden border-t border-white/5 bg-white/2">
+                    <form method="post" action="{% url 'admin_werbung_edit' werbung_id=w.id %}" class="p-8">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Titel *</label>
+                                <input type="text" name="titel" value="{{ w.titel }}" required
+                                    class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
+                            </div>
+                            <div>
+                                <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Ziel-URL *</label>
+                                <input type="url" name="link" value="{{ w.link }}" required
+                                    class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Beschreibung</label>
+                            <textarea name="beschreibung" rows="2"
+                                class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50 resize-y">{{ w.beschreibung }}</textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Budget (€)</label>
+                                <input type="number" step="0.01" min="0" name="budget" value="{{ w.budget|stringformat:'f' }}"
+                                    class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
+                                <p class="text-[9px] text-white/20 mt-1">Kosten: 0,25ct/View · 9,5ct/Klick</p>
+                            </div>
+                            <div class="flex items-center gap-3 pt-5">
+                                <label class="flex items-center gap-2 cursor-pointer text-sm text-white/50">
+                                    <input type="checkbox" name="aktiv" value="1" {% if w.aktiv %}checked{% endif %}
+                                        class="w-4 h-4 accent-emerald-400">
+                                    Aktiv schalten
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="submit"
+                                class="px-6 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[11px] font-black uppercase tracking-widest hover:bg-emerald-500/25 transition-all cursor-pointer">
+                                💾 Speichern
+                            </button>
+                            <button type="button" onclick="toggleEdit({{ w.id }})"
+                                class="px-6 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 text-[11px] font-black uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer">
+                                Abbrechen
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="glass-card rounded-[3rem] p-20 text-center">
+            <p class="text-5xl mb-4">📢</p>
+            <h3 class="text-lg font-black text-white mb-2">Keine Werbungen vorhanden</h3>
+            <p class="text-white/30 text-xs uppercase tracking-widest">Lege Werbungen direkt in der Datenbank an.</p>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// ── Edit toggle ──
+function toggleEdit(id) {
+    const el = document.getElementById('edit-' + id);
+    el.classList.toggle('hidden');
+}
+
+// ── Chart ──
+const RAW = {{ chart_json|safe }};
+
+// KPI totals
+const totalViews = RAW.reduce((s, w) => s + w.impressionen, 0);
+const totalClicks = RAW.reduce((s, w) => s + w.klicks, 0);
+document.getElementById('total-views').textContent = totalViews.toLocaleString('de-DE');
+document.getElementById('total-clicks').textContent = totalClicks.toLocaleString('de-DE');
+
+if (RAW.length > 0) {
+    const labels = RAW.map(w => w.name);
+    const colors = ['#f97316', '#8b5cf6', '#22c55e', '#38bdf8', '#f43f5e'];
+
+    new Chart(document.getElementById('werbungChart'), {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Views (Impressionen)',
+                    data: RAW.map(w => w.impressionen),
+                    backgroundColor: RAW.map((_, i) => colors[i % colors.length] + '33'),
+                    borderColor: RAW.map((_, i) => colors[i % colors.length]),
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    yAxisID: 'y',
+                },
+                {
+                    label: 'Klicks',
+                    data: RAW.map(w => w.klicks),
+                    backgroundColor: RAW.map((_, i) => colors[i % colors.length] + '99'),
+                    borderColor: RAW.map((_, i) => colors[i % colors.length]),
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    yAxisID: 'y',
+                },
+                {
+                    label: 'Ausgegeben (€)',
+                    data: RAW.map(w => w.ausgegeben),
+                    type: 'line',
+                    borderColor: '#fbbf24',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#fbbf24',
+                    pointRadius: 5,
+                    tension: 0.3,
+                    yAxisID: 'y2',
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    labels: { color: 'rgba(255,255,255,0.5)', font: { size: 11, weight: 'bold' } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => {
+                            const val = ctx.parsed.y;
+                            if (ctx.dataset.label.includes('€')) return ` ${ctx.dataset.label}: €${val.toFixed(2)}`;
+                            return ` ${ctx.dataset.label}: ${val}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+                y: {
+                    position: 'left',
+                    ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 11 } },
+                    grid: { color: 'rgba(255,255,255,0.04)' },
+                    title: { display: true, text: 'Views / Klicks', color: 'rgba(255,255,255,0.3)', font: { size: 10 } },
+                },
+                y2: {
+                    position: 'right',
+                    ticks: {
+                        color: '#fbbf24',
+                        font: { size: 11 },
+                        callback: v => '€' + v.toFixed(2),
+                    },
+                    grid: { drawOnChartArea: false },
+                    title: { display: true, text: 'Ausgegeben (€)', color: '#fbbf24', font: { size: 10 } },
+                },
+            },
+        },
+    });
+}
+</script>
+{% endblock %}

@@ -53,8 +53,7 @@ def admin_dashboard(request):
         produkte_count = Produkt.objects.count()
         aktive_count = Produkt.objects.filter(aktiv=True).count()
         user_count = User.objects.count()
-        
-        # Order-Statistiken
+
         orders_count = Order.objects.count()
         orders_paid = Order.objects.filter(status='paid').count()
         orders_pending = Order.objects.filter(status='pending').count()
@@ -62,7 +61,13 @@ def admin_dashboard(request):
     except Exception as e:
         print(f"Dashboard query error: {e}")
         produkte_count = aktive_count = user_count = orders_count = orders_paid = orders_pending = orders_failed = 0
-    
+
+    try:
+        werbung_count = Werbung.objects.count()
+        werbung_aktiv_count = Werbung.objects.filter(aktiv=True).count()
+    except Exception:
+        werbung_count = werbung_aktiv_count = 0
+
     context = {
         'produkte_count': produkte_count,
         'aktive_count': aktive_count,
@@ -71,6 +76,8 @@ def admin_dashboard(request):
         'orders_paid': orders_paid,
         'orders_pending': orders_pending,
         'orders_failed': orders_failed,
+        'werbung_count': werbung_count,
+        'werbung_aktiv_count': werbung_aktiv_count,
         'is_admin': is_admin(request.user),
         'is_staff_member': is_staff_member(request.user),
     }
@@ -107,7 +114,76 @@ def admin_produkte_list(request):
 from django.utils import timezone
 from datetime import timedelta
 import json
-from .models import PageVisit
+from .models import PageVisit, Werbung, WerbungStat
+
+
+# ═══ WERBUNG ADMIN ═══
+
+@admin_required
+def admin_werbung_list(request):
+    """Werbungen verwalten – Budget, Klicks, Views, Per-Seite-Auswertung + Chart."""
+    from django.db.models import Sum
+
+    werbungen = list(Werbung.objects.all().order_by('-erstellt_am'))
+
+    for w in werbungen:
+        w.site_stats = list(
+            WerbungStat.objects.filter(werbung=w)
+            .values('seite')
+            .annotate(v=Sum('impressionen'), k=Sum('klicks'))
+            .order_by('seite')
+        )
+
+    chart_data = [
+        {
+            'name': w.titel,
+            'impressionen': w.impressionen,
+            'klicks': w.klicks,
+            'ausgegeben': float(w.ausgegeben),
+            'verbleibendes': float(w.verbleibendes_budget),
+            'budget': float(w.budget),
+            'prozent': w.budget_prozent_genutzt,
+        }
+        for w in werbungen
+    ]
+
+    context = {
+        'werbungen': werbungen,
+        'chart_json': json.dumps(chart_data),
+    }
+    return render(request, 'shop1/admin/werbung_list.html', context)
+
+
+@admin_required
+def admin_werbung_toggle(request, werbung_id):
+    """Schaltet Aktiv-Status einer Werbung um."""
+    if request.method == 'POST':
+        w = get_object_or_404(Werbung, id=werbung_id)
+        w.aktiv = not w.aktiv
+        w.save(update_fields=['aktiv'])
+        status = 'aktiviert' if w.aktiv else 'pausiert'
+        messages.success(request, f'Werbung "{w.titel}" wurde {status}.')
+    return redirect('admin_werbung_list')
+
+
+@admin_required
+def admin_werbung_edit(request, werbung_id):
+    """Werbung-Felder inline bearbeiten (POST only)."""
+    if request.method == 'POST':
+        w = get_object_or_404(Werbung, id=werbung_id)
+        w.titel = request.POST.get('titel', w.titel).strip() or w.titel
+        w.link = request.POST.get('link', w.link).strip() or w.link
+        w.beschreibung = request.POST.get('beschreibung', w.beschreibung)
+        try:
+            w.budget = float(request.POST.get('budget', w.budget))
+        except (ValueError, TypeError):
+            pass
+        aktiv_val = request.POST.get('aktiv')
+        w.aktiv = aktiv_val == '1'
+        w.save()
+        messages.success(request, f'Werbung "{w.titel}" gespeichert.')
+    return redirect('admin_werbung_list')
+
 
 @admin_required
 def admin_stats(request):

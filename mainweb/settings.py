@@ -188,6 +188,7 @@ if os.getenv('CLOUDINARY_URL'):
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+#nichts
 
 # ═══ EMAIL-KONFIGURATION ═══
 

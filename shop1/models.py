@@ -184,6 +184,73 @@ class OrderItem(models.Model):
         verbose_name_plural = "Bestellungs-Artikel"
 
 
+class Werbung(models.Model):
+    """Werbebanner – in dieser Datenbank verwaltet, von anderen Sites (tutorials) mitgenutzt."""
+    titel = models.CharField(max_length=200)
+    beschreibung = models.TextField(blank=True, default='')
+    link = models.URLField(max_length=500)
+    bild = models.CharField(max_length=500, blank=True, default='')
+    budget = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    laufzeit_tage = models.PositiveIntegerField(default=30)
+    ablauf_email_gesendet = models.BooleanField(default=False)
+    aktiv = models.BooleanField(default=True)
+    impressionen = models.PositiveIntegerField(default=0)
+    klicks = models.PositiveIntegerField(default=0)
+    erstellt_am = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Werbung'
+        verbose_name_plural = 'Werbungen'
+        ordering = ['-erstellt_am']
+
+    def __str__(self):
+        return self.titel
+
+    @property
+    def name(self):
+        return self.titel
+
+    @property
+    def ausgegeben(self):
+        from decimal import Decimal
+        return (Decimal(self.impressionen) * Decimal('0.0025')) + (Decimal(self.klicks) * Decimal('0.095'))
+
+    @property
+    def verbleibendes_budget(self):
+        from decimal import Decimal
+        remaining = self.budget - self.ausgegeben
+        return remaining if remaining > Decimal('0') else Decimal('0')
+
+    @property
+    def budget_prozent_genutzt(self):
+        if not self.budget:
+            return 100
+        pct = int((self.ausgegeben / self.budget) * 100)
+        return min(pct, 100)
+
+    @property
+    def ist_aktiv(self):
+        from decimal import Decimal
+        return bool(self.aktiv) and (self.budget - self.ausgegeben) > Decimal('0')
+
+
+class WerbungStat(models.Model):
+    """Klick-/View-Statistik pro Werbung, Seite und Tag."""
+    werbung = models.ForeignKey(Werbung, on_delete=models.CASCADE, related_name='stats')
+    seite = models.CharField(max_length=100)
+    impressionen = models.PositiveIntegerField(default=0)
+    klicks = models.PositiveIntegerField(default=0)
+    datum = models.DateField()
+
+    class Meta:
+        verbose_name = 'Werbung Statistik'
+        verbose_name_plural = 'Werbung Statistiken'
+        unique_together = ('werbung', 'seite', 'datum')
+
+    def __str__(self):
+        return f"{self.werbung.titel} – {self.seite} ({self.datum})"
+
+
 class PageVisit(models.Model):
     """Speichert die Anzahl der Seitenbesuche pro Tag"""
     date = models.DateField(unique=True, verbose_name="Datum")

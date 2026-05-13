@@ -26,10 +26,13 @@
             <a href="{% url 'admin_produkt_upload' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
                 New Drop
             </a>
+            <a href="{% url 'admin_werbung_list' %}" class="px-6 py-3 rounded-xl glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-glow-orange transition-all">
+                Werbung
+            </a>
         </div>
 
         <!-- Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-6 mb-12">
             <div class="glass-card p-8 rounded-[2.5rem] border-white/5">
                 <p class="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Total Inventory</p>
                 <h4 class="text-3xl font-black text-white">{{ produkte_count }}</h4>
@@ -47,6 +50,10 @@
                 <p class="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Member Base</p>
                 <h4 class="text-3xl font-black text-white">{{ user_count }}</h4>
             </div>
+            <a href="{% url 'admin_werbung_list' %}" class="glass-card p-8 rounded-[2.5rem] border-violet-500/10 border bg-violet-500/5 hover:bg-violet-500/10 transition-all">
+                <p class="text-[10px] font-black uppercase tracking-widest text-violet-400 mb-2">Werbungen Aktiv</p>
+                <h4 class="text-3xl font-black text-violet-400">{{ werbung_aktiv_count }}<span class="text-lg text-white/30"> / {{ werbung_count }}</span></h4>
+            </a>
             {% endif %}
         </div>
 
@@ -98,6 +105,14 @@
                     <h4 class="text-lg font-bold text-white mb-2">Bestellungen verwalten</h4>
                     <p class="text-white/30 text-[10px] uppercase tracking-widest leading-relaxed">Status prüfen, Versand vorbereiten oder Bestellungen löschen.</p>
                 </a>
+
+                {% if is_admin %}
+                <a href="{% url 'admin_werbung_list' %}" class="group p-8 glass rounded-[2.5rem] border-white/5 hover:bg-white/5 transition-all">
+                    <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">📢</div>
+                    <h4 class="text-lg font-bold text-white mb-2">Werbung</h4>
+                    <p class="text-white/30 text-[10px] uppercase tracking-widest leading-relaxed">Budget, Klicks, Views und Cross-Site Auswertung aller Anzeigen.</p>
+                </a>
+                {% endif %}
 
                 <a href="{% url 'home' %}" class="group p-8 glass rounded-[2.5rem] border-white/5 hover:bg-white/5 transition-all">
                     <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">🏠</div>

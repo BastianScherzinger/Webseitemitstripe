@@ -85,4 +85,9 @@ urlpatterns = [
     path('shop-admin/orders/', admin_views.admin_orders_list, name='admin_orders_list'),
     path('shop-admin/orders/<int:order_id>/', admin_views.admin_order_detail, name='admin_order_detail'),
     path('shop-admin/orders/<int:order_id>/delete/', admin_views.admin_order_delete, name='admin_order_delete'),
+
+    # ═══ WERBUNG ═══
+    path('shop-admin/werbung/', admin_views.admin_werbung_list, name='admin_werbung_list'),
+    path('shop-admin/werbung/<int:werbung_id>/toggle/', admin_views.admin_werbung_toggle, name='admin_werbung_toggle'),
+    path('shop-admin/werbung/<int:werbung_id>/edit/', admin_views.admin_werbung_edit, name='admin_werbung_edit'),
 ]
