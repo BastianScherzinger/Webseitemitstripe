@@ -111,10 +111,13 @@ def admin_produkte_list(request):
     return render(request, 'shop1/admin/produkte_list.html', context)
 
 
+import logging as _logging
 from django.utils import timezone
 from datetime import timedelta
 import json
-from .models import PageVisit, Werbung, WerbungStat
+from .models import PageVisit, Werbung, WerbungStat, VisitorLog
+
+_log = _logging.getLogger('shop1')
 
 
 # ═══ WERBUNG ADMIN ═══
@@ -134,18 +137,25 @@ def admin_werbung_list(request):
             .order_by('seite')
         )
 
-    chart_data = [
-        {
-            'name': w.titel,
-            'impressionen': w.impressionen,
-            'klicks': w.klicks,
-            'ausgegeben': float(w.ausgegeben),
-            'verbleibendes': float(w.verbleibendes_budget),
-            'budget': float(w.budget),
-            'prozent': w.budget_prozent_genutzt,
-        }
-        for w in werbungen
-    ]
+    chart_data = []
+    for w in werbungen:
+        try:
+            chart_data.append({
+                'name': w.titel or f'Werbung {w.id}',
+                'impressionen': w.impressionen or 0,
+                'klicks': w.klicks or 0,
+                'ausgegeben': float(w.ausgegeben),
+                'verbleibendes': float(w.verbleibendes_budget),
+                'budget': float(w.budget or 0),
+                'prozent': w.budget_prozent_genutzt,
+            })
+        except Exception as e:
+            _log.error('werbung chart_data error ad %s: %s', w.id, e)
+            chart_data.append({
+                'name': getattr(w, 'titel', f'Werbung {w.id}') or f'Werbung {w.id}',
+                'impressionen': 0, 'klicks': 0,
+                'ausgegeben': 0.0, 'verbleibendes': 0.0, 'budget': 0.0, 'prozent': 0,
+            })
 
     context = {
         'werbungen': werbungen,
@@ -183,6 +193,45 @@ def admin_werbung_edit(request, werbung_id):
         w.save()
         messages.success(request, f'Werbung "{w.titel}" gespeichert.')
     return redirect('admin_werbung_list')
+
+
+def _geo_enrich_visitors(visitors):
+    """Batch geo-enrich visitor log entries that have no country yet."""
+    import urllib.request
+    import json as _json
+
+    PRIVATE = ('127.', '10.', '192.168.', '::1', '172.16.', '172.17.',
+               '172.18.', '172.19.', '172.20.', '172.21.', '172.22.',
+               '172.23.', '172.24.', '172.25.', '172.26.', '172.27.',
+               '172.28.', '172.29.', '172.30.', '172.31.')
+
+    to_enrich = [v for v in visitors
+                 if not v.country and v.ip_address
+                 and not any(str(v.ip_address).startswith(p) for p in PRIVATE)]
+    if not to_enrich:
+        return
+    ips = [v.ip_address for v in to_enrich[:10]]
+    ip_to_obj = {v.ip_address: v for v in to_enrich[:10]}
+    try:
+        body = _json.dumps([{'query': ip} for ip in ips]).encode('utf-8')
+        req = urllib.request.Request(
+            'http://ip-api.com/batch?fields=query,status,country,countryCode,city',
+            data=body, headers={'Content-Type': 'application/json'},
+        )
+        with urllib.request.urlopen(req, timeout=3) as resp:
+            results = _json.loads(resp.read())
+        for r in results:
+            ip = r.get('query')
+            v = ip_to_obj.get(ip)
+            if v and r.get('status') == 'success':
+                v.country = r.get('country', '')
+                v.country_code = r.get('countryCode', '')
+                v.city = r.get('city', '')
+                VisitorLog.objects.filter(pk=v.pk).update(
+                    country=v.country, country_code=v.country_code, city=v.city,
+                )
+    except Exception as e:
+        _log.warning('geo batch enrich failed: %s', e)
 
 
 @admin_required
@@ -235,6 +284,17 @@ def admin_stats(request):
     except Exception as e:
         print(f"Error in revenue calculation: {e}")
     
+    recent_visitors = []
+    total_visitor_logs = 0
+    try:
+        visitors = list(VisitorLog.objects.order_by('-timestamp')[:30])
+        _log.debug('admin_stats: loaded %d visitor log entries', len(visitors))
+        _geo_enrich_visitors(visitors)
+        recent_visitors = visitors
+        total_visitor_logs = VisitorLog.objects.count()
+    except Exception as e:
+        _log.error('admin_stats: visitor log error: %s', e)
+
     context = {
         'users': users,
         'orders': orders,
@@ -245,6 +305,8 @@ def admin_stats(request):
         'total_revenue': total_revenue,
         'total_discounts': total_discounts,
         'chart_data_json': chart_data_json,
+        'recent_visitors': recent_visitors,
+        'total_visitor_logs': total_visitor_logs,
     }
     return render(request, 'shop1/admin/stats.html', context)
 

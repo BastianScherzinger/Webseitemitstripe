@@ -213,25 +213,31 @@ class Werbung(models.Model):
     @property
     def ausgegeben(self):
         from decimal import Decimal
-        return (Decimal(self.impressionen) * Decimal('0.0025')) + (Decimal(self.klicks) * Decimal('0.095'))
+        imp = Decimal(self.impressionen or 0)
+        klk = Decimal(self.klicks or 0)
+        return (imp * Decimal('0.0025')) + (klk * Decimal('0.095'))
 
     @property
     def verbleibendes_budget(self):
         from decimal import Decimal
-        remaining = self.budget - self.ausgegeben
+        budget = self.budget or Decimal('0')
+        remaining = budget - self.ausgegeben
         return remaining if remaining > Decimal('0') else Decimal('0')
 
     @property
     def budget_prozent_genutzt(self):
-        if not self.budget:
+        from decimal import Decimal
+        budget = self.budget or Decimal('0')
+        if not budget:
             return 100
-        pct = int((self.ausgegeben / self.budget) * 100)
+        pct = int((self.ausgegeben / budget) * 100)
         return min(pct, 100)
 
     @property
     def ist_aktiv(self):
         from decimal import Decimal
-        return bool(self.aktiv) and (self.budget - self.ausgegeben) > Decimal('0')
+        budget = self.budget or Decimal('0')
+        return bool(self.aktiv) and (budget - self.ausgegeben) > Decimal('0')
 
 
 class WerbungStat(models.Model):
@@ -249,6 +255,34 @@ class WerbungStat(models.Model):
 
     def __str__(self):
         return f"{self.werbung.titel} – {self.seite} ({self.datum})"
+
+
+class VisitorLog(models.Model):
+    """Einzelne Besuchereinträge mit IP, Geo-Daten und Quell-Site."""
+    timestamp = models.DateTimeField(auto_now_add=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    country = models.CharField(max_length=100, blank=True, default='')
+    country_code = models.CharField(max_length=5, blank=True, default='')
+    city = models.CharField(max_length=100, blank=True, default='')
+    path = models.CharField(max_length=255, blank=True, default='')
+    user_agent = models.CharField(max_length=500, blank=True, default='')
+    seite = models.CharField(max_length=100, blank=True, default='pystore')
+
+    @property
+    def country_flag(self):
+        code = (self.country_code or '').upper()
+        if len(code) == 2 and code.isalpha():
+            return chr(0x1F1E6 + ord(code[0]) - 65) + chr(0x1F1E6 + ord(code[1]) - 65)
+        return '🌍'
+
+    class Meta:
+        ordering = ['-timestamp']
+        verbose_name = 'Besucher Log'
+        verbose_name_plural = 'Besucher Logs'
+
+    def __str__(self):
+        loc = f"{self.city}, {self.country}" if self.city else (self.country or self.ip_address or 'Unbekannt')
+        return f"{loc} – {self.timestamp.strftime('%d.%m.%Y %H:%M')}"
 
 
 class PageVisit(models.Model):

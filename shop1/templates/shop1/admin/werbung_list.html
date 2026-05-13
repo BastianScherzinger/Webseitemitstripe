@@ -44,7 +44,7 @@
             </div>
             <div class="glass-card p-6 rounded-[2rem] border-emerald-500/10 border bg-emerald-500/5">
                 <p class="text-[9px] font-black uppercase tracking-widest text-emerald-400 mb-1">Aktiv</p>
-                <h4 class="text-2xl font-black text-emerald-400">{% with count=0 %}{% for w in werbungen %}{% if w.aktiv %}{% with count=count|add:1 %}{% endwith %}{% endif %}{% endfor %}{{ werbungen|length }}{% endwith %}</h4>
+                <h4 class="text-2xl font-black text-emerald-400" id="total-active">–</h4>
             </div>
             <div class="glass-card p-6 rounded-[2rem] border-white/5">
                 <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Views Gesamt</p>
@@ -236,13 +236,15 @@ const RAW = {{ chart_json|safe }};
 // KPI totals
 const totalViews = RAW.reduce((s, w) => s + w.impressionen, 0);
 const totalClicks = RAW.reduce((s, w) => s + w.klicks, 0);
+const totalActive = RAW.filter(w => w.prozent < 100).length;
 document.getElementById('total-views').textContent = totalViews.toLocaleString('de-DE');
 document.getElementById('total-clicks').textContent = totalClicks.toLocaleString('de-DE');
+document.getElementById('total-active').textContent = totalActive;
+
+const colors = ['#f97316', '#8b5cf6', '#22c55e', '#38bdf8', '#f43f5e'];
+const labels = RAW.map(w => w.name.length > 20 ? w.name.slice(0, 18) + '…' : w.name);
 
 if (RAW.length > 0) {
-    const labels = RAW.map(w => w.name);
-    const colors = ['#f97316', '#8b5cf6', '#22c55e', '#38bdf8', '#f43f5e'];
-
     new Chart(document.getElementById('werbungChart'), {
         type: 'bar',
         data: {
@@ -251,30 +253,34 @@ if (RAW.length > 0) {
                 {
                     label: 'Views (Impressionen)',
                     data: RAW.map(w => w.impressionen),
-                    backgroundColor: RAW.map((_, i) => colors[i % colors.length] + '33'),
-                    borderColor: RAW.map((_, i) => colors[i % colors.length]),
+                    backgroundColor: colors.slice(0, RAW.length).map(c => c + '44'),
+                    borderColor: colors.slice(0, RAW.length),
                     borderWidth: 2,
                     borderRadius: 8,
+                    // Minimum bar height so zero-value entries are still visible
+                    minBarLength: 4,
                     yAxisID: 'y',
                 },
                 {
                     label: 'Klicks',
                     data: RAW.map(w => w.klicks),
-                    backgroundColor: RAW.map((_, i) => colors[i % colors.length] + '99'),
-                    borderColor: RAW.map((_, i) => colors[i % colors.length]),
+                    backgroundColor: colors.slice(0, RAW.length).map(c => c + 'aa'),
+                    borderColor: colors.slice(0, RAW.length),
                     borderWidth: 2,
                     borderRadius: 8,
+                    minBarLength: 4,
                     yAxisID: 'y',
                 },
                 {
                     label: 'Ausgegeben (€)',
-                    data: RAW.map(w => w.ausgegeben),
+                    data: RAW.map(w => parseFloat(w.ausgegeben.toFixed(4))),
                     type: 'line',
                     borderColor: '#fbbf24',
                     backgroundColor: 'transparent',
                     borderWidth: 2,
                     pointBackgroundColor: '#fbbf24',
-                    pointRadius: 5,
+                    pointRadius: 6,
+                    pointHoverRadius: 9,
                     tension: 0.3,
                     yAxisID: 'y2',
                 },
@@ -285,28 +291,43 @@ if (RAW.length > 0) {
             interaction: { mode: 'index', intersect: false },
             plugins: {
                 legend: {
-                    labels: { color: 'rgba(255,255,255,0.5)', font: { size: 11, weight: 'bold' } }
+                    labels: { color: 'rgba(255,255,255,0.5)', font: { size: 11, weight: 'bold' } },
                 },
                 tooltip: {
                     callbacks: {
+                        title: items => RAW[items[0].dataIndex]?.name || items[0].label,
                         label: ctx => {
                             const val = ctx.parsed.y;
-                            if (ctx.dataset.label.includes('€')) return ` ${ctx.dataset.label}: €${val.toFixed(2)}`;
-                            return ` ${ctx.dataset.label}: ${val}`;
-                        }
-                    }
-                }
+                            if (ctx.dataset.label.includes('€')) return ` Ausgegeben: €${val.toFixed(2)}`;
+                            return ` ${ctx.dataset.label}: ${val.toLocaleString('de-DE')}`;
+                        },
+                        afterBody: items => {
+                            const idx = items[0].dataIndex;
+                            const w = RAW[idx];
+                            return [
+                                `Verbleibendes Budget: €${parseFloat(w.verbleibendes).toFixed(2)}`,
+                                `Gesamt-Budget: €${parseFloat(w.budget).toFixed(2)}`,
+                                `Budget verbraucht: ${w.prozent}%`,
+                            ];
+                        },
+                    },
+                },
             },
             scales: {
-                x: { ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+                x: {
+                    ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 12, weight: 'bold' } },
+                    grid: { color: 'rgba(255,255,255,0.04)' },
+                },
                 y: {
                     position: 'left',
+                    beginAtZero: true,
                     ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 11 } },
                     grid: { color: 'rgba(255,255,255,0.04)' },
                     title: { display: true, text: 'Views / Klicks', color: 'rgba(255,255,255,0.3)', font: { size: 10 } },
                 },
                 y2: {
                     position: 'right',
+                    beginAtZero: true,
                     ticks: {
                         color: '#fbbf24',
                         font: { size: 11 },
