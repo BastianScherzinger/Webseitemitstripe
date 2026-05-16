@@ -23,7 +23,7 @@ def _geo_enrich(log_pk, ip):
     try:
         if not ip or any(ip.startswith(p) for p in _PRIVATE):
             return
-        url = f'http://ip-api.com/json/{ip}?fields=status,country,countryCode,city'
+        url = f'https://ip-api.com/json/{ip}?fields=status,country,countryCode,city'
         with _req.urlopen(url, timeout=4) as resp:
             data = _json.loads(resp.read())
         if data.get('status') == 'success':

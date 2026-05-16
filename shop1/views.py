@@ -68,7 +68,7 @@ def _is_admin(user):
     if not user.is_authenticated:
         return False
     admin_username = os.getenv('ADMIN_USERNAME', 'shopbesitzer')
-    return user.username == admin_username
+    return user.username == admin_username or user.is_superuser
 
 
 def admin_required(view_func):
@@ -129,7 +129,7 @@ def startseite(request):
 
 
 def kontakte(request, produkt_id):
-    return HttpResponse(f"Kontakt für Produkt {produkt_id}")
+    return redirect('kontakt')
 
 
 from .utils import send_brevo_email
@@ -142,9 +142,12 @@ def kontakt(request):
         nachricht = request.POST.get('nachricht', '')
         
         if name and email and betreff and nachricht:
-            # Email zusammenbauen
-            subject = f"Kontaktformular: {betreff}"
-            message = f"Neue Nachricht von {name} ({email}):\n\n{nachricht}"
+            # Newlines aus Subject-Feldern entfernen (Email-Header-Injection)
+            safe_betreff = betreff.replace('\r', '').replace('\n', ' ')
+            safe_name = name.replace('\r', '').replace('\n', ' ')
+            safe_email = email.replace('\r', '').replace('\n', ' ')
+            subject = f"Kontaktformular: {safe_betreff}"
+            message = f"Neue Nachricht von {safe_name} ({safe_email}):\n\n{nachricht}"
             from_email = settings.DEFAULT_FROM_EMAIL
             # E-Mail an dich (Shop-Betreiber) senden
             # Wir nutzen ADMIN_EMAIL aus der .env, sonst DEFAULT_FROM_EMAIL
@@ -586,8 +589,8 @@ def checkout(request):
             # Standard: PayPal
             return redirect('payment', order_id=order.id)
             
-        except Exception as e:
-            messages.error(request, f'Ein Fehler ist aufgetreten: {str(e)}')
+        except Exception:
+            messages.error(request, 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.')
             return redirect('checkout')
     
     # GET Request - Checkout-Formular anzeigen
@@ -638,23 +641,30 @@ def payment(request, order_id):
     return render(request, 'shop1/payment.html', context)
 
 
-@csrf_exempt
 @require_http_methods(["POST"])
 @login_required(login_url='login')
 def paypal_capture(request, order_id):
-    """Wird nach erfolgreicher PayPal-Zahlung aufgerufen (AJAX)"""
+    """Wird nach erfolgreicher PayPal-Zahlung aufgerufen (AJAX).
+    CSRF wird über X-CSRFToken Header geprüft (payment.html Zeile 145)."""
     try:
         order = Order.objects.get(id=order_id, user=request.user)
     except Order.DoesNotExist:
         return JsonResponse({'error': 'Bestellung nicht gefunden'}, status=404)
-    
+
+    if order.status == 'paid':
+        return JsonResponse({'status': 'success', 'redirect': f'/payment/success/{order.id}/'})
+
     try:
         data = json.loads(request.body)
         paypal_order_id = data.get('paypal_order_id', '')
-        
+
         if not paypal_order_id:
             return JsonResponse({'error': 'Keine PayPal Order ID'}, status=400)
-        
+
+        # Replay-Schutz: paypal_order_id darf nicht bereits einer anderen Bestellung gehören
+        if Order.objects.filter(paypal_order_id=paypal_order_id).exclude(id=order.id).exists():
+            return JsonResponse({'error': 'Diese PayPal-Transaktion wurde bereits verwendet.'}, status=400)
+
         # Bestellung als bezahlt markieren
         order.paypal_order_id = paypal_order_id
         order.status = 'paid'
@@ -681,8 +691,8 @@ def paypal_capture(request, order_id):
         
         return JsonResponse({'status': 'success', 'redirect': f'/payment/success/{order.id}/'})
         
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+    except Exception:
+        return JsonResponse({'error': 'Zahlung konnte nicht verarbeitet werden.'}, status=500)
 
 
 @login_required(login_url='login')
