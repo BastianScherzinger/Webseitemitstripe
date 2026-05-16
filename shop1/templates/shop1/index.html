@@ -9,14 +9,14 @@
     <div class="energy-nebula"></div>
 
     <!-- Hero Section -->
-    <section class="relative pt-32 pb-40 px-4 overflow-hidden">
+    <section class="relative pt-20 sm:pt-32 pb-20 sm:pb-40 px-4 overflow-hidden">
         <div class="max-w-7xl mx-auto text-center animate-reveal">
-            <div class="inline-flex items-center space-x-2 px-6 py-2 rounded-full glass border-white/5 mb-10">
+            <div class="inline-flex items-center space-x-2 px-6 py-2 rounded-full glass border-white/5 mb-6 sm:mb-10">
                 <span class="w-2 h-2 rounded-full bg-glow-orange animate-pulse"></span>
                 <span class="text-xs font-black uppercase tracking-[0.3em] text-white/60">Sustainable Art Drop</span>
             </div>
-            
-            <h1 class="text-6xl md:text-[9rem] font-black heading-font tracking-tighter text-white mb-10 leading-[0.8] animate-float">
+
+            <h1 class="text-5xl sm:text-6xl md:text-[9rem] font-black heading-font tracking-tighter text-white mb-6 sm:mb-10 leading-[0.85] animate-float">
                 UPCYCLED <br> <span class="text-glow">ART</span>
             </h1>
             
@@ -37,22 +37,22 @@
 
     <!-- Features Section -->
     <section class="py-24 relative z-10">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div class="scroll-reveal glass-card p-12 rounded-[3.5rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                <div class="w-20 h-20 bg-glow-orange/5 rounded-3xl flex items-center justify-center text-4xl mb-8 group-hover:scale-110 group-hover:bg-glow-orange/10 transition-all duration-500">🎨</div>
-                <h3 class="text-2xl font-black heading-font text-white mb-4 uppercase tracking-tight">Hand-Painted</h3>
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12">
+            <div class="scroll-reveal glass-card p-8 sm:p-12 rounded-[2.5rem] sm:rounded-[3.5rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-glow-orange/5 rounded-3xl flex items-center justify-center text-3xl sm:text-4xl mb-6 sm:mb-8 group-hover:scale-110 group-hover:bg-glow-orange/10 transition-all duration-500">🎨</div>
+                <h3 class="text-xl sm:text-2xl font-black heading-font text-white mb-3 sm:mb-4 uppercase tracking-tight">Hand-Painted</h3>
                 <p class="text-white/30 text-sm leading-relaxed font-light uppercase tracking-wider">Jedes Stück ist ein Unikat. Von Hand bemalt und mit Liebe zum Detail veredelt.</p>
             </div>
 
-            <div class="scroll-reveal glass-card p-12 rounded-[3.5rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
-                <div class="w-20 h-20 bg-glow-orange/5 rounded-3xl flex items-center justify-center text-4xl mb-8 group-hover:scale-110 group-hover:bg-glow-orange/10 transition-all duration-500">♻️</div>
-                <h3 class="text-2xl font-black heading-font text-white mb-4 uppercase tracking-tight">Eco-Conscious</h3>
+            <div class="scroll-reveal glass-card p-8 sm:p-12 rounded-[2.5rem] sm:rounded-[3.5rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-glow-orange/5 rounded-3xl flex items-center justify-center text-3xl sm:text-4xl mb-6 sm:mb-8 group-hover:scale-110 group-hover:bg-glow-orange/10 transition-all duration-500">♻️</div>
+                <h3 class="text-xl sm:text-2xl font-black heading-font text-white mb-3 sm:mb-4 uppercase tracking-tight">Eco-Conscious</h3>
                 <p class="text-white/30 text-sm leading-relaxed font-light uppercase tracking-wider">Second-Hand ist die Zukunft. Wir reduzieren Müll und schaffen bleibende Werte.</p>
             </div>
 
-            <div class="scroll-reveal glass-card p-12 rounded-[3.5rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.4s;">
-                <div class="w-20 h-20 bg-glow-orange/5 rounded-3xl flex items-center justify-center text-4xl mb-8 group-hover:scale-110 group-hover:bg-glow-orange/10 transition-all duration-500">💎</div>
-                <h3 class="text-2xl font-black heading-font text-white mb-4 uppercase tracking-tight">Curated Style</h3>
+            <div class="scroll-reveal glass-card p-8 sm:p-12 rounded-[2.5rem] sm:rounded-[3.5rem] product-card group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.4s;">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-glow-orange/5 rounded-3xl flex items-center justify-center text-3xl sm:text-4xl mb-6 sm:mb-8 group-hover:scale-110 group-hover:bg-glow-orange/10 transition-all duration-500">💎</div>
+                <h3 class="text-xl sm:text-2xl font-black heading-font text-white mb-3 sm:mb-4 uppercase tracking-tight">Curated Style</h3>
                 <p class="text-white/30 text-sm leading-relaxed font-light uppercase tracking-wider">Nur die besten Vintage-Teile schaffen es in unseren Veredelungsprozess.</p>
             </div>
         </div>
@@ -118,14 +118,14 @@
                      x-intersect.once="shown = true" 
                      :class="{ 'visible': shown }"
                      style="transition-delay: 0.{{ forloop.counter0 }}s">
-                    <div class="relative h-[24rem] overflow-hidden">
+                    <div class="relative h-[18rem] sm:h-[24rem] overflow-hidden">
                         {% if produkt.bild %}
                             <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 grayscale-[20%] group-hover:grayscale-0">
                         {% endif %}
                         <div class="absolute inset-0 bg-gradient-to-t from-bg-base via-transparent to-transparent opacity-80"></div>
                         <div class="absolute top-6 right-6 glass px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest text-white/80 border-white/10">1 of 1</div>
                     </div>
-                    <div class="p-10 relative">
+                    <div class="p-6 sm:p-10 relative">
                         <h4 class="text-xl font-black heading-font text-white mb-6 uppercase tracking-tight">{{ produkt.name }}</h4>
                         <div class="flex items-center justify-between">
                             <span class="text-glow font-black text-2xl tracking-tighter">{{ produkt.preis }} €</span>
@@ -147,7 +147,7 @@
     <!-- Newsletter Section -->
     <section class="py-40 relative overflow-hidden bg-white/[0.01]">
         <div class="max-w-4xl mx-auto px-4 relative z-10 text-center">
-            <div class="scroll-reveal glass-card p-16 md:p-24 rounded-[4.5rem] shadow-[0_0_120px_rgba(255,106,0,0.1)] relative overflow-hidden" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <div class="scroll-reveal glass-card p-8 sm:p-16 md:p-24 rounded-[2.5rem] sm:rounded-[4.5rem] shadow-[0_0_120px_rgba(255,106,0,0.1)] relative overflow-hidden" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                 <div class="absolute -top-24 -left-24 w-64 h-64 bg-glow-orange/5 blur-[100px] rounded-full"></div>
                 <h2 class="text-4xl md:text-6xl font-black heading-font text-white mb-10 uppercase tracking-tighter">JOIN THE <span class="text-glow">ORBIT</span></h2>
                 <p class="text-white/30 mb-14 max-w-lg mx-auto font-light leading-relaxed tracking-wide uppercase text-xs">Melde dich an und erfahre als Erster von neuen Drops und exklusiven handbemalten Unikaten.</p>

@@ -39,9 +39,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # CSRF Einstellungen für Proxy-Umgebungen
-CSRF_COOKIE_HTTPONLY = False
 CSRF_USE_SESSIONS = False
-CSRF_COOKIE_SECURE = not DEBUG # Sicherstellen, dass Cookies nur über HTTPS gesendet werden
 
 # Dynamische SITE_URL für korrekte Weiterleitungen
 SITE_URL = os.getenv('SITE_URL')
@@ -179,6 +177,9 @@ STORAGES = {
     },
 }
 
+# Rückwärtskompatibilität für django-cloudinary-storage (prüft noch das alte Attribut)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
 if os.getenv('CLOUDINARY_URL'):
     STORAGES["default"] = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -229,7 +230,7 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Cookie-Sicherheit
 CSRF_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False  # False = JS kann CSRF-Token lesen (nötig für HTMX/AJAX)
 CSRF_COOKIE_SAMESITE = 'Lax'
 
 # Clickjacking-Schutz

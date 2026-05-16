@@ -281,7 +281,7 @@ section {
     .energy-nebula::after {
         animation: nebula-evolve 15s ease-in-out infinite alternate;
         filter: blur(60px);
-        background: 
+        background:
             radial-gradient(circle at 30% 40%, rgba(255, 106, 0, 0.2), transparent 50%),
             radial-gradient(circle at 70% 60%, rgba(255, 157, 47, 0.15), transparent 50%),
             radial-gradient(circle at 50% 50%, rgba(0, 102, 255, 0.1), transparent 60%);
@@ -297,5 +297,48 @@ section {
 
     .glass-card {
         border-color: rgba(255, 106, 0, 0.1);
+    }
+
+    /* Sections weniger Abstand auf Tablet */
+    section {
+        padding-top: 3rem !important;
+        padding-bottom: 3rem !important;
+    }
+}
+
+/* ═══ HANDY-OPTIMIERUNG (< 640px) ═══ */
+@media (max-width: 640px) {
+    /* Sections deutlich weniger Abstand */
+    section {
+        padding-top: 2.5rem !important;
+        padding-bottom: 2.5rem !important;
+    }
+
+    /* Glass Cards: kleinere Rundungen */
+    .glass-card {
+        border-radius: 1.75rem !important;
+    }
+
+    /* Buttons groß genug für Touch (min. 44px) */
+    .btn-glow {
+        min-height: 48px;
+    }
+
+    /* Admin-Tabelle horizontal scrollbar */
+    .admin-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* iOS Eingabe-Zoom verhindern (font-size < 16px löst Zoom aus) */
+@supports (-webkit-touch-callout: none) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+        font-size: 16px !important;
     }
 }
