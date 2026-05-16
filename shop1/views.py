@@ -24,16 +24,18 @@ def _setup_admin_user():
     try:
         admin_username = os.getenv('ADMIN_USERNAME', 'shopbesitzer')
         admin_email = os.getenv('ADMIN_EMAIL', 'admin@shop.de')
-        admin_password = os.getenv('ADMIN_PASSWORD', 'AdminPassword123!')
-        
+        admin_password = os.getenv('ADMIN_PASSWORD')
+
+        if not admin_password:
+            return  # Kein Passwort gesetzt → nichts tun (sichererer Fallback)
+
         user = User.objects.filter(username=admin_username).first()
         if user:
-            # Nur updaten, wenn sich etwas geändert hat, um Session-Invalidierung zu vermeiden
             changed = False
             if user.email != admin_email:
                 user.email = admin_email
                 changed = True
-            
+
             if not user.check_password(admin_password):
                 user.set_password(admin_password)
                 changed = True
@@ -314,7 +316,10 @@ def remove_from_cart(request, produkt_name):
 @login_required(login_url='login')
 def update_cart(request, produkt_name):
     """Aktualisiert die Menge eines Produkts im Warenkorb. Nur für eingeloggte User."""
-    menge = int(request.POST.get('menge', 1))
+    try:
+        menge = int(request.POST.get('menge', 1))
+    except (ValueError, TypeError):
+        menge = 1
     
     if menge < 1:
         return remove_from_cart(request, produkt_name)
@@ -444,7 +449,6 @@ def change_password(request):
 
 def verify_email(request, token):
     """Verifiziert die E-Mail-Adresse eines Users anhand des Tokens."""
-    print(f">>> VERIFY VIEW AUFGERUFEN MIT TOKEN: {token}")
     try:
         profile = UserProfile.objects.get(verification_token=token)
         if profile.email_verified:

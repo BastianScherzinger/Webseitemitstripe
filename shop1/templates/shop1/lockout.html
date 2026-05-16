@@ -1,16 +1,54 @@
 {% extends 'base.html' %}
-{% block title %}Account gesperrt{% endblock %}
+{% load static %}
+
+{% block title %}Zu viele Login-Versuche – Luviq Universe{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card border-danger shadow-sm p-5 text-center">
-      <h1 class="display-4 text-danger mb-4">⛔ Zugriff gesperrt</h1>
-      <p class="lead">Zu viele fehlerhafte Login-Versuche.</p>
-      <p class="text-muted">Dein Account wurde aus Sicherheitsgründen für eine Stunde gesperrt. Bitte versuche es später erneut oder kontaktiere den Support.</p>
-      <div class="mt-4">
-        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Zur Startseite</a>
-      </div>
+<div class="relative min-h-[80vh] flex items-center justify-center pt-20 pb-32">
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-lg w-full px-4 relative z-10 animate-reveal">
+        <div class="glass-card p-10 md:p-14 rounded-[3rem] shadow-2xl text-center">
+
+            <!-- Icon -->
+            <div class="w-24 h-24 rounded-full glass mx-auto flex items-center justify-center mb-8 shadow-[0_0_40px_rgba(255,0,0,0.2)]">
+                <span class="text-5xl">🔒</span>
+            </div>
+
+            <!-- Titel -->
+            <h1 class="text-3xl font-black heading-font text-white uppercase tracking-tight mb-4">
+                Zugriff <span style="color:#ff4444">gesperrt</span>
+            </h1>
+
+            <!-- Erklärung (klar und deutlich - kein CSRF-Fehler!) -->
+            <div class="glass p-6 rounded-2xl mb-8 border-red-500/20 border">
+                <p class="text-white/80 text-sm font-medium mb-2">
+                    Zu viele fehlerhafte Login-Versuche erkannt.
+                </p>
+                <p class="text-white/50 text-xs leading-relaxed">
+                    Dein Account wurde aus Sicherheitsgründen vorübergehend gesperrt.<br>
+                    Bitte warte <strong class="text-white/70">1 Stunde</strong> und versuche es dann erneut.<br><br>
+                    <span class="text-yellow-400/70">Hinweis: Dies ist <em>kein</em> CSRF-Fehler –
+                    sondern ein Brute-Force-Schutz.</span>
+                </p>
+            </div>
+
+            <!-- Aktionen -->
+            <div class="space-y-4">
+                <a href="{% url 'home' %}"
+                   class="block w-full btn-glow py-4 rounded-2xl text-white font-black uppercase tracking-widest text-xs text-center">
+                    Zur Startseite
+                </a>
+                <a href="{% url 'password_reset' %}"
+                   class="block w-full py-4 rounded-2xl glass border-white/10 text-white/60 font-medium text-xs text-center hover:bg-white/5 transition-all uppercase tracking-widest">
+                    Passwort zurücksetzen
+                </a>
+            </div>
+
+            <p class="mt-8 text-white/20 text-[10px] uppercase tracking-widest">
+                Luviq Security System · Axes Brute-Force Protection
+            </p>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}

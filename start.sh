@@ -1,24 +1,41 @@
 #!/bin/sh
 
-# Migrations ausführen
+# ═══ MIGRATIONEN ═══
 echo "Running migrations..."
 python manage.py migrate --noinput
 
-# Superuser automatisch erstellen (falls Variablen gesetzt sind)
-if [ "$ADMIN_USERNAME" ]; then
+# ═══ SUPERUSER ANLEGEN ═══
+if [ -n "$ADMIN_USERNAME" ] && [ -n "$ADMIN_PASSWORD" ]; then
     echo "Creating superuser $ADMIN_USERNAME..."
-    python manage.py shell -c "from django.contrib.auth.models import User; import os; \
-        username=os.getenv('ADMIN_USERNAME'); \
-        email=os.getenv('ADMIN_EMAIL'); \
-        password=os.getenv('ADMIN_PASSWORD'); \
-        not User.objects.filter(username=username).exists() and User.objects.create_superuser(username, email, password)"
+    python manage.py shell -c "
+import os
+from django.contrib.auth.models import User
+username = os.environ.get('ADMIN_USERNAME')
+email    = os.environ.get('ADMIN_EMAIL', 'admin@shop.de')
+password = os.environ.get('ADMIN_PASSWORD')
+if username and password:
+    user, created = User.objects.get_or_create(username=username)
+    user.email = email
+    user.is_staff = True
+    user.is_superuser = True
+    user.set_password(password)
+    user.save()
+    print('Superuser', username, 'created' if created else 'updated')
+"
 fi
 
-# Statische Dateien sammeln
-echo "Collecting static files..."
-python manage.py collectstatic --noinput
+# ═══ FIXTURES LADEN ═══
+python manage.py loaddata initial_data.json 2>/dev/null || true
 
-# Server mit Gunicorn starten (für Production)
-# Railway setzt automatisch die Umgebungsvariable PORT
+# ═══ STATISCHE DATEIEN SAMMELN ═══
+echo "Collecting static files..."
+python manage.py collectstatic --noinput --clear || echo "WARNING: collectstatic failed"
+
+# ═══ GUNICORN STARTEN ═══
 echo "Starting Gunicorn on port $PORT..."
-exec gunicorn mainweb.wsgi:application --bind 0.0.0.0:$PORT
+exec gunicorn mainweb.wsgi:application \
+    --bind "0.0.0.0:$PORT" \
+    --workers 2 \
+    --timeout 120 \
+    --access-logfile - \
+    --error-logfile -
