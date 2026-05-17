@@ -419,11 +419,17 @@ def admin_stats(request):
     recent_visitors = []
     total_visitor_logs = 0
     try:
-        visitors = list(VisitorLog.objects.order_by('-timestamp')[:30])
-        _log.debug('admin_stats: loaded %d visitor log entries', len(visitors))
+        site_name = os.getenv('SITE_NAME', 'luviq')
+        # pystore zeigt alle Sites; andere Sites nur ihre eigenen Einträge
+        if site_name == 'pystore':
+            visitor_qs = VisitorLog.objects
+        else:
+            visitor_qs = VisitorLog.objects.filter(seite=site_name)
+        visitors = list(visitor_qs.order_by('-timestamp')[:30])
+        _log.debug('admin_stats: loaded %d visitor log entries (site=%s)', len(visitors), site_name)
         _geo_enrich_visitors(visitors)
         recent_visitors = visitors
-        total_visitor_logs = VisitorLog.objects.count()
+        total_visitor_logs = visitor_qs.count()
     except Exception as e:
         _log.error('admin_stats: visitor log error: %s', e)
 
