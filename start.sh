@@ -27,6 +27,10 @@ fi
 # ═══ FIXTURES LADEN ═══
 python manage.py loaddata initial_data.json 2>/dev/null || true
 
+# ═══ PYSTORE SCHEMA FIX ═══
+echo "Fixing pystore schema (seite column)..."
+python manage.py fix_pystore_schema
+
 # ═══ STATISCHE DATEIEN SAMMELN ═══
 echo "Collecting static files..."
 python manage.py collectstatic --noinput --clear || echo "WARNING: collectstatic failed"
