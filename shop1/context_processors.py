@@ -12,7 +12,7 @@ def shop_owner_check(request):
 
     # ═══ WERBUNG: Impressionen zählen + aktive Ads für Templates bereitstellen ═══
     werbung_aktiv = []
-    if '/shop-admin/' not in request.path and '/static/' not in request.path:
+    if '/static/' not in request.path:
         try:
             from .models import Werbung, WerbungStat
             site_name = os.getenv('SITE_NAME', 'luviq')

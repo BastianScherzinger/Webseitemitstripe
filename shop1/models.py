@@ -215,7 +215,7 @@ class Werbung(models.Model):
         from decimal import Decimal
         imp = Decimal(self.impressionen or 0)
         klk = Decimal(self.klicks or 0)
-        return (imp * Decimal('0.0025')) + (klk * Decimal('0.095'))
+        return (imp * Decimal('0.0025')) + (klk * Decimal('0.005'))  # 0,25ct/View · 0,5ct/Klick
 
     @property
     def verbleibendes_budget(self):

@@ -109,6 +109,17 @@ DATABASES = {
     )
 }
 
+# ═══ PYSTORE-DATENBANK (Werbung/WerbungStat Cross-Site) ═══
+# Railway-Variable: PYSTORE_DATABASE_URL
+# Ohne Variable: Fallback auf lokale DB (Entwicklung)
+_pystore_url = os.getenv('PYSTORE_DATABASE_URL')
+if _pystore_url:
+    DATABASES['pystore'] = dj_database_url.parse(_pystore_url, conn_max_age=600)
+else:
+    DATABASES['pystore'] = DATABASES['default']
+
+DATABASE_ROUTERS = ['shop1.routers.WerbungRouter']
+
 # ═══ PASSWORT-VALIDIERUNG ═══
 
 AUTH_PASSWORD_VALIDATORS = [
