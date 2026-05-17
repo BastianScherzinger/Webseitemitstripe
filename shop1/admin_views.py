@@ -361,7 +361,7 @@ def _geo_enrich_visitors(visitors):
     try:
         body = _json.dumps([{'query': ip} for ip in ips]).encode('utf-8')
         req = urllib.request.Request(
-            'https://ip-api.com/batch?fields=query,status,country,countryCode,city',
+            'http://ip-api.com/batch?fields=query,status,country,countryCode,city',
             data=body, headers={'Content-Type': 'application/json'},
         )
         with urllib.request.urlopen(req, timeout=5) as resp:

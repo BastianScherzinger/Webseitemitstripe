@@ -42,7 +42,7 @@ def _geo_enrich(log_pk, ip):
     try:
         if not ip or any(ip.startswith(p) for p in _PRIVATE):
             return
-        url = f'https://ip-api.com/json/{ip}?fields=status,country,countryCode,city'
+        url = f'http://ip-api.com/json/{ip}?fields=status,country,countryCode,city'
         with _req.urlopen(url, timeout=4) as resp:
             data = _json.loads(resp.read())
         if data.get('status') == 'success':
@@ -131,7 +131,7 @@ class PageVisitMiddleware:
                     visited = dict(sorted(visited.items(), key=lambda x: x[1], reverse=True)[:40])
                 request.session['visited_paths'] = visited
                 request.session.modified = True
-                _log.debug('VisitorLog created: ip=%s path=%s site=%s', ip, path, site_name)
+                _log.info('VisitorLog created: ip=%s path=%s site=%s', ip, path, site_name)
                 threading.Thread(target=_geo_enrich, args=(log_obj.pk, ip), daemon=True).start()
             except Exception as e:
                 _log.error('VisitorLog create error: ip=%s path=%s err=%s', ip, path, e)
