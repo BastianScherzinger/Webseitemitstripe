@@ -51,8 +51,11 @@ def _geo_enrich(log_pk, ip):
                 country_code=data.get('countryCode', ''),
                 city=data.get('city', ''),
             )
-    except Exception:
-        pass
+            _log.debug('_geo_enrich: ok pk=%s ip=%s city=%s', log_pk, ip, data.get('city'))
+        else:
+            _log.warning('_geo_enrich: ip-api fail ip=%s status=%s', ip, data.get('status'))
+    except Exception as e:
+        _log.warning('_geo_enrich: error ip=%s: %s', ip, e)
     finally:
         try:
             connections['pystore'].close()
