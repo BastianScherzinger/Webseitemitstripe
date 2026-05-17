@@ -299,7 +299,7 @@ class VisitorLog(models.Model):
     city = models.CharField(max_length=100, blank=True, default='')
     path = models.CharField(max_length=255, blank=True, default='')
     user_agent = models.CharField(max_length=500, blank=True, default='')
-    seite = models.CharField(max_length=100, blank=True, default='pystore')
+    seite = models.CharField(max_length=100, blank=True, default='pystore', db_column='site')
 
     @property
     def country_flag(self):
