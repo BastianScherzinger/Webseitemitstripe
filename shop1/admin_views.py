@@ -124,8 +124,9 @@ _log = _logging.getLogger('shop1')
 
 @admin_required
 def admin_werbung_list(request):
-    """Werbungen verwalten – Budget, Klicks, Views, Per-Seite-Auswertung + Chart."""
+    """Werbungen verwalten – Budget, Klicks, Views, Per-Seite-Auswertung + Charts."""
     from django.db.models import Sum
+    from datetime import timedelta
 
     werbungen = list(Werbung.objects.all().order_by('-erstellt_am'))
 
@@ -137,6 +138,7 @@ def admin_werbung_list(request):
             .order_by('seite')
         )
 
+    # ── Per-Werbung Balken-Chart ──────────────────────────────────────────
     chart_data = []
     for w in werbungen:
         try:
@@ -150,18 +152,137 @@ def admin_werbung_list(request):
                 'prozent': w.budget_prozent_genutzt,
             })
         except Exception as e:
-            _log.error('werbung chart_data error ad %s: %s', w.id, e)
+            _log.error('werbung chart_data error id=%s: %s', w.id, e)
             chart_data.append({
                 'name': getattr(w, 'titel', f'Werbung {w.id}') or f'Werbung {w.id}',
                 'impressionen': 0, 'klicks': 0,
                 'ausgegeben': 0.0, 'verbleibendes': 0.0, 'budget': 0.0, 'prozent': 0,
             })
 
+    # ── Cross-Site-Linien-Chart: Views & Klicks der letzten 30 Tage ──────
+    cross_chart_json = json.dumps({'labels': [], 'views_datasets': [], 'klicks_datasets': []})
+    try:
+        today = timezone.localdate()
+        start_date = today - timedelta(days=29)
+        labels = [(start_date + timedelta(days=i)).strftime('%d.%m.') for i in range(30)]
+
+        sites = list(
+            WerbungStat.objects.filter(datum__gte=start_date)
+            .values_list('seite', flat=True)
+            .distinct()
+            .order_by('seite')
+        )
+
+        SITE_PALETTE = {
+            'luviq':     {'border': '#f97316', 'bg': 'rgba(249,115,22,0.08)'},
+            'pystore':   {'border': '#38bdf8', 'bg': 'rgba(56,189,248,0.08)'},
+            'tutorials': {'border': '#4ade80', 'bg': 'rgba(74,222,128,0.08)'},
+            'pixvault':  {'border': '#c084fc', 'bg': 'rgba(192,132,252,0.08)'},
+        }
+        FALLBACK = [
+            {'border': '#fbbf24', 'bg': 'rgba(251,191,36,0.08)'},
+            {'border': '#f87171', 'bg': 'rgba(248,113,113,0.08)'},
+        ]
+
+        views_datasets, klicks_datasets = [], []
+        for idx, site in enumerate(sites):
+            color = SITE_PALETTE.get(site, FALLBACK[idx % len(FALLBACK)])
+            qs = WerbungStat.objects.filter(datum__gte=start_date, seite=site)
+            by_day_v, by_day_k = {}, {}
+            for stat in qs:
+                lbl = stat.datum.strftime('%d.%m.')
+                by_day_v[lbl] = by_day_v.get(lbl, 0) + stat.impressionen
+                by_day_k[lbl] = by_day_k.get(lbl, 0) + stat.klicks
+            views_datasets.append({
+                'label': site.capitalize(),
+                'data': [by_day_v.get(l, 0) for l in labels],
+                'borderColor': color['border'],
+                'backgroundColor': color['bg'],
+                'tension': 0.4, 'fill': True, 'pointRadius': 3,
+            })
+            klicks_datasets.append({
+                'label': site.capitalize(),
+                'data': [by_day_k.get(l, 0) for l in labels],
+                'borderColor': color['border'],
+                'backgroundColor': color['bg'],
+                'tension': 0.4, 'fill': True, 'pointRadius': 3,
+            })
+
+        cross_chart_json = json.dumps({
+            'labels': labels,
+            'views_datasets': views_datasets,
+            'klicks_datasets': klicks_datasets,
+        })
+    except Exception as e:
+        _log.error('cross_chart error: %s', e)
+
     context = {
         'werbungen': werbungen,
         'chart_json': json.dumps(chart_data),
+        'cross_chart_json': cross_chart_json,
+        'is_admin': is_admin(request.user),
     }
     return render(request, 'shop1/admin/werbung_list.html', context)
+
+
+@admin_required
+def admin_werbung_create(request):
+    """Neue Werbung anlegen (POST only). Bild als URL angeben."""
+    if request.method == 'POST':
+        titel = request.POST.get('titel', '').strip()
+        link = request.POST.get('link', '').strip()
+        beschreibung = request.POST.get('beschreibung', '').strip()
+        bild = request.POST.get('bild', '').strip()
+        budget_str = request.POST.get('budget', '0').replace(',', '.')
+        try:
+            budget = float(budget_str)
+        except (ValueError, TypeError):
+            budget = 0.0
+
+        if not titel or not link:
+            messages.error(request, 'Titel und Link sind Pflichtfelder.')
+            return redirect('admin_werbung_list')
+
+        try:
+            Werbung.objects.create(
+                titel=titel,
+                link=link,
+                beschreibung=beschreibung,
+                bild=bild,
+                budget=budget,
+                aktiv=True,
+            )
+            messages.success(request, f'Werbung "{titel}" wurde erstellt.')
+        except Exception as e:
+            messages.error(request, f'Fehler beim Erstellen: {e}')
+    return redirect('admin_werbung_list')
+
+
+@admin_required
+def admin_werbung_delete(request, werbung_id):
+    """Werbung löschen (POST only)."""
+    if request.method == 'POST':
+        w = get_object_or_404(Werbung, id=werbung_id)
+        titel = w.titel
+        try:
+            w.delete()
+            messages.success(request, f'Werbung "{titel}" wurde gelöscht.')
+        except Exception as e:
+            messages.error(request, f'Fehler beim Löschen: {e}')
+    return redirect('admin_werbung_list')
+
+
+@admin_required
+def admin_reset_werbung_stats(request):
+    """Setzt alle Werbungs-Statistiken (Views, Klicks, WerbungStat) auf 0 zurück."""
+    if request.method == 'POST':
+        try:
+            Werbung.objects.all().update(impressionen=0, klicks=0)
+            WerbungStat.objects.all().delete()
+            messages.success(request, 'Alle Werbungs-Statistiken wurden zurückgesetzt.')
+        except Exception as e:
+            messages.error(request, f'Fehler beim Zurücksetzen: {e}')
+    return redirect('admin_werbung_list')
 
 
 @admin_required

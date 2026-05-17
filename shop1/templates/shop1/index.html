@@ -98,6 +98,41 @@
         </div>
     </section>
 
+    {% if werbung_aktiv %}
+    <!-- ═══ GESPONSERT / WERBUNG ═══ -->
+    <section class="py-10 relative z-10 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="text-[9px] font-black uppercase tracking-[0.3em] text-white/15 mb-5">Gesponsert</p>
+            <style>
+            .ad-grid{display:flex;gap:1rem;flex-wrap:nowrap;overflow-x:auto;padding-bottom:.25rem;scrollbar-width:none;}
+            .ad-grid::-webkit-scrollbar{display:none;}
+            .ad-item{flex-shrink:0;display:flex;align-items:center;gap:.85rem;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:.85rem 1.1rem;text-decoration:none;min-width:240px;max-width:340px;transition:border-color .2s,background .2s;}
+            .ad-item:hover{border-color:rgba(249,115,22,0.25);background:rgba(249,115,22,0.04);}
+            @media(max-width:640px){
+                .ad-grid{flex-wrap:wrap;overflow-x:visible;}
+                .ad-item{flex-shrink:1;min-width:0;max-width:100%;width:100%;}
+            }
+            </style>
+            <div class="ad-grid">
+                {% for w in werbung_aktiv %}
+                <a href="{% url 'werbung_klick' w.id %}" target="_blank" rel="noopener sponsored" class="ad-item">
+                    {% if w.bild %}
+                    <img src="{{ w.bild }}" alt="{{ w.titel }}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;">
+                    {% endif %}
+                    <div style="overflow:hidden;flex:1;min-width:0;">
+                        <p style="font-weight:800;font-size:.88rem;color:#fff;margin:0 0 .15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ w.titel }}</p>
+                        {% if w.beschreibung %}
+                        <p style="font-size:.75rem;color:rgba(255,255,255,0.35);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ w.beschreibung }}</p>
+                        {% endif %}
+                    </div>
+                    <span style="color:#f97316;opacity:.7;flex-shrink:0;font-size:.9rem;">↗</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
     <!-- Products Gallery Section -->
     <section class="py-32 relative z-10">
         <div class="max-w-7xl mx-auto px-4">

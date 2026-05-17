@@ -128,6 +128,23 @@ def startseite(request):
     return render(request, 'shop1/index.html', context)
 
 
+def werbung_klick(request, werbung_id):
+    """Zählt einen Klick auf eine Werbung (atomisch) und leitet zur Ziel-URL weiter."""
+    from django.db.models import F
+    from django.utils import timezone
+    from .models import Werbung, WerbungStat
+    try:
+        site_name = os.getenv('SITE_NAME', 'luviq')
+        today = timezone.now().date()
+        w = Werbung.objects.get(id=werbung_id, aktiv=True)
+        Werbung.objects.filter(id=werbung_id).update(klicks=F('klicks') + 1)
+        stat, _ = WerbungStat.objects.get_or_create(werbung=w, seite=site_name, datum=today)
+        WerbungStat.objects.filter(id=stat.id).update(klicks=F('klicks') + 1)
+        return redirect(w.link)
+    except Werbung.DoesNotExist:
+        return redirect('home')
+
+
 def kontakte(request, produkt_id):
     return redirect('kontakt')
 

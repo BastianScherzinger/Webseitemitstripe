@@ -19,10 +19,69 @@
         </div>
 
         <!-- Header -->
-        <div class="mb-10">
-            <h1 class="text-4xl font-black text-white mb-1">Werbung <span class="text-glow-orange">Dashboard</span></h1>
-            <p class="text-white/30 text-xs uppercase tracking-widest">Budget · Klicks · Views · Cross-Site Auswertung</p>
+        <div class="flex items-start justify-between mb-10 flex-wrap gap-4">
+            <div>
+                <h1 class="text-4xl font-black text-white mb-1">Werbung <span class="text-glow-orange">Dashboard</span></h1>
+                <p class="text-white/30 text-xs uppercase tracking-widest">Budget · Klicks · Views · Cross-Site Auswertung</p>
+            </div>
+            {% if is_admin %}
+            <button onclick="document.getElementById('create-form').classList.toggle('hidden')"
+                class="px-6 py-3 rounded-xl bg-glow-orange/15 border border-glow-orange/30 text-glow-orange text-[11px] font-black uppercase tracking-widest hover:bg-glow-orange/25 transition-all cursor-pointer flex-shrink-0">
+                + Neue Werbung
+            </button>
+            {% endif %}
         </div>
+
+        <!-- Create Form (collapsed by default) -->
+        {% if is_admin %}
+        <div id="create-form" class="hidden glass-card rounded-[2.5rem] p-8 mb-10 border border-glow-orange/20">
+            <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Neue Werbung erstellen</h3>
+            <form method="post" action="{% url 'admin_werbung_create' %}">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Titel *</label>
+                        <input type="text" name="titel" required placeholder="z.B. Sommer-Drop"
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Ziel-URL *</label>
+                        <input type="url" name="link" required placeholder="https://..."
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Beschreibung</label>
+                    <input type="text" name="beschreibung" placeholder="Kurze Tagline (optional)"
+                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Bild-URL</label>
+                        <input type="url" name="bild" placeholder="https://res.cloudinary.com/..."
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
+                        <p class="text-[9px] text-white/20 mt-1">Cloudinary-URL oder beliebige Bild-URL</p>
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Budget (€) *</label>
+                        <input type="number" name="budget" step="0.01" min="1" value="20.00" required
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
+                        <p class="text-[9px] text-white/20 mt-1">0,25ct/View · 9,5ct/Klick · stoppt automatisch</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button type="submit"
+                        class="px-8 py-3 rounded-xl bg-glow-orange/20 border border-glow-orange/40 text-glow-orange text-[11px] font-black uppercase tracking-widest hover:bg-glow-orange/30 transition-all cursor-pointer">
+                        Werbung starten →
+                    </button>
+                    <button type="button" onclick="document.getElementById('create-form').classList.add('hidden')"
+                        class="px-8 py-3 rounded-xl bg-white/5 border border-white/10 text-white/40 text-[11px] font-black uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer">
+                        Abbrechen
+                    </button>
+                </div>
+            </form>
+        </div>
+        {% endif %}
 
         <!-- Messages -->
         {% for msg in messages %}
@@ -56,7 +115,33 @@
             </div>
         </div>
 
-        <!-- Chart -->
+        <!-- Cross-Site-Chart: Views & Klicks pro Seite (30 Tage) -->
+        <div class="glass-card rounded-[3rem] overflow-hidden mb-6">
+            <div class="px-10 py-8 border-b border-white/5 flex items-center justify-between flex-wrap gap-3">
+                <div>
+                    <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Views & Klicks nach Webseite — 30 Tage</h3>
+                    <p class="text-white/20 text-[10px] mt-1">Alle verbundenen Seiten im Vergleich</p>
+                </div>
+                <div class="flex gap-2">
+                    <button id="btn-views" onclick="switchCrossChart('views')"
+                        class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer bg-glow-orange/15 border-glow-orange/40 text-glow-orange">
+                        Views
+                    </button>
+                    <button id="btn-klicks" onclick="switchCrossChart('klicks')"
+                        class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer bg-white/5 border-white/10 text-white/40">
+                        Klicks
+                    </button>
+                </div>
+            </div>
+            <div class="p-8" style="position:relative;height:240px;">
+                <canvas id="crossChart"></canvas>
+                <p id="cross-no-data" style="display:none;" class="absolute inset-0 flex items-center justify-center text-white/20 text-sm">
+                    Noch keine Cross-Site-Daten — erscheinen sobald erste Impressionen gezählt werden.
+                </p>
+            </div>
+        </div>
+
+        <!-- Per-Werbung Balken-Chart -->
         <div class="glass-card rounded-[3rem] overflow-hidden mb-10">
             <div class="px-10 py-8 border-b border-white/5">
                 <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Performance Chart – Alle Werbungen</h3>
@@ -155,6 +240,15 @@
                                 {% if w.aktiv %}Pausieren{% else %}Aktivieren{% endif %}
                             </button>
                         </form>
+                        {% if is_admin %}
+                        <form method="post" action="{% url 'admin_werbung_delete' werbung_id=w.id %}"
+                              onsubmit="return confirm('Werbung &quot;{{ w.titel|escapejs }}&quot; wirklich löschen?')">
+                            {% csrf_token %}
+                            <button type="submit" class="w-full px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-[11px] font-black uppercase tracking-widest hover:bg-red-500/20 transition-all cursor-pointer">
+                                🗑 Löschen
+                            </button>
+                        </form>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -215,20 +309,87 @@
         <div class="glass-card rounded-[3rem] p-20 text-center">
             <p class="text-5xl mb-4">📢</p>
             <h3 class="text-lg font-black text-white mb-2">Keine Werbungen vorhanden</h3>
-            <p class="text-white/30 text-xs uppercase tracking-widest">Lege Werbungen direkt in der Datenbank an.</p>
+            <p class="text-white/30 text-xs uppercase tracking-widest mb-6">Erstelle deine erste Anzeige mit dem Button oben.</p>
+        </div>
+        {% endif %}
+
+        <!-- Stats Reset -->
+        {% if is_admin and werbungen %}
+        <div class="mt-16 pt-8 border-t border-white/5">
+            <h4 class="text-[10px] font-black uppercase tracking-widest text-white/20 mb-4">Gefahrenzone</h4>
+            <form method="post" action="{% url 'admin_reset_werbung_stats' %}"
+                  onsubmit="return confirm('Alle Views, Klicks und WerbungStat-Einträge unwiderruflich auf 0 zurücksetzen?')">
+                {% csrf_token %}
+                <button type="submit"
+                    class="px-6 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest hover:bg-red-500/20 transition-all cursor-pointer">
+                    📊 Werbungs-Statistiken zurücksetzen
+                </button>
+            </form>
         </div>
         {% endif %}
 
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 // ── Edit toggle ──
 function toggleEdit(id) {
     const el = document.getElementById('edit-' + id);
     el.classList.toggle('hidden');
 }
+
+// ── Cross-Site-Linien-Chart ──────────────────────────────────────────────
+(function() {
+    const raw = {{ cross_chart_json|safe }};
+    const canvas = document.getElementById('crossChart');
+    const noData = document.getElementById('cross-no-data');
+    if (!canvas) return;
+
+    const hasData = (raw.views_datasets || []).some(ds => ds.data.some(v => v > 0))
+                 || (raw.klicks_datasets || []).some(ds => ds.data.some(v => v > 0));
+
+    if (!hasData || !raw.labels || !raw.labels.length) {
+        canvas.style.display = 'none';
+        if (noData) noData.style.display = 'flex';
+        return;
+    }
+
+    Chart.defaults.color = 'rgba(255,255,255,0.4)';
+    Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+
+    const cfg = {
+        type: 'line',
+        data: { labels: raw.labels, datasets: raw.views_datasets },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14, font: { size: 10 } } },
+            },
+            scales: {
+                x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { maxTicksLimit: 10, font: { size: 10 } } },
+                y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 10 } } },
+            },
+        },
+    };
+
+    const crossChart = new Chart(canvas, cfg);
+
+    window.switchCrossChart = function(mode) {
+        const btnV = document.getElementById('btn-views');
+        const btnK = document.getElementById('btn-klicks');
+        if (mode === 'views') {
+            btnV.className = btnV.className.replace('bg-white/5 border-white/10 text-white/40', 'bg-glow-orange/15 border-glow-orange/40 text-glow-orange');
+            btnK.className = btnK.className.replace('bg-glow-orange/15 border-glow-orange/40 text-glow-orange', 'bg-white/5 border-white/10 text-white/40');
+        } else {
+            btnK.className = btnK.className.replace('bg-white/5 border-white/10 text-white/40', 'bg-glow-orange/15 border-glow-orange/40 text-glow-orange');
+            btnV.className = btnV.className.replace('bg-glow-orange/15 border-glow-orange/40 text-glow-orange', 'bg-white/5 border-white/10 text-white/40');
+        }
+        crossChart.data.datasets = mode === 'views' ? raw.views_datasets : raw.klicks_datasets;
+        crossChart.update();
+    };
+})();
 
 // ── Chart ──
 const RAW = {{ chart_json|safe }};

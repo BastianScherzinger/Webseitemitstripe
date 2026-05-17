@@ -6,6 +6,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.startseite, name='home'),
+    path('werbung/klick/<int:werbung_id>/', views.werbung_klick, name='werbung_klick'),
     path('paypal/capture/<int:order_id>/', views.paypal_capture, name='paypal_capture'),
     path('produkte/', views.produkte, name='produkte'),
     path('produkt/<int:produkt_id>/', views.produkt_detail, name='produkt_detail'),
@@ -88,6 +89,9 @@ urlpatterns = [
 
     # ═══ WERBUNG ═══
     path('shop-admin/werbung/', admin_views.admin_werbung_list, name='admin_werbung_list'),
+    path('shop-admin/werbung/create/', admin_views.admin_werbung_create, name='admin_werbung_create'),
     path('shop-admin/werbung/<int:werbung_id>/toggle/', admin_views.admin_werbung_toggle, name='admin_werbung_toggle'),
     path('shop-admin/werbung/<int:werbung_id>/edit/', admin_views.admin_werbung_edit, name='admin_werbung_edit'),
+    path('shop-admin/werbung/<int:werbung_id>/delete/', admin_views.admin_werbung_delete, name='admin_werbung_delete'),
+    path('shop-admin/stats/reset-werbung/', admin_views.admin_reset_werbung_stats, name='admin_reset_werbung_stats'),
 ]
