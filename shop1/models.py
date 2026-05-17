@@ -239,6 +239,39 @@ class Werbung(models.Model):
         budget = self.budget or Decimal('0')
         return bool(self.aktiv) and (budget - self.ausgegeben) > Decimal('0')
 
+    @property
+    def bild_src(self):
+        """Gibt eine vollständige HTTPS-URL für das Werbungsbild zurück.
+
+        pystore speichert bild als ImageField → Cloudinary public_id (z.B. 'werbung/img.jpg').
+        Luviq speichert bild als volle URL. Beide Fälle werden korrekt aufgelöst.
+        """
+        val = str(self.bild or '').strip()
+        if not val:
+            return ''
+        if val.startswith('http'):
+            return val
+        # Relativer Pfad → Cloudinary-URL konstruieren
+        import os
+        from urllib.parse import urlparse
+        cloud_name = os.getenv('PYSTORE_CLOUDINARY_CLOUD_NAME', '')
+        if not cloud_name:
+            for env_key in ('PYSTORE_CLOUDINARY_URL', 'CLOUDINARY_URL'):
+                env_val = os.getenv(env_key, '')
+                if env_val:
+                    try:
+                        cloud_name = urlparse(env_val).hostname or ''
+                    except Exception:
+                        pass
+                    if cloud_name:
+                        break
+        if cloud_name:
+            return f'https://res.cloudinary.com/{cloud_name}/image/upload/{val}'
+        media_base = os.getenv('PYSTORE_MEDIA_URL', '').rstrip('/')
+        if media_base:
+            return f'{media_base}/{val}'
+        return ''
+
 
 class WerbungStat(models.Model):
     """Klick-/View-Statistik pro Werbung, Seite und Tag."""
@@ -329,3 +362,27 @@ class Comment(models.Model):
     @property
     def is_parent(self):
         return self.parent is None
+
+
+class PyStoreVisitorLog(models.Model):
+    """Unmanaged Proxy — spiegelt luviq-Besucher in die pystore-DB (shop1_visitorlog).
+
+    Wird nur zum Schreiben per .using('pystore') verwendet.
+    managed=False → keine eigene Migration, Tabelle existiert bereits in pystore.
+    """
+    timestamp = models.DateTimeField(auto_now_add=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    country = models.CharField(max_length=100, blank=True, default='')
+    country_code = models.CharField(max_length=5, blank=True, default='')
+    city = models.CharField(max_length=100, blank=True, default='')
+    path = models.CharField(max_length=255, blank=True, default='')
+    user_agent = models.CharField(max_length=500, blank=True, default='')
+    seite = models.CharField(max_length=100, blank=True, default='luviq')
+
+    class Meta:
+        managed = False
+        db_table = 'shop1_visitorlog'
+        app_label = 'shop1'
+
+    def __str__(self):
+        return f"{self.seite} – {self.ip_address}"
