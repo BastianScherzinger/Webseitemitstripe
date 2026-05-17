@@ -21,13 +21,13 @@
         <!-- Header -->
         <div class="flex items-start justify-between mb-10 flex-wrap gap-4">
             <div>
-                <h1 class="text-4xl font-black text-white mb-1">Werbung <span class="text-glow-orange">Dashboard</span></h1>
-                <p class="text-white/30 text-xs uppercase tracking-widest">Budget · Klicks · Views · Cross-Site Auswertung</p>
+                <h1 class="text-4xl font-black text-white mb-1">Luviq <span class="text-glow-orange">Kampagne</span></h1>
+                <p class="text-white/30 text-xs uppercase tracking-widest">Budget · Klicks · Reichweite auf anderen Plattformen</p>
             </div>
             {% if is_admin %}
             <button onclick="document.getElementById('create-form').classList.toggle('hidden')"
                 class="px-6 py-3 rounded-xl bg-glow-orange/15 border border-glow-orange/30 text-glow-orange text-[11px] font-black uppercase tracking-widest hover:bg-glow-orange/25 transition-all cursor-pointer flex-shrink-0">
-                + Neue Werbung
+                + Neue Kampagne
             </button>
             {% endif %}
         </div>
@@ -35,13 +35,13 @@
         <!-- Create Form (collapsed by default) -->
         {% if is_admin %}
         <div id="create-form" class="hidden glass-card rounded-[2.5rem] p-8 mb-10 border border-glow-orange/20">
-            <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Neue Werbung erstellen</h3>
+            <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Neue Kampagne erstellen</h3>
             <form method="post" action="{% url 'admin_werbung_create' %}">
                 {% csrf_token %}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Titel *</label>
-                        <input type="text" name="titel" required placeholder="z.B. Sommer-Drop"
+                        <input type="text" name="titel" required placeholder="z.B. Luviq – Sommer Drop"
                             class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
                     </div>
                     <div>
@@ -60,7 +60,7 @@
                         <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Bild-URL</label>
                         <input type="url" name="bild" placeholder="https://res.cloudinary.com/..."
                             class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
-                        <p class="text-[9px] text-white/20 mt-1">Cloudinary-URL oder beliebige Bild-URL</p>
+                        <p class="text-[9px] text-white/20 mt-1">Vollständige HTTPS-URL zum Bild</p>
                     </div>
                     <div>
                         <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Budget (€) *</label>
@@ -72,7 +72,7 @@
                 <div class="flex gap-3">
                     <button type="submit"
                         class="px-8 py-3 rounded-xl bg-glow-orange/20 border border-glow-orange/40 text-glow-orange text-[11px] font-black uppercase tracking-widest hover:bg-glow-orange/30 transition-all cursor-pointer">
-                        Werbung starten →
+                        Kampagne starten →
                     </button>
                     <button type="button" onclick="document.getElementById('create-form').classList.add('hidden')"
                         class="px-8 py-3 rounded-xl bg-white/5 border border-white/10 text-white/40 text-[11px] font-black uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer">
@@ -98,70 +98,78 @@
         <!-- KPI Row -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
             <div class="glass-card p-6 rounded-[2rem] border-white/5">
-                <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Werbungen Gesamt</p>
+                <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Kampagnen</p>
                 <h4 class="text-2xl font-black text-white">{{ werbungen|length }}</h4>
             </div>
             <div class="glass-card p-6 rounded-[2rem] border-emerald-500/10 border bg-emerald-500/5">
                 <p class="text-[9px] font-black uppercase tracking-widest text-emerald-400 mb-1">Aktiv</p>
-                <h4 class="text-2xl font-black text-emerald-400" id="total-active">–</h4>
+                <h4 class="text-2xl font-black text-emerald-400">{{ aktiv_count }}</h4>
             </div>
             <div class="glass-card p-6 rounded-[2rem] border-white/5">
-                <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Views Gesamt</p>
-                <h4 class="text-2xl font-black text-white" id="total-views">–</h4>
+                <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Views (30 Tage)</p>
+                <h4 class="text-2xl font-black text-white" id="kpi-views">–</h4>
             </div>
             <div class="glass-card p-6 rounded-[2rem] border-glow-orange/10 border bg-glow-orange/5">
-                <p class="text-[9px] font-black uppercase tracking-widest text-glow-orange mb-1">Klicks Gesamt</p>
-                <h4 class="text-2xl font-black text-glow-orange" id="total-clicks">–</h4>
+                <p class="text-[9px] font-black uppercase tracking-widest text-glow-orange mb-1">Klicks (30 Tage)</p>
+                <h4 class="text-2xl font-black text-glow-orange" id="kpi-klicks">–</h4>
             </div>
         </div>
 
-        <!-- Cross-Site-Chart: Views & Klicks pro Seite (30 Tage) -->
+        <!-- Chart 1: Reichweite nach Plattform -->
         <div class="glass-card rounded-[3rem] overflow-hidden mb-6">
+            <div class="px-10 py-8 border-b border-white/5">
+                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Reichweite nach Plattform</h3>
+                <p class="text-white/20 text-[10px] mt-1">Auf welchen Seiten wurde deine Werbung gezeigt (Gesamtwerte)</p>
+            </div>
+            <div class="p-8" style="position:relative;height:220px;">
+                <canvas id="siteChart"></canvas>
+                <p id="site-no-data" style="display:none;" class="absolute inset-0 flex items-center justify-center text-white/20 text-sm">
+                    Noch keine Daten — erscheinen sobald Impressionen gezählt werden.
+                </p>
+            </div>
+        </div>
+
+        <!-- Chart 2: Tagesverlauf -->
+        <div class="glass-card rounded-[3rem] overflow-hidden mb-10">
             <div class="px-10 py-8 border-b border-white/5 flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Views & Klicks nach Webseite — 30 Tage</h3>
-                    <p class="text-white/20 text-[10px] mt-1">Alle verbundenen Seiten im Vergleich</p>
+                    <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Performance – 30 Tage</h3>
+                    <p class="text-white/20 text-[10px] mt-1">Tägliche Views und Klicks deiner Luviq-Kampagne</p>
                 </div>
                 <div class="flex gap-2">
-                    <button id="btn-views" onclick="switchCrossChart('views')"
+                    <button id="btn-views" onclick="switchTimeline('views')"
                         class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer bg-glow-orange/15 border-glow-orange/40 text-glow-orange">
                         Views
                     </button>
-                    <button id="btn-klicks" onclick="switchCrossChart('klicks')"
+                    <button id="btn-klicks" onclick="switchTimeline('klicks')"
                         class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer bg-white/5 border-white/10 text-white/40">
                         Klicks
                     </button>
                 </div>
             </div>
-            <div class="p-8" style="position:relative;height:240px;">
-                <canvas id="crossChart"></canvas>
-                <p id="cross-no-data" style="display:none;" class="absolute inset-0 flex items-center justify-center text-white/20 text-sm">
-                    Noch keine Cross-Site-Daten — erscheinen sobald erste Impressionen gezählt werden.
+            <div class="p-8" style="position:relative;height:220px;">
+                <canvas id="timelineChart"></canvas>
+                <p id="timeline-no-data" style="display:none;" class="absolute inset-0 flex items-center justify-center text-white/20 text-sm">
+                    Noch keine Daten in den letzten 30 Tagen.
                 </p>
             </div>
         </div>
 
-        <!-- Per-Werbung Balken-Chart -->
-        <div class="glass-card rounded-[3rem] overflow-hidden mb-10">
-            <div class="px-10 py-8 border-b border-white/5">
-                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Performance Chart – Alle Werbungen</h3>
-            </div>
-            <div class="p-8">
-                <canvas id="werbungChart" height="90"></canvas>
-            </div>
-        </div>
-
-        <!-- Werbung Cards -->
+        <!-- Kampagnen Cards -->
+        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mb-5">Kampagnen Details</h3>
         <div class="flex flex-col gap-6">
             {% for w in werbungen %}
-            <div class="glass-card rounded-[2.5rem] overflow-hidden border {% if w.aktiv %}border-emerald-500/20{% else %}border-white/5{% endif %}">
+            <div class="glass-card rounded-[2.5rem] overflow-hidden border {% if w.ist_aktiv %}border-emerald-500/20{% else %}border-white/5{% endif %}">
 
                 <!-- Top row: image + info + actions -->
                 <div class="flex flex-col md:flex-row">
+
                     <!-- Bild -->
                     {% if w.bild %}
-                    <div class="w-full md:w-24 md:flex-shrink-0 bg-black/30 flex items-center justify-center overflow-hidden" style="min-height:100px;">
-                        <img src="{{ w.bild }}" alt="{{ w.titel }}" class="w-full h-full object-cover">
+                    <div class="w-full md:w-28 md:flex-shrink-0 bg-black/30 flex items-center justify-center overflow-hidden" id="imgwrap-{{ w.id }}" style="min-height:112px;max-height:160px;">
+                        <img src="{{ w.bild }}" alt="{{ w.titel }}"
+                             class="w-full h-full object-cover"
+                             onerror="document.getElementById('imgwrap-{{ w.id }}').style.display='none'">
                     </div>
                     {% endif %}
 
@@ -169,8 +177,10 @@
                     <div class="flex-1 p-8">
                         <div class="flex items-center gap-3 flex-wrap mb-2">
                             <span class="text-lg font-black text-white">{{ w.titel }}</span>
-                            {% if w.aktiv %}
+                            {% if w.ist_aktiv %}
                             <span class="text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">● LIVE</span>
+                            {% elif w.aktiv %}
+                            <span class="text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">Budget verbraucht</span>
                             {% else %}
                             <span class="text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-white/5 text-white/30 border border-white/10">Pausiert</span>
                             {% endif %}
@@ -180,7 +190,7 @@
                         <p class="text-white/40 text-xs mb-2">{{ w.beschreibung|truncatewords:15 }}</p>
                         {% endif %}
 
-                        <a href="{{ w.link }}" target="_blank" class="text-glow-orange text-[11px] truncate block mb-4" style="max-width:400px;">{{ w.link|truncatechars:60 }} ↗</a>
+                        <a href="{{ w.link }}" target="_blank" rel="noopener" class="text-glow-orange text-[11px] truncate block mb-4" style="max-width:420px;">{{ w.link|truncatechars:65 }} ↗</a>
 
                         <!-- Budget Bar -->
                         <div class="mb-4">
@@ -195,33 +205,22 @@
                                     {% else %}bg-emerald-500{% endif %}"
                                     style="width:{{ w.budget_prozent_genutzt }}%"></div>
                             </div>
-                            <div class="text-[9px] text-white/20 mt-1">{{ w.budget_prozent_genutzt }}% verbraucht</div>
+                            <div class="text-[9px] text-white/20 mt-1">{{ w.budget_prozent_genutzt }}% verbraucht · 0,25ct/View · 0,5ct/Klick</div>
                         </div>
 
                         <!-- Stats Row -->
                         <div class="flex gap-8 flex-wrap">
                             <div>
-                                <p class="text-[9px] uppercase tracking-widest text-white/30 font-black mb-0.5">Views</p>
+                                <p class="text-[9px] uppercase tracking-widest text-white/30 font-black mb-0.5">Views Gesamt</p>
                                 <p class="text-xl font-black text-white">{{ w.impressionen }}</p>
                             </div>
                             <div>
-                                <p class="text-[9px] uppercase tracking-widest text-white/30 font-black mb-0.5">Klicks</p>
+                                <p class="text-[9px] uppercase tracking-widest text-white/30 font-black mb-0.5">Klicks Gesamt</p>
                                 <p class="text-xl font-black text-glow-orange">{{ w.klicks }}</p>
                             </div>
                             <div>
-                                <p class="text-[9px] uppercase tracking-widest text-white/30 font-black mb-1.5">Per Webseite</p>
-                                <div class="flex flex-wrap gap-2">
-                                    {% for s in w.site_stats %}
-                                    <span class="text-[9px] font-black px-2.5 py-1 rounded-full
-                                        {% if s.seite == 'pystore' %}bg-sky-500/15 text-sky-300 border border-sky-500/30
-                                        {% elif s.seite == 'tutorials' %}bg-violet-500/15 text-violet-300 border border-violet-500/30
-                                        {% else %}bg-white/10 text-white/50 border border-white/10{% endif %}">
-                                        {{ s.seite }}: {{ s.v }}v / {{ s.k }}k
-                                    </span>
-                                    {% empty %}
-                                    <span class="text-white/20 text-[10px]">noch keine Daten</span>
-                                    {% endfor %}
-                                </div>
+                                <p class="text-[9px] uppercase tracking-widest text-white/30 font-black mb-0.5">Erstellt</p>
+                                <p class="text-sm font-bold text-white/50">{{ w.erstellt_am|date:"d.m.Y" }}</p>
                             </div>
                         </div>
                     </div>
@@ -242,7 +241,7 @@
                         </form>
                         {% if is_admin %}
                         <form method="post" action="{% url 'admin_werbung_delete' werbung_id=w.id %}"
-                              onsubmit="return confirm('Werbung &quot;{{ w.titel|escapejs }}&quot; wirklich löschen?')">
+                              onsubmit="return confirm('Kampagne &quot;{{ w.titel|escapejs }}&quot; wirklich löschen?')">
                             {% csrf_token %}
                             <button type="submit" class="w-full px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-[11px] font-black uppercase tracking-widest hover:bg-red-500/20 transition-all cursor-pointer">
                                 🗑 Löschen
@@ -272,6 +271,13 @@
                             <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Beschreibung</label>
                             <textarea name="beschreibung" rows="2"
                                 class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50 resize-y">{{ w.beschreibung }}</textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Bild-URL</label>
+                            <input type="url" name="bild" value="{{ w.bild }}"
+                                placeholder="https://res.cloudinary.com/..."
+                                class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
+                            <p class="text-[9px] text-white/20 mt-1">Vollständige HTTPS-URL — nur dann wird das Bild angezeigt</p>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                             <div>
@@ -306,10 +312,18 @@
         </div>
 
         {% else %}
-        <div class="glass-card rounded-[3rem] p-20 text-center">
-            <p class="text-5xl mb-4">📢</p>
-            <h3 class="text-lg font-black text-white mb-2">Keine Werbungen vorhanden</h3>
-            <p class="text-white/30 text-xs uppercase tracking-widest mb-6">Erstelle deine erste Anzeige mit dem Button oben.</p>
+        <!-- Empty State: Keine aktuelle Luviq Kampagne -->
+        <div class="glass-card rounded-[3rem] p-20 text-center border border-white/5">
+            <p class="text-6xl mb-6">📢</p>
+            <h3 class="text-2xl font-black text-white mb-3">Keine aktuelle Luviq Kampagne</h3>
+            <p class="text-white/30 text-sm mb-2">Es läuft derzeit keine Werbekampagne für Luviq.</p>
+            <p class="text-white/20 text-xs uppercase tracking-widest mb-8">Erstelle eine neue Kampagne, um auf anderen Plattformen sichtbar zu sein.</p>
+            {% if is_admin %}
+            <button onclick="document.getElementById('create-form').classList.remove('hidden');this.closest('.glass-card').style.display='none'"
+                class="px-10 py-4 rounded-2xl bg-glow-orange/20 border border-glow-orange/40 text-glow-orange text-sm font-black uppercase tracking-widest hover:bg-glow-orange/30 transition-all cursor-pointer">
+                + Erste Kampagne starten
+            </button>
+            {% endif %}
         </div>
         {% endif %}
 
@@ -322,7 +336,7 @@
                 {% csrf_token %}
                 <button type="submit"
                     class="px-6 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest hover:bg-red-500/20 transition-all cursor-pointer">
-                    📊 Werbungs-Statistiken zurücksetzen
+                    Kampagnen-Statistiken zurücksetzen
                 </button>
             </form>
         </div>
@@ -333,173 +347,154 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-// ── Edit toggle ──
 function toggleEdit(id) {
-    const el = document.getElementById('edit-' + id);
-    el.classList.toggle('hidden');
+    document.getElementById('edit-' + id).classList.toggle('hidden');
 }
 
-// ── Cross-Site-Linien-Chart ──────────────────────────────────────────────
+Chart.defaults.color = 'rgba(255,255,255,0.4)';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+
+{% if werbungen %}
+// ── KPI totals aus Timeline ───────────────────────────────────────────────
+const TIMELINE = {{ timeline_json|safe }};
+const totalViews30  = TIMELINE.views.reduce((s, v) => s + v, 0);
+const totalKlicks30 = TIMELINE.klicks.reduce((s, v) => s + v, 0);
+document.getElementById('kpi-views').textContent  = totalViews30.toLocaleString('de-DE');
+document.getElementById('kpi-klicks').textContent = totalKlicks30.toLocaleString('de-DE');
+
+// ── Chart 1: Reichweite nach Plattform (Balken) ──────────────────────────
 (function() {
-    const raw = {{ cross_chart_json|safe }};
-    const canvas = document.getElementById('crossChart');
-    const noData = document.getElementById('cross-no-data');
+    const BD = {{ site_breakdown_json|safe }};
+    const canvas = document.getElementById('siteChart');
+    const noData = document.getElementById('site-no-data');
     if (!canvas) return;
 
-    const hasData = (raw.views_datasets || []).some(ds => ds.data.some(v => v > 0))
-                 || (raw.klicks_datasets || []).some(ds => ds.data.some(v => v > 0));
-
-    if (!hasData || !raw.labels || !raw.labels.length) {
+    const hasData = (BD.views || []).some(v => v > 0) || (BD.klicks || []).some(v => v > 0);
+    if (!hasData || !BD.labels || !BD.labels.length) {
         canvas.style.display = 'none';
         if (noData) noData.style.display = 'flex';
         return;
     }
 
-    Chart.defaults.color = 'rgba(255,255,255,0.4)';
-    Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
-
-    const cfg = {
-        type: 'line',
-        data: { labels: raw.labels, datasets: raw.views_datasets },
+    new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: BD.labels,
+            datasets: [
+                {
+                    label: 'Views (Impressionen)',
+                    data: BD.views,
+                    backgroundColor: BD.colors.map(c => c + '33'),
+                    borderColor: BD.colors,
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    minBarLength: 4,
+                },
+                {
+                    label: 'Klicks',
+                    data: BD.klicks,
+                    backgroundColor: BD.colors.map(c => c + '88'),
+                    borderColor: BD.colors,
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    minBarLength: 4,
+                },
+            ],
+        },
         options: {
             responsive: true, maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             plugins: {
                 legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14, font: { size: 10 } } },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString('de-DE')}`,
+                    },
+                },
+            },
+            scales: {
+                x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 11, weight: 'bold' } } },
+                y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 10 } } },
+            },
+        },
+    });
+})();
+
+// ── Chart 2: Tagesverlauf (Linie) ────────────────────────────────────────
+var timelineChart = null;
+(function() {
+    const canvas = document.getElementById('timelineChart');
+    const noData = document.getElementById('timeline-no-data');
+    if (!canvas) return;
+
+    const hasData = TIMELINE.views.some(v => v > 0) || TIMELINE.klicks.some(v => v > 0);
+    if (!hasData) {
+        canvas.style.display = 'none';
+        if (noData) noData.style.display = 'flex';
+        return;
+    }
+
+    const makeDataset = (label, data, color) => ({
+        label,
+        data,
+        borderColor: color,
+        backgroundColor: color.replace(')', ',0.08)').replace('rgb', 'rgba'),
+        tension: 0.4,
+        fill: true,
+        pointRadius: 3,
+        pointHoverRadius: 6,
+    });
+
+    timelineChart = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: TIMELINE.labels,
+            datasets: [makeDataset('Views', TIMELINE.views, '#f97316')],
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString('de-DE')}` },
+                },
             },
             scales: {
                 x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { maxTicksLimit: 10, font: { size: 10 } } },
                 y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 10 } } },
             },
         },
-    };
-
-    const crossChart = new Chart(canvas, cfg);
-
-    window.switchCrossChart = function(mode) {
-        const btnV = document.getElementById('btn-views');
-        const btnK = document.getElementById('btn-klicks');
-        if (mode === 'views') {
-            btnV.className = btnV.className.replace('bg-white/5 border-white/10 text-white/40', 'bg-glow-orange/15 border-glow-orange/40 text-glow-orange');
-            btnK.className = btnK.className.replace('bg-glow-orange/15 border-glow-orange/40 text-glow-orange', 'bg-white/5 border-white/10 text-white/40');
-        } else {
-            btnK.className = btnK.className.replace('bg-white/5 border-white/10 text-white/40', 'bg-glow-orange/15 border-glow-orange/40 text-glow-orange');
-            btnV.className = btnV.className.replace('bg-glow-orange/15 border-glow-orange/40 text-glow-orange', 'bg-white/5 border-white/10 text-white/40');
-        }
-        crossChart.data.datasets = mode === 'views' ? raw.views_datasets : raw.klicks_datasets;
-        crossChart.update();
-    };
+    });
 })();
 
-// ── Chart ──
-const RAW = {{ chart_json|safe }};
+window.switchTimeline = function(mode) {
+    const btnV = document.getElementById('btn-views');
+    const btnK = document.getElementById('btn-klicks');
+    const activeClass  = 'bg-glow-orange/15 border-glow-orange/40 text-glow-orange';
+    const inactiveClass = 'bg-white/5 border-white/10 text-white/40';
 
-// KPI totals
-const totalViews = RAW.reduce((s, w) => s + w.impressionen, 0);
-const totalClicks = RAW.reduce((s, w) => s + w.klicks, 0);
-const totalActive = RAW.filter(w => w.prozent < 100).length;
-document.getElementById('total-views').textContent = totalViews.toLocaleString('de-DE');
-document.getElementById('total-clicks').textContent = totalClicks.toLocaleString('de-DE');
-document.getElementById('total-active').textContent = totalActive;
+    if (mode === 'views') {
+        btnV.className = btnV.className.replace(inactiveClass, activeClass);
+        btnK.className = btnK.className.replace(activeClass, inactiveClass);
+    } else {
+        btnK.className = btnK.className.replace(inactiveClass, activeClass);
+        btnV.className = btnV.className.replace(activeClass, inactiveClass);
+    }
 
-const colors = ['#f97316', '#8b5cf6', '#22c55e', '#38bdf8', '#f43f5e'];
-const labels = RAW.map(w => w.name.length > 20 ? w.name.slice(0, 18) + '…' : w.name);
-
-if (RAW.length > 0) {
-    new Chart(document.getElementById('werbungChart'), {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [
-                {
-                    label: 'Views (Impressionen)',
-                    data: RAW.map(w => w.impressionen),
-                    backgroundColor: colors.slice(0, RAW.length).map(c => c + '44'),
-                    borderColor: colors.slice(0, RAW.length),
-                    borderWidth: 2,
-                    borderRadius: 8,
-                    // Minimum bar height so zero-value entries are still visible
-                    minBarLength: 4,
-                    yAxisID: 'y',
-                },
-                {
-                    label: 'Klicks',
-                    data: RAW.map(w => w.klicks),
-                    backgroundColor: colors.slice(0, RAW.length).map(c => c + 'aa'),
-                    borderColor: colors.slice(0, RAW.length),
-                    borderWidth: 2,
-                    borderRadius: 8,
-                    minBarLength: 4,
-                    yAxisID: 'y',
-                },
-                {
-                    label: 'Ausgegeben (€)',
-                    data: RAW.map(w => parseFloat(w.ausgegeben.toFixed(4))),
-                    type: 'line',
-                    borderColor: '#fbbf24',
-                    backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#fbbf24',
-                    pointRadius: 6,
-                    pointHoverRadius: 9,
-                    tension: 0.3,
-                    yAxisID: 'y2',
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-                legend: {
-                    labels: { color: 'rgba(255,255,255,0.5)', font: { size: 11, weight: 'bold' } },
-                },
-                tooltip: {
-                    callbacks: {
-                        title: items => RAW[items[0].dataIndex]?.name || items[0].label,
-                        label: ctx => {
-                            const val = ctx.parsed.y;
-                            if (ctx.dataset.label.includes('€')) return ` Ausgegeben: €${val.toFixed(2)}`;
-                            return ` ${ctx.dataset.label}: ${val.toLocaleString('de-DE')}`;
-                        },
-                        afterBody: items => {
-                            const idx = items[0].dataIndex;
-                            const w = RAW[idx];
-                            return [
-                                `Verbleibendes Budget: €${parseFloat(w.verbleibendes).toFixed(2)}`,
-                                `Gesamt-Budget: €${parseFloat(w.budget).toFixed(2)}`,
-                                `Budget verbraucht: ${w.prozent}%`,
-                            ];
-                        },
-                    },
-                },
-            },
-            scales: {
-                x: {
-                    ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 12, weight: 'bold' } },
-                    grid: { color: 'rgba(255,255,255,0.04)' },
-                },
-                y: {
-                    position: 'left',
-                    beginAtZero: true,
-                    ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 11 } },
-                    grid: { color: 'rgba(255,255,255,0.04)' },
-                    title: { display: true, text: 'Views / Klicks', color: 'rgba(255,255,255,0.3)', font: { size: 10 } },
-                },
-                y2: {
-                    position: 'right',
-                    beginAtZero: true,
-                    ticks: {
-                        color: '#fbbf24',
-                        font: { size: 11 },
-                        callback: v => '€' + v.toFixed(2),
-                    },
-                    grid: { drawOnChartArea: false },
-                    title: { display: true, text: 'Ausgegeben (€)', color: '#fbbf24', font: { size: 10 } },
-                },
-            },
-        },
+    if (!timelineChart) return;
+    const makeDataset = (label, data, color) => ({
+        label, data,
+        borderColor: color,
+        backgroundColor: color.replace(')', ',0.08)').replace('rgb', 'rgba'),
+        tension: 0.4, fill: true, pointRadius: 3, pointHoverRadius: 6,
     });
-}
+    timelineChart.data.datasets =
+        mode === 'views'
+            ? [makeDataset('Views', TIMELINE.views, '#f97316')]
+            : [makeDataset('Klicks', TIMELINE.klicks, '#38bdf8')];
+    timelineChart.update();
+};
+{% endif %}
 </script>
 {% endblock %}

@@ -124,102 +124,77 @@ _log = _logging.getLogger('shop1')
 
 @admin_required
 def admin_werbung_list(request):
-    """Werbungen verwalten – Budget, Klicks, Views, Per-Seite-Auswertung + Charts."""
+    """Werbungen verwalten – Budget, Klicks, Views + Charts."""
     from django.db.models import Sum
     from datetime import timedelta
 
     werbungen = list(Werbung.objects.all().order_by('-erstellt_am'))
+    aktiv_count = sum(1 for w in werbungen if w.ist_aktiv)
 
-    for w in werbungen:
-        w.site_stats = list(
-            WerbungStat.objects.filter(werbung=w)
+    SITE_COLORS = {
+        'luviq':       '#f97316',
+        'pystore':     '#38bdf8',
+        'tutorials':   '#4ade80',
+        'pixvault':    '#c084fc',
+        'familienzone':'#f43f5e',
+    }
+    FALLBACK_COLORS = ['#fbbf24', '#a78bfa', '#34d399', '#fb923c']
+
+    # ── Chart 1: Reichweite nach Plattform (Balken, gesamt) ───────────────
+    site_breakdown_json = json.dumps({'labels': [], 'views': [], 'klicks': [], 'colors': []})
+    try:
+        breakdown = list(
+            WerbungStat.objects
             .values('seite')
-            .annotate(v=Sum('impressionen'), k=Sum('klicks'))
+            .annotate(total_v=Sum('impressionen'), total_k=Sum('klicks'))
             .order_by('seite')
         )
+        colors = [
+            SITE_COLORS.get(s['seite'], FALLBACK_COLORS[i % len(FALLBACK_COLORS)])
+            for i, s in enumerate(breakdown)
+        ]
+        site_breakdown_json = json.dumps({
+            'labels': [s['seite'].capitalize() for s in breakdown],
+            'views':  [s['total_v'] for s in breakdown],
+            'klicks': [s['total_k'] for s in breakdown],
+            'colors': colors,
+        })
+    except Exception as e:
+        _log.error('site_breakdown error: %s', e)
 
-    # ── Per-Werbung Balken-Chart ──────────────────────────────────────────
-    chart_data = []
-    for w in werbungen:
-        try:
-            chart_data.append({
-                'name': w.titel or f'Werbung {w.id}',
-                'impressionen': w.impressionen or 0,
-                'klicks': w.klicks or 0,
-                'ausgegeben': float(w.ausgegeben),
-                'verbleibendes': float(w.verbleibendes_budget),
-                'budget': float(w.budget or 0),
-                'prozent': w.budget_prozent_genutzt,
-            })
-        except Exception as e:
-            _log.error('werbung chart_data error id=%s: %s', w.id, e)
-            chart_data.append({
-                'name': getattr(w, 'titel', f'Werbung {w.id}') or f'Werbung {w.id}',
-                'impressionen': 0, 'klicks': 0,
-                'ausgegeben': 0.0, 'verbleibendes': 0.0, 'budget': 0.0, 'prozent': 0,
-            })
-
-    # ── Cross-Site-Linien-Chart: Views & Klicks der letzten 30 Tage ──────
-    cross_chart_json = json.dumps({'labels': [], 'views_datasets': [], 'klicks_datasets': []})
+    # ── Chart 2: Tagesverlauf – Views & Klicks der letzten 30 Tage ───────
+    timeline_json = json.dumps({'labels': [], 'views': [], 'klicks': []})
     try:
         today = timezone.localdate()
         start_date = today - timedelta(days=29)
-        labels = [(start_date + timedelta(days=i)).strftime('%d.%m.') for i in range(30)]
+        day_labels = [(start_date + timedelta(days=i)).strftime('%d.%m.') for i in range(30)]
 
-        sites = list(
-            WerbungStat.objects.filter(datum__gte=start_date)
-            .values_list('seite', flat=True)
-            .distinct()
-            .order_by('seite')
+        timeline_qs = (
+            WerbungStat.objects
+            .filter(datum__gte=start_date)
+            .values('datum')
+            .annotate(v=Sum('impressionen'), k=Sum('klicks'))
+            .order_by('datum')
         )
+        day_views, day_klicks = {}, {}
+        for entry in timeline_qs:
+            lbl = entry['datum'].strftime('%d.%m.')
+            day_views[lbl]  = day_views.get(lbl, 0)  + entry['v']
+            day_klicks[lbl] = day_klicks.get(lbl, 0) + entry['k']
 
-        SITE_PALETTE = {
-            'luviq':     {'border': '#f97316', 'bg': 'rgba(249,115,22,0.08)'},
-            'pystore':   {'border': '#38bdf8', 'bg': 'rgba(56,189,248,0.08)'},
-            'tutorials': {'border': '#4ade80', 'bg': 'rgba(74,222,128,0.08)'},
-            'pixvault':  {'border': '#c084fc', 'bg': 'rgba(192,132,252,0.08)'},
-        }
-        FALLBACK = [
-            {'border': '#fbbf24', 'bg': 'rgba(251,191,36,0.08)'},
-            {'border': '#f87171', 'bg': 'rgba(248,113,113,0.08)'},
-        ]
-
-        views_datasets, klicks_datasets = [], []
-        for idx, site in enumerate(sites):
-            color = SITE_PALETTE.get(site, FALLBACK[idx % len(FALLBACK)])
-            qs = WerbungStat.objects.filter(datum__gte=start_date, seite=site)
-            by_day_v, by_day_k = {}, {}
-            for stat in qs:
-                lbl = stat.datum.strftime('%d.%m.')
-                by_day_v[lbl] = by_day_v.get(lbl, 0) + stat.impressionen
-                by_day_k[lbl] = by_day_k.get(lbl, 0) + stat.klicks
-            views_datasets.append({
-                'label': site.capitalize(),
-                'data': [by_day_v.get(l, 0) for l in labels],
-                'borderColor': color['border'],
-                'backgroundColor': color['bg'],
-                'tension': 0.4, 'fill': True, 'pointRadius': 3,
-            })
-            klicks_datasets.append({
-                'label': site.capitalize(),
-                'data': [by_day_k.get(l, 0) for l in labels],
-                'borderColor': color['border'],
-                'backgroundColor': color['bg'],
-                'tension': 0.4, 'fill': True, 'pointRadius': 3,
-            })
-
-        cross_chart_json = json.dumps({
-            'labels': labels,
-            'views_datasets': views_datasets,
-            'klicks_datasets': klicks_datasets,
+        timeline_json = json.dumps({
+            'labels': day_labels,
+            'views':  [day_views.get(l, 0)  for l in day_labels],
+            'klicks': [day_klicks.get(l, 0) for l in day_labels],
         })
     except Exception as e:
-        _log.error('cross_chart error: %s', e)
+        _log.error('timeline error: %s', e)
 
     context = {
         'werbungen': werbungen,
-        'chart_json': json.dumps(chart_data),
-        'cross_chart_json': cross_chart_json,
+        'aktiv_count': aktiv_count,
+        'site_breakdown_json': site_breakdown_json,
+        'timeline_json': timeline_json,
         'is_admin': is_admin(request.user),
     }
     return render(request, 'shop1/admin/werbung_list.html', context)
@@ -305,6 +280,9 @@ def admin_werbung_edit(request, werbung_id):
         w.titel = request.POST.get('titel', w.titel).strip() or w.titel
         w.link = request.POST.get('link', w.link).strip() or w.link
         w.beschreibung = request.POST.get('beschreibung', w.beschreibung)
+        bild = request.POST.get('bild', '').strip()
+        if bild:
+            w.bild = bild
         try:
             w.budget = float(request.POST.get('budget', w.budget))
         except (ValueError, TypeError):
@@ -336,7 +314,7 @@ def _geo_enrich_visitors(visitors):
     try:
         body = _json.dumps([{'query': ip} for ip in ips]).encode('utf-8')
         req = urllib.request.Request(
-            'http://ip-api.com/batch?fields=query,status,country,countryCode,city',
+            'https://ip-api.com/batch?fields=query,status,country,countryCode,city',
             data=body, headers={'Content-Type': 'application/json'},
         )
         with urllib.request.urlopen(req, timeout=3) as resp:
