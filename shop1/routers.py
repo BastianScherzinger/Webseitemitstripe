@@ -1,4 +1,4 @@
-_WERBUNG_MODELS = frozenset({'werbung', 'werbungstat'})
+_WERBUNG_MODELS = frozenset({'werbung', 'werbungstat', 'visitorlog'})
 
 
 class WerbungRouter:

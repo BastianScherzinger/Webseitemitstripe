@@ -120,15 +120,39 @@ from .models import PageVisit, Werbung, WerbungStat, VisitorLog
 _log = _logging.getLogger('shop1')
 
 
+def _upload_werbung_bild(file_obj):
+    """Lädt ein Werbebild auf Cloudinary hoch (WERBUNG_CLOUDINARY_URL für separates Konto)."""
+    try:
+        import cloudinary.uploader
+        from urllib.parse import urlparse
+        werbung_url = os.getenv('WERBUNG_CLOUDINARY_URL', '')
+        kwargs = {'folder': 'werbung', 'resource_type': 'image'}
+        if werbung_url:
+            p = urlparse(werbung_url)
+            kwargs.update({'cloud_name': p.hostname, 'api_key': p.username, 'api_secret': p.password})
+        result = cloudinary.uploader.upload(file_obj, **kwargs)
+        return result.get('secure_url', '')
+    except Exception as e:
+        _log.error('werbung cloudinary upload error: %s', e)
+        return ''
+
+
 # ═══ WERBUNG ADMIN ═══
 
 @admin_required
 def admin_werbung_list(request):
-    """Werbungen verwalten – Budget, Klicks, Views + Charts."""
+    """Werbungen verwalten – Budget, Klicks, Views + Charts (nur eigene Kampagnen)."""
     from django.db.models import Sum
+    from django.db.models.functions import Lower
     from datetime import timedelta
 
-    werbungen = list(Werbung.objects.all().order_by('-erstellt_am'))
+    site_name = os.getenv('SITE_NAME', 'luviq')
+
+    # Nur Kampagnen dieser Site zeigen (Link enthält SITE_NAME, z.B. 'luviq')
+    qs = Werbung.objects.order_by('-erstellt_am')
+    if site_name:
+        qs = qs.filter(link__icontains=site_name)
+    werbungen = list(qs)
     aktiv_count = sum(1 for w in werbungen if w.ist_aktiv)
 
     SITE_COLORS = {
@@ -139,22 +163,25 @@ def admin_werbung_list(request):
         'familienzone':'#f43f5e',
     }
     FALLBACK_COLORS = ['#fbbf24', '#a78bfa', '#34d399', '#fb923c']
+    own_ids = [w.id for w in werbungen]
 
     # ── Chart 1: Reichweite nach Plattform (Balken, gesamt) ───────────────
     site_breakdown_json = json.dumps({'labels': [], 'views': [], 'klicks': [], 'colors': []})
     try:
         breakdown = list(
             WerbungStat.objects
-            .values('seite')
+            .filter(werbung_id__in=own_ids)
+            .annotate(seite_norm=Lower('seite'))  # Groß/Kleinschreibung normieren
+            .values('seite_norm')
             .annotate(total_v=Sum('impressionen'), total_k=Sum('klicks'))
-            .order_by('seite')
+            .order_by('seite_norm')
         )
         colors = [
-            SITE_COLORS.get(s['seite'], FALLBACK_COLORS[i % len(FALLBACK_COLORS)])
+            SITE_COLORS.get(s['seite_norm'], FALLBACK_COLORS[i % len(FALLBACK_COLORS)])
             for i, s in enumerate(breakdown)
         ]
         site_breakdown_json = json.dumps({
-            'labels': [s['seite'].capitalize() for s in breakdown],
+            'labels': [s['seite_norm'].capitalize() for s in breakdown],
             'views':  [s['total_v'] for s in breakdown],
             'klicks': [s['total_k'] for s in breakdown],
             'colors': colors,
@@ -171,7 +198,7 @@ def admin_werbung_list(request):
 
         timeline_qs = (
             WerbungStat.objects
-            .filter(datum__gte=start_date)
+            .filter(datum__gte=start_date, werbung_id__in=own_ids)
             .values('datum')
             .annotate(v=Sum('impressionen'), k=Sum('klicks'))
             .order_by('datum')
@@ -202,7 +229,7 @@ def admin_werbung_list(request):
 
 @admin_required
 def admin_werbung_create(request):
-    """Neue Werbung anlegen (POST only). Bild als URL angeben."""
+    """Neue Werbung anlegen (POST only). Bild per Upload oder URL."""
     if request.method == 'POST':
         titel = request.POST.get('titel', '').strip()
         link = request.POST.get('link', '').strip()
@@ -213,6 +240,10 @@ def admin_werbung_create(request):
             budget = float(budget_str)
         except (ValueError, TypeError):
             budget = 0.0
+
+        # Bild: Upload hat Vorrang vor manuell eingetragener URL
+        if not bild and 'bild_file' in request.FILES:
+            bild = _upload_werbung_bild(request.FILES['bild_file'])
 
         if not titel or not link:
             messages.error(request, 'Titel und Link sind Pflichtfelder.')
@@ -281,6 +312,8 @@ def admin_werbung_edit(request, werbung_id):
         w.link = request.POST.get('link', w.link).strip() or w.link
         w.beschreibung = request.POST.get('beschreibung', w.beschreibung)
         bild = request.POST.get('bild', '').strip()
+        if not bild and 'bild_file' in request.FILES:
+            bild = _upload_werbung_bild(request.FILES['bild_file'])
         if bild:
             w.bild = bild
         try:
