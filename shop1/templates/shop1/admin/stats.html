@@ -206,6 +206,8 @@
                                     <span class="text-[9px] font-black px-2.5 py-1 rounded-full
                                         {% if v.seite == 'pystore' %}bg-sky-500/15 text-sky-300 border border-sky-500/30
                                         {% elif v.seite == 'tutorials' %}bg-violet-500/15 text-violet-300 border border-violet-500/30
+                                        {% elif v.seite == 'luviq' %}bg-orange-500/15 text-orange-300 border border-orange-500/30
+                                        {% elif v.seite == 'pixvault' %}bg-purple-500/15 text-purple-300 border border-purple-500/30
                                         {% else %}bg-white/10 text-white/40 border border-white/10{% endif %}">
                                         {{ v.seite|default:"–" }}
                                     </span>

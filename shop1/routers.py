@@ -21,6 +21,8 @@ class WerbungRouter:
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
+        if db == 'pystore':
+            return False  # pystore-DB wird vom pystore-Projekt verwaltet
         if model_name in _WERBUNG_MODELS:
-            return False  # Werbung-Tabellen werden vom pystore-Projekt verwaltet
+            return False
         return None

@@ -90,7 +90,7 @@ class PageVisitMiddleware:
         ip = self._get_ip(request)
         path = request.path[:255]
         ua = request.META.get('HTTP_USER_AGENT', '')[:500]
-        site_name = os.getenv('SITE_NAME', 'pystore')
+        site_name = os.getenv('SITE_NAME', 'luviq')
 
         # ── PageVisit: once per session per day ──
         if request.session.get('last_visit_date') != today_str:
