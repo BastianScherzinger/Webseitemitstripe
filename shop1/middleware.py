@@ -111,7 +111,7 @@ class PageVisitMiddleware:
                 if last_dt.tzinfo is None:
                     last_dt = last_dt.replace(tzinfo=timezone.get_current_timezone())
                 diff = (timezone.now() - last_dt).total_seconds()
-                if diff < 1800:
+                if diff < 300:
                     should_log = False
             except Exception:
                 pass
