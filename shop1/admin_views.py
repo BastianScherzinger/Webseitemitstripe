@@ -280,12 +280,15 @@ def admin_werbung_delete(request, werbung_id):
 
 @admin_required
 def admin_reset_werbung_stats(request):
-    """Setzt alle Werbungs-Statistiken (Views, Klicks, WerbungStat) auf 0 zurück."""
+    """Setzt Werbungs-Statistiken dieser Site auf 0 zurück (nur eigene Kampagnen)."""
     if request.method == 'POST':
         try:
-            Werbung.objects.all().update(impressionen=0, klicks=0)
-            WerbungStat.objects.all().delete()
-            messages.success(request, 'Alle Werbungs-Statistiken wurden zurückgesetzt.')
+            site_name = os.getenv('SITE_NAME', 'luviq')
+            own_qs = Werbung.objects.filter(link__icontains=site_name)
+            own_ids = list(own_qs.values_list('id', flat=True))
+            own_qs.update(impressionen=0, klicks=0)
+            WerbungStat.objects.filter(werbung_id__in=own_ids).delete()
+            messages.success(request, 'Werbungs-Statistiken dieser Site wurden zurückgesetzt.')
         except Exception as e:
             messages.error(request, f'Fehler beim Zurücksetzen: {e}')
     return redirect('admin_werbung_list')

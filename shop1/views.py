@@ -137,6 +137,9 @@ def werbung_klick(request, werbung_id):
         site_name = os.getenv('SITE_NAME', 'luviq')
         today = timezone.now().date()
         w = Werbung.objects.get(id=werbung_id, aktiv=True)
+        # Nur http/https erlaubt – kein javascript: / data: Scheme
+        if not w.link.startswith(('http://', 'https://')):
+            return redirect('home')
         Werbung.objects.filter(id=werbung_id).update(klicks=F('klicks') + 1)
         stat, _ = WerbungStat.objects.get_or_create(werbung=w, seite=site_name, datum=today)
         WerbungStat.objects.filter(id=stat.id).update(klicks=F('klicks') + 1)
@@ -807,8 +810,8 @@ def send_bank_details_email(order):
 
                     <div style="margin: 30px 0; padding: 30px; background: #fdf2f2; border-radius: 20px; border-left: 5px solid #ff6a00;">
                         <h3 style="margin-top: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #ff6a00;">Zahlungsoption A: Überweisung</h3>
-                        <p style="margin: 15px 0 5px 0; font-size: 13px;"><strong>Inhaber:</strong> Luisa Brehler</p>
-                        <p style="margin: 5px 0; font-size: 13px;"><strong>IBAN:</strong> DE05 51 85 0079 1028 1367 37</p>
+                        <p style="margin: 15px 0 5px 0; font-size: 13px;"><strong>Inhaber:</strong> {os.getenv('BANK_INHABER', 'Luisa Brehler')}</p>
+                        <p style="margin: 5px 0; font-size: 13px;"><strong>IBAN:</strong> {os.getenv('BANK_IBAN', '')}</p>
                         <p style="margin: 5px 0; font-size: 13px;"><strong>Verwendungszweck:</strong> Mission #{order.id}</p>
                         <p style="margin: 5px 0; font-size: 13px;"><strong>Betrag:</strong> <span style="font-size: 18px; font-weight: 900;">{float(order.gesamt_betrag):.2f} €</span></p>
                     </div>
@@ -816,7 +819,7 @@ def send_bank_details_email(order):
                     <div style="margin: 30px 0; padding: 30px; background: #eff6ff; border-radius: 20px; border-left: 5px solid #2563eb;">
                         <h3 style="margin-top: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #2563eb;">Zahlungsoption B: PayPal</h3>
                         <p style="margin: 15px 0; font-size: 13px;">Sende das Geld einfach per PayPal an:</p>
-                        <p style="margin: 5px 0; font-size: 16px; font-weight: bold; color: #2563eb;">brehlerluisa@gmail.com</p>
+                        <p style="margin: 5px 0; font-size: 16px; font-weight: bold; color: #2563eb;">{os.getenv('PAYPAL_EMAIL', '')}</p>
                         <p style="margin: 10px 0 0 0; font-size: 11px; color: #6b7280;">(Bitte bestelle als "Freunde & Familie" oder übernehme die Gebühren, damit der volle Betrag ankommt.)</p>
                     </div>
 
@@ -840,26 +843,25 @@ def send_bank_details_email(order):
     send_brevo_email(subject, html_content, order.email, recipient_name=f"{order.vorname} {order.nachname}")
 
 
-@csrf_exempt
 def newsletter_subscribe(request):
-    """Abonniert den Newsletter."""
+    """Abonniert den Newsletter (CSRF-geschützt via X-CSRFToken Header)."""
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
             email = data.get('email', '').strip()
-        except:
+        except Exception:
             email = request.POST.get('email', '').strip()
-            
+
         if not email:
             return JsonResponse({'error': 'Bitte gib eine gültige Email an.'}, status=400)
-            
+
         from .models import Subscriber
         if Subscriber.objects.filter(email=email).exists():
             return JsonResponse({'message': 'Du bist bereits im Orbit angemeldet!'}, status=200)
-            
+
         Subscriber.objects.create(email=email)
         return JsonResponse({'message': 'Erfolgreich zum Newsletter angemeldet!'}, status=200)
-        
+
     return JsonResponse({'error': 'Invalid request'}, status=405)
 
 
@@ -941,29 +943,32 @@ def comment_add(request):
     if request.method == 'POST':
         text = request.POST.get('text', '').strip()
         parent_id = request.POST.get('parent_id')
-        
+
         if not text:
             messages.error(request, 'Bitte gib eine Nachricht ein.')
-            return redirect(request.META.get('HTTP_REFERER', 'gaestebuch'))
-            
+            return redirect('gaestebuch')
+
+        if len(text) > 2000:
+            messages.error(request, 'Nachricht ist zu lang (max. 2000 Zeichen).')
+            return redirect('gaestebuch')
+
         parent = None
         is_admin_reply = False
-        
+
         if parent_id:
             parent = get_object_or_404(Comment, id=parent_id)
-            # Prüfen ob der antwortende User ein Admin ist
             if _is_admin(request.user):
                 is_admin_reply = True
-        
+
         Comment.objects.create(
             user=request.user,
             text=text,
             parent=parent,
             is_admin_reply=is_admin_reply
         )
-        
+
         messages.success(request, 'Dein Beitrag wurde im Orbit veröffentlicht!')
-    return redirect(request.META.get('HTTP_REFERER', 'gaestebuch'))
+    return redirect('gaestebuch')
 
 
 @login_required(login_url='login')
@@ -974,20 +979,18 @@ def comment_like(request, comment_id):
         comment.likes.remove(request.user)
     else:
         comment.likes.add(request.user)
-    
-    return redirect(request.META.get('HTTP_REFERER', 'gaestebuch'))
+    return redirect('gaestebuch')
 
 
 @login_required(login_url='login')
 def comment_delete(request, comment_id):
     """Löscht einen Kommentar (nur Admin oder Ersteller)."""
     comment = get_object_or_404(Comment, id=comment_id)
-    
-    # Nur Admin oder der Verfasser dürfen löschen
+
     if _is_admin(request.user) or comment.user == request.user:
         comment.delete()
         messages.success(request, 'Beitrag wurde gelöscht.')
     else:
         messages.error(request, 'Keine Berechtigung zum Löschen.')
-        
-    return redirect(request.META.get('HTTP_REFERER', 'gaestebuch'))
+
+    return redirect('gaestebuch')

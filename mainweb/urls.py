@@ -15,13 +15,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+import os
 from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 
+# Admin-URL aus Env-Variable – verbirgt den Standard-Pfad vor Scanner-Bots.
+# Setze ADMIN_URL in Railway auf z.B. "luisa-admin-x7k2/"
+_admin_url = os.getenv('ADMIN_URL', 'admin/').strip('/')
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(f'{_admin_url}/', admin.site.urls),
     path('', include('shop1.urls')),
 ]
 

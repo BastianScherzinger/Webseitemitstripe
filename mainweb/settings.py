@@ -11,11 +11,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / '.env')
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-CHANGE_THIS_IN_PRODUCTION')
+_SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-CHANGE_THIS_IN_PRODUCTION')
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+if not DEBUG and _SECRET_KEY.startswith('django-insecure-'):
+    raise RuntimeError(
+        'SECRET_KEY ist nicht gesetzt oder unsicher. '
+        'Setze die Umgebungsvariable SECRET_KEY auf einen zufälligen Wert.'
+    )
+SECRET_KEY = _SECRET_KEY
 
-ALLOWED_HOSTS = ['*']
+# In Production nur bekannte Hosts erlauben; DEBUG erlaubt alles lokal.
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    _extra = [h.strip() for h in os.getenv('ALLOWED_HOSTS_EXTRA', '').split(',') if h.strip()]
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.up.railway.app'] + _extra
 
 # ═══ CSRF / PROXY ═══
 

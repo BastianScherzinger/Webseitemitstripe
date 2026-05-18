@@ -205,9 +205,15 @@
         const message = document.getElementById('newsletter-message');
         
         try {
+            const csrfToken = document.cookie.split(';')
+                .map(c => c.trim()).find(c => c.startsWith('csrftoken='))
+                ?.split('=')[1] || '';
             const response = await fetch('/newsletter/subscribe/', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
                 body: JSON.stringify({ email })
             });
             const data = await response.json();
