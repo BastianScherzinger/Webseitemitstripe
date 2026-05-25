@@ -19,14 +19,16 @@ def create_profile(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=User)
-def save_profile(sender, instance, **kwargs):
+def save_profile(sender, instance, created, **kwargs):
     """
-    Signal: Speichere das UserProfile, wenn der User gespeichert wird
+    Signal: Speichere das UserProfile, wenn der User aktualisiert wird (nicht bei Create).
+    create_profile() übernimmt den Create-Fall separat.
     """
-    try:
-        instance.profile.save()
-    except UserProfile.DoesNotExist:
-        UserProfile.objects.create(user=instance)
+    if not created:
+        try:
+            instance.profile.save()
+        except UserProfile.DoesNotExist:
+            pass
 
 
 from .utils import send_brevo_email
@@ -41,18 +43,18 @@ def send_verification_email(user, profile):
     # Sicherstellen, dass SITE_URL keinen Schrägstrich am Ende hat
     base_url = settings.SITE_URL.rstrip('/')
     verification_url = f"{base_url}/verify/{profile.verification_token}/"
-    subject = "Luviq-Shop – Bitte bestätige deine E-Mail-Adresse"
-    
+    subject = "Luviq Universe – Bitte bestätige deine E-Mail-Adresse"
+
     # HTML Nachricht
     html_content = f"""
     <html>
         <body>
             <h2>Hallo {user.first_name or user.username},</h2>
-            <p>vielen Dank für deine Registrierung bei MeinShop!</p>
+            <p>vielen Dank für deine Registrierung bei Luviq Universe!</p>
             <p>Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Button klickst:</p>
-            <a href="{verification_url}" style="background-color: #0d6efd; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">E-Mail bestätigen</a>
+            <a href="{verification_url}" style="background-color: #ff6a00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">E-Mail bestätigen</a>
             <p>Oder kopiere diesen Link in deinen Browser:<br>{verification_url}</p>
-            <p>Viele Grüße,<br>Dein MeinShop-Team</p>
+            <p>Viele Grüße,<br>Dein Luviq Universe Team</p>
         </body>
     </html>
     """

@@ -134,10 +134,10 @@ def profil(request):
         form = UserProfileForm(instance=profile)
 
     status = "Normaler Nutzer"
-    if user.is_staff:
-        status = "Administrator (Statistiken & System)"
-    elif user.is_superuser:
-        status = "Mitarbeiter (Produktverwaltung)"
+    if user.is_superuser:
+        status = "Superadministrator"
+    elif user.is_staff:
+        status = "Mitarbeiter"
 
     bestellungen_count = Order.objects.filter(user=user).count()
     bestellungen = Order.objects.filter(user=user).prefetch_related('items').order_by('-erstellt_am')
