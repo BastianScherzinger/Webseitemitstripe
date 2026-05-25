@@ -1,14 +1,24 @@
 """Admin/Shopbesitzer-Views"""
 
+import logging
+import os
+from functools import wraps
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.conf import settings
-from functools import wraps
 from django.db.models import Count, Q
-import os
+
+import json
+from datetime import timedelta
+
+from django.utils import timezone
+
 from .forms import ProduktForm, AdminUserEditForm, AdminUserCreationForm
-from .models import Produkt, UserProfile, Order, OrderItem
+from .models import Produkt, UserProfile, Order, OrderItem, PageVisit, Werbung, WerbungStat, VisitorLog
+
+_log = logging.getLogger('shop1')
 
 
 def is_admin(user):
@@ -59,7 +69,7 @@ def admin_dashboard(request):
         orders_pending = Order.objects.filter(status='pending').count()
         orders_failed = Order.objects.filter(status='failed').count()
     except Exception as e:
-        print(f"Dashboard query error: {e}")
+        _log.error("Dashboard query error: %s", e)
         produkte_count = aktive_count = user_count = orders_count = orders_paid = orders_pending = orders_failed = 0
 
     try:
@@ -111,13 +121,6 @@ def admin_produkte_list(request):
     return render(request, 'shop1/admin/produkte_list.html', context)
 
 
-import logging as _logging
-from django.utils import timezone
-from datetime import timedelta
-import json
-from .models import PageVisit, Werbung, WerbungStat, VisitorLog
-
-_log = _logging.getLogger('shop1')
 
 
 def _upload_werbung_bild(file_obj):
@@ -411,7 +414,7 @@ def admin_stats(request):
             
         chart_data_json = json.dumps({'labels': labels, 'data': data})
     except Exception as e:
-        print(f"Error in chart calculation: {e}")
+        _log.error("Error in chart calculation: %s", e)
         chart_data_json = json.dumps({'labels': [], 'data': []})
 
     
@@ -434,7 +437,7 @@ def admin_stats(request):
             if items_sum > rev:
                 total_discounts += (items_sum - rev)
     except Exception as e:
-        print(f"Error in revenue calculation: {e}")
+        _log.error("Error in revenue calculation: %s", e)
     
     recent_visitors = []
     total_visitor_logs = 0
@@ -713,7 +716,7 @@ def admin_orders_list(request):
         if status_filter:
             orders = orders.filter(status=status_filter)
     except Exception as e:
-        print(f"Orders list error: {e}")
+        _log.error("Orders list error: %s", e)
         orders = []
         
     context = {
