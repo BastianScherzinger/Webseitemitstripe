@@ -188,6 +188,7 @@
                 <a href="{% url 'produkte' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">Produkte</a>
                 <a href="{% url 'gaestebuch' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">Gästebuch</a>
                 <a href="{% url 'kontakt' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">Kontakt</a>
+                <a href="{% url 'ueber_uns' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">Über uns</a>
                 
                 {% if is_shop_owner %}
                     <div class="border-t border-white/5 my-2 pt-2">
@@ -202,7 +203,11 @@
                         <a href="{% url 'register' %}" class="block px-3 py-3 rounded-xl text-glow-orange font-bold">Registrieren</a>
                     </div>
                 {% else %}
-                    <a href="{% url 'profil' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">Mein Profil</a>
+                    <div class="border-t border-white/5 pt-2">
+                        <a href="{% url 'warenkorb' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">🛒 Warenkorb</a>
+                        <a href="{% url 'profil' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">👤 Mein Profil</a>
+                        <a href="{% url 'logout' %}" class="block px-3 py-3 rounded-xl text-red-400 hover:bg-white/5">Logout</a>
+                    </div>
                 {% endif %}
             </div>
         </div>
