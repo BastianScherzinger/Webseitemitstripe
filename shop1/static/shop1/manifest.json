@@ -1,0 +1,26 @@
+{
+  "name": "Luviq Universe",
+  "short_name": "Luviq",
+  "description": "Handbemalte 1-of-1 Unikate. Nachhaltige Upcycling-Mode aus dem Luviq Orbit.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050816",
+  "theme_color": "#ff6a00",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/shop1/images/logo-luviq.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/shop1/images/logo-luviq.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "lifestyle"],
+  "lang": "de"
+}
