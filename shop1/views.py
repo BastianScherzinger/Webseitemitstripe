@@ -119,6 +119,22 @@ def _sync_session_to_db(request, user):
 
 def startseite(request):
     produkte_galerie = Produkt.objects.filter(aktiv=True).order_by('-erstellt_am')[:8]
+
+    # Impressionen für aktive Werbung zählen (nur auf der Startseite)
+    try:
+        from django.db.models import F
+        from django.utils import timezone
+        from .models import Werbung, WerbungStat
+        site_name = os.getenv('SITE_NAME', 'luviq')
+        today = timezone.now().date()
+        for w in Werbung.objects.filter(aktiv=True):
+            if w.ist_aktiv:
+                Werbung.objects.filter(id=w.id).update(impressionen=F('impressionen') + 1)
+                stat, _ = WerbungStat.objects.get_or_create(werbung=w, seite=site_name, datum=today)
+                WerbungStat.objects.filter(id=stat.id).update(impressionen=F('impressionen') + 1)
+    except Exception:
+        pass
+
     context = {
         'titel': 'Luviq-Shop',
         'anzahl': 42,
