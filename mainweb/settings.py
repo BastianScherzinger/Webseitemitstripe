@@ -213,13 +213,16 @@ CSRF_COOKIE_SECURE = not DEBUG      # nochmal explizit (überschreibt frühere Z
 # Clickjacking
 X_FRAME_OPTIONS = 'DENY'
 
+# Immer aktiv (kein Grund nur in Production)
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
 # SSL/HSTS (nur in Production)
 SECURE_SSL_REDIRECT = not DEBUG
 if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
 
 APPEND_SLASH = True
