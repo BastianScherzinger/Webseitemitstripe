@@ -48,11 +48,13 @@
         }
     </script>
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts (preconnect for faster DNS + TLS) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
 
-    <!-- HTMX & Alpine.js -->
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <!-- HTMX & Alpine.js (defer = non-blocking, executes after HTML parse) -->
+    <script defer src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
