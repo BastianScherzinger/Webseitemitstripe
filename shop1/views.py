@@ -118,8 +118,7 @@ def _sync_session_to_db(request, user):
 # ═══ SEITEN ═══
 
 def startseite(request):
-    # Fetch some active products for the animated gallery
-    produkte_galerie = Produkt.objects.filter(aktiv=True)[:8]
+    produkte_galerie = Produkt.objects.filter(aktiv=True).order_by('-erstellt_am')[:8]
     context = {
         'titel': 'Luviq-Shop',
         'anzahl': 42,
@@ -271,7 +270,7 @@ def agb(request):
 
 def produkte(request):
     """Zeigt alle aktiven Produkte aus der Datenbank"""
-    produkte_liste = Produkt.objects.filter(aktiv=True)
+    produkte_liste = Produkt.objects.filter(aktiv=True).order_by('-erstellt_am')
     return render(request, 'shop1/produkte.html', {
         'produkte_liste': produkte_liste
     })
@@ -695,12 +694,17 @@ def paypal_capture(request, order_id):
             request.user.profile.has_welcome_discount = False
             request.user.profile.save()
 
-        # Lagerbestand reduzieren
-        for item in order.items.all():
-            db_produkt = Produkt.objects.filter(name=item.produkt_name).first()
+        # Lagerbestand reduzieren – Bulk-Fetch statt N+1
+        order_items = list(order.items.all())
+        produkt_namen = [i.produkt_name for i in order_items]
+        produkts_by_name = {
+            p.name: p for p in Produkt.objects.filter(name__in=produkt_namen)
+        }
+        for item in order_items:
+            db_produkt = produkts_by_name.get(item.produkt_name)
             if db_produkt:
                 db_produkt.lagerbestand = max(0, db_produkt.lagerbestand - item.menge)
-                db_produkt.aktiv = False # Artikel nach Verkauf deaktivieren (1-of-1)
+                db_produkt.aktiv = False
                 db_produkt.save()
         
         # Bestätigungs-Email senden
@@ -775,10 +779,13 @@ def send_bank_details_email(order):
     """Sendet wunderschöne Bankverbindung & PayPal Option bei Wahl von Überweisung"""
     subject = f'Zahlungsinformationen für deine Mission #{order.id}'
     
-    # Items Liste generieren
+    # Items Liste generieren – Bulk-Fetch statt N+1
+    bank_items = list(order.items.all())
+    bank_produkt_namen = [i.produkt_name for i in bank_items]
+    bank_produkts = {p.name: p for p in Produkt.objects.filter(name__in=bank_produkt_namen)}
     items_html = ""
-    for item in order.items.all():
-        db_produkt = Produkt.objects.filter(name=item.produkt_name).first()
+    for item in bank_items:
+        db_produkt = bank_produkts.get(item.produkt_name)
         bild_html = ""
         if db_produkt and db_produkt.bild:
             bild_html = f'<img src="{db_produkt.bild.url}" width="80" style="border-radius: 10px; margin-right: 15px;">'
