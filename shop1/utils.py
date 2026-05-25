@@ -1,9 +1,13 @@
 import os
+import logging
 import threading
 import requests
 import json
 from django.conf import settings
 from django.core.mail import send_mail
+
+_log = logging.getLogger('shop1')
+
 
 def send_brevo_email(subject, html_content, recipient_email, recipient_name="", text_content=""):
     """
@@ -14,18 +18,15 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
         api_key = os.getenv('BREVO_API_KEY')
         sender_name = "Luviq-Shop"
         sender_email = settings.DEFAULT_FROM_EMAIL
-        
+
         if api_key:
-            # --- BREVO API ---
             url = "https://api.brevo.com/v3/smtp/email"
             headers = {
                 "accept": "application/json",
                 "content-type": "application/json",
                 "api-key": api_key
             }
-            # Brevo verlangt zwingend einen Namen im 'to' Feld, darf nicht leer sein
             final_recipient_name = recipient_name if recipient_name else "Nutzer"
-            
             payload = {
                 "sender": {"name": sender_name, "email": sender_email},
                 "to": [{"email": recipient_email, "name": final_recipient_name}],
@@ -34,17 +35,15 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
             }
             if text_content:
                 payload["textContent"] = text_content
-                
             try:
                 response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=10)
                 if response.status_code < 300:
-                    print(f"✅ E-Mail via API erfolgreich an {recipient_email} gesendet.")
+                    _log.info("E-Mail via Brevo API gesendet an %s", recipient_email)
                 else:
-                    print(f"❌ API Fehler: {response.text}")
+                    _log.error("Brevo API Fehler (%s): %s", response.status_code, response.text)
             except Exception as e:
-                print(f"❌ API Verbindungsfehler: {str(e)}")
+                _log.error("Brevo API Verbindungsfehler: %s", e)
         else:
-            # --- SMTP FALLBACK ---
             try:
                 sent = send_mail(
                     subject,
@@ -55,9 +54,9 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
                     html_message=html_content
                 )
                 if sent:
-                    print(f"✅ E-Mail via SMTP erfolgreich an {recipient_email} gesendet.")
+                    _log.info("E-Mail via SMTP gesendet an %s", recipient_email)
             except Exception as e:
-                print(f"❌ SMTP Fehler: {str(e)}")
+                _log.error("SMTP Fehler: %s", e)
 
     # Im Hintergrund senden
     threading.Thread(target=_send).start()
