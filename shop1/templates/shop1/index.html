@@ -64,7 +64,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
                 <div class="scroll-reveal relative" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                     <div class="relative z-10 rounded-[5rem] overflow-hidden glass border-white/5 p-5 shadow-2xl transform hover:scale-[1.01] transition-all duration-1000 group">
-                        <img src="{% static 'shop1/images/ich.png' %}" alt="Luisa Brehler" class="w-full h-auto rounded-[4rem] object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000">
+                        <img src="{% static 'shop1/images/ich.png' %}" alt="Luisa Brehler" class="w-full h-auto rounded-[4rem] object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-bg-base/80 to-transparent opacity-60"></div>
                     </div>
                     <!-- Decorative elements -->
@@ -117,8 +117,7 @@
                 {% for w in werbung_aktiv %}
                 <a href="{% url 'werbung_klick' w.id %}" target="_blank" rel="noopener sponsored" class="ad-item">
                     {% if w.bild_src %}
-                    <img src="{{ w.bild_src }}" alt="{{ w.titel }}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;"
-                         onerror="this.style.display='none'">
+                    <img src="{{ w.bild_src }}" alt="{{ w.titel }}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     {% endif %}
                     <div style="overflow:hidden;flex:1;min-width:0;">
                         <p style="font-weight:800;font-size:.88rem;color:#fff;margin:0 0 .15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ w.titel }}</p>
@@ -156,7 +155,7 @@
                      style="transition-delay: 0.{{ forloop.counter0 }}s">
                     <div class="relative h-[18rem] sm:h-[24rem] overflow-hidden">
                         {% if produkt.bild %}
-                            <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 grayscale-[20%] group-hover:grayscale-0">
+                            <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 grayscale-[20%] group-hover:grayscale-0" loading="lazy" decoding="async">
                         {% endif %}
                         <div class="absolute inset-0 bg-gradient-to-t from-bg-base via-transparent to-transparent opacity-80"></div>
                         <div class="absolute top-6 right-6 glass px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest text-white/80 border-white/10">1 of 1</div>

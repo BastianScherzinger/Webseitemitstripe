@@ -30,7 +30,7 @@
                 <!-- Image Container -->
                 <div class="relative h-[20rem] sm:h-[28rem] overflow-hidden group">
                     {% if produkt.bild %}
-                        <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[10%] group-hover:grayscale-0">
+                        <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[10%] group-hover:grayscale-0" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" decoding="async">
                     {% endif %}
                     <div class="shimmer-mask absolute inset-0 opacity-20"></div>
                     
