@@ -342,3 +342,107 @@ section {
         font-size: 16px !important;
     }
 }
+
+/* ═══ SCROLL PROGRESS BAR ═══ */
+#scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, #ff6a00 0%, #ff9d2f 60%, #ffcc66 100%);
+    z-index: 10000;
+    box-shadow: 0 0 12px rgba(255, 106, 0, 0.7), 0 0 30px rgba(255, 106, 0, 0.3);
+    transition: width 0.08s linear;
+    pointer-events: none;
+}
+
+/* ═══ 3D CARD TILT ═══ */
+.product-card {
+    transform-style: preserve-3d;
+    perspective: 800px;
+    will-change: transform;
+}
+
+/* ═══ ENHANCED PRODUCT CARD ═══ */
+.product-card:hover {
+    border-color: rgba(255, 106, 0, 0.25) !important;
+    box-shadow:
+        0 30px 60px -12px rgba(0, 0, 0, 0.7),
+        0 0 40px rgba(255, 106, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* ═══ MAGNETIC BUTTON EFFECT ═══ */
+.btn-glow {
+    position: relative;
+    overflow: hidden;
+}
+.btn-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: inherit;
+}
+.btn-glow:hover::before {
+    opacity: 1;
+}
+
+/* ═══ HERO SECTION POLISH ═══ */
+#hero-section {
+    background:
+        radial-gradient(ellipse at 50% 100%, rgba(255, 106, 0, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(255, 157, 47, 0.06) 0%, transparent 50%);
+}
+
+/* ═══ GLASS CARD UPGRADE ═══ */
+.glass-card {
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ═══ SECTION DIVIDER GLOW ═══ */
+.section-glow {
+    position: relative;
+}
+.section-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 106, 0, 0.3), transparent);
+}
+
+/* ═══ TYPOGRAPHY UPGRADE ═══ */
+.heading-font {
+    font-feature-settings: 'kern' 1, 'liga' 1;
+    text-rendering: optimizeLegibility;
+}
+
+/* Hero title specific */
+#hero-title {
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+}
+
+/* ═══ CURSOR SPOTLIGHT (DESKTOP ONLY) ═══ */
+@media (pointer: fine) {
+    .glass-card {
+        transition: box-shadow 0.4s ease, border-color 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+}
+
+/* ═══ NAVBAR BACKDROP UPGRADE ═══ */
+nav .glass {
+    background: rgba(5, 8, 22, 0.7);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+}

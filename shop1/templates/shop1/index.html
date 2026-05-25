@@ -3,35 +3,83 @@
 
 {% block title %}Luviq – Upcycled Art & Fashion{% endblock %}
 
+{% block schema_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Aktuelle Unikate – Luviq Universe",
+  "description": "Handbemalte 1-of-1 Upcycling Mode – exklusive Einzelstücke aus dem Luviq Orbit.",
+  "url": "{{ request.scheme }}://{{ request.get_host }}/",
+  "itemListElement": [{% for produkt in produkte_galerie %}
+    {"@type": "ListItem", "position": {{ forloop.counter }}, "name": "{{ produkt.name|escapejs }}", "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkt_detail' produkt.id %}"}{% if not forloop.last %},{% endif %}{% endfor %}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+#hero-section {
+    background:
+        radial-gradient(ellipse at 50% 120%, rgba(255, 106, 0, 0.15) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 10%, rgba(255, 157, 47, 0.07) 0%, transparent 45%),
+        url('{% static "shop1/images/backgroundpics/hintergund_design_farbe_der_seite.jpeg" %}') center/cover no-repeat;
+}
+/* Wrap for clipping reveal animation */
+.hero-clip { overflow: hidden; line-height: 1; }
+.hero-line { display: inline-block; will-change: transform; }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="relative min-h-screen">
     <!-- Nebula Background Layer -->
     <div class="energy-nebula"></div>
 
-    <!-- Hero Section -->
-    <section class="relative pt-20 sm:pt-32 pb-20 sm:pb-40 px-4 overflow-hidden">
-        <div class="max-w-7xl mx-auto text-center animate-reveal">
-            <div class="inline-flex items-center space-x-2 px-6 py-2 rounded-full glass border-white/5 mb-6 sm:mb-10">
+    <!-- ═══ 3D HERO ═══ -->
+    <section id="hero-section" class="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
+        <!-- Three.js particle canvas (disabled on mobile for performance) -->
+        <canvas id="hero-canvas" class="absolute inset-0 w-full h-full pointer-events-none hidden sm:block"></canvas>
+
+        <!-- Content -->
+        <div class="relative z-10 max-w-7xl mx-auto text-center py-32">
+            <!-- Badge -->
+            <div id="hero-badge" class="inline-flex items-center space-x-2 px-6 py-2 rounded-full glass border-white/5 mb-10" style="opacity:0">
                 <span class="w-2 h-2 rounded-full bg-glow-orange animate-pulse"></span>
                 <span class="text-xs font-black uppercase tracking-[0.3em] text-white/60">Sustainable Art Drop</span>
             </div>
 
-            <h1 class="text-5xl sm:text-6xl md:text-[9rem] font-black heading-font tracking-tighter text-white mb-6 sm:mb-10 leading-[0.85] animate-float">
-                UPCYCLED <br> <span class="text-glow">ART</span>
-            </h1>
-            
-            <p class="text-lg md:text-xl text-white/40 max-w-2xl mx-auto mb-14 leading-relaxed font-light tracking-wide">
+            <!-- Title with clip-reveal animation -->
+            <div class="hero-clip mb-2 sm:mb-4">
+                <h1 id="hero-line1" class="hero-line text-5xl sm:text-7xl md:text-[9rem] font-black heading-font tracking-tighter text-white leading-[0.85]" style="transform:translateY(110%)">
+                    UPCYCLED
+                </h1>
+            </div>
+            <div class="hero-clip mb-10 sm:mb-16">
+                <div id="hero-line2" class="hero-line text-5xl sm:text-7xl md:text-[9rem] font-black heading-font tracking-tighter text-glow leading-[0.85]" style="transform:translateY(110%)">
+                    ART
+                </div>
+            </div>
+
+            <p id="hero-sub" class="text-base sm:text-xl text-white/40 max-w-2xl mx-auto mb-14 leading-relaxed font-light tracking-wide" style="opacity:0;transform:translateY(28px)">
                 Wir finden vergessene Klassiker, geben ihnen durch handbemalte Designs eine neue Seele und machen sie zu tragbaren Kunstwerken.
             </p>
-            
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-8">
-                <a href="{% url 'produkte' %}" class="btn-glow px-16 py-6 rounded-2xl text-white font-black uppercase tracking-widest text-xs shadow-[0_20px_50px_rgba(255,106,0,0.3)] hover:scale-105 transition-transform">
+
+            <div id="hero-cta" class="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-8" style="opacity:0;transform:translateY(28px)">
+                <a href="{% url 'produkte' %}" class="btn-glow px-12 sm:px-16 py-5 sm:py-6 rounded-2xl text-white font-black uppercase tracking-widest text-xs shadow-[0_20px_50px_rgba(255,106,0,0.3)] hover:scale-105 transition-transform">
                     Drop Entdecken
                 </a>
-                <a href="{% url 'ueber_uns' %}" class="px-16 py-6 rounded-2xl glass border-white/10 text-white font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all">
+                <a href="{% url 'ueber_uns' %}" class="px-12 sm:px-16 py-5 sm:py-6 rounded-2xl glass border-white/10 text-white font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all">
                     Unsere Story
                 </a>
             </div>
+        </div>
+
+        <!-- Scroll hint -->
+        <div id="hero-scroll" class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3" style="opacity:0">
+            <span class="text-[9px] font-black uppercase tracking-[0.5em] text-white/25">Scroll</span>
+            <div class="w-px h-12 bg-gradient-to-b from-glow-orange/60 to-transparent animate-pulse"></div>
         </div>
     </section>
 
@@ -196,6 +244,128 @@
         </div>
     </section>
 </div>
+
+{% block extra_js %}
+<!-- Three.js + GSAP for 3D Hero (loaded only on this page) -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    // ═══ GSAP HERO ANIMATION ═══
+    if (typeof gsap !== 'undefined') {
+        var tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+        tl
+            .to('#hero-badge', { opacity: 1, duration: 0.8, delay: 0.1 })
+            .to('#hero-line1', { y: '0%', duration: 1.3, ease: 'expo.out' }, '-=0.5')
+            .to('#hero-line2', { y: '0%', duration: 1.3, ease: 'expo.out' }, '-=1.0')
+            .to('#hero-sub', { opacity: 1, y: 0, duration: 1.0 }, '-=0.6')
+            .to('#hero-cta', { opacity: 1, y: 0, duration: 0.9 }, '-=0.7')
+            .to('#hero-scroll', { opacity: 1, duration: 0.8 }, '-=0.3')
+            .then(function () {
+                // Add floating animation after reveal
+                var t = document.getElementById('hero-line1');
+                var t2 = document.getElementById('hero-line2');
+                if (t) t.classList.add('animate-float');
+                if (t2) { t2.style.animationDelay = '0.5s'; t2.classList.add('animate-float'); }
+            });
+    }
+
+    // ═══ THREE.JS PARTICLE FIELD ═══
+    var canvas = document.getElementById('hero-canvas');
+    var isMobile = window.innerWidth < 640;
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!isMobile && !prefersReduced && canvas && typeof THREE !== 'undefined') {
+        var W = window.innerWidth;
+        var H = window.innerHeight;
+
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(70, W / H, 0.1, 1000);
+        camera.position.z = 6;
+
+        var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false });
+        renderer.setSize(W, H);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+
+        // Layer 1 — dense orange particles
+        var N = 380;
+        var pos = new Float32Array(N * 3);
+        var col = new Float32Array(N * 3);
+        for (var i = 0; i < N; i++) {
+            pos[i*3]   = (Math.random() - 0.5) * 22;
+            pos[i*3+1] = (Math.random() - 0.5) * 18;
+            pos[i*3+2] = (Math.random() - 0.5) * 14;
+            var t = Math.pow(Math.random(), 0.5);
+            col[i*3]   = 1.0;
+            col[i*3+1] = 0.40 + t * 0.22;
+            col[i*3+2] = 0.00 + t * 0.04;
+        }
+        var g1 = new THREE.BufferGeometry();
+        g1.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        g1.setAttribute('color', new THREE.BufferAttribute(col, 3));
+        var m1 = new THREE.PointsMaterial({ size: 0.045, vertexColors: true, transparent: true, opacity: 0.78, sizeAttenuation: true });
+        var pts1 = new THREE.Points(g1, m1);
+        scene.add(pts1);
+
+        // Layer 2 — sparse warm-white distant stars
+        var N2 = 80;
+        var pos2 = new Float32Array(N2 * 3);
+        var col2 = new Float32Array(N2 * 3);
+        for (var j = 0; j < N2; j++) {
+            pos2[j*3]   = (Math.random() - 0.5) * 30;
+            pos2[j*3+1] = (Math.random() - 0.5) * 28;
+            pos2[j*3+2] = (Math.random() - 0.5) * 12;
+            col2[j*3]   = 1.0;
+            col2[j*3+1] = 0.92;
+            col2[j*3+2] = 0.80;
+        }
+        var g2 = new THREE.BufferGeometry();
+        g2.setAttribute('position', new THREE.BufferAttribute(pos2, 3));
+        g2.setAttribute('color', new THREE.BufferAttribute(col2, 3));
+        var m2 = new THREE.PointsMaterial({ size: 0.10, vertexColors: true, transparent: true, opacity: 0.22, sizeAttenuation: true });
+        var pts2 = new THREE.Points(g2, m2);
+        scene.add(pts2);
+
+        // Mouse parallax
+        var mx = 0, my = 0, tx = 0, ty = 0;
+        document.addEventListener('mousemove', function (e) {
+            mx = (e.clientX / W - 0.5);
+            my = (e.clientY / H - 0.5);
+        }, { passive: true });
+
+        var clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            var elapsed = clock.getElapsedTime();
+            pts1.rotation.y = elapsed * 0.025;
+            pts1.rotation.x = elapsed * 0.008;
+            pts2.rotation.y = -elapsed * 0.018;
+            pts2.rotation.z = elapsed * 0.006;
+
+            tx += (mx - tx) * 0.035;
+            ty += (my - ty) * 0.035;
+            camera.position.x = tx * 1.8;
+            camera.position.y = -ty * 1.2;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', function () {
+            W = window.innerWidth;
+            H = window.innerHeight;
+            camera.aspect = W / H;
+            camera.updateProjectionMatrix();
+            renderer.setSize(W, H);
+        }, { passive: true });
+    }
+})();
+</script>
+{% endblock %}
 
 <script>
     document.getElementById('newsletter-form').addEventListener('submit', async (e) => {

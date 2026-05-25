@@ -25,6 +25,38 @@
     <meta property="twitter:title" content="Luviq Universe">
     <meta property="twitter:description" content="Unique Upcycling Art & Fashion. Explore the Luviq Orbit.">
 
+    <!-- Schema.org Sitewide JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": ["Organization", "ClothingStore"],
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
+          "name": "Luviq Universe",
+          "url": "{{ request.scheme }}://{{ request.get_host }}/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}"
+          },
+          "founder": {"@type": "Person", "name": "Luisa Brehler"},
+          "description": "Handbemalte 1-of-1 Unikate. Nachhaltige Upcycling-Mode aus dem Luviq Orbit.",
+          "priceRange": "€€",
+          "currenciesAccepted": "EUR",
+          "paymentAccepted": "PayPal, Bank Transfer"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
+          "url": "{{ request.scheme }}://{{ request.get_host }}/",
+          "name": "Luviq Universe",
+          "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
+        }
+      ]
+    }
+    </script>
+    {% block schema_ld %}{% endblock %}
+
     <!-- Favicon & PWA -->
     <link rel="icon" type="image/jpeg" href="{% static 'shop1/images/flavicon.jpeg' %}">
     <link rel="shortcut icon" type="image/jpeg" href="{% static 'shop1/images/flavicon.jpeg' %}">
@@ -122,6 +154,8 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="min-h-screen flex flex-col">
+    <!-- Scroll progress indicator -->
+    <div id="scroll-progress" aria-hidden="true"></div>
     <div class="ambient-glow"></div>
 
     <!-- ═══ NAVBAR ═══ -->
@@ -270,6 +304,34 @@
         </div>
     </footer>
 
+    <script>
+    (function () {
+        // Scroll progress bar
+        var bar = document.getElementById('scroll-progress');
+        if (bar) {
+            window.addEventListener('scroll', function () {
+                var max = document.documentElement.scrollHeight - window.innerHeight;
+                bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+            }, { passive: true });
+        }
+        // 3D card tilt (mouse/pointer devices only)
+        if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches) {
+            document.querySelectorAll('.product-card').forEach(function (card) {
+                card.addEventListener('mousemove', function (e) {
+                    var r = card.getBoundingClientRect();
+                    var x = (e.clientX - r.left) / r.width - 0.5;
+                    var y = (e.clientY - r.top) / r.height - 0.5;
+                    card.style.transform = 'translateY(-10px) scale(1.02) rotateX(' + (-y * 8) + 'deg) rotateY(' + (x * 8) + 'deg)';
+                    card.style.transition = 'transform 0.1s ease-out, border-color 0.5s, box-shadow 0.5s';
+                });
+                card.addEventListener('mouseleave', function () {
+                    card.style.transform = '';
+                    card.style.transition = 'transform 0.6s cubic-bezier(0.16,1,0.3,1), border-color 0.5s, box-shadow 0.5s';
+                });
+            });
+        }
+    })();
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

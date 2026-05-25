@@ -4,6 +4,40 @@
 {% block title %}{{ produkt.name }} – Luviq Universe{% endblock %}
 {% block meta_description %}{{ produkt.beschreibung|truncatewords:25 }}{% endblock %}
 
+{% block schema_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Produkte", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}"},
+    {"@type": "ListItem", "position": 3, "name": "{{ produkt.name|escapejs }}", "item": "{{ request.build_absolute_uri }}"}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ produkt.name|escapejs }}",
+  "description": "{{ produkt.beschreibung|escapejs }}",{% if produkt.bild %}
+  "image": "{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}",{% endif %}
+  "brand": {"@type": "Brand", "name": "Luviq Universe"},
+  "sku": "LUVIQ-{{ produkt.id }}",
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "EUR",
+    "price": "{{ produkt.preis|floatformat:2 }}",
+    "availability": "{% if produkt.lagerbestand > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "itemCondition": "https://schema.org/UsedCondition",
+    "seller": {"@type": "Organization", "name": "Luviq Universe"},
+    "url": "{{ request.build_absolute_uri }}"
+  }
+}
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="relative min-h-screen pt-20 pb-32">
     <!-- Nebula Background Layer -->
