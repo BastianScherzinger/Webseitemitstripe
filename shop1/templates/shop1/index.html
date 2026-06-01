@@ -22,14 +22,26 @@
 <style>
 #hero-section {
     background:
-        radial-gradient(ellipse at 50% 120%, rgba(255, 106, 0, 0.15) 0%, transparent 55%),
-        radial-gradient(ellipse at 80% 10%, rgba(255, 157, 47, 0.07) 0%, transparent 45%),
-        url('{% static "shop1/images/backgroundpics/hintergund_design_farbe_der_seite.jpeg" %}') center/cover no-repeat;
+        radial-gradient(ellipse at 50% 115%, rgba(200, 150, 92, 0.13) 0%, transparent 60%),
+        radial-gradient(ellipse at 15% 35%,  rgba(160, 113, 74, 0.09) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 65%,  rgba(100,  60, 20, 0.07) 0%, transparent 50%),
+        linear-gradient(175deg, #160e08 0%, #0d0907 60%, #0a0805 100%);
     border-radius: 1.5rem;
     margin: 0.75rem 0.75rem 0;
 }
-/* Kein overflow:hidden – Fade+Slide verhindert jedes Abschneiden */
-#hero-line1, #hero-line2 { will-change: transform, opacity; }
+
+/* 3D perspective wrapper for the hero title */
+#hero-3d-wrap { perspective: 1400px; }
+
+#hero-line1 {
+    will-change: transform, opacity;
+    transform-style: preserve-3d;
+    text-shadow:
+        2px 3px 0 rgba(100, 60, 20, 0.5),
+        4px 6px 0 rgba(80,  45, 10, 0.3),
+        0 0 80px rgba(200, 150, 92, 0.18);
+}
+#hero-line2 { will-change: transform, opacity; }
 </style>
 {% endblock %}
 
@@ -44,7 +56,7 @@
         <canvas id="hero-canvas" class="absolute inset-0 w-full h-full pointer-events-none hidden sm:block"></canvas>
 
         <!-- Content -->
-        <div class="relative z-10 max-w-7xl mx-auto text-center py-32">
+        <div id="hero-3d-wrap" class="relative z-10 max-w-7xl mx-auto text-center py-32">
             <!-- Badge -->
             <div id="hero-badge" class="inline-flex items-center space-x-2 px-6 py-2 rounded-full glass border-white/5 mb-10" style="opacity:0">
                 <span class="w-2 h-2 rounded-full bg-glow-orange animate-pulse"></span>
@@ -52,7 +64,7 @@
             </div>
 
             <!-- Titel – Fade + Slide-Up (kein overflow:hidden → kein Abschneiden) -->
-            <h1 id="hero-line1" class="text-[5.5rem] sm:text-[9rem] md:text-[13rem] font-black heading-font tracking-tight text-glow leading-none mb-2 sm:mb-3" style="opacity:0;transform:translateY(60px)">
+            <h1 id="hero-line1" class="text-[5.5rem] sm:text-[9rem] md:text-[13rem] font-black heading-font tracking-tight text-glow leading-none mb-2 sm:mb-3" style="opacity:0;transform:translateY(80px) scale(0.72) rotateX(22deg)">
                 LUVIQ
             </h1>
             <div id="hero-line2" class="text-2xl sm:text-4xl md:text-[3.5rem] font-black heading-font tracking-[0.4em] text-white/80 leading-none uppercase mb-10 sm:mb-16" style="opacity:0;transform:translateY(45px)">
@@ -227,13 +239,13 @@
     <!-- Newsletter Section -->
     <section class="py-40 relative overflow-hidden bg-white/[0.01]">
         <div class="max-w-4xl mx-auto px-4 relative z-10 text-center">
-            <div class="scroll-reveal glass-card p-8 sm:p-16 md:p-24 rounded-[2.5rem] sm:rounded-[4.5rem] shadow-[0_0_120px_rgba(255,106,0,0.1)] relative overflow-hidden" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <div class="scroll-reveal glass-card p-8 sm:p-16 md:p-24 rounded-[2.5rem] sm:rounded-[4.5rem] shadow-[0_0_120px_rgba(200,150,92,0.10)] relative overflow-hidden" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                 <div class="absolute -top-24 -left-24 w-64 h-64 bg-glow-orange/5 blur-[100px] rounded-full"></div>
                 <h2 class="text-4xl md:text-6xl font-black heading-font text-white mb-10 uppercase tracking-tighter">JOIN THE <span class="text-glow">ORBIT</span></h2>
                 <p class="text-white/30 mb-14 max-w-lg mx-auto font-light leading-relaxed tracking-wide uppercase text-xs">Melde dich an und erfahre als Erster von neuen Drops und exklusiven handbemalten Unikaten.</p>
                 
                 <form id="newsletter-form" class="flex flex-col sm:flex-row gap-5 relative z-10">
-                    <input type="email" id="newsletter-email" placeholder="DEINE EMAIL ADRESSE" class="flex-grow bg-white/5 border border-white/10 rounded-2xl px-10 py-6 text-white focus:outline-none focus:border-glow-orange transition-all uppercase tracking-[0.3em] text-[10px] font-black">
+                    <input type="email" id="newsletter-email" placeholder="DEINE EMAIL ADRESSE" class="flex-grow bg-white/5 border border-white/10 rounded-2xl px-10 py-6 text-white focus:outline-none focus:border-glow-orange focus:shadow-[0_0_15px_rgba(200,150,92,0.2)] transition-all uppercase tracking-[0.3em] text-[10px] font-black">
                     <button type="submit" class="btn-glow px-12 py-6 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] shadow-2xl">Subscribe</button>
                 </form>
                 <p id="newsletter-message" class="mt-8 text-[10px] font-black uppercase tracking-[0.3em] hidden"></p>
@@ -250,15 +262,16 @@
 (function () {
     'use strict';
 
-    // ═══ GSAP HERO ANIMATION (Fade + Slide-Up – kein Clipping möglich) ═══
+    // ═══ GSAP HERO ANIMATION — 3D Fly-In ═══
     if (typeof gsap !== 'undefined') {
+        gsap.registerPlugin && gsap.registerPlugin();
         var tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
         tl
-            .to('#hero-badge', { opacity: 1, duration: 0.7, delay: 0.15, ease: 'power3.out' })
-            .to('#hero-line1', { opacity: 1, y: 0, duration: 1.4 }, '-=0.3')
-            .to('#hero-line2', { opacity: 1, y: 0, duration: 1.2 }, '-=1.05')
-            .to('#hero-sub',  { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' }, '-=0.6')
-            .to('#hero-cta',  { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=0.7')
+            .to('#hero-badge',  { opacity: 1, duration: 0.6, delay: 0.1, ease: 'power2.out' })
+            .to('#hero-line1',  { opacity: 1, y: 0, scale: 1, rotateX: 0, duration: 1.7, ease: 'expo.out' }, '-=0.2')
+            .to('#hero-line2',  { opacity: 1, y: 0, duration: 1.2, ease: 'expo.out' }, '-=1.1')
+            .to('#hero-sub',    { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' }, '-=0.65')
+            .to('#hero-cta',    { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=0.7')
             .to('#hero-scroll', { opacity: 1, duration: 0.7 }, '-=0.3')
             .then(function () {
                 var t = document.getElementById('hero-line1');
@@ -283,18 +296,18 @@
         renderer.setSize(W, H);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
-        // Layer 1 — feine orange Partikel (kleiner & weniger als zuvor)
-        var N = 200;
+        // Layer 1 — goldene Staubpartikel
+        var N = 220;
         var pos = new Float32Array(N * 3);
         var col = new Float32Array(N * 3);
         for (var i = 0; i < N; i++) {
-            pos[i*3]   = (Math.random() - 0.5) * 24;
-            pos[i*3+1] = (Math.random() - 0.5) * 20;
-            pos[i*3+2] = (Math.random() - 0.5) * 16;
-            var t = Math.pow(Math.random(), 0.5);
-            col[i*3]   = 1.0;
-            col[i*3+1] = 0.40 + t * 0.22;
-            col[i*3+2] = 0.00 + t * 0.04;
+            pos[i*3]   = (Math.random() - 0.5) * 26;
+            pos[i*3+1] = (Math.random() - 0.5) * 22;
+            pos[i*3+2] = (Math.random() - 0.5) * 18;
+            var t = Math.pow(Math.random(), 0.45);
+            col[i*3]   = 0.63 + t * 0.18;  // R: warm gold
+            col[i*3+1] = 0.42 + t * 0.17;  // G: warm
+            col[i*3+2] = 0.25 + t * 0.12;  // B: low, warm
         }
         var g1 = new THREE.BufferGeometry();
         g1.setAttribute('position', new THREE.BufferAttribute(pos, 3));
@@ -303,17 +316,17 @@
         var pts1 = new THREE.Points(g1, m1);
         scene.add(pts1);
 
-        // Layer 2 — winzige helle Hintergrund-Sterne
-        var N2 = 40;
+        // Layer 2 — warme Creme-Sterne
+        var N2 = 50;
         var pos2 = new Float32Array(N2 * 3);
         var col2 = new Float32Array(N2 * 3);
         for (var j = 0; j < N2; j++) {
-            pos2[j*3]   = (Math.random() - 0.5) * 32;
-            pos2[j*3+1] = (Math.random() - 0.5) * 30;
-            pos2[j*3+2] = (Math.random() - 0.5) * 14;
-            col2[j*3]   = 1.0;
-            col2[j*3+1] = 0.92;
-            col2[j*3+2] = 0.80;
+            pos2[j*3]   = (Math.random() - 0.5) * 34;
+            pos2[j*3+1] = (Math.random() - 0.5) * 32;
+            pos2[j*3+2] = (Math.random() - 0.5) * 16;
+            col2[j*3]   = 0.96;   // warm cream #f5ede4
+            col2[j*3+1] = 0.91;
+            col2[j*3+2] = 0.84;
         }
         var g2 = new THREE.BufferGeometry();
         g2.setAttribute('position', new THREE.BufferAttribute(pos2, 3));

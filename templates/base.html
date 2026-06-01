@@ -62,7 +62,7 @@
     <link rel="shortcut icon" type="image/jpeg" href="{% static 'shop1/images/flavicon.jpeg' %}">
     <link rel="apple-touch-icon" href="{% static 'shop1/images/logo-luviq.jpeg' %}">
     <link rel="manifest" href="{% static 'shop1/manifest.json' %}">
-    <meta name="theme-color" content="#ff6a00">
+    <meta name="theme-color" content="#0d0907">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -75,12 +75,12 @@
             theme: {
                 extend: {
                     colors: {
-                        'space-black': '#050816',
-                        'space-dark': '#0b1023',
-                        'glow-orange': '#ff6a00',
-                        'glow-amber': '#ff9d2f',
-                        'soft-light': '#ffd6a5',
-                        'space-text': '#f4f7fb',
+                        'space-black': '#0d0907',
+                        'space-dark': '#160d06',
+                        'glow-orange': '#c8965c',
+                        'glow-amber': '#a0714a',
+                        'soft-light': '#f5ede4',
+                        'space-text': '#f5ede4',
                     }
                 }
             }
@@ -109,13 +109,13 @@
 
     <style>
         :root {
-            --bg-base: #050816;
-            --bg-secondary: #0b1023;
-            --accent-orange: #ff6a00;
-            --accent-amber: #ff9d2f;
-            --text-main: #f4f7fb;
-            --glass: rgba(11, 16, 35, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --bg-base: #0d0907;
+            --bg-secondary: #160d06;
+            --accent-orange: #c8965c;
+            --accent-amber: #a0714a;
+            --text-main: #f5ede4;
+            --glass: rgba(20, 12, 6, 0.72);
+            --glass-border: rgba(200, 150, 92, 0.15);
         }
 
         body {
@@ -124,10 +124,10 @@
             color: var(--text-main);
             overflow-x: hidden;
             background-attachment: fixed;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(255, 106, 0, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(255, 157, 47, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(11, 16, 35, 1) 0%, rgba(5, 8, 22, 1) 100%);
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(200, 150, 92, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(160, 113, 74, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(22, 13, 6, 1) 0%, rgba(13, 9, 7, 1) 100%);
         }
 
         .heading-font { font-family: 'Outfit', sans-serif; }
@@ -145,9 +145,9 @@
             top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
             z-index: -1;
-            background: 
-                radial-gradient(600px circle at 10% 10%, rgba(255, 106, 0, 0.03), transparent),
-                radial-gradient(800px circle at 90% 90%, rgba(255, 157, 47, 0.03), transparent);
+            background:
+                radial-gradient(600px circle at 10% 10%, rgba(200, 150, 92, 0.025), transparent),
+                radial-gradient(800px circle at 90% 90%, rgba(160, 113, 74, 0.025), transparent);
         }
     </style>
 
@@ -164,7 +164,7 @@
             <div class="flex justify-between h-20">
                 <div class="flex items-center">
                     <a href="{% url 'home' %}" class="flex-shrink-0 flex items-center group">
-                        <div class="h-12 w-12 rounded-full glass flex items-center justify-center p-2 group-hover:shadow-[0_0_20px_rgba(255,106,0,0.4)] transition-all">
+                        <div class="h-12 w-12 rounded-full glass flex items-center justify-center p-2 group-hover:shadow-[0_0_20px_rgba(200,150,92,0.5)] transition-all">
                             <img class="h-full w-auto" src="{% static 'shop1/images/logo-luviq.jpeg' %}" alt="Logo">
                         </div>
                         <span class="ml-3 text-2xl font-black heading-font tracking-tighter text-white uppercase">Luviq</span>
@@ -209,11 +209,11 @@
                         </div>
                     {% else %}
                         <a href="{% url 'login' %}" class="text-sm font-semibold text-white/70 hover:text-white transition-colors">Login</a>
-                        <a href="{% url 'register' %}" class="px-6 py-2 rounded-full bg-glow-orange text-white text-sm font-bold hover:shadow-[0_0_20px_rgba(255,106,0,0.5)] transition-all transform hover:scale-105 active:scale-95">Registrieren</a>
+                        <a href="{% url 'register' %}" class="px-6 py-2 rounded-full bg-glow-orange text-white text-sm font-bold hover:shadow-[0_0_20px_rgba(200,150,92,0.6)] transition-all transform hover:scale-105 active:scale-95">Registrieren</a>
                     {% endif %}
                 </div>
                 
-                <div class="md:hidden flex items-center">
+                <div id="hamburger-wrap" class="md:hidden flex items-center">
                     <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-white/70">
                         <svg class="h-6 w-6" x-show="!mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
                         <svg class="h-6 w-6" x-show="mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -272,7 +272,7 @@
     </main>
 
     <!-- ═══ FOOTER ═══ -->
-    <footer class="mt-20 border-t border-white/5 bg-space-black/50">
+    <footer class="mt-20 border-t border-[rgba(200,150,92,0.12)] bg-space-black/80">
         <div class="max-w-7xl mx-auto px-4 py-16">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                 <div>
@@ -303,6 +303,45 @@
             </div>
         </div>
     </footer>
+
+    <!-- ═══ MOBILE BOTTOM NAV ═══ -->
+    <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+        <a href="{% url 'home' %}" class="mbn-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span>Home</span>
+        </a>
+        <a href="{% url 'produkte' %}" class="mbn-item {% if request.resolver_match.url_name == 'produkte' %}active{% endif %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            <span>Shop</span>
+        </a>
+        <a href="{% url 'warenkorb' %}" class="mbn-item {% if request.resolver_match.url_name == 'warenkorb' %}active{% endif %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            {% if cart_count %}<span class="mbn-badge">{{ cart_count }}</span>{% endif %}
+            <span>Warenkorb</span>
+        </a>
+        <a href="{% url 'gaestebuch' %}" class="mbn-item {% if request.resolver_match.url_name == 'gaestebuch' %}active{% endif %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Gästebuch</span>
+        </a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'profil' %}" class="mbn-item {% if request.resolver_match.url_name == 'profil' %}active{% endif %}">
+        {% else %}
+        <a href="{% url 'login' %}" class="mbn-item {% if request.resolver_match.url_name == 'login' %}active{% endif %}">
+        {% endif %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>{% if user.is_authenticated %}Profil{% else %}Login{% endif %}</span>
+        </a>
+    </nav>
 
     <script>
     (function () {
