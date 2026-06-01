@@ -26,3 +26,7 @@ Thumbs.db
 
 # Docker
 .dockerignore
+
+# Node / Tailwind build
+node_modules/
+tailwind_input.css

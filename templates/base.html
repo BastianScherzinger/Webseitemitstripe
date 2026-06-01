@@ -68,34 +68,18 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Luviq">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'space-black': '#0d0907',
-                        'space-dark': '#160d06',
-                        'glow-orange': '#c8965c',
-                        'glow-amber': '#a0714a',
-                        'soft-light': '#f5ede4',
-                        'space-text': '#f5ede4',
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Tailwind CSS (self-hosted, purged) -->
+    <link rel="stylesheet" href="{% static 'shop1/tailwind.css' %}?v=1">
 
-    <!-- Google Fonts (preconnect for faster DNS + TLS) -->
+    <!-- Google Fonts (async — non-render-blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;900&display=swap">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;900&display=swap"></noscript>
 
-    <!-- HTMX & Alpine.js (defer = non-blocking, executes after HTML parse) -->
-    <script defer src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Alpine.js (pinned versions, defer = non-blocking) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.14.8/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 
     <noscript>
         <style>
@@ -128,6 +112,9 @@
                 radial-gradient(circle at 20% 30%, rgba(200, 150, 92, 0.04) 0%, transparent 40%),
                 radial-gradient(circle at 80% 70%, rgba(160, 113, 74, 0.04) 0%, transparent 40%),
                 radial-gradient(circle at 50% 50%, rgba(22, 13, 6, 1) 0%, rgba(13, 9, 7, 1) 100%);
+        }
+        @media (max-width: 768px) {
+            body { background-attachment: scroll; }
         }
 
         .heading-font { font-family: 'Outfit', sans-serif; }
