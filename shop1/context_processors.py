@@ -1,4 +1,5 @@
 import os
+from django.conf import settings
 from django.core.cache import cache
 
 
@@ -9,7 +10,18 @@ def shop_owner_check(request):
         if request.user.username == admin_username or request.user.is_superuser:
             is_shop_owner = True
 
-    # ═══ WERBUNG: aktive Ads aus Cache oder DB laden (kein Write hier) ═══
+    # Cart count
+    cart_count = 0
+    if request.user.is_authenticated:
+        try:
+            from .models import Cart
+            cart = Cart.objects.filter(user=request.user).first()
+            if cart:
+                cart_count = cart.anzahl_items
+        except Exception:
+            pass
+
+    # Aktive Werbung aus Cache
     werbung_aktiv = []
     _skip = ('/static/', '/shop-admin/', '/admin/', '/media/', '/favicon')
     if not any(request.path.startswith(s) for s in _skip):
@@ -25,5 +37,9 @@ def shop_owner_check(request):
 
     return {
         'is_shop_owner': is_shop_owner,
+        'cart_count': cart_count,
         'werbung_aktiv': werbung_aktiv,
+        'GOOGLE_MAPS_API_KEY': getattr(settings, 'GOOGLE_MAPS_API_KEY', ''),
+        'GOOGLE_PLACE_ID':     getattr(settings, 'GOOGLE_PLACE_ID', ''),
+        'GOOGLE_REVIEW_URL':   getattr(settings, 'GOOGLE_REVIEW_URL', ''),
     }

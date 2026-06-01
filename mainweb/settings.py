@@ -239,6 +239,13 @@ LOGIN_URL = '/login/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# ═══ GOOGLE MAPS / PLACES ═══
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', '')
+GOOGLE_PLACE_ID     = os.getenv('GOOGLE_PLACE_ID', '')
+# Direkt-Link zum Bewertungsformular:
+# https://search.google.com/local/writereview?placeid=DEINE_PLACE_ID
+GOOGLE_REVIEW_URL   = os.getenv('GOOGLE_REVIEW_URL', 'https://www.google.com/maps/search/Luviq+Universe+Alsfeld')
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

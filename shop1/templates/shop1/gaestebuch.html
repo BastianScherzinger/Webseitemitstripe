@@ -21,6 +21,11 @@
             <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Teile deine Gedanken mit dem Orbit</p>
         </header>
 
+        <!-- Google Maps + Bewertungen -->
+        {% with show_compact=False %}
+        {% include 'shop1/_reviews_map.html' %}
+        {% endwith %}
+
         <!-- New Comment Form -->
         {% if user.is_authenticated %}
         <div class="glass-card p-10 md:p-16 rounded-[4rem] mb-24 border-white/5 relative overflow-hidden group">

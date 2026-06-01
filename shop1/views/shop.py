@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.db.models import F
 from django.utils import timezone
 
-from ..models import Produkt, Werbung, WerbungStat
+from ..models import Produkt, Werbung, WerbungStat, Comment
 from ..utils import send_brevo_email
 
 
@@ -27,10 +27,18 @@ def startseite(request):
     except Exception:
         pass
 
+    recent_comments = (
+        Comment.objects.filter(parent=None)
+        .select_related('user')
+        .prefetch_related('likes')
+        .order_by('-erstellt_am')[:4]
+    )
+
     return render(request, 'shop1/index.html', {
         'titel': 'Luviq-Shop',
         'anzahl': 42,
         'produkte_galerie': produkte_galerie,
+        'recent_comments': recent_comments,
     })
 
 

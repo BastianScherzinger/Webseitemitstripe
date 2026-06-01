@@ -278,6 +278,31 @@
     </section>
     {% endif %}
 
+    <!-- ═══ Community & Bewertungen ═══ -->
+    <section class="py-24 relative z-10" id="community" aria-labelledby="community-heading">
+        <div class="max-w-7xl mx-auto px-4">
+
+            <div class="flex flex-col sm:flex-row justify-between items-end mb-14 gap-6 scroll-reveal"
+                 x-data="{shown:false}" x-intersect.once="shown=true" :class="{'visible':shown}">
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-[0.5em] text-glow-orange mb-3">Community &amp; Bewertungen</p>
+                    <h2 id="community-heading" class="text-4xl md:text-5xl font-black heading-font text-white uppercase tracking-tighter leading-none">
+                        Was andere <span class="text-glow">sagen</span>
+                    </h2>
+                </div>
+                <a href="{% url 'gaestebuch' %}" class="glass px-8 py-4 rounded-2xl text-white/60 font-black uppercase tracking-widest text-[9px] hover:text-white transition-colors whitespace-nowrap"
+                   style="border-color:rgba(200,150,92,0.2)">
+                    Alle Kommentare lesen →
+                </a>
+            </div>
+
+            {% with show_compact=True %}
+            {% include 'shop1/_reviews_map.html' %}
+            {% endwith %}
+
+        </div>
+    </section>
+
     <!-- Products Gallery Section -->
     <section class="py-32 relative z-10">
         <div class="max-w-7xl mx-auto px-4">
