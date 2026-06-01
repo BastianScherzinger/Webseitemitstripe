@@ -1,5 +1,28 @@
 {% extends 'base.html' %}
-{% block title %}Impressum – Luviq Universe{% endblock %}
+{% load static %}
+{% block title %}Impressum – Luviq Universe | Alsfeld, Hessen{% endblock %}
+{% block meta_robots %}noindex, follow{% endblock %}
+{% block schema_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Luviq Universe",
+  "legalName": "Luisa Brehler – Luviq Universe",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Grünberger Str. 16",
+    "addressLocality": "Alsfeld",
+    "postalCode": "36304",
+    "addressRegion": "Hessen",
+    "addressCountry": "DE"
+  },
+  "geo": {"@type": "GeoCoordinates", "latitude": 50.7517, "longitude": 9.2685},
+  "email": "brehlerluisa@gmail.com",
+  "url": "{{ request.scheme }}://{{ request.get_host }}/"
+}
+</script>
+{% endblock %}
 {% block content %}
 <div class="relative min-h-screen pt-32 pb-40">
     <!-- Nebula Background Layer -->

@@ -1,18 +1,79 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Luviq – Upcycled Art & Fashion{% endblock %}
+{% block title %}Luviq Universe – Handbemalte Second Hand Mode aus Alsfeld | Hessen{% endblock %}
+{% block meta_description %}Luviq Universe aus Alsfeld (Hessen): Handbemalte 1-of-1 Vintage-Unikate – jedes Stück ein Kunstwerk. Nachhaltige Second-Hand-Mode, deutschlandweit bestellen. Gießen, Fulda, Frankfurt & überall.{% endblock %}
+{% block og_title %}Luviq Universe – Handbemalte Second Hand Mode | Alsfeld, Hessen{% endblock %}
+{% block og_description %}Handbemalte 1-of-1 Vintage-Unikate aus Alsfeld. Nachhaltige Second-Hand-Mode von Luisa Brehler – deutschlandweit. Jetzt entdecken.{% endblock %}
+{% block twitter_title %}Luviq Universe – Dein Second Hand Shop aus Hessen{% endblock %}
+{% block twitter_description %}Handbemalte Vintage-Unikate aus Alsfeld, Hessen. Nachhaltig. Einzigartig. Deutschlandweit.{% endblock %}
 
 {% block schema_ld %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  "name": "Aktuelle Unikate – Luviq Universe",
-  "description": "Handbemalte 1-of-1 Upcycling Mode – exklusive Einzelstücke aus dem Luviq Orbit.",
+  "name": "Aktuelle Unikate – Luviq Universe Alsfeld",
+  "description": "Handbemalte 1-of-1 Upcycling-Mode aus Alsfeld, Hessen – exklusive Einzelstücke.",
   "url": "{{ request.scheme }}://{{ request.get_host }}/",
   "itemListElement": [{% for produkt in produkte_galerie %}
-    {"@type": "ListItem", "position": {{ forloop.counter }}, "name": "{{ produkt.name|escapejs }}", "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkt_detail' produkt.id %}"}{% if not forloop.last %},{% endif %}{% endfor %}
+    {"@type": "ListItem", "position": {{ forloop.counter }}, "name": "{{ produkt.name|escapejs }}", "url": "{{ request.scheme }}://{{ request.get_host }}{{ produkt.get_absolute_url }}"}{% if not forloop.last %},{% endif %}{% endfor %}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Was ist Luviq Universe?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Luviq Universe ist ein nachhaltiger Second-Hand-Shop aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung durch einzigartige Handmalerei in 1-of-1 Kunstwerke. Jedes Stück ist ein Unikat – nachhaltig, handgemacht und einzigartig."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wo ist Luviq Universe?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Luviq Universe kommt aus Alsfeld (36304), Hessen, Deutschland. Wir versenden unsere handbemalten Vintage-Unikate deutschlandweit – nach Gießen, Fulda, Frankfurt, Lauterbach, Marburg, Kassel und in alle anderen Städte."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Liefert Luviq nach Gießen, Fulda und andere Städte in Hessen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja! Luviq Universe versendet deutschlandweit. Egal ob du in Gießen, Fulda, Lauterbach, Frankfurt, Berlin oder sonstwo in Deutschland wohnst – dein handbemaltes Unikat kommt sicher zu dir."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was verkauft Luviq Universe?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Luviq Universe verkauft handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück ist ein 1-of-1 Unikat – von Luisa Brehler aus Alsfeld handverlesen und mit einzigartigen Designs bemalt. Unsere Kollektion umfasst Jacken, Shirts und weitere Vintage-Teile."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie kann ich bei Luviq Universe bestellen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Besuche luviq.de, stöbere in der Kollektion und bestelle direkt online. Wir akzeptieren PayPal und Banküberweisung. Der Versand erfolgt deutschlandweit – schnell, sicher und mit Liebe verpackt."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Ist Luviq Universe nachhaltig?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja, Nachhaltigkeit ist unser Kern. Statt neue Kleidung zu produzieren, retten wir Vintage-Kleidung vor dem Wegwurf und verwandeln sie in handbemalte Kunstwerke. Second Hand neu gedacht – aus Alsfeld, Hessen."
+      }
+    }
   ]
 }
 </script>
@@ -72,7 +133,7 @@
             </div>
 
             <p id="hero-sub" class="text-base sm:text-lg text-white/85 max-w-xl mx-auto mb-14 leading-relaxed font-light tracking-wide glass px-8 py-5 rounded-2xl border-white/10" style="opacity:0;transform:translateY(28px)">
-                Wir finden vergessene Klassiker, geben ihnen durch handbemalte Designs eine neue Seele und machen sie zu tragbaren Kunstwerken.
+                Aus <strong class="text-white font-semibold">Alsfeld, Hessen</strong> – wir verwandeln vergessene Vintage-Klassiker durch handbemalte Designs in einzigartige 1-of-1 Kunstwerke. Second&nbsp;Hand neu gedacht.
             </p>
 
             <div id="hero-cta" class="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-8" style="opacity:0;transform:translateY(28px)">
@@ -111,6 +172,33 @@
                 <div class="w-16 h-16 sm:w-20 sm:h-20 bg-glow-orange/5 rounded-3xl flex items-center justify-center text-3xl sm:text-4xl mb-6 sm:mb-8 group-hover:scale-110 group-hover:bg-glow-orange/10 transition-all duration-500">💎</div>
                 <h3 class="text-xl sm:text-2xl font-black heading-font text-white mb-3 sm:mb-4 uppercase tracking-tight">Curated Style</h3>
                 <p class="text-white/30 text-sm leading-relaxed font-light uppercase tracking-wider">Nur die besten Vintage-Teile schaffen es in unseren Veredelungsprozess.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Local SEO: Herkunft & Versand -->
+    <section class="py-14 relative z-10 border-t border-b border-[rgba(200,150,92,0.08)]" aria-label="Herkunft und Versandgebiet">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-glow-orange mb-5">Made in Hessen · Versand Deutschland</p>
+            <h2 class="text-white/80 text-lg sm:text-xl font-light leading-relaxed max-w-3xl mx-auto">
+                Luviq Universe kommt aus
+                <strong class="text-white font-semibold">Alsfeld</strong> im Vogelsberg —
+                unsere handbemalten Vintage-Unikate versenden wir in ganz Deutschland.
+                Von <strong class="text-white/90">Gießen</strong> über <strong class="text-white/90">Fulda</strong>
+                und <strong class="text-white/90">Marburg</strong> bis
+                <strong class="text-white/90">Frankfurt</strong>, <strong class="text-white/90">Berlin</strong>
+                und überall dazwischen.
+            </h2>
+            <div class="flex flex-wrap justify-center gap-3 mt-8 text-[10px] font-black uppercase tracking-[0.15em] text-white/20">
+                <span>Alsfeld</span><span class="text-glow-orange/40">·</span>
+                <span>Gießen</span><span class="text-glow-orange/40">·</span>
+                <span>Fulda</span><span class="text-glow-orange/40">·</span>
+                <span>Lauterbach</span><span class="text-glow-orange/40">·</span>
+                <span>Marburg</span><span class="text-glow-orange/40">·</span>
+                <span>Frankfurt</span><span class="text-glow-orange/40">·</span>
+                <span>Kassel</span><span class="text-glow-orange/40">·</span>
+                <span>Wiesbaden</span><span class="text-glow-orange/40">·</span>
+                <span>Ganz Deutschland</span>
             </div>
         </div>
     </section>

@@ -5,10 +5,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Luviq Universe – Unique Upcycling Art{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}Luviq Universe: Handbemalte 1-of-1 Unikate. Nachhaltige Upcycling-Mode und exklusive Kunst aus dem Orbit. Entdecke einzigartige Designs.{% endblock %}">
-    <meta name="keywords" content="Luviq, Upcycling, Art, Fashion, 1-of-1, Nachhaltigkeit, Kunst, Mode, Unikate, Luisa Brehler">
+    <title>{% block title %}Luviq Universe – Handbemalte Second Hand Mode aus Alsfeld | Hessen{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Luviq Universe aus Alsfeld (Hessen): Handbemalte 1-of-1 Vintage-Unikate. Nachhaltige Second-Hand-Mode – deutschlandweit bestellen. Gießen, Fulda, Frankfurt &amp; mehr.{% endblock %}">
+    <meta name="keywords" content="Luviq, Luviq Universe, Second Hand Mode Alsfeld, Vintage Mode Hessen, handbemalte Kleidung kaufen, Upcycling Mode Deutschland, 1 of 1 Unikate, Second Hand Gießen, Vintage Fulda, nachhaltige Mode Hessen">
     <meta name="author" content="Luisa Brehler">
+
+    <!-- Geo / Local SEO -->
+    <meta name="geo.region" content="DE-HE">
+    <meta name="geo.placename" content="Alsfeld, Hessen">
+    <meta name="geo.position" content="50.7517;9.2685">
+    <meta name="ICBM" content="50.7517, 9.2685">
     <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
     <meta name="google-site-verification" content="wxLpa8ANLiSPL7mfpSwUxEPl8-H3yyCsiUzHu4lMxsM" />
     <meta name="csrf-token" content="{{ csrf_token }}">
@@ -47,26 +53,84 @@
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": ["Organization", "ClothingStore"],
+          "@type": ["Organization", "ClothingStore", "LocalBusiness"],
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
           "name": "Luviq Universe",
+          "alternateName": ["Luviq", "Luviq Mode", "Luviq Alsfeld"],
           "url": "{{ request.scheme }}://{{ request.get_host }}/",
           "logo": {
             "@type": "ImageObject",
             "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}"
           },
-          "founder": {"@type": "Person", "name": "Luisa Brehler"},
-          "description": "Handbemalte 1-of-1 Unikate. Nachhaltige Upcycling-Mode aus dem Luviq Orbit.",
+          "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}",
+          "founder": {
+            "@type": "Person",
+            "name": "Luisa Brehler",
+            "jobTitle": "Gründerin & Creative Director"
+          },
+          "description": "Luviq Universe ist ein nachhaltiger Second-Hand-Shop aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Versand deutschlandweit.",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Grünberger Str. 16",
+            "addressLocality": "Alsfeld",
+            "postalCode": "36304",
+            "addressRegion": "Hessen",
+            "addressCountry": "DE"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 50.7517,
+            "longitude": 9.2685
+          },
+          "areaServed": [
+            {"@type": "City", "name": "Alsfeld"},
+            {"@type": "City", "name": "Gießen"},
+            {"@type": "City", "name": "Fulda"},
+            {"@type": "City", "name": "Lauterbach"},
+            {"@type": "City", "name": "Frankfurt am Main"},
+            {"@type": "City", "name": "Marburg"},
+            {"@type": "City", "name": "Kassel"},
+            {"@type": "State", "name": "Hessen"},
+            {"@type": "Country", "name": "Deutschland"}
+          ],
+          "email": "brehlerluisa@gmail.com",
           "priceRange": "€€",
           "currenciesAccepted": "EUR",
-          "paymentAccepted": "PayPal, Bank Transfer"
+          "paymentAccepted": "PayPal, Banküberweisung",
+          "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+            "opens": "00:00",
+            "closes": "23:59"
+          },
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Handbemalte Vintage & Second Hand Mode",
+            "itemListElement": [
+              {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Handbemalte Vintage-Jacken"}},
+              {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Handbemalte Vintage-Shirts"}},
+              {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "1-of-1 Upcycling-Unikate"}}
+            ]
+          },
+          "sameAs": [
+            "https://www.instagram.com/luviq.universe/"
+          ]
         },
         {
           "@type": "WebSite",
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
           "url": "{{ request.scheme }}://{{ request.get_host }}/",
           "name": "Luviq Universe",
-          "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
+          "description": "Handbemalte Second Hand Mode und Vintage-Unikate aus Alsfeld, Hessen – deutschlandweit bestellen.",
+          "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "{{ request.scheme }}://{{ request.get_host }}/produkte/?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
         }
       ]
     }
