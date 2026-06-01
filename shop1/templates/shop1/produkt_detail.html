@@ -1,8 +1,23 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ produkt.name }} – Luviq Universe{% endblock %}
-{% block meta_description %}{{ produkt.beschreibung|truncatewords:25 }}{% endblock %}
+{% block title %}{{ produkt.meta_title }}{% endblock %}
+{% block meta_description %}{{ produkt.meta_description }}{% endblock %}
+{% block og_type %}product{% endblock %}
+{% block og_title %}{{ produkt.meta_title }}{% endblock %}
+{% block og_description %}{{ produkt.meta_description }}{% endblock %}
+{% block twitter_title %}{{ produkt.meta_title }}{% endblock %}
+{% block twitter_description %}{{ produkt.meta_description }}{% endblock %}
+{% if produkt.bild %}
+{% block og_image_tag %}
+<meta property="og:image" content="{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="800">
+{% endblock %}
+{% block twitter_image_tag %}
+<meta name="twitter:image" content="{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}">
+{% endblock %}
+{% endif %}
 
 {% block schema_ld %}
 <script type="application/ld+json">

@@ -1,7 +1,51 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Unsere Story – Luviq Universe{% endblock %}
+{% block title %}Über uns – Handbemalte Vintage Mode von Luisa Brehler | Luviq Universe{% endblock %}
+{% block meta_description %}Luviq Universe ist Luisa Brehlers Vision: vergessene Vintage-Kleidung wird zu handbemalten Kunstwerken. Nachhaltige Upcycling-Mode made in Germany. Erfahre unsere Story.{% endblock %}
+{% block og_title %}Über Luviq Universe – Luisa Brehler & handbemalte Vintage Mode{% endblock %}
+{% block og_description %}Luviq Universe verwandelt Second-Hand-Kleidung in handbemalte 1-of-1 Kunstwerke. Luisa Brehlers Mission für nachhaltige Upcycling-Mode in Deutschland.{% endblock %}
+
+{% block schema_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "AboutPage",
+      "name": "Über Luviq Universe",
+      "description": "Luisa Brehler verwandelt vergessene Vintage-Kleidung in handbemalte Kunstwerke – nachhaltige Upcycling-Mode made in Germany.",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}",
+      "mainEntity": {
+        "@id": "{{ request.scheme }}://{{ request.get_host }}/#organisation"
+      }
+    },
+    {
+      "@type": "Person",
+      "@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa",
+      "name": "Luisa Brehler",
+      "jobTitle": "Gründerin & Creative Director",
+      "description": "Luisa Brehler ist die Gründerin von Luviq Universe. Sie verwandelt handverlesene Vintage-Kleidung durch handbemalte Designs in einzigartige 1-of-1 Kunstwerke.",
+      "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/ich.png' %}",
+      "worksFor": {
+        "@id": "{{ request.scheme }}://{{ request.get_host }}/#organisation"
+      },
+      "knowsAbout": ["Upcycling", "Vintage Mode", "Handmalerei", "Nachhaltige Mode", "Textilkunst"]
+    },
+    {
+      "@type": ["Organization", "ClothingStore"],
+      "@id": "{{ request.scheme }}://{{ request.get_host }}/#organisation",
+      "name": "Luviq Universe",
+      "url": "{{ request.scheme }}://{{ request.get_host }}/",
+      "founder": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
+      "description": "Handbemalte 1-of-1 Upcycling-Mode aus Deutschland. Jedes Stück ist ein Unikat – nachhaltig, handgemacht, einzigartig.",
+      "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}",
+      "sameAs": []
+    }
+  ]
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <div class="relative min-h-screen pt-20 pb-32">

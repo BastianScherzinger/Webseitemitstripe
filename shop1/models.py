@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 
 # Create your models here.
 
@@ -55,7 +56,10 @@ class Subscriber(models.Model):
 class Produkt(models.Model):
     """Produkt-Modell für den Shop"""
     name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=220, unique=True, blank=True, null=True)
     beschreibung = models.TextField(blank=True)
+    seo_titel = models.CharField(max_length=60, blank=True, help_text='SEO-Titel (max. 60 Zeichen). Leer = automatisch.')
+    seo_beschreibung = models.CharField(max_length=160, blank=True, help_text='Meta-Description (max. 160 Zeichen). Leer = aus Beschreibung.')
     preis = models.DecimalField(max_digits=10, decimal_places=2)
     bild = models.ImageField(upload_to='produkte/', blank=True, null=True)
     aktiv = models.BooleanField(default=True)
@@ -64,10 +68,40 @@ class Produkt(models.Model):
     erstellt_am = models.DateTimeField(auto_now_add=True)
     aktualisiert_am = models.DateTimeField(auto_now=True)
     ersteller = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='produkte')
-    
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.name) or f"produkt-{self.pk or 'neu'}"
+            slug = base
+            n = 1
+            while Produkt.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base}-{n}"
+                n += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        if self.slug:
+            return reverse('produkt_detail_slug', args=[self.slug])
+        return reverse('produkt_detail', args=[self.id])
+
+    @property
+    def meta_title(self):
+        if self.seo_titel:
+            return self.seo_titel
+        return f"{self.name} kaufen – Luviq Universe"
+
+    @property
+    def meta_description(self):
+        if self.seo_beschreibung:
+            return self.seo_beschreibung
+        desc = self.beschreibung[:155].rsplit(' ', 1)[0] if len(self.beschreibung) > 155 else self.beschreibung
+        return f"{desc} – Einzigartiges 1-of-1 Upcycling-Unikat bei Luviq Universe."
+
     def __str__(self):
         return f"{self.name} ({self.preis} €)"
-    
+
     class Meta:
         verbose_name_plural = "Produkte"
         ordering = ['-erstellt_am']

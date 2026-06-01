@@ -1,7 +1,42 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Kollektion – Luviq Universe{% endblock %}
+{% block title %}Vintage Upcycling Mode kaufen – Handbemalte Unikate | Luviq Universe{% endblock %}
+{% block meta_description %}Entdecke handbemalte 1-of-1 Vintage-Unikate bei Luviq Universe. Nachhaltige Upcycling-Mode aus Deutschland – jedes Stück ist ein Kunstwerk. Second Hand neu gedacht.{% endblock %}
+{% block og_title %}Vintage Upcycling Mode kaufen – Handbemalte Unikate | Luviq Universe{% endblock %}
+{% block og_description %}Handbemalte 1-of-1 Upcycling-Unikate aus Deutschland. Nachhaltige Second-Hand-Mode mit einzigartigem Kunstcharakter – jetzt bei Luviq Universe entdecken.{% endblock %}
+
+{% block schema_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Luviq Universe – Vintage Upcycling Mode Kollektion",
+  "description": "Handbemalte 1-of-1 Vintage-Unikate. Nachhaltige Upcycling-Mode aus Deutschland.",
+  "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}",
+  "provider": {
+    "@type": "Organization",
+    "name": "Luviq Universe",
+    "url": "{{ request.scheme }}://{{ request.get_host }}/"
+  },
+  "hasPart": [{% for p in produkte_liste %}
+    {
+      "@type": "Product",
+      "name": "{{ p.name|escapejs }}",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{{ p.get_absolute_url }}",
+      "offers": {
+        "@type": "Offer",
+        "price": "{{ p.preis|floatformat:2 }}",
+        "priceCurrency": "EUR",
+        "availability": "{% if p.lagerbestand > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+        "itemCondition": "https://schema.org/UsedCondition"
+      }{% if p.bild %},
+      "image": "{% if p.bild.url|slice:':4' == 'http' %}{{ p.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ p.bild.url }}{% endif %}"{% endif %}
+    }{% if not forloop.last %},{% endif %}{% endfor %}
+  ]
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <div class="relative min-h-screen pt-20 pb-32">

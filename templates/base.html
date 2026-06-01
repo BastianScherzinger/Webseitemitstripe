@@ -9,21 +9,37 @@
     <meta name="description" content="{% block meta_description %}Luviq Universe: Handbemalte 1-of-1 Unikate. Nachhaltige Upcycling-Mode und exklusive Kunst aus dem Orbit. Entdecke einzigartige Designs.{% endblock %}">
     <meta name="keywords" content="Luviq, Upcycling, Art, Fashion, 1-of-1, Nachhaltigkeit, Kunst, Mode, Unikate, Luisa Brehler">
     <meta name="author" content="Luisa Brehler">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
     <meta name="google-site-verification" content="wxLpa8ANLiSPL7mfpSwUxEPl8-H3yyCsiUzHu4lMxsM" />
     <meta name="csrf-token" content="{{ csrf_token }}">
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
-    <meta property="og:title" content="Luviq Universe – Unique Upcycling Art">
-    <meta property="og:description" content="Entdecke handbemalte Unikate und exklusive Upcycling-Mode. Jedes Teil ein Einzelstück aus dem Luviq Orbit.">
-    <meta property="og:image" content="{% static 'shop1/images/logo-luviq.jpeg' %}">
+    <!-- Canonical -->
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="Luviq Universe">
-    <meta property="twitter:description" content="Unique Upcycling Art & Fashion. Explore the Luviq Orbit.">
+    <!-- Hreflang -->
+    <link rel="alternate" hreflang="de" href="{{ request.build_absolute_uri }}">
+    <link rel="alternate" hreflang="x-default" href="{{ request.build_absolute_uri }}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{% block og_title %}Luviq Universe – Handbemalte Vintage Mode kaufen{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Entdecke handbemalte 1-of-1 Upcycling-Unikate bei Luviq Universe. Nachhaltige Vintage-Mode aus Deutschland – jedes Stück ein Kunstwerk.{% endblock %}">
+    <meta property="og:locale" content="de_DE">
+    <meta property="og:site_name" content="Luviq Universe">
+    {% block og_image_tag %}
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:height" content="800">
+    {% endblock %}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}Luviq Universe – Handbemalte Vintage Mode{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Handbemalte 1-of-1 Upcycling-Unikate aus Deutschland.{% endblock %}">
+    {% block twitter_image_tag %}
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}">
+    {% endblock %}
 
     <!-- Schema.org Sitewide JSON-LD -->
     <script type="application/ld+json">

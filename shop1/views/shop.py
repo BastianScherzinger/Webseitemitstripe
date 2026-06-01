@@ -89,7 +89,13 @@ def produkte(request):
     return render(request, 'shop1/produkte.html', {'produkte_liste': produkte_liste})
 
 
-def produkt_detail(request, produkt_id):
-    """Zeigt die Detailseite eines einzelnen Produkts."""
-    produkt = get_object_or_404(Produkt, id=produkt_id, aktiv=True)
+def produkt_detail_slug(request, slug):
+    """Zeigt die Detailseite eines Produkts über seinen SEO-Slug."""
+    produkt = get_object_or_404(Produkt, slug=slug, aktiv=True)
     return render(request, 'shop1/produkt_detail.html', {'produkt': produkt})
+
+
+def produkt_detail_redirect(request, produkt_id):
+    """301-Redirect: alte numerische Produkt-URL → neue Slug-URL."""
+    produkt = get_object_or_404(Produkt, id=produkt_id, aktiv=True)
+    return redirect(produkt.get_absolute_url(), permanent=True)
