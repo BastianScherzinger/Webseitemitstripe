@@ -1,10 +1,9 @@
 {% load static %}
-{# Eingebundene Sektion: Google Maps + Bewertungen. Variablen: show_compact (bool) #}
 
 <div class="reviews-map-section">
 
     {% if show_compact %}
-    {# ── Kompaktversion für die Startseite ── #}
+    {# ── Kompakt (Startseite) ── #}
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
 
         {# Karte + Google-CTA #}
@@ -12,14 +11,13 @@
             <div class="glass-card rounded-[2.5rem] overflow-hidden" style="border-color:rgba(200,150,92,0.12)">
                 <div style="position:relative;padding-bottom:66%;overflow:hidden;">
                     <iframe
-                        src="{% if GOOGLE_PLACE_ID and GOOGLE_MAPS_API_KEY %}https://www.google.com/maps/embed/v1/place?key={{ GOOGLE_MAPS_API_KEY }}&q=place_id:{{ GOOGLE_PLACE_ID }}&language=de{% else %}https://maps.google.com/maps?q=Gr%C3%BCnberger+Str.+16%2C+36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=16{% endif %}"
+                        src="https://maps.google.com/maps?q=Gr%C3%BCnberger+Str.+16%2C+36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=16"
                         style="position:absolute;inset:0;width:100%;height:100%;border:0;"
                         allowfullscreen loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"
                         title="Luviq Universe – Alsfeld, Hessen">
                     </iframe>
                 </div>
-
                 <div class="p-6">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-9 h-9 rounded-xl glass flex items-center justify-center p-1.5" style="border-color:rgba(200,150,92,0.2)">
@@ -30,13 +28,10 @@
                             <p class="text-white/30 text-[9px] uppercase tracking-widest">Alsfeld, Hessen</p>
                         </div>
                     </div>
-
-                    {# Sterne-Anzeige: JS füllt #g-rating-compact, sonst statische Platzhalter #}
-                    <div id="g-rating-compact" class="flex items-center gap-2 mb-5">
-                        <div class="flex gap-0.5 text-glow-orange text-base" aria-label="5 Sterne">★★★★★</div>
+                    <div class="flex items-center gap-2 mb-5">
+                        <div class="flex gap-0.5 text-glow-orange text-base">★★★★★</div>
                         <span class="text-white/30 text-[10px] uppercase tracking-wider">Auf Google bewerten</span>
                     </div>
-
                     <a href="{{ GOOGLE_REVIEW_URL }}" target="_blank" rel="noopener"
                        class="flex items-center justify-center gap-2 w-full btn-glow px-5 py-3 rounded-2xl text-white font-black uppercase tracking-widest text-[9px] shadow-xl">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.545 10.239v3.821h5.445c-.712 2.315-2.647 3.972-5.445 3.972a6.033 6.033 0 1 1 0-12.064c1.498 0 2.866.549 3.921 1.453l2.814-2.814A9.969 9.969 0 0 0 12.545 2C7.021 2 2.543 6.477 2.543 12s4.478 10 10.002 10c8.396 0 10.249-7.85 9.426-11.748l-9.426-.013Z"/></svg>
@@ -46,34 +41,28 @@
             </div>
         </div>
 
-        {# Kommentare (Google via JS ODER Django-Fallback) + Schnell-Formular #}
+        {# Kommentare + Schnell-Formular #}
         <div class="lg:col-span-3 space-y-5">
-
-            {# Google-Reviews Container (JS füllt) #}
-            <div id="g-reviews-list" class="space-y-4">
-                {# Fallback: Django-Kommentare wenn kein API-Key / noch leer #}
-                {% for comment in recent_comments %}
-                <div class="glass-card p-7 rounded-[2rem] scroll-reveal"
-                     x-data="{shown:false}" x-intersect.once="shown=true" :class="{'visible':shown}"
-                     style="border-color:rgba(200,150,92,0.08);transition-delay:{{ forloop.counter0 }}00ms">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-9 h-9 rounded-xl glass flex items-center justify-center text-base" style="border-color:rgba(200,150,92,0.15)">👤</div>
-                        <div>
-                            <p class="text-white font-black text-xs uppercase tracking-tight">{{ comment.user.username }}</p>
-                            <p class="text-white/20 text-[9px]">{{ comment.erstellt_am|date:"d.m.Y" }}</p>
-                        </div>
-                        <div class="ml-auto flex gap-0.5 text-glow-orange text-sm">★★★★★</div>
+            {% for comment in recent_comments %}
+            <div class="glass-card p-7 rounded-[2rem] scroll-reveal"
+                 x-data="{shown:false}" x-intersect.once="shown=true" :class="{'visible':shown}"
+                 style="border-color:rgba(200,150,92,0.08);transition-delay:{{ forloop.counter0 }}00ms">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-9 h-9 rounded-xl glass flex items-center justify-center text-base" style="border-color:rgba(200,150,92,0.15)">👤</div>
+                    <div>
+                        <p class="text-white font-black text-xs uppercase tracking-tight">{{ comment.user.username }}</p>
+                        <p class="text-white/20 text-[9px]">{{ comment.erstellt_am|date:"d.m.Y" }}</p>
                     </div>
-                    <p class="text-white/55 text-xs leading-relaxed">{{ comment.text|truncatewords:30 }}</p>
+                    <div class="ml-auto flex gap-0.5 text-glow-orange text-sm">★★★★★</div>
                 </div>
-                {% empty %}
-                <div class="glass-card p-8 rounded-[2rem] text-center" style="border-color:rgba(200,150,92,0.08)">
-                    <p class="text-white/20 text-xs uppercase tracking-widest">Noch keine Kommentare — sei der Erste!</p>
-                </div>
-                {% endfor %}
+                <p class="text-white/55 text-xs leading-relaxed">{{ comment.text|truncatewords:30 }}</p>
             </div>
+            {% empty %}
+            <div class="glass-card p-8 rounded-[2rem] text-center" style="border-color:rgba(200,150,92,0.08)">
+                <p class="text-white/20 text-xs uppercase tracking-widest">Noch keine Kommentare — sei der Erste!</p>
+            </div>
+            {% endfor %}
 
-            {# Schnell-Kommentar-Formular #}
             <div class="glass-card p-7 rounded-[2rem]" style="border-color:rgba(200,150,92,0.12)">
                 {% if user.is_authenticated %}
                 <p class="text-[9px] font-black uppercase tracking-[0.3em] text-glow-orange mb-4">Dein Kommentar</p>
@@ -82,7 +71,7 @@
                     <textarea name="text" rows="3" required
                         class="w-full bg-white/5 border rounded-2xl p-5 text-white text-sm focus:outline-none transition-all font-light placeholder:text-white/20 resize-none"
                         style="border-color:rgba(200,150,92,0.18)"
-                        placeholder="Teile deine Erfahrung mit dem Orbit..."></textarea>
+                        placeholder="Teile deine Erfahrung..."></textarea>
                     <div class="flex justify-end gap-3">
                         <a href="{% url 'gaestebuch' %}" class="px-6 py-3 rounded-xl text-white/30 font-black uppercase tracking-widest text-[9px] hover:text-white transition-colors">Alle lesen →</a>
                         <button type="submit" class="btn-glow px-8 py-3 rounded-xl text-white font-black uppercase tracking-widest text-[9px] shadow-xl">Senden</button>
@@ -97,27 +86,22 @@
                 </p>
                 {% endif %}
             </div>
-
         </div>
     </div>
 
     {% else %}
-    {# ── Vollversion für das Gästebuch ── #}
+    {# ── Vollversion (Gästebuch) ── #}
     <div class="glass-card rounded-[3rem] overflow-hidden mb-16" style="border-color:rgba(200,150,92,0.12)">
         <div class="grid grid-cols-1 md:grid-cols-2">
-
-            {# Karte links #}
             <div style="position:relative;min-height:320px;">
                 <iframe
-                    src="{% if GOOGLE_PLACE_ID and GOOGLE_MAPS_API_KEY %}https://www.google.com/maps/embed/v1/place?key={{ GOOGLE_MAPS_API_KEY }}&q=place_id:{{ GOOGLE_PLACE_ID }}&language=de{% else %}https://maps.google.com/maps?q=Gr%C3%BCnberger+Str.+16%2C+36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=16{% endif %}"
+                    src="https://maps.google.com/maps?q=Gr%C3%BCnberger+Str.+16%2C+36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=16"
                     style="position:absolute;inset:0;width:100%;height:100%;border:0;"
                     allowfullscreen loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"
                     title="Luviq Universe – Alsfeld, Hessen">
                 </iframe>
             </div>
-
-            {# Info rechts #}
             <div class="p-10 flex flex-col justify-center gap-6">
                 <div class="flex items-center gap-4">
                     <div class="w-14 h-14 rounded-2xl glass flex items-center justify-center p-2.5" style="border-color:rgba(200,150,92,0.2)">
@@ -128,16 +112,10 @@
                         <p class="text-white/30 text-xs uppercase tracking-widest">Grünberger Str. 16 · 36304 Alsfeld</p>
                     </div>
                 </div>
-
-                {# Rating (JS füllt #g-rating-full) #}
-                <div id="g-rating-full" class="space-y-2">
-                    <div class="flex items-baseline gap-3">
-                        <span class="text-4xl font-black text-white" id="g-score">–</span>
-                        <div class="flex gap-0.5 text-glow-orange text-xl" id="g-stars">★★★★★</div>
-                    </div>
-                    <p class="text-white/25 text-[10px] uppercase tracking-widest" id="g-count">Google Bewertungen</p>
+                <div class="flex items-baseline gap-3">
+                    <span class="text-4xl font-black text-white">5.0</span>
+                    <div class="flex gap-0.5 text-glow-orange text-xl">★★★★★</div>
                 </div>
-
                 <div class="flex flex-col gap-3">
                     <a href="{{ GOOGLE_REVIEW_URL }}" target="_blank" rel="noopener"
                        class="flex items-center justify-center gap-2 btn-glow px-6 py-4 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] shadow-xl">
@@ -152,111 +130,7 @@
                 </div>
             </div>
         </div>
-
-        {# Google Reviews Zeile (JS füllt #g-reviews-full) #}
-        <div id="g-reviews-full" class="hidden border-t px-10 py-8 flex gap-6 overflow-x-auto" style="border-color:rgba(200,150,92,0.1)">
-        </div>
     </div>
     {% endif %}
 
 </div>
-
-{% if GOOGLE_MAPS_API_KEY and GOOGLE_PLACE_ID %}
-<script>
-(function() {
-    const PLACE_ID  = '{{ GOOGLE_PLACE_ID }}';
-    const REVIEW_URL = '{{ GOOGLE_REVIEW_URL }}';
-
-    function renderStars(n) {
-        return Array.from({length:5}, (_,i) =>
-            `<span style="color:${i < Math.round(n) ? '#c8965c' : 'rgba(255,255,255,0.12)'}">★</span>`
-        ).join('');
-    }
-
-    function initPlaces() {
-        const div = document.createElement('div');
-        document.body.appendChild(div);
-        const map = new google.maps.Map(div, {center:{lat:50.7517,lng:9.2685},zoom:15});
-        const svc = new google.maps.places.PlacesService(map);
-        svc.getDetails({
-            placeId: PLACE_ID,
-            fields: ['name','rating','user_ratings_total','reviews','url']
-        }, function(place, status) {
-            document.body.removeChild(div);
-            if (status !== 'OK' || !place) return;
-
-            const rating = place.rating || 0;
-            const total  = place.user_ratings_total || 0;
-
-            // Compact version (Startseite)
-            const rc = document.getElementById('g-rating-compact');
-            if (rc) {
-                rc.innerHTML = `
-                    <div class="flex gap-0.5 text-base" style="line-height:1">${renderStars(rating)}</div>
-                    <span style="color:rgba(255,255,255,0.5);font-size:11px;font-weight:700">${rating.toFixed(1)}</span>
-                    <span style="color:rgba(255,255,255,0.25);font-size:9px;text-transform:uppercase;letter-spacing:.1em">(${total} Bewertungen)</span>
-                `;
-            }
-
-            // Full version (Gästebuch)
-            const scoreEl = document.getElementById('g-score');
-            const starsEl = document.getElementById('g-stars');
-            const countEl = document.getElementById('g-count');
-            if (scoreEl) scoreEl.textContent = rating.toFixed(1);
-            if (starsEl) starsEl.innerHTML   = renderStars(rating);
-            if (countEl) countEl.textContent  = `${total} Google-Bewertung${total !== 1 ? 'en' : ''}`;
-
-            // Reviews Karussell (Gästebuch)
-            const reviewsEl = document.getElementById('g-reviews-full');
-            if (reviewsEl && place.reviews && place.reviews.length) {
-                reviewsEl.classList.remove('hidden');
-                reviewsEl.innerHTML = place.reviews.map(r => `
-                    <div style="flex:0 0 280px;background:rgba(200,150,92,0.04);border:1px solid rgba(200,150,92,0.1);border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;gap:.6rem;">
-                        <div style="display:flex;align-items:center;gap:.6rem">
-                            <img src="${r.profile_photo_url || ''}" alt="${r.author_name}"
-                                 style="width:32px;height:32px;border-radius:50%;object-fit:cover;background:rgba(200,150,92,.15)"
-                                 onerror="this.src=''">
-                            <div>
-                                <p style="color:#f5ede4;font-weight:800;font-size:11px">${r.author_name}</p>
-                                <div style="display:flex;gap:1px;font-size:11px">${renderStars(r.rating)}</div>
-                            </div>
-                        </div>
-                        <p style="color:rgba(245,237,228,.5);font-size:11px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden">${r.text || ''}</p>
-                        <p style="color:rgba(245,237,228,.2);font-size:9px">${r.relative_time_description || ''}</p>
-                    </div>
-                `).join('');
-            }
-
-            // Startseiten-Fallback: Google Reviews über Django-Kommentaren zeigen
-            const listEl = document.getElementById('g-reviews-list');
-            if (listEl && place.reviews && place.reviews.length) {
-                listEl.innerHTML = place.reviews.slice(0,4).map((r, i) => `
-                    <div class="glass-card p-7 rounded-[2rem]" style="border-color:rgba(200,150,92,0.08);animation:fadeUp .6s ${i*0.1}s both ease-out">
-                        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem">
-                            <img src="${r.profile_photo_url || ''}" alt="${r.author_name}"
-                                 style="width:36px;height:36px;border-radius:10px;object-fit:cover;background:rgba(200,150,92,.1)"
-                                 onerror="this.style.display='none'">
-                            <div style="flex:1;min-width:0">
-                                <p style="color:#f5ede4;font-weight:800;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.author_name}</p>
-                                <p style="color:rgba(245,237,228,.2);font-size:8px">${r.relative_time_description || ''}</p>
-                            </div>
-                            <div style="display:flex;gap:1px;font-size:13px;flex-shrink:0">${renderStars(r.rating)}</div>
-                        </div>
-                        <p style="color:rgba(245,237,228,.55);font-size:11px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${r.text || ''}</p>
-                    </div>
-                `).join('');
-            }
-        });
-    }
-
-    if (window.google && window.google.maps) {
-        initPlaces();
-    } else {
-        window.__luviqPlacesInit = initPlaces;
-    }
-})();
-</script>
-<script async defer
-    src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=window.__luviqPlacesInit&language=de">
-</script>
-{% endif %}

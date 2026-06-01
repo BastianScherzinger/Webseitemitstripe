@@ -39,7 +39,5 @@ def shop_owner_check(request):
         'is_shop_owner': is_shop_owner,
         'cart_count': cart_count,
         'werbung_aktiv': werbung_aktiv,
-        'GOOGLE_MAPS_API_KEY': getattr(settings, 'GOOGLE_MAPS_API_KEY', ''),
-        'GOOGLE_PLACE_ID':     getattr(settings, 'GOOGLE_PLACE_ID', ''),
-        'GOOGLE_REVIEW_URL':   getattr(settings, 'GOOGLE_REVIEW_URL', ''),
+        'GOOGLE_REVIEW_URL': getattr(settings, 'GOOGLE_REVIEW_URL', ''),
     }
