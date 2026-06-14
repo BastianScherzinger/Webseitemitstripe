@@ -334,7 +334,7 @@
                         <h4 class="text-xl font-black heading-font text-white mb-6 uppercase tracking-tight">{{ produkt.name }}</h4>
                         <div class="flex items-center justify-between">
                             <span class="text-glow font-black text-2xl tracking-tighter">{{ produkt.preis }} €</span>
-                            <a href="{% url 'produkt_detail' produkt.id %}" class="w-14 h-14 glass rounded-[1.5rem] flex items-center justify-center hover:bg-glow-orange hover:text-white transition-all transform group-hover:rotate-6 shadow-xl">
+                            <a href="{{ produkt.get_absolute_url }}" class="w-14 h-14 glass rounded-[1.5rem] flex items-center justify-center hover:bg-glow-orange hover:text-white transition-all transform group-hover:rotate-6 shadow-xl">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                             </a>
                         </div>

@@ -104,6 +104,8 @@ def produkt_detail_slug(request, slug):
 
 
 def produkt_detail_redirect(request, produkt_id):
-    """301-Redirect: alte numerische Produkt-URL → neue Slug-URL."""
+    """Redirect numerische ID → Slug-URL; generiert Slug falls noch keiner existiert."""
     produkt = get_object_or_404(Produkt, id=produkt_id, aktiv=True)
+    if not produkt.slug:
+        produkt.save()
     return redirect(produkt.get_absolute_url(), permanent=True)
