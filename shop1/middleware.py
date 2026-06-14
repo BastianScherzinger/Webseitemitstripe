@@ -156,6 +156,16 @@ class PageVisitMiddleware:
             except Exception:
                 pass
 
+        # ── Admin-Benachrichtigung: einmal pro Browser-Session ──
+        if not request.session.get('visitor_notif_sent'):
+            request.session['visitor_notif_sent'] = True
+            request.session.modified = True
+            threading.Thread(
+                target=_notify_admin,
+                args=(ip, path, ua, site_name),
+                daemon=True,
+            ).start()
+
         if should_log:
             try:
                 log_obj = VisitorLog.objects.create(
@@ -171,16 +181,6 @@ class PageVisitMiddleware:
                 request.session.modified = True
                 _log.info('VisitorLog created: ip=%s path=%s site=%s', ip, path, site_name)
                 threading.Thread(target=_geo_enrich, args=(log_obj.pk, ip), daemon=True).start()
-
-                # ── Admin-Benachrichtigung: einmal pro Browser-Session ──
-                if not request.session.get('visitor_notif_sent'):
-                    request.session['visitor_notif_sent'] = True
-                    request.session.modified = True
-                    threading.Thread(
-                        target=_notify_admin,
-                        args=(ip, path, ua, site_name),
-                        daemon=True,
-                    ).start()
             except Exception as e:
                 _log.error('VisitorLog create error: ip=%s path=%s err=%s', ip, path, e)
 
