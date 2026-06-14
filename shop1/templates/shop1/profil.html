@@ -164,6 +164,11 @@
                 <div class="glass-card p-10 rounded-[3rem]">
                     <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-8">Account Control</h3>
                     <div class="space-y-4">
+                        {% if profil.is_main_admin %}
+                        <a href="{% url 'admin_dashboard' %}" class="block w-full py-4 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest transition-all" style="background: linear-gradient(135deg, rgba(251,146,60,0.2), rgba(249,115,22,0.1)); border: 1px solid rgba(251,146,60,0.4); color: #fb923c;">
+                            ⚙️ Admin Dashboard
+                        </a>
+                        {% endif %}
                         <a href="{% url 'change_password' %}" class="block w-full py-4 glass border-white/5 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">
                             🔑 Change Security Key
                         </a>
