@@ -53,6 +53,7 @@ def sitemap_xml(request):
         {'loc': reverse('produkte'),         'priority': '0.9', 'changefreq': 'daily'},
         {'loc': reverse('gaestebuch'),       'priority': '0.7', 'changefreq': 'weekly'},
         {'loc': reverse('ueber_uns'),        'priority': '0.7', 'changefreq': 'monthly'},
+        {'loc': reverse('liefergebiet'),     'priority': '0.7', 'changefreq': 'monthly'},
         {'loc': reverse('kontakt'),          'priority': '0.6', 'changefreq': 'monthly'},
         {'loc': reverse('impressum'),        'priority': '0.2', 'changefreq': 'yearly'},
         {'loc': reverse('datenschutz'),      'priority': '0.2', 'changefreq': 'yearly'},

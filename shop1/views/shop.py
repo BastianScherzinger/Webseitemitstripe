@@ -91,6 +91,16 @@ def ueber_uns(request):
     return render(request, 'shop1/ueber_uns.html')
 
 
+def liefergebiet(request):
+    """SEO/GEO-Landingpage: Herkunft Alsfeld + Liefergebiet zwischen Fulda und Gießen."""
+    orte = [
+        'Fulda', 'Herbstein', 'Lauterbach', 'Grebenau', 'Ulrichstein',
+        'Alsfeld', 'Romrod', 'Antrifttal', 'Kirtorf', 'Homberg (Efze)',
+        'Neustadt (Hessen)', 'Schwalmstadt', 'Mücke', 'Grünberg', 'Laubach', 'Gießen',
+    ]
+    return render(request, 'shop1/liefergebiet.html', {'orte': orte})
+
+
 def produkte(request):
     """Zeigt alle aktiven Produkte aus der Datenbank."""
     produkte_liste = Produkt.objects.filter(aktiv=True).order_by('-erstellt_am')

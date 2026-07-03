@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Liefergebiet: Handbemalte Vintage Mode von Fulda bis Gießen | Luviq Universe{% endblock %}
+{% block meta_description %}Luviq Universe aus Alsfeld versendet handbemalte 1-of-1 Vintage-Unikate in die ganze Region zwischen Fulda und Gießen – u.a. nach Lauterbach, Homberg (Efze), Schwalmstadt und Grünberg. Deutschlandweiter Versand.{% endblock %}
+{% block og_title %}Liefergebiet Fulda – Gießen | Luviq Universe{% endblock %}
+{% block og_description %}Handbemalte Vintage-Unikate aus Alsfeld – beliebt in der ganzen Region zwischen Fulda und Gießen. Deutschlandweiter Versand.{% endblock %}
+{% block twitter_title %}Liefergebiet Fulda – Gießen | Luviq Universe{% endblock %}
+{% block twitter_description %}Handbemalte Vintage-Unikate aus Alsfeld, versendet in die Region zwischen Fulda und Gießen sowie deutschlandweit.{% endblock %}
+
+{% block schema_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+        {"@type": "ListItem", "position": 2, "name": "Liefergebiet", "item": "{{ request.build_absolute_uri }}"}
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Gibt es einen Luviq-Laden in Fulda oder Gießen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nein. Luviq Universe ist ein reiner Online-Shop mit Sitz in Alsfeld. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – auch nach Fulda und Gießen gibt es also keinen Laden zum Reinschauen, aber sehr wohl schnellen Versand."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie schnell kommt eine Bestellung in der Region an?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Innerhalb von Hessen – etwa nach Fulda, Gießen, Lauterbach oder Grünberg – ist ein Unikat meist schon nach 1-3 Werktagen im Briefkasten."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Welche Region beliefert Luviq besonders oft?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ein Großteil unserer Community kommt aus dem Vogelsbergkreis und der weiteren Umgebung zwischen Fulda und Gießen. Versendet wird aber deutschlandweit – egal wo du wohnst."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <!-- Hero -->
+        <div class="mb-28 animate-reveal text-center">
+            <h3 class="text-[10px] font-black uppercase tracking-[0.4em] text-glow-orange mb-6">Herkunft &amp; Liefergebiet</h3>
+            <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
+                Von Alsfeld<br class="md:hidden"> bis <span class="text-glow">Fulda &amp; Gießen</span>
+            </h1>
+            <p class="text-white/40 text-lg font-light max-w-2xl mx-auto leading-relaxed">
+                Jedes Luviq-Unikat entsteht in Alsfeld, Hessen – und reist von dort in die ganze Region und deutschlandweit zu dir.
+            </p>
+            <div class="h-px w-32 bg-glow-orange mt-16 rounded-full mx-auto"></div>
+        </div>
+
+        <!-- Story -->
+        <section class="scroll-reveal glass-card p-10 md:p-16 rounded-[3.5rem] mb-24 max-w-4xl mx-auto" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <p class="text-white/60 text-lg leading-relaxed font-light">
+                Luisa Brehler bemalt jedes Unikat mit der Hand in ihrem Atelier in Alsfeld, mitten im Vogelsbergkreis – genau zwischen Fulda und Gießen. Einen Ladenverkauf gibt es bewusst nicht: Luviq Universe ist ein reiner Online-Shop. Dafür kommt der Versand aus Hessen heraus besonders schnell bei dir an, egal ob du eher Richtung Fulda oder Richtung Gießen wohnst.
+            </p>
+        </section>
+
+        <!-- Region Grid -->
+        <section class="mb-28">
+            <h2 class="text-2xl md:text-4xl font-black heading-font text-white uppercase tracking-tighter mb-4 text-center">
+                Beliebt in <span class="text-glow">deiner Nähe</span>
+            </h2>
+            <p class="text-white/30 text-xs sm:text-sm text-center max-w-2xl mx-auto mb-14 uppercase tracking-widest">
+                Ein Auszug aus unserer Community entlang der Strecke Fulda – Alsfeld – Gießen
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                {% for ort in orte %}
+                <div class="scroll-reveal glass rounded-2xl px-4 py-5 text-center border-white/5" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                    <span class="text-white/70 text-sm font-semibold">{{ ort }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            <p class="text-white/20 text-xs text-center mt-10 max-w-xl mx-auto leading-relaxed">
+                Du wohnst woanders? Kein Problem – wir versenden jedes Unikat deutschlandweit.
+            </p>
+        </section>
+
+        <!-- FAQ -->
+        <section class="max-w-4xl mx-auto mb-24">
+            <h2 class="text-2xl md:text-4xl font-black heading-font text-white uppercase tracking-tighter mb-12 text-center">
+                Fragen zu <span class="text-glow">Versand &amp; Region</span>
+            </h2>
+            <div class="space-y-6">
+                <div class="scroll-reveal glass-card p-8 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                    <h3 class="text-white font-bold mb-3">Gibt es einen Luviq-Laden in Fulda oder Gießen?</h3>
+                    <p class="text-white/50 font-light leading-relaxed">Nein. Luviq Universe ist ein reiner Online-Shop mit Sitz in Alsfeld. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – auch nach Fulda und Gießen gibt es also keinen Laden zum Reinschauen, aber sehr wohl schnellen Versand.</p>
+                </div>
+                <div class="scroll-reveal glass-card p-8 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
+                    <h3 class="text-white font-bold mb-3">Wie schnell kommt eine Bestellung in der Region an?</h3>
+                    <p class="text-white/50 font-light leading-relaxed">Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Innerhalb von Hessen – etwa nach Fulda, Gießen, Lauterbach oder Grünberg – ist ein Unikat meist schon nach 1-3 Werktagen im Briefkasten.</p>
+                </div>
+                <div class="scroll-reveal glass-card p-8 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+                    <h3 class="text-white font-bold mb-3">Welche Region beliefert Luviq besonders oft?</h3>
+                    <p class="text-white/50 font-light leading-relaxed">Ein Großteil unserer Community kommt aus dem Vogelsbergkreis und der weiteren Umgebung zwischen Fulda und Gießen. Versendet wird aber deutschlandweit – egal wo du wohnst.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <div class="text-center">
+            <a href="{% url 'produkte' %}" class="inline-block px-12 py-5 rounded-full bg-glow-orange text-white text-sm font-black uppercase tracking-widest hover:shadow-[0_0_30px_rgba(200,150,92,0.5)] transition-all transform hover:scale-105 active:scale-95">
+                Kollektion entdecken
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
