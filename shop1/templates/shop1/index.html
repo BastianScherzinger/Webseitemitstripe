@@ -5,8 +5,16 @@
 {% block meta_description %}Luviq Universe aus Alsfeld (Hessen): Handbemalte 1-of-1 Vintage-Unikate – jedes Stück ein Kunstwerk. Nachhaltige Second-Hand-Mode, deutschlandweit bestellen. Gießen, Fulda, Frankfurt & überall.{% endblock %}
 {% block og_title %}Luviq Universe – Handbemalte Second Hand Mode | Alsfeld, Hessen{% endblock %}
 {% block og_description %}Handbemalte 1-of-1 Vintage-Unikate aus Alsfeld. Nachhaltige Second-Hand-Mode von Luisa Brehler – deutschlandweit. Jetzt entdecken.{% endblock %}
+{% block og_image_tag %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/hero-dragon.jpg' %}">
+<meta property="og:image:width" content="1536">
+<meta property="og:image:height" content="1024">
+{% endblock %}
 {% block twitter_title %}Luviq Universe – Dein Second Hand Shop aus Hessen{% endblock %}
 {% block twitter_description %}Handbemalte Vintage-Unikate aus Alsfeld, Hessen. Nachhaltig. Einzigartig. Deutschlandweit.{% endblock %}
+{% block twitter_image_tag %}
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/hero-dragon.jpg' %}">
+{% endblock %}
 
 {% block schema_ld %}
 <script type="application/ld+json">
@@ -111,6 +119,36 @@
         0 0 80px rgba(200, 150, 92, 0.18);
 }
 #hero-line2 { will-change: transform, opacity; }
+
+/* Marquee ticker below the hero */
+.hero-ticker-wrap {
+    overflow: hidden;
+    white-space: nowrap;
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+}
+.hero-ticker-track {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.5rem;
+    animation: hero-ticker-scroll 32s linear infinite;
+    will-change: transform;
+}
+.hero-ticker-track span {
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.25);
+}
+.hero-ticker-track .tick-dot { color: rgba(200, 150, 92, 0.5); }
+@keyframes hero-ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hero-ticker-track { animation: none; }
+}
 </style>
 {% endblock %}
 
@@ -120,46 +158,110 @@
     <div class="energy-nebula"></div>
 
     <!-- ═══ 3D HERO ═══ -->
-    <section id="hero-section" class="relative flex items-center justify-center overflow-hidden px-4" style="min-height: 90vh;">
+    <section id="hero-section" class="relative overflow-hidden px-4" style="min-height: 100svh;">
         <!-- Three.js particle canvas (disabled on mobile for performance) -->
         <canvas id="hero-canvas" class="absolute inset-0 w-full h-full pointer-events-none hidden sm:block"></canvas>
 
         <!-- Content -->
-        <div id="hero-3d-wrap" class="relative z-10 max-w-7xl mx-auto text-center py-32">
-            <!-- Badge -->
-            <div id="hero-badge" class="inline-flex items-center space-x-2 px-6 py-2 rounded-full glass border-white/5 mb-10" style="opacity:0">
-                <span class="w-2 h-2 rounded-full bg-glow-orange animate-pulse"></span>
-                <span class="text-xs font-black uppercase tracking-[0.3em] text-white/60">Sustainable Art Drop</span>
+        <div class="relative z-10 max-w-7xl mx-auto py-28 sm:py-32 grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-16 lg:gap-12 items-center">
+            <!-- Copy -->
+            <div id="hero-3d-wrap" class="text-center lg:text-left">
+                <!-- Badge -->
+                <div id="hero-badge" class="inline-flex items-center space-x-2 px-6 py-2 rounded-full glass border-white/5 mb-10" style="opacity:0">
+                    <span class="w-2 h-2 rounded-full bg-glow-orange animate-pulse"></span>
+                    <span class="text-xs font-black uppercase tracking-[0.3em] text-white/60">Sustainable Art Drop</span>
+                </div>
+
+                <!-- Titel – Fade + Slide-Up (kein overflow:hidden → kein Abschneiden) -->
+                <h1 id="hero-line1" class="text-[4.5rem] sm:text-[7rem] lg:text-[8.5rem] font-black heading-font tracking-tight text-glow leading-none mb-2 sm:mb-3" style="opacity:0;transform:translateY(80px) scale(0.72) rotateX(22deg)">
+                    LUVIQ
+                </h1>
+                <div id="hero-line2" class="text-xl sm:text-3xl lg:text-4xl font-black heading-font tracking-[0.4em] text-white/80 leading-none uppercase mb-10 sm:mb-14" style="opacity:0;transform:translateY(45px)">
+                    UNIVERSE
+                </div>
+
+                <p id="hero-sub" class="text-base sm:text-lg text-white/85 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed font-light tracking-wide glass px-8 py-5 rounded-2xl border-white/10" style="opacity:0;transform:translateY(28px)">
+                    Aus <strong class="text-white font-semibold">Alsfeld, Hessen</strong> – wir verwandeln vergessene Vintage-Klassiker durch handbemalte Designs in einzigartige 1-of-1 Kunstwerke. Second&nbsp;Hand neu gedacht.
+                </p>
+
+                <div id="hero-cta" class="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-6 sm:gap-8 mb-12" style="opacity:0;transform:translateY(28px)">
+                    <a href="{% url 'produkte' %}" class="btn-glow px-12 sm:px-14 py-5 sm:py-6 rounded-2xl text-white font-black uppercase tracking-widest text-xs shadow-[0_20px_50px_rgba(255,106,0,0.3)] hover:scale-105 transition-transform">
+                        Drop Entdecken
+                    </a>
+                    <a href="{% url 'ueber_uns' %}" class="px-12 sm:px-14 py-5 sm:py-6 rounded-2xl glass border-white/10 text-white font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all">
+                        Unsere Story
+                    </a>
+                </div>
+
+                <!-- Trust badges -->
+                <div id="hero-trust" class="flex flex-wrap justify-center lg:justify-start gap-3" style="opacity:0;transform:translateY(20px)">
+                    <div class="inline-flex items-center gap-2 glass px-5 py-3 rounded-2xl border-white/5">
+                        <svg class="w-4 h-4 text-glow-orange flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 21c2-1 3-3 3.5-5L15 7.5l3.5 3.5L10 19.5C8 20 6 21 3 21z"/>
+                            <path d="M15 7.5L18 4.5a2 2 0 1 1 2.5 2.5l-2.5 3"/>
+                        </svg>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-white/60">100% Handbemalt</span>
+                    </div>
+                    <div class="inline-flex items-center gap-2 glass px-5 py-3 rounded-2xl border-white/5">
+                        <svg class="w-4 h-4 text-glow-orange flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/>
+                        </svg>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-white/60">1-of-1 Unikat</span>
+                    </div>
+                    <div class="inline-flex items-center gap-2 glass px-5 py-3 rounded-2xl border-white/5">
+                        <svg class="w-4 h-4 text-glow-orange flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 7h11v8H3z"/>
+                            <path d="M14 10h4l3 3v2h-7v-5z"/>
+                            <circle cx="7" cy="17" r="1.5"/>
+                            <circle cx="17" cy="17" r="1.5"/>
+                        </svg>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-white/60">Versand DE</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Titel – Fade + Slide-Up (kein overflow:hidden → kein Abschneiden) -->
-            <h1 id="hero-line1" class="text-[5.5rem] sm:text-[9rem] md:text-[13rem] font-black heading-font tracking-tight text-glow leading-none mb-2 sm:mb-3" style="opacity:0;transform:translateY(80px) scale(0.72) rotateX(22deg)">
-                LUVIQ
-            </h1>
-            <div id="hero-line2" class="text-2xl sm:text-4xl md:text-[3.5rem] font-black heading-font tracking-[0.4em] text-white/80 leading-none uppercase mb-10 sm:mb-16" style="opacity:0;transform:translateY(45px)">
-                UNIVERSE
-            </div>
-
-            <p id="hero-sub" class="text-base sm:text-lg text-white/85 max-w-xl mx-auto mb-14 leading-relaxed font-light tracking-wide glass px-8 py-5 rounded-2xl border-white/10" style="opacity:0;transform:translateY(28px)">
-                Aus <strong class="text-white font-semibold">Alsfeld, Hessen</strong> – wir verwandeln vergessene Vintage-Klassiker durch handbemalte Designs in einzigartige 1-of-1 Kunstwerke. Second&nbsp;Hand neu gedacht.
-            </p>
-
-            <div id="hero-cta" class="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-8" style="opacity:0;transform:translateY(28px)">
-                <a href="{% url 'produkte' %}" class="btn-glow px-12 sm:px-16 py-5 sm:py-6 rounded-2xl text-white font-black uppercase tracking-widest text-xs shadow-[0_20px_50px_rgba(255,106,0,0.3)] hover:scale-105 transition-transform">
-                    Drop Entdecken
-                </a>
-                <a href="{% url 'ueber_uns' %}" class="px-12 sm:px-16 py-5 sm:py-6 rounded-2xl glass border-white/10 text-white font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all">
-                    Unsere Story
-                </a>
+            <!-- Featured artwork photo -->
+            <div id="hero-image" class="relative" style="opacity:0;transform:translateY(40px) scale(0.96)">
+                <div class="relative rounded-[3rem] sm:rounded-[4rem] overflow-hidden glass border-white/5 p-3 shadow-2xl">
+                    <img
+                        src="{% static 'shop1/images/hero-dragon.jpg' %}"
+                        alt="Handbemalter Dragon-Hoodie von Luviq Universe – 1-of-1 Unikat aus Alsfeld"
+                        class="w-full h-[24rem] sm:h-[32rem] lg:h-[38rem] object-cover rounded-[2.5rem] sm:rounded-[3.5rem]"
+                        width="1536" height="1024"
+                        loading="eager" fetchpriority="high" decoding="async">
+                    <div class="absolute inset-3 rounded-[2.5rem] sm:rounded-[3.5rem] bg-gradient-to-t from-bg-base/70 via-transparent to-transparent pointer-events-none"></div>
+                    <div class="absolute bottom-8 left-8 right-8 flex items-center justify-between">
+                        <span class="glass px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest text-white/90 border-white/10">Dragon Hoodie</span>
+                        <span class="glass px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest text-glow-orange border-glow-orange/20">1 of 1</span>
+                    </div>
+                </div>
+                <div class="absolute -top-10 -right-10 w-56 h-56 bg-glow-orange/20 blur-[100px] rounded-full pointer-events-none"></div>
+                <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-orange-900/10 blur-[110px] rounded-full pointer-events-none"></div>
             </div>
         </div>
 
         <!-- Scroll hint -->
-        <div id="hero-scroll" class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3" style="opacity:0">
+        <div id="hero-scroll" class="absolute bottom-6 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-3" style="opacity:0">
             <span class="text-[9px] font-black uppercase tracking-[0.5em] text-white/25">Scroll</span>
             <div class="w-px h-12 bg-gradient-to-b from-glow-orange/60 to-transparent animate-pulse"></div>
         </div>
     </section>
+
+    <!-- Marquee Ticker -->
+    <div class="hero-ticker-wrap py-5 border-y border-white/5 relative z-10" aria-hidden="true">
+        <div class="hero-ticker-track">
+            <span>1-OF-1 UNIKAT</span><span class="tick-dot">·</span>
+            <span>HANDBEMALT</span><span class="tick-dot">·</span>
+            <span>NACHHALTIG</span><span class="tick-dot">·</span>
+            <span>ALSFELD, HESSEN</span><span class="tick-dot">·</span>
+            <span>VINTAGE ART</span><span class="tick-dot">·</span>
+            <span>1-OF-1 UNIKAT</span><span class="tick-dot">·</span>
+            <span>HANDBEMALT</span><span class="tick-dot">·</span>
+            <span>NACHHALTIG</span><span class="tick-dot">·</span>
+            <span>ALSFELD, HESSEN</span><span class="tick-dot">·</span>
+            <span>VINTAGE ART</span><span class="tick-dot">·</span>
+        </div>
+    </div>
 
     <!-- Features Section -->
     <section class="py-24 relative z-10">
@@ -393,6 +495,8 @@
             .to('#hero-line2',  { opacity: 1, y: 0, duration: 1.2, ease: 'expo.out' }, '-=1.1')
             .to('#hero-sub',    { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' }, '-=0.65')
             .to('#hero-cta',    { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=0.7')
+            .to('#hero-trust',  { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
+            .to('#hero-image',  { opacity: 1, y: 0, scale: 1, duration: 1.3, ease: 'expo.out' }, '-=1.4')
             .to('#hero-scroll', { opacity: 1, duration: 0.7 }, '-=0.3')
             .then(function () {
                 var t = document.getElementById('hero-line1');
