@@ -22,10 +22,22 @@ if not DEBUG and _SECRET_KEY.startswith('django-insecure-'):
 SECRET_KEY = _SECRET_KEY
 
 # In Production nur bekannte Hosts erlauben; DEBUG erlaubt alles lokal.
+# ALLOWED_HOSTS_EXTRA robust parsen: Nutzer tragen dort oft aus Versehen
+# "https://domain.com" statt "domain.com" ein - das würde ALLOWED_HOSTS
+# sonst wirkungslos machen. Außerdem wird automatisch die jeweils andere
+# Variante (mit/ohne "www.") ergänzt, falls nur eine davon eingetragen wurde.
+_extra_raw = [
+    h.strip().removeprefix('https://').removeprefix('http://').rstrip('/')
+    for h in os.getenv('ALLOWED_HOSTS_EXTRA', '').split(',') if h.strip()
+]
+_extra = set(_extra_raw)
+for _h in _extra_raw:
+    _extra.add(_h[4:] if _h.startswith('www.') else f'www.{_h}')
+_extra = sorted(_extra)
+
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    _extra = [h.strip() for h in os.getenv('ALLOWED_HOSTS_EXTRA', '').split(',') if h.strip()]
     ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.up.railway.app'] + _extra
 
 # ═══ CSRF / PROXY ═══
@@ -35,7 +47,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://luviq-luisa-production.up.railway.app',
     'http://localhost',
     'http://127.0.0.1',
-]
+] + [f'https://{_h}' for _h in _extra]
 
 # Railway terminiert HTTPS am Proxy und leitet intern als HTTP weiter
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
