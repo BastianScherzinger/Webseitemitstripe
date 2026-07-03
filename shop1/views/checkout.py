@@ -4,6 +4,7 @@ import os
 import json
 import logging
 
+import requests
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -16,6 +17,56 @@ from ..utils import send_brevo_email
 from ._helpers import _get_or_create_cart
 
 _log = logging.getLogger('shop1')
+
+
+def _paypal_api_base():
+    return 'https://api-m.paypal.com' if os.getenv('PAYPAL_MODE', 'sandbox') == 'live' else 'https://api-m.sandbox.paypal.com'
+
+
+def _verify_paypal_order(paypal_order_id, expected_amount):
+    """Verifiziert eine PayPal-Zahlung serverseitig ueber die PayPal Orders API.
+
+    Ohne diese Pruefung wuerde der vom Client per AJAX gesendete
+    paypal_order_id-String ungeprueft uebernommen: jeder eingeloggte Nutzer
+    haette so jede eigene Bestellung ohne echte Zahlung als bezahlt markieren
+    koennen (siehe frueherer Code: nur Replay-Check, keine Verifikation).
+    """
+    client_id = settings.PAYPAL_CLIENT_ID
+    secret = os.getenv('PAYPAL_SECRET', '')
+    if not secret or client_id == 'sb':
+        _log.error('PayPal Verifikation nicht moeglich: PAYPAL_SECRET/PAYPAL_CLIENT_ID fehlt.')
+        return False
+    try:
+        token_resp = requests.post(
+            f'{_paypal_api_base()}/v1/oauth2/token',
+            auth=(client_id, secret),
+            data={'grant_type': 'client_credentials'},
+            timeout=10,
+        )
+        token_resp.raise_for_status()
+        access_token = token_resp.json()['access_token']
+
+        order_resp = requests.get(
+            f'{_paypal_api_base()}/v2/checkout/orders/{paypal_order_id}',
+            headers={'Authorization': f'Bearer {access_token}'},
+            timeout=10,
+        )
+        if order_resp.status_code != 200:
+            return False
+        data = order_resp.json()
+        if data.get('status') != 'COMPLETED':
+            return False
+
+        paid_total = sum(
+            float(capture['amount']['value'])
+            for unit in data.get('purchase_units', [])
+            for capture in unit.get('payments', {}).get('captures', [])
+            if capture.get('amount', {}).get('currency_code') == 'EUR'
+        )
+        return abs(paid_total - float(expected_amount)) < 0.01
+    except Exception as e:
+        _log.error('PayPal Verifikation fehlgeschlagen: %s', e)
+        return False
 
 
 @login_required(login_url='login')
@@ -156,6 +207,10 @@ def paypal_capture(request, order_id):
         # Replay-Schutz
         if Order.objects.filter(paypal_order_id=paypal_order_id).exclude(id=order.id).exists():
             return JsonResponse({'error': 'Diese PayPal-Transaktion wurde bereits verwendet.'}, status=400)
+
+        # Serverseitige Verifikation gegen die PayPal Orders API (Status + Betrag)
+        if not _verify_paypal_order(paypal_order_id, order.gesamt_betrag):
+            return JsonResponse({'error': 'Zahlung konnte nicht verifiziert werden.'}, status=400)
 
         order.paypal_order_id = paypal_order_id
         order.status = 'paid'
