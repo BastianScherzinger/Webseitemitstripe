@@ -1,6 +1,8 @@
 import logging
 import os
+import re
 import threading
+from django.core.cache import cache
 from django.utils import timezone
 from django.db.models import F
 from .models import PageVisit, VisitorLog
@@ -9,6 +11,20 @@ _log = logging.getLogger('shop1')
 
 _SKIP = ('/static/', '/media/', '/admin/', '/favicon', '/robots.txt',
          '/sitemap.xml', '/health', '/__debug__')
+
+# Bots/Crawler/Scanner senden i.d.R. keine Cookies zurück -> jede ihrer
+# Anfragen sieht fuer das Session-Dedup wie ein "neuer Besucher" aus und
+# hat sonst bei jedem Hit eine Admin-Mail ausgelöst (Ursache der Mail-Flut).
+_BOT_UA_RE = re.compile(
+    r'bot|crawl|spider|slurp|facebookexternalhit|telegrambot|whatsapp|'
+    r'discordbot|slackbot|linkedinbot|embedly|quora link preview|'
+    r'pinterest|vkshare|redditbot|applebot|ia_archiver|semrushbot|'
+    r'ahrefsbot|mj12bot|dotbot|petalbot|bytespider|gptbot|ccbot|'
+    r'python-requests|curl/|wget/|go-http-client|okhttp|scrapy|'
+    r'headlesschrome|phantomjs|uptimerobot|pingdom|statuscake|gtmetrix|'
+    r'monitor',
+    re.IGNORECASE,
+)
 
 _PRIVATE = ('127.', '10.', '192.168.', '::1', '172.16.', '172.17.',
             '172.18.', '172.19.', '172.20.', '172.21.', '172.22.',
@@ -156,15 +172,19 @@ class PageVisitMiddleware:
             except Exception:
                 pass
 
-        # ── Admin-Benachrichtigung: einmal pro Browser-Session ──
-        if not request.session.get('visitor_notif_sent'):
+        # ── Admin-Benachrichtigung: einmal pro Browser-Session, keine Bots,
+        #    zusaetzlich hart gedeckelt (Schutz vor Mail-Flut durch UAs ohne
+        #    Cookie-Unterstuetzung oder Traffic-Spitzen) ──
+        is_bot = bool(_BOT_UA_RE.search(ua))
+        if not is_bot and not request.session.get('visitor_notif_sent'):
             request.session['visitor_notif_sent'] = True
             request.session.modified = True
-            threading.Thread(
-                target=_notify_admin,
-                args=(ip, path, ua, site_name),
-                daemon=True,
-            ).start()
+            if cache.add('admin_notif_lock', 1, timeout=30):
+                threading.Thread(
+                    target=_notify_admin,
+                    args=(ip, path, ua, site_name),
+                    daemon=True,
+                ).start()
 
         if should_log:
             try:

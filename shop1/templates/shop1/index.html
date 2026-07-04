@@ -149,6 +149,17 @@
 @media (prefers-reduced-motion: reduce) {
     .hero-ticker-track { animation: none; }
 }
+.hero-progress-fill {
+    width: 0%;
+    animation: hero-fill 4.5s linear forwards;
+}
+@keyframes hero-fill {
+    from { width: 0%; }
+    to   { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hero-progress-fill { animation: none; width: 100%; }
+}
 </style>
 {% endblock %}
 
@@ -233,13 +244,21 @@
 
             <!-- Switchable Product Showcase -->
             <div id="hero-showcase" class="relative" style="opacity:0;transform:translateY(40px) scale(0.96)">
-                {% with showcase=produkte_galerie|slice:":4" %}
-                <div class="relative rounded-[3rem] sm:rounded-[4rem] overflow-hidden glass border-white/5 p-3 shadow-2xl" {% if showcase %}x-data="{ active: 0, count: {{ showcase|length }} }" x-init="setInterval(() => active = (active + 1) % count, 4500)"{% endif %}>
-                    <div class="relative w-full h-[22rem] sm:h-[28rem] lg:h-[32rem] rounded-[2.5rem] sm:rounded-[3.5rem] overflow-hidden">
+                {% with showcase=produkte_galerie|slice:":5" %}
+                <div class="relative rounded-[3rem] sm:rounded-[4rem] overflow-hidden glass border-white/5 p-3 shadow-2xl"
+                     role="region" aria-roledescription="carousel" aria-label="Aktuelle Unikate"
+                     {% if showcase %}x-data="{ active: 0, count: {{ showcase|length }}, paused: false, touchX: 0 }"
+                     x-init="setInterval(() => { if (!paused) active = (active + 1) % count }, 4500)"
+                     @mouseenter="paused = true" @mouseleave="paused = false"{% endif %}>
+                    <div class="group relative w-full h-[22rem] sm:h-[28rem] lg:h-[32rem] rounded-[2.5rem] sm:rounded-[3.5rem] overflow-hidden"
+                         @touchstart.passive="touchX = $event.changedTouches[0].clientX"
+                         @touchend.passive="let dx = $event.changedTouches[0].clientX - touchX; if (Math.abs(dx) > 40) active = dx > 0 ? (active - 1 + count) % count : (active + 1) % count">
                         {% for produkt in showcase %}
                         <a href="{{ produkt.get_absolute_url }}"
                            class="absolute inset-0 block"
                            x-show="active === {{ forloop.counter0 }}"
+                           :aria-hidden="active === {{ forloop.counter0 }} ? 'false' : 'true'"
+                           :tabindex="active === {{ forloop.counter0 }} ? 0 : -1"
                            x-transition:enter="transition ease-out duration-700"
                            x-transition:enter-start="opacity-0 scale-105"
                            x-transition:enter-end="opacity-100 scale-100"
@@ -250,6 +269,7 @@
                             <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" decoding="async">
                             {% endif %}
                             <div class="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/10 to-transparent"></div>
+                            <span class="absolute top-6 left-6 glass px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-white/50 border-white/10">{{ forloop.counter|stringformat:"02d" }} / {{ showcase|length|stringformat:"02d" }}</span>
                             <span class="absolute top-6 right-6 glass px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest text-white/90 border-white/10">1 of 1</span>
                             <div class="absolute bottom-7 left-7 right-7">
                                 <p class="text-white font-black text-lg sm:text-xl heading-font uppercase tracking-tight mb-2">{{ produkt.name }}</p>
@@ -266,16 +286,37 @@
                             <p class="text-white/20 italic font-light tracking-[0.3em] uppercase text-xs px-8 text-center">Neue Drops kommen bald</p>
                         </div>
                         {% endfor %}
+
+                        {% if showcase|length > 1 %}
+                        <button type="button" @click="active = (active - 1 + count) % count" aria-label="Vorheriges Produkt"
+                            class="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 items-center justify-center rounded-full glass border-white/10 text-white/70 opacity-0 group-hover:opacity-100 hover:text-white transition-all duration-300 focus-visible:opacity-100">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 19l-7-7 7-7"/></svg>
+                        </button>
+                        <button type="button" @click="active = (active + 1) % count" aria-label="Nächstes Produkt"
+                            class="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 items-center justify-center rounded-full glass border-white/10 text-white/70 opacity-0 group-hover:opacity-100 hover:text-white transition-all duration-300 focus-visible:opacity-100">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                        {% endif %}
                     </div>
 
                     {% if showcase|length > 1 %}
-                    <div class="flex items-center justify-center gap-2 mt-4 pb-1">
+                    <div class="flex items-stretch gap-2 sm:gap-3 mt-4 px-1" role="tablist" aria-label="Produkte wechseln">
                         {% for produkt in showcase %}
                         <button
+                            type="button"
+                            role="tab"
                             @click="active = {{ forloop.counter0 }}"
-                            :class="active === {{ forloop.counter0 }} ? 'w-8 bg-glow-orange' : 'w-2 bg-white/20'"
-                            class="h-2 rounded-full transition-all duration-300"
-                            aria-label="Zeige {{ produkt.name }}"></button>
+                            :aria-selected="active === {{ forloop.counter0 }} ? 'true' : 'false'"
+                            aria-label="{{ produkt.name }} anzeigen"
+                            class="relative flex-1 h-14 sm:h-16 rounded-xl sm:rounded-2xl overflow-hidden ring-1 transition-all duration-300"
+                            :class="active === {{ forloop.counter0 }} ? 'ring-glow-orange opacity-100' : 'ring-white/10 opacity-40 hover:opacity-70'">
+                            {% if produkt.bild %}
+                            <img src="{{ produkt.bild.url }}" alt="" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                            {% endif %}
+                            <span class="absolute inset-x-0 bottom-0 h-[2px] bg-black/30">
+                                <span x-show="active === {{ forloop.counter0 }}" class="hero-progress-fill block h-full bg-glow-orange"></span>
+                            </span>
+                        </button>
                         {% endfor %}
                     </div>
                     {% endif %}
