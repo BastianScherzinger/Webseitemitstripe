@@ -219,6 +219,14 @@ preis = models.DecimalField(...)      # Preis-Kopie zum Bestellzeitpunkt
 # → Blockiert NIEMALS den Response
 # → Geo-Daten kommen asynchron in die DB
 ```
+**Kein E-Mail-Versand pro Besuch (Stand 2026-07):** Früher verschickte die
+Middleware pro (vermeintlich neuem) Besucher eine Admin-Mail via Brevo. Das
+führte trotz Bot-Filter/Session-Dedup zu einer Mail-Flut (Clients/Bots ohne
+Cookies gelten bei jedem Hit als „neu") und überlastete Brevo. `_notify_admin`
+und der Aufruf-Block wurden komplett entfernt. Besuche werden weiterhin still
+in `PageVisit` (Tagesstatistik) und `VisitorLog` (Dashboard, inkl. Geo-IP)
+protokolliert — nur ohne jegliche E-Mail. Admin-Mails gibt es nur noch
+nutzergetriggert (Kontaktformular, Bestellungen).
 
 ### Werbungs-Cache
 ```python
