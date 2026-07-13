@@ -2,7 +2,6 @@ import logging
 import os
 import re
 import threading
-from django.core.cache import cache
 from django.utils import timezone
 from django.db.models import F
 from .models import PageVisit, VisitorLog
@@ -79,46 +78,6 @@ def _geo_enrich(log_pk, ip):
             pass
 
 
-def _notify_admin(ip, path, ua, site_name):
-    """Background thread: E-Mail-Benachrichtigung an Admin bei neuem Besucher."""
-    try:
-        from django.db import close_old_connections
-        close_old_connections()
-        from django.utils import timezone
-        from shop1.utils import send_brevo_email
-        recipient = os.getenv('ADMIN_EMAIL', '')
-        if not recipient:
-            return
-        now_str = timezone.now().strftime('%d.%m.%Y %H:%M:%S')
-        is_private = any((ip or '').startswith(p) for p in _PRIVATE)
-        ip_display = ip or 'Unbekannt'
-        ua_short = (ua or '')[:120] + ('…' if len(ua or '') > 120 else '')
-        subject = f'[{site_name}] Neuer Besucher – {now_str}'
-        html = f"""
-        <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;
-                    background:#0a0a1a;color:#f0f0f0;border-radius:12px;
-                    padding:30px;border:1px solid #222;">
-            <h2 style="color:#ff6a00;margin:0 0 20px;font-size:18px;">
-                Neuer Besucher auf <strong>{site_name}</strong>
-            </h2>
-            <table style="width:100%;border-collapse:collapse;font-size:13px;">
-                <tr><td style="padding:6px 0;color:#999;width:100px;">Zeitpunkt</td>
-                    <td style="padding:6px 0;">{now_str}</td></tr>
-                <tr><td style="padding:6px 0;color:#999;">Seite</td>
-                    <td style="padding:6px 0;font-weight:bold;">{path}</td></tr>
-                <tr><td style="padding:6px 0;color:#999;">IP</td>
-                    <td style="padding:6px 0;">{"(intern)" if is_private else ip_display}</td></tr>
-                <tr><td style="padding:6px 0;color:#999;">Browser</td>
-                    <td style="padding:6px 0;">{ua_short}</td></tr>
-            </table>
-        </div>
-        """
-        text = f'Neuer Besucher auf {site_name}\n{now_str}\nSeite: {path}\nIP: {ip_display}'
-        send_brevo_email(subject, html, recipient, recipient_name='Admin', text_content=text)
-    except Exception as e:
-        _log.warning('_notify_admin error: %s', e)
-
-
 class PageVisitMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -172,19 +131,12 @@ class PageVisitMiddleware:
             except Exception:
                 pass
 
-        # ── Admin-Benachrichtigung: einmal pro Browser-Session, keine Bots,
-        #    zusaetzlich hart gedeckelt (Schutz vor Mail-Flut durch UAs ohne
-        #    Cookie-Unterstuetzung oder Traffic-Spitzen) ──
-        is_bot = bool(_BOT_UA_RE.search(ua))
-        if not is_bot and not request.session.get('visitor_notif_sent'):
-            request.session['visitor_notif_sent'] = True
-            request.session.modified = True
-            if cache.add('admin_notif_lock', 1, timeout=30):
-                threading.Thread(
-                    target=_notify_admin,
-                    args=(ip, path, ua, site_name),
-                    daemon=True,
-                ).start()
+        # ── Admin-Benachrichtigung pro Seitenbesuch: bewusst deaktiviert. ──
+        # Frueher wurde hier pro (vermeintlich neuem) Besucher eine Admin-Mail
+        # verschickt. Das hat trotz Bot-Filter/Session-Dedup zu einer Mail-Flut
+        # gefuehrt (Clients/Bots ohne Cookies gelten bei jedem Hit als "neu")
+        # und Brevo ueberlastet. Besucher werden weiterhin still in VisitorLog
+        # protokolliert (Admin-Dashboard), aber ohne E-Mail-Versand.
 
         if should_log:
             try:
