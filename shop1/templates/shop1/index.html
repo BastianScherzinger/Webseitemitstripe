@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
 
 {% block title %}Luviq Universe – Handbemalte Second Hand Mode aus Alsfeld | Hessen{% endblock %}
 {% block meta_description %}Luviq Universe aus Alsfeld (Hessen): Handbemalte 1-of-1 Vintage-Unikate – jedes Stück ein Kunstwerk. Nachhaltige Second-Hand-Mode, deutschlandweit bestellen. Gießen, Fulda, Frankfurt & überall.{% endblock %}
@@ -96,6 +97,8 @@
 {% endblock %}
 
 {% block extra_css %}
+<!-- LCP-Bild vorab laden für schnellstmögliches Largest Contentful Paint -->
+<link rel="preload" as="image" href="{% static 'shop1/images/hero-dragon.jpg' %}" fetchpriority="high">
 <style>
 #hero-section {
     background:
@@ -150,15 +153,17 @@
     .hero-ticker-track { animation: none; }
 }
 .hero-progress-fill {
-    width: 0%;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
     animation: hero-fill 4.5s linear forwards;
 }
 @keyframes hero-fill {
-    from { width: 0%; }
-    to   { width: 100%; }
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
 }
 @media (prefers-reduced-motion: reduce) {
-    .hero-progress-fill { animation: none; width: 100%; }
+    .hero-progress-fill { animation: none; transform: scaleX(1); }
 }
 </style>
 {% endblock %}
@@ -266,7 +271,7 @@
                            x-transition:leave-start="opacity-100"
                            x-transition:leave-end="opacity-0">
                             {% if produkt.bild %}
-                            <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" decoding="async">
+                            <img src="{{ produkt.bild.url|cloud:'w_800,h_1000,c_fill' }}" alt="{{ produkt.name }}" class="w-full h-full object-cover" width="800" height="1000" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" {% if forloop.first %}fetchpriority="high"{% endif %} decoding="async">
                             {% endif %}
                             <div class="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/10 to-transparent"></div>
                             <span class="absolute top-6 left-6 glass px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-white/50 border-white/10">{{ forloop.counter|stringformat:"02d" }} / {{ showcase|length|stringformat:"02d" }}</span>
@@ -311,7 +316,7 @@
                             class="relative flex-1 h-14 sm:h-16 rounded-xl sm:rounded-2xl overflow-hidden ring-1 transition-all duration-300"
                             :class="active === {{ forloop.counter0 }} ? 'ring-glow-orange opacity-100' : 'ring-white/10 opacity-40 hover:opacity-70'">
                             {% if produkt.bild %}
-                            <img src="{{ produkt.bild.url }}" alt="" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                            <img src="{{ produkt.bild.url|cloud:'w_200,h_140,c_fill' }}" alt="" class="w-full h-full object-cover" width="200" height="140" loading="lazy" decoding="async">
                             {% endif %}
                             <span class="absolute inset-x-0 bottom-0 h-[2px] bg-black/30">
                                 <span x-show="active === {{ forloop.counter0 }}" class="hero-progress-fill block h-full bg-glow-orange"></span>
@@ -351,7 +356,7 @@
     </div>
 
     <!-- Features Strip -->
-    <section class="py-20 sm:py-24 relative z-10">
+    <section class="py-24 sm:py-32 relative z-10">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/5 border-t border-b border-white/5">
                 <div class="scroll-reveal flex items-start gap-5 py-10 sm:py-4 sm:px-10 group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
@@ -360,7 +365,7 @@
                         <path d="M15 7.5L18 4.5a2 2 0 1 1 2.5 2.5l-2.5 3"/>
                     </svg>
                     <div>
-                        <h3 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Hand-Painted</h3>
+                        <h2 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Hand-Painted</h2>
                         <p class="text-white/30 text-sm leading-relaxed font-light">Jedes Stück ist ein Unikat, von Hand bemalt und mit Liebe zum Detail veredelt.</p>
                     </div>
                 </div>
@@ -371,7 +376,7 @@
                         <path d="M7 21l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
                     </svg>
                     <div>
-                        <h3 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Eco-Conscious</h3>
+                        <h2 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Eco-Conscious</h2>
                         <p class="text-white/30 text-sm leading-relaxed font-light">Second-Hand ist die Zukunft. Wir reduzieren Müll und schaffen bleibende Werte.</p>
                     </div>
                 </div>
@@ -382,7 +387,7 @@
                         <path d="M19 15l0.8 2.2L22 18l-2.2 0.8L19 21l-0.8-2.2L16 18l2.2-0.8L19 15z"/>
                     </svg>
                     <div>
-                        <h3 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Curated Style</h3>
+                        <h2 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Curated Style</h2>
                         <p class="text-white/30 text-sm leading-relaxed font-light">Nur die besten Vintage-Teile schaffen es in unseren Veredelungsprozess.</p>
                     </div>
                 </div>
@@ -391,7 +396,7 @@
     </section>
 
     <!-- Local SEO: Herkunft & Versand -->
-    <section class="py-14 relative z-10 border-t border-b border-[rgba(200,150,92,0.08)]" aria-label="Herkunft und Versandgebiet">
+    <section class="py-16 sm:py-20 relative z-10 border-t border-b border-[rgba(200,150,92,0.08)]" aria-label="Herkunft und Versandgebiet">
         <div class="max-w-5xl mx-auto px-4 text-center">
             <p class="text-[10px] font-black uppercase tracking-[0.5em] text-glow-orange mb-5">Made in Hessen · Versand Deutschland</p>
             <h2 class="text-white/80 text-lg sm:text-xl font-light leading-relaxed max-w-3xl mx-auto">
@@ -418,22 +423,22 @@
     </section>
 
     <!-- About Artist Section -->
-    <section class="py-32 relative z-10 overflow-hidden bg-white/[0.01]">
+    <section class="py-24 sm:py-32 relative z-10 overflow-hidden bg-white/[0.01]">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <div class="scroll-reveal relative" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                     <div class="relative z-10 rounded-[5rem] overflow-hidden glass border-white/5 p-5 shadow-2xl transform hover:scale-[1.01] transition-all duration-1000 group">
-                        <img src="{% static 'shop1/images/ich.png' %}" alt="Luisa Brehler" class="w-full h-auto rounded-[4rem] object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000" loading="lazy" decoding="async">
+                        <img src="{% static 'shop1/images/ich.jpg' %}" alt="Luisa Brehler – Gründerin von Luviq Universe" class="w-full h-auto rounded-[4rem] object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000" width="900" height="1350" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-bg-base/80 to-transparent opacity-60"></div>
                     </div>
                     <!-- Decorative elements -->
-                    <div class="absolute -top-15 -left-15 w-64 h-64 bg-glow-orange/20 blur-[100px] rounded-full animate-pulse"></div>
-                    <div class="absolute -bottom-15 -right-15 w-80 h-80 bg-blue-500/10 blur-[120px] rounded-full"></div>
+                    <div class="absolute -top-16 -left-16 w-64 h-64 bg-glow-orange/20 blur-[100px] rounded-full animate-pulse"></div>
+                    <div class="absolute -bottom-16 -right-16 w-80 h-80 bg-amber-800/15 blur-[120px] rounded-full"></div>
                 </div>
 
                 <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.3s;">
                     <div class="h-px w-12 bg-glow-orange mb-10"></div>
-                    <h3 class="text-[10px] font-black uppercase tracking-[0.6em] text-glow-orange mb-8">Creative Director</h3>
+                    <p class="text-[10px] font-black uppercase tracking-[0.6em] text-glow-orange mb-8">Creative Director</p>
                     <h2 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-10 leading-[0.9]">
                         Luisa <br> <span class="text-glow">Brehler</span>
                     </h2>
@@ -459,7 +464,7 @@
 
     {% if werbung_aktiv %}
     <!-- ═══ GESPONSERT / WERBUNG ═══ -->
-    <section class="py-10 relative z-10 border-t border-white/5">
+    <section class="py-12 sm:py-16 relative z-10 border-t border-white/5">
         <div class="max-w-7xl mx-auto px-4">
             <p class="text-[9px] font-black uppercase tracking-[0.3em] text-white/15 mb-5">Gesponsert</p>
             <style>
@@ -493,7 +498,7 @@
     {% endif %}
 
     <!-- ═══ Community & Bewertungen ═══ -->
-    <section class="py-24 relative z-10" id="community" aria-labelledby="community-heading">
+    <section class="py-24 sm:py-32 relative z-10" id="community" aria-labelledby="community-heading">
         <div class="max-w-7xl mx-auto px-4">
 
             <div class="flex flex-col sm:flex-row justify-between items-end mb-14 gap-6 scroll-reveal"
@@ -518,7 +523,7 @@
     </section>
 
     <!-- Products Gallery Section -->
-    <section class="py-32 relative z-10">
+    <section class="py-24 sm:py-32 relative z-10">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
                 <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
@@ -539,17 +544,17 @@
                      style="transition-delay: 0.{{ forloop.counter0 }}s">
                     <div class="relative h-[18rem] sm:h-[24rem] overflow-hidden">
                         {% if produkt.bild %}
-                            <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 grayscale-[20%] group-hover:grayscale-0" loading="lazy" decoding="async">
+                            <img src="{{ produkt.bild.url|cloud:'w_600,h_750,c_fill' }}" alt="{{ produkt.name }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 grayscale-[20%] group-hover:grayscale-0" width="600" height="750" loading="lazy" decoding="async">
                         {% endif %}
                         <div class="absolute inset-0 bg-gradient-to-t from-bg-base via-transparent to-transparent opacity-80"></div>
                         <div class="absolute top-6 right-6 glass px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest text-white/80 border-white/10">1 of 1</div>
                     </div>
                     <div class="p-6 sm:p-10 relative">
-                        <h4 class="text-xl font-black heading-font text-white mb-6 uppercase tracking-tight">{{ produkt.name }}</h4>
+                        <h3 class="text-xl font-black heading-font text-white mb-6 uppercase tracking-tight">{{ produkt.name }}</h3>
                         <div class="flex items-center justify-between">
                             <span class="text-glow font-black text-2xl tracking-tighter">{{ produkt.preis }} €</span>
-                            <a href="{{ produkt.get_absolute_url }}" class="w-14 h-14 glass rounded-[1.5rem] flex items-center justify-center hover:bg-glow-orange hover:text-white transition-all transform group-hover:rotate-6 shadow-xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                            <a href="{{ produkt.get_absolute_url }}" aria-label="{{ produkt.name }} ansehen" class="w-14 h-14 glass rounded-[1.5rem] flex items-center justify-center hover:bg-glow-orange hover:text-white transition-all transform group-hover:rotate-6 shadow-xl">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                             </a>
                         </div>
                     </div>
@@ -564,9 +569,9 @@
     </section>
 
     <!-- Newsletter Section -->
-    <section class="py-40 relative overflow-hidden bg-white/[0.01]">
+    <section class="py-28 sm:py-36 relative overflow-hidden bg-white/[0.01]">
         <div class="max-w-4xl mx-auto px-4 relative z-10 text-center">
-            <div class="scroll-reveal glass-card p-8 sm:p-16 md:p-24 rounded-[2.5rem] sm:rounded-[4.5rem] shadow-[0_0_120px_rgba(200,150,92,0.10)] relative overflow-hidden" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <div class="scroll-reveal glass-card p-8 sm:p-14 md:p-20 rounded-[2.5rem] sm:rounded-[4rem] shadow-[0_0_120px_rgba(200,150,92,0.10)] relative overflow-hidden" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                 <div class="absolute -top-24 -left-24 w-64 h-64 bg-glow-orange/5 blur-[100px] rounded-full"></div>
                 <h2 class="text-4xl md:text-6xl font-black heading-font text-white mb-10 uppercase tracking-tighter">JOIN THE <span class="text-glow">ORBIT</span></h2>
                 <p class="text-white/30 mb-14 max-w-lg mx-auto font-light leading-relaxed tracking-wide uppercase text-xs">Melde dich an und erfahre als Erster von neuen Drops und exklusiven handbemalten Unikaten.</p>
@@ -582,15 +587,28 @@
 </div>
 
 {% block extra_js %}
-<!-- Three.js + GSAP for 3D Hero (loaded only on this page) -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<!-- GSAP for Hero-Animation (defer = non-blocking). Three.js wird nur bei Bedarf
+     dynamisch nachgeladen (Desktop, keine Reduced-Motion) → spart ~450 KiB auf Mobil. -->
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script>
 (function () {
     'use strict';
 
-    // ═══ GSAP HERO ANIMATION — 3D Fly-In ═══
-    if (typeof gsap !== 'undefined') {
+    // Fallback: Falls GSAP nicht (rechtzeitig) lädt, Hero-Inhalte trotzdem sichtbar machen.
+    function revealHeroFallback() {
+        ['hero-badge','hero-line1','hero-line2','hero-sub','hero-cta','hero-trust','hero-showcase','hero-scroll']
+            .forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) { el.style.opacity = '1'; el.style.transform = 'none'; }
+            });
+    }
+    var heroRevealed = false;
+
+    function runHeroAnimation() {
+        if (heroRevealed) return;
+        heroRevealed = true;
+        // ═══ GSAP HERO ANIMATION — 3D Fly-In ═══
+        if (typeof gsap === 'undefined') { revealHeroFallback(); return; }
         gsap.registerPlugin && gsap.registerPlugin();
         var tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
         tl
@@ -608,12 +626,22 @@
             });
     }
 
-    // ═══ THREE.JS PARTICLE FIELD ═══
+    // GSAP ist deferred → läuft vor DOMContentLoaded. Hero dann starten,
+    // mit Sicherheits-Timeout falls das CDN blockiert/langsam ist.
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', runHeroAnimation);
+    } else {
+        runHeroAnimation();
+    }
+    setTimeout(runHeroAnimation, 2500);
+
+    // ═══ THREE.JS PARTICLE FIELD (nur Desktop, dynamisch nachgeladen) ═══
     var canvas = document.getElementById('hero-canvas');
     var isMobile = window.innerWidth < 640;
     var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if (!isMobile && !prefersReduced && canvas && typeof THREE !== 'undefined') {
+    function initParticles() {
+        if (!canvas || typeof THREE === 'undefined') return;
         var W = window.innerWidth;
         var H = window.innerHeight;
 
@@ -698,6 +726,23 @@
             camera.updateProjectionMatrix();
             renderer.setSize(W, H);
         }, { passive: true });
+    }
+
+    // Three.js (~450 KiB) nur auf Desktop ohne Reduced-Motion nach dem Load laden,
+    // damit es LCP/TBT auf Mobil nicht belastet.
+    if (!isMobile && !prefersReduced && canvas) {
+        var loadThree = function () {
+            var s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js';
+            s.async = true;
+            s.onload = initParticles;
+            document.head.appendChild(s);
+        };
+        if (document.readyState === 'complete') {
+            loadThree();
+        } else {
+            window.addEventListener('load', loadThree);
+        }
     }
 })();
 </script>

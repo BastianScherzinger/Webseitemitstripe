@@ -26,7 +26,7 @@
       "name": "Luisa Brehler",
       "jobTitle": "Gründerin & Creative Director",
       "description": "Luisa Brehler ist die Gründerin von Luviq Universe. Sie verwandelt handverlesene Vintage-Kleidung durch handbemalte Designs in einzigartige 1-of-1 Kunstwerke.",
-      "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/ich.png' %}",
+      "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/ich.jpg' %}",
       "worksFor": {
         "@id": "{{ request.scheme }}://{{ request.get_host }}/#organisation"
       },
@@ -68,7 +68,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                 <div class="scroll-reveal relative" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                     <div class="relative z-10 rounded-[4rem] overflow-hidden glass border-white/5 p-4 shadow-2xl transform hover:scale-[1.02] transition-transform duration-700">
-                        <img src="{% static 'shop1/images/ich.png' %}" alt="Luisa Brehler" class="w-full h-auto rounded-[3.5rem] object-cover grayscale hover:grayscale-0 transition-all duration-1000">
+                        <img src="{% static 'shop1/images/ich.jpg' %}" alt="Luisa Brehler" class="w-full h-auto rounded-[3.5rem] object-cover grayscale hover:grayscale-0 transition-all duration-1000" width="900" height="1350" loading="lazy" decoding="async">
                     </div>
                     <div class="absolute -top-10 -left-10 w-40 h-40 bg-glow-orange/20 blur-[80px] rounded-full"></div>
                 </div>
