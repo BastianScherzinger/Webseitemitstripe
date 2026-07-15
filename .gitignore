@@ -30,3 +30,7 @@ Thumbs.db
 # Node / Tailwind build
 node_modules/
 tailwind_input.css
+
+# Scratch / Altablagen (nicht Teil der Django-App)
+projekt1/
+tiktok stream/
