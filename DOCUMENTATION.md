@@ -18,7 +18,8 @@ webseitemain/
 │   │   ├── legal.py      impressum, datenschutz, agb, robots_txt, sitemap_xml, newsletter
 │   │   └── gaestebuch.py gaestebuch, comment_add, comment_like, comment_delete
 │   ├── models.py         Alle Modelle
-│   ├── admin_views.py    Admin-Panel Views (geschützt durch admin_required)
+│   ├── admin_views.py    Admin-Panel Views (geschützt durch das dort selbst
+│   │                     definierte admin_required, admin_views.py:37-45)
 │   ├── context_processors.py  shop_owner_check + werbung_aktiv
 │   ├── middleware.py     PageVisitMiddleware (Geo-IP, Background-Thread)
 │   ├── routers.py        WerbungRouter (pystore-Datenbank)
@@ -228,8 +229,10 @@ nicht für die Schreibvorgänge.
 
 **Dedup-Fenster:** `PageVisit` einmal pro Session und Tag, `VisitorLog`
 einmal pro Pfad und Session alle **5 Minuten** (`diff < 300` in
-`middleware.py`). Der Kommentar über dem Block nennt fälschlich
-30 Minuten — maßgeblich ist der Code.
+`middleware.py`). Der Kommentar über dem Block nannte bis Commit `93b3cde`
+fälschlich 30 Minuten und steht jetzt auf 5. Ob 5 oder 30 Minuten gewollt
+sind, ist eine offene Frage an die Betreiberin — dokumentiert und im Code
+steht der Ist-Zustand.
 **Kein E-Mail-Versand pro Besuch (Stand 2026-07):** Früher verschickte die
 Middleware pro (vermeintlich neuem) Besucher eine Admin-Mail via Brevo. Das
 führte trotz Bot-Filter/Session-Dedup zu einer Mail-Flut (Clients/Bots ohne

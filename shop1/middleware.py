@@ -98,7 +98,8 @@ class PageVisitMiddleware:
             except Exception as e:
                 _log.error('PageVisit error: %s', e)
 
-        # ── VisitorLog: one entry per unique path per session (30-min window) ──
+        # ── VisitorLog: one entry per unique path per session (5-min window) ──
+        # 5 Minuten, nicht 30: massgeblich ist "diff < 300" weiter unten.
         visited = request.session.get('visited_paths', {})
         now_iso = timezone.now().isoformat()
         last_seen = visited.get(path, '')
