@@ -461,14 +461,17 @@ nav .glass {
    erkennbar, wo man gerade steht. Die Regel greift nur bei Tastaturbedienung
    (:focus-visible) — beim Mausklick bleibt alles wie bisher. Als Farbe dient
    der vorhandene Token --text-main auf --bg-base (Kontrast rund 16:1, weit
-   über den geforderten 3:1); es kommt keine neue Farbe hinzu. */
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-summary:focus-visible,
-[tabindex]:focus-visible {
+   über den geforderten 3:1); es kommt keine neue Farbe hinzu.
+
+   Spezifität ist hier entscheidend: `.form-input:focus` (oben in dieser
+   Datei, 0,2,0) setzt `outline: none`, und die Tailwind-Klasse
+   `.focus\:outline-none:focus` (0,2,0) einen transparenten Outline. Ein
+   schlichtes `input:focus-visible` (0,1,1) verlöre gegen beide, obwohl es
+   später geladen wird. Deshalb `body :is(…)`: `:is()` übernimmt die
+   Spezifität seines stärksten Arguments (`[tabindex]`, 0,1,0), dazu
+   `:focus-visible` und `body` – zusammen 0,2,1, also mehr als 0,2,0.
+   Der Test `test_barrierefreiheit` rechnet das nach. */
+body :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
     outline: 3px solid var(--text-main);
     outline-offset: 3px;
     border-radius: 4px;
