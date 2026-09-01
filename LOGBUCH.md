@@ -793,3 +793,42 @@ test shop1`: 151 von 152 grün, derselbe zeitbedingte, vorbestehende
 Fehlschlag in `test_geo` (Lauf vor 00:00 UTC). `sh -n start.sh` liess
 die Sandbox nicht zu; die Änderung ist eine Zeile nach dem Muster der
 `collectstatic`-Zeile darüber.
+
+### 2026-09-02 — Welle 8, Schritt 40: Betriebs- und Schutztests nachgezogen
+
+**Was:** `shop1/tests/test_einstellungen.py`, 27 → 42 Tests. (1) CSP:
+Kopfzeile gesetzt (Vorgabe Report-Only) mit `frame-ancestors 'none'`,
+`base-uri 'self'`, `form-action 'self'`, `object-src 'none'`; `scharf`
+sendet dieselbe Richtlinie blockierend, `aus` keine, ein Tippfehler fällt
+auf Report-Only zurück; Gegenbeweis als Test (Middleware per
+`modify_settings` entfernt → keine Kopfzeile); jede von öffentlichen
+Seiten und Admin-Panel eingebundene Fremdquelle (`<script src>`,
+Stylesheet, Iframe, Nachladen per `.src =`) muss in der passenden
+Direktive stehen; PayPal-SDK-Adresse aus `payment.html` sowie
+`www.paypal.com`, `www.sandbox.paypal.com`, `www.paypalobjects.com` gegen
+`script-src`/`img-src`/`frame-src`/`connect-src`. (2) Weiterleitung, die
+vier Fälle des Plans: kanonischer Host → 200; Nebenvariante → 301 mit
+vollem Pfad samt Query auf `https://www.…`, auch aus einem HTTP-Aufruf in
+einer Antwort; Railway-Adresse und `localhost` → keine Weiterleitung;
+Variable leer → keine Weiterleitung; dazu die Bereinigung von
+`CANONICAL_HOST` (Schema, Schrägstrich, Grossschreibung) und die Aufnahme
+beider Varianten in `ALLOWED_HOSTS`/`CSRF_TRUSTED_ORIGINS`. (3) HSTS wird
+auf `/` und `/produkte/` mit `max-age ≥ 31536000`, `includeSubDomains`,
+`preload` gesendet (die übrigen Schutzkopfzeilen prüfte
+`test_jede_antwort_traegt_die_schutzkoepfe` schon). (4) Fehlt `DEBUG` in
+der Umgebung, gilt der Betriebsmodus und der Startschutz wirft bei
+unverändertem Schlüssel `RuntimeError` (die Fälle „DEBUG=False" und
+„unsicherer Schlüssel" bestanden bereits). (5) Prüfbefehl: Bericht nennt
+„n von n Sitemap-Adressen" mit n ≥ 13 und Exitcode 0 im sauberen Zustand;
+aktives Produkt mit leerer Beschreibung (per `update()`) → Exitcode 1 und
+FEHLER; `CSP_MODUS=aus` → FEHLER, Report-Only → WARNUNG; der Lauf
+hinterlässt keine Spuren (Werbe-Impressionen 0, kein `VisitorLog`, kein
+`PageVisit`). Der Fall „fehlende Pflichtvariable → Exitcode 1" bestand
+bereits (`test_fehlende_admin_zugangsdaten_werden_gemeldet`).
+
+**Warum:** Sichert Schritt 36–39 (Befunde PJ02, PJ04, SI08, TS11).
+Gegenbeweise: der Spuren-Test wurde ohne die `set_rollback`-Zeilen rot
+(„2 != 0" – `/` wird zweimal abgerufen); der Middleware-Gegenbeweis
+steckt als eigener Test in der Suite. Geprüft: `manage.py check` grün;
+`manage.py test shop1`: 166 von 167 grün, derselbe zeitbedingte,
+vorbestehende Fehlschlag in `test_geo` (Lauf um 23:28 UTC).

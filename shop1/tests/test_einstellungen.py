@@ -11,14 +11,17 @@ verlassen.
 
 import importlib.util
 import os
+import re
 from pathlib import Path
 from unittest import mock
+from urllib.parse import urlsplit
 
 from django.conf import settings
+from django.test import modify_settings, override_settings
 
 from ..models import Comment, PageVisit, Produkt, VisitorLog, Werbung
 from ..routers import WerbungRouter
-from ._basis import LuviqTestCase
+from ._basis import ADMIN_SEITEN, OEFFENTLICHE_SEITEN, LuviqTestCase, erzeuge_produkt
 
 _SETTINGS_PFAD = Path(settings.BASE_DIR) / 'mainweb' / 'settings.py'
 
@@ -88,6 +91,37 @@ class BetriebsmodusTest(LuviqTestCase):
             lade_einstellungen(dict(BETRIEBSUMGEBUNG,
                                     SECRET_KEY='django-insecure-CHANGE_THIS_IN_PRODUCTION'))
 
+    def test_ohne_debug_variable_gilt_der_betriebsmodus_samt_startschutz(self):
+        """Verhindert, dass die Vorgabe kippt: fehlt ``DEBUG`` in der Umgebung
+        (der Normalfall in Railway), muss der Betriebsmodus gelten – und der
+        Startschutz muss auch dann greifen. Eine Vorgabe ``DEBUG=True`` wäre
+        der teuerste Ein-Zeilen-Fehler des Projekts, denn kein Test und keine
+        Prüfung würde ihn vor dem Deploy sehen."""
+        ohne_debug = {k: v for k, v in BETRIEBSUMGEBUNG.items() if k != 'DEBUG'}
+        ohne_debug['DEBUG'] = ''   # leer = nicht gesetzt; .env darf nicht nachfüllen
+        betrieb = lade_einstellungen(ohne_debug)
+        self.assertFalse(betrieb.DEBUG)
+        self.assertTrue(betrieb.SECURE_SSL_REDIRECT)
+        with self.assertRaises(RuntimeError):
+            lade_einstellungen(dict(ohne_debug,
+                                    SECRET_KEY='django-insecure-CHANGE_THIS_IN_PRODUCTION'))
+
+    def test_der_kanonische_host_wird_bereinigt_und_samt_nebenvariante_erlaubt(self):
+        """Verhindert zwei Ausfälle der Weiterleitung aus Schritt 37: ein
+        ``CANONICAL_HOST`` mit Schema oder Schrägstrich (``https://www.x.de/``)
+        würde nie mit einem Hostnamen übereinstimmen, und eine Nebenvariante,
+        die nicht in ``ALLOWED_HOSTS`` steht, bekäme 400 statt 301."""
+        betrieb = lade_einstellungen(dict(BETRIEBSUMGEBUNG,
+                                          CANONICAL_HOST='https://www.Shop.example/'))
+        self.assertEqual(betrieb.CANONICAL_HOST, 'www.shop.example')
+        self.assertIn('www.shop.example', betrieb.ALLOWED_HOSTS)
+        self.assertIn('shop.example', betrieb.ALLOWED_HOSTS)
+        self.assertIn('https://www.shop.example', betrieb.CSRF_TRUSTED_ORIGINS)
+        self.assertIn('https://shop.example', betrieb.CSRF_TRUSTED_ORIGINS)
+
+        ohne = lade_einstellungen(dict(BETRIEBSUMGEBUNG, CANONICAL_HOST=''))
+        self.assertEqual(ohne.CANONICAL_HOST, '')
+
     def test_kein_geheimnis_steht_fest_im_quelltext(self):
         """Verhindert, dass ein Schlüssel oder Passwort in die Versionsverwaltung
         gerät: jedes Geheimnis muss aus der Umgebung kommen."""
@@ -135,6 +169,205 @@ class SchutzkoepfeTest(LuviqTestCase):
         antwort = self.client.get('/')
         self.assertEqual(antwort.status_code, 301)
         self.assertTrue(antwort['Location'].startswith('https://'))
+
+    def test_https_antworten_tragen_hsts_mit_einem_jahr_und_subdomains(self):
+        """Verhindert, dass HSTS still wegfällt – etwa weil jemand den
+        ``if not DEBUG``-Block in ``settings.py`` umbaut. Ohne die Kopfzeile
+        fragt der Browser beim nächsten Besuch wieder per HTTP an, und der
+        erste Abruf ist abfangbar. Geprüft wird die gesendete Kopfzeile auf
+        zwei Seiten, nicht die Einstellung."""
+        for pfad in ('/', '/produkte/'):
+            with self.subTest(pfad=pfad):
+                hsts = self.hole(pfad).get('Strict-Transport-Security', '')
+                self.assertRegex(hsts, r'max-age=(\d+)', f'{pfad}: HSTS fehlt')
+                self.assertGreaterEqual(int(re.search(r'max-age=(\d+)', hsts).group(1)), 31536000)
+                self.assertIn('includeSubDomains', hsts)
+                self.assertIn('preload', hsts)
+
+
+def _quelle_erlaubt(url, quellen):
+    """Deckt eine CSP-Quellliste die Adresse ``url``?
+
+    Versteht die Formen, die in ``CSP_QUELLEN`` vorkommen: ``https:``
+    (jede HTTPS-Adresse), ``https://host`` und ``https://*.host``.
+    """
+    host = (urlsplit(url).hostname or '').lower()
+    for quelle in quellen:
+        if quelle == 'https:' and url.startswith('https://'):
+            return True
+        if not quelle.startswith('https://'):
+            continue
+        muster = (urlsplit(quelle).hostname or '').lower()
+        if muster.startswith('*.') and host.endswith(muster[1:]):
+            return True
+        if host == muster:
+            return True
+    return False
+
+
+#: Was eine Seite von fremden Hosts einbindet, je Direktive: das Muster
+#: findet die Adresse, die Direktive muss sie erlauben. ``.src = '…'`` ist
+#: das Nachladen von Three.js in ``index.html``.
+_FREMDQUELLEN = (
+    ('script-src', re.compile(r'<script[^>]+src="(https://[^"]+)"')),
+    ('script-src', re.compile(r'''\.src\s*=\s*['"](https://[^'"]+)['"]''')),
+    ('style-src', re.compile(r'<link[^>]+rel="stylesheet"[^>]+href="(https://[^"]+)"')),
+    ('style-src', re.compile(r'<link[^>]+href="(https://[^"]+)"[^>]+rel="stylesheet"')),
+    ('frame-src', re.compile(r'<iframe[^>]+src="(https://[^"]+)"')),
+)
+
+
+class ContentSecurityPolicyTest(LuviqTestCase):
+    """Die Content-Security-Policy aus Schritt 36 – gesetzt, scharf an den
+    richtigen Stellen, und weit genug für alles, was die Seite einbindet."""
+
+    SCHARFE_DIREKTIVEN = ("frame-ancestors 'none'", "base-uri 'self'",
+                          "form-action 'self'", "object-src 'none'")
+
+    def test_die_csp_ist_gesetzt_und_haelt_die_scharfen_direktiven(self):
+        """Verhindert, dass die Richtlinie still verschwindet oder eine der
+        vier scharfen Direktiven verliert: ohne ``frame-ancestors`` lässt sich
+        die Seite in eine fremde Seite einbetten (Clickjacking), ohne
+        ``form-action`` kann eingeschleuster Code das Anmeldeformular an einen
+        fremden Server schicken, ohne ``base-uri`` lassen sich alle relativen
+        Adressen umbiegen, ohne ``object-src`` laufen Plugins.
+
+        Vorgabe ist Report-Only; ``scharf`` schaltet auf die blockierende
+        Kopfzeile mit demselben Inhalt um; ``aus`` sendet keine."""
+        antwort = self.hole('/')
+        self.assertFalse(antwort.has_header('Content-Security-Policy'),
+                         'Vorgabe muss Report-Only sein, bis der Browser geprüft ist')
+        richtlinie = antwort.get('Content-Security-Policy-Report-Only', '')
+        self.assertTrue(richtlinie, 'Keine Content-Security-Policy-Report-Only auf /')
+        for direktive in self.SCHARFE_DIREKTIVEN:
+            with self.subTest(direktive=direktive):
+                self.assertIn(direktive, richtlinie)
+
+        with self.settings(CSP_MODUS='scharf'):
+            scharf = self.hole('/')
+        self.assertEqual(scharf.get('Content-Security-Policy'), richtlinie)
+        self.assertFalse(scharf.has_header('Content-Security-Policy-Report-Only'))
+
+        with self.settings(CSP_MODUS='aus'):
+            aus = self.hole('/')
+        self.assertFalse(aus.has_header('Content-Security-Policy'))
+        self.assertFalse(aus.has_header('Content-Security-Policy-Report-Only'))
+
+        with self.settings(CSP_MODUS='tippfehler'):
+            tippfehler = self.hole('/')
+        self.assertEqual(tippfehler.get('Content-Security-Policy-Report-Only'), richtlinie,
+                         'Ein unbekannter Modus muss auf Report-Only zurückfallen')
+
+    def test_die_csp_kommt_aus_der_eigenen_middleware(self):
+        """Gegenbeweis zum Test darüber: ohne ``ContentSecurityPolicyMiddleware``
+        darf keine Kopfzeile mehr kommen – sonst prüfte der Test oben etwas
+        anderes als die Middleware, und ihr Ausbau bliebe unbemerkt."""
+        with modify_settings(MIDDLEWARE={'remove': ['shop1.middleware.ContentSecurityPolicyMiddleware']}):
+            antwort = self.hole('/')
+        self.assertFalse(antwort.has_header('Content-Security-Policy'))
+        self.assertFalse(antwort.has_header('Content-Security-Policy-Report-Only'))
+
+    def test_die_csp_erlaubt_jede_fremdquelle_die_die_seiten_einbinden(self):
+        """Verhindert die teuerste Wirkung einer CSP: dass sie die Seite
+        bricht. Jeder fremde Host, den eine öffentliche Seite oder das
+        Admin-Panel per ``<script src>``, Stylesheet, Iframe oder Nachladen
+        einbindet (Alpine.js, GSAP, Three.js, Chart.js, Google Fonts, die
+        Karte), muss in der passenden Direktive stehen. Ein neues CDN in
+        einem Template fällt hier auf, bevor der Browser es blockiert –
+        auch dann, wenn die Richtlinie noch als Report-Only läuft.
+
+        Der Test schlägt auch an, wenn er gar keine Fremdquelle findet: dann
+        hat sich die Suchweise von den Templates entfernt."""
+        from django.contrib.auth.models import User
+
+        admin = User.objects.create_superuser('inhaberin', 'i@example.invalid', 'x' * 20)
+        self.client.force_login(admin)
+
+        gefunden = 0
+        for pfad in OEFFENTLICHE_SEITEN + ADMIN_SEITEN:
+            html = self.hole(pfad).content.decode()
+            for direktive, muster in _FREMDQUELLEN:
+                for url in muster.findall(html):
+                    gefunden += 1
+                    with self.subTest(pfad=pfad, direktive=direktive, url=url[:60]):
+                        self.assertTrue(
+                            _quelle_erlaubt(url, settings.CSP_QUELLEN[direktive]),
+                            f'{pfad} bindet {url} ein, {direktive} erlaubt es nicht',
+                        )
+        self.assertGreaterEqual(gefunden, 5, 'Kaum Fremdquellen gefunden – Suchmuster prüfen')
+
+    def test_die_csp_deckt_paypal_auf_der_bezahlseite(self):
+        """Verhindert den schlimmsten Fall aus dem Plan: der Checkout
+        funktioniert nicht und niemand merkt es. ``payment.html`` lädt das
+        PayPal-SDK von ``www.paypal.com``; das SDK rendert seine Knöpfe in
+        Iframes von ``*.paypal.com``, lädt Bilder und Skripte von
+        ``*.paypalobjects.com`` und meldet an ``*.paypal.com`` zurück. Die
+        Bezahlseite selbst braucht eine Bestellung und ist hier nicht
+        abrufbar – geprüft wird deshalb die Richtlinie gegen die im Template
+        eingebundene Adresse und gegen die Hosts, die das SDK nachlädt."""
+        vorlage = Path(settings.BASE_DIR) / 'shop1' / 'templates' / 'shop1' / 'payment.html'
+        sdk = re.findall(r'<script src="(https://[^"?]+)', vorlage.read_text(encoding='utf-8'))
+        self.assertTrue(sdk, 'payment.html bindet kein PayPal-SDK mehr ein')
+        quellen = settings.CSP_QUELLEN
+        for url in sdk:
+            with self.subTest(url=url):
+                self.assertTrue(_quelle_erlaubt(url, quellen['script-src']))
+        for host in ('https://www.paypal.com/x', 'https://www.sandbox.paypal.com/x',
+                     'https://www.paypalobjects.com/x'):
+            with self.subTest(host=host):
+                self.assertTrue(_quelle_erlaubt(host, quellen['script-src']))
+                self.assertTrue(_quelle_erlaubt(host, quellen['img-src']))
+        for host in ('https://www.paypal.com/x', 'https://www.sandbox.paypal.com/x'):
+            with self.subTest(host=host):
+                self.assertTrue(_quelle_erlaubt(host, quellen['frame-src']))
+                self.assertTrue(_quelle_erlaubt(host, quellen['connect-src']))
+
+
+@override_settings(
+    CANONICAL_HOST='www.luviq-alsfeld.com',
+    ALLOWED_HOSTS=['www.luviq-alsfeld.com', 'luviq-alsfeld.com',
+                   '.up.railway.app', 'localhost', 'testserver'],
+)
+class KanonischerHostTest(LuviqTestCase):
+    """Die Weiterleitung aus Schritt 37 – genau die vier Fälle des Plans."""
+
+    def test_der_kanonische_host_antwortet_direkt_mit_200(self):
+        """Verhindert die Endlosschleife: der kanonische Host selbst darf
+        nie umgeleitet werden. Genau so würde eine falsche Regel die Seite
+        unerreichbar machen – und zwar erst im Betrieb."""
+        antwort = self.hole('/', HTTP_HOST='www.luviq-alsfeld.com')
+        self.assertEqual(antwort.status_code, 200)
+
+    def test_die_nebenvariante_wird_per_301_mit_vollem_pfad_umgeleitet(self):
+        """Verhindert die Rückkehr zum Zustand vor Schritt 37: beide
+        Schreibweisen lieferten 200, und Google durfte sich eine aussuchen.
+        Die Weiterleitung muss dauerhaft (301) sein, Pfad und Query erhalten
+        und aus einem HTTP-Aufruf in **einer** Antwort auf die HTTPS-Adresse
+        des kanonischen Hosts führen – nicht erst auf https://luviq-alsfeld.com
+        und von dort weiter."""
+        antwort = self.hole('/produkte/?seite=2', HTTP_HOST='luviq-alsfeld.com')
+        self.assertEqual(antwort.status_code, 301)
+        self.assertEqual(antwort['Location'], 'https://www.luviq-alsfeld.com/produkte/?seite=2')
+
+        unsicher = self.client.get('/kontakt/', HTTP_HOST='luviq-alsfeld.com')
+        self.assertEqual(unsicher.status_code, 301)
+        self.assertEqual(unsicher['Location'], 'https://www.luviq-alsfeld.com/kontakt/')
+
+    def test_die_railway_adresse_wird_nicht_umgeleitet(self):
+        """Verhindert, dass die Regel den Deploy-Zugang trifft: Railway
+        spricht die Anwendung unter ``*.up.railway.app`` an (Health-Check,
+        Vorschau). ``PREPEND_WWW`` hätte genau das kaputtgemacht."""
+        antwort = self.hole('/', HTTP_HOST='luviq-luisa-production.up.railway.app')
+        self.assertEqual(antwort.status_code, 200)
+        self.assertEqual(self.hole('/', HTTP_HOST='localhost').status_code, 200)
+
+    def test_ohne_variable_wird_nichts_umgeleitet(self):
+        """Verhindert, dass die Middleware ohne ``CANONICAL_HOST`` etwas
+        rät – etwa aus ``SITE_URL`` oder ``ALLOWED_HOSTS`` – und lokal oder
+        in einer Vorschau-Umgebung Weiterleitungen erzeugt."""
+        with self.settings(CANONICAL_HOST=''):
+            antwort = self.hole('/', HTTP_HOST='luviq-alsfeld.com')
+        self.assertEqual(antwort.status_code, 200)
 
 
 class DatenbankweicheTest(LuviqTestCase):
@@ -264,6 +497,67 @@ class PruefbefehlTest(LuviqTestCase):
         self.assertEqual(ohne, 0)
         self.assertEqual(mit, 1)
         self.assertIn('WARNUNG', text)
+
+    # ── Die ausgelieferte Seite (Schritt 39) ───────────────────────────
+
+    def test_der_befehl_ruft_jede_sitemap_adresse_ab_und_findet_nichts(self):
+        """Verhindert, dass die Seitenprüfung still nichts prüft: der
+        Bericht muss belegen, dass jede Sitemap-Adresse – die statischen
+        Seiten und die Produktseite – abgerufen wurde, und darf im sauberen
+        Zustand keinen FEHLER daraus melden. Nur so ist ein FEHLER im
+        Container-Log später ein echter Befund."""
+        erzeuge_produkt('Bemalte Bomberjacke')
+        with mock.patch.dict(os.environ, {
+            'ADMIN_USERNAME': 'shopbesitzer', 'ADMIN_PASSWORD': 'x' * 20,
+        }):
+            code, text = self._laufe()
+        self.assertEqual(code, 0, text)
+        treffer = re.search(r'(\d+) von (\d+) Sitemap-Adressen', text)
+        self.assertIsNotNone(treffer, text)
+        self.assertEqual(treffer.group(1), treffer.group(2), text)
+        self.assertGreaterEqual(int(treffer.group(1)), 13, text)
+
+    def test_ein_aktives_produkt_ohne_beschreibung_wird_als_fehler_gemeldet(self):
+        """Verhindert, dass ein Produkt mit leerem Pflichtwert unbemerkt in
+        Sitemap, llms.txt und Übersicht steht. ``update()`` umgeht ``save()``
+        und das Formular – so entsteht der Zustand, den keine Eingabemaske
+        mehr zulässt, aber eine alte Zeile in der Datenbank haben kann."""
+        produkt = erzeuge_produkt('Bemalte Bomberjacke')
+        Produkt.objects.filter(pk=produkt.pk).update(beschreibung='   ')
+        code, text = self._laufe()
+        self.assertEqual(code, 1)
+        self.assertRegex(text, r'FEHLER.*Bemalte Bomberjacke.*ohne beschreibung')
+
+    def test_eine_fehlende_csp_wird_als_fehler_gemeldet(self):
+        """Verhindert, dass die Richtlinie aus Schritt 36 abgeschaltet wird
+        (``CSP_MODUS=aus``) und niemand es merkt: der Prüfbefehl im
+        Container-Start muss es als FEHLER nennen. Als Report-Only ist es
+        eine WARNUNG – der Hinweis, nach der Browserprüfung scharf zu
+        schalten."""
+        with self.settings(CSP_MODUS='aus'):
+            code, text = self._laufe()
+        self.assertEqual(code, 1)
+        self.assertRegex(text, r'FEHLER.*Content-Security-Policy')
+
+        _, text = self._laufe()
+        self.assertRegex(text, r'WARNUNG.*Content-Security-Policy.*Report-Only')
+
+    def test_der_befehl_hinterlaesst_keine_spuren(self):
+        """Verhindert, dass der Prüflauf beim Container-Start selbst Daten
+        erzeugt: ``startseite()`` zählt bei jedem Abruf von ``/`` eine
+        Impression je aktiver Werbung (0,25 ct, dem Werbekunden berechnet),
+        und die Middleware schriebe einen Besuchseintrag. Beides muss nach
+        dem Lauf unverändert sein – die Abrufe laufen in einer zurück-
+        gerollten Transaktion und mit abgeschaltetem Protokoll."""
+        werbung = Werbung.objects.create(titel='Probe', link='https://example.invalid/', budget=10)
+        self.assertTrue(werbung.ist_aktiv)
+
+        self._laufe()
+
+        werbung.refresh_from_db()
+        self.assertEqual(werbung.impressionen, 0)
+        self.assertEqual(VisitorLog.objects.count(), 0)
+        self.assertEqual(PageVisit.objects.count(), 0)
 
 
 class AusgabecacheTest(LuviqTestCase):
