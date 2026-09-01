@@ -65,7 +65,8 @@
                         </div>
                         <div class="text-white/40 leading-relaxed font-light pl-12">
                             <p>E-Mail: <a href="mailto:brehlerluisa@gmail.com" class="text-glow-orange hover:underline">brehlerluisa@gmail.com</a></p>
-                            <p>Website: <a href="https://luviq.de" class="hover:text-white transition-colors">www.luviq.de</a></p>
+                            {# Hier stand "www.luviq.de" - eine Adresse, unter der dieses Projekt nicht erreichbar ist. Die Seite nennt jetzt den Host, unter dem sie tatsaechlich ausgeliefert wird; damit stimmt die Angabe unabhaengig davon, welche Domain gerade davorsteht. #}
+                            <p>Website: <a href="{{ request.scheme }}://{{ request.get_host }}/" class="hover:text-white transition-colors">{{ request.get_host }}</a></p>
                         </div>
                     </section>
                 </div>
