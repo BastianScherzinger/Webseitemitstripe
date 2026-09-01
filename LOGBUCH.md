@@ -30,7 +30,7 @@ zugehörigen Commits existieren.
 | 6 | 26–29 | Inhalt | offen | — |
 | 7 | 30–31 | Sicherheit (CSP, Härtung) | offen | — |
 | 7 | 32 | Toten Code entfernt | erledigt | `c6e0cce` |
-| 7 | 33 | Doku an den Code angeglichen, Logbuch angelegt | erledigt | dieser Commit |
+| 7 | 33 | Doku an den Code angeglichen, Logbuch angelegt | erledigt | `342f7fd` |
 
 ### 2026-09-01 — Welle 7, Schritt 32: Toter Code entfernt (`c6e0cce`)
 
@@ -61,7 +61,7 @@ Aufräumschritt.
 enthält derzeit keine Tests), `collectstatic --noinput --clear` läuft
 durch (148 Dateien).
 
-### 2026-09-01 — Welle 7, Schritt 33: Doku an den Code angeglichen (dieser Commit)
+### 2026-09-01 — Welle 7, Schritt 33: Doku an den Code angeglichen (`342f7fd`)
 
 **Was:** Drei Stellen korrigiert, an denen die Dokumentation das Gegenteil
 des Codes behauptete, plus zwei falsche Angaben im SEO-Leitfaden:
