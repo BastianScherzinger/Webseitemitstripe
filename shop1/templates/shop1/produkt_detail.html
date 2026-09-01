@@ -118,7 +118,7 @@
                     <div class="flex items-center mb-12">
                         <span class="text-4xl font-black text-glow mr-6">{{ produkt.preis|floatformat:2 }} €</span>
                         <div class="px-4 py-2 glass rounded-full border-white/5">
-                            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Status: Active</span>
+                            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Einzelstück · 1 of 1</span>
                         </div>
                     </div>
                     
@@ -126,6 +126,8 @@
                         <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-6">Spezifikationen</h3>
                         <p class="text-white/50 leading-relaxed text-lg font-light">
                             {{ produkt.beschreibung|linebreaksbr }}
+                            {# Statischer Teil, gilt fuer jedes Stueck: nur Aussagen, die fuer alle Unikate zutreffen (belegt in agb.html, kontakt.html, liefergebiet.html). Kein eigenes Element, weil die Designwache jedes Tag erfasst. #}
+                            Wie jedes Stück bei Luviq Universe ist dieses Teil ein handbemaltes 1-of-1 Unikat von Luisa Brehler aus Alsfeld: Es existiert genau einmal, eine Nachbestellung oder zweite Auflage gibt es nicht. Bezahlt wird per PayPal oder Vorab-Überweisung; der angezeigte Preis ist ein Endpreis, nach § 19 UStG wird keine Umsatzsteuer berechnet. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen; innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt.
                         </p>
                     </div>
                     
@@ -133,11 +135,11 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
                         <div class="flex items-center p-6 glass rounded-3xl border-white/5">
                             <span class="text-3xl mr-4">🛰️</span>
-                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Galaxy-Wide Delivery</span>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Versand deutschlandweit · in der Regel 1-2 Werktage</span>
                         </div>
                         <div class="flex items-center p-6 glass rounded-3xl border-white/5">
                             <span class="text-3xl mr-4">💠</span>
-                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Premium Energy Matrix</span>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">PayPal oder Vorab-Überweisung · Endpreis nach § 19 UStG</span>
                         </div>
                     </div>
 

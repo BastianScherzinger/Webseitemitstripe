@@ -370,3 +370,23 @@ ihre Quelle ist nicht belegt. Keine neuen Elemente, Klassen unverändert.
 
 **Warum:** `/ueber_uns/` enthielt keine einzige Zahl (Befund 4.14/GE25),
 `/gaestebuch/` hatte gemessen 55 statische Wörter (Befund 4.3/IS19).
+
+### 2026-09-01 — Welle 5, Schritt 24: Produktdetailseiten und Impressum mit Auskunft gefüllt
+
+**Was:** `shop1/templates/shop1/produkt_detail.html`: der Absatz unter
+„Spezifikationen" trägt nach der Produktbeschreibung einen statischen Teil,
+der auf **jeder** Produktseite gilt – 1-of-1 Unikat von Luisa Brehler aus
+Alsfeld, existiert genau einmal, keine Nachbestellung; PayPal oder
+Vorab-Überweisung, Endpreis, § 19 UStG; Versand deutschlandweit in der Regel
+innerhalb von 1-2 Werktagen, in Hessen meist nach 1-3 Werktagen zugestellt
+(wörtlich aus `agb.html`, `kontakt.html`, `liefergebiet.html`). Kein
+eigenes Element, weil die Designwache jedes Tag erfasst. Drei
+Beschriftungen ohne Aussage wurden ersetzt: „Status: Active" →
+„Einzelstück · 1 of 1", „Galaxy-Wide Delivery" → „Versand deutschlandweit
+· in der Regel 1-2 Werktage", „Premium Energy Matrix" → „PayPal oder
+Vorab-Überweisung · Endpreis nach § 19 UStG". `legal/impressum.html`: die
+Unterzeile unter der `h1` bekommt einen erklärenden Satz (Anbieterin,
+Ort, Inhalt der Seite). `agb.html` und `datenschutz.html` unangetastet.
+
+**Warum:** Produktseiten hatten gemessen 23 statische Wörter und keinen
+Einleitungsabsatz; das Impressum keinen (Befund 4.9/GE23, IS17/IS18).
