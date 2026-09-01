@@ -107,3 +107,28 @@ und nicht nachgeprüft.
 
 **Geprüft:** `manage.py check` grün, `manage.py test shop1` grün. Reine
 Textarbeit an Dateien, die nicht ausgeliefert werden.
+
+---
+
+## Verbesserungslauf 4 (Zweig `cockpit/2026-09-01-verbesserung-4`)
+
+Die Wellen 1 und 2 (Schritte 1–10, Commits `65a1bd0` bis `8222aed`) haben
+keinen Logbuch-Eintrag hinterlassen; ihre Commit-Nachrichten nennen das
+*Was*. Ab Welle 3 wird je Schritt hier eingetragen.
+
+### 2026-09-01 — Welle 3, Schritt 11: Meta-Beschreibungen auf 110–175 Zeichen, Schluss mit Aufforderung
+
+**Was:** Die `meta_description` aller neun Inhaltsseiten (`index`,
+`produkte`, `kontakt`, `ueber_uns`, `liefergebiet`, `gaestebuch`,
+`impressum`, `datenschutz`, `agb`) neu gefasst: 157–171 Zeichen, je Seite
+verschieden, jede endet mit einem Verb (entdecken, bestellen, anfragen,
+kennenlernen, nachlesen, schreiben). Nur Angaben, die auf der jeweiligen
+Seite selbst stehen (Alsfeld/Hessen, Luisa Brehler, E-Mail auf der
+Kontaktseite, „in Hessen meist in 1–3 Werktagen zugestellt" aus dem
+FAQ-Text der Liefergebietsseite). Gestrichen: „Frankfurt" (kein Beleg als
+Liefergebiet), „made in Germany", „§ 5 TMG" (Gesetz seit 2024 abgelöst,
+siehe offene Frage im Bericht der Welle).
+
+**Warum:** Google kürzt Beschreibungen über etwa 160–175 Zeichen mitten im
+Satz ab; die Startseite lag bei 193, Produkte bei 180. Eine Beschreibung
+ohne Aufforderung verschenkt den Klick aus der Trefferliste.
