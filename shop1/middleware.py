@@ -1,6 +1,5 @@
 import logging
 import os
-import re
 import threading
 from django.utils import timezone
 from django.db.models import F
@@ -10,20 +9,6 @@ _log = logging.getLogger('shop1')
 
 _SKIP = ('/static/', '/media/', '/admin/', '/favicon', '/robots.txt',
          '/sitemap.xml', '/health', '/__debug__')
-
-# Bots/Crawler/Scanner senden i.d.R. keine Cookies zurück -> jede ihrer
-# Anfragen sieht fuer das Session-Dedup wie ein "neuer Besucher" aus und
-# hat sonst bei jedem Hit eine Admin-Mail ausgelöst (Ursache der Mail-Flut).
-_BOT_UA_RE = re.compile(
-    r'bot|crawl|spider|slurp|facebookexternalhit|telegrambot|whatsapp|'
-    r'discordbot|slackbot|linkedinbot|embedly|quora link preview|'
-    r'pinterest|vkshare|redditbot|applebot|ia_archiver|semrushbot|'
-    r'ahrefsbot|mj12bot|dotbot|petalbot|bytespider|gptbot|ccbot|'
-    r'python-requests|curl/|wget/|go-http-client|okhttp|scrapy|'
-    r'headlesschrome|phantomjs|uptimerobot|pingdom|statuscake|gtmetrix|'
-    r'monitor',
-    re.IGNORECASE,
-)
 
 _PRIVATE = ('127.', '10.', '192.168.', '::1', '172.16.', '172.17.',
             '172.18.', '172.19.', '172.20.', '172.21.', '172.22.',

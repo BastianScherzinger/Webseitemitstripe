@@ -36,7 +36,6 @@ def startseite(request):
 
     return render(request, 'shop1/index.html', {
         'titel': 'Luviq-Shop',
-        'anzahl': 42,
         'produkte_galerie': produkte_galerie,
         'recent_comments': recent_comments,
     })
