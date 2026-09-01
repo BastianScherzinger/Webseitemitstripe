@@ -81,7 +81,7 @@
                                 <td>
                                     <div class="w-16 h-16 rounded-xl overflow-hidden glass border-white/5">
                                         {% if produkt.bild %}
-                                            <img src="{{ produkt.bild.url }}" class="w-full h-full object-cover">
+                                            <img src="{{ produkt.bild.url }}" alt="Produktbild: {{ produkt.name }}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                                         {% else %}
                                             <div class="w-full h-full flex items-center justify-center text-white/10 text-xs">NO IMG</div>
                                         {% endif %}

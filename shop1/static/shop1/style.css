@@ -456,6 +456,53 @@ nav .glass {
     }
 }
 
+/* ═══ SICHTBARER TASTATURFOKUS ═══
+   Auf dem dunklen Hintergrund war beim Bedienen mit der Tabulatortaste nicht
+   erkennbar, wo man gerade steht. Die Regel greift nur bei Tastaturbedienung
+   (:focus-visible) — beim Mausklick bleibt alles wie bisher. Als Farbe dient
+   der vorhandene Token --text-main auf --bg-base (Kontrast rund 16:1, weit
+   über den geforderten 3:1); es kommt keine neue Farbe hinzu. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+    outline: 3px solid var(--text-main);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* ═══ BEWEGUNGSREDUZIERUNG ═══
+   Für alle, die im Betriebssystem „Bewegung reduzieren" eingestellt haben.
+   Bewusst über sehr kurze Dauern statt „animation: none": Elemente, die per
+   Animation mit `forwards` eingeblendet werden, erreichen so trotzdem ihren
+   Endzustand. Zusätzlich werden die per Scroll eingeblendeten Blöcke fest
+   sichtbar gesetzt — sonst bliebe Inhalt unsichtbar. Für Bildschirmleser und
+   Suchmaschinen ändert sich nichts, das Markup bleibt unangetastet. */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        transition-delay: 0ms !important;
+    }
+
+    .scroll-reveal,
+    .animate-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
 /* iOS input zoom prevention */
 @supports (-webkit-touch-callout: none) {
     input[type="text"],

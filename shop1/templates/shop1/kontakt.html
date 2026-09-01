@@ -53,22 +53,22 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Dein Name</label>
-                                <input type="text" name="name" placeholder="Eingabe..." class="w-full form-input rounded-2xl px-6 py-4" required>
+                                <input type="text" name="name" aria-label="Dein Name" autocomplete="name" placeholder="Eingabe..." class="w-full form-input rounded-2xl px-6 py-4" required>
                             </div>
                             <div>
                                 <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Deine E-Mail</label>
-                                <input type="email" name="email" placeholder="Eingabe..." class="w-full form-input rounded-2xl px-6 py-4" required>
+                                <input type="email" name="email" aria-label="Deine E-Mail-Adresse" autocomplete="email" placeholder="Eingabe..." class="w-full form-input rounded-2xl px-6 py-4" required>
                             </div>
                         </div>
                         
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Betreff</label>
-                            <input type="text" name="betreff" placeholder="Worum geht es?" class="w-full form-input rounded-2xl px-6 py-4" required>
+                            <input type="text" name="betreff" aria-label="Betreff deiner Nachricht" placeholder="Worum geht es?" class="w-full form-input rounded-2xl px-6 py-4" required>
                         </div>
                         
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Nachricht</label>
-                            <textarea name="nachricht" rows="6" placeholder="Schreib uns..." class="w-full form-input rounded-2xl px-6 py-4 resize-none" required></textarea>
+                            <textarea name="nachricht" rows="6" aria-label="Deine Nachricht" placeholder="Schreib uns..." class="w-full form-input rounded-2xl px-6 py-4 resize-none" required></textarea>
                         </div>
                         
                         <button type="submit" class="w-full btn-glow py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm shadow-2xl">
@@ -82,7 +82,7 @@
             <div class="space-y-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
                 <!-- Me Section -->
                 <div class="glass-card p-4 rounded-[3rem] border-white/5 group overflow-hidden">
-                    <img src="{% static 'shop1/images/ich.jpg' %}" alt="Luisa" class="w-full h-64 object-cover rounded-[2.5rem] grayscale group-hover:grayscale-0 transition-all duration-700" width="900" height="1350" loading="lazy" decoding="async">
+                    <img src="{% static 'shop1/images/ich.jpg' %}" alt="Luisa Brehler, Gründerin von Luviq Universe" class="w-full h-64 object-cover rounded-[2.5rem] grayscale group-hover:grayscale-0 transition-all duration-700" width="900" height="1350" loading="lazy" decoding="async">
                     <div class="absolute inset-0 bg-gradient-to-t from-space-dark/80 to-transparent"></div>
                     <div class="absolute bottom-6 left-6">
                         <p class="text-white/40 text-[10px] uppercase tracking-widest leading-relaxed">Luisa Brehler</p>
@@ -158,7 +158,7 @@
                     {% if user.is_authenticated %}
                     <form action="{% url 'comment_add' %}" method="POST" class="space-y-6">
                         {% csrf_token %}
-                        <textarea name="text" rows="4" required
+                        <textarea name="text" rows="4" required aria-label="Dein Feedback fürs Gästebuch"
                             class="w-full bg-white/5 border border-white/10 rounded-3xl p-6 text-white focus:outline-none focus:border-glow-orange transition-all font-light text-sm"
                             placeholder="Schreib ein kurzes Feedback..."></textarea>
                         <button type="submit" class="w-full btn-glow py-4 rounded-2xl text-white font-black uppercase tracking-widest text-[10px]">

@@ -12,7 +12,7 @@
     <div class="max-w-md w-full px-4 relative z-10 animate-reveal">
         <div class="text-center mb-12">
             <div class="h-20 w-20 rounded-full glass mx-auto flex items-center justify-center p-4 mb-8 shadow-[0_0_40px_rgba(255,106,0,0.2)]">
-                <img class="h-full w-auto" src="{% static 'shop1/images/logo-luviq.jpeg' %}" alt="Logo">
+                <img class="h-full w-auto" src="{% static 'shop1/images/logo-luviq.jpeg' %}" alt="Luviq Universe" width="40" height="40">
             </div>
             <h1 class="text-4xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                 Initiate <span class="text-glow">Access</span>
@@ -26,12 +26,12 @@
                 
                 <div>
                     <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange mb-4">Identity</label>
-                    <input type="text" name="username" placeholder="BENUTZERNAME" class="w-full form-input rounded-2xl px-6 py-4 text-sm" required>
+                    <input type="text" name="username" aria-label="Benutzername" autocomplete="username" placeholder="BENUTZERNAME" class="w-full form-input rounded-2xl px-6 py-4 text-sm" required>
                 </div>
                 
                 <div>
                     <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange mb-4">Security Key</label>
-                    <input type="password" name="password" placeholder="PASSWORT" class="w-full form-input rounded-2xl px-6 py-4 text-sm" required>
+                    <input type="password" name="password" aria-label="Passwort" autocomplete="current-password" placeholder="PASSWORT" class="w-full form-input rounded-2xl px-6 py-4 text-sm" required>
                 </div>
 
                 {% if error or form.errors %}

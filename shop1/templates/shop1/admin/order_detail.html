@@ -48,7 +48,7 @@
                             <div class="flex items-center gap-6">
                                 <div class="w-16 h-16 rounded-2xl overflow-hidden glass border-white/10">
                                     {% if entry.db_produkt and entry.db_produkt.bild %}
-                                        <img src="{{ entry.db_produkt.bild.url }}" class="w-full h-full object-cover">
+                                        <img src="{{ entry.db_produkt.bild.url }}" alt="Produktbild: {{ entry.item.produkt_name }}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                                     {% else %}
                                         <div class="w-full h-full flex items-center justify-center text-[8px] text-white/20">NO IMG</div>
                                     {% endif %}
