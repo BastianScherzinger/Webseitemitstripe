@@ -2,11 +2,73 @@ import logging
 import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
+from django.conf import settings
 from django.utils import timezone
 from django.db.models import F
 from .models import PageVisit, VisitorLog
 
 _log = logging.getLogger('shop1')
+
+
+# ═══ CONTENT-SECURITY-POLICY ═══════════════════════════════════════════════
+
+#: Betriebsarten der Richtlinie, gesetzt über ``settings.CSP_MODUS``
+#: (Umgebungsvariable ``CSP_MODUS``). Die Erklärung der Quellen und der
+#: Reihenfolge report-only → scharf steht in ``mainweb/settings.py``.
+CSP_REPORT_ONLY = 'report-only'
+CSP_SCHARF = 'scharf'
+CSP_AUS = 'aus'
+
+#: Betriebsart → Name der Kopfzeile.
+CSP_KOPF = {
+    CSP_REPORT_ONLY: 'Content-Security-Policy-Report-Only',
+    CSP_SCHARF: 'Content-Security-Policy',
+}
+
+
+def csp_wert(quellen=None):
+    """Die Richtlinie als Kopfzeilenwert, ``direktive quelle quelle; …``."""
+    if quellen is None:
+        quellen = settings.CSP_QUELLEN
+    return '; '.join(
+        f'{direktive} {" ".join(werte)}' for direktive, werte in quellen.items()
+    )
+
+
+def csp_kopfname():
+    """Name der zu setzenden Kopfzeile oder ``None`` (``CSP_MODUS=aus``).
+
+    Ein unbekannter Wert der Variablen fällt auf Report-Only zurück: ein
+    Tippfehler darf weder die Seite blockieren noch die Richtlinie still
+    abschalten.
+    """
+    modus = str(getattr(settings, 'CSP_MODUS', CSP_REPORT_ONLY)).strip().lower()
+    if modus == CSP_AUS:
+        return None
+    return CSP_KOPF.get(modus, CSP_KOPF[CSP_REPORT_ONLY])
+
+
+class ContentSecurityPolicyMiddleware:
+    """Setzt die Content-Security-Policy aus ``settings.CSP_QUELLEN``.
+
+    Eine Kopfzeile, die eine View selbst gesetzt hat, bleibt unangetastet.
+    Die Betriebsart wird je Antwort gelesen, damit ein Umschalten von
+    ``CSP_MODUS`` ohne Neustart wirkt und Tests beide Kopfzeilen prüfen
+    können.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        kopf = csp_kopfname()
+        if kopf and not any(response.has_header(k) for k in CSP_KOPF.values()):
+            response[kopf] = csp_wert()
+        return response
+
+
+# ═══ BESUCHSPROTOKOLL ══════════════════════════════════════════════════════
 
 #: Umgebungsvariable, die das Besuchsprotokoll abschaltet. Vorgabe: an.
 #: Gedacht für den Fall, dass die pystore-Datenbank hakt – dann wartete

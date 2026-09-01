@@ -77,6 +77,10 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    # Content-Security-Policy (Schritt 36). Steht hinter WhiteNoise, damit
+    # statische Dateien die Kopfzeile nicht tragen – sie brauchen keine.
+    # Betriebsart und Positivliste: CSP_MODUS / CSP_QUELLEN weiter unten.
+    'shop1.middleware.ContentSecurityPolicyMiddleware',
     # GZip für alle dynamischen Antworten (HTML, sitemap.xml, llms.txt).
     # Steht bewusst NACH WhiteNoise: statische Dateien liefert WhiteNoise
     # vorher aus und sie sollen nicht bei jedem Abruf neu gepackt werden.
@@ -272,6 +276,56 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
 
 APPEND_SLASH = True
+
+# ═══ CONTENT-SECURITY-POLICY ═══
+# Gesetzt von shop1.middleware.ContentSecurityPolicyMiddleware, ohne Paket.
+#
+# Eine strenge Richtlinie (Nonces, kein Inline-Code) ist mit dieser Seite
+# nicht möglich: sie ist mit Inline-<script>/<style>, style="…"-Attributen,
+# on*-Handlern und Alpine.js (braucht 'unsafe-eval') gebaut, und der sicht-
+# bare Aufbau darf nicht verändert werden. Deshalb bleiben script-src und
+# style-src offen für Inline-Code – scharf sind dafür die Direktiven, die
+# Inline-Code nicht brauchen: frame-ancestors (niemand darf die Seite
+# einbetten), base-uri, form-action (Formulare gehen nur an die eigene
+# Seite) und object-src.
+#
+# Positivliste der Fremdquellen, belegt durch die Templates:
+#   cdn.jsdelivr.net   Alpine.js, GSAP, Three.js (base.html, index.html),
+#                      Chart.js (admin/stats.html, admin/werbung_list.html)
+#   fonts.googleapis.com / fonts.gstatic.com   Schriften (base.html)
+#   *.paypal.com / *.paypalobjects.com   PayPal-SDK, seine Iframes, Bilder
+#                      und Telemetrie (payment.html)
+#   maps.google.com / www.google.com   Karten-Iframe (_reviews_map.html)
+#   img-src https:     Produktbilder liegen auf res.cloudinary.com; die
+#                      Werbebilder (Werbung.bild) sind frei eingetragene
+#                      URLs beliebiger Hosts – eine engere Liste bräche sie.
+#
+# CSP_MODUS (Umgebungsvariable, ohne Deploy umschaltbar):
+#   report-only  Vorgabe. Der Browser meldet Verstösse nur in der Konsole,
+#                blockiert nichts. So lange, bis alle Seiten samt Checkout,
+#                Bezahlseite, Gästebuch-Karte und Admin-Panel im Browser
+#                ohne Meldung geprüft sind.
+#   scharf       Content-Security-Policy – der Browser blockiert.
+#   aus          keine Kopfzeile.
+CSP_MODUS = os.getenv('CSP_MODUS', 'report-only').strip().lower()
+
+CSP_QUELLEN = {
+    'default-src': ["'self'"],
+    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'",
+                   'https://cdn.jsdelivr.net',
+                   'https://*.paypal.com', 'https://*.paypalobjects.com'],
+    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+    'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
+    'img-src': ["'self'", 'data:', 'blob:', 'https:'],
+    'connect-src': ["'self'", 'https://*.paypal.com', 'https://*.paypalobjects.com'],
+    'frame-src': ['https://maps.google.com', 'https://www.google.com',
+                  'https://*.paypal.com'],
+    'manifest-src': ["'self'"],
+    'frame-ancestors': ["'none'"],
+    'base-uri': ["'self'"],
+    'form-action': ["'self'"],
+    'object-src': ["'none'"],
+}
 
 # ═══ PAYPAL ═══
 

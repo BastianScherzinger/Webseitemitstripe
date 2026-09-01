@@ -701,3 +701,32 @@ Geprüft: `sh -n start.sh` Exitcode 0, `manage.py check` grün, `manage.py
 test shop1` grün (152 Tests). Gunicorn läuft nicht unter Windows; ein
 lokaler Start mit denselben Parametern war deshalb nicht möglich – die
 Wirkung lässt sich erst am veröffentlichten Stand messen.
+
+### 2026-09-02 — Welle 8, Schritt 36: Content-Security-Policy als Report-Only
+
+**Was:** `shop1/middleware.py`: neue `ContentSecurityPolicyMiddleware`
+(eigener Code, keine Abhängigkeit), in `MIDDLEWARE` hinter WhiteNoise.
+`mainweb/settings.py`: `CSP_QUELLEN` (Positivliste) und `CSP_MODUS`
+(Umgebungsvariable; `report-only` = Vorgabe, `scharf`, `aus`; ein
+unbekannter Wert fällt auf Report-Only zurück). `script-src`/`style-src`
+mit `'unsafe-inline'`/`'unsafe-eval'` plus `cdn.jsdelivr.net`,
+`fonts.googleapis.com`, `fonts.gstatic.com`, `*.paypal.com`,
+`*.paypalobjects.com`; `frame-src` für `maps.google.com`, `www.google.com`
+und PayPal; `img-src https:`; scharf: `frame-ancestors 'none'`,
+`base-uri 'self'`, `form-action 'self'`, `object-src 'none'`.
+
+**Warum:** Es gab keine CSP (Befund SI08, `01-BEFUND.md` 4.19). Eine
+strenge Richtlinie ist mit dem Inline-Code der Templates nicht möglich,
+ohne den sichtbaren Aufbau zu ändern (Regel 1). Die Kopfzeile geht
+zuerst als `Content-Security-Policy-Report-Only` hinaus: der Browser
+meldet Verstösse nur in der Konsole und blockiert nichts. Erst nach der
+Prüfung im Browser auf `/`, `/produkte/`, `/gaestebuch/`, `/checkout/`,
+`/payment/` und im Admin-Panel wird `CSP_MODUS=scharf` gesetzt – ohne
+Deploy. `img-src https:` statt nur Cloudinary, weil `Werbung.bild` frei
+eingetragene Bild-URLs beliebiger Hosts enthält. Geprüft: `manage.py
+check` grün; `manage.py test shop1`: 151 von 152 grün, der eine
+Fehlschlag (`test_geo.test_die_produktseite_nennt_ihr_aenderungsdatum`)
+ist zeitbedingt und vorbestehend – er vergleicht das UTC-Datum von
+`aktualisiert_am` mit dem in Europe/Berlin gerenderten `dateModified`
+und schlägt zwischen 22:00 und 24:00 UTC fehl (Lauf um 23:17 UTC); die
+Tests in Schritt 40 belegen die Kopfzeile.
