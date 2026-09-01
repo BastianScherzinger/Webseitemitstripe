@@ -80,12 +80,21 @@ def robots_txt(request):
 
 
 #: Wissensseiten für den Abschnitt „Wissen" der llms.txt: Tripel aus
-#: Routenname, Ankertext und einem Satz Beschreibung. Zurzeit leer – die
-#: Seiten entstehen in einem späteren Schritt und werden hier eingetragen,
-#: sobald sie ausgeliefert werden. Solange die Liste leer ist, erscheint der
-#: Abschnitt nicht; eine leere Überschrift wäre für Antwortmaschinen ein
-#: Versprechen ohne Inhalt.
-WISSEN_SEITEN = []
+#: Routenname, Ankertext und einem Satz Beschreibung. Die Routennamen kommen
+#: aus dem Register ``views/wissen.py``; der Ankertext beschreibt, was die
+#: Seite beantwortet, statt sie nur zu benennen. Wäre die Liste leer,
+#: erschiene der Abschnitt nicht – eine leere Überschrift wäre für
+#: Antwortmaschinen ein Versprechen ohne Inhalt.
+WISSEN_SEITEN = [
+    ('wissen', 'Wissen: Uebersicht',
+     'Einstieg in die Beitraege zu Pflege, Upcycling-Begriff und Groessenwahl; nennt, woher die Angaben stammen'),
+    ('wissen_pflege', 'Wie pflege ich handbemalte Kleidung?',
+     'Waschen auf links bei 30 Grad, Trocknen an der Luft, Buegeln nur von links, Lagern ohne Druck auf die Bemalung, Flecken'),
+    ('wissen_upcycling', 'Was ist Upcycling-Mode - und was unterscheidet sie von Second Hand?',
+     'Begriffsklaerung Upcycling, Second Hand und Vintage; warum ein Einzelstueck nicht nachbestellbar ist; Handbemalung von Druck unterscheiden'),
+    ('wissen_groesse', 'Wie finde ich bei Einzelstuecken die richtige Groesse?',
+     'Masse mit eigener Kleidung vergleichen statt Etikett, warum Vintage-Schnitte abweichen, vorab nachfragen, Widerruf'),
+]
 
 
 def llms_txt(request):
@@ -216,6 +225,11 @@ def sitemap_xml(request):
         {'name': 'kontakt',      'loc': reverse('kontakt'),      'priority': '0.6', 'changefreq': 'monthly'},
         {'name': 'datenschutz',  'loc': reverse('datenschutz'),  'priority': '0.2', 'changefreq': 'yearly'},
         {'name': 'agb',          'loc': reverse('agb'),          'priority': '0.2', 'changefreq': 'yearly'},
+        # Wissensbereich: Redaktionsinhalt, lastmod aus demselben Register.
+        {'name': 'wissen',           'loc': reverse('wissen'),           'priority': '0.6', 'changefreq': 'monthly'},
+        {'name': 'wissen_pflege',    'loc': reverse('wissen_pflege'),    'priority': '0.6', 'changefreq': 'monthly'},
+        {'name': 'wissen_upcycling', 'loc': reverse('wissen_upcycling'), 'priority': '0.6', 'changefreq': 'monthly'},
+        {'name': 'wissen_groesse',   'loc': reverse('wissen_groesse'),   'priority': '0.6', 'changefreq': 'monthly'},
     ]
     # /impressum/ steht bewusst NICHT in dieser Liste: impressum.html setzt
     # meta robots auf "noindex, follow". Eine Adresse gleichzeitig zur

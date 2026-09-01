@@ -80,6 +80,11 @@ UMFANG_PRODUKT_SEITE = '/produkt/bemalte-bomberjacke/'
 #: ``/agb/`` 177, Produktseite 103. Die Zielgrössen des Prüfstands (700 für
 #: die Startseite, 600 für ``/produkte/``) sind damit ausdrücklich **nicht**
 #: erreicht; wer sie erreicht, zieht die Schwellen nach.
+#:
+#: Wissensbereich (Welle 6, 2026-09-01), gemessen mit derselben Funktion:
+#: ``/wissen/`` 261, Pflege 821, Upcycling 941, Grösse 890. Die drei Beiträge
+#: liegen über der Zielgrösse 600 des Plans; die Schwellen halten auch hier
+#: den gemessenen Stand fest, nicht die Zielgrösse.
 MINDESTWOERTER = {
     '/': 390,
     '/produkte/': 105,
@@ -91,6 +96,10 @@ MINDESTWOERTER = {
     '/datenschutz/': 360,
     '/agb/': 170,
     UMFANG_PRODUKT_SEITE: 95,
+    '/wissen/': 250,
+    '/wissen/pflege-handbemalte-kleidung/': 800,
+    '/wissen/upcycling-mode-second-hand-vintage/': 920,
+    '/wissen/groesse-bei-einzelstuecken/': 870,
 }
 
 #: Seiten, deren erstes Drittel noch keine Zahl nennt. ``/liefergebiet/``

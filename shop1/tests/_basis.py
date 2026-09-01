@@ -64,6 +64,10 @@ OEFFENTLICHE_SEITEN = [
     '/impressum/',
     '/datenschutz/',
     '/agb/',
+    '/wissen/',
+    '/wissen/pflege-handbemalte-kleidung/',
+    '/wissen/upcycling-mode-second-hand-vintage/',
+    '/wissen/groesse-bei-einzelstuecken/',
     '/login/',
     '/register/',
     '/password-reset/',
@@ -84,6 +88,11 @@ INHALTSSEITEN = [
     '/impressum/',
     '/datenschutz/',
     '/agb/',
+    # Wissensbereich (Welle 6): Übersicht und drei Beiträge, alle indexierbar.
+    '/wissen/',
+    '/wissen/pflege-handbemalte-kleidung/',
+    '/wissen/upcycling-mode-second-hand-vintage/',
+    '/wissen/groesse-bei-einzelstuecken/',
 ]
 
 #: Pflichtseiten nach deutschem Recht – ihr Ausfall ist ein Abmahnrisiko.

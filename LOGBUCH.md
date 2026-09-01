@@ -504,3 +504,35 @@ mit den sechs Verkaufsseiten ist SU07 erfüllt.
 
 **Warum:** Grössenfrage ist bei Einzelstücken ohne Anprobe die Kaufhürde
 und ein Retourengrund; eine erfundene Tabelle wäre beides zugleich.
+
+### 2026-09-01 — Welle 6, Schritt 30: Wissensbereich angeschlossen und unter die Designwache gestellt
+
+**Was:** (1) `shop1/seiten_stand.py`: vier Registereinträge (`wissen`,
+`wissen_pflege`, `wissen_upcycling`, `wissen_groesse`, Stand 2026-09-01) mit
+Namen – die Übersicht „Wissen", die Beiträge ihr `h1`-Text, weil sie in
+keinem Menü stehen. (2) `shop1/views/legal.py`: vier Sitemap-Einträge mit
+`lastmod` aus dem Register; `WISSEN_SEITEN` gefüllt, damit `llms.txt` den
+Abschnitt „Wissen" mit beschreibendem Ankertext ausliefert. (3)
+`shop1/tests/_basis.py`: die vier Adressen in `OEFFENTLICHE_SEITEN` und
+`INHALTSSEITEN` – damit erben sie die bestehenden Prüfungen (200, Titel,
+Beschreibung, canonical, h1, Alternativtexte, Bedienelemente, Ladezeit,
+Antwort-zuerst, Zahl im ersten Drittel, WebPage-Knoten, Brotkrume,
+Person-Verweise, Sitemap-Abgleich). `BEWACHTE_SEITEN` in `test_aufbau.py`
+leitet sich aus `OEFFENTLICHE_SEITEN` ab und umfasst sie damit ohne
+Änderung an der Datei. (4) `shop1/tests/test_geo.py`: die drei Beiträge in
+`FAQ_SEITEN`, sonst meldete der FAQ-Abgleich „Schema auf Seite gefunden,
+die nicht in der Liste steht"; jetzt prüft er dort Frage-für-Frage
+Überschrift und Antwort. (5) `shop1/tests/test_inhalt.py`: vier Schwellen in
+`MINDESTWOERTER` (gemessen 261/821/941/890 → 250/800/920/870), weil
+`test_jede_inhaltsseite_ist_in_der_schwellenliste` sie verlangt. (6)
+`shop1/tests/aufbau_referenz.json`: die vier Fingerabdrücke **gezielt
+ergänzt** – über ein Wegwerf-Testmodul, das die Datei liest, nur fehlende
+Schlüssel anfügt und mit denselben `json.dumps`-Einstellungen wie
+`test_aufbau.py` zurückschreibt. `git diff --numstat`: 1054 Zeilen
+hinzugefügt, **0 gelöscht**; 15 → 19 Seiten. Die Datei wurde **nicht**
+gelöscht und neu erzeugt – das hätte den Schutz der fünfzehn bestehenden
+Seiten still aufgehoben.
+
+**Warum:** Ohne diesen Schritt wären die drei Seiten unsichtbar (nicht in
+Sitemap und llms.txt) und ungeschützt (in keiner Testliste). Befunde SU01,
+SU04, SU07, SU09, PJ02.

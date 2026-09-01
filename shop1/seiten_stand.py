@@ -27,12 +27,19 @@ SEITEN_STAND = {
     'impressum':    '2026-09-01',
     'datenschutz':  '2026-09-01',
     'agb':          '2026-09-01',
+    # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
+    'wissen':           '2026-09-01',
+    'wissen_pflege':    '2026-09-01',
+    'wissen_upcycling': '2026-09-01',
+    'wissen_groesse':   '2026-09-01',
 }
 
 #: Routenname → Bezeichnung der Seite, wörtlich so, wie sie in der Navigation
 #: und im Fusszeilen-Menü von ``base.html`` sichtbar ist. Der ``WebPage``-
 #: Knoten trägt sie als ``name``; ein Schema, das eine Seite anders nennt als
-#: die Seite selbst, ist schlimmer als keines.
+#: die Seite selbst, ist schlimmer als keines. Die Wissensseiten stehen in
+#: keinem Menü; ihr Name ist der Text ihrer ``h1`` (die Übersicht: die
+#: Bereichsbezeichnung „Wissen", die dort als Kicker über der ``h1`` steht).
 SEITEN_NAME = {
     'home':         'Home',
     'produkte':     'Produkte',
@@ -43,6 +50,10 @@ SEITEN_NAME = {
     'impressum':    'Impressum',
     'datenschutz':  'Datenschutz',
     'agb':          'AGB',
+    'wissen':           'Wissen',
+    'wissen_pflege':    'Wie pflege ich handbemalte Kleidung?',
+    'wissen_upcycling': 'Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?',
+    'wissen_groesse':   'Wie finde ich bei Einzelstücken die richtige Größe?',
 }
 
 

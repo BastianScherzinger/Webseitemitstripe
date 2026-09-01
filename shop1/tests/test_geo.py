@@ -19,12 +19,19 @@ _JSONLD = re.compile(
     r'<script[^>]+type="application/ld\+json"[^>]*>(.*?)</script>', re.DOTALL
 )
 
-#: Die Seiten, die ein FAQPage-Schema tragen (``kontakt.html`` und
-#: ``liefergebiet.html``). Die Startseite steht bewusst nicht darin: ihr
-#: Schema wurde entfernt, weil die Fragen dort nirgends sichtbar waren (siehe
-#: Kommentar in ``index.html``). Kommt eine Seite dazu, gehört sie hier hinein
-#: – dann prüft der Test auch dort, dass jede Frage sichtbar auf der Seite steht.
-FAQ_SEITEN = ('/kontakt/', '/liefergebiet/')
+#: Die Seiten, die ein FAQPage-Schema tragen (``kontakt.html``,
+#: ``liefergebiet.html`` und die drei Wissensbeiträge, deren
+#: Zwischenüberschriften Fragen sind). Die Startseite steht bewusst nicht
+#: darin: ihr Schema wurde entfernt, weil die Fragen dort nirgends sichtbar
+#: waren (siehe Kommentar in ``index.html``); die Wissensübersicht hat kein
+#: FAQ. Kommt eine Seite dazu, gehört sie hier hinein – dann prüft der Test
+#: auch dort, dass jede Frage sichtbar auf der Seite steht.
+FAQ_SEITEN = (
+    '/kontakt/', '/liefergebiet/',
+    '/wissen/pflege-handbemalte-kleidung/',
+    '/wissen/upcycling-mode-second-hand-vintage/',
+    '/wissen/groesse-bei-einzelstuecken/',
+)
 
 
 class _Textleser(HTMLParser):
