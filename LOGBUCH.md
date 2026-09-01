@@ -482,3 +482,25 @@ Vorab-Überweisung, Endpreise, § 19 UStG, Widerruf vierzehn Tage (AGB § 4,
 
 **Warum:** Die Frage, für die eine Antwortmaschine eine Definition sucht
 (SU04, GE23); zweite von drei Wissensseiten.
+
+### 2026-09-01 — Welle 6, Schritt 29: Wissensseite „Wie finde ich bei Einzelstücken die richtige Größe?"
+
+**Was:** `shop1/templates/shop1/wissen/groesse.html` unter
+`/wissen/groesse-bei-einzelstuecken/` (Registereintrag `wissen_groesse`).
+Gleicher Bauplan: Antwort im ersten Absatz (Vergleich mit der eigenen
+Kleidung statt Etikett; Maße vorab erfragen), sechs Fragen als `h2`,
+`FAQPage` wortgleich, Brotkrume Home → Wissen → Seite. Inhalt: warum es nur
+eine Größe gibt, Messmethode (flach hinlegen; Brustweite, Länge,
+Ärmellänge, Schulterbreite), warum Vintage-Schnitte und ältere
+Konfektionsgrößen abweichen, welche Maße man kennen sollte, wie man über
+das Kontaktformular oder brehlerluisa@gmail.com nachfragt (Kontaktseite),
+was bei Nichtpassen gilt (kein Größentausch bei einem Einzelstück;
+Widerruf binnen vierzehn Tagen wörtlich nach AGB § 5, Einzelheiten dort).
+**Keine Größentabelle mit Zentimeterwerten** – im Projekt ist keine
+hinterlegt; die Seite sagt an zwei Stellen ausdrücklich, warum nicht.
+Gemessen: 890 Wörter, Zahl im ersten Drittel (36304, 1-of-1), Titel 67 und
+Beschreibung 162 Zeichen. Damit sind drei Wissensseiten erreicht (SU04);
+mit den sechs Verkaufsseiten ist SU07 erfüllt.
+
+**Warum:** Grössenfrage ist bei Einzelstücken ohne Anprobe die Kaufhürde
+und ein Retourengrund; eine erfundene Tabelle wäre beides zugleich.

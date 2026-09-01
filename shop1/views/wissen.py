@@ -39,6 +39,13 @@ WISSEN_BEITRAEGE = {
         'kurz': 'Begriffsklärung Upcycling, Second Hand und Vintage, warum ein Einzelstück '
                 'nicht nachbestellbar ist und woran man Handbemalung von Druck unterscheidet.',
     },
+    'groesse-bei-einzelstuecken': {
+        'url_name': 'wissen_groesse',
+        'template': 'shop1/wissen/groesse.html',
+        'titel': 'Wie finde ich bei Einzelstücken die richtige Größe?',
+        'kurz': 'Maße mit der eigenen Kleidung vergleichen statt aufs Etikett zu vertrauen, '
+                'warum Vintage-Schnitte abweichen und wie man vor dem Kauf nachfragt.',
+    },
 }
 
 
