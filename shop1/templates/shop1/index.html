@@ -30,70 +30,7 @@
   ]
 }
 </script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Was ist Luviq Universe?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Luviq Universe ist ein nachhaltiger Second-Hand-Shop aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung durch einzigartige Handmalerei in 1-of-1 Kunstwerke. Jedes Stück ist ein Unikat – nachhaltig, handgemacht und einzigartig."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Wo ist Luviq Universe?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Luviq Universe kommt aus Alsfeld (36304), Hessen, Deutschland. Wir versenden unsere handbemalten Vintage-Unikate deutschlandweit – nach Gießen, Fulda, Frankfurt, Lauterbach, Marburg, Kassel und in alle anderen Städte."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Liefert Luviq nach Gießen, Fulda und andere Städte in Hessen?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Ja! Luviq Universe versendet deutschlandweit. Egal ob du in Gießen, Fulda, Lauterbach, Frankfurt, Berlin oder sonstwo in Deutschland wohnst – dein handbemaltes Unikat kommt sicher zu dir."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Was verkauft Luviq Universe?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Luviq Universe verkauft handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück ist ein 1-of-1 Unikat – von Luisa Brehler aus Alsfeld handverlesen und mit einzigartigen Designs bemalt. Unsere Kollektion umfasst Jacken, Shirts und weitere Vintage-Teile."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Wie kann ich bei Luviq Universe bestellen?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Besuche luviq.de, stöbere in der Kollektion und bestelle direkt online. Wir akzeptieren PayPal und Banküberweisung. Der Versand erfolgt deutschlandweit – schnell, sicher und mit Liebe verpackt."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Ist Luviq Universe nachhaltig?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Ja, Nachhaltigkeit ist unser Kern. Statt neue Kleidung zu produzieren, retten wir Vintage-Kleidung vor dem Wegwurf und verwandeln sie in handbemalte Kunstwerke. Second Hand neu gedacht – aus Alsfeld, Hessen."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Aus welcher Region zwischen Fulda und Gießen kommt Luviq?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Luviq Universe kommt aus Alsfeld im Vogelsbergkreis – mittendrin zwischen Fulda und Gießen. Unsere Community reicht von Lauterbach und Herbstein im Osten bis Grünberg und Gießen im Westen, von Homberg (Efze) und Schwalmstadt im Norden bis Ulrichstein im Süden. Mehr zum Liefergebiet gibt es auf unserer Liefergebiet-Seite."
-      }
-    }
-  ]
-}
-</script>
+{# Das FAQ-Schema, das hier stand, nannte sieben Fragen und Antworten, die auf der Startseite nirgends sichtbar sind. Google verlangt fuer FAQPage sichtbaren Inhalt auf derselben Seite und entfernt Seiten, die das verletzen; eine Antwortmaschine zitiert sonst etwas, das niemand nachlesen kann. Eine Antwort nannte ausserdem "luviq.de" statt der tatsaechlichen Adresse. Die Inhalte stehen jetzt in llms.txt (views/legal.py) - dort sind sie ausdruecklich als Kurzfassung gedacht und brauchen keine Entsprechung im Seitenkoerper. Zurueck ins Schema koennen sie, sobald die Startseite einen sichtbaren Fragenbereich bekommt; das aendert den Aufbau und braucht eine Freigabe. #}
 {% endblock %}
 
 {% block extra_css %}

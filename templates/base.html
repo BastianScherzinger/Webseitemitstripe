@@ -109,12 +109,6 @@
           "priceRange": "€€",
           "currenciesAccepted": "EUR",
           "paymentAccepted": "PayPal, Banküberweisung",
-          "openingHoursSpecification": {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-            "opens": "00:00",
-            "closes": "23:59"
-          },
           "hasOfferCatalog": {
             "@type": "OfferCatalog",
             "name": "Handbemalte Vintage & Second Hand Mode",
@@ -134,15 +128,8 @@
           "url": "{{ request.scheme }}://{{ request.get_host }}/",
           "name": "Luviq Universe",
           "description": "Handbemalte Second Hand Mode und Vintage-Unikate aus Alsfeld, Hessen – deutschlandweit bestellen.",
-          "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": {
-              "@type": "EntryPoint",
-              "urlTemplate": "{{ request.scheme }}://{{ request.get_host }}/produkte/?q={search_term_string}"
-            },
-            "query-input": "required name=search_term_string"
-          }
+          "inLanguage": "de-DE",
+          "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
         }
       ]
     }

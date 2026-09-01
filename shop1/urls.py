@@ -58,6 +58,7 @@ urlpatterns = [
     # ═══ SEO ═══
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
+    path('llms.txt', views.llms_txt, name='llms_txt'),
 
     # ═══ GÄSTEBUCH & KOMMENTARE ═══
     path('gaestebuch/', views.gaestebuch, name='gaestebuch'),

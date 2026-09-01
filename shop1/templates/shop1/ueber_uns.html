@@ -17,7 +17,7 @@
       "description": "Luisa Brehler verwandelt vergessene Vintage-Kleidung in handbemalte Kunstwerke – nachhaltige Upcycling-Mode made in Germany.",
       "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}",
       "mainEntity": {
-        "@id": "{{ request.scheme }}://{{ request.get_host }}/#organisation"
+        "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
       }
     },
     {
@@ -28,19 +28,13 @@
       "description": "Luisa Brehler ist die Gründerin von Luviq Universe. Sie verwandelt handverlesene Vintage-Kleidung durch handbemalte Designs in einzigartige 1-of-1 Kunstwerke.",
       "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/ich.jpg' %}",
       "worksFor": {
-        "@id": "{{ request.scheme }}://{{ request.get_host }}/#organisation"
+        "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
       },
       "knowsAbout": ["Upcycling", "Vintage Mode", "Handmalerei", "Nachhaltige Mode", "Textilkunst"]
     },
     {
-      "@type": ["Organization", "ClothingStore"],
-      "@id": "{{ request.scheme }}://{{ request.get_host }}/#organisation",
-      "name": "Luviq Universe",
-      "url": "{{ request.scheme }}://{{ request.get_host }}/",
-      "founder": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
-      "description": "Handbemalte 1-of-1 Upcycling-Mode aus Deutschland. Jedes Stück ist ein Unikat – nachhaltig, handgemacht, einzigartig.",
-      "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}",
-      "sameAs": []
+      "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
+      "founder": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"}
     }
   ]
 }

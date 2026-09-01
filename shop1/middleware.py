@@ -8,7 +8,7 @@ from .models import PageVisit, VisitorLog
 _log = logging.getLogger('shop1')
 
 _SKIP = ('/static/', '/media/', '/admin/', '/favicon', '/robots.txt',
-         '/sitemap.xml', '/health', '/__debug__')
+         '/sitemap.xml', '/llms.txt', '/health', '/__debug__')
 
 _PRIVATE = ('127.', '10.', '192.168.', '::1', '172.16.', '172.17.',
             '172.18.', '172.19.', '172.20.', '172.21.', '172.22.',
