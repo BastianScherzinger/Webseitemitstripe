@@ -536,3 +536,19 @@ Seiten still aufgehoben.
 **Warum:** Ohne diesen Schritt wären die drei Seiten unsichtbar (nicht in
 Sitemap und llms.txt) und ungeschützt (in keiner Testliste). Befunde SU01,
 SU04, SU07, SU09, PJ02.
+
+### 2026-09-01 — Welle 7, Schritt 31: Nicht eingebundenes Hintergrundbild entfernt
+
+**Was:** `shop1/static/shop1/images/backgroundpics/hintergund_design_farbe_der_seite.jpeg`
+(336.579 Byte, die grösste statische Datei des Projekts) gelöscht; der
+Ordner `backgroundpics/` ist damit leer und verschwindet aus Git.
+
+**Warum:** Die Datei wurde nirgends referenziert – erneute Suche vor dem
+Löschen über `*.html`, `*.css`, `*.py`, `*.json`, `*.js`, `*.sh`, `*.md`
+einschliesslich `tailwind_input.css` und `manifest.json`: kein Treffer;
+der einzige Fund war der Eintrag im Build-Artefakt `staticfiles/staticfiles.json`,
+das nicht versioniert ist und bei jedem `collectstatic --clear` neu entsteht.
+Sie wanderte bei jedem Deploy durch `collectstatic` (`start.sh:36`) und wurde
+inhaltsgehasht abgelegt, ohne je ausgeliefert zu werden. Befund
+`01-BEFUND.md` 4.20. Geprüft: `collectstatic --noinput` ohne Fehler,
+`manage.py check` grün, `manage.py test shop1` grün (147 Tests).
