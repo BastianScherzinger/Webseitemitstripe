@@ -242,13 +242,13 @@
                     </div>
 
                     {% if showcase|length > 1 %}
-                    <div class="flex items-stretch gap-2 sm:gap-3 mt-4 px-1" role="tablist" aria-label="Produkte wechseln">
+                    {% comment %}Bewusst kein role="tablist"/"tab": das vollständige Tabmuster verlangt role="tabpanel" mit Kennung und aria-controls auf jeder Folie, und Kennungen sind hier geschützt. Eine benannte Gruppe von Schaltflächen mit aria-pressed sagt Vorleseprogrammen wahrheitsgemäß, welche Folie gerade gezeigt wird.{% endcomment %}
+                    <div class="flex items-stretch gap-2 sm:gap-3 mt-4 px-1" role="group" aria-label="Produkte wechseln">
                         {% for produkt in showcase %}
                         <button
                             type="button"
-                            role="tab"
                             @click="active = {{ forloop.counter0 }}"
-                            :aria-selected="active === {{ forloop.counter0 }} ? 'true' : 'false'"
+                            :aria-pressed="active === {{ forloop.counter0 }} ? 'true' : 'false'"
                             aria-label="{{ produkt.name }} anzeigen"
                             class="relative flex-1 h-14 sm:h-16 rounded-xl sm:rounded-2xl overflow-hidden ring-1 transition-all duration-300"
                             :class="active === {{ forloop.counter0 }} ? 'ring-glow-orange opacity-100' : 'ring-white/10 opacity-40 hover:opacity-70'">

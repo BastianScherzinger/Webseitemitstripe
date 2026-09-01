@@ -87,10 +87,10 @@
                             </td>
                             <td class="text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <a href="{% url 'admin_order_detail' order.id %}" class="inline-flex w-10 h-10 glass rounded-xl items-center justify-center hover:bg-glow-orange transition-all transform group-hover:scale-110">
+                                    <a href="{% url 'admin_order_detail' order.id %}" aria-label="Bestellung #{{ order.id }} ansehen" class="inline-flex w-10 h-10 glass rounded-xl items-center justify-center hover:bg-glow-orange transition-all transform group-hover:scale-110">
                                         👁️
                                     </a>
-                                    <a href="{% url 'admin_order_delete' order.id %}" class="inline-flex w-10 h-10 glass border-red-500/10 text-red-400/40 hover:text-red-400 hover:bg-red-500/10 rounded-xl items-center justify-center transition-all transform group-hover:scale-110">
+                                    <a href="{% url 'admin_order_delete' order.id %}" aria-label="Bestellung #{{ order.id }} löschen" class="inline-flex w-10 h-10 glass border-red-500/10 text-red-400/40 hover:text-red-400 hover:bg-red-500/10 rounded-xl items-center justify-center transition-all transform group-hover:scale-110">
                                         🗑️
                                     </a>
                                 </div>
