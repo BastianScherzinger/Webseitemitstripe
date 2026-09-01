@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Was ist Upcycling-Mode? Abgrenzung zu Second Hand | Luviq Alsfeld{% endblock %}
+{% block meta_description %}Upcycling-Mode, Second Hand und Vintage: was die Begriffe bedeuten, worin sie sich unterscheiden und warum ein Einzelstück nicht nachbestellbar ist. Jetzt erfahren.{% endblock %}
+{% block og_title %}Was ist Upcycling-Mode? – Luviq Universe, Alsfeld{% endblock %}
+{% block og_description %}Upcycling, Second Hand, Vintage: Begriffsklärung und Abgrenzung – und warum ein handbemaltes Einzelstück genau einmal existiert.{% endblock %}
+{% block twitter_title %}Was ist Upcycling-Mode? – Luviq Universe{% endblock %}
+{% block twitter_description %}Begriffsklärung Upcycling, Second Hand und Vintage; warum ein 1-of-1 nicht nachbestellbar ist.{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Wissen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen' %}"},
+    {"@type": "ListItem", "position": 3, "name": "Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen_upcycling' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block schema_ld %}
+{% comment %}Jede Frage steht wortgleich als h2 auf der Seite, jede Antwort wortgleich als erster Absatz unter dieser h2 - test_geo prueft beides. Keine Marktzahlen, keine Umweltbilanz, keine Prozentangaben: nichts davon ist belegt. Ueber Luviq nur, was Ueber-uns, Produkte, Liefergebiet und AGB belegen.{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Was bedeutet Upcycling bei Kleidung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Upcycling heißt, ein vorhandenes Kleidungsstück aufzuwerten statt es wegzuwerfen oder zu Rohstoff zu zerlegen. Das Teil bleibt als Teil erhalten und bekommt durch eine Bearbeitung – Bemalung, Stickerei, neuer Schnitt, neue Details – einen höheren Wert als vorher. Beim Recycling wird ein Textil dagegen in Fasern aufgelöst und daraus etwas Neues hergestellt."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was ist der Unterschied zwischen Upcycling und Second Hand?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Second Hand ist gebrauchte Kleidung, die unverändert weiterverkauft wird. Upcycling beginnt mit genau dieser Kleidung, verändert sie aber handwerklich, bevor sie weitergegeben wird. Jedes Stück von Luviq Universe ist deshalb beides zugleich: ein Second-Hand-Teil als Grundlage und ein Upcycling-Stück durch die Bemalung von Hand."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was ist Vintage – und ist jedes Second-Hand-Teil Vintage?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Vintage beschreibt das Alter und den Stil eines Stücks, nicht seinen Zustand und nicht, ob es gebraucht ist. Als Vintage gelten üblicherweise Stücke, die mindestens etwa 20 Jahre alt sind; Retro heißt dagegen neu hergestellt im alten Stil. Nicht jedes Second-Hand-Teil ist Vintage, und nicht jedes Vintage-Teil ist Second Hand."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Warum ist ein Einzelstück nicht nachbestellbar?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Weil beides nur einmal existiert: das Basisteil und das Motiv. Das Basisteil ist ein bestimmtes getragenes Kleidungsstück in einer bestimmten Größe mit eigenem Stoff und eigenen Spuren; das Motiv wird von Hand für genau dieses Teil gemalt und nicht wiederholt. Ist ein Stück verkauft, gibt es kein zweites Exemplar, keine andere Größe und keine zweite Auflage."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Ist Upcycling-Mode nachhaltiger als neue Kleidung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Upcycling vermeidet, dass für ein Kleidungsstück ein neues produziert wird, weil ein vorhandenes weiterverwendet wird – das ist der Grund, aus dem Luviq Universe als nachhaltig gilt. Wie groß die Ersparnis an Wasser, Energie oder Emissionen im Einzelfall ist, hängt vom jeweiligen Teil ab und lässt sich für ein einzelnes handbemaltes Stück nicht seriös beziffern; Zahlen dazu nennt diese Seite deshalb nicht."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Woran erkenne ich, dass ein Stück wirklich handbemalt ist?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An den Spuren der Hand: Pinselstriche mit unterschiedlicher Dichte, kleine Unregelmäßigkeiten in Linien und Rändern, Stellen, an denen die Farbe dicker oder dünner aufliegt. Ein Druck wirkt dagegen überall gleichmäßig, hat oft ein feines Punktraster und exakt gleiche Kanten. Bei Luviq Universe wird jedes Teil einzeln mit Pinsel und Textilfarbe bemalt, es gibt keine Drucke."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie kaufe ich ein Upcycling-Einzelstück bei Luviq Universe?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Über diese Seite: Das Stück unter Alle Unikate aussuchen, nach der Anmeldung in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder Vorab-Überweisung; alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen. Ein Ladengeschäft gibt es nicht."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <!-- Kopf: Antwort zuerst -->
+        <div class="mb-20 animate-reveal text-center">
+            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-glow-orange mb-6"><a href="{% url 'wissen' %}" class="hover:text-white transition-colors">Wissen</a></p>
+            <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
+                Was ist Upcycling-Mode – <span class="text-glow">und was unterscheidet sie von Second Hand?</span>
+            </h1>
+            <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
+                Upcycling-Mode ist Kleidung, die schon getragen wurde und durch eine handwerkliche Bearbeitung zu einem neuen, höherwertigen Stück wird – bei Luviq Universe aus Alsfeld durch Bemalung von Hand mit Pinsel und Textilfarbe. Second Hand ist dieselbe Kleidung ohne diese Bearbeitung: gebraucht, weiterverkauft, unverändert. Vintage bezeichnet Alter und Stil eines Stücks, nicht seinen Zustand; als Vintage gelten üblicherweise Stücke, die mindestens etwa 20 Jahre alt sind. Ein handbemaltes Upcycling-Stück gibt es genau einmal (1-of-1) – deshalb lässt es sich weder nachbestellen noch in einer zweiten Größe liefern.
+            </p>
+            <div class="h-px w-32 bg-glow-orange mt-16 rounded-full mx-auto"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto space-y-6">
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Was bedeutet Upcycling bei Kleidung?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Upcycling heißt, ein vorhandenes Kleidungsstück aufzuwerten statt es wegzuwerfen oder zu Rohstoff zu zerlegen. Das Teil bleibt als Teil erhalten und bekommt durch eine Bearbeitung – Bemalung, Stickerei, neuer Schnitt, neue Details – einen höheren Wert als vorher. Beim Recycling wird ein Textil dagegen in Fasern aufgelöst und daraus etwas Neues hergestellt.</p>
+                <p class="text-white/50 leading-relaxed font-light">Das Wort setzt sich aus „up" und „Recycling" zusammen: nicht nur wiederverwerten, sondern nach oben verwerten. Entscheidend ist, dass am Ende ein Stück steht, das jemand lieber trägt als das Ausgangsteil. Bei Luviq Universe ist das Ausgangsteil eine getragene Jacke oder ein getragenes Shirt, und die Bearbeitung ist ein Motiv, das Luisa Brehler mit Pinsel und Textilfarbe direkt auf den Stoff malt – keine Drucke, keine Serie.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Was ist der Unterschied zwischen Upcycling und Second Hand?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Second Hand ist gebrauchte Kleidung, die unverändert weiterverkauft wird. Upcycling beginnt mit genau dieser Kleidung, verändert sie aber handwerklich, bevor sie weitergegeben wird. Jedes Stück von Luviq Universe ist deshalb beides zugleich: ein Second-Hand-Teil als Grundlage und ein Upcycling-Stück durch die Bemalung von Hand.</p>
+                <p class="text-white/50 leading-relaxed font-light">Für die Käuferin bedeutet der Unterschied vor allem zweierlei. Erstens: Ein Second-Hand-Teil gibt es in ähnlicher Form oft mehrfach, ein Upcycling-Stück mit handgemaltem Motiv nur einmal. Zweitens: Ein Second-Hand-Teil trägt nur die Spuren seines früheren Lebens, ein Upcycling-Stück zusätzlich die Arbeit, die hineingesteckt wurde. Beides ist gebraucht; das Basisteil wird bei Luviq bewusst als getragene Kleidung ausgesucht, deren Stoff und Schnitt sich als Leinwand eignen.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Was ist Vintage – und ist jedes Second-Hand-Teil Vintage?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Vintage beschreibt das Alter und den Stil eines Stücks, nicht seinen Zustand und nicht, ob es gebraucht ist. Als Vintage gelten üblicherweise Stücke, die mindestens etwa 20 Jahre alt sind; Retro heißt dagegen neu hergestellt im alten Stil. Nicht jedes Second-Hand-Teil ist Vintage, und nicht jedes Vintage-Teil ist Second Hand.</p>
+                <p class="text-white/50 leading-relaxed font-light">Eine feste Altersgrenze gibt es nicht; die Faustregel mit etwa 20 Jahren ist eine Konvention des Handels, keine Norm. Ein ungetragenes Teil aus einem alten Lagerbestand ist Vintage, aber nicht Second Hand. Ein Shirt von vor drei Jahren ist Second Hand, aber nicht Vintage. Die Basisteile von Luviq Universe sind handverlesene Second-Hand- und Vintage-Kleidung; welches Alter ein bestimmtes Stück hat, lässt sich vor dem Kauf über das <a href="{% url 'kontakt' %}" class="text-glow-orange hover:underline">Kontaktformular</a> nachfragen.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Warum ist ein Einzelstück nicht nachbestellbar?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Weil beides nur einmal existiert: das Basisteil und das Motiv. Das Basisteil ist ein bestimmtes getragenes Kleidungsstück in einer bestimmten Größe mit eigenem Stoff und eigenen Spuren; das Motiv wird von Hand für genau dieses Teil gemalt und nicht wiederholt. Ist ein Stück verkauft, gibt es kein zweites Exemplar, keine andere Größe und keine zweite Auflage.</p>
+                <p class="text-white/50 leading-relaxed font-light">Das unterscheidet ein 1-of-1 von Kleidung aus der Serie, bei der dasselbe Modell in mehreren Größen und Farben nachproduziert wird. Wer ein bestimmtes Stück möchte, kauft genau dieses Stück – und prüft vorher, ob die Größe passt. Wie das ohne Anprobe geht, erklärt der Beitrag zur Größenwahl in diesem Wissensbereich. Das gesetzliche Widerrufsrecht von vierzehn Tagen gilt auch für Einzelstücke; die Einzelheiten stehen in den <a href="{% url 'agb' %}" class="text-glow-orange hover:underline">AGB</a>.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Ist Upcycling-Mode nachhaltiger als neue Kleidung?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Upcycling vermeidet, dass für ein Kleidungsstück ein neues produziert wird, weil ein vorhandenes weiterverwendet wird – das ist der Grund, aus dem Luviq Universe als nachhaltig gilt. Wie groß die Ersparnis an Wasser, Energie oder Emissionen im Einzelfall ist, hängt vom jeweiligen Teil ab und lässt sich für ein einzelnes handbemaltes Stück nicht seriös beziffern; Zahlen dazu nennt diese Seite deshalb nicht.</p>
+                <p class="text-white/50 leading-relaxed font-light">Was sich ohne Zahl sagen lässt: Ein Teil, das weitergetragen wird, muss nicht entsorgt werden, und für sein Motiv wird kein neuer Stoff gewebt, gefärbt und zugeschnitten. Dazu kommt die Haltung, die ein Unikat mit sich bringt – ein Stück, das es nur einmal gibt, wird eher gepflegt und länger getragen als eines, das jederzeit ersetzbar ist. Wie man handbemalte Kleidung pflegt, damit sie lange hält, steht im Beitrag zur Pflege in diesem Wissensbereich.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Woran erkenne ich, dass ein Stück wirklich handbemalt ist?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">An den Spuren der Hand: Pinselstriche mit unterschiedlicher Dichte, kleine Unregelmäßigkeiten in Linien und Rändern, Stellen, an denen die Farbe dicker oder dünner aufliegt. Ein Druck wirkt dagegen überall gleichmäßig, hat oft ein feines Punktraster und exakt gleiche Kanten. Bei Luviq Universe wird jedes Teil einzeln mit Pinsel und Textilfarbe bemalt, es gibt keine Drucke.</p>
+                <p class="text-white/50 leading-relaxed font-light">Diese Unregelmäßigkeiten sind kein Mangel, sondern der Beleg für die Handarbeit – zwei handbemalte Stücke mit ähnlichem Motiv wären trotzdem nie identisch. Wer ein Stück in der Hand hält, sieht es an der Rückseite des Stoffs: Textilfarbe, die von Hand aufgetragen wurde, dringt ungleichmäßig in die Fasern ein, ein Druck sitzt gleichmäßig auf der Oberfläche.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie kaufe ich ein Upcycling-Einzelstück bei Luviq Universe?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Über diese Seite: Das Stück unter Alle Unikate aussuchen, nach der Anmeldung in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder Vorab-Überweisung; alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen. Ein Ladengeschäft gibt es nicht.</p>
+                <p class="text-white/50 leading-relaxed font-light">Die verfügbaren Stücke stehen unter <a href="{% url 'produkte' %}" class="text-glow-orange hover:underline">Alle Unikate</a>. Innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt; Einzelheiten zum Versandgebiet stehen unter <a href="{% url 'liefergebiet' %}" class="text-glow-orange hover:underline">Liefergebiet</a>. Luviq Universe sitzt in 36304 Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen.</p>
+            </section>
+        </div>
+
+        <!-- Weiterlesen -->
+        <div class="text-center mt-16">
+            <a href="{% url 'wissen' %}" class="inline-block px-12 py-5 rounded-full bg-glow-orange text-white text-sm font-black uppercase tracking-widest hover:shadow-[0_0_30px_rgba(200,150,92,0.5)] transition-all transform hover:scale-105 active:scale-95">
+                Alle Wissensbeiträge
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

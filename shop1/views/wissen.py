@@ -32,6 +32,13 @@ WISSEN_BEITRAEGE = {
                 'Lagern ohne Druck auf die Bemalung – und was für ein einzelnes Stück '
                 'von Luviq Universe gilt.',
     },
+    'upcycling-mode-second-hand-vintage': {
+        'url_name': 'wissen_upcycling',
+        'template': 'shop1/wissen/upcycling.html',
+        'titel': 'Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?',
+        'kurz': 'Begriffsklärung Upcycling, Second Hand und Vintage, warum ein Einzelstück '
+                'nicht nachbestellbar ist und woran man Handbemalung von Druck unterscheidet.',
+    },
 }
 
 

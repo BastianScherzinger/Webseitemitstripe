@@ -459,3 +459,26 @@ ausdrücklich, dass diese Seite dafür keine Zahl nennt.
 **Warum:** Erste Wissensseite (SU04); Fragen als Zwischenüberschriften
 (GE24) und saubere Überschriftenhierarchie (IS14/BF15) kosten auf einer
 neuen Seite nichts.
+
+### 2026-09-01 — Welle 6, Schritt 28: Wissensseite „Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?"
+
+**Was:** `shop1/templates/shop1/wissen/upcycling.html` unter
+`/wissen/upcycling-mode-second-hand-vintage/` (Registereintrag
+`wissen_upcycling`). Gleicher Bauplan wie Schritt 27: Antwort im ersten
+Absatz mit Definition und Abgrenzung (Upcycling = getragen plus
+handwerkliche Bearbeitung; Second Hand = gebraucht, unverändert; Vintage =
+Alter und Stil, Faustregel „üblicherweise mindestens etwa 20 Jahre" als
+ausdrückliche Konvention), sieben Fragen als `h2`, `FAQPage` wortgleich,
+Brotkrume Home → Wissen → Seite. Gemessen: 941 Wörter, Zahl im ersten
+Drittel, Titel 65 und Beschreibung 164 Zeichen. **Keine Marktzahlen, keine
+Umweltbilanz, keine Prozentangaben zu Wasser oder CO₂** – die Frage nach
+der Nachhaltigkeit wird beantwortet, indem die Seite sagt, warum sie dafür
+keine Zahl nennt. Über Luviq nur Belegtes: Pinsel und Textilfarbe, keine
+Drucke, kein Motiv wiederholt, keine zweite Auflage (Über uns), Bestellweg
+nach Anmeldung über den Warenkorb (Produkte), PayPal oder
+Vorab-Überweisung, Endpreise, § 19 UStG, Widerruf vierzehn Tage (AGB § 4,
+§ 5), Versand 1-2 bzw. 1-3 Werktage, kein Ladengeschäft, 36304 Alsfeld
+(Liefergebiet, Impressum).
+
+**Warum:** Die Frage, für die eine Antwortmaschine eine Definition sucht
+(SU04, GE23); zweite von drei Wissensseiten.
