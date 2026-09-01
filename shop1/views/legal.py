@@ -55,10 +55,13 @@ def sitemap_xml(request):
         {'loc': reverse('ueber_uns'),        'priority': '0.7', 'changefreq': 'monthly'},
         {'loc': reverse('liefergebiet'),     'priority': '0.7', 'changefreq': 'monthly'},
         {'loc': reverse('kontakt'),          'priority': '0.6', 'changefreq': 'monthly'},
-        {'loc': reverse('impressum'),        'priority': '0.2', 'changefreq': 'yearly'},
         {'loc': reverse('datenschutz'),      'priority': '0.2', 'changefreq': 'yearly'},
         {'loc': reverse('agb'),              'priority': '0.2', 'changefreq': 'yearly'},
     ]
+    # /impressum/ steht bewusst NICHT in dieser Liste: impressum.html setzt
+    # meta robots auf "noindex, follow". Eine Adresse gleichzeitig zur
+    # Aufnahme anzumelden und die Aufnahme zu verbieten, meldet die Search
+    # Console als Fehler. Massgeblich ist die Angabe auf der Seite selbst.
 
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'

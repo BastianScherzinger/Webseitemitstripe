@@ -66,6 +66,11 @@ def send_newsletter_email(produkt, subscribers):
     """Sendet ein wunderschönes Newsletter-Update an alle Abonnenten."""
     subject = f"✨ NEW DROP: {produkt.name} is online!"
     site_url = settings.SITE_URL.rstrip('/')
+    # Zieladresse aus der URLconf holen statt sie von Hand zusammenzusetzen.
+    # Vorher stand hier f"{site_url}/produkte/{produkt.id}/" – diese Route gibt
+    # es nicht (richtig waere "produkt/<int>/", siehe shop1/urls.py). Jeder
+    # verschickte Newsletter fuehrte damit auf eine 404-Seite.
+    produkt_url = f"{site_url}{produkt.get_absolute_url()}"
     # Wenn das Bild auf einem externen Speicher (Cloudinary) liegt, ist die URL bereits absolut
     if produkt.bild and (produkt.bild.url.startswith('http://') or produkt.bild.url.startswith('https://')):
         image_url = produkt.bild.url
@@ -98,7 +103,7 @@ def send_newsletter_email(produkt, subscribers):
                                             Jedes Teil ist ein 1-of-1 Statement gegen die Fast-Fashion Industrie.
                                         </p>
                                         
-                                        <a href="{site_url}/produkte/{produkt.id}/" style="display: inline-block; background-color: #ff6a00; color: #ffffff; padding: 18px 40px; text-decoration: none; border-radius: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 14px; box-shadow: 0 10px 30px rgba(255,106,0,0.3);">
+                                        <a href="{produkt_url}" style="display: inline-block; background-color: #ff6a00; color: #ffffff; padding: 18px 40px; text-decoration: none; border-radius: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 14px; box-shadow: 0 10px 30px rgba(255,106,0,0.3);">
                                             Jetzt Sichern
                                         </a>
                                     </td>

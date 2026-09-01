@@ -42,7 +42,7 @@ class SitemapTest(LuviqTestCase):
         eine gelistete Adresse, die 404 liefert. Passiert, sobald eine Route
         umbenannt wird und die handgeschriebene Sitemap davon nichts erfährt."""
         _, adressen = self._adressen()
-        self.assertGreaterEqual(len(adressen), 10, 'Sitemap wirkt unvollständig')
+        self.assertGreaterEqual(len(adressen), 8, 'Sitemap wirkt unvollständig')
         for adresse in adressen:
             pfad = adresse.split('testserver', 1)[-1] or '/'
             with self.subTest(adresse=adresse):
@@ -58,13 +58,28 @@ class SitemapTest(LuviqTestCase):
         pfade = {a.split('testserver', 1)[-1] or '/' for a in adressen}
         pflicht = {
             '/', '/produkte/', '/gaestebuch/', '/ueber_uns/',
-            '/liefergebiet/', '/kontakt/', '/impressum/',
-            '/datenschutz/', '/agb/',
+            '/liefergebiet/', '/kontakt/', '/datenschutz/', '/agb/',
         }
         self.assertTrue(
             pflicht.issubset(pfade),
             f'In der Sitemap fehlen: {sorted(pflicht - pfade)}',
         )
+
+    def test_keine_adresse_der_sitemap_ist_auf_noindex_gesetzt(self):
+        """Verhindert das widersprüchliche Signal, das dieser Lauf vorgefunden
+        hat: ``/impressum/`` stand in der Sitemap und setzte zugleich
+        ``noindex``. Die Search Console meldet das als Fehler."""
+        _, adressen = self._adressen()
+        for adresse in adressen:
+            pfad = adresse.split('testserver', 1)[-1] or '/'
+            with self.subTest(pfad=pfad):
+                inhalt = self.hole(pfad).content.decode()
+                treffer = re.findall(r'<meta\s+name="robots"\s+content="([^"]*)"', inhalt)
+                self.assertTrue(treffer, f'{pfad} hat keine robots-Angabe')
+                self.assertNotIn(
+                    'noindex', treffer[0],
+                    f'{pfad} steht in der Sitemap, verbietet aber die Aufnahme',
+                )
 
     def test_sitemap_fuehrt_aktive_produkte_mit_lastmod(self):
         """Verhindert, dass Produktseiten aus der Sitemap fallen oder ohne
@@ -141,6 +156,47 @@ class RobotsTest(LuviqTestCase):
                     self.assertNotIn('Disallow: /\n', block.group(1) + '\n')
 
 
+class VerweiseTest(LuviqTestCase):
+    """Adressen, die aus dem Projekt heraus gesetzt werden."""
+
+    def test_die_favicon_routen_zeigen_auf_eine_vorhandene_datei(self):
+        """Verhindert den Zustand, den dieser Lauf vorgefunden hat: beide
+        Routen leiteten auf ``/static/shop1/favicon.ico`` bzw. ``.png`` – keine
+        der beiden Dateien existiert, jeder Browser holte sich eine 404."""
+        from django.contrib.staticfiles import finders
+
+        for pfad in ('/favicon.ico', '/favicon.png'):
+            with self.subTest(pfad=pfad):
+                antwort = self.hole(pfad)
+                self.assertEqual(antwort.status_code, 301)
+                ziel = antwort['Location']
+                self.assertTrue(ziel.startswith('/static/'))
+                self.assertIsNotNone(
+                    finders.find(ziel[len('/static/'):]),
+                    f'{pfad} verweist auf {ziel}, diese Datei gibt es nicht',
+                )
+
+    def test_der_newsletter_verlinkt_das_produkt_richtig(self):
+        """Verhindert den Fehler, den dieser Lauf vorgefunden hat: der
+        Newsletter baute ``/produkte/<id>/`` zusammen – diese Route gibt es
+        nicht. Jeder verschickte Newsletter-Button führte auf eine 404."""
+        from unittest import mock
+
+        from ..models import Subscriber
+        from ..utils import send_newsletter_email
+
+        produkt = erzeuge_produkt('Bemalte Bomberjacke')
+        abonnentin = Subscriber(email='leserin@example.invalid')
+        with mock.patch('shop1.utils.send_brevo_email') as versand:
+            send_newsletter_email(produkt, [abonnentin])
+
+        html = versand.call_args.args[1]
+        self.assertIn(produkt.get_absolute_url(), html)
+        self.assertNotIn(f'/produkte/{produkt.id}/', html)
+        pfad = produkt.get_absolute_url()
+        self.assertEqual(self.hole(pfad).status_code, 200)
+
+
 class SeitenkopfTest(LuviqTestCase):
     """Titel, Beschreibung und canonical – was in der Trefferliste steht."""
 
@@ -173,6 +229,37 @@ class SeitenkopfTest(LuviqTestCase):
                 treffer = _DESCRIPTION.findall(self.hole(pfad).content.decode())
                 self.assertEqual(len(treffer), 1, f'{pfad} hat {len(treffer)} Beschreibungen')
                 self.assertGreater(len(treffer[0].strip()), 40, f'{pfad}: Beschreibung zu kurz')
+
+    def test_keine_zwei_seiten_teilen_sich_titel_oder_beschreibung(self):
+        """Verhindert, dass Seiten in der Trefferliste ununterscheidbar werden.
+        Vor diesem Lauf erbten Impressum, Datenschutz, AGB, Warenkorb und alle
+        Konto-Seiten wörtlich die Beschreibung der Startseite."""
+        titel, beschreibungen = {}, {}
+        for pfad in OEFFENTLICHE_SEITEN:
+            inhalt = self.hole(pfad).content.decode()
+            titel.setdefault(_TITEL.findall(inhalt)[0].strip(), []).append(pfad)
+            beschreibungen.setdefault(
+                _DESCRIPTION.findall(inhalt)[0].strip(), []).append(pfad)
+
+        for name, sammlung in (('Titel', titel), ('Beschreibung', beschreibungen)):
+            for wert, pfade in sammlung.items():
+                with self.subTest(art=name, wert=wert[:50]):
+                    self.assertEqual(
+                        len(pfade), 1,
+                        f'Gleiche {name} auf {pfade}: "{wert[:80]}"',
+                    )
+
+    def test_titel_und_beschreibung_halten_die_anzeigelaenge_ein(self):
+        """Verhindert Titel und Beschreibungen, die Google mitten im Wort
+        abschneidet oder als zu dünn verwirft."""
+        for pfad in OEFFENTLICHE_SEITEN:
+            inhalt = self.hole(pfad).content.decode()
+            with self.subTest(pfad=pfad, teil='Titel'):
+                laenge = len(_TITEL.findall(inhalt)[0].strip())
+                self.assertTrue(25 <= laenge <= 70, f'{pfad}: Titel {laenge} Zeichen')
+            with self.subTest(pfad=pfad, teil='Beschreibung'):
+                laenge = len(_DESCRIPTION.findall(inhalt)[0].strip())
+                self.assertTrue(50 <= laenge <= 200, f'{pfad}: Beschreibung {laenge} Zeichen')
 
     def test_jede_seite_hat_genau_eine_h1(self):
         """Verhindert eine kaputte Überschriftenstruktur: keine oder mehrere

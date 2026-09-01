@@ -65,9 +65,16 @@ urlpatterns = [
     path('comment/<int:comment_id>/like/', views.comment_like, name='comment_like'),
     path('comment/<int:comment_id>/delete/', views.comment_delete, name='comment_delete'),
 
-    # Favicon Fix
-    path('favicon.ico', RedirectView.as_view(url='/static/shop1/favicon.ico')),
-    path('favicon.png', RedirectView.as_view(url='/static/shop1/favicon.png')),
+    # Favicon: Browser fragen /favicon.ico unabhaengig vom <link> im <head> an.
+    # Beide Routen zeigten bisher auf /static/shop1/favicon.ico bzw. .png –
+    # keine der beiden Dateien existiert. Das einzige vorhandene Symbol ist
+    # shop1/images/flavicon.jpeg; collectstatic legt es unter diesem Namen
+    # zusaetzlich zur inhaltsgehashten Fassung ab, der Pfad traegt also auch
+    # mit ManifestStaticFilesStorage.
+    path('favicon.ico', RedirectView.as_view(
+        url='/static/shop1/images/flavicon.jpeg', permanent=True)),
+    path('favicon.png', RedirectView.as_view(
+        url='/static/shop1/images/flavicon.jpeg', permanent=True)),
 
     # ═══ ADMIN ROUTES ═══
     path('shop-admin/dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),
