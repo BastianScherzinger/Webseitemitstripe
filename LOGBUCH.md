@@ -655,3 +655,29 @@ angemeldeten Nutzers; die Zählung war dort die teuerste Abfrage ohne Cache
 kam nicht in Frage – der Zähler muss sofort nach „In den Warenkorb"
 stimmen. Geprüft: `manage.py check` grün, `manage.py test shop1` grün
 (150 Tests).
+
+### 2026-09-01 — Welle 7, Schritt 34: Besuchs-Middleware mit Abschalter und festem Geo-Pool
+
+**Was:** `shop1/middleware.py`: (1) Umgebungsvariable `VISITOR_TRACKING`
+(Vorgabe an; `0/false/off/no/nein/aus` schaltet ab), je Anfrage gelesen in
+`tracking_aktiv()`; steht sie auf aus, endet `__call__` vor `_track()`.
+(2) Der Geo-Lookup läuft in einem `ThreadPoolExecutor` mit `GEO_PLAETZE`
+= 4 Threads aus der Standardbibliothek statt in einem neuen
+Betriebssystem-Thread je Seitenaufruf; eine `BoundedSemaphore` zählt die
+belegten Plätze, und `_geo_einreihen()` lässt den Lookup aus, wenn alle
+belegt sind (Land/Stadt bleiben dann leer) oder die Adresse privat ist.
+`_geo_enrich()` gibt den Platz im `finally` zurück. Das synchrone Schreiben
+von `PageVisit` und `VisitorLog` bleibt unverändert – es hängt an der
+Session, und ein Thread machte die Reihenfolge der Session-Schreibvorgänge
+unbestimmt (Plan). Zwei neue Tests in `test_einstellungen.py`:
+Abschalter beidseitig (aus → keine Einträge, Antwort 200; ohne Variable →
+Einträge) und Pool (private Adresse → kein Auftrag; öffentliche → genau
+einer; alle Plätze belegt → ausgelassen, keine Warteschlange); `submit`
+wird abgefangen, kein Netzzugriff im Test.
+
+**Warum:** Ohne Abschalter wartete bei einer hakenden pystore-Datenbank
+jeder Besucher auf den Verbindungstimeout; ohne Obergrenze erzeugte ein
+Crawler-Schwarm beliebig viele Threads, jeder mit 4 s Netz-Timeout
+(Befund PF10, `01-BEFUND.md` 4.25 (2, 3), 6.2). Geprüft: `manage.py check`
+grün, `manage.py test shop1` grün (152 Tests – die Basisklasse ruft die
+Middleware bei jedem Abruf auf).

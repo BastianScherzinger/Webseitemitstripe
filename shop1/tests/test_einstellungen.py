@@ -16,7 +16,7 @@ from unittest import mock
 
 from django.conf import settings
 
-from ..models import Comment, Produkt, VisitorLog, Werbung
+from ..models import Comment, PageVisit, Produkt, VisitorLog, Werbung
 from ..routers import WerbungRouter
 from ._basis import LuviqTestCase
 
@@ -317,3 +317,52 @@ class BesucherprotokollTest(LuviqTestCase):
         self.hole('/sitemap.xml')
         self.hole('/robots.txt')
         self.assertEqual(VisitorLog.objects.count(), 0)
+
+    def test_der_abschalter_stoppt_das_protokoll_und_die_vorgabe_ist_an(self):
+        """Verhindert zweierlei: dass ``VISITOR_TRACKING=False`` ohne Wirkung
+        bleibt – dann liesse sich das Protokoll bei hakender pystore-Datenbank
+        nicht abschalten, und jeder Besucher wartete auf den Verbindungs-
+        timeout – und dass die Vorgabe umkippt und das Protokoll ohne die
+        Variable still versiegt."""
+        from ..middleware import TRACKING_ENV
+
+        with mock.patch.dict(os.environ, {TRACKING_ENV: 'False'}):
+            antwort = self.hole('/')
+        self.assertEqual(antwort.status_code, 200)
+        self.assertEqual(VisitorLog.objects.count(), 0)
+        self.assertEqual(PageVisit.objects.count(), 0)
+
+        with mock.patch.dict(os.environ, {}):
+            os.environ.pop(TRACKING_ENV, None)
+            self.hole('/produkte/')
+        self.assertEqual(VisitorLog.objects.count(), 1)
+        self.assertEqual(PageVisit.objects.count(), 1)
+
+    def test_der_geo_lookup_laeuft_im_pool_und_entfaellt_wenn_er_voll_ist(self):
+        """Verhindert die Rückkehr zum neuen Betriebssystem-Thread je
+        Seitenaufruf ohne Obergrenze – und dass ein voller Pool eine
+        Warteschlange aufbaut statt den Lookup auszulassen. Kein Netzzugriff:
+        ``submit`` wird abgefangen, der Lookup selbst läuft nie."""
+        from .. import middleware
+
+        with mock.patch.object(middleware._geo_pool, 'submit') as submit:
+            # Private Adresse (Testclient): nichts nachzuschlagen.
+            self.hole('/')
+            submit.assert_not_called()
+
+            # Öffentliche Adresse: genau ein Auftrag in den Pool.
+            self.hole('/produkte/', REMOTE_ADDR='203.0.113.5')
+            submit.assert_called_once()
+            self.assertIs(submit.call_args.args[0], middleware._geo_enrich)
+            middleware._geo_frei.release()   # der abgefangene Lookup gibt nie frei
+
+            # Alle Plätze belegt: der Lookup entfällt, nichts wird eingereiht.
+            belegt = [middleware._geo_frei.acquire(blocking=False)
+                      for _ in range(middleware.GEO_PLAETZE)]
+            try:
+                self.assertTrue(all(belegt))
+                self.assertFalse(middleware._geo_einreihen(99, '203.0.113.5'))
+                submit.assert_called_once()
+            finally:
+                for _ in belegt:
+                    middleware._geo_frei.release()

@@ -1,11 +1,34 @@
 import logging
 import os
 import threading
+from concurrent.futures import ThreadPoolExecutor
 from django.utils import timezone
 from django.db.models import F
 from .models import PageVisit, VisitorLog
 
 _log = logging.getLogger('shop1')
+
+#: Umgebungsvariable, die das Besuchsprotokoll abschaltet. Vorgabe: an.
+#: Gedacht für den Fall, dass die pystore-Datenbank hakt – dann wartete
+#: sonst jeder Besucher beim synchronen VisitorLog-Schreiben auf den
+#: Verbindungstimeout. Wird je Anfrage gelesen, damit ein Umschalten ohne
+#: Neustart wirkt und Tests beide Seiten prüfen können.
+TRACKING_ENV = 'VISITOR_TRACKING'
+_AUS = {'0', 'false', 'off', 'no', 'nein', 'aus'}
+
+
+def tracking_aktiv():
+    """True, solange VISITOR_TRACKING nicht ausdrücklich auf aus steht."""
+    return os.getenv(TRACKING_ENV, 'True').strip().lower() not in _AUS
+
+
+#: Geo-Lookups laufen in einem festen, kleinen Pool statt in einem neuen
+#: Betriebssystem-Thread je Seitenaufruf. Die Semaphore zählt die belegten
+#: Plätze: ist der Pool voll, entfällt der Lookup für diesen Eintrag –
+#: Land und Stadt bleiben dann leer, die Antwort wartet nie.
+GEO_PLAETZE = 4
+_geo_pool = ThreadPoolExecutor(max_workers=GEO_PLAETZE, thread_name_prefix='geo')
+_geo_frei = threading.BoundedSemaphore(GEO_PLAETZE)
 
 _SKIP = ('/static/', '/media/', '/admin/', '/favicon', '/robots.txt',
          '/sitemap.xml', '/llms.txt', '/health', '/__debug__')
@@ -29,19 +52,39 @@ _PRIVATE = ('127.', '10.', '192.168.', '::1', '172.16.', '172.17.',
             '100.124.', '100.125.', '100.126.', '100.127.')
 
 
+def _geo_einreihen(log_pk, ip):
+    """Reiht den Geo-Lookup in den Pool ein; False, wenn er ausgelassen wird.
+
+    Ausgelassen wird er für leere und private Adressen (dafür gibt es nichts
+    nachzuschlagen) und wenn alle GEO_PLAETZE belegt sind. Den Platz gibt
+    ``_geo_enrich`` am Ende wieder frei.
+    """
+    if not ip or any(ip.startswith(p) for p in _PRIVATE):
+        return False
+    if not _geo_frei.acquire(blocking=False):
+        _log.info('Geo-Lookup ausgelassen, Pool voll: pk=%s ip=%s', log_pk, ip)
+        return False
+    try:
+        _geo_pool.submit(_geo_enrich, log_pk, ip)
+    except RuntimeError:
+        # Pool bereits heruntergefahren (Prozessende) – Platz zurückgeben.
+        _geo_frei.release()
+        return False
+    return True
+
+
 def _geo_enrich(log_pk, ip):
-    """Background thread: Geo-Daten nachschlagen und VisitorLog aktualisieren.
+    """Pool-Thread: Geo-Daten nachschlagen und VisitorLog aktualisieren.
 
     VisitorLog wird via WerbungRouter in pystore-DB geschrieben – Connection
-    muss im Thread explizit verwaltet werden.
+    muss im Thread explizit verwaltet werden. Läuft nur über
+    ``_geo_einreihen``; das ``finally`` gibt den Pool-Platz zurück.
     """
     from django.db import close_old_connections, connections
-    close_old_connections()
     import urllib.request as _req
     import json as _json
     try:
-        if not ip or any(ip.startswith(p) for p in _PRIVATE):
-            return
+        close_old_connections()
         url = f'http://ip-api.com/json/{ip}?fields=status,country,countryCode,city'
         with _req.urlopen(url, timeout=4) as resp:
             data = _json.loads(resp.read())
@@ -61,9 +104,19 @@ def _geo_enrich(log_pk, ip):
             connections['pystore'].close()
         except Exception:
             pass
+        _geo_frei.release()
 
 
 class PageVisitMiddleware:
+    """Zählt Besuche (PageVisit, VisitorLog) nach jeder Antwort.
+
+    Die Datenbankschreibvorgänge laufen bewusst synchron im Anfragezyklus:
+    sie hängen an der Session (``visited_paths``, ``last_visit_date``), und
+    ein Thread machte die Reihenfolge der Session-Schreibvorgänge
+    unbestimmt. Nur der Geo-Lookup läuft nebenher, im festen Pool oben.
+    ``VISITOR_TRACKING`` schaltet das Ganze ab.
+    """
+
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -71,6 +124,8 @@ class PageVisitMiddleware:
         response = self.get_response(request)
         path = request.path
         if any(path.startswith(s) for s in _SKIP):
+            return response
+        if not tracking_aktiv():
             return response
         try:
             self._track(request)
@@ -138,7 +193,7 @@ class PageVisitMiddleware:
                 request.session['visited_paths'] = visited
                 request.session.modified = True
                 _log.info('VisitorLog created: ip=%s path=%s site=%s', ip, path, site_name)
-                threading.Thread(target=_geo_enrich, args=(log_obj.pk, ip), daemon=True).start()
+                _geo_einreihen(log_obj.pk, ip)
             except Exception as e:
                 _log.error('VisitorLog create error: ip=%s path=%s err=%s', ip, path, e)
 
