@@ -223,3 +223,19 @@ Angaben statt eines erfundenen Datums.
 4.28/GE18); Antwortmaschinen konnten die Aktualität der übrigen Seiten
 nicht einschätzen. Weil Sitemap-`lastmod` und Schema aus **einem**
 Register kommen, können sie nicht auseinanderlaufen.
+
+### 2026-09-01 — Welle 4, Schritt 17: `Person`-Knoten mit Kennung, `founder` und `author` verweisen darauf
+
+**Was:** Im `@graph` von `base.html` steht die Gründerin jetzt als eigener
+Knoten `Person` mit `@id` `/#luisa`, `name`, `jobTitle` (unverändert
+„Gründerin & Creative Director") und `worksFor` → `#organization`.
+`founder` am Unternehmensknoten ist ein Verweis auf diese Kennung statt
+eines eingebetteten Knotens; der `WebPage`-Knoten aus Schritt 16 trägt
+`author` mit demselben Verweis. Die Kennung `#luisa` ist dieselbe, die
+`ueber_uns.html` für seinen ausführlicheren `Person`-Knoten schon benutzt
+– JSON-LD führt beide zu einer Person zusammen. Keine neuen Angaben (keine
+Biografie, kein Geburtsjahr, keine Qualifikation).
+
+**Warum:** `<meta name="author">` nannte die Autorin, das Schema kannte nur
+einen `founder` und keinen `author` (Befund 4.13/GE16). Antwortmaschinen
+werten `author` als Signal, wer für den Inhalt einsteht.

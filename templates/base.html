@@ -63,11 +63,7 @@
             "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}"
           },
           "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}",
-          "founder": {
-            "@type": "Person",
-            "name": "Luisa Brehler",
-            "jobTitle": "Gründerin & Creative Director"
-          },
+          "founder": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
           "description": "Luviq Universe ist ein nachhaltiger Second-Hand-Shop aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Versand deutschlandweit.",
           "address": {
             "@type": "PostalAddress",
@@ -132,6 +128,14 @@
           "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
         },
         {
+          {% comment %}Die eine Person hinter der Seite, einmal mit eigener Kennung: founder (oben) und author (unten) verweisen darauf, statt sie je einzubetten. Dieselbe Kennung #luisa nutzt ueber_uns.html fuer seinen ausfuehrlicheren Person-Knoten - JSON-LD fuehrt beide zu einer Person zusammen. Nur belegte Angaben: Name (Impressum) und Rolle; keine Biografie, keine Jahreszahl.{% endcomment %}
+          "@type": "Person",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa",
+          "name": "Luisa Brehler",
+          "jobTitle": "Gründerin & Creative Director",
+          "worksFor": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
+        },
+        {
           {% comment %}name und dateModified kommen aus dem gepflegten Register shop1/seiten_stand.py (ueber den Kontextprozessor als "seite"). Dasselbe Register speist das lastmod der Sitemap - beide koennen so nicht auseinanderlaufen. Auf Seiten ohne Registereintrag (Produkt, Konto) fehlen die beiden Angaben, statt erfunden zu werden.{% endcomment %}
           "@type": "WebPage",
           "@id": "{{ request.build_absolute_uri }}#webpage",
@@ -139,6 +143,7 @@
           "name": "{{ seite.name|escapejs }}",
           "dateModified": "{{ seite.stand }}",{% endif %}
           "isPartOf": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#website"},
+          "author": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
           "inLanguage": "de-DE"
         }
       ]
