@@ -8,7 +8,10 @@ Text derselben Seite wiederzufinden sind.
 
 import json
 import re
+from datetime import date
 from html.parser import HTMLParser
+from urllib.parse import urlsplit
+from xml.etree import ElementTree
 
 from ._basis import INHALTSSEITEN, LuviqTestCase, erzeuge_produkt
 
@@ -49,6 +52,40 @@ def sichtbarer_text(html):
     leser = _Textleser()
     leser.feed(html)
     return ' '.join(' '.join(leser.stuecke).split())
+
+
+class _Ueberschriftenleser(HTMLParser):
+    """Sammelt den Text jeder Überschrift ``<h1>`` bis ``<h6>``."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self._offen = None
+        self.ueberschriften = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
+            self._offen = [tag, '']
+
+    def handle_endtag(self, tag):
+        if self._offen and tag == self._offen[0]:
+            self.ueberschriften.append(' '.join(self._offen[1].split()))
+            self._offen = None
+
+    def handle_data(self, daten):
+        if self._offen:
+            self._offen[1] += daten
+
+
+def ueberschriften(html):
+    """Alle sichtbaren Überschriftentexte einer Seite, Leerraum normalisiert."""
+    leser = _Ueberschriftenleser()
+    leser.feed(html)
+    return leser.ueberschriften
+
+
+def kennung(knoten):
+    """``@id`` eines Knotens ohne Schema und Host – ``#luisa`` statt ``https://testserver/#luisa``."""
+    return knoten['@id'].split('://', 1)[-1].split('/', 1)[-1]
 
 
 def schema_knoten(html):
@@ -188,6 +225,123 @@ class StrukturierteDatenTest(LuviqTestCase):
             produktknoten[0]['dateModified'][:10],
             self.produkt.aktualisiert_am.date().isoformat(),
         )
+
+    def test_jede_seite_traegt_einen_webpage_knoten_mit_aenderungsdatum(self):
+        """Verhindert drei Fehler auf einmal: (a) eine Inhaltsseite ohne
+        ``WebPage``-Knoten – Antwortmaschinen können ihre Aktualität dann
+        nicht einschätzen (Befund GE18); (b) ein ``dateModified``, das kein
+        Datum ist oder in der Zukunft liegt – ein Tippfehler im Register
+        ``shop1/seiten_stand.py``; (c) ein Schema-Datum, das vom ``lastmod``
+        derselben Adresse in der Sitemap abweicht – beide kommen aus einem
+        Register, und genau das sichert dieser Vergleich.
+
+        Der ``name`` des Knotens muss auf der Seite sichtbar sein (er ist die
+        Menübeschriftung), sonst behauptet das Schema einen Titel, den
+        niemand liest."""
+        sitemap = ElementTree.fromstring(self.hole('/sitemap.xml').content)
+        ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+        lastmod_je_pfad = {
+            urlsplit(e.find('sm:loc', ns).text).path or '/': e.find('sm:lastmod', ns).text
+            for e in sitemap.findall('sm:url', ns)
+        }
+        for pfad in INHALTSSEITEN:
+            with self.subTest(pfad=pfad):
+                inhalt = self.hole(pfad).content.decode()
+                seiten = [k for k in schema_knoten(inhalt) if k.get('@type') == 'WebPage']
+                self.assertEqual(len(seiten), 1, f'{pfad}: {len(seiten)} WebPage-Knoten statt einem')
+                seite = seiten[0]
+                self.assertEqual(urlsplit(seite['url']).path, pfad)
+                self.assertEqual(kennung(seite['isPartOf']), '#website')
+                self.assertTrue(seite.get('name'), f'{pfad}: WebPage ohne name')
+                self.assertIn(seite['name'], sichtbarer_text(inhalt), f'{pfad}: name "{seite["name"]}" steht nicht auf der Seite')
+                stand = seite.get('dateModified', '')
+                self.assertRegex(stand, r'^\d{4}-\d{2}-\d{2}$', f'{pfad}: dateModified "{stand}"')
+                self.assertLessEqual(date.fromisoformat(stand), date.today())
+                if pfad in lastmod_je_pfad:
+                    self.assertEqual(
+                        stand, lastmod_je_pfad[pfad],
+                        f'{pfad}: Schema sagt {stand}, Sitemap sagt {lastmod_je_pfad[pfad]}',
+                    )
+
+    def test_die_person_hinter_der_seite_steht_genau_einmal_im_graphen(self):
+        """Verhindert zwei Personen, wo es eine gibt: vor diesem Lauf war die
+        Gründerin als namenloser Knoten in ``founder`` eingebettet und auf
+        /ueber_uns/ ein zweites Mal mit Kennung angelegt; ``author`` fehlte
+        ganz (Befund GE16). Jetzt gibt es genau eine Kennung, und ``founder``
+        wie ``author`` sind Verweise darauf – ein eingebetteter Knoten an einer
+        dieser Stellen wäre die Rückkehr des Fehlers."""
+        for pfad in INHALTSSEITEN:
+            with self.subTest(pfad=pfad):
+                knoten = schema_knoten(self.hole(pfad).content.decode())
+                personen = [k for k in knoten if k.get('@type') == 'Person']
+                self.assertTrue(personen, f'{pfad}: kein Person-Knoten')
+                for person in personen:
+                    self.assertIn('@id', person, f'{pfad}: Person ohne @id')
+                kennungen = {kennung(p) for p in personen}
+                self.assertEqual(len(kennungen), 1, f'{pfad}: mehrere Personen {sorted(kennungen)}')
+                person_id = kennungen.pop()
+
+                verweise = {'founder': 0, 'author': 0}
+                for k in knoten:
+                    for rolle in verweise:
+                        if rolle not in k:
+                            continue
+                        wert = k[rolle]
+                        self.assertEqual(
+                            set(wert), {'@id'},
+                            f'{pfad}: {rolle} bettet einen Knoten ein statt zu verweisen',
+                        )
+                        self.assertEqual(kennung(wert), person_id)
+                        verweise[rolle] += 1
+                self.assertGreaterEqual(verweise['founder'], 1, f'{pfad}: kein founder-Verweis')
+                self.assertGreaterEqual(verweise['author'], 1, f'{pfad}: kein author-Verweis')
+
+    def test_jede_unterseite_traegt_eine_brotkrume_mit_erreichbaren_stationen(self):
+        """Verhindert den Zustand vor Schritt 18 – sieben von neun Seiten ohne
+        ``BreadcrumbList`` (Befund GE12) – und zwei Folgefehler: eine Station,
+        deren Adresse ins 404 führt, und einen Namen, der nirgends auf der
+        Seite sichtbar ist. Die Startseite darf keine Brotkrume tragen: ein
+        Pfad mit einer Station ist keiner."""
+        unterseiten = [p for p in INHALTSSEITEN if p != '/'] + [self.produkt.get_absolute_url()]
+        for pfad in unterseiten:
+            with self.subTest(pfad=pfad):
+                inhalt = self.hole(pfad).content.decode()
+                text = sichtbarer_text(inhalt)
+                listen = [k for k in schema_knoten(inhalt) if k.get('@type') == 'BreadcrumbList']
+                self.assertEqual(len(listen), 1, f'{pfad}: {len(listen)} BreadcrumbList-Knoten')
+                stationen = listen[0].get('itemListElement', [])
+                self.assertGreaterEqual(len(stationen), 2, f'{pfad}: Brotkrume mit weniger als zwei Stationen')
+                self.assertEqual([s['position'] for s in stationen], list(range(1, len(stationen) + 1)))
+                for station in stationen:
+                    self.assertIn(station['name'], text, f'{pfad}: "{station["name"]}" steht nicht auf der Seite')
+                    ziel = urlsplit(station['item']).path
+                    self.assertEqual(self.hole(ziel).status_code, 200, f'{pfad}: Station {ziel} antwortet nicht')
+                self.assertEqual(urlsplit(stationen[-1]['item']).path, pfad, 'Letzte Station ist nicht die Seite selbst')
+        startseite = [k for k in schema_knoten(self.hole('/').content.decode()) if k.get('@type') == 'BreadcrumbList']
+        self.assertEqual(startseite, [], 'Die Startseite trägt eine Brotkrume')
+
+    def test_jede_faq_frage_ist_eine_sichtbare_ueberschrift(self):
+        """Verhindert, dass eine Frage im FAQ-Schema nur irgendwo im Fliesstext
+        vorkommt oder leicht anders lautet als auf der Seite. Google verlangt
+        für ``FAQPage``, dass Frage und Antwort sichtbar sind; die Frage muss
+        deshalb **wortgleich** als Überschrift stehen – nicht als Teil eines
+        Satzes. Der schwächere Test oben (``assertIn`` im Gesamttext) würde
+        eine Frage durchwinken, die in einem Absatz zitiert wird."""
+        for pfad in FAQ_SEITEN:
+            inhalt = self.hole(pfad).content.decode()
+            titel = ueberschriften(inhalt)
+            fragen = [
+                frage['name']
+                for knoten in schema_knoten(inhalt) if knoten.get('@type') == 'FAQPage'
+                for frage in knoten.get('mainEntity', [])
+            ]
+            self.assertTrue(fragen, f'{pfad}: FAQPage ohne Fragen')
+            for frage in fragen:
+                with self.subTest(pfad=pfad, frage=frage[:40]):
+                    self.assertIn(
+                        ' '.join(frage.split()), titel,
+                        f'{pfad}: "{frage}" steht nicht wortgleich als Überschrift auf der Seite',
+                    )
 
 
 class AntwortCrawlerTest(LuviqTestCase):

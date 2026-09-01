@@ -279,3 +279,26 @@ Zahl und Ort ist er nicht zitierfähig (Arbeitsfeld GEO). Ein Profil, das
 nur im Schema steht, kann eine Antwortmaschine nicht nachlesen (Befund
 4.34/GE11). Ein leerer Abschnitt wäre ein Versprechen ohne Inhalt, daher
 die Bedingung.
+
+### 2026-09-01 — Welle 4, Schritt 20: GEO-Tests auf die neuen Schema-Knoten ausgeweitet (16 → 20)
+
+**Was:** Vier neue Tests in `shop1/tests/test_geo.py`: (1) jede
+Inhaltsseite trägt genau einen `WebPage`-Knoten mit `isPartOf` →
+`#website`, einem sichtbaren `name` und einem `dateModified` im Format
+JJJJ-MM-TT, nicht in der Zukunft und **gleich dem `lastmod` derselben
+Adresse in der Sitemap**; (2) genau eine `Person`-Kennung je Seite, und
+jedes `founder`/`author` ist ein Verweis (`{"@id": …}`) darauf, kein
+eingebetteter Knoten; (3) jede Unterseite und die Produktseite tragen
+genau eine `BreadcrumbList` mit lückenlosen Positionen, jeder Stationsname
+steht sichtbar auf der Seite, jede Stationsadresse antwortet mit 200, die
+letzte Station ist die Seite selbst, die Startseite trägt keine; (4) jede
+Frage im FAQ-Schema steht **wortgleich** als Überschrift `h1`–`h6` auf
+derselben Seite (neuer Helfer `_Ueberschriftenleser`). Der bestehende
+Öffnungszeiten-Test ist unangetastet. Gegenbeweis geführt: Überschrift
+„Zahlungsmethoden?" in `kontakt.html` zu „Welche Zahlungsmethoden gibt
+es?" umformuliert → Test (4) rot („steht nicht wortgleich als Überschrift
+auf der Seite"), danach zurückgesetzt.
+
+**Warum:** Die Schritte 16–19 sind Zusagen im Quelltext, die eine spätere
+Änderung still brechen kann. Der Test (1) sichert zusätzlich den Zweck des
+gemeinsamen Registers: Sitemap und Schema dürfen nicht auseinanderlaufen.
