@@ -832,3 +832,29 @@ Gegenbeweise: der Spuren-Test wurde ohne die `set_rollback`-Zeilen rot
 steckt als eigener Test in der Suite. Geprüft: `manage.py check` grün;
 `manage.py test shop1`: 166 von 167 grün, derselbe zeitbedingte,
 vorbestehende Fehlschlag in `test_geo` (Lauf um 23:28 UTC).
+
+### 2026-09-02 — Welle 9, Schritt 41: Warenkorb-Tests
+
+**Was:** Neues Modul `shop1/tests/test_warenkorb.py`, 8 Tests über die
+Views in `views/cart.py` und den Sitzungsabgleich `_sync_session_to_db`
+(`views/_helpers.py`): Hinzufügen kopiert Name und Preis, und kein Feld
+von `CartItem` verweist auf `Produkt`; eine spätere Preisänderung (per
+`update()`) wirkt nicht rückwirkend; ein gelöschtes Produkt bricht die
+Warenkorbseite nicht; zweimal Hinzufügen erhöht die Menge statt eine
+zweite Zeile anzulegen; die Menge bleibt beim Lagerbestand stehen und
+ein ausverkauftes Produkt kommt nicht hinein; Entfernen nimmt nur diesen
+Posten heraus und die Summe stimmt; der Sitzungswarenkorb wandert beim
+Anmelden über `/login/` in die Datenbank, ein vorhandener Posten wird in
+der Menge zusammengeführt statt verdoppelt, die Sitzung ist danach leer
+und eine zweite Anmeldung fügt nichts hinzu; fremde Warenkörbe sind
+weder sichtbar noch per Entfernen-Adresse veränderbar (eigener
+Testclient für die zweite Kundin, weil die noch nicht angezeigte
+Erfolgsmeldung sonst im Cookie mitreist).
+
+**Warum:** `views/cart.py` und `_sync_session_to_db` hatten null Tests
+(Befunde PJ02, PJ04, 01-BEFUND 3.3); die Zusage der Denormalisierung war
+nur am Modell geprüft, nicht auf dem Weg, den eine Kundin nimmt. Alle
+Klassen erben von `LuviqTestCase` (`secure=True`, beide Datenbanken).
+Geprüft: `manage.py check` grün; `manage.py test shop1`: 174 von 175
+grün, derselbe zeitbedingte, vorbestehende Fehlschlag in `test_geo`
+(Lauf um 23:55 UTC).
