@@ -163,6 +163,76 @@ class DatenbankweicheTest(LuviqTestCase):
             self.assertIsNone(self.router.allow_migrate('default', 'shop1', 'werbung'))
 
 
+class PruefbefehlTest(LuviqTestCase):
+    """``python manage.py pruefe_seite`` – die Prüfung der laufenden Umgebung.
+
+    Sie prüft, was die Testsuite bauartbedingt nicht sehen kann: gesetzte
+    Umgebungsvariablen, erreichbare Datenbanken, vorhandene statische Dateien.
+    """
+
+    def _laufe(self, **optionen):
+        from io import StringIO
+
+        from django.core.management import call_command
+
+        ausgabe = StringIO()
+        try:
+            call_command('pruefe_seite', stdout=ausgabe, stderr=ausgabe, **optionen)
+            code = 0
+        except SystemExit as ende:
+            code = ende.code
+        return code, ausgabe.getvalue()
+
+    def test_der_befehl_laeuft_und_meldet_etwas(self):
+        """Verhindert, dass der Prüfbefehl selbst abstürzt und damit den
+        Containerstart blockiert, wenn er in start.sh aufgenommen wird."""
+        _, text = self._laufe()
+        self.assertTrue(text.strip())
+
+    def test_debug_wird_als_fehler_gemeldet(self):
+        """Verhindert ein unbemerktes DEBUG=True in der Betriebsumgebung –
+        der teuerste Ein-Schalter-Fehler im ganzen Projekt."""
+        with self.settings(DEBUG=True):
+            code, text = self._laufe()
+        self.assertEqual(code, 1)
+        self.assertIn('DEBUG ist an', text)
+
+    def test_offene_hostliste_wird_als_fehler_gemeldet(self):
+        """Verhindert ALLOWED_HOSTS = ['*'] im Betrieb."""
+        with self.settings(ALLOWED_HOSTS=['*']):
+            code, text = self._laufe()
+        self.assertEqual(code, 1)
+        self.assertIn('ALLOWED_HOSTS', text)
+
+    def test_unsicherer_secret_key_wird_als_fehler_gemeldet(self):
+        """Verhindert das Ausliefern mit dem Beispielschlüssel."""
+        with self.settings(SECRET_KEY='django-insecure-CHANGE_THIS_IN_PRODUCTION'):
+            code, text = self._laufe()
+        self.assertEqual(code, 1)
+        self.assertIn('SECRET_KEY', text)
+
+    def test_fehlende_admin_zugangsdaten_werden_gemeldet(self):
+        """Verhindert einen Start ohne Superuser: ``start.sh`` legt ihn nur an,
+        wenn ADMIN_USERNAME und ADMIN_PASSWORD gesetzt sind."""
+        with mock.patch.dict(os.environ, {}, clear=True):
+            code, text = self._laufe()
+        self.assertEqual(code, 1)
+        self.assertIn('ADMIN_USERNAME', text)
+        self.assertIn('ADMIN_PASSWORD', text)
+
+    def test_streng_macht_warnungen_zu_fehlern(self):
+        """Verhindert, dass Warnungen im Dauerbetrieb ignoriert werden – für
+        einen Einsatz in start.sh oder einer Prüfstrecke."""
+        with mock.patch.dict(os.environ, {
+            'ADMIN_USERNAME': 'shopbesitzer', 'ADMIN_PASSWORD': 'x' * 20,
+        }, clear=True):
+            ohne, _ = self._laufe()
+            mit, text = self._laufe(streng=True)
+        self.assertEqual(ohne, 0)
+        self.assertEqual(mit, 1)
+        self.assertIn('WARNUNG', text)
+
+
 class BesucherprotokollTest(LuviqTestCase):
     """``PageVisitMiddleware`` läuft bei jeder Antwort mit."""
 
