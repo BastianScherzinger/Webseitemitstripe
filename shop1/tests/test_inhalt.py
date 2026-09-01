@@ -3,6 +3,12 @@
 Widersprüchliche Angaben zu Anschrift, E-Mail oder Zahlungsarten sind für die
 lokale Auffindbarkeit einer der schädlichsten Zustände überhaupt: Google
 gleicht diese Angaben quer über Seite, Schema und Verzeichnisse ab.
+
+Der zweite Teil dieses Moduls misst den **Umfang** des Inhalts. Bis Welle 5
+waren alle Wortzahlen des Laufs Schätzungen aus den Vorlagen
+(``01-BEFUND.md`` Abschnitt 7); :func:`inhaltstext` und :func:`wortzahl`
+messen am ausgelieferten HTML, und ``MINDESTWOERTER`` hält den erreichten
+Stand fest, damit er nicht still wieder abschmilzt.
 """
 
 import re
@@ -10,6 +16,88 @@ from html.parser import HTMLParser
 
 from ._basis import INHALTSSEITEN, OEFFENTLICHE_SEITEN, LuviqTestCase, erzeuge_produkt
 from .test_geo import sichtbarer_text
+
+
+class _Inhaltsleser(HTMLParser):
+    """Zieht den sichtbaren Text aus dem ``<main>`` eines Dokuments.
+
+    Navigation, Fusszeile und Cookie-Hinweis stehen in ``base.html`` ausserhalb
+    von ``<main>`` und wären auf jeder Seite dieselben ~80 Wörter – wer sie
+    mitzählt, misst nicht den Inhalt der Seite, sondern das Gerüst.
+    """
+
+    _STUMM = ('script', 'style', 'noscript', 'template')
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self._im_main = False
+        self._stumm = 0
+        self.stuecke = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'main':
+            self._im_main = True
+        elif tag in self._STUMM:
+            self._stumm += 1
+
+    def handle_endtag(self, tag):
+        if tag == 'main':
+            self._im_main = False
+        elif tag in self._STUMM and self._stumm:
+            self._stumm -= 1
+
+    def handle_data(self, daten):
+        if self._im_main and not self._stumm:
+            self.stuecke.append(daten)
+
+
+def inhaltstext(html):
+    """Sichtbarer Text des Inhaltsbereichs, Leerraum auf ein Zeichen gekürzt."""
+    leser = _Inhaltsleser()
+    leser.feed(html)
+    return ' '.join(' '.join(leser.stuecke).split())
+
+
+def wortzahl(text):
+    """Zählt Wörter: durch Leerraum getrennte Stücke mit mindestens einem
+    Buchstaben oder einer Ziffer. Trennstriche, Punkte und Sterne
+    („·", „—", „★★★★★") zählen nicht; „1-2" und „§" zählen als ein Wort."""
+    return len([stueck for stueck in text.split() if re.search(r'\w', stueck)])
+
+
+#: Produkt, das die Umfangstests anlegen. Name und Beschreibung sind fest,
+#: weil beide in die Wortzahl der Produktseite und der Übersichten eingehen.
+UMFANG_PRODUKT = 'Bemalte Bomberjacke'
+UMFANG_PRODUKT_SEITE = '/produkt/bemalte-bomberjacke/'
+
+#: Mindestwortzahl je Seite im Inhaltsbereich – **kein** Ziel, sondern der
+#: nach Welle 5 (2026-09-01) tatsächlich gemessene Stand, jeweils um einige
+#: Wörter unterschritten, damit eine Umformulierung nicht anschlägt, ein
+#: gestrichener Absatz aber schon. Gemessen mit genau einem Produkt im
+#: Bestand, ohne Kommentare, ohne Anmeldung: ``/`` 399, ``/produkte/`` 111,
+#: ``/kontakt/`` 135, ``/ueber_uns/`` 362, ``/liefergebiet/`` 247,
+#: ``/gaestebuch/`` 99, ``/impressum/`` 75, ``/datenschutz/`` 371,
+#: ``/agb/`` 177, Produktseite 103. Die Zielgrössen des Prüfstands (700 für
+#: die Startseite, 600 für ``/produkte/``) sind damit ausdrücklich **nicht**
+#: erreicht; wer sie erreicht, zieht die Schwellen nach.
+MINDESTWOERTER = {
+    '/': 390,
+    '/produkte/': 105,
+    '/kontakt/': 130,
+    '/ueber_uns/': 350,
+    '/liefergebiet/': 240,
+    '/gaestebuch/': 95,
+    '/impressum/': 70,
+    '/datenschutz/': 360,
+    '/agb/': 170,
+    UMFANG_PRODUKT_SEITE: 95,
+}
+
+#: Seiten, deren erstes Drittel noch keine Zahl nennt. ``/liefergebiet/``
+#: nennt seine Lieferzeiten erst in der FAQ am Seitenende (Befund 4.14); die
+#: Vorlage gehörte nicht zu den Dateien, die Welle 5 ändern durfte. Wer den
+#: ersten Absatz dort um die Versandangabe ergänzt, streicht die Ausnahme.
+OHNE_ZAHL_IM_ERSTEN_DRITTEL = {'/liefergebiet/'}
 
 #: Belegt im Impressum (impressum.html) und im seitenweiten JSON-LD.
 ANSCHRIFT = ['Grünberger Str. 16', '36304', 'Alsfeld']
@@ -178,10 +266,12 @@ class AntwortZuerstTest(LuviqTestCase):
         ersten Absatz; 'Wir antworten schneller als das Licht.' beantwortet
         keine Frage und nennt weder Anbieter noch Ort.
 
-        Die drei Rechtstexte sind ausgenommen: sie beginnen mit einer knappen
-        Bereichsbezeichnung über dem vorgeschriebenen Aufbau, und diese Zeile
-        aufzublähen wäre eine Änderung am Erscheinungsbild ohne Nutzen."""
-        rechtstexte = {'/impressum/', '/datenschutz/', '/agb/'}
+        Seit Welle 5 gilt das auch für das Impressum: seine Unterzeile nennt
+        Anbieterin, Ort und Inhalt der Seite. AGB und Datenschutzerklärung
+        bleiben ausgenommen – an Rechtstexten wird nicht formuliert (Plan,
+        Schritt 24), und ihre Unterzeile ist eine Bereichsbezeichnung über
+        dem vorgeschriebenen Aufbau."""
+        rechtstexte = {'/datenschutz/', '/agb/'}
         for pfad in [p for p in INHALTSSEITEN if p not in rechtstexte]:
             with self.subTest(pfad=pfad):
                 absatz = erster_absatz(self.hole(pfad).content.decode())
@@ -192,4 +282,76 @@ class AntwortZuerstTest(LuviqTestCase):
                 self.assertTrue(
                     re.search(r'Luviq|Alsfeld|Luisa Brehler', absatz),
                     f'{pfad}: erster Absatz nennt weder Anbieter noch Ort: "{absatz}"',
+                )
+
+
+class UmfangTest(LuviqTestCase):
+    """Gemessener Textumfang statt geschätzter – und kein Rückfall."""
+
+    def setUp(self):
+        erzeuge_produkt(UMFANG_PRODUKT)
+
+    def test_die_messfunktion_zaehlt_nur_den_inhaltsbereich(self):
+        """Gegenprobe an bekanntem Inhalt, bevor die Schwellen gelten.
+        Verhindert, dass die Messung Navigation, Fusszeile oder Skripttext
+        mitzählt und damit jede Seite um dieselben Gerüstwörter zu gross
+        erscheint – dann würde ein gestrichener Absatz nicht mehr auffallen."""
+        html = (
+            '<html><head><title>Titel Titel</title>'
+            '<script>var a = "kein Inhalt";</script></head><body>'
+            '<nav>Home Produkte Kontakt</nav>'
+            '<main><h1>Vier Wörter im Titel</h1>'
+            '<p>Versand in 1-2 Werktagen · <strong>Alsfeld</strong> — ★★★★★</p>'
+            '<script>document.write("auch kein Inhalt")</script>'
+            '<style>.x { color: red }</style>'
+            '</main><footer>Impressum Datenschutz AGB</footer></body></html>'
+        )
+        text = inhaltstext(html)
+        self.assertEqual(
+            text, 'Vier Wörter im Titel Versand in 1-2 Werktagen · Alsfeld — ★★★★★',
+        )
+        # 4 Wörter Überschrift + „Versand", „in", „1-2", „Werktagen", „Alsfeld";
+        # „·", „—" und die Sterne sind keine Wörter.
+        self.assertEqual(wortzahl(text), 9)
+        self.assertEqual(wortzahl(''), 0)
+
+    def test_keine_seite_faellt_unter_ihren_erreichten_umfang(self):
+        """Verhindert den Rückfall: ein Absatz, der beim nächsten Umbau
+        „aufgeräumt" wird, nimmt der Seite still ein Drittel ihres Inhalts.
+        Vor Welle 5 hatte ``/produkte/`` 41 und jede Produktseite 23 Wörter
+        – die Schwellen halten den seither erreichten Stand fest, nicht ein
+        Ziel (siehe ``MINDESTWOERTER``)."""
+        for pfad, mindestens in MINDESTWOERTER.items():
+            with self.subTest(pfad=pfad):
+                antwort = self.hole(pfad)
+                self.assertEqual(antwort.status_code, 200)
+                woerter = wortzahl(inhaltstext(antwort.content.decode()))
+                self.assertGreaterEqual(
+                    woerter, mindestens,
+                    f'{pfad} hat im Inhaltsbereich nur noch {woerter} Wörter '
+                    f'(Stand nach Welle 5: mindestens {mindestens})',
+                )
+
+    def test_jede_inhaltsseite_ist_in_der_schwellenliste(self):
+        """Verhindert, dass eine neue Inhaltsseite ungemessen bleibt: wer
+        ``INHALTSSEITEN`` erweitert, muss ihren Stand auch festhalten."""
+        for pfad in INHALTSSEITEN:
+            with self.subTest(pfad=pfad):
+                self.assertIn(pfad, MINDESTWOERTER)
+
+    def test_jede_inhaltsseite_nennt_im_ersten_drittel_eine_zahl(self):
+        """Verhindert den Zustand aus Befund 4.14: ``/`` und ``/ueber_uns/``
+        nannten keine einzige Zahl, und wo Zahlen standen, standen sie am
+        Seitenende in einer FAQ. Antwortmaschinen zitieren den Anfang; eine
+        Angabe wie „1-2 Werktage" oder „36304 Alsfeld" macht ihn zitierfähig.
+        Die Produktseite zählt mit – ihr statischer Teil nennt die Versanddauer."""
+        seiten = [p for p in INHALTSSEITEN if p not in OHNE_ZAHL_IM_ERSTEN_DRITTEL]
+        for pfad in seiten + [UMFANG_PRODUKT_SEITE]:
+            with self.subTest(pfad=pfad):
+                woerter = inhaltstext(self.hole(pfad).content.decode()).split()
+                drittel = ' '.join(woerter[: max(1, len(woerter) // 3)])
+                self.assertTrue(
+                    re.search(r'\d', drittel),
+                    f'{pfad}: im ersten Drittel des Inhalts steht keine Zahl: '
+                    f'"{drittel[:200]}…"',
                 )

@@ -390,3 +390,29 @@ Ort, Inhalt der Seite). `agb.html` und `datenschutz.html` unangetastet.
 
 **Warum:** Produktseiten hatten gemessen 23 statische Wörter und keinen
 Einleitungsabsatz; das Impressum keinen (Befund 4.9/GE23, IS17/IS18).
+
+### 2026-09-01 — Welle 5, Schritt 25: Inhaltstests messen Wortzahlen statt zu schätzen (11 → 15)
+
+**Was:** `shop1/tests/test_inhalt.py` bekommt (1) die Messfunktionen
+`inhaltstext()` (sichtbarer Text innerhalb von `<main>`, ohne
+`script`/`style`/`noscript`/`template`) und `wortzahl()` (Stücke mit
+mindestens einem Buchstaben oder einer Ziffer; „·", „—", „★★★★★" zählen
+nicht) – mit einer Gegenprobe an bekanntem HTML, bevor die Schwellen
+gelten; (2) `MINDESTWOERTER` je Seite, gesetzt auf den nach Welle 5
+**gemessenen** Stand minus wenige Wörter (`/` 390, `/produkte/` 105,
+`/kontakt/` 130, `/ueber_uns/` 350, `/liefergebiet/` 240, `/gaestebuch/` 95,
+`/impressum/` 70, `/datenschutz/` 360, `/agb/` 170, Produktseite 95) – ein
+Rückfallschutz, kein Ziel; dazu ein Test, dass jede `INHALTSSEITE` in der
+Liste steht; (3) jede Inhaltsseite und die Produktseite nennen im ersten
+Drittel des Inhalts eine Zahl – Ausnahme `/liefergebiet/`
+(`OHNE_ZAHL_IM_ERSTEN_DRITTEL`): dort stehen die Zahlen erst in der FAQ am
+Seitenende, und die Vorlage gehörte nicht zu den Dateien dieser Welle;
+(4) der Antwort-zuerst-Test gilt jetzt auch für `/impressum/`; `/agb/` und
+`/datenschutz/` bleiben ausgenommen, weil an Rechtstexten nicht formuliert
+wird (Schritt 24). Gegenbeweis: den Absatz auf `/produkte/` auf den alten
+Umfang gekürzt → Umfangs- und Zahlentest rot für `/produkte/`; danach
+zurückgesetzt, `git status` zeigte nur `test_inhalt.py`.
+
+**Warum:** Alle Wortzahlen des Laufs waren Schätzungen aus den Vorlagen
+(`01-BEFUND.md` 7). Erst gemessen sind die Schritte 21–24 nachweisbar, und
+erst mit Schwellen fällt auf, wenn ein Umbau den Inhalt still wieder kürzt.
