@@ -120,7 +120,7 @@
             <div class="space-y-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
                 <!-- Me Section -->
                 <div class="glass-card p-4 rounded-[3rem] border-white/5 group overflow-hidden">
-                    <img src="{% static 'shop1/images/ich.jpg' %}" alt="Luisa Brehler, Gründerin von Luviq Universe" class="w-full h-64 object-cover rounded-[2.5rem] grayscale group-hover:grayscale-0 transition-all duration-700" width="900" height="1350" loading="lazy" decoding="async">
+                    <img src="{% static 'shop1/images/ich-900.webp' %}" srcset="{% static 'shop1/images/ich-450.webp' %} 450w, {% static 'shop1/images/ich-900.webp' %} 900w" sizes="(min-width: 1024px) 33vw, 100vw" alt="Luisa Brehler, Gründerin von Luviq Universe" class="w-full h-64 object-cover rounded-[2.5rem] grayscale group-hover:grayscale-0 transition-all duration-700" width="900" height="1350" loading="lazy" decoding="async">
                     <div class="absolute inset-0 bg-gradient-to-t from-space-dark/80 to-transparent"></div>
                     <div class="absolute bottom-6 left-6">
                         <p class="text-white/40 text-[10px] uppercase tracking-widest leading-relaxed">Luisa Brehler</p>

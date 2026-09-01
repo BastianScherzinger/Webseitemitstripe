@@ -552,3 +552,35 @@ Sie wanderte bei jedem Deploy durch `collectstatic` (`start.sh:36`) und wurde
 inhaltsgehasht abgelegt, ohne je ausgeliefert zu werden. Befund
 `01-BEFUND.md` 4.20. Geprüft: `collectstatic --noinput` ohne Fehler,
 `manage.py check` grün, `manage.py test shop1` grün (147 Tests).
+
+### 2026-09-01 — Welle 7, Schritt 32: Statische Bilder als WebP in mehreren Breiten, Favicon als ICO
+
+**Was:** Mit Pillow (bereits in `requirements.txt`, keine neue Bibliothek)
+aus den vier statischen JPEGs erzeugt, Qualität 80, Seitenverhältnis
+unverändert: `hero-dragon-640/1024/1536.webp` (24,7 / 53,6 / 102,0 KB statt
+179,4 KB), `ich-450/900.webp` (19,6 / 64,9 KB statt 115,2 KB),
+`logo-luviq-96/192.webp` (1,1 / 2,3 KB statt 133,0 KB für ein 40-px-Logo)
+und `flavicon.ico` mit 16/32/48 px (7,3 KB statt 71,0 KB, aus dem
+1254-px-JPEG). Umgestellt: `index.html` (Preload mit `imagesrcset`/
+`imagesizes`, Hero-`<img>` mit `srcset`/`sizes="100vw"`, Gründerinnenbild),
+`kontakt.html` und `ueber_uns.html` (Gründerinnenbild mit `srcset`),
+`base.html` (Favicon-Links auf `.ico`, Logo mit `srcset`/`sizes="48px"`),
+`_reviews_map.html` und `login.html` (Logo). Nur `src`, `srcset`, `sizes`
+und `href` geändert – keine neuen Elemente, kein `<picture>`,
+`width`/`height`/`class`/`alt` unverändert.
+
+**Bewusst auf JPEG belassen:** `og:image`, `twitter:image`, die
+Bildadressen im JSON-LD, `apple-touch-icon` und `manifest.json` – Vorschau-
+Dienste und iOS-Startbildschirm-Symbole nehmen WebP nicht durchgängig an,
+und die alten JPEGs bleiben laut Plan liegen. Die Weiterleitungen
+`/favicon.ico` → `flavicon.jpeg` in `urls.py` wurden nicht angefasst
+(nicht im Plan; siehe Bericht „Für den nächsten Lauf").
+
+**Warum:** Das Hero-Bild ist das LCP-Element der Startseite und wurde ohne
+`srcset` auf jedem Handy in Desktop-Auflösung geladen; Logo und Favicon
+kamen als 1290- bzw. 1254-px-JPEG auf jeder Seite mit. Summe der
+Bilddateien der Startseite vorher 498,6 KB, nachher 175,3 KB (Desktop,
+1536 px breit) bzw. 126,9 KB (1024 px). Befunde PF15, PF16,
+`01-BEFUND.md` 4.20, 4.21. Geprüft: `collectstatic --noinput` (8 neue
+Dateien, alle im Manifest), `manage.py check` grün, `manage.py test shop1`
+grün (147 Tests, darunter `test_aufbau` und `test_ladezeit`).

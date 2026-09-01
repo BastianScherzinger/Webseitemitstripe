@@ -154,8 +154,9 @@
     {% block schema_ld %}{% endblock %}
 
     <!-- Favicon & PWA -->
-    <link rel="icon" type="image/jpeg" href="{% static 'shop1/images/flavicon.jpeg' %}">
-    <link rel="shortcut icon" type="image/jpeg" href="{% static 'shop1/images/flavicon.jpeg' %}">
+    {# flavicon.ico (16/32/48 px, aus flavicon.jpeg erzeugt) statt des 1254-px-JPEGs: 7 KB statt 69 KB auf jeder Seite. #}
+    <link rel="icon" type="image/x-icon" href="{% static 'shop1/images/flavicon.ico' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'shop1/images/flavicon.ico' %}">
     <link rel="apple-touch-icon" href="{% static 'shop1/images/logo-luviq.jpeg' %}">
     <link rel="manifest" href="{% static 'shop1/manifest.json' %}">
     <meta name="theme-color" content="#0d0907">
@@ -251,7 +252,7 @@
                 <div class="flex items-center">
                     <a href="{% url 'home' %}" class="flex-shrink-0 flex items-center group">
                         <div class="h-12 w-12 rounded-full glass flex items-center justify-center p-2 group-hover:shadow-[0_0_20px_rgba(200,150,92,0.5)] transition-all">
-                            <img class="h-full w-auto" src="{% static 'shop1/images/logo-luviq.jpeg' %}" alt="Luviq-Schriftzug in heller Schrift auf dunklem Grund mit dem Leitspruch „Less noise. More power.“" width="40" height="40" loading="eager" decoding="async">
+                            <img class="h-full w-auto" src="{% static 'shop1/images/logo-luviq-96.webp' %}" srcset="{% static 'shop1/images/logo-luviq-96.webp' %} 96w, {% static 'shop1/images/logo-luviq-192.webp' %} 192w" sizes="48px" alt="Luviq-Schriftzug in heller Schrift auf dunklem Grund mit dem Leitspruch „Less noise. More power.“" width="40" height="40" loading="eager" decoding="async">
                         </div>
                         <span class="ml-3 text-2xl font-black heading-font tracking-tighter text-white uppercase">Luviq</span>
                     </a>
