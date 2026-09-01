@@ -8,16 +8,15 @@
 {% block og_description %}{{ produkt.meta_description }}{% endblock %}
 {% block twitter_title %}{{ produkt.meta_title }}{% endblock %}
 {% block twitter_description %}{{ produkt.meta_description }}{% endblock %}
-{% if produkt.bild %}
-{% block og_image_tag %}
+{# Die Pruefung auf produkt.bild steht bewusst INNERHALB der Bloecke: eine Bedingung um einen Block herum wirkt in einem erbenden Template nicht, weil Bloecke beim Uebersetzen eingesammelt werden und nicht beim Rendern. Stand sie aussen, wurde produkt.bild.url auch ohne Bild ausgewertet und warf einen ValueError - also 500 auf jeder bildlosen Produktseite. #}
+{% block og_image_tag %}{% if produkt.bild %}
 <meta property="og:image" content="{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="800">
-{% endblock %}
-{% block twitter_image_tag %}
+{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block twitter_image_tag %}{% if produkt.bild %}
 <meta name="twitter:image" content="{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}">
-{% endblock %}
-{% endif %}
+{% else %}{{ block.super }}{% endif %}{% endblock %}
 
 {% block schema_ld %}
 <script type="application/ld+json">

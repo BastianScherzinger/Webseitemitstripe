@@ -136,10 +136,22 @@ DATABASES = {
 # Railway-Variable: PYSTORE_DATABASE_URL
 # Ohne Variable: Fallback auf lokale DB (Entwicklung)
 _pystore_url = os.getenv('PYSTORE_DATABASE_URL')
+
+# Nur mit eigener PYSTORE_DATABASE_URL ist die pystore-Datenbank tatsächlich
+# fremdverwaltet (vom separaten pystore-Projekt). Ohne die Variable zeigt der
+# Alias auf die eigene Datenbank – dann muss dieses Projekt die Tabellen dort
+# selbst anlegen, sonst fehlen sie lokal und im Testlauf. WerbungRouter liest
+# dieses Flag in allow_migrate().
+PYSTORE_IS_EXTERNAL = bool(_pystore_url)
+
 if _pystore_url:
     DATABASES['pystore'] = dj_database_url.parse(_pystore_url, conn_max_age=600)
 else:
-    DATABASES['pystore'] = DATABASES['default']
+    # Bewusst eine Kopie, kein zweiter Verweis auf dasselbe dict: der
+    # Test-Runner schreibt den Namen der Testdatenbank in das
+    # Einstellungs-dict jedes Alias und würde sonst den Eintrag von
+    # 'default' überschreiben.
+    DATABASES['pystore'] = dict(DATABASES['default'])
 
 DATABASE_ROUTERS = ['shop1.routers.WerbungRouter']
 

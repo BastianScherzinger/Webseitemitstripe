@@ -63,10 +63,13 @@ def kontakte(request, produkt_id):
 
 def kontakt(request):
     if request.method == 'POST':
-        name = request.POST.get('name', '')
-        email = request.POST.get('email', '')
-        betreff = request.POST.get('betreff', '')
-        nachricht = request.POST.get('nachricht', '')
+        # .strip(): ohne das zaehlt ein Feld, in dem nur ein Leerzeichen steht,
+        # als ausgefuellt – der billigste Weg, das Formular mit Leermeldungen
+        # zu fluten.
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        betreff = request.POST.get('betreff', '').strip()
+        nachricht = request.POST.get('nachricht', '').strip()
 
         if name and email and betreff and nachricht:
             safe_betreff = betreff.replace('\r', '').replace('\n', ' ')
