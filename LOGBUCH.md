@@ -350,3 +350,23 @@ Element ist durch Regel 1 ausgeschlossen, also wächst der vorhandene Absatz
 
 **Warum:** Die wichtigste Ranking-Seite hatte im Inhaltsbereich gemessen 41
 Wörter (Befund 4.3/IS19, Prüfstand 62 von 600).
+
+### 2026-09-01 — Welle 5, Schritt 23: /ueber_uns/ und /gaestebuch/ auf Substanz gebracht
+
+**Was:** `shop1/templates/shop1/ueber_uns.html`: der Antwortabsatz unter der
+`h1` nennt jetzt eine Zahl (Versand in der Regel innerhalb von 1-2
+Werktagen) und den Vertriebsweg (nur online, kein Ladengeschäft); der
+Absatz über Luisa Brehler beschreibt die Arbeitsweise in drei Schritten
+(Basisteil aussuchen, von Hand bemalen, in den Shop) samt Zahlungsart,
+Endpreisen und § 19 UStG; die drei Wertekarten (Kuration, Veredelung,
+Exklusivität) und der Visionsabsatz bekommen je einen Satz mit Auskunft
+(nichts neu produziert; Pinsel und Textilfarbe, kein Motiv wiederholt;
+keine Nachbestellung). `shop1/templates/shop1/gaestebuch.html`: der
+Antwortabsatz nennt Postleitzahl 36304, Ort, kein Ladengeschäft,
+Einzelstück und die Versandangabe; der Hinweis für nicht angemeldete
+Besucher sagt, wer Beiträge schreiben kann. Die sichtbare Angabe „5.0
+★★★★★" aus `_reviews_map.html` wurde weder aufgegriffen noch angefasst –
+ihre Quelle ist nicht belegt. Keine neuen Elemente, Klassen unverändert.
+
+**Warum:** `/ueber_uns/` enthielt keine einzige Zahl (Befund 4.14/GE25),
+`/gaestebuch/` hatte gemessen 55 statische Wörter (Befund 4.3/IS19).

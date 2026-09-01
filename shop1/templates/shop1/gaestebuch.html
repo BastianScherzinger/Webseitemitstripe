@@ -31,7 +31,7 @@
             <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                 Guest <span class="text-glow">Book</span>
             </h1>
-            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Im Gästebuch von Luviq Universe stehen Rückmeldungen von Kundinnen und Kunden zu ihren handbemalten Einzelstücken. Wer angemeldet ist, kann selbst einen Beitrag schreiben.</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Im Gästebuch von Luviq Universe stehen Rückmeldungen von Kundinnen und Kunden zu ihren handbemalten Einzelstücken. Wer angemeldet ist, kann selbst einen Beitrag schreiben. Luviq Universe ist ein reiner Online-Shop aus 36304 Alsfeld in Hessen ohne Ladengeschäft: Luisa Brehler bemalt gebrauchte Vintage-Kleidung von Hand, jedes Stück gibt es nur einmal, versendet wird deutschlandweit in der Regel innerhalb von 1-2 Werktagen.</p>
         </header>
 
         <!-- Google Maps + Bewertungen -->
@@ -61,7 +61,7 @@
         {% else %}
         <div class="glass-card p-10 text-center rounded-[3rem] mb-24 border-white/5">
             <p class="text-white/30 text-xs uppercase tracking-widest">
-                Bitte <a href="{% url 'login' %}" class="text-glow-orange hover:underline">logge dich ein</a>, um einen Beitrag zu schreiben.
+                Beiträge können nur angemeldete Nutzerinnen und Nutzer schreiben. Bitte <a href="{% url 'login' %}" class="text-glow-orange hover:underline">logge dich ein</a>, um einen Beitrag zu schreiben.
             </p>
         </div>
         {% endif %}
