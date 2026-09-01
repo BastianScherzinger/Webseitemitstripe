@@ -216,9 +216,20 @@ preis = models.DecimalField(...)      # Preis-Kopie zum Bestellzeitpunkt
 ### PageVisitMiddleware
 ```python
 # Macht HTTP-Request zu ip-api.com im Background-Thread
-# → Blockiert NIEMALS den Response
+# → Der Geo-Lookup blockiert den Response nicht
 # → Geo-Daten kommen asynchron in die DB
 ```
+**Was trotzdem synchron läuft:** `_track()` wird in `__call__` vor dem
+`return response` aufgerufen. Die Datenbankschreibvorgänge (`PageVisit`,
+`VisitorLog.objects.create`) laufen also **im Request-Zyklus** und
+verzögern die Auslieferung — nur der Geo-Lookup ist ausgelagert. Die
+frühere Formulierung „blockiert niemals" galt für Mail und Geo-Abfrage,
+nicht für die Schreibvorgänge.
+
+**Dedup-Fenster:** `PageVisit` einmal pro Session und Tag, `VisitorLog`
+einmal pro Pfad und Session alle **5 Minuten** (`diff < 300` in
+`middleware.py`). Der Kommentar über dem Block nennt fälschlich
+30 Minuten — maßgeblich ist der Code.
 **Kein E-Mail-Versand pro Besuch (Stand 2026-07):** Früher verschickte die
 Middleware pro (vermeintlich neuem) Besucher eine Admin-Mail via Brevo. Das
 führte trotz Bot-Filter/Session-Dedup zu einer Mail-Flut (Clients/Bots ohne
@@ -284,12 +295,28 @@ cache.set('werbung_aktiv_list', werbung_aktiv, 60)  # 60s LocMemCache
 
 - `django-axes`: 10 Versuche, 1h Sperre, Username+IP-basiert
 - `AXES_LOCKOUT_TEMPLATE`: eigene Lockout-Seite
-- HSTS: 1 Jahr, inkl. Subdomains, Preload
-- CSRF: Secure-Cookie, SameSite=Lax
-- CSP: per settings-Variable, angepasst pro Deployment
+- HSTS: 1 Jahr, inkl. Subdomains, Preload — **nur wenn `DEBUG=False`**
+  (`SECURE_HSTS_SECONDS = 31536000`, `mainweb/settings.py`)
+- CSRF: `CSRF_COOKIE_SECURE = not DEBUG`, `SameSite=Lax`,
+  `CSRF_COOKIE_HTTPONLY = False` (damit Frontend-JavaScript das Token lesen
+  kann; der Kommentar in `settings.py` nennt dafür noch HTMX — das wird seit
+  Commit `89046ab` nicht mehr geladen)
+- `SECURE_SSL_REDIRECT = not DEBUG`, `SECURE_PROXY_SSL_HEADER` für den
+  Railway-Proxy
 - X-Frame-Options: DENY
+- `SECURE_CONTENT_TYPE_NOSNIFF = True`
 - `SECURE_REFERRER_POLICY`: strict-origin-when-cross-origin
+- `SECRET_KEY`: `settings.py` bricht mit `RuntimeError` ab, wenn bei
+  `DEBUG=False` noch der unsichere Standardwert gesetzt ist
 - Email-Header-Injection-Schutz in Kontaktformular
+
+**Keine Content-Security-Policy (Stand 2026-09-01):** Diese Doku behauptete
+früher „CSP: per settings-Variable, angepasst pro Deployment". Das traf nie
+zu — in `mainweb/settings.py` wird kein CSP-Header gesetzt und es ist keine
+CSP-Middleware installiert. Eine CSP nachzurüsten ist offen; sie muss vor
+dem Scharfschalten am laufenden Server geprüft werden, weil die Seite
+Inline-Styles und Inline-Skripte enthält und Alpine.js sowie Three.js von
+`cdn.jsdelivr.net` und Bilder von Cloudinary lädt.
 
 ---
 

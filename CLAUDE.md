@@ -14,7 +14,7 @@ Die Ordner `projekt1/` und `tiktok stream/` im Repo-Root sind unversionierte Scr
 python manage.py runserver              # Dev-Server
 python manage.py migrate                # Migrationen anwenden
 python manage.py makemigrations shop1    # Neue Migration erzeugen (einzige App: shop1)
-python manage.py test shop1              # Tests (aktuell shop1/tests.py leer)
+python manage.py test shop1              # Testsuite der App (Stand 2026-09-01: shop1/tests.py enthält keine Tests)
 python manage.py createsuperuser
 python manage.py collectstatic --noinput
 python manage.py fix_pystore_schema      # Custom Command, siehe start.sh
@@ -22,7 +22,9 @@ python manage.py fix_pystore_schema      # Custom Command, siehe start.sh
 
 Es gibt kein `package.json`/npm-Build. Tailwind wird eigenständig aus `tailwind_input.css` nach `shop1/static/shop1/tailwind.css` gebaut (Tailwind-CLI, `tailwind.config.js` scannt `templates/**/*.html` und `shop1/templates/**/*.html`).
 
-Lokale Konfiguration über `.env` im Projekt-Root (`python-dotenv`, wird in `mainweb/settings.py` geladen) — nicht in Git.
+Lokale Konfiguration über `.env` im Projekt-Root (`python-dotenv`, wird in `mainweb/settings.py` geladen) — nicht in Git. **Ohne `.env` läuft kein `manage.py`-Befehl**: `settings.py` wirft bei `DEBUG=False` und unverändertem Standard-`SECRET_KEY` einen `RuntimeError`. Für lokale Prüfläufe genügt eine `.env` mit einem gesetzten `SECRET_KEY`.
+
+Änderungen an diesem Projekt werden in `LOGBUCH.md` festgehalten (was und **warum**, mit Commit-Kennung).
 
 ## Architektur
 
@@ -47,7 +49,7 @@ Das custom Admin-Panel (`/shop-admin/...`) ist eine eigene View-Datei `shop1/adm
 2. `shop1/utils.py::send_brevo_email()` — direkter HTTP-Call an die Brevo-API (Bypass für von Railway blockierte SMTP-Ports), läuft asynchron in einem `threading.Thread`. Für Bestell- und Benachrichtigungs-Mails wird dieser Weg bevorzugt.
 
 ### PageVisitMiddleware (`shop1/middleware.py`)
-Läuft nach jeder Response, macht Geo-IP-Lookups (`ip-api.com`) und Admin-Benachrichtigungs-Mails **immer in Background-Threads** — darf niemals den Response blockieren. Session-basiertes Dedup: ein `PageVisit`-Eintrag pro Session/Tag, ein `VisitorLog`-Eintrag pro Pfad alle 30 Min, eine Admin-Benachrichtigung pro Browser-Session. Neue Tracking-Logik hier nach demselben Muster (nie synchron blockieren) ergänzen.
+Läuft nach jeder Response (`_track()` vor dem `return response`). Der Geo-IP-Lookup bei `ip-api.com` läuft **im Background-Thread** und blockiert die Antwort nicht. Die Datenbankschreibvorgänge selbst (`PageVisit`, `VisitorLog`) laufen dagegen **synchron im Request-Zyklus** — sie verzögern die Auslieferung. Session-basiertes Dedup: ein `PageVisit`-Eintrag pro Session/Tag, ein `VisitorLog`-Eintrag pro Pfad alle **5 Minuten** (`diff < 300` in `middleware.py`; der Kommentar darüber nennt fälschlich 30 Minuten — maßgeblich ist der Code). Admin-Benachrichtigungs-Mails pro Seitenbesuch gibt es seit Commit `e58775a` **nicht mehr**. Externe Aufrufe in neuer Tracking-Logik gehören weiterhin in einen Thread.
 
 ### Context Processor (`shop1/context_processors.py`)
 `shop_owner_check` injiziert `is_shop_owner`, `cart_count`, `werbung_aktiv` (60s `LocMemCache`) und `GOOGLE_REVIEW_URL` in jedes Template. Werbe-Impressionen werden bewusst **nicht** hier gezählt (war ein Bug), sondern nur in der `startseite()`-View.
