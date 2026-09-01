@@ -36,10 +36,25 @@ echo "Collecting static files..."
 python manage.py collectstatic --noinput --clear || echo "WARNING: collectstatic failed"
 
 # ═══ GUNICORN STARTEN ═══
+# Die Anwendung ist E/A-gebunden (Datenbank, Cloudinary, ip-api): deshalb
+# gthread mit mehreren Threads je Worker statt nur zwei gleichzeitiger
+# Anfragen fuer den ganzen Shop. Jeder Thread haelt eine eigene
+# Datenbankverbindung (CONN_MAX_AGE=600): 2 x 4 = 8, dazu bis zu 4 je
+# Worker aus dem Geo-Pool der Middleware. --timeout 30 statt 120: die
+# langsamste gemessene Seite lag bei 11 s (Befund PF10); eine haengende
+# Anfrage blockiert so keinen halben Pool mehr fuer zwei Minuten.
+# --max-requests erneuert Worker regelmaessig, der Jitter verhindert,
+# dass beide gleichzeitig neu starten. Kein --preload: es teilte die
+# Datenbankverbindungen ueber den Fork (zwei Datenbanken, ein Router).
+# Die drei Werte lassen sich per Railway-Variable ohne Deploy zuruecknehmen.
 echo "Starting Gunicorn on port $PORT..."
 exec gunicorn mainweb.wsgi:application \
     --bind "0.0.0.0:$PORT" \
-    --workers 2 \
-    --timeout 120 \
+    --worker-class gthread \
+    --workers "${GUNICORN_WORKERS:-2}" \
+    --threads "${GUNICORN_THREADS:-4}" \
+    --timeout "${GUNICORN_TIMEOUT:-30}" \
+    --max-requests 1000 \
+    --max-requests-jitter 100 \
     --access-logfile - \
     --error-logfile -

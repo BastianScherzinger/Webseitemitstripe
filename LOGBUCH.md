@@ -681,3 +681,23 @@ Crawler-Schwarm beliebig viele Threads, jeder mit 4 s Netz-Timeout
 (Befund PF10, `01-BEFUND.md` 4.25 (2, 3), 6.2). Geprüft: `manage.py check`
 grün, `manage.py test shop1` grün (152 Tests – die Basisklasse ruft die
 Middleware bei jedem Abruf auf).
+
+### 2026-09-01 — Welle 7, Schritt 35: Gunicorn mit Threads, Worker-Erneuerung und kürzerem Timeout
+
+**Was:** `start.sh`: `--worker-class gthread --threads 4` (je Worker, also
+2 × 4 = 8 gleichzeitige Anfragen statt 2), `--timeout 30` statt 120,
+`--max-requests 1000 --max-requests-jitter 100`. Worker, Threads und
+Timeout sind über `GUNICORN_WORKERS`, `GUNICORN_THREADS`, `GUNICORN_TIMEOUT`
+ohne Deploy zurücknehmbar. Kein `--preload`.
+
+**Warum:** Zwei gleichzeitige Anfragen waren die Obergrenze für den ganzen
+Shop, und eine hängende blockierte zwei Minuten lang einen halben Pool –
+die Erklärung für Ausreisser bis 11 s (Befund PF10, `01-BEFUND.md` 4.25
+(1)). 30 s liegen fast dreifach über der langsamsten gemessenen Seite.
+Jeder Thread hält eine eigene Datenbankverbindung (`CONN_MAX_AGE=600`),
+dazu bis zu 4 je Worker aus dem Geo-Pool – zusammen höchstens 16 Verbindungen
+je Datenbank; der `LocMemCache` wird je Worker von seinen Threads geteilt.
+Geprüft: `sh -n start.sh` Exitcode 0, `manage.py check` grün, `manage.py
+test shop1` grün (152 Tests). Gunicorn läuft nicht unter Windows; ein
+lokaler Start mit denselben Parametern war deshalb nicht möglich – die
+Wirkung lässt sich erst am veröffentlichten Stand messen.
