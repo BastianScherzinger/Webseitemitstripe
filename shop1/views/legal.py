@@ -3,10 +3,32 @@
 import json
 
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponsePermanentRedirect, JsonResponse
 from django.urls import reverse
 
 from ..models import Produkt, Subscriber
+
+
+#: Stand der statischen Seiten: Routenname → Datum der letzten inhaltlichen
+#: Änderung (ISO 8601). Speist das ``<lastmod>`` der Sitemap.
+#:
+#: Das Register wird **von Hand** nachgezogen, wenn sich der Inhalt einer
+#: Seite ändert. Absichtlich kein Datei-Änderungsdatum und kein Build-
+#: Zeitpunkt: beide springen bei jedem Deploy hoch und würden Suchmaschinen
+#: eine Änderung vorgaukeln, die es nicht gab – dann verlieren sie das
+#: Vertrauen in die Angabe. Die Daten unten sind belegt durch
+#: ``git log -1 --date=short -- <Template>`` am 2026-09-01.
+SEITEN_STAND = {
+    'home':         '2026-09-01',
+    'produkte':     '2026-09-01',
+    'gaestebuch':   '2026-09-01',
+    'ueber_uns':    '2026-09-01',
+    'liefergebiet': '2026-09-01',
+    'kontakt':      '2026-09-01',
+    'impressum':    '2026-09-01',
+    'datenschutz':  '2026-09-01',
+    'agb':          '2026-09-01',
+}
 
 
 def impressum(request):
@@ -177,15 +199,18 @@ def sitemap_xml(request):
     """Erzeugt eine vollständige sitemap.xml mit lastmod und Bild-URLs."""
     base_url = request.build_absolute_uri('/')[:-1]
 
+    # 'home' behält absichtlich den leeren Pfad: die Startseite steht seit
+    # jeher ohne Schrägstrich am Ende in der Sitemap, und eine andere
+    # Schreibweise wäre für Google eine neue Adresse.
     static_pages = [
-        {'loc': '',                          'priority': '1.0', 'changefreq': 'daily'},
-        {'loc': reverse('produkte'),         'priority': '0.9', 'changefreq': 'daily'},
-        {'loc': reverse('gaestebuch'),       'priority': '0.7', 'changefreq': 'weekly'},
-        {'loc': reverse('ueber_uns'),        'priority': '0.7', 'changefreq': 'monthly'},
-        {'loc': reverse('liefergebiet'),     'priority': '0.7', 'changefreq': 'monthly'},
-        {'loc': reverse('kontakt'),          'priority': '0.6', 'changefreq': 'monthly'},
-        {'loc': reverse('datenschutz'),      'priority': '0.2', 'changefreq': 'yearly'},
-        {'loc': reverse('agb'),              'priority': '0.2', 'changefreq': 'yearly'},
+        {'name': 'home',         'loc': '',                      'priority': '1.0', 'changefreq': 'daily'},
+        {'name': 'produkte',     'loc': reverse('produkte'),     'priority': '0.9', 'changefreq': 'daily'},
+        {'name': 'gaestebuch',   'loc': reverse('gaestebuch'),   'priority': '0.7', 'changefreq': 'weekly'},
+        {'name': 'ueber_uns',    'loc': reverse('ueber_uns'),    'priority': '0.7', 'changefreq': 'monthly'},
+        {'name': 'liefergebiet', 'loc': reverse('liefergebiet'), 'priority': '0.7', 'changefreq': 'monthly'},
+        {'name': 'kontakt',      'loc': reverse('kontakt'),      'priority': '0.6', 'changefreq': 'monthly'},
+        {'name': 'datenschutz',  'loc': reverse('datenschutz'),  'priority': '0.2', 'changefreq': 'yearly'},
+        {'name': 'agb',          'loc': reverse('agb'),          'priority': '0.2', 'changefreq': 'yearly'},
     ]
     # /impressum/ steht bewusst NICHT in dieser Liste: impressum.html setzt
     # meta robots auf "noindex, follow". Eine Adresse gleichzeitig zur
@@ -199,6 +224,7 @@ def sitemap_xml(request):
     for page in static_pages:
         xml += '  <url>\n'
         xml += f'    <loc>{base_url}{page["loc"]}</loc>\n'
+        xml += f'    <lastmod>{SEITEN_STAND[page["name"]]}</lastmod>\n'
         xml += f'    <changefreq>{page["changefreq"]}</changefreq>\n'
         xml += f'    <priority>{page["priority"]}</priority>\n'
         xml += '  </url>\n'
@@ -231,6 +257,16 @@ def sitemap_xml(request):
 
     xml += '</urlset>'
     return HttpResponse(xml, content_type='application/xml; charset=utf-8')
+
+
+def produkt_uebersicht_redirect(request):
+    """``/produkt/`` ohne Kennung dauerhaft auf die Produktübersicht leiten.
+
+    Die Adresse ist der natürliche Tippfehler zu ``/produkte/`` und der
+    Elternpfad jeder Produktseite ``/produkt/<slug>/``; sie lief bisher ins
+    404 (Befund SU09). Eine 301 gibt Besuchern und Crawlern das Ziel, das
+    sie meinen, ohne eine Seite zu ändern."""
+    return HttpResponsePermanentRedirect(reverse('produkte'))
 
 
 def newsletter_subscribe(request):

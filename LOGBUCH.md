@@ -163,3 +163,22 @@ Name vor dem Nachsatz statt eines führenden „–". Keine Migration.
 **Warum:** Vorher wurde erst auf 155 Zeichen gekürzt und dann ein ~60
 Zeichen langer Nachsatz angehängt – bis zu ~215 Zeichen, die Google mitten
 im Satz abschneidet (Befund 4.35).
+
+### 2026-09-01 — Welle 3, Schritt 14: `lastmod` für die statischen Sitemap-Seiten, `/produkt/` → `/produkte/`
+
+**Was:** (a) `shop1/views/legal.py` führt das Register `SEITEN_STAND`
+(Routenname → ISO-Datum, von Hand gepflegt); jede der acht statischen
+Sitemap-Seiten trägt daraus ein `<lastmod>`. Startwert überall
+`2026-09-01`, belegt durch `git log -1 --date=short` je Template (alle
+Seiten wurden in diesem und dem vorigen Lauf am selben Tag zuletzt
+geändert). `impressum` steht mit im Register, obwohl es nicht in der
+Sitemap ist – Schritt 16 braucht das Datum für den `WebPage`-Knoten.
+(b) Neue View `produkt_uebersicht_redirect` (in `legal.py`, re-exportiert
+in `views/__init__.py`), Route `produkt/` in `shop1/urls.py` **vor**
+`produkt/<slug:slug>/`: 301 auf `/produkte/`.
+
+**Warum:** Ohne `lastmod` crawlt Google statische Seiten nach eigenem
+Ermessen und erkennt Änderungen spät (Befund 4.16). Ein Datei- oder
+Build-Datum wäre falsch, weil es bei jedem Deploy hochspringt – deshalb
+das gepflegte Register. `/produkt/` ist der Elternpfad jeder Produktseite
+und lief ins 404 (Befund SU09).

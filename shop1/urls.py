@@ -9,6 +9,8 @@ urlpatterns = [
     path('werbung/klick/<int:werbung_id>/', views.werbung_klick, name='werbung_klick'),
     path('paypal/capture/<int:order_id>/', views.paypal_capture, name='paypal_capture'),
     path('produkte/', views.produkte, name='produkte'),
+    # Muss vor produkt/<slug:slug>/ stehen: /produkt/ ohne Kennung -> 301 auf die Uebersicht.
+    path('produkt/', views.produkt_uebersicht_redirect, name='produkt_uebersicht_redirect'),
     path('produkt/<int:produkt_id>/', views.produkt_detail_redirect, name='produkt_detail'),
     path('produkt/<slug:slug>/', views.produkt_detail_slug, name='produkt_detail_slug'),
     path('kontakt/', views.kontakt, name='kontakt'),
