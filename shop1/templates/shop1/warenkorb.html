@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static custom_tags %}
 
 {% block title %}Warenkorb – Luviq Universe{% endblock %}
 
@@ -36,7 +36,7 @@
                                         <div class="flex items-center space-x-6">
                                             {% if item.bild %}
                                                 <div class="w-20 h-20 rounded-2xl overflow-hidden glass">
-                                                    <img src="{{ item.bild }}" alt="{{ item.name }} im Warenkorb" class="w-full h-full object-cover" width="96" height="96" loading="lazy" decoding="async">
+                                                    <img src="{{ item.bild|cloud:'w_192,h_192,c_fill' }}" alt="{{ item.name }} im Warenkorb" class="w-full h-full object-cover" width="96" height="96" loading="lazy" decoding="async">
                                                 </div>
                                             {% else %}
                                                 <div class="w-20 h-20 rounded-2xl glass flex items-center justify-center text-white/10">

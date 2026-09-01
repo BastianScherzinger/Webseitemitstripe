@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static custom_tags %}
 
 {% block title %}{{ produkt.meta_title }}{% endblock %}
 {% block meta_description %}{{ produkt.meta_description }}{% endblock %}
+{% block preload %}{% if produkt.bild %}<link rel="preload" as="image" href="{{ produkt.bild.url|cloud:'w_1200,c_limit' }}" imagesrcset="{{ produkt.bild.url|cloud:'w_600,c_limit' }} 600w, {{ produkt.bild.url|cloud:'w_900,c_limit' }} 900w, {{ produkt.bild.url|cloud:'w_1200,c_limit' }} 1200w" imagesizes="(min-width: 1024px) 50vw, 100vw" fetchpriority="high">{% endif %}{% endblock %}
 {% block og_type %}product{% endblock %}
 {% block og_title %}{{ produkt.meta_title }}{% endblock %}
 {% block og_description %}{{ produkt.meta_description }}{% endblock %}
@@ -78,8 +79,11 @@
             <div class="relative">
                 <div class="glass-card rounded-[4rem] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.5)] group">
                     {% if produkt.bild %}
+                        {# c_limit statt c_fill: das Hauptbild darf nicht beschnitten werden. #}
                         <img
-                          src="{{ produkt.bild.url }}"
+                          src="{{ produkt.bild.url|cloud:'w_1200,c_limit' }}"
+                          srcset="{{ produkt.bild.url|cloud:'w_600,c_limit' }} 600w, {{ produkt.bild.url|cloud:'w_900,c_limit' }} 900w, {{ produkt.bild.url|cloud:'w_1200,c_limit' }} 1200w"
+                          sizes="(min-width: 1024px) 50vw, 100vw"
                           class="w-full h-auto object-cover transform transition-transform duration-[2000ms] group-hover:scale-110"
                           alt="{{ produkt.name }} – handbemaltes Upcycling-Unikat von Luviq Universe"
                           loading="eager"

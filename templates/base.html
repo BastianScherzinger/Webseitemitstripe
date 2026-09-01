@@ -230,6 +230,9 @@
         }
     </style>
 
+    {% comment %}Vorabladen des groessten Bildes im ersten Bildschirm: der Browser findet es sonst erst beim Uebersetzen des Seitenkoerpers. Jede Seite fuellt den Block selbst, leer bleibt er ohne Wirkung.{% endcomment %}
+    {% block preload %}{% endblock %}
+
     {% block extra_css %}{% endblock %}
 </head>
 <body class="min-h-screen flex flex-col">
@@ -244,7 +247,7 @@
                 <div class="flex items-center">
                     <a href="{% url 'home' %}" class="flex-shrink-0 flex items-center group">
                         <div class="h-12 w-12 rounded-full glass flex items-center justify-center p-2 group-hover:shadow-[0_0_20px_rgba(200,150,92,0.5)] transition-all">
-                            <img class="h-full w-auto" src="{% static 'shop1/images/logo-luviq.jpeg' %}" alt="Luviq Universe Logo" width="40" height="40">
+                            <img class="h-full w-auto" src="{% static 'shop1/images/logo-luviq.jpeg' %}" alt="Luviq Universe Logo" width="40" height="40" loading="eager" decoding="async">
                         </div>
                         <span class="ml-3 text-2xl font-black heading-font tracking-tighter text-white uppercase">Luviq</span>
                     </a>
