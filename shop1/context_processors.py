@@ -1,6 +1,9 @@
+import logging
 import os
 from django.conf import settings
 from django.core.cache import cache
+
+_log = logging.getLogger('shop1')
 
 
 def shop_owner_check(request):
@@ -19,7 +22,7 @@ def shop_owner_check(request):
             if cart:
                 cart_count = cart.anzahl_items
         except Exception:
-            pass
+            _log.exception('Warenkorb-Zählung im Context Processor fehlgeschlagen')
 
     # Aktive Werbung aus Cache
     werbung_aktiv = []
@@ -33,7 +36,7 @@ def shop_owner_check(request):
                 werbung_aktiv = [w for w in Werbung.objects.filter(aktiv=True) if w.ist_aktiv]
                 cache.set(cache_key, werbung_aktiv, 60)
         except Exception:
-            pass
+            _log.exception('Aktive Werbung konnte nicht geladen werden')
 
     return {
         'is_shop_owner': is_shop_owner,

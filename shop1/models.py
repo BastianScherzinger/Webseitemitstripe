@@ -1,7 +1,10 @@
+import logging
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+
+_log = logging.getLogger('shop1')
 
 # Create your models here.
 
@@ -296,7 +299,7 @@ class Werbung(models.Model):
                     try:
                         cloud_name = urlparse(env_val).hostname or ''
                     except Exception:
-                        pass
+                        _log.exception('Cloudinary-Cloudname aus %s nicht lesbar', env_key)
                     if cloud_name:
                         break
         if cloud_name:

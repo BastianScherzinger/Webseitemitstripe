@@ -1,5 +1,6 @@
 """Shop-Hauptseiten: Startseite, Produkte, Kontakt, Über uns."""
 
+import logging
 import os
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -10,6 +11,8 @@ from django.utils import timezone
 
 from ..models import Produkt, Werbung, WerbungStat, Comment
 from ..utils import send_brevo_email
+
+_log = logging.getLogger('shop1')
 
 
 def startseite(request):
@@ -25,7 +28,7 @@ def startseite(request):
                 stat, _ = WerbungStat.objects.get_or_create(werbung=w, seite=site_name, datum=today)
                 WerbungStat.objects.filter(id=stat.id).update(impressionen=F('impressionen') + 1)
     except Exception:
-        pass
+        _log.exception('Werbe-Impressionen auf der Startseite konnten nicht gezählt werden')
 
     recent_comments = (
         Comment.objects.filter(parent=None)

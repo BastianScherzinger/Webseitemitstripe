@@ -1,9 +1,13 @@
+import logging
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import UserProfile
+
+_log = logging.getLogger('shop1')
 
 
 @receiver(post_save, sender=User)
@@ -28,7 +32,7 @@ def save_profile(sender, instance, created, **kwargs):
         try:
             instance.profile.save()
         except UserProfile.DoesNotExist:
-            pass
+            _log.exception('Benutzer %s hat kein UserProfile, Speichern übersprungen', instance.pk)
 
 
 from .utils import send_brevo_email

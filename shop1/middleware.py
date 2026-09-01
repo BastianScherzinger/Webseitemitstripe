@@ -115,7 +115,7 @@ class PageVisitMiddleware:
                 if diff < 300:
                     should_log = False
             except Exception:
-                pass
+                _log.exception('Zeitstempel in visited_paths nicht lesbar: %r', last_seen)
 
         # ── Admin-Benachrichtigung pro Seitenbesuch: bewusst deaktiviert. ──
         # Frueher wurde hier pro (vermeintlich neuem) Besucher eine Admin-Mail
