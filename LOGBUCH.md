@@ -602,3 +602,25 @@ vorkomprimierte Static-Dateien wären ein Wechsel des Storage-Backends und
 stehen nicht im Plan. Django polstert gzip-Antworten seit 4.2 mit
 Zufallsbytes gegen BREACH; der CSRF-Token ist ohnehin maskiert. Geprüft:
 `manage.py check` grün, `manage.py test shop1` grün (148 Tests).
+
+### 2026-09-01 — Welle 7, Schritt 33 (2/4): sitemap.xml und llms.txt aus dem Cache
+
+**Was:** `sitemap_xml` und `llms_txt` in `shop1/views/legal.py` tragen
+`@cache_page(AUSGABE_CACHE_SEKUNDEN)` (15 Minuten). `shop1/tests/_basis.py`
+leert den Cache in `_pre_setup` vor jedem Test – der `LocMemCache` überlebt
+die Datenbank-Rücksetzung zwischen zwei Tests, und jeder Sitemap-Test hätte
+sonst den Produktbestand seines Vorgängers gesehen. Neuer Test
+`AusgabecacheTest` in `test_einstellungen.py`: der zweite Abruf beider
+Adressen kommt mit **null** Datenbankabfragen aus und liefert denselben
+Inhalt.
+
+**Warum:** Beide Antworten sind für jeden Abrufer gleich (kein Nutzerbezug,
+keine Session) und luden bei jedem Crawler-Abruf alle aktiven Produkte
+(Befund PF10, `01-BEFUND.md` 4.25 (4)). Messung mit 40 Produkten über ein
+Wegwerf-Testmodul, lokal (SQLite): vorher je Abruf eine Produktabfrage;
+nachher Abruf 1 mit einer Abfrage, Abruf 2 mit null Abfragen, 2,3 ms statt
+129 ms (Sitemap) und 1,5 ms statt 7,7 ms (`llms.txt`) – die Absolutwerte
+sagen lokal wenig, die Null bei den Abfragen ist der Beleg. Ein neues Stück
+erscheint spätestens nach 15 Minuten; `cache_page` setzt zusätzlich
+`Cache-Control: max-age=900`. Geprüft: `manage.py check` grün,
+`manage.py test shop1` grün (149 Tests).

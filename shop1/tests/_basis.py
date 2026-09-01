@@ -6,6 +6,7 @@ Kein Testmodul (Name beginnt nicht mit ``test``), wird nur importiert.
 from decimal import Decimal
 
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.test import TestCase
 
 from ..models import Produkt
@@ -14,7 +15,7 @@ from ..models import Produkt
 class LuviqTestCase(TestCase):
     """Basisklasse für alle Tests dieser App.
 
-    Zwei Eigenheiten des Projekts machen sie nötig:
+    Drei Eigenheiten des Projekts machen sie nötig:
 
     1. ``SECURE_SSL_REDIRECT = not DEBUG`` (``mainweb/settings.py``) beantwortet
        im Betriebsmodus **jeden** HTTP-Abruf mit einer 301 auf ``https://``.
@@ -25,9 +26,19 @@ class LuviqTestCase(TestCase):
     2. ``WerbungRouter`` leitet ``VisitorLog`` in die Datenbank ``pystore``.
        ``PageVisitMiddleware`` schreibt dort bei **jedem** Seitenabruf. Ohne
        ``databases`` scheitert jeder Seitentest an einer gesperrten Verbindung.
+    3. ``sitemap_xml`` und ``llms_txt`` liegen per ``cache_page`` im
+       ``LocMemCache``, und der überlebt die Datenbank-Rücksetzung zwischen
+       zwei Tests. Ohne Leeren sähe ein Test die Sitemap mit den Produkten
+       des vorigen. Deshalb wird der Cache vor jedem Test geleert – in
+       :meth:`_pre_setup`, damit es auch für Unterklassen gilt, die ``setUp``
+       ohne ``super()`` überschreiben.
     """
 
     databases = {'default', 'pystore'}
+
+    def _pre_setup(self):
+        super()._pre_setup()
+        cache.clear()
 
     def hole(self, pfad, **kwargs):
         """GET über HTTPS – siehe Klassendokumentation, Punkt 1."""

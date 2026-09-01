@@ -266,6 +266,28 @@ class PruefbefehlTest(LuviqTestCase):
         self.assertIn('WARNUNG', text)
 
 
+class AusgabecacheTest(LuviqTestCase):
+    """sitemap.xml und llms.txt kommen nach dem ersten Abruf aus dem Cache."""
+
+    def test_sitemap_und_llms_txt_fragen_die_datenbank_nur_einmal(self):
+        """Verhindert, dass jeder Crawler-Abruf der Sitemap alle aktiven
+        Produkte neu aus der Datenbank lädt – bei einem Crawler-Schwarm war
+        das die teuerste ungecachte Abfrage des Shops. Der zweite Abruf muss
+        ohne eine einzige Datenbankabfrage auskommen und dieselbe Antwort
+        liefern."""
+        from ._basis import erzeuge_produkt
+
+        erzeuge_produkt('Gecachtes Stueck')
+        for pfad in ('/sitemap.xml', '/llms.txt'):
+            with self.subTest(pfad=pfad):
+                erster = self.hole(pfad)
+                self.assertEqual(erster.status_code, 200)
+                self.assertIn('gecachtes-stueck', erster.content.decode())
+                with self.assertNumQueries(0):
+                    zweiter = self.hole(pfad)
+                self.assertEqual(zweiter.content, erster.content)
+
+
 class BesucherprotokollTest(LuviqTestCase):
     """``PageVisitMiddleware`` läuft bei jeder Antwort mit."""
 

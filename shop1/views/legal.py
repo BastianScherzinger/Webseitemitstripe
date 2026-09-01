@@ -5,6 +5,7 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponsePermanentRedirect, JsonResponse
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 
 from ..models import Produkt, Subscriber
 # Das Register SEITEN_STAND (Routenname → Datum) liegt seit Schritt 16 in
@@ -97,6 +98,16 @@ WISSEN_SEITEN = [
 ]
 
 
+#: Wie lange sitemap.xml und llms.txt aus dem Cache kommen. Beide Antworten
+#: sind für jeden Abrufer gleich (kein Nutzerbezug, keine Session) und
+#: hängen nur vom Produktbestand ab – ein neues oder geändertes Stück
+#: erscheint darin spätestens nach dieser Frist. Der Schlüssel enthält
+#: Schema und Host (``build_absolute_uri``), www und Railway-Adresse werden
+#: also getrennt gehalten.
+AUSGABE_CACHE_SEKUNDEN = 60 * 15
+
+
+@cache_page(AUSGABE_CACHE_SEKUNDEN)
 def llms_txt(request):
     """Kurzfassung der Seite für Antwortmaschinen (llmstxt.org).
 
@@ -209,6 +220,7 @@ def llms_txt(request):
                         content_type="text/plain; charset=utf-8")
 
 
+@cache_page(AUSGABE_CACHE_SEKUNDEN)
 def sitemap_xml(request):
     """Erzeugt eine vollständige sitemap.xml mit lastmod und Bild-URLs."""
     base_url = request.build_absolute_uri('/')[:-1]
