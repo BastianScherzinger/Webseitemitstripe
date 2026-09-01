@@ -68,7 +68,7 @@
                 <p class="text-[9px] font-black uppercase tracking-[0.3em] text-glow-orange mb-4">Dein Kommentar</p>
                 <form action="{% url 'comment_add' %}" method="POST" class="flex flex-col gap-3">
                     {% csrf_token %}
-                    <textarea name="text" rows="3" required
+                    <textarea name="text" rows="3" required aria-label="Dein Kommentar"
                         class="w-full bg-white/5 border rounded-2xl p-5 text-white text-sm focus:outline-none transition-all font-light placeholder:text-white/20 resize-none"
                         style="border-color:rgba(200,150,92,0.18)"
                         placeholder="Teile deine Erfahrung..."></textarea>

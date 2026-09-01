@@ -40,7 +40,7 @@
             
             <div class="flex items-center gap-4">
                 <form method="GET" class="flex items-center gap-2">
-                    <select name="status" class="glass px-6 py-3 rounded-xl text-[10px] font-bold text-white uppercase tracking-widest outline-none border-white/10" onchange="this.form.submit()">
+                    <select name="status" aria-label="Bestellungen nach Status filtern" class="glass px-6 py-3 rounded-xl text-[10px] font-bold text-white uppercase tracking-widest outline-none border-white/10" onchange="this.form.submit()">
                         <option value="">Alle Stati</option>
                         {% for code, label in status_choices %}
                             <option value="{{ code }}" {% if current_status == code %}selected{% endif %}>{{ label }}</option>

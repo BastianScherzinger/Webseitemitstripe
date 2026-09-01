@@ -28,15 +28,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="flex items-center space-x-4 p-6 glass rounded-2xl border-white/5 bg-white/[0.02]">
                             {{ form.is_staff }}
-                            <label class="text-[10px] font-bold text-white uppercase tracking-widest">Staff Status</label>
+                            <label for="{{ form.is_staff.id_for_label }}" class="text-[10px] font-bold text-white uppercase tracking-widest">Staff Status</label>
                         </div>
                         <div class="flex items-center space-x-4 p-6 glass rounded-2xl border-white/5 bg-white/[0.02]">
                             {{ form.is_superuser }}
-                            <label class="text-[10px] font-bold text-white uppercase tracking-widest">Admin Status</label>
+                            <label for="{{ form.is_superuser.id_for_label }}" class="text-[10px] font-bold text-white uppercase tracking-widest">Admin Status</label>
                         </div>
                         <div class="flex items-center space-x-4 p-6 glass rounded-2xl border-white/5 bg-white/[0.02]">
                             {{ form.email_verified }}
-                            <label class="text-[10px] font-bold text-white uppercase tracking-widest">Verified</label>
+                            <label for="{{ form.email_verified.id_for_label }}" class="text-[10px] font-bold text-white uppercase tracking-widest">Verified</label>
                         </div>
                     </div>
                 </section>
@@ -48,19 +48,19 @@
                     <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange">Bio-Metrics</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Username</label>
+                            <label for="{{ form.username.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Username</label>
                             {{ form.username }}
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Email</label>
+                            <label for="{{ form.email.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Email</label>
                             {{ form.email }}
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">First Name</label>
+                            <label for="{{ form.first_name.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">First Name</label>
                             {{ form.first_name }}
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Last Name</label>
+                            <label for="{{ form.last_name.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Last Name</label>
                             {{ form.last_name }}
                         </div>
                     </div>
@@ -73,15 +73,15 @@
                     <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange">Location Data</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="md:col-span-2">
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Street & Number</label>
+                            <label for="{{ form.adresse.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Street & Number</label>
                             {{ form.adresse }}
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Postcode</label>
+                            <label for="{{ form.postleitzahl.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Postcode</label>
                             {{ form.postleitzahl }}
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">City</label>
+                            <label for="{{ form.stadt.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">City</label>
                             {{ form.stadt }}
                         </div>
                     </div>

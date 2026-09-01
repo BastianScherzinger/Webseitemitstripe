@@ -50,7 +50,7 @@
                 <div class="px-10 py-6 border-b border-white/5 bg-white/[0.02] flex flex-wrap items-center justify-between gap-6">
                     <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange">Active Collection</h3>
                     <div class="flex items-center gap-4">
-                        <select name="action" class="glass px-6 py-2 rounded-xl text-[10px] font-bold text-white uppercase tracking-widest outline-none border-white/10">
+                        <select name="action" aria-label="Sammelaktion für die ausgewählten Produkte" class="glass px-6 py-2 rounded-xl text-[10px] font-bold text-white uppercase tracking-widest outline-none border-white/10">
                             <option value="">Bulk Actions</option>
                             <option value="activate">Activate</option>
                             <option value="deactivate">Deactivate</option>
@@ -64,7 +64,7 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th class="w-12"><input type="checkbox" @change="$el.closest('table').querySelectorAll('input[name=selected_produkte]').forEach(cb => cb.checked = $el.checked)" class="glass"></th>
+                                <th class="w-12"><input type="checkbox" aria-label="Alle Produkte auswählen" @change="$el.closest('table').querySelectorAll('input[name=selected_produkte]').forEach(cb => cb.checked = $el.checked)" class="glass"></th>
                                 <th>Visual</th>
                                 <th>Product Name</th>
                                 <th>Price</th>
@@ -77,7 +77,7 @@
                         <tbody>
                             {% for produkt in produkte %}
                             <tr class="group">
-                                <td><input type="checkbox" name="selected_produkte" value="{{ produkt.id }}" class="glass"></td>
+                                <td><input type="checkbox" name="selected_produkte" value="{{ produkt.id }}" aria-label="{{ produkt.name }} auswählen" class="glass"></td>
                                 <td>
                                     <div class="w-16 h-16 rounded-xl overflow-hidden glass border-white/5">
                                         {% if produkt.bild %}

@@ -41,36 +41,36 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Titel *</label>
-                        <input type="text" name="titel" required placeholder="z.B. Luviq – Sommer Drop"
+                        <input type="text" name="titel" required aria-label="Titel der neuen Kampagne" placeholder="z.B. Luviq – Sommer Drop"
                             class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
                     </div>
                     <div>
                         <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Ziel-URL *</label>
-                        <input type="url" name="link" required placeholder="https://..."
+                        <input type="url" name="link" required aria-label="Ziel-URL der neuen Kampagne" placeholder="https://..."
                             class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
                     </div>
                 </div>
                 <div class="mb-4">
                     <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Beschreibung</label>
-                    <input type="text" name="beschreibung" placeholder="Kurze Tagline (optional)"
+                    <input type="text" name="beschreibung" aria-label="Beschreibung der neuen Kampagne (optional)" placeholder="Kurze Tagline (optional)"
                         class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div class="md:col-span-1">
                         <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Bild hochladen</label>
-                        <input type="file" name="bild_file" accept="image/*"
+                        <input type="file" name="bild_file" accept="image/*" aria-label="Bild für die neue Kampagne hochladen"
                             class="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white/60 text-xs focus:outline-none focus:border-glow-orange/50 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-glow-orange/20 file:text-glow-orange cursor-pointer">
                         <p class="text-[9px] text-white/20 mt-1">→ Cloudinary (WERBUNG_CLOUDINARY_URL)</p>
                     </div>
                     <div class="md:col-span-1">
                         <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">oder Bild-URL</label>
-                        <input type="url" name="bild" placeholder="https://res.cloudinary.com/..."
+                        <input type="url" name="bild" aria-label="Bild-URL der neuen Kampagne" placeholder="https://res.cloudinary.com/..."
                             class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
                         <p class="text-[9px] text-white/20 mt-1">Upload hat Vorrang vor URL</p>
                     </div>
                     <div class="md:col-span-1">
                         <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1.5">Budget (€) *</label>
-                        <input type="number" name="budget" step="0.01" min="1" value="20.00" required
+                        <input type="number" name="budget" step="0.01" min="1" value="20.00" required aria-label="Budget der neuen Kampagne in Euro"
                             class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
                         <p class="text-[9px] text-white/20 mt-1">0,25ct/View · 0,5ct/Klick · stoppt automatisch</p>
                     </div>
@@ -264,18 +264,18 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Titel *</label>
-                                <input type="text" name="titel" value="{{ w.titel }}" required
+                                <input type="text" name="titel" value="{{ w.titel }}" required aria-label="Titel der Kampagne „{{ w.titel }}“"
                                     class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
                             </div>
                             <div>
                                 <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Ziel-URL *</label>
-                                <input type="url" name="link" value="{{ w.link }}" required
+                                <input type="url" name="link" value="{{ w.link }}" required aria-label="Ziel-URL der Kampagne „{{ w.titel }}“"
                                     class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
                             </div>
                         </div>
                         <div class="mb-4">
                             <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Beschreibung</label>
-                            <textarea name="beschreibung" rows="2"
+                            <textarea name="beschreibung" rows="2" aria-label="Beschreibung der Kampagne „{{ w.titel }}“"
                                 class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50 resize-y">{{ w.beschreibung }}</textarea>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -285,12 +285,12 @@
                                 <img src="{{ w.bild_src }}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:8px;margin-bottom:6px;"
                                      onerror="this.style.display='none'">
                                 {% endif %}
-                                <input type="file" name="bild_file" accept="image/*"
+                                <input type="file" name="bild_file" accept="image/*" aria-label="Neues Bild für die Kampagne „{{ w.titel }}“ hochladen"
                                     class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-white/60 text-xs focus:outline-none focus:border-glow-orange/50 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-glow-orange/20 file:text-glow-orange cursor-pointer">
                             </div>
                             <div>
                                 <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">oder Bild-URL</label>
-                                <input type="url" name="bild" value="{{ w.bild }}"
+                                <input type="url" name="bild" value="{{ w.bild }}" aria-label="Bild-URL der Kampagne „{{ w.titel }}“"
                                     placeholder="https://res.cloudinary.com/..."
                                     class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
                                 <p class="text-[9px] text-white/20 mt-1">Upload hat Vorrang · nur vollständige HTTPS-URLs</p>
@@ -299,7 +299,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                             <div>
                                 <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Budget (€)</label>
-                                <input type="number" step="0.01" min="0" name="budget" value="{{ w.budget|stringformat:'f' }}"
+                                <input type="number" step="0.01" min="0" name="budget" value="{{ w.budget|stringformat:'f' }}" aria-label="Budget der Kampagne „{{ w.titel }}“ in Euro"
                                     class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-glow-orange/50">
                                 <p class="text-[9px] text-white/20 mt-1">Kosten: 0,25ct/View · 0,5ct/Klick</p>
                             </div>
