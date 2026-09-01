@@ -77,6 +77,13 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    # GZip für alle dynamischen Antworten (HTML, sitemap.xml, llms.txt).
+    # Steht bewusst NACH WhiteNoise: statische Dateien liefert WhiteNoise
+    # vorher aus und sie sollen nicht bei jedem Abruf neu gepackt werden.
+    # Django polstert gzip-Antworten seit 4.2 mit Zufallsbytes gegen BREACH;
+    # Antworten unter 200 Byte und solche mit eigenem Content-Encoding
+    # bleiben unangetastet.
+    'django.middleware.gzip.GZipMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

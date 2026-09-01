@@ -118,6 +118,17 @@ class SchutzkoepfeTest(LuviqTestCase):
         self.assertEqual(antwort['X-Frame-Options'], 'DENY')
         self.assertEqual(antwort['Referrer-Policy'], 'strict-origin-when-cross-origin')
 
+    def test_html_antworten_werden_komprimiert_ausgeliefert(self):
+        """Verhindert, dass die Kompression beim Umsortieren der Middleware
+        still wegfällt: eine unkomprimierte Startseite ist ein Vielfaches
+        grösser, und kein Messwerkzeug würde das als Fehler melden – nur als
+        langsam. Geprüft wird die tatsächliche Antwort, nicht die Einstellung."""
+        antwort = self.hole('/', HTTP_ACCEPT_ENCODING='gzip')
+        self.assertEqual(antwort.status_code, 200)
+        self.assertEqual(antwort.get('Content-Encoding'), 'gzip')
+        # Ein Client ohne gzip-Unterstützung bekommt weiterhin Klartext.
+        self.assertIsNone(self.hole('/').get('Content-Encoding'))
+
     def test_ein_http_abruf_wird_auf_https_umgeleitet(self):
         """Belegt, dass ``SECURE_SSL_REDIRECT`` greift – und begründet zugleich,
         warum alle übrigen Tests dieser Suite ``secure=True`` benutzen."""

@@ -584,3 +584,21 @@ Bilddateien der Startseite vorher 498,6 KB, nachher 175,3 KB (Desktop,
 `01-BEFUND.md` 4.20, 4.21. Geprüft: `collectstatic --noinput` (8 neue
 Dateien, alle im Manifest), `manage.py check` grün, `manage.py test shop1`
 grün (147 Tests, darunter `test_aufbau` und `test_ladezeit`).
+
+### 2026-09-01 — Welle 7, Schritt 33 (1/4): GZip-Kompression für dynamische Antworten
+
+**Was:** `django.middleware.gzip.GZipMiddleware` in `mainweb/settings.py`
+eingetragen, direkt nach `WhiteNoiseMiddleware`. Neuer Test
+`test_html_antworten_werden_komprimiert_ausgeliefert` in
+`shop1/tests/test_einstellungen.py`: die Startseite trägt mit
+`Accept-Encoding: gzip` den Kopf `Content-Encoding: gzip`, ohne die Angabe
+kommt Klartext.
+
+**Warum:** Bisher ging jede HTML-Seite, die Sitemap und `llms.txt`
+unkomprimiert über die Leitung (Befund PF10, `01-BEFUND.md` 4.25 (4)). Die
+Middleware steht **nach** WhiteNoise, weil statische Dateien dort schon
+beantwortet werden und nicht bei jedem Abruf neu gepackt werden sollen –
+vorkomprimierte Static-Dateien wären ein Wechsel des Storage-Backends und
+stehen nicht im Plan. Django polstert gzip-Antworten seit 4.2 mit
+Zufallsbytes gegen BREACH; der CSRF-Token ist ohnehin maskiert. Geprüft:
+`manage.py check` grün, `manage.py test shop1` grün (148 Tests).
