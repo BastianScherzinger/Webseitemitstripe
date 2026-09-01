@@ -416,3 +416,23 @@ zurückgesetzt, `git status` zeigte nur `test_inhalt.py`.
 **Warum:** Alle Wortzahlen des Laufs waren Schätzungen aus den Vorlagen
 (`01-BEFUND.md` 7). Erst gemessen sind die Schritte 21–24 nachweisbar, und
 erst mit Schwellen fällt auf, wenn ein Umbau den Inhalt still wieder kürzt.
+
+### 2026-09-01 — Welle 6, Schritt 26: Wissensbereich angelegt (Route, View, Übersicht)
+
+**Was:** Neues View-Modul `shop1/views/wissen.py` mit dem Register
+`WISSEN_BEITRAEGE` (Slug → Routenname, Vorlage, Titel, Kurztext; zunächst
+leer), der Übersicht `wissen()` und der Beitragsview `wissen_beitrag(slug)`;
+beide samt Register in `shop1/views/__init__.py` re-exportiert.
+`shop1/urls.py`: `/wissen/` (Name `wissen`) und je Registereintrag eine Route
+`/wissen/<slug>/` mit festem Pfad und **eigenem Routennamen** – eine gemeinsame
+`<slug>`-Route hätte für alle Beiträge nur einen Namen, aber Sitemap
+(`lastmod`), `seiten_stand.py` (WebPage-Knoten) und `llms.txt` sprechen
+Seiten über den Routennamen an. Übersichtsvorlage
+`shop1/templates/shop1/wissen/uebersicht.html`: Antwortabsatz mit Ort, PLZ
+und Einzelstück-Regel, Beitragsliste aus dem Register, ein Abschnitt „Woher
+die Angaben stammen" mit Verweisen auf Über uns, Liefergebiet, AGB und
+Kontakt. Keine Migration, kein Link in Navigation oder Fusszeile (Plan,
+Verworfen Zeile 7). Bestehende Seiten unverändert.
+
+**Warum:** Null Wissensseiten, 13 rankfähige Seiten gegen 30, vier
+Themenbereiche mit je einer Seite (Befunde SU01, SU04, SU07, SU08, SU09).

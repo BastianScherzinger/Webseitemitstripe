@@ -68,6 +68,16 @@ urlpatterns = [
     path('comment/<int:comment_id>/like/', views.comment_like, name='comment_like'),
     path('comment/<int:comment_id>/delete/', views.comment_delete, name='comment_delete'),
 
+    # ═══ WISSEN ═══
+    # Übersicht plus eine Route je Beitrag aus dem Register views/wissen.py:
+    # fester Pfad /wissen/<slug>/ und ein eigener Routenname, weil Sitemap,
+    # seiten_stand.py und llms.txt Seiten über den Routennamen ansprechen.
+    path('wissen/', views.wissen, name='wissen'),
+    *[
+        path(f'wissen/{slug}/', views.wissen_beitrag, {'slug': slug}, name=beitrag['url_name'])
+        for slug, beitrag in views.WISSEN_BEITRAEGE.items()
+    ],
+
     # Favicon: Browser fragen /favicon.ico unabhaengig vom <link> im <head> an.
     # Beide Routen zeigten bisher auf /static/shop1/favicon.ico bzw. .png –
     # keine der beiden Dateien existiert. Das einzige vorhandene Symbol ist
