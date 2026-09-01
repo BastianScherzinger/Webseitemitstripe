@@ -79,22 +79,39 @@ def robots_txt(request):
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
 
+#: Wissensseiten für den Abschnitt „Wissen" der llms.txt: Tripel aus
+#: Routenname, Ankertext und einem Satz Beschreibung. Zurzeit leer – die
+#: Seiten entstehen in einem späteren Schritt und werden hier eingetragen,
+#: sobald sie ausgeliefert werden. Solange die Liste leer ist, erscheint der
+#: Abschnitt nicht; eine leere Überschrift wäre für Antwortmaschinen ein
+#: Versprechen ohne Inhalt.
+WISSEN_SEITEN = []
+
+
 def llms_txt(request):
     """Kurzfassung der Seite für Antwortmaschinen (llmstxt.org).
 
     Enthält ausschliesslich Angaben, die auch auf der Seite selbst stehen:
-    Anschrift und E-Mail aus dem Impressum, Zahlungsarten und Widerrufsfrist
+    Anschrift und E-Mail aus dem Impressum, Instagram-Profil aus dem
+    ``sameAs`` des Schemas (``base.html``), Zahlungsarten und Widerrufsfrist
     aus den AGB, Versandangaben von der Liefergebietsseite. Wo eine Angabe
     fehlt, steht sie hier nicht.
+
+    Der Einleitungsabsatz (die ``>``-Zeilen) ist der Absatz, den eine
+    Antwortmaschine zitiert. Er nennt deshalb Ort, Postleitzahl und die
+    belegten Versandzeiten – keine Zahl darin, die nicht auch auf
+    ``/liefergebiet/`` oder im Impressum steht.
     """
     basis = request.build_absolute_uri('/')[:-1]
 
     zeilen = [
         "# Luviq Universe",
         "",
-        "> Luviq Universe ist ein Online-Shop aus Alsfeld in Hessen. Luisa Brehler",
-        "> bemalt handverlesene Second-Hand- und Vintage-Kleidung von Hand; jedes",
-        "> Stueck ist ein Einzelstueck (1-of-1) und wird deutschlandweit versendet.",
+        "> Luviq Universe ist ein Online-Shop aus Alsfeld (36304) in Hessen, zwischen",
+        "> Fulda und Giessen. Luisa Brehler bemalt handverlesene Second-Hand- und",
+        "> Vintage-Kleidung von Hand; jedes Stueck ist ein Einzelstueck (1-of-1).",
+        "> Versand deutschlandweit, in der Regel innerhalb von 1-2 Werktagen;",
+        "> innerhalb Hessens ist ein Stueck meist nach 1-3 Werktagen zugestellt.",
         "> Einen Laden zum Reinschauen gibt es nicht, der Verkauf laeuft",
         "> ausschliesslich ueber diese Seite.",
         "",
@@ -102,6 +119,7 @@ def llms_txt(request):
         "",
         "- Betreiberin: Luisa Brehler, Gruenberger Str. 16, 36304 Alsfeld, Deutschland",
         "- E-Mail: brehlerluisa@gmail.com",
+        "- Instagram: https://www.instagram.com/luviq.universe/",
         "- Zahlungsarten: PayPal oder Vorab-Ueberweisung (AGB, Paragraph 4)",
         "- Preise sind Endpreise; nach Paragraph 19 UStG wird keine Umsatzsteuer",
         "  berechnet (Kleinunternehmerstatus)",
@@ -132,6 +150,11 @@ def llms_txt(request):
             )
     else:
         zeilen.append("- Zurzeit ist kein Einzelstueck verfuegbar.")
+
+    if WISSEN_SEITEN:
+        zeilen += ["", "## Wissen", ""]
+        for routenname, ankertext, beschreibung in WISSEN_SEITEN:
+            zeilen.append(f"- [{ankertext}]({basis}{reverse(routenname)}): {beschreibung}")
 
     zeilen += [
         "",

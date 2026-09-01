@@ -259,3 +259,23 @@ wurden nicht ergänzt, der Seitenaufbau ist unverändert.
 (Befund 4.38/GE12); Suchmaschinen zeigen ohne ihn die rohe Adresse in der
 Trefferliste. Ein zentraler Block statt neun Einzellösungen, damit die
 nächste Seite denselben Weg geht.
+
+### 2026-09-01 — Welle 4, Schritt 19: `llms.txt` mit Ort, Versandzeiten und Instagram; Wissensbereich vorbereitet
+
+**Was:** In `views/legal.py::llms_txt`: (a) der Einleitungsabsatz nennt
+jetzt Postleitzahl und Lage („Alsfeld (36304) in Hessen, zwischen Fulda und
+Giessen") sowie die belegten Versandzeiten („in der Regel innerhalb von 1-2
+Werktagen; innerhalb Hessens meist nach 1-3 Werktagen") – beides steht
+wörtlich auf `/liefergebiet/` bzw. im Impressum; (b) die Eckdaten führen
+das Instagram-Profil `https://www.instagram.com/luviq.universe/`, das
+bisher nur im `sameAs` des Schemas stand; (c) neue Modulliste
+`WISSEN_SEITEN` (Routenname, Ankertext, Beschreibung) – solange sie leer
+ist, wird kein Abschnitt „Wissen" ausgegeben; Schritt 30 trägt die Seiten
+ein. `robots.txt` ist unverändert: die dreizehn Antwort-Crawler bleiben
+zugelassen, nichts wird zusätzlich gesperrt.
+
+**Warum:** Antwortmaschinen zitieren den ersten sachlichen Absatz; ohne
+Zahl und Ort ist er nicht zitierfähig (Arbeitsfeld GEO). Ein Profil, das
+nur im Schema steht, kann eine Antwortmaschine nicht nachlesen (Befund
+4.34/GE11). Ein leerer Abschnitt wäre ein Versprechen ohne Inhalt, daher
+die Bedingung.
