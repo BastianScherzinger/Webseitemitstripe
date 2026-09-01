@@ -6,7 +6,14 @@ niemand merkt es, solange niemand sie aufruft.
 """
 
 from django.contrib.auth.models import User
-from django.urls import NoReverseMatch, get_resolver, reverse
+from django.urls import NoReverseMatch, URLPattern, URLResolver, get_resolver, resolve, reverse
+from django.urls.converters import (
+    IntConverter,
+    PathConverter,
+    SlugConverter,
+    StringConverter,
+    UUIDConverter,
+)
 
 from ._basis import (
     ADMIN_SEITEN,
@@ -17,6 +24,44 @@ from ._basis import (
     erzeuge_benutzer,
     erzeuge_produkt,
 )
+
+#: Ein gültiger Beispielwert je Pfadkonverter, um Routen mit Pflichtparametern
+#: (``<int:produkt_id>``, ``<slug:slug>`` …) aufzulösen.
+_BEISPIELWERTE = (
+    (IntConverter, 1),
+    (UUIDConverter, '12345678-1234-5678-1234-567812345678'),
+    (SlugConverter, 'beispiel'),
+    (PathConverter, 'beispiel/pfad'),
+    (StringConverter, 'beispiel'),
+)
+
+
+def _beispielwert(konverter):
+    for typ, wert in _BEISPIELWERTE:
+        if isinstance(konverter, typ):
+            return wert
+    return 'beispiel'
+
+
+def _projektrouten():
+    """Alle benannten Routen samt ihren Pfadkonvertern.
+
+    Der Django-Admin (eigener Namensraum) bleibt draussen – sein URLconf ist
+    nicht unser Code. Die Medienroute hat keinen Namen und fällt ebenfalls weg.
+    """
+    routen = []
+
+    def sammle(muster, geerbt):
+        for eintrag in muster:
+            if isinstance(eintrag, URLResolver):
+                if eintrag.namespace:
+                    continue
+                sammle(eintrag.url_patterns, {**geerbt, **eintrag.pattern.converters})
+            elif isinstance(eintrag, URLPattern) and eintrag.name:
+                routen.append((eintrag.name, {**geerbt, **eintrag.pattern.converters}))
+
+    sammle(get_resolver().url_patterns, {})
+    return routen
 
 
 class OeffentlicheSeitenTest(LuviqTestCase):
@@ -56,18 +101,38 @@ class OeffentlicheSeitenTest(LuviqTestCase):
         antwort = self.hole('/gibt-es-nicht-und-soll-es-nicht-geben/')
         self.assertEqual(antwort.status_code, 404)
 
-    def test_jeder_url_name_laesst_sich_aufloesen(self):
-        """Verhindert den häufigsten Fehler dieses Projekts: eine neue View wird
-        in ``shop1/views/__init__.py`` nicht re-exportiert oder ein URL-Name wird
-        umbenannt, während Templates ihn per ``{% url %}`` weiter benutzen."""
-        namen = [n for n in get_resolver().reverse_dict.keys() if isinstance(n, str)]
-        self.assertGreater(len(namen), 50, 'URLconf wirkt unvollständig geladen')
-        for name in namen:
+    def test_jeder_url_name_laesst_sich_aufloesen_und_fuehrt_zu_seiner_route(self):
+        """Verhindert zwei Fehler, die beide erst beim Aufruf einer Seite
+        auffallen würden.
+
+        1. Ein URL-Name lässt sich nicht mehr auflösen – etwa weil eine Route
+           umbenannt wurde, während Templates sie per ``{% url %}`` weiter
+           benutzen, oder weil eine Route mit Pflichtparametern ihren
+           Konverter verloren hat. Routen mit Parametern werden mit gültigen
+           Beispielwerten aufgelöst, nicht übersprungen.
+        2. Die erzeugte Adresse landet bei einer **anderen** Route. Das
+           passiert, sobald eine allgemeinere Route vor einer speziellen steht
+           – ``produkt/<slug>`` vor ``produkt/<int>`` fängt jede Produkt-ID
+           als Slug ab und liefert 404. Deshalb wird jede erzeugte Adresse
+           wieder aufgelöst und muss bei ihrem eigenen Namen ankommen.
+
+        Wird eine View in ``shop1/views/__init__.py`` nicht re-exportiert,
+        scheitert schon das Laden von ``shop1/urls.py`` – dieser Test ist dann
+        der erste, der mit einem ``AttributeError`` rot wird."""
+        routen = _projektrouten()
+        self.assertGreater(len(routen), 50, 'URLconf wirkt unvollständig geladen')
+        for name, konverter in routen:
             with self.subTest(name=name):
+                werte = {param: _beispielwert(k) for param, k in konverter.items()}
                 try:
-                    reverse(name)
-                except NoReverseMatch:
-                    pass  # Route mit Pflichtparametern – hier nicht prüfbar
+                    adresse = reverse(name, kwargs=werte)
+                except NoReverseMatch as fehler:
+                    self.fail(f'{name} lässt sich nicht auflösen: {fehler}')
+                treffer = resolve(adresse)
+                self.assertEqual(
+                    treffer.url_name, name,
+                    f'{adresse} wurde aus "{name}" gebaut, landet aber bei "{treffer.url_name}"',
+                )
 
 
 class ProduktseitenTest(LuviqTestCase):

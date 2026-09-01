@@ -16,6 +16,13 @@ _JSONLD = re.compile(
     r'<script[^>]+type="application/ld\+json"[^>]*>(.*?)</script>', re.DOTALL
 )
 
+#: Die Seiten, die ein FAQPage-Schema tragen (``kontakt.html`` und
+#: ``liefergebiet.html``). Die Startseite steht bewusst nicht darin: ihr
+#: Schema wurde entfernt, weil die Fragen dort nirgends sichtbar waren (siehe
+#: Kommentar in ``index.html``). Kommt eine Seite dazu, gehört sie hier hinein
+#: – dann prüft der Test auch dort, dass jede Frage sichtbar auf der Seite steht.
+FAQ_SEITEN = ('/kontakt/', '/liefergebiet/')
+
 
 class _Textleser(HTMLParser):
     """Zieht den sichtbaren Text aus einem Dokument."""
@@ -117,35 +124,58 @@ class StrukturierteDatenTest(LuviqTestCase):
     def test_die_brotkrume_nennt_die_sichtbaren_beschriftungen(self):
         """Verhindert den Fall, den dieser Lauf vorgefunden hat: die Seite
         zeigte 'Orbit' und 'Objekte', das Schema meldete 'Home' und
-        'Produkte'."""
+        'Produkte'.
+
+        Der Test schlägt auch an, wenn die Produktseite gar keine Brotkrume
+        mehr ausliefert oder eine leere – sonst wäre er ohne einen einzigen
+        Vergleich grün."""
         inhalt = self.hole(self.produkt.get_absolute_url()).content.decode()
         text = sichtbarer_text(inhalt)
-        for knoten in schema_knoten(inhalt):
-            if knoten.get('@type') != 'BreadcrumbList':
-                continue
-            for eintrag in knoten['itemListElement']:
-                with self.subTest(name=eintrag['name']):
-                    self.assertIn(
-                        eintrag['name'], text,
-                        f'Die Brotkrume nennt "{eintrag["name"]}", '
-                        f'auf der Seite steht das nicht',
-                    )
+        brotkrumen = [k for k in schema_knoten(inhalt) if k.get('@type') == 'BreadcrumbList']
+        self.assertEqual(
+            len(brotkrumen), 1,
+            f'Die Produktseite hat {len(brotkrumen)} BreadcrumbList-Knoten statt einem',
+        )
+        eintraege = brotkrumen[0].get('itemListElement', [])
+        self.assertGreaterEqual(len(eintraege), 2, 'Brotkrume ohne Stationen')
+        for eintrag in eintraege:
+            with self.subTest(name=eintrag.get('name')):
+                self.assertTrue(eintrag.get('name'), 'Station ohne Namen')
+                self.assertIn(
+                    eintrag['name'], text,
+                    f'Die Brotkrume nennt "{eintrag["name"]}", '
+                    f'auf der Seite steht das nicht',
+                )
 
     def test_jede_frage_im_schema_steht_auch_auf_der_seite(self):
         """Verhindert erfundene Fragen und Antworten im FAQ-Schema. Google
         entfernt solche Seiten aus den Ergebnissen, Antwortmaschinen zitieren
-        etwas, das niemand nachlesen kann."""
+        etwas, das niemand nachlesen kann.
+
+        Zusätzlich muss das FAQ-Schema genau auf den Seiten liegen, die es
+        tragen sollen (``FAQ_SEITEN``): fällt es dort weg, wäre der Test sonst
+        ohne einen einzigen Vergleich grün; taucht es auf einer neuen Seite
+        auf, gehört die Seite bewusst in die Liste aufgenommen – samt Abgleich
+        mit ihrem sichtbaren Text."""
+        gefunden = set()
         for pfad in INHALTSSEITEN:
             inhalt = self.hole(pfad).content.decode()
             text = sichtbarer_text(inhalt)
             for knoten in schema_knoten(inhalt):
                 if knoten.get('@type') != 'FAQPage':
                     continue
-                for frage in knoten['mainEntity']:
+                gefunden.add(pfad)
+                fragen = knoten.get('mainEntity', [])
+                self.assertTrue(fragen, f'{pfad}: FAQPage ohne eine einzige Frage')
+                for frage in fragen:
                     with self.subTest(pfad=pfad, frage=frage['name'][:40]):
                         self.assertIn(frage['name'], text)
                         antwort = ' '.join(frage['acceptedAnswer']['text'].split())
                         self.assertIn(antwort, text)
+        self.assertEqual(
+            gefunden, set(FAQ_SEITEN),
+            f'FAQ-Schema gefunden auf {sorted(gefunden)}, erwartet auf {sorted(FAQ_SEITEN)}',
+        )
 
     def test_die_produktseite_nennt_ihr_aenderungsdatum(self):
         """Verhindert, dass Antwortmaschinen und Suchmaschinen die Aktualität

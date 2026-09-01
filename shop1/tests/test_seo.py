@@ -33,9 +33,39 @@ class SitemapTest(LuviqTestCase):
 
     def test_sitemap_ist_wohlgeformtes_xml(self):
         """Verhindert, dass ein unmaskiertes Zeichen in einem Produktnamen die
-        gesamte Sitemap unlesbar macht – Google verwirft sie dann komplett."""
+        gesamte Sitemap unlesbar macht – Google verwirft sie dann komplett.
+
+        Der Produktname landet über ``<image:title>`` und ``<image:caption>``
+        in der Sitemap, sobald ein Bild hinterlegt ist. Deshalb bekommt das
+        Testprodukt ein Bild und einen Namen mit ``&``, ``<`` und ``>`` – genau
+        die drei Zeichen, die in XML maskiert werden müssen. Anschliessend muss
+        das Dokument nicht nur parsen, sondern auch die richtige Wurzel tragen
+        und je Eintrag eine Adresse nennen."""
+        self.produkt.name = 'Jacke "Rot & Gold" <Unikat>'
+        self.produkt.bild = 'produkte/probe.jpg'
+        self.produkt.save()
+
         roh = self.hole('/sitemap.xml').content
-        ElementTree.fromstring(roh)  # wirft bei kaputtem XML
+        try:
+            wurzel = ElementTree.fromstring(roh)
+        except ElementTree.ParseError as fehler:
+            self.fail(f'sitemap.xml ist kein gültiges XML: {fehler}')
+
+        ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9',
+              'image': 'http://www.google.com/schemas/sitemap-image/1.1'}
+        self.assertEqual(wurzel.tag, '{http://www.sitemaps.org/schemas/sitemap/0.9}urlset')
+        eintraege = wurzel.findall('sm:url', ns)
+        self.assertGreaterEqual(len(eintraege), 8, 'Sitemap wirkt unvollständig')
+        for eintrag in eintraege:
+            loc = eintrag.find('sm:loc', ns)
+            self.assertIsNotNone(loc, 'Sitemap-Eintrag ohne <loc>')
+            self.assertTrue(loc.text and loc.text.startswith('http'), loc.text)
+
+        titel = [t.text for t in wurzel.iter('{http://www.google.com/schemas/sitemap-image/1.1}title')]
+        self.assertTrue(
+            any('Rot & Gold' in (t or '') and '<Unikat>' in (t or '') for t in titel),
+            f'Der Produktname kommt nicht unversehrt aus der Sitemap zurück: {titel}',
+        )
 
     def test_jede_adresse_der_sitemap_antwortet_mit_200(self):
         """Verhindert die häufigste Sitemap-Fehlermeldung der Search Console:
@@ -142,18 +172,42 @@ class RobotsTest(LuviqTestCase):
         for zeile in self.inhalt.splitlines():
             self.assertNotEqual(zeile.strip(), 'Disallow: /')
 
+    def _regeln_fuer(self, bot):
+        """Die Disallow-Regeln, die für ``bot`` gelten.
+
+        Nach robots-Konvention zählt der Block mit dem eigenen Namen; gibt es
+        keinen, gilt der ``User-agent: *``-Block. Ein Crawler ohne beides wäre
+        ein Fehler in der Datei selbst."""
+        for name in (re.escape(bot), r'\*'):
+            block = re.search(
+                rf'^User-agent:\s*{name}\s*$\n(.*?)(?:\n\s*\n|\Z)',
+                self.inhalt, re.IGNORECASE | re.DOTALL | re.MULTILINE,
+            )
+            if block:
+                return [z.split(':', 1)[1].strip()
+                        for z in block.group(1).splitlines()
+                        if z.strip().lower().startswith('disallow:')]
+        self.fail(f'robots.txt hat weder einen Block für {bot} noch für *')
+
     def test_robots_sperrt_keinen_antwort_crawler_aus(self):
         """Verhindert, dass die Seite in KI-Antworten nicht mehr zitiert werden
-        kann, weil ein Crawler wie GPTBot oder PerplexityBot gesperrt wurde."""
+        kann, weil ein Crawler wie GPTBot oder PerplexityBot gesperrt wurde.
+
+        Geprüft werden die Regeln, die für den Crawler **tatsächlich gelten**:
+        sein eigener Block oder, wenn es keinen gibt, der ``*``-Block. Ein
+        pauschales ``Disallow: /`` an einer dieser Stellen lässt den Test rot
+        werden – auch dann, wenn der Crawler gar nicht namentlich genannt ist."""
         for bot in ('GPTBot', 'OAI-SearchBot', 'PerplexityBot',
                     'ClaudeBot', 'Google-Extended'):
             with self.subTest(bot=bot):
-                block = re.search(
-                    rf'User-agent:\s*{bot}\s*\n(.*?)(?:\n\s*\n|\Z)',
-                    self.inhalt, re.IGNORECASE | re.DOTALL,
-                )
-                if block:
-                    self.assertNotIn('Disallow: /\n', block.group(1) + '\n')
+                regeln = self._regeln_fuer(bot)
+                self.assertNotIn('/', regeln, f'{bot} ist komplett ausgesperrt')
+                self.assertNotIn('', regeln)  # "Disallow:" ohne Wert erlaubt alles
+                for regel in regeln:
+                    self.assertTrue(
+                        regel.startswith('/') and len(regel) > 1,
+                        f'{bot}: unklare Regel "Disallow: {regel}"',
+                    )
 
 
 class VerweiseTest(LuviqTestCase):

@@ -183,11 +183,33 @@ class PruefbefehlTest(LuviqTestCase):
             code = ende.code
         return code, ausgabe.getvalue()
 
-    def test_der_befehl_laeuft_und_meldet_etwas(self):
-        """Verhindert, dass der Prüfbefehl selbst abstürzt und damit den
-        Containerstart blockiert, wenn er in start.sh aufgenommen wird."""
-        _, text = self._laufe()
-        self.assertTrue(text.strip())
+    def test_exitcode_und_bericht_des_befehls_stimmen_ueberein(self):
+        """Verhindert die zwei Arten, auf die der Prüfbefehl in ``start.sh``
+        unbrauchbar würde: er bricht den Start mit Exitcode 1 ab, ohne einen
+        einzigen FEHLER zu nennen – oder er nennt einen FEHLER, endet aber mit
+        0, und der Container startet trotzdem.
+
+        Geprüft wird der Vertrag zwischen Bericht und Exitcode: die Summenzeile
+        zählt genau die ausgegebenen FEHLER- und WARNUNG-Zeilen, und der
+        Exitcode ist genau dann 1, wenn mindestens ein FEHLER gemeldet wurde.
+        Das gilt unabhängig davon, wie die Umgebung des Testlaufs gerade
+        aussieht."""
+        import re
+
+        code, text = self._laufe()
+        fehler = [z for z in text.splitlines() if z.startswith('FEHLER')]
+        warnungen = [z for z in text.splitlines() if z.startswith('WARNUNG')]
+
+        summe = re.search(r'(\d+) Fehler, (\d+) Warnungen\.', text)
+        if summe:
+            self.assertEqual(int(summe.group(1)), len(fehler), text)
+            self.assertEqual(int(summe.group(2)), len(warnungen), text)
+            self.assertTrue(fehler or warnungen, text)
+        else:
+            self.assertIn('Alles in Ordnung.', text)
+            self.assertFalse(fehler or warnungen, text)
+
+        self.assertEqual(code, 1 if fehler else 0, text)
 
     def test_debug_wird_als_fehler_gemeldet(self):
         """Verhindert ein unbemerktes DEBUG=True in der Betriebsumgebung –
