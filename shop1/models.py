@@ -93,7 +93,7 @@ class Produkt(models.Model):
     def meta_title(self):
         if self.seo_titel:
             return self.seo_titel
-        return f"{self.name} kaufen – Luviq Universe"
+        return f"{self.name} kaufen – Luviq Universe, Alsfeld"
 
     @property
     def meta_description(self):

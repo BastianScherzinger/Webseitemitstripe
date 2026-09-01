@@ -132,3 +132,17 @@ siehe offene Frage im Bericht der Welle).
 **Warum:** Google kürzt Beschreibungen über etwa 160–175 Zeichen mitten im
 Satz ab; die Startseite lag bei 193, Produkte bei 180. Eine Beschreibung
 ohne Aufforderung verschenkt den Klick aus der Trefferliste.
+
+### 2026-09-01 — Welle 3, Schritt 12: Ortsbezug im Titel jeder Seite
+
+**Was:** Der automatische Produkttitel (`Produkt.meta_title`, wenn
+`seo_titel` leer ist) heißt jetzt „<Name> kaufen – Luviq Universe, Alsfeld".
+Die drei im Plan genannten Templates (`agb`, `datenschutz`, `gaestebuch`)
+trugen zum Zeitpunkt dieser Welle bereits Ort („Alsfeld") bzw. Nutzen
+(„Vintage Upcycling Mode") im `<title>` — „Alsfeld" seit Commit `df94e14`
+des vorigen Laufs, der Gästebuch-Titel seit `99e9bd7` — und blieben
+unverändert. Ein gepflegter `seo_titel` hat
+weiterhin Vorrang.
+
+**Warum:** Ein Titel ohne Ort oder Nutzen konkurriert mit jedem Shop im
+Land; „Alsfeld" ist die einzige belegte Ortsangabe des Impressums.
