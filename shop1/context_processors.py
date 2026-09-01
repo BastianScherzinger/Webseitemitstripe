@@ -3,6 +3,8 @@ import os
 from django.conf import settings
 from django.core.cache import cache
 
+from .seiten_stand import seite_fuer
+
 _log = logging.getLogger('shop1')
 
 
@@ -38,9 +40,17 @@ def shop_owner_check(request):
         except Exception:
             _log.exception('Aktive Werbung konnte nicht geladen werden')
 
+    # Stand der aktuellen Seite für den WebPage-Knoten in base.html: reines
+    # Nachschlagen im Register, kein Datenbankzugriff. resolver_match fehlt
+    # bei Fehlerseiten, url_name bei namenlosen Routen – beides ergibt None,
+    # und base.html lässt name/dateModified dann weg.
+    treffer = getattr(request, 'resolver_match', None)
+    seite = seite_fuer(treffer.url_name if treffer else None)
+
     return {
         'is_shop_owner': is_shop_owner,
         'cart_count': cart_count,
         'werbung_aktiv': werbung_aktiv,
         'GOOGLE_REVIEW_URL': getattr(settings, 'GOOGLE_REVIEW_URL', ''),
+        'seite': seite,
     }

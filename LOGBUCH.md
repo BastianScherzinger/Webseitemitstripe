@@ -202,3 +202,24 @@ Startseiten-Beschreibung auf 205 Zeichen verlängert → Test (1) rot
 
 **Warum:** Ohne diese Tests kann die nächste Textänderung die Zusagen aus
 Schritt 11–14 still wieder brechen; die Suite meldet es jetzt sofort.
+
+### 2026-09-01 — Welle 4, Schritt 16: `WebPage`-Knoten mit gepflegtem Änderungsdatum je Seite
+
+**Was:** Das Register `SEITEN_STAND` aus Schritt 14 ist nach
+`shop1/seiten_stand.py` gewandert (`views/legal.py` importiert es weiter
+unter demselben Namen, die Sitemap ist unverändert). Daneben steht
+`SEITEN_NAME` (Routenname → Bezeichnung, wörtlich wie im Menü von
+`base.html`) und `seite_fuer(url_name)`, das beides als Dict oder `None`
+liefert. `context_processors.shop_owner_check` legt das Ergebnis als
+`seite` in jeden Template-Kontext (reines Dict-Nachschlagen über
+`request.resolver_match.url_name`, kein Datenbankzugriff). Der `@graph` in
+`base.html` trägt einen dritten Knoten `WebPage` mit `@id`
+(`<Seitenadresse>#webpage`), `url`, `isPartOf` → `#website`, `inLanguage`
+und – nur wenn die Route im Register steht – `name` und `dateModified`.
+Produkt-, Konto- und Admin-Seiten bekommen den Knoten ohne diese beiden
+Angaben statt eines erfundenen Datums.
+
+**Warum:** `dateModified` gab es bisher nur auf Produktseiten (Befund
+4.28/GE18); Antwortmaschinen konnten die Aktualität der übrigen Seiten
+nicht einschätzen. Weil Sitemap-`lastmod` und Schema aus **einem**
+Register kommen, können sie nicht auseinanderlaufen.

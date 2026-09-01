@@ -130,6 +130,16 @@
           "description": "Handbemalte Second Hand Mode und Vintage-Unikate aus Alsfeld, Hessen – deutschlandweit bestellen.",
           "inLanguage": "de-DE",
           "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
+        },
+        {
+          {% comment %}name und dateModified kommen aus dem gepflegten Register shop1/seiten_stand.py (ueber den Kontextprozessor als "seite"). Dasselbe Register speist das lastmod der Sitemap - beide koennen so nicht auseinanderlaufen. Auf Seiten ohne Registereintrag (Produkt, Konto) fehlen die beiden Angaben, statt erfunden zu werden.{% endcomment %}
+          "@type": "WebPage",
+          "@id": "{{ request.build_absolute_uri }}#webpage",
+          "url": "{{ request.build_absolute_uri }}",{% if seite %}
+          "name": "{{ seite.name|escapejs }}",
+          "dateModified": "{{ seite.stand }}",{% endif %}
+          "isPartOf": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#website"},
+          "inLanguage": "de-DE"
         }
       ]
     }

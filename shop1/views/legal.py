@@ -7,28 +7,10 @@ from django.http import HttpResponse, HttpResponsePermanentRedirect, JsonRespons
 from django.urls import reverse
 
 from ..models import Produkt, Subscriber
-
-
-#: Stand der statischen Seiten: Routenname → Datum der letzten inhaltlichen
-#: Änderung (ISO 8601). Speist das ``<lastmod>`` der Sitemap.
-#:
-#: Das Register wird **von Hand** nachgezogen, wenn sich der Inhalt einer
-#: Seite ändert. Absichtlich kein Datei-Änderungsdatum und kein Build-
-#: Zeitpunkt: beide springen bei jedem Deploy hoch und würden Suchmaschinen
-#: eine Änderung vorgaukeln, die es nicht gab – dann verlieren sie das
-#: Vertrauen in die Angabe. Die Daten unten sind belegt durch
-#: ``git log -1 --date=short -- <Template>`` am 2026-09-01.
-SEITEN_STAND = {
-    'home':         '2026-09-01',
-    'produkte':     '2026-09-01',
-    'gaestebuch':   '2026-09-01',
-    'ueber_uns':    '2026-09-01',
-    'liefergebiet': '2026-09-01',
-    'kontakt':      '2026-09-01',
-    'impressum':    '2026-09-01',
-    'datenschutz':  '2026-09-01',
-    'agb':          '2026-09-01',
-}
+# Das Register SEITEN_STAND (Routenname → Datum) liegt seit Schritt 16 in
+# ``shop1/seiten_stand.py``, weil auch der Kontextprozessor es liest. Hier
+# bleibt es unter demselben Namen erreichbar; die Sitemap unten nutzt es.
+from ..seiten_stand import SEITEN_STAND  # noqa: F401 – Re-Export
 
 
 def impressum(request):
