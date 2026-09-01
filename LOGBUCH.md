@@ -327,3 +327,26 @@ Nachbestellung".
 Slogan ohne Zahl und ohne Festlegung (Befund 4.9/GE23, 4.14/GE25);
 Antwortmaschinen zitieren den ersten sachlichen Absatz. Gemessen im
 Inhaltsbereich (`<main>`, ein Produkt im Testbestand): vorher 261 Wörter.
+
+### 2026-09-01 — Welle 5, Schritt 22: /produkte/ von der Bildergalerie zur Kategorieseite
+
+**Was:** In `shop1/templates/shop1/produkte.html` bekommt der einzige
+Fließtextabsatz unter der `h1` Auskunft zu allem, was ein Besucher vor der
+Bestellung wissen muss: was 1-of-1 bedeutet (ein Motiv, ein Teil, keine
+zweite Auflage), wie ein Stück entsteht (getragenes Basisteil, Pinsel und
+Textilfarbe), wie bestellt und bezahlt wird (Anmeldung, Warenkorb, PayPal
+oder Vorab-Überweisung, Endpreise nach § 19 UStG), Versanddauer (in der
+Regel 1-2 Werktage) und was mit einem verkauften Stück geschieht (keine
+Neuauflage). Zwei Beschriftungen an jeder Produktkarte wurden ersetzt:
+„Vintage Custom Art" → „Handbemaltes 1-of-1 Unikat", „Investition" →
+„Endpreis" (belegt in `agb.html` § 4). CSS-Klassen, Elemente und Reihenfolge
+sind unverändert.
+
+**Entscheidung:** Der Plan sah den neuen Text in „normal gesetzten Stellen"
+vor. `produkte.html` hat keine: außer der `h1` und den Kartenbeschriftungen
+gibt es nur diesen einen Absatz (Versalien, `tracking-[0.4em]`). Ein neues
+Element ist durch Regel 1 ausgeschlossen, also wächst der vorhandene Absatz
+– auf rund 100 Wörter begrenzt, damit die Versalienfläche nicht zur Wand wird.
+
+**Warum:** Die wichtigste Ranking-Seite hatte im Inhaltsbereich gemessen 41
+Wörter (Befund 4.3/IS19, Prüfstand 62 von 600).
