@@ -1,13 +1,8 @@
 """Interne Hilfsfunktionen und Decorators – kein direkter URL-Zugriff."""
 
 import os
-from functools import wraps
 
-from django.shortcuts import redirect
-from django.contrib import messages
-from django.conf import settings
-
-from ..models import UserProfile, Cart, CartItem
+from ..models import Cart, CartItem
 
 
 def _is_admin(user):
@@ -16,17 +11,6 @@ def _is_admin(user):
         return False
     admin_username = os.getenv('ADMIN_USERNAME', 'shopbesitzer')
     return user.username == admin_username or user.is_superuser
-
-
-def admin_required(view_func):
-    """Decorator – nur Admin kann zugreifen."""
-    @wraps(view_func)
-    def wrapped(request, *args, **kwargs):
-        if not _is_admin(request.user):
-            messages.error(request, 'Du hast keine Berechtigung für diese Seite.')
-            return redirect('home')
-        return view_func(request, *args, **kwargs)
-    return wrapped
 
 
 def _get_or_create_cart(user):
