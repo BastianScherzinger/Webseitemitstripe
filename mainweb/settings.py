@@ -162,6 +162,21 @@ else:
 
 DATABASE_ROUTERS = ['shop1.routers.WerbungRouter']
 
+# ═══ CACHE ═══
+# Bisher stand hier nichts – Django nahm still einen LocMemCache. Jetzt
+# ausdrücklich, damit die Eigenschaften sichtbar sind: der Speicher lebt im
+# Prozess, jeder Gunicorn-Worker hält also seinen eigenen; Threads eines
+# Workers teilen ihn. Genutzt von cache_page (sitemap.xml, llms.txt) und der
+# Werbeliste im Kontextprozessor. CACHE_MAX_ENTRIES begrenzt den Speicher
+# je Worker; bei Erreichen wird per CULL_FREQUENCY ein Drittel verworfen.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'luviq',
+        'OPTIONS': {'MAX_ENTRIES': 300, 'CULL_FREQUENCY': 3},
+    },
+}
+
 # ═══ PASSWORT-VALIDIERUNG ═══
 
 AUTH_PASSWORD_VALIDATORS = [

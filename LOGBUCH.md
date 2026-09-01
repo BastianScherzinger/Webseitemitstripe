@@ -624,3 +624,18 @@ sagen lokal wenig, die Null bei den Abfragen ist der Beleg. Ein neues Stück
 erscheint spätestens nach 15 Minuten; `cache_page` setzt zusätzlich
 `Cache-Control: max-age=900`. Geprüft: `manage.py check` grün,
 `manage.py test shop1` grün (149 Tests).
+
+### 2026-09-01 — Welle 7, Schritt 33 (3/4): CACHES ausdrücklich gesetzt
+
+**Was:** `CACHES` in `mainweb/settings.py`: `LocMemCache`, `LOCATION`
+`luviq`, `MAX_ENTRIES` 300, `CULL_FREQUENCY` 3. Verhalten unverändert –
+Django nahm ohne Eintrag denselben Backend-Typ.
+
+**Warum:** Ein Cache, der nur implizit existiert, wird bei jeder
+Konfigurationsfrage übersehen (Befund `01-BEFUND.md` 4.25 (4)). Der
+Kommentar hält fest, was der Betreiber wissen muss: der Speicher lebt je
+Gunicorn-Worker, Threads eines Workers teilen ihn, und `cache_page` sowie
+die Werbeliste hängen daran. Ein prozessübergreifender Cache (Redis,
+Datenbank) wäre eine neue Abhängigkeit bzw. Infrastruktur und steht nicht
+im Plan. Geprüft: `manage.py check` grün, `manage.py test shop1` grün
+(149 Tests).
