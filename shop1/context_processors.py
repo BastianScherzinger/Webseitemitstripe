@@ -15,14 +15,19 @@ def shop_owner_check(request):
         if request.user.username == admin_username or request.user.is_superuser:
             is_shop_owner = True
 
-    # Cart count
+    # Warenkorb-Zähler im Kopf jeder Seite. Läuft bei jedem Abruf eines
+    # angemeldeten Nutzers – deshalb eine einzige SUM-Abfrage über die Posten
+    # statt Warenkorb laden und die Posten in Python aufsummieren (zwei
+    # Abfragen plus Objektaufbau). Ohne Warenkorb oder ohne Posten ergibt
+    # SUM NULL, daraus wird 0 – wie bisher.
     cart_count = 0
     if request.user.is_authenticated:
         try:
-            from .models import Cart
-            cart = Cart.objects.filter(user=request.user).first()
-            if cart:
-                cart_count = cart.anzahl_items
+            from django.db.models import Sum
+            from .models import CartItem
+            cart_count = CartItem.objects.filter(
+                cart__user=request.user
+            ).aggregate(summe=Sum('menge'))['summe'] or 0
         except Exception:
             _log.exception('Warenkorb-Zählung im Context Processor fehlgeschlagen')
 

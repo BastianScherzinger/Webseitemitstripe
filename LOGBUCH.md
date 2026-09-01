@@ -639,3 +639,19 @@ die Werbeliste hängen daran. Ein prozessübergreifender Cache (Redis,
 Datenbank) wäre eine neue Abhängigkeit bzw. Infrastruktur und steht nicht
 im Plan. Geprüft: `manage.py check` grün, `manage.py test shop1` grün
 (149 Tests).
+
+### 2026-09-01 — Welle 7, Schritt 33 (4/4): Warenkorb-Zähler mit einer Abfrage
+
+**Was:** `shop_owner_check` in `shop1/context_processors.py` zählt den
+Warenkorb per `CartItem.objects.filter(cart__user=…).aggregate(Sum('menge'))`
+statt `Cart` zu laden und `anzahl_items` (eine zweite Abfrage plus Aufbau
+aller Posten-Objekte) in Python zu summieren; `None` wird wie bisher zu 0.
+Neuer Test in `shop1/tests/test_daten.py`: 3 + 2 Stück ergeben 5, mit genau
+einer Abfrage; ohne Warenkorb 0.
+
+**Warum:** Der Kontextprozessor läuft bei **jedem** Seitenabruf eines
+angemeldeten Nutzers; die Zählung war dort die teuerste Abfrage ohne Cache
+(Befund `01-BEFUND.md` 4.25 (4), `context_processors.py:18`). Ein Cache
+kam nicht in Frage – der Zähler muss sofort nach „In den Warenkorb"
+stimmen. Geprüft: `manage.py check` grün, `manage.py test shop1` grün
+(150 Tests).

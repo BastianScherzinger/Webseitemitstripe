@@ -157,6 +157,28 @@ class DenormalisierungTest(LuviqTestCase):
         self.assertEqual(korb.anzahl_items, 5)
         self.assertEqual(korb.gesamt_preis, Decimal('41.00'))
 
+    def test_der_warenkorbzaehler_im_seitenkopf_zaehlt_mengen_mit_einer_abfrage(self):
+        """Verhindert zweierlei am Zähler, der auf **jeder** Seite eines
+        angemeldeten Nutzers mitläuft: dass er Zeilen statt Mengen zählt (zwei
+        Posten mit 3 und 2 Stück müssen 5 ergeben, nicht 2) und dass er wieder
+        auf mehrere Abfragen je Seitenaufruf anwächst – die Zählung war die
+        teuerste ungecachte Abfrage im Kontextprozessor."""
+        from django.test import RequestFactory
+
+        from ..context_processors import shop_owner_check
+
+        korb = Cart.objects.create(user=self.benutzerin)
+        CartItem.objects.create(cart=korb, produkt_name='A', produkt_preis=Decimal('10.00'), menge=3)
+        CartItem.objects.create(cart=korb, produkt_name='B', produkt_preis=Decimal('5.50'), menge=2)
+        anfrage = RequestFactory().get('/shop-admin/')   # Pfad ohne Werbeabfrage
+        anfrage.user = self.benutzerin
+        with self.assertNumQueries(1):
+            self.assertEqual(shop_owner_check(anfrage)['cart_count'], 5)
+
+        # Ohne Warenkorb bleibt es bei 0 – kein None im Template.
+        anfrage.user = erzeuge_benutzer('ohne-korb')
+        self.assertEqual(shop_owner_check(anfrage)['cart_count'], 0)
+
 
 class KennungenTest(LuviqTestCase):
     """Keine doppelten Kennungen dort, wo das Projekt Eindeutigkeit zusagt."""
