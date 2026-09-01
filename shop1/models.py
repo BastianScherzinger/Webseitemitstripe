@@ -6,6 +6,32 @@ from django.utils.text import slugify
 
 _log = logging.getLogger('shop1')
 
+#: Anzeigegrenzen der abgeleiteten Produkt-Metaangaben. Es sind dieselben
+#: Werte, die die Hilfetexte der gepflegten Felder ``seo_titel`` (60) und
+#: ``seo_beschreibung`` (160) nennen – die Ersatzfassung darf nicht länger
+#: werden als das, was man von Hand eintragen dürfte.
+META_TITEL_MAX = 60
+META_BESCHREIBUNG_MAX = 160
+
+#: Zusätze der Ersatzfassung. Der Titel-Zusatz wird in dieser Reihenfolge
+#: probiert und entfällt, wenn er nicht mehr in die Grenze passt – er wird
+#: nie mitten im Wort abgeschnitten.
+META_TITEL_ZUSAETZE = (' kaufen – Luviq Universe, Alsfeld', ' – Luviq Universe')
+META_BESCHREIBUNG_ZUSATZ = ' – Einzigartiges 1-of-1 Upcycling-Unikat bei Luviq Universe.'
+
+
+def _kuerze_an_wortgrenze(text, maximum):
+    """Fasst ``text`` auf eine Zeile zusammen und kürzt ihn auf höchstens
+    ``maximum`` Zeichen, ohne ein Wort zu zerschneiden. Ein Satzzeichen, das
+    nach dem Kürzen am Ende hängen bliebe, fällt mit weg."""
+    text = ' '.join(text.split())
+    if len(text) <= maximum:
+        return text
+    gekuerzt = text[:maximum + 1].rsplit(' ', 1)[0]
+    if len(gekuerzt) > maximum:  # kein Leerzeichen innerhalb der Grenze
+        gekuerzt = text[:maximum]
+    return gekuerzt.rstrip(' ,;:–-')
+
 # Create your models here.
 
 class UserProfile(models.Model):
@@ -91,16 +117,35 @@ class Produkt(models.Model):
 
     @property
     def meta_title(self):
+        """``<title>`` der Produktseite: gepflegter ``seo_titel`` oder eine
+        Ersatzfassung aus dem Namen, höchstens ``META_TITEL_MAX`` Zeichen.
+
+        Der Zusatz mit Ort entfällt, wenn er nicht mehr passt; dann der
+        kürzere ohne Ort; zuletzt bleibt der Name allein, an einer Wortgrenze
+        gekürzt. So wird der Zusatz nie mitten im Wort abgeschnitten."""
         if self.seo_titel:
             return self.seo_titel
-        return f"{self.name} kaufen – Luviq Universe, Alsfeld"
+        name = ' '.join(self.name.split())
+        for zusatz in META_TITEL_ZUSAETZE:
+            if len(name) + len(zusatz) <= META_TITEL_MAX:
+                return f"{name}{zusatz}"
+        return _kuerze_an_wortgrenze(name, META_TITEL_MAX)
 
     @property
     def meta_description(self):
+        """``meta description`` der Produktseite: gepflegte ``seo_beschreibung``
+        oder eine Ersatzfassung aus der Beschreibung plus festem Nachsatz,
+        zusammen höchstens ``META_BESCHREIBUNG_MAX`` Zeichen.
+
+        Die Länge des Nachsatzes wird vom Kürzungspunkt abgezogen – vorher
+        wurde erst auf 155 gekürzt und dann der ~60 Zeichen lange Nachsatz
+        angehängt, das ergab bis zu ~215 Zeichen. Ohne Beschreibung steht
+        der Name vor dem Nachsatz, damit kein Text mit „–" beginnt."""
         if self.seo_beschreibung:
             return self.seo_beschreibung
-        desc = self.beschreibung[:155].rsplit(' ', 1)[0] if len(self.beschreibung) > 155 else self.beschreibung
-        return f"{desc} – Einzigartiges 1-of-1 Upcycling-Unikat bei Luviq Universe."
+        platz = META_BESCHREIBUNG_MAX - len(META_BESCHREIBUNG_ZUSATZ)
+        kern = _kuerze_an_wortgrenze(self.beschreibung or self.name, platz)
+        return f"{kern}{META_BESCHREIBUNG_ZUSATZ}"
 
     def __str__(self):
         return f"{self.name} ({self.preis} €)"

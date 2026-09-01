@@ -146,3 +146,20 @@ weiterhin Vorrang.
 
 **Warum:** Ein Titel ohne Ort oder Nutzen konkurriert mit jedem Shop im
 Land; „Alsfeld" ist die einzige belegte Ortsangabe des Impressums.
+
+### 2026-09-01 — Welle 3, Schritt 13: Abgeleitete Produkt-Metaangaben auf gültige Längen begrenzt
+
+**Was:** In `shop1/models.py` rechnen `Produkt.meta_title` und
+`Produkt.meta_description` jetzt gegen feste Grenzen (`META_TITEL_MAX` =
+60, `META_BESCHREIBUNG_MAX` = 160 – dieselben Werte wie die Hilfetexte der
+gepflegten Felder). Die Beschreibung wird um die Länge des Nachsatzes
+gekürzt, das Ende liegt an einer Wortgrenze (`_kuerze_an_wortgrenze`). Beim
+Titel entfällt der Zusatz stufenweise („kaufen – Luviq Universe, Alsfeld" →
+„– Luviq Universe" → nur der Name), statt abgeschnitten zu werden. Gepflegte
+`seo_titel`/`seo_beschreibung` behalten Vorrang. Nebenwirkung: Zeilenumbrüche
+in der Beschreibung werden zu Leerzeichen, und ohne Beschreibung steht der
+Name vor dem Nachsatz statt eines führenden „–". Keine Migration.
+
+**Warum:** Vorher wurde erst auf 155 Zeichen gekürzt und dann ein ~60
+Zeichen langer Nachsatz angehängt – bis zu ~215 Zeichen, die Google mitten
+im Satz abschneidet (Befund 4.35).
