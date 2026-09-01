@@ -6,8 +6,10 @@ dazukommt oder verschwindet – genau das prüfen die Tests hier.
 """
 
 import re
+from datetime import date
 from xml.etree import ElementTree
 
+from ..models import META_BESCHREIBUNG_MAX, META_BESCHREIBUNG_ZUSATZ, META_TITEL_MAX, META_TITEL_ZUSAETZE
 from ._basis import (
     INHALTSSEITEN,
     OEFFENTLICHE_SEITEN,
@@ -19,6 +21,31 @@ _LOC = re.compile(r'<loc>(.*?)</loc>')
 _TITEL = re.compile(r'<title>(.*?)</title>', re.DOTALL)
 _CANONICAL = re.compile(r'<link[^>]+rel="canonical"[^>]+href="([^"]+)"')
 _DESCRIPTION = re.compile(r'<meta\s+name="description"\s+content="([^"]*)"')
+
+_SITEMAP_NS = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+
+#: Länge der ``meta description`` auf Inhaltsseiten. Unter 110 Zeichen
+#: verschenkt der Text den Platz in der Trefferliste, über 175 schneidet
+#: Google ihn mitten im Satz ab. Die Anmelde- und Passwortseiten sind in
+#: robots.txt gesperrt und dürfen kürzer bleiben (50–200, wie bisher).
+BESCHREIBUNG_MIN, BESCHREIBUNG_MAX = 110, 175
+
+#: Verben, mit denen eine Beschreibung enden darf – die Aufforderung, auf
+#: die der Klick aus der Trefferliste folgt. Wer ein neues Verb braucht,
+#: trägt es hier ein; ein Substantiv am Ende ist keine Aufforderung.
+HANDLUNGSVERBEN = {
+    'entdecken', 'bestellen', 'anfragen', 'kennenlernen', 'nachlesen',
+    'schreiben', 'ansehen', 'lesen', 'stöbern', 'erfahren', 'kontaktieren',
+    'informieren', 'prüfen', 'finden', 'eintragen',
+}
+
+#: Was ein Titel nennen muss, damit er nicht mit jedem Shop im Land
+#: konkurriert: den Ort (belegt durch das Impressum und die
+#: Liefergebietsseite) oder den Nutzen, der die Seite von anderen abhebt.
+ORT_ODER_NUTZEN = (
+    'alsfeld', 'hessen', 'fulda', 'gießen',
+    'handbemalt', 'vintage', 'unikat', 'upcycling', 'second hand', 'second-hand',
+)
 
 
 class SitemapTest(LuviqTestCase):
@@ -118,6 +145,31 @@ class SitemapTest(LuviqTestCase):
         pfade = {a.split('testserver', 1)[-1] for a in adressen}
         self.assertIn(self.produkt.get_absolute_url(), pfade)
         self.assertIn('<lastmod>', xml)
+
+    def test_jeder_sitemap_eintrag_traegt_ein_gueltiges_lastmod(self):
+        """Verhindert den Zustand vor Schritt 14: nur Produktseiten trugen ein
+        ``lastmod``, die acht statischen Seiten keines – Google crawlt sie
+        dann nach eigenem Ermessen und erkennt Änderungen spät.
+
+        Geprüft wird **jeder** ``<url>``-Eintrag, nicht nur, ob das Wort
+        irgendwo vorkommt. Das Datum muss als ``JJJJ-MM-TT`` lesbar sein und
+        darf nicht in der Zukunft liegen: ein Tippfehler im gepflegten
+        Register ``SEITEN_STAND`` (``legal.py``) fällt hier auf, ebenso ein
+        Eintrag, dessen Routenname im Register fehlt (die Sitemap würde dann
+        mit ``KeyError`` gar nicht mehr ausgeliefert)."""
+        wurzel = ElementTree.fromstring(self.hole('/sitemap.xml').content)
+        eintraege = wurzel.findall('sm:url', _SITEMAP_NS)
+        self.assertGreaterEqual(len(eintraege), 9, 'Sitemap wirkt unvollständig')
+        for eintrag in eintraege:
+            loc = eintrag.find('sm:loc', _SITEMAP_NS).text
+            with self.subTest(loc=loc):
+                lastmod = eintrag.find('sm:lastmod', _SITEMAP_NS)
+                self.assertIsNotNone(lastmod, f'{loc} steht ohne <lastmod> in der Sitemap')
+                self.assertRegex(lastmod.text or '', r'^\d{4}-\d{2}-\d{2}$')
+                self.assertLessEqual(
+                    date.fromisoformat(lastmod.text), date.today(),
+                    f'{loc}: lastmod {lastmod.text} liegt in der Zukunft',
+                )
 
     def test_sitemap_fuehrt_keine_inaktiven_produkte(self):
         """Verhindert, dass ein deaktiviertes Produkt Suchmaschinen weiter auf
@@ -250,6 +302,24 @@ class VerweiseTest(LuviqTestCase):
         pfad = produkt.get_absolute_url()
         self.assertEqual(self.hole(pfad).status_code, 200)
 
+    def test_produkt_ohne_kennung_leitet_auf_die_uebersicht(self):
+        """Verhindert, dass ``/produkt/`` – der Elternpfad jeder Produktseite
+        und der naheliegende Tippfehler zu ``/produkte/`` – wieder ins 404
+        läuft (Befund SU09). Zugleich der Beleg, dass die neue Route die
+        Produktseiten selbst nicht verdeckt: ``/produkt/<slug>/`` muss
+        weiterhin 200 liefern und ``/produkt/<id>/`` weiterhin auf den Slug
+        umleiten."""
+        produkt = erzeuge_produkt('Bemalte Bomberjacke')
+
+        antwort = self.hole('/produkt/')
+        self.assertEqual(antwort.status_code, 301)
+        self.assertEqual(antwort['Location'], '/produkte/')
+
+        self.assertEqual(self.hole(produkt.get_absolute_url()).status_code, 200)
+        alt = self.hole(f'/produkt/{produkt.id}/')
+        self.assertIn(alt.status_code, (301, 302))
+        self.assertTrue(alt['Location'].endswith(produkt.get_absolute_url()))
+
 
 class SeitenkopfTest(LuviqTestCase):
     """Titel, Beschreibung und canonical – was in der Trefferliste steht."""
@@ -305,7 +375,12 @@ class SeitenkopfTest(LuviqTestCase):
 
     def test_titel_und_beschreibung_halten_die_anzeigelaenge_ein(self):
         """Verhindert Titel und Beschreibungen, die Google mitten im Wort
-        abschneidet oder als zu dünn verwirft."""
+        abschneidet oder als zu dünn verwirft.
+
+        Für Inhaltsseiten gilt die enge Spanne 110–175 Zeichen: vor Schritt 11
+        lag die Startseite bei 193 und die Produktübersicht bei 180 Zeichen,
+        beide wurden in der Trefferliste abgeschnitten. Die gesperrten Anmelde-
+        und Passwortseiten dürfen wie bisher 50–200 Zeichen haben."""
         for pfad in OEFFENTLICHE_SEITEN:
             inhalt = self.hole(pfad).content.decode()
             with self.subTest(pfad=pfad, teil='Titel'):
@@ -313,7 +388,44 @@ class SeitenkopfTest(LuviqTestCase):
                 self.assertTrue(25 <= laenge <= 70, f'{pfad}: Titel {laenge} Zeichen')
             with self.subTest(pfad=pfad, teil='Beschreibung'):
                 laenge = len(_DESCRIPTION.findall(inhalt)[0].strip())
-                self.assertTrue(50 <= laenge <= 200, f'{pfad}: Beschreibung {laenge} Zeichen')
+                if pfad in INHALTSSEITEN:
+                    untergrenze, obergrenze = BESCHREIBUNG_MIN, BESCHREIBUNG_MAX
+                else:
+                    untergrenze, obergrenze = 50, 200
+                self.assertTrue(
+                    untergrenze <= laenge <= obergrenze,
+                    f'{pfad}: Beschreibung {laenge} Zeichen, erlaubt {untergrenze}–{obergrenze}',
+                )
+
+    def test_jede_beschreibung_schliesst_mit_einer_handlungsaufforderung(self):
+        """Verhindert eine Beschreibung, die mit einer Feststellung endet
+        („… Versand deutschlandweit.") statt zu sagen, was die Leserin tun
+        kann. Vor Schritt 11 fehlte die Aufforderung auf vier Inhaltsseiten.
+
+        Geprüft wird das letzte Wort gegen ``HANDLUNGSVERBEN``; eine
+        Beschreibung, die mit einem Substantiv oder einer Ortsangabe endet,
+        wird rot."""
+        for pfad in INHALTSSEITEN:
+            with self.subTest(pfad=pfad):
+                beschreibung = _DESCRIPTION.findall(self.hole(pfad).content.decode())[0].strip()
+                letztes_wort = beschreibung.rstrip('.!').rsplit(' ', 1)[-1].lower()
+                self.assertIn(
+                    letztes_wort, HANDLUNGSVERBEN,
+                    f'{pfad}: Beschreibung endet auf „{letztes_wort}", nicht auf eine Aufforderung',
+                )
+
+    def test_jeder_titel_nennt_ort_oder_nutzen(self):
+        """Verhindert einen Titel wie „AGB – Luviq Universe", der mit jedem
+        Shop im Land konkurriert: jede Inhaltsseite nennt im ``<title>`` den
+        Ort (Alsfeld, Hessen, Fulda, Gießen) oder den Nutzen (handbemalt,
+        Vintage, Unikat, Upcycling, Second Hand)."""
+        for pfad in INHALTSSEITEN:
+            with self.subTest(pfad=pfad):
+                titel = _TITEL.findall(self.hole(pfad).content.decode())[0].strip()
+                self.assertTrue(
+                    any(wort in titel.lower() for wort in ORT_ODER_NUTZEN),
+                    f'{pfad}: Titel „{titel}" nennt weder Ort noch Nutzen',
+                )
 
     def test_jede_seite_hat_genau_eine_h1(self):
         """Verhindert eine kaputte Überschriftenstruktur: keine oder mehrere
@@ -326,3 +438,88 @@ class SeitenkopfTest(LuviqTestCase):
             with self.subTest(pfad=pfad):
                 anzahl = len(re.findall(r'<h1[\s>]', self.hole(pfad).content.decode()))
                 self.assertEqual(anzahl, 1, f'{pfad} hat {anzahl} h1-Überschriften')
+
+
+class ProduktMetaangabenTest(LuviqTestCase):
+    """Die abgeleiteten Kopfangaben der Produktseiten (``Produkt.meta_title``,
+    ``Produkt.meta_description``), wenn ``seo_titel``/``seo_beschreibung``
+    leer sind. Den Vorrang der gepflegten Felder prüft ``test_daten``."""
+
+    BESCHREIBUNG_400 = ('Handbemalte Jeansjacke mit Sonnenblumenmotiv auf dem Rücken, '
+                        'Second-Hand-Basis aus fester Baumwolle, Farben fixiert und '
+                        'waschbar bei dreißig Grad. ') * 3  # 3 × 147 = 441 Zeichen, also über 400
+    NAME_90 = ('Handbemalte Vintage Jeansjacke mit dem Sonnenblumenmotiv '
+               'und Blütenranken an beiden Ärmeln')  # 90 Zeichen
+
+    def test_lange_beschreibung_wird_auf_die_anzeigegrenze_gekuerzt(self):
+        """Verhindert den Fehler aus Befund 4.35: erst auf 155 Zeichen kürzen,
+        dann ~60 Zeichen Nachsatz anhängen – bis zu ~215 Zeichen, die Google
+        mitten im Satz abschneidet. Mit 400 Zeichen Beschreibung muss die
+        Ersatzfassung samt Nachsatz in ``META_BESCHREIBUNG_MAX`` passen, und
+        der Kürzungspunkt muss auf einer Wortgrenze liegen."""
+        self.assertGreaterEqual(len(self.BESCHREIBUNG_400), 400)
+        produkt = erzeuge_produkt('Jeansjacke', beschreibung=self.BESCHREIBUNG_400)
+        beschreibung = produkt.meta_description
+
+        self.assertLessEqual(len(beschreibung), META_BESCHREIBUNG_MAX, beschreibung)
+        self.assertTrue(beschreibung.endswith(META_BESCHREIBUNG_ZUSATZ), beschreibung)
+        kern = beschreibung[:-len(META_BESCHREIBUNG_ZUSATZ)]
+        self.assertTrue(kern, 'Die Beschreibung besteht nur noch aus dem Nachsatz')
+        self.assertTrue(
+            self.BESCHREIBUNG_400.startswith(kern)
+            and self.BESCHREIBUNG_400[len(kern)] in ' ,.',
+            f'Der Kern „…{kern[-25:]}" endet nicht an einer Wortgrenze',
+        )
+
+    def test_kurze_beschreibung_bleibt_vollstaendig(self):
+        """Verhindert, dass die Kürzung auch dort zuschlägt, wo nichts zu
+        kürzen ist – eine kurze Beschreibung kommt unverändert plus Nachsatz."""
+        produkt = erzeuge_produkt('Jeansjacke', beschreibung='Handbemaltes Einzelstück aus Alsfeld.')
+        self.assertEqual(
+            produkt.meta_description,
+            'Handbemaltes Einzelstück aus Alsfeld.' + META_BESCHREIBUNG_ZUSATZ,
+        )
+
+    def test_kurzer_name_erhaelt_den_ortsbezug_im_titel(self):
+        """Verhindert, dass der automatische Titel den Ort verliert (Schritt 12):
+        ein Name, der samt Zusatz in ``META_TITEL_MAX`` passt, trägt „Alsfeld"."""
+        produkt = erzeuge_produkt('Bemalte Jacke')
+        self.assertEqual(produkt.meta_title, 'Bemalte Jacke' + META_TITEL_ZUSAETZE[0])
+        self.assertIn('Alsfeld', produkt.meta_title)
+        self.assertLessEqual(len(produkt.meta_title), META_TITEL_MAX)
+
+    def test_langer_name_sprengt_den_titel_nicht(self):
+        """Verhindert einen Titel, der bei einem 90 Zeichen langen Namen weit
+        über der Anzeigegrenze liegt oder den Zusatz mitten im Wort abschneidet.
+        Der Zusatz muss ganz entfallen; was bleibt, ist ein Anfang des Namens,
+        der an einer Wortgrenze endet."""
+        self.assertEqual(len(self.NAME_90), 90)
+        produkt = erzeuge_produkt(self.NAME_90)
+        titel = produkt.meta_title
+
+        self.assertLessEqual(len(titel), META_TITEL_MAX, titel)
+        self.assertNotIn('kaufen', titel, f'Der Orts-Zusatz wurde angeschnitten: „{titel}"')
+        self.assertNotIn('Luviq', titel, f'Der Marken-Zusatz wurde angeschnitten: „{titel}"')
+        self.assertTrue(
+            self.NAME_90.startswith(titel) and self.NAME_90[len(titel)] == ' ',
+            f'„{titel}" ist kein Namensanfang an einer Wortgrenze',
+        )
+
+    def test_mittellanger_name_bekommt_den_kuerzeren_zusatz(self):
+        """Verhindert, dass ein Name, dem nur der Orts-Zusatz zu lang ist, den
+        Markennamen ganz verliert: die zweite Stufe „– Luviq Universe" greift."""
+        name = 'Handbemalte Vintage Jeansjacke Sonnenblume'  # 42 Zeichen
+        produkt = erzeuge_produkt(name)
+        self.assertEqual(produkt.meta_title, name + META_TITEL_ZUSAETZE[1])
+        self.assertLessEqual(len(produkt.meta_title), META_TITEL_MAX)
+
+    def test_produktseite_liefert_die_begrenzten_angaben_aus(self):
+        """Verhindert, dass Modell und Template auseinanderlaufen: die
+        Produktseite muss genau den begrenzten Titel und die begrenzte
+        Beschreibung in den Kopf schreiben."""
+        produkt = erzeuge_produkt(self.NAME_90, beschreibung=self.BESCHREIBUNG_400)
+        inhalt = self.hole(produkt.get_absolute_url()).content.decode()
+        self.assertEqual(_TITEL.findall(inhalt)[0].strip(), produkt.meta_title)
+        self.assertEqual(_DESCRIPTION.findall(inhalt)[0].strip(), produkt.meta_description)
+        self.assertLessEqual(len(_TITEL.findall(inhalt)[0].strip()), META_TITEL_MAX)
+        self.assertLessEqual(len(_DESCRIPTION.findall(inhalt)[0].strip()), META_BESCHREIBUNG_MAX)

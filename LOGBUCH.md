@@ -182,3 +182,23 @@ Ermessen und erkennt Änderungen spät (Befund 4.16). Ein Datei- oder
 Build-Datum wäre falsch, weil es bei jedem Deploy hochspringt – deshalb
 das gepflegte Register. `/produkt/` ist der Elternpfad jeder Produktseite
 und lief ins 404 (Befund SU09).
+
+### 2026-09-01 — Welle 3, Schritt 15: SEO-Tests auf die neuen Zusagen verschärft
+
+**Was:** In `shop1/tests/test_seo.py`: (1) der Längentest verlangt für
+Inhaltsseiten 110–175 Zeichen Beschreibung (vorher 50–200 für alle; die
+gesperrten Konto-Seiten behalten 50–200); (2) neuer Test: jede Beschreibung
+endet auf ein Verb aus `HANDLUNGSVERBEN`; (3) neuer Test: jeder Titel
+nennt Ort oder Nutzen (`ORT_ODER_NUTZEN`); (4) neuer Test: **jeder**
+`<url>`-Eintrag der Sitemap trägt ein `lastmod` im Format JJJJ-MM-TT, das
+nicht in der Zukunft liegt – die 200-Prüfung jeder Sitemap-Adresse bestand
+schon; (5) neue Klasse `ProduktMetaangabenTest` mit sechs Tests für die
+Ersatzfassung von `meta_title`/`meta_description` (400 Zeichen
+Beschreibung, 90 Zeichen Name, mittellanger Name, kurze Fälle, Auslieferung
+im Seitenkopf). Dazu ein Test, dass `/produkt/` mit 301 auf `/produkte/`
+leitet und `/produkt/<slug>/` weiterhin 200 liefert. Gegenbeweis geführt:
+Startseiten-Beschreibung auf 205 Zeichen verlängert → Test (1) rot
+(„/: Beschreibung 205 Zeichen, erlaubt 110–175"), danach zurückgesetzt.
+
+**Warum:** Ohne diese Tests kann die nächste Textänderung die Zusagen aus
+Schritt 11–14 still wieder brechen; die Suite meldet es jetzt sofort.
