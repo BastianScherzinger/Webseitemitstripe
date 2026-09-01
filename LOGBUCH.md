@@ -756,3 +756,40 @@ zeitbedingte, vorbestehende Fehlschlag in `test_geo` wie bei Schritt 36
 Offen beim Hoster: der DNS-Eintrag der Nebenvariante muss auf denselben
 Dienst zeigen, und `CANONICAL_HOST=www.luviq-alsfeld.com` muss in Railway
 gesetzt werden – erst dann wirkt die Regel.
+
+### 2026-09-02 — Welle 8, Schritt 39: Prüfbefehl auf die ausgelieferte Seite ausgeweitet und in start.sh angeschlossen
+
+**Was:** `shop1/management/commands/pruefe_seite.py`: zwei neue
+Prüfungen. (1) `_pruefe_produkte`: kein aktives Produkt ohne Name, Slug,
+Beschreibung oder Preis (FEHLER), ohne Bild (WARNUNG); kein Slug doppelt
+(Vergleich in Kleinschreibung). (2) `_pruefe_ausgelieferte_seite`: über
+den Django-Testclient (kein Netzzugriff) wird `/sitemap.xml` geholt und
+jede genannte Adresse abgerufen – 200 Pflicht; je Seite genau ein Titel
+(25–70 Zeichen, sonst WARNUNG), genau eine Beschreibung (über 175 Zeichen
+FEHLER, unter 110 FEHLER auf Inhaltsseiten und WARNUNG auf Produktseiten),
+`canonical` auf sich selbst, `robots` ohne `noindex`; jedes JSON-LD parst
+und enthält `Organization`, `WebPage` (Inhaltsseiten) bzw. `Product`
+(Produktseiten) und ausser auf `/` eine `BreadcrumbList`; auf `/` die
+Schutzkopfzeilen (nosniff, `X-Frame-Options: DENY`, Referrer-Policy, HSTS
+ausser bei DEBUG) und die CSP aus Schritt 36 mit `frame-ancestors 'none'`,
+`base-uri 'self'`, `form-action 'self'`, `object-src 'none'` – fehlt sie
+ganz, FEHLER; läuft sie als Report-Only, WARNUNG. Die Abrufe laufen mit
+`VISITOR_TRACKING=False` und in je einer Transaktion auf `default` und
+`pystore`, die am Ende zurückgerollt wird: keine Sitzung, kein
+Besuchseintrag und – wichtig – keine Werbe-Impression, die
+`startseite()` sonst bei jedem Abruf von `/` zählt und dem Werbekunden
+berechnet. Host der Abrufe: `CANONICAL_HOST`, sonst der Host aus
+`SITE_URL`, sonst `localhost`. `start.sh`: Aufruf nach `collectstatic`
+(die Seiten brauchen das Manifest) und vor Gunicorn, nicht blockierend
+(`|| echo "WARNING: …"` wie bei `collectstatic`); scharf per `--streng`.
+
+**Warum:** Der Befehl prüfte nur Einstellungen und Datenbanken, der
+Katalog verlangt die ausgelieferte Seite (Befund PJ01 Teil 2,
+`01-BEFUND.md` 4.5). Ein blockierender Aufruf nähme die Seite bei einer
+fehlenden Variablen offline. Geprüft: `manage.py check` grün; im
+Testumfeld meldet der Befehl „13 von 13 Sitemap-Adressen antworten mit
+200 und wurden geprüft" ohne FEHLER aus den neuen Prüfungen; `manage.py
+test shop1`: 151 von 152 grün, derselbe zeitbedingte, vorbestehende
+Fehlschlag in `test_geo` (Lauf vor 00:00 UTC). `sh -n start.sh` liess
+die Sandbox nicht zu; die Änderung ist eine Zeile nach dem Muster der
+`collectstatic`-Zeile darüber.

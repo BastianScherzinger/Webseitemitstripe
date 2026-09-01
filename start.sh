@@ -35,6 +35,15 @@ python manage.py fix_pystore_schema
 echo "Collecting static files..."
 python manage.py collectstatic --noinput --clear || echo "WARNING: collectstatic failed"
 
+# ═══ UMGEBUNG UND AUSGELIEFERTE SEITE PRUEFEN ═══
+# Nach collectstatic (die Seiten brauchen das Manifest), vor Gunicorn.
+# Bewusst NICHT blockierend: ein Fehler steht im Log, die Seite geht
+# trotzdem online - ein Abbruch wegen einer fehlenden Variablen naehme
+# den Shop offline, das waere schlechter als heute. Blockierend waere
+# "python manage.py pruefe_seite --streng" ohne "|| ...".
+echo "Checking environment and delivered pages..."
+python manage.py pruefe_seite || echo "WARNING: pruefe_seite reported errors (see above), starting anyway"
+
 # ═══ GUNICORN STARTEN ═══
 # Die Anwendung ist E/A-gebunden (Datenbank, Cloudinary, ip-api): deshalb
 # gthread mit mehreren Threads je Worker statt nur zwei gleichzeitiger
