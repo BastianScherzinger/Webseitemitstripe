@@ -2,12 +2,63 @@ import logging
 import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
+from urllib.parse import urlsplit
 from django.conf import settings
+from django.http import HttpResponsePermanentRedirect
 from django.utils import timezone
 from django.db.models import F
 from .models import PageVisit, VisitorLog
 
 _log = logging.getLogger('shop1')
+
+
+# ═══ KANONISCHER HOST ══════════════════════════════════════════════════════
+
+def kanonischer_host():
+    """``settings.CANONICAL_HOST`` in Kleinbuchstaben, leer = abgeschaltet.
+
+    Je Anfrage gelesen, damit Tests den Wert überschreiben können und ein
+    Umschalten der Variablen ohne Neustart wirkt.
+    """
+    return str(getattr(settings, 'CANONICAL_HOST', '') or '').strip().lower()
+
+
+def nebenvariante(host):
+    """Die jeweils andere www-Schreibweise: ``www.x.de`` ↔ ``x.de``."""
+    return host[4:] if host.startswith('www.') else f'www.{host}'
+
+
+class CanonicalHostMiddleware:
+    """Leitet die www-/Nicht-www-Nebenvariante per 301 auf CANONICAL_HOST.
+
+    Bewusst eng: umgeleitet wird ausschliesslich der Host, der sich vom
+    kanonischen nur durch das ``www.`` unterscheidet. Die Railway-Adresse,
+    ``localhost`` und jeder andere erlaubte Host bleiben, wie sie sind – eine
+    breitere Regel könnte den Deploy-Zugang oder die Health-Checks treffen
+    und im schlimmsten Fall eine Endlosschleife bauen. Der kanonische Host
+    selbst wird nie umgeleitet, deshalb kann es keine Schleife geben.
+
+    Pfad und Query bleiben erhalten; das Schema ist ``https``, sobald die
+    Anfrage sicher ist oder ``SECURE_SSL_REDIRECT`` gilt – so entsteht eine
+    einzige Weiterleitung statt der Kette http → https → www.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        ziel = kanonischer_host()
+        if ziel:
+            # get_host() prüft gegen ALLOWED_HOSTS; DisallowedHost wird von
+            # Django wie überall sonst zu 400.
+            host = (urlsplit('//' + request.get_host()).hostname or '').lower()
+            if host == nebenvariante(ziel):
+                sicher = request.is_secure() or getattr(settings, 'SECURE_SSL_REDIRECT', False)
+                schema = 'https' if sicher else 'http'
+                return HttpResponsePermanentRedirect(
+                    f'{schema}://{ziel}{request.get_full_path()}'
+                )
+        return self.get_response(request)
 
 
 # ═══ CONTENT-SECURITY-POLICY ═══════════════════════════════════════════════

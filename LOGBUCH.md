@@ -730,3 +730,29 @@ ist zeitbedingt und vorbestehend – er vergleicht das UTC-Datum von
 `aktualisiert_am` mit dem in Europe/Berlin gerenderten `dateModified`
 und schlägt zwischen 22:00 und 24:00 UTC fehl (Lauf um 23:17 UTC); die
 Tests in Schritt 40 belegen die Kopfzeile.
+
+### 2026-09-02 — Welle 8, Schritt 37: Domainvarianten per 301 auf den kanonischen Host
+
+**Was:** `shop1/middleware.py`: neue `CanonicalHostMiddleware`, ganz vorn
+in `MIDDLEWARE` (vor der HTTPS-Weiterleitung der `SecurityMiddleware`).
+`mainweb/settings.py`: `CANONICAL_HOST` aus der Umgebungsvariablen
+(Schema und Pfad werden abgestreift); ist sie gesetzt, kommen der Host und
+seine www-Nebenvariante zusätzlich in `ALLOWED_HOSTS` und
+`CSRF_TRUSTED_ORIGINS`. Umgeleitet wird **nur** der Host, der sich vom
+kanonischen durch das `www.` unterscheidet – mit 301, vollem Pfad samt
+Query und `https`, sobald die Anfrage sicher ist oder
+`SECURE_SSL_REDIRECT` gilt (eine Weiterleitung statt der Kette
+http → https → www). Railway-Adresse, `localhost` und alle anderen Hosts
+bleiben unberührt; ohne Variable tut die Middleware nichts.
+
+**Warum:** Beide Schreibweisen antworteten mit 200, nur ein `canonical`
+unterschied sie – Google darf den ignorieren, eine 301 nicht (Befund
+TS11, `01-BEFUND.md` 4.1). `PREPEND_WWW` schied aus, weil es auch
+`*.up.railway.app` umschriebe. Der kanonische Host selbst wird nie
+umgeleitet, deshalb ist keine Schleife möglich. Geprüft: `manage.py
+check` grün; `manage.py test shop1`: 151 von 152 grün, derselbe
+zeitbedingte, vorbestehende Fehlschlag in `test_geo` wie bei Schritt 36
+(Lauf vor 00:00 UTC). Die vier Weiterleitungsfälle prüft Schritt 40.
+Offen beim Hoster: der DNS-Eintrag der Nebenvariante muss auf denselben
+Dienst zeigen, und `CANONICAL_HOST=www.luviq-alsfeld.com` muss in Railway
+gesetzt werden – erst dann wirkt die Regel.

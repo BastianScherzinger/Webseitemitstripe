@@ -30,6 +30,26 @@ _extra_raw = [
     h.strip().removeprefix('https://').removeprefix('http://').rstrip('/')
     for h in os.getenv('ALLOWED_HOSTS_EXTRA', '').split(',') if h.strip()
 ]
+
+# ═══ KANONISCHER HOST ═══
+# Die eine Adresse, unter der die Seite laufen soll (z. B.
+# www.luviq-alsfeld.com). shop1.middleware.CanonicalHostMiddleware leitet
+# die jeweils andere www-Variante (luviq-alsfeld.com) per 301 dorthin –
+# und NUR diese: die Railway-Adresse *.up.railway.app, localhost und alles
+# andere bleiben unberührt, sonst bräche der Deploy-Zugang. Ist die
+# Variable leer, tut die Middleware nichts. PREPEND_WWW wäre falsch, es
+# schriebe auch *.up.railway.app auf www. um.
+# Wichtig: Der DNS-Eintrag beider Varianten muss auf denselben Dienst
+# zeigen, sonst kommt die Anfrage nie hier an.
+CANONICAL_HOST = (
+    os.getenv('CANONICAL_HOST', '').strip().lower()
+    .removeprefix('https://').removeprefix('http://').split('/')[0]
+)
+if CANONICAL_HOST:
+    # Beide Varianten müssen erlaubt sein, damit die Nebenvariante die
+    # Weiterleitung überhaupt erreicht statt mit 400 abgewiesen zu werden.
+    _extra_raw.append(CANONICAL_HOST)
+
 _extra = set(_extra_raw)
 for _h in _extra_raw:
     _extra.add(_h[4:] if _h.startswith('www.') else f'www.{_h}')
@@ -75,6 +95,11 @@ INSTALLED_APPS = [
 # ═══ MIDDLEWARE ═══
 
 MIDDLEWARE = [
+    # Ganz vorn, noch vor der HTTPS-Weiterleitung der SecurityMiddleware:
+    # so springt luviq-alsfeld.com in EINER 301 auf https://www.…, nicht
+    # erst auf https://luviq-alsfeld.com und dann weiter. Tut ohne
+    # CANONICAL_HOST nichts (siehe oben).
+    'shop1.middleware.CanonicalHostMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     # Content-Security-Policy (Schritt 36). Steht hinter WhiteNoise, damit
