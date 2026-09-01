@@ -149,6 +149,8 @@
       ]
     }
     </script>
+    {% comment %}Brotkrumenpfad (BreadcrumbList) der Seite: jede Unterseite fuellt den Block mit ihrem eigenen Pfad, die Startseite laesst ihn leer. Die Stationsnamen muessen woertlich einer sichtbaren Beschriftung derselben Seite entsprechen (Menue "Home", "Produkte", ... in dieser Datei oder die sichtbare Brotkrume der Produktseite) - ein Schema, das etwas anderes behauptet als die Seite, ist schlimmer als keines. Eine Bedingung gehoert IN den Block, nicht darum herum.{% endcomment %}
+    {% block brotkrume_ld %}{% endblock %}
     {% block schema_ld %}{% endblock %}
 
     <!-- Favicon & PWA -->

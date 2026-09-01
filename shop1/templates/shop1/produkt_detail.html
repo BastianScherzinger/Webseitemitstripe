@@ -19,7 +19,7 @@
 <meta name="twitter:image" content="{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}">
 {% else %}{{ block.super }}{% endif %}{% endblock %}
 
-{% block schema_ld %}
+{% block brotkrume_ld %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -32,6 +32,9 @@
   ]
 }
 </script>
+{% endblock %}
+
+{% block schema_ld %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

@@ -6,6 +6,19 @@
 {% block og_title %}Über Luviq Universe – Luisa Brehler & handbemalte Vintage Mode{% endblock %}
 {% block og_description %}Luviq Universe verwandelt Second-Hand-Kleidung in handbemalte 1-of-1 Kunstwerke. Luisa Brehlers Mission für nachhaltige Upcycling-Mode in Deutschland.{% endblock %}
 
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Über uns", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
 {% block schema_ld %}
 <script type="application/ld+json">
 {

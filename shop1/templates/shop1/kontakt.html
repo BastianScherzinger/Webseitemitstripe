@@ -6,6 +6,19 @@
 {% block og_title %}Kontakt – Luviq Universe{% endblock %}
 {% block og_description %}Fragen zu deiner Bestellung oder unseren handbemalten Upcycling-Unikaten? Schreib uns – Luviq Universe antwortet schnell.{% endblock %}
 
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Kontakt", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'kontakt' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
 {% block schema_ld %}
 <script type="application/ld+json">
 {

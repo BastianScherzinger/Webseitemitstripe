@@ -1,6 +1,18 @@
 {% extends 'base.html' %}
 {% block title %}Datenschutzerklärung – Luviq Universe, Alsfeld{% endblock %}
 {% block meta_description %}Wie Luviq Universe aus Alsfeld personenbezogene Daten verarbeitet: welche Daten bei Besuch, Bestellung und Newsletter anfallen und welche Rechte du hast. Jetzt nachlesen.{% endblock %}
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Datenschutz", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'datenschutz' %}"}
+  ]
+}
+</script>
+{% endblock %}
 {% block content %}
 <div class="relative min-h-screen pt-32 pb-40">
     <!-- Nebula Background Layer -->

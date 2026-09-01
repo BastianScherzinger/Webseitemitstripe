@@ -239,3 +239,23 @@ Biografie, kein Geburtsjahr, keine Qualifikation).
 **Warum:** `<meta name="author">` nannte die Autorin, das Schema kannte nur
 einen `founder` und keinen `author` (Befund 4.13/GE16). Antwortmaschinen
 werten `author` als Signal, wer für den Inhalt einsteht.
+
+### 2026-09-01 — Welle 4, Schritt 18: `BreadcrumbList` auf jeder Unterseite über einen zentralen Block
+
+**Was:** `base.html` hat im `<head>` einen neuen, leeren Block
+`brotkrume_ld` (vor `schema_ld`). Die neun Unterseiten `produkte`,
+`kontakt`, `ueber_uns`, `gaestebuch`, `liefergebiet`, `impressum`,
+`datenschutz`, `agb` und `produkt_detail` füllen ihn mit je einem
+`BreadcrumbList`-Script. Die zwei bestehenden Brotkrumen (`produkt_detail`,
+`liefergebiet`) sind in den Block gezogen; das FAQ-Schema von
+`liefergebiet` bleibt in `schema_ld`. Die Startseite füllt den Block nicht.
+Stationsnamen sind wörtlich die sichtbaren Menübeschriftungen aus
+`base.html` („Home", „Produkte", „Gästebuch", „Kontakt", „Über uns",
+„Liefergebiet", „Datenschutz", „Impressum", „AGB"); die Produktseite behält
+„Orbit"/„Objekte" aus ihrer sichtbaren Brotkrume. Sichtbare Brotkrumen
+wurden nicht ergänzt, der Seitenaufbau ist unverändert.
+
+**Warum:** Sieben von neun Inhaltsseiten hatten keinen Brotkrumenpfad
+(Befund 4.38/GE12); Suchmaschinen zeigen ohne ihn die rohe Adresse in der
+Trefferliste. Ein zentraler Block statt neun Einzellösungen, damit die
+nächste Seite denselben Weg geht.

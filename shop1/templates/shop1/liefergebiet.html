@@ -8,18 +8,24 @@
 {% block twitter_title %}Liefergebiet Fulda – Gießen | Luviq Universe{% endblock %}
 {% block twitter_description %}Handbemalte Vintage-Unikate aus Alsfeld, versendet in die Region zwischen Fulda und Gießen sowie deutschlandweit.{% endblock %}
 
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Liefergebiet", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'liefergebiet' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
 {% block schema_ld %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@graph": [
-    {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
-        {"@type": "ListItem", "position": 2, "name": "Liefergebiet", "item": "{{ request.build_absolute_uri }}"}
-      ]
-    },
     {
       "@type": "FAQPage",
       "mainEntity": [
