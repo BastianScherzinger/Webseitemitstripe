@@ -302,3 +302,28 @@ auf der Seite"), danach zurückgesetzt.
 **Warum:** Die Schritte 16–19 sind Zusagen im Quelltext, die eine spätere
 Änderung still brechen kann. Der Test (1) sichert zusätzlich den Zweck des
 gemeinsamen Registers: Sitemap und Schema dürfen nicht auseinanderlaufen.
+
+### 2026-09-01 — Welle 5, Schritt 21: Startseite beginnt mit einer zitierfähigen Antwort
+
+**Was:** Fünf bestehende Absätze in `shop1/templates/shop1/index.html` mit
+Auskunft gefüllt – kein neuer Absatz, keine neue Überschrift, kein neuer
+Link, kein neues Element (die Designwache `test_aufbau` erfasst jedes
+Tag). Der erste Absatz nach der `h1` (`#hero-sub`) beantwortet jetzt „Was
+ist Luviq Universe?": Online-Shop von Luisa Brehler aus Alsfeld, Hessen,
+für handbemalte Second-Hand- und Vintage-Kleidung; jedes Stück 1-of-1,
+keine Nachproduktion; Versand deutschlandweit in der Regel innerhalb von
+1-2 Werktagen (belegte Zahl, wörtlich von `/liefergebiet/` und
+`/kontakt/`). Die drei Feature-Absätze erklären Arbeitsweise (Pinsel und
+Textilfarbe – belegt in `ueber_uns.html`), Grundlage (getragene
+Second-Hand-Kleidung) und Vertrieb (ausschließlich online, kein
+Ladengeschäft). Der Absatz über Luisa Brehler nennt zusätzlich Zahlungsart
+(PayPal oder Vorab-Überweisung), Endpreise und § 19 UStG – wörtlich wie in
+`agb.html`. Nicht behauptet: dass verkaufte Stücke aus dem Shop
+verschwinden (`views/shop.py` filtert nur nach `aktiv`, nicht nach
+Lagerbestand); formuliert ist „kein zweites Exemplar, keine
+Nachbestellung".
+
+**Warum:** Die wichtigste Seite begann mit Badge, Wortmarke und einem
+Slogan ohne Zahl und ohne Festlegung (Befund 4.9/GE23, 4.14/GE25);
+Antwortmaschinen zitieren den ersten sachlichen Absatz. Gemessen im
+Inhaltsbereich (`<main>`, ein Produkt im Testbestand): vorher 261 Wörter.
