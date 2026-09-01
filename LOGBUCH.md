@@ -436,3 +436,26 @@ Verworfen Zeile 7). Bestehende Seiten unverändert.
 
 **Warum:** Null Wissensseiten, 13 rankfähige Seiten gegen 30, vier
 Themenbereiche mit je einer Seite (Befunde SU01, SU04, SU07, SU08, SU09).
+
+### 2026-09-01 — Welle 6, Schritt 27: Wissensseite „Wie pflege ich handbemalte Kleidung?"
+
+**Was:** `shop1/templates/shop1/wissen/pflege.html` unter
+`/wissen/pflege-handbemalte-kleidung/` (Registereintrag `wissen_pflege` in
+`views/wissen.py`). Aufbau nach dem Bauplan für alle drei Wissensseiten:
+Antwort im ersten Absatz mit Festlegung (auf links, kalt oder 30 °C,
+Schonprogramm, Lufttrocknung, Bügeln nur von links), sechs
+Zwischenüberschriften **als Fragen** in `h2` direkt unter der `h1` – kein
+Ebenensprung –, je Frage ein Antwortabsatz ohne Inline-Elemente und ein
+vertiefender Absatz. `FAQPage`-Schema mit genau diesen sechs Fragen und den
+wortgleichen Antwortabsätzen; Brotkrume Home → Wissen → Seite. Gemessen:
+821 Wörter im Inhaltsbereich, Zahl im ersten Drittel, Titel 63 und
+Beschreibung 171 Zeichen. Textilpflege ist allgemeines Sachwissen und so
+formuliert (Regel 2); über Luviq steht nur Belegtes: Pinsel und Textilfarbe
+auf getragener Second-Hand-Kleidung (Über uns), Einzelstück, Versand 1-2
+Werktage (Liefergebiet), Kontaktformular. Keine Garantie, keine
+Haltbarkeitszusage, kein Farbfabrikat – der Abschnitt zu Luviq sagt
+ausdrücklich, dass diese Seite dafür keine Zahl nennt.
+
+**Warum:** Erste Wissensseite (SU04); Fragen als Zwischenüberschriften
+(GE24) und saubere Überschriftenhierarchie (IS14/BF15) kosten auf einer
+neuen Seite nichts.

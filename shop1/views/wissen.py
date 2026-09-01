@@ -23,7 +23,16 @@ from django.shortcuts import render
 #: Slug → Beitrag. ``url_name`` ist der Routenname, ``template`` die Vorlage,
 #: ``titel`` die sichtbare Überschrift (zugleich ``h1`` der Seite), ``kurz``
 #: der Satz, mit dem die Übersicht den Beitrag ankündigt.
-WISSEN_BEITRAEGE = {}
+WISSEN_BEITRAEGE = {
+    'pflege-handbemalte-kleidung': {
+        'url_name': 'wissen_pflege',
+        'template': 'shop1/wissen/pflege.html',
+        'titel': 'Wie pflege ich handbemalte Kleidung?',
+        'kurz': 'Waschen auf links bei 30 °C, Trocknen an der Luft, Bügeln nur von links, '
+                'Lagern ohne Druck auf die Bemalung – und was für ein einzelnes Stück '
+                'von Luviq Universe gilt.',
+    },
+}
 
 
 def wissen(request):
