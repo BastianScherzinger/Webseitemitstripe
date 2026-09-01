@@ -173,7 +173,7 @@
                     <!-- Bild -->
                     {% if w.bild_src %}
                     <div class="w-full md:w-28 md:flex-shrink-0 bg-black/30 flex items-center justify-center overflow-hidden" id="imgwrap-{{ w.id }}" style="min-height:112px;max-height:160px;">
-                        <img src="{{ w.bild_src }}" alt="{{ w.titel }}"
+                        <img src="{{ w.bild_src }}" alt="Werbebild der Kampagne „{{ w.titel }}“"
                              class="w-full h-full object-cover"
                              onerror="document.getElementById('imgwrap-{{ w.id }}').style.display='none'">
                     </div>
@@ -282,7 +282,7 @@
                             <div>
                                 <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Neues Bild hochladen</label>
                                 {% if w.bild_src %}
-                                <img src="{{ w.bild_src }}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:8px;margin-bottom:6px;"
+                                <img src="{{ w.bild_src }}" alt="Bisheriges Werbebild der Kampagne „{{ w.titel }}“ (Vorschau)" style="width:40px;height:40px;object-fit:cover;border-radius:8px;margin-bottom:6px;"
                                      onerror="this.style.display='none'">
                                 {% endif %}
                                 <input type="file" name="bild_file" accept="image/*" aria-label="Neues Bild für die Kampagne „{{ w.titel }}“ hochladen"

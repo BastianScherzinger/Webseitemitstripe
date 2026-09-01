@@ -208,7 +208,7 @@
                            x-transition:leave-start="opacity-100"
                            x-transition:leave-end="opacity-0">
                             {% if produkt.bild %}
-                            <img src="{{ produkt.bild.url|cloud:'w_800,h_1000,c_fill' }}" alt="{{ produkt.name }}" class="w-full h-full object-cover" width="800" height="1000" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" {% if forloop.first %}fetchpriority="high"{% endif %} decoding="async">
+                            <img src="{{ produkt.bild.url|cloud:'w_800,h_1000,c_fill' }}" alt="Produktfoto: {{ produkt.name }}, Upcycling-Einzelstück von Luviq Universe" class="w-full h-full object-cover" width="800" height="1000" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" {% if forloop.first %}fetchpriority="high"{% endif %} decoding="async">
                             {% endif %}
                             <div class="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/10 to-transparent"></div>
                             <span class="absolute top-6 left-6 glass px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-white/50 border-white/10">{{ forloop.counter|stringformat:"02d" }} / {{ showcase|length|stringformat:"02d" }}</span>
