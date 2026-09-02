@@ -5,6 +5,10 @@ mit 500 oder 404 antwortet, ist für Kundschaft und Suchmaschinen weg – und
 niemand merkt es, solange niemand sie aufruft.
 """
 
+import re
+from decimal import Decimal
+from html.parser import HTMLParser
+
 from django.contrib.auth.models import User
 from django.urls import NoReverseMatch, URLPattern, URLResolver, get_resolver, resolve, reverse
 from django.urls.converters import (
@@ -15,6 +19,7 @@ from django.urls.converters import (
     UUIDConverter,
 )
 
+from ..models import Cart, CartItem, Comment, Order, Werbung
 from ._basis import (
     ADMIN_SEITEN,
     GESCHUETZTE_SEITEN,
@@ -222,3 +227,113 @@ class ZugriffsschutzTest(LuviqTestCase):
         for pfad in ADMIN_SEITEN:
             with self.subTest(pfad=pfad):
                 self.assertEqual(self.hole(pfad).status_code, 200)
+
+
+#: Ein Attributwert in Anführungszeichen, auf den ohne Leerzeichen direkt das
+#: nächste Zeichen folgt – ``aria-label="Vorname"value="…"``. Das Muster
+#: verlangt davor ``name=``, damit ein Anführungszeichen **innerhalb** eines
+#: Werts (``x-data="{ 'shown': false }"``) nicht als Attributende zählt.
+_ATTRIBUT_OHNE_ABSTAND = re.compile(
+    r'''\s[^\s=<>"'/]+\s*=\s*(?:"[^"]*"|'[^']*')(?=[^\s/>])'''
+)
+
+
+class _Starttags(HTMLParser):
+    """Sammelt den rohen Text jedes Start-Tags, so wie er ausgeliefert wird.
+
+    ``HTMLParser`` liest ein fehlendes Leerzeichen zwischen zwei Attributen
+    stillschweigend richtig – genau deshalb blieb der Fehler in jedem
+    anderen Test unsichtbar. Hier wird nicht das Ergebnis des Parsers
+    geprüft, sondern der Rohtext des Tags (``get_starttag_text``).
+    """
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.tags = []
+
+    def handle_starttag(self, tag, attrs):
+        # Auch für selbstschliessende Tags (``<img …/>``): ``HTMLParser``
+        # ruft dafür ebenfalls handle_starttag auf.
+        self.tags.append(self.get_starttag_text())
+
+
+def _attribute_ohne_abstand(html):
+    """Alle Start-Tags einer Seite, in denen zwei Attribute aneinanderkleben."""
+    leser = _Starttags()
+    leser.feed(html)
+    return [t for t in leser.tags if _ATTRIBUT_OHNE_ABSTAND.search(t)]
+
+
+class AttributSyntaxTest(LuviqTestCase):
+    """Zwischen zwei Attributen fehlt ein Leerzeichen – ungültiges HTML, das
+    Browser verzeihen und kein anderer Test sieht.
+
+    Vorgefunden in ``checkout.html`` (acht Felder, Gegenprüfung des vierten
+    Laufs, Befund 6.1): ``aria-label="Vorname"value="…"``. Der Validator
+    meldet es, Bildschirmleser und ältere Parser lesen es uneinheitlich,
+    und die Seite, auf der es stand, ist die, die Geld einnimmt.
+    """
+
+    def setUp(self):
+        self.produkt = erzeuge_produkt('Bemalte Bomberjacke')
+        self.kundin = erzeuge_benutzer('kundin')
+        Comment.objects.create(user=self.kundin, text='Mein Unikat ist angekommen.')
+        korb = Cart.objects.create(user=self.kundin)
+        CartItem.objects.create(cart=korb, produkt_name='Bemalte Bomberjacke',
+                                produkt_preis=Decimal('49.90'), menge=1)
+        self.besitzerin = User.objects.create_superuser(
+            'shopbesitzer', 'shop@example.invalid', 'ein-langes-testpasswort'
+        )
+        Order.objects.create(
+            user=self.kundin, vorname='Erika', nachname='Musterfrau',
+            email='erika@example.invalid', adresse='Grünberger Str. 16',
+            stadt='Alsfeld', postleitzahl='36304', land='Deutschland',
+            gesamt_betrag=Decimal('49.90'),
+        )
+        Werbung.objects.create(
+            titel='Testkampagne', link='https://www.luviq-alsfeld.com/',
+            bild='https://example.invalid/werbung.jpg', budget=Decimal('20.00'),
+        )
+
+    def _pruefe(self, pfade):
+        for pfad in pfade:
+            with self.subTest(pfad=pfad):
+                antwort = self.hole(pfad)
+                self.assertEqual(antwort.status_code, 200, f'{pfad} nicht erreichbar')
+                treffer = _attribute_ohne_abstand(antwort.content.decode())
+                self.assertEqual(
+                    treffer, [],
+                    f'{pfad}: Attribute ohne Leerzeichen dazwischen: {treffer[:3]}',
+                )
+
+    def test_das_muster_erkennt_den_vorgefundenen_fehler(self):
+        """Gegenprobe am Muster selbst, damit der Test nicht ins Leere läuft:
+        das Feld aus ``checkout.html`` vor der Korrektur muss gefunden werden,
+        ein korrektes Feld und ein Alpine-Ausdruck mit Anführungszeichen im
+        Wert dürfen es nicht."""
+        self.assertEqual(
+            len(_attribute_ohne_abstand(
+                '<input type="text" name="vorname" aria-label="Vorname"value="Erika" required>'
+            )), 1,
+        )
+        self.assertEqual(_attribute_ohne_abstand(
+            '<input type="text" name="vorname" aria-label="Vorname" value="Erika" required>'
+            '<article x-data="{ shown: false }" :class="{ \'visible\': shown }"></article>'
+            '<img src="a.webp" alt="Bild"/>'
+        ), [])
+
+    def test_kein_start_tag_klebt_zwei_attribute_aneinander(self):
+        """Verhindert, dass ein Attribut ohne Leerzeichen an das vorige
+        angehängt wird – auf jeder öffentlichen Seite, ausserdem angemeldet
+        auf Startseite, Gästebuch, Warenkorb, Checkout und Profil (nur dort
+        erscheinen Kommentar- und Adressfelder) und im Admin-Panel."""
+        self._pruefe(OEFFENTLICHE_SEITEN)
+
+        self.client.force_login(self.kundin)
+        self._pruefe(['/', '/gaestebuch/', '/warenkorb/', '/checkout/', '/profil/'])
+
+        self.client.force_login(self.besitzerin)
+        self._pruefe(ADMIN_SEITEN + [
+            '/shop-admin/users/create/',
+            f'/shop-admin/users/{self.besitzerin.id}/edit/',
+        ])
