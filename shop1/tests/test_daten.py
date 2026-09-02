@@ -10,7 +10,18 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from ..models import Cart, CartItem, Order, OrderItem, Produkt, Subscriber
+from ..models import (
+    META_BESCHREIBUNG_MAX,
+    META_TITEL_MAX,
+    Cart,
+    CartItem,
+    Order,
+    OrderItem,
+    Produkt,
+    PyStoreVisitorLog,
+    Subscriber,
+    VisitorLog,
+)
 from ._basis import LuviqTestCase, erzeuge_benutzer, erzeuge_produkt
 
 
@@ -209,3 +220,141 @@ class KennungenTest(LuviqTestCase):
         Order.objects.create(**felder)
         with self.assertRaises(IntegrityError), transaction.atomic():
             Order.objects.create(**felder)
+
+
+class ProduktInvariantenTest(LuviqTestCase):
+    """Zusagen über **alle** aktiven Produkte auf einmal – so, wie sie der
+    Prüfbefehl ``pruefe_seite`` und die Produktseiten voraussetzen.
+
+    Die Tests legen sich ihre Produkte selbst an, auch die Grenzfälle
+    (Namensvettern, Sonderzeichen, überlange Texte), und behaupten dann die
+    Invariante über die ganze Menge statt über ein Beispiel.
+    """
+
+    @staticmethod
+    def aktive():
+        return list(Produkt.objects.filter(aktiv=True))
+
+    def test_kein_aktives_produkt_hat_einen_leeren_oder_doppelten_slug(self):
+        """Verhindert die Adresse ``/produkt//`` und zwei Produkte auf einer
+        Adresse – prüft die Kollisionslogik in ``Produkt.save()`` über
+        Namensvettern (``-1``, ``-2``), einen Namen ohne lateinische
+        Buchstaben und ein Produkt, das mit leerem Slug gespeichert wird."""
+        for _ in range(3):
+            erzeuge_produkt('Custom Print Hoodie')
+        erzeuge_produkt('★★★')
+        erzeuge_produkt('Leerer Slug', slug='')
+        erzeuge_produkt('Custom Print Hoodie', aktiv=False)   # inaktiv, zählt nicht mit
+
+        slugs = [p.slug for p in self.aktive()]
+        self.assertEqual(len(slugs), 5)
+        self.assertTrue(all(slugs), f'leerer Slug: {slugs}')
+        self.assertEqual(len({s.lower() for s in slugs}), len(slugs), f'doppelter Slug: {slugs}')
+        self.assertEqual(
+            sorted(s for s in slugs if s.startswith('custom-print-hoodie')),
+            ['custom-print-hoodie', 'custom-print-hoodie-1', 'custom-print-hoodie-2'],
+        )
+
+    def test_kein_aktives_produkt_hat_leeren_namen_fehlenden_preis_oder_negativen_bestand(self):
+        """Verhindert Produkte, die die Anzeige oder die Summenbildung im
+        Warenkorb brechen. Die Pflichtwerte werden auf zwei Ebenen geprüft:
+        die Formularprüfung (``full_clean``) weist leeren Namen, fehlenden
+        Preis und negativen Bestand ab, und die Datenbank selbst lässt
+        keinen negativen Bestand zu – auch nicht per ``update()`` am
+        Formular vorbei."""
+        erzeuge_produkt('Bemalte Jacke')
+        erzeuge_produkt('Bemalte Tasche', preis=Decimal('0.01'), lagerbestand=0)
+        for produkt in self.aktive():
+            # ``ersteller`` ist ``null=True`` ohne ``blank=True`` und steht in
+            # keinem Formular – für die Pflichtwerte hier ohne Belang.
+            produkt.full_clean(exclude=['ersteller'])   # kein Fehler: der Bestand ist sauber
+
+        for felder in (
+            dict(name='', preis=Decimal('10.00')),
+            dict(name='Ohne Preis'),
+            dict(name='Negativ', preis=Decimal('10.00'), lagerbestand=-1),
+        ):
+            with self.subTest(felder=felder), self.assertRaises(ValidationError):
+                Produkt(**felder).full_clean()
+
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            Produkt.objects.filter(name='Bemalte Jacke').update(lagerbestand=-1)
+        self.assertFalse(Produkt.objects.filter(lagerbestand__lt=0).exists())
+
+    def test_keine_zwei_aktiven_produkte_haben_denselben_meta_titel(self):
+        """Macht ``IS23`` prüfbar: zwei aktive Produkte mit demselben
+        ``<title>`` konkurrieren in der Suche gegeneinander. Der Titel
+        entsteht aus dem Namen, Namensvettern kollidieren also, sobald sie
+        beide aktiv sind. Der Test **behebt** nichts – welche Seite den
+        Namen behält, ist eine Entscheidung über Kundendaten. Der Weg: für
+        eines der Produkte ``seo_titel`` im Django-Standard-Admin pflegen
+        (``ProduktAdmin`` in ``shop1/admin.py`` bietet das Feld an, es hat
+        keine ``fields``-Einschränkung); die Ersatzfassung tritt dann
+        zurück."""
+        erzeuge_produkt('Bemalte Jacke')
+        erzeuge_produkt('Bemalte Tasche')
+        namensvetter = erzeuge_produkt('Bemalte Jacke')
+
+        def doppelte():
+            titel = [p.meta_title for p in self.aktive()]
+            return sorted({t for t in titel if titel.count(t) > 1})
+
+        self.assertEqual(doppelte(), ['Bemalte Jacke kaufen – Luviq Universe, Alsfeld'])
+
+        namensvetter.seo_titel = 'Bemalte Jeansjacke Blau – Luviq Universe'
+        namensvetter.save()
+        self.assertEqual(doppelte(), [], 'seo_titel löst die Kollision nicht auf')
+
+    def test_meta_titel_und_beschreibung_bleiben_bei_jedem_produkt_in_der_zielspanne(self):
+        """Verhindert Titel, die Google abschneidet, und Beschreibungen, die
+        entweder abgeschnitten werden oder zu dünn sind, um als Snippet zu
+        taugen – auch bei überlangen Namen, überlangen Beschreibungen, ohne
+        Beschreibung und mit gepflegten SEO-Feldern."""
+        erzeuge_produkt('Bemalte Jacke', beschreibung=(
+            'Handbemalte Vintage-Jeansjacke aus Alsfeld, Einzelstück mit Acrylmotiv '
+            'auf dem Rücken, gewaschen und versandfertig.'
+        ))
+        erzeuge_produkt('Ein sehr langer Produktname mit vielen Wörtern, der die Titelgrenze sprengt', beschreibung='Wort ' * 200)
+        erzeuge_produkt('Ohne Beschreibung', beschreibung='')
+        erzeuge_produkt('Gepflegt', seo_titel='Kurz', seo_beschreibung='Knapp.')
+
+        for produkt in self.aktive():
+            with self.subTest(produkt=produkt.name):
+                self.assertTrue(produkt.meta_title.strip())
+                self.assertLessEqual(len(produkt.meta_title), META_TITEL_MAX)
+                self.assertTrue(produkt.meta_description.strip())
+                self.assertLessEqual(len(produkt.meta_description), META_BESCHREIBUNG_MAX)
+
+        # Eine gewöhnliche Beschreibung erreicht die untere Zielgrenze des
+        # Prüfbefehls (110 Zeichen); die Ersatzfassung darf nicht zu dünn sein.
+        gewoehnlich = Produkt.objects.get(name='Bemalte Jacke')
+        self.assertGreaterEqual(len(gewoehnlich.meta_description), 110)
+
+
+class BesucherprotokollTest(LuviqTestCase):
+    """``VisitorLog`` und ``PyStoreVisitorLog`` zeigen auf dieselbe Tabelle
+    ``shop1_visitorlog`` in der Datenbank ``pystore``.
+
+    Zwei Modelle auf einer Tabelle müssen sich über die Spalten einig sein.
+    ``VisitorLog.seite`` schreibt per ``db_column='site'``; schreibt das
+    Spiegelmodell in eine andere Spalte, scheitert entweder sein Schreiben
+    (Spalte fehlt) oder die Einträge landen in zwei Spalten und die
+    Auswertung sieht nur die Hälfte (``01-BEFUND.md`` 6.1 (3)).
+    """
+
+    def test_beide_besuchermodelle_schreiben_in_dieselbe_spalte(self):
+        """Verhindert, dass ein Schreibweg über ``PyStoreVisitorLog`` an einer
+        fehlenden Spalte scheitert oder an ``VisitorLog`` vorbeischreibt:
+        beide Modelle nennen dieselbe Tabelle und dieselbe Spalte, das
+        Schreiben über beide gelingt, und jedes Modell sieht beide Einträge."""
+        self.assertEqual(VisitorLog._meta.db_table, PyStoreVisitorLog._meta.db_table)
+        self.assertEqual(
+            VisitorLog._meta.get_field('seite').column,
+            PyStoreVisitorLog._meta.get_field('seite').column,
+        )
+
+        VisitorLog.objects.create(path='/ueber-visitorlog/', seite='luviq')
+        PyStoreVisitorLog.objects.using('pystore').create(path='/ueber-pystore/', seite='luviq')
+
+        self.assertEqual(VisitorLog.objects.filter(seite='luviq').count(), 2)
+        self.assertEqual(PyStoreVisitorLog.objects.using('pystore').filter(seite='luviq').count(), 2)

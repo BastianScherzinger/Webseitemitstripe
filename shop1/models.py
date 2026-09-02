@@ -459,7 +459,12 @@ class PyStoreVisitorLog(models.Model):
     city = models.CharField(max_length=100, blank=True, default='')
     path = models.CharField(max_length=255, blank=True, default='')
     user_agent = models.CharField(max_length=500, blank=True, default='')
-    seite = models.CharField(max_length=100, blank=True, default='luviq')
+    # Dieselbe Spalte wie ``VisitorLog.seite`` (``db_column='site'``, Migration
+    # 0016). Ohne die Angabe schrieb dieses Modell in eine Spalte ``seite``,
+    # die es in der eigenen Datenbank (lokal, Testlauf) nicht gibt und die in
+    # der pystore-Datenbank neben ``site`` steht – zwei Modelle auf einer
+    # Tabelle müssen sich über die Spalte einig sein (01-BEFUND 6.1 (3)).
+    seite = models.CharField(max_length=100, blank=True, default='luviq', db_column='site')
 
     class Meta:
         managed = False

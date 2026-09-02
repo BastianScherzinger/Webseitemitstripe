@@ -969,3 +969,47 @@ Vollständigkeitsprüfung gegen das Modul `admin_views`.
 `admin_user_delete`, `admin_order_delete`, `admin_produkt_toggle` und
 alle `admin_werbung_*`. Geprüft: `manage.py check` grün; `manage.py test
 shop1`: 206 von 206 grün.
+
+### 2026-09-02 — Welle 9, Schritt 45: Invarianten der Datenmodule
+
+**Was:** `shop1/tests/test_daten.py`, 17 → 22 Tests. (1) Kein aktives
+Produkt hat einen leeren oder doppelten Slug – über drei Namensvettern
+(`custom-print-hoodie`, `-1`, `-2`), einen Namen ohne lateinische
+Buchstaben und ein mit `slug=''` gespeichertes Produkt; ein inaktiver
+Namensvetter zählt nicht mit. (2) Kein leerer Name, kein fehlender
+Preis, kein negativer Bestand: `full_clean` weist alle drei ab, und die
+Datenbank lässt einen negativen Bestand auch per `update()` nicht zu
+(`IntegrityError`). (3) Keine zwei aktiven Produkte mit demselben
+`meta_title` (`IS23` prüfbar): zwei aktive Namensvettern kollidieren im
+Titel, ein gepflegter `seo_titel` löst die Kollision auf; der Test behebt
+nichts und nennt im Docstring den Weg über den Django-Standard-Admin
+(`ProduktAdmin`, `shop1/admin.py`). (4) `meta_title` ≤ 60 und
+`meta_description` ≤ 160 Zeichen für jedes aktive Produkt, auch bei
+überlangem Namen, überlanger, fehlender und gepflegter Beschreibung;
+eine gewöhnliche Beschreibung erreicht die untere Grenze 110 des
+Prüfbefehls. (5) `VisitorLog` und `PyStoreVisitorLog` nennen dieselbe
+Tabelle und dieselbe Spalte, das Schreiben über beide gelingt, und
+jedes Modell sieht beide Einträge.
+
+**Befund und Behebung (Test 5):** Der Test war zuerst rot
+(`'site' != 'seite'`): `VisitorLog.seite` schreibt per
+`db_column='site'` (Migration 0016), `PyStoreVisitorLog.seite` schrieb
+in eine Spalte `seite`, die es in der eigenen Datenbank nicht gibt
+(lokal und im Testlauf: `no such column`) und die in der
+pystore-Datenbank neben `site` steht (`fix_pystore_schema` legt `site`
+an und füllt es aus `seite`). Behoben durch `db_column='site'` an
+`PyStoreVisitorLog.seite` (`models.py`). Keine Migration nötig:
+`makemigrations --check` meldet keine Änderung, Feldänderungen an
+`managed=False`-Modellen werden nicht verfolgt. Auswirkung auf die
+externe pystore-Datenbank: keine – kein Codepfad schreibt über
+`PyStoreVisitorLog` (Suche über `shop1/` ohne Tests: nur Modell und
+Migration 0015); das Modell ist jetzt mit der Spalte einig, in die die
+Middleware tatsächlich schreibt.
+
+**Nebenbefund:** `Produkt.ersteller` ist `null=True` ohne `blank=True`;
+`full_clean()` ohne Ausschluss meldet deshalb bei jedem Produkt ohne
+Ersteller einen Fehler, obwohl kein Formular das Feld führt. Der Test
+schliesst das Feld aus; Modell nicht geändert (nicht im Plan).
+
+**Warum:** Befunde PJ02, PJ04, IS23, 01-BEFUND 4.11, 6.1 (3). Geprüft:
+`manage.py check` grün; `manage.py test shop1`: 211 von 211 grün.
