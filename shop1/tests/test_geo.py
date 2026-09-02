@@ -13,6 +13,8 @@ from html.parser import HTMLParser
 from urllib.parse import urlsplit
 from xml.etree import ElementTree
 
+from django.utils import timezone
+
 from ._basis import INHALTSSEITEN, LuviqTestCase, erzeuge_produkt
 
 _JSONLD = re.compile(
@@ -224,13 +226,19 @@ class StrukturierteDatenTest(LuviqTestCase):
     def test_die_produktseite_nennt_ihr_aenderungsdatum(self):
         """Verhindert, dass Antwortmaschinen und Suchmaschinen die Aktualität
         eines Angebots nicht einschätzen können. Die Angabe stammt aus
-        ``Produkt.aktualisiert_am`` – sie wird nicht erfunden."""
+        ``Produkt.aktualisiert_am`` – sie wird nicht erfunden.
+
+        Der Vergleich rechnet den Zeitstempel in die Zeitzone der Seite um
+        (``TIME_ZONE``, Europe/Berlin), weil das Template ihn so rendert.
+        ``aktualisiert_am`` selbst ist UTC; ohne die Umrechnung war der Test
+        täglich zwischen 22:00 und 24:00 UTC rot, weil in Berlin schon der
+        nächste Tag angebrochen war."""
         inhalt = self.hole(self.produkt.get_absolute_url()).content.decode()
         produktknoten = [k for k in schema_knoten(inhalt) if k.get('@type') == 'Product']
         self.assertEqual(len(produktknoten), 1)
         self.assertEqual(
             produktknoten[0]['dateModified'][:10],
-            self.produkt.aktualisiert_am.date().isoformat(),
+            timezone.localtime(self.produkt.aktualisiert_am).date().isoformat(),
         )
 
     def test_jede_seite_traegt_einen_webpage_knoten_mit_aenderungsdatum(self):
