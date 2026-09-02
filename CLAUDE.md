@@ -1,5 +1,35 @@
 # CLAUDE.md
 
+<!-- doku-wegweiser -->
+> ## Die Dokumentation dieses Projekts liegt in `doku/`
+>
+> **Elf Dateien, bei jeder betreuten Seite dieselben** — Einstieg
+> [`doku/README.md`](doku/README.md), Lage der Dinge
+> [`doku/00-STATUS.md`](doku/00-STATUS.md).
+>
+> | Frage | Datei |
+> |---|---|
+> | Wie steht die Seite da? | [`doku/00-STATUS.md`](doku/00-STATUS.md) |
+> | Wie ist sie gebaut, was sind die Fallen? | [`doku/10-TECHNIK.md`](doku/10-TECHNIK.md) |
+> | Wie sieht sie aus, was darf sich nicht ändern? | [`doku/20-DESIGN.md`](doku/20-DESIGN.md) |
+> | Welche Seiten und Texte gibt es? | [`doku/30-INHALTE.md`](doku/30-INHALTE.md) |
+> | Wie weit ist SEO und GEO? | [`doku/40-SEO.md`](doku/40-SEO.md) |
+> | Unternehmensprofil, Search Console, Bewertungen | [`doku/50-LOCAL-SEO.md`](doku/50-LOCAL-SEO.md) |
+> | Wie weit sind Google Ads? | [`doku/60-ADS.md`](doku/60-ADS.md) |
+> | Wie schnell ist die Seite? | [`doku/70-PERFORMANCE.md`](doku/70-PERFORMANCE.md) |
+> | Was ist offen, was fehlt, was kann besser werden? | [`doku/80-AUFGABEN.md`](doku/80-AUFGABEN.md) |
+> | Besonderheiten, Namensfallen, Verweise | [`doku/90-NOTIZEN.md`](doku/90-NOTIZEN.md) |
+>
+> Diese Dateien **fassen zusammen und verweisen** — die ausführliche Original-Doku
+> dieses Projekts bleibt, wo sie ist, und wird von dort verlinkt. Wer etwas ändert,
+> zieht den Kopf der betroffenen Datei nach (`stand`, `status`, `zusammenfassung`).
+> Der verbindliche Aufbau steht in
+> `C:\Users\basti\Desktop\pystore-overview\docs\DOKU-STANDARD.md`.
+>
+> Den Block zwischen `<!-- messung:anfang -->` und `<!-- messung:ende -->` in
+> `doku/00-STATUS.md` schreibt das Werkzeug — nicht von Hand ändern.
+
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Projektüberblick
