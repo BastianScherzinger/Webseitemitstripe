@@ -7,6 +7,8 @@
 {% block og_description %}Waschen auf links bei 30 °C, Lufttrocknung, Bügeln nur von links, Lagerung ohne Druck auf die Bemalung – die Pflegeregeln für handbemalte Einzelstücke.{% endblock %}
 {% block twitter_title %}Wie pflege ich handbemalte Kleidung? – Luviq Universe{% endblock %}
 {% block twitter_description %}Pflegeregeln für handbemalte Kleidung: Waschen, Trocknen, Bügeln, Lagern, Flecken.{% endblock %}
+{% comment %}Freigabe der Betreiberin: siehe views/wissen.py. Die Bedingung steht IM Block, nicht darum herum (CLAUDE.md).{% endcomment %}
+{% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">

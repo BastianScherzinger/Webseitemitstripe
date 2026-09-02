@@ -515,7 +515,11 @@ class PruefbefehlTest(LuviqTestCase):
         treffer = re.search(r'(\d+) von (\d+) Sitemap-Adressen', text)
         self.assertIsNotNone(treffer, text)
         self.assertEqual(treffer.group(1), treffer.group(2), text)
-        self.assertGreaterEqual(int(treffer.group(1)), 13, text)
+        # Soll: jeder <loc> der ausgelieferten Sitemap – acht statische Seiten,
+        # die freigegebenen Wissensseiten und die Produktseite.
+        sitemap = self.hole('/sitemap.xml').content.decode()
+        self.assertEqual(int(treffer.group(1)), sitemap.count('<loc>'), text)
+        self.assertGreaterEqual(int(treffer.group(1)), 9, text)
 
     def test_ein_aktives_produkt_ohne_beschreibung_wird_als_fehler_gemeldet(self):
         """Verhindert, dass ein Produkt mit leerem Pflichtwert unbemerkt in

@@ -7,6 +7,8 @@
 {% block og_description %}Pflege handbemalter Kleidung, Upcycling gegenüber Second Hand, Größe bei Einzelstücken: der Wissensbereich von Luviq Universe.{% endblock %}
 {% block twitter_title %}Wissen – Luviq Universe, Alsfeld{% endblock %}
 {% block twitter_description %}Pflege, Upcycling-Begriff und Größenwahl bei handbemalten Einzelstücken – erklärt von Luviq Universe.{% endblock %}
+{% comment %}Freigabe der Betreiberin: siehe views/wissen.py. Die Bedingung steht IM Block, nicht darum herum (CLAUDE.md).{% endcomment %}
+{% block meta_robots %}{% if indexierbar %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">

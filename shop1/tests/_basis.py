@@ -99,12 +99,35 @@ INHALTSSEITEN = [
     '/impressum/',
     '/datenschutz/',
     '/agb/',
-    # Wissensbereich (Welle 6): Übersicht und drei Beiträge, alle indexierbar.
+    # Wissensbereich (Welle 6): Übersicht und drei Beiträge. Indexierbar erst
+    # nach Freigabe durch die Betreiberin (``freigegeben`` in views/wissen.py,
+    # Auflage 3 des vierten Laufs); bis dahin ``noindex`` und nicht in Sitemap
+    # und llms.txt – siehe NICHT_INDEXIERBARE_SEITEN.
     '/wissen/',
     '/wissen/pflege-handbemalte-kleidung/',
     '/wissen/upcycling-mode-second-hand-vintage/',
     '/wissen/groesse-bei-einzelstuecken/',
 ]
+
+
+def _nicht_indexierbare_wissensseiten():
+    """Aus dem Register abgeleitet, damit die Tests von selbst umschalten,
+    sobald ein Beitrag freigegeben wird."""
+    from ..views.wissen import WISSEN_BEITRAEGE, uebersicht_indexierbar
+
+    seiten = [f'/wissen/{slug}/' for slug, b in WISSEN_BEITRAEGE.items() if not b.get('freigegeben')]
+    if not uebersicht_indexierbar():
+        seiten.insert(0, '/wissen/')
+    return seiten
+
+
+#: Inhaltsseiten, die heute bewusst ``noindex`` tragen und deshalb in Sitemap
+#: und llms.txt fehlen müssen: ``/impressum/`` (dauerhaft, siehe legal.py) und
+#: die noch nicht freigegebenen Wissensseiten.
+NICHT_INDEXIERBARE_SEITEN = ['/impressum/'] + _nicht_indexierbare_wissensseiten()
+
+#: Die Inhaltsseiten, die Sitemap und llms.txt nennen müssen.
+INDEXIERBARE_SEITEN = [p for p in INHALTSSEITEN if p not in NICHT_INDEXIERBARE_SEITEN]
 
 #: Pflichtseiten nach deutschem Recht – ihr Ausfall ist ein Abmahnrisiko.
 PFLICHTSEITEN = ['/impressum/', '/datenschutz/', '/agb/']

@@ -15,7 +15,7 @@ from xml.etree import ElementTree
 
 from django.utils import timezone
 
-from ._basis import INHALTSSEITEN, LuviqTestCase, erzeuge_produkt
+from ._basis import INDEXIERBARE_SEITEN, INHALTSSEITEN, LuviqTestCase, erzeuge_produkt
 
 _JSONLD = re.compile(
     r'<script[^>]+type="application/ld\+json"[^>]*>(.*?)</script>', re.DOTALL
@@ -411,11 +411,12 @@ class AntwortCrawlerTest(LuviqTestCase):
 
     def test_die_kurzfassung_verweist_auf_alle_hauptseiten(self):
         """Verhindert, dass eine neue Seite gebaut wird, die Antwortmaschinen
-        über die Kurzfassung nie erreichen."""
+        über die Kurzfassung nie erreichen. Seiten mit ``noindex`` (Impressum,
+        nicht freigegebene Wissensbeiträge) gehören nicht hinein – das prüft
+        ``test_seo.WissensfreigabeTest`` in beide Richtungen."""
         text = self.hole('/llms.txt').content.decode()
-        for pfad in INHALTSSEITEN:
-            if pfad == '/impressum/':
-                continue  # steht unter "Rechtliches", per reverse() erzeugt
+        self.assertIn('/impressum/', text)  # steht unter "Rechtliches"
+        for pfad in INDEXIERBARE_SEITEN:
             with self.subTest(pfad=pfad):
                 self.assertIn(pfad, text)
 

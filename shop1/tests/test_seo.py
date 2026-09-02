@@ -7,9 +7,12 @@ dazukommt oder verschwindet – genau das prüfen die Tests hier.
 
 import re
 from datetime import date
+from unittest import mock
 from xml.etree import ElementTree
 
 from ..models import META_BESCHREIBUNG_MAX, META_BESCHREIBUNG_ZUSATZ, META_TITEL_MAX, META_TITEL_ZUSAETZE
+from ..seiten_stand import SEITEN_STAND
+from ..views.wissen import WISSEN_BEITRAEGE
 from ._basis import (
     INHALTSSEITEN,
     OEFFENTLICHE_SEITEN,
@@ -21,6 +24,7 @@ _LOC = re.compile(r'<loc>(.*?)</loc>')
 _TITEL = re.compile(r'<title>(.*?)</title>', re.DOTALL)
 _CANONICAL = re.compile(r'<link[^>]+rel="canonical"[^>]+href="([^"]+)"')
 _DESCRIPTION = re.compile(r'<meta\s+name="description"\s+content="([^"]*)"')
+_ROBOTS = re.compile(r'<meta\s+name="robots"\s+content="([^"]*)"')
 
 _SITEMAP_NS = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
 
@@ -196,6 +200,77 @@ class SitemapTest(LuviqTestCase):
                         pfad.startswith(regel),
                         f'{pfad} steht in der Sitemap, ist aber per "{regel}" gesperrt',
                     )
+
+
+class WissensfreigabeTest(LuviqTestCase):
+    """Die Wissensbeiträge gehen erst nach Bestätigung der Betreiberin in den
+    Index (``freigegeben`` in ``views/wissen.py``, Auflage 3 des vierten
+    Laufs). Bis dahin: ``noindex``, nicht in der Sitemap, nicht in llms.txt –
+    die drei Stellen müssen dieselbe Antwort geben, sonst meldet die Search
+    Console einen Widerspruch oder eine Antwortmaschine zitiert eine Seite,
+    die nicht zitiert werden soll."""
+
+    def _pfade_in(self, pfad_datei):
+        text = self.hole(pfad_datei).content.decode()
+        return {a.split('testserver', 1)[-1] or '/' for a in re.findall(r'https?://testserver[^\s<)"]*', text)}
+
+    def _robots(self, pfad):
+        antwort = self.hole(pfad)
+        self.assertEqual(antwort.status_code, 200, f'{pfad} nicht erreichbar')
+        treffer = _ROBOTS.findall(antwort.content.decode())
+        self.assertEqual(len(treffer), 1, f'{pfad}: {len(treffer)} robots-Angaben')
+        return treffer[0]
+
+    def test_nicht_freigegebene_beitraege_bleiben_aus_dem_index(self):
+        """Verhindert, dass ein unbestätigter Beitrag (Waschtemperatur,
+        Grössen-Faustregel) indexiert oder zitiert wird: er antwortet mit 200,
+        meldet ``noindex, follow`` und fehlt in Sitemap und llms.txt. Die
+        Übersicht ``/wissen/`` folgt: ohne einen freigegebenen Beitrag ist
+        auch sie ``noindex`` und in keiner der beiden Dateien."""
+        gesperrt = [f'/wissen/{slug}/' for slug, b in WISSEN_BEITRAEGE.items() if not b.get('freigegeben')]
+        if not gesperrt:
+            self.skipTest('Alle Wissensbeiträge sind freigegeben – nichts zu sperren.')
+        if len(gesperrt) == len(WISSEN_BEITRAEGE):
+            gesperrt.append('/wissen/')
+        sitemap, llms = self._pfade_in('/sitemap.xml'), self._pfade_in('/llms.txt')
+        for pfad in gesperrt:
+            with self.subTest(pfad=pfad):
+                self.assertEqual(self._robots(pfad), 'noindex, follow')
+                self.assertNotIn(pfad, sitemap, f'{pfad} ist noindex, steht aber in der Sitemap')
+                self.assertNotIn(pfad, llms, f'{pfad} ist noindex, steht aber in der llms.txt')
+
+    def test_ein_freigegebener_beitrag_wird_an_allen_drei_stellen_sichtbar(self):
+        """Gegenprobe, damit der Schalter nicht nur sperren, sondern auch
+        öffnen kann: wird ein Beitrag im Register freigegeben, meldet er
+        ``index, follow``, steht mit dem ``lastmod`` aus ``SEITEN_STAND`` in
+        der Sitemap und in der llms.txt – und die Übersicht wird mit ihm
+        indexierbar, während die übrigen Beiträge gesperrt bleiben."""
+        slug = 'pflege-handbemalte-kleidung'
+        pfad = f'/wissen/{slug}/'
+        andere = [f'/wissen/{s}/' for s in WISSEN_BEITRAEGE if s != slug]
+        with mock.patch.dict(WISSEN_BEITRAEGE[slug], {'freigegeben': True}):
+            self.assertEqual(self._robots(pfad), 'index, follow')
+            self.assertEqual(self._robots('/wissen/'), 'index, follow')
+            for anderer in andere:
+                self.assertEqual(self._robots(anderer), 'noindex, follow')
+
+            xml = self.hole('/sitemap.xml').content.decode()
+            sitemap = {a.split('testserver', 1)[-1] for a in _LOC.findall(xml)}
+            self.assertIn(pfad, sitemap)
+            self.assertIn('/wissen/', sitemap)
+            for anderer in andere:
+                self.assertNotIn(anderer, sitemap)
+            eintrag = re.search(
+                rf'<loc>https?://testserver{re.escape(pfad)}</loc>\s*<lastmod>([^<]+)</lastmod>', xml
+            )
+            self.assertIsNotNone(eintrag, 'Sitemap-Eintrag ohne lastmod')
+            self.assertEqual(eintrag.group(1), SEITEN_STAND['wissen_pflege'])
+
+            llms = self._pfade_in('/llms.txt')
+            self.assertIn(pfad, llms)
+            self.assertIn('/wissen/', llms)
+            for anderer in andere:
+                self.assertNotIn(anderer, llms)
 
 
 class RobotsTest(LuviqTestCase):

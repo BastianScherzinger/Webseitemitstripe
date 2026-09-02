@@ -12,6 +12,9 @@ from ..models import Produkt, Subscriber
 # ``shop1/seiten_stand.py``, weil auch der Kontextprozessor es liest. Hier
 # bleibt es unter demselben Namen erreichbar; die Sitemap unten nutzt es.
 from ..seiten_stand import SEITEN_STAND  # noqa: F401 – Re-Export
+# Freigabe der Wissensbeiträge (Auflage 3 des vierten Laufs): Sitemap und
+# llms.txt nennen nur bestätigte Beiträge, siehe Docstring in views/wissen.py.
+from .wissen import freigegebene_beitraege, uebersicht_indexierbar
 
 
 def impressum(request):
@@ -83,9 +86,10 @@ def robots_txt(request):
 #: Wissensseiten für den Abschnitt „Wissen" der llms.txt: Tripel aus
 #: Routenname, Ankertext und einem Satz Beschreibung. Die Routennamen kommen
 #: aus dem Register ``views/wissen.py``; der Ankertext beschreibt, was die
-#: Seite beantwortet, statt sie nur zu benennen. Wäre die Liste leer,
-#: erschiene der Abschnitt nicht – eine leere Überschrift wäre für
-#: Antwortmaschinen ein Versprechen ohne Inhalt.
+#: Seite beantwortet, statt sie nur zu benennen. Ausgegeben werden nur die
+#: Zeilen, deren Beitrag freigegeben ist (``wissen_routen_fuer_llms``); ist
+#: danach nichts übrig, erscheint der Abschnitt nicht – eine leere
+#: Überschrift wäre für Antwortmaschinen ein Versprechen ohne Inhalt.
 WISSEN_SEITEN = [
     ('wissen', 'Wissen: Uebersicht',
      'Einstieg in die Beitraege zu Pflege, Upcycling-Begriff und Groessenwahl; nennt, woher die Angaben stammen'),
@@ -96,6 +100,20 @@ WISSEN_SEITEN = [
     ('wissen_groesse', 'Wie finde ich bei Einzelstuecken die richtige Groesse?',
      'Masse mit eigener Kleidung vergleichen statt Etikett, warum Vintage-Schnitte abweichen, vorab nachfragen, Widerruf'),
 ]
+
+
+def wissen_routen_fuer_llms():
+    """Routennamen der Wissensseiten, die llms.txt nennen darf.
+
+    Die Übersicht ``wissen`` nur, wenn sie indexierbar ist; jeder Beitrag nur,
+    wenn er freigegeben ist. Gleiche Regel wie in der Sitemap – eine Seite mit
+    ``noindex`` gehört in keine der beiden Dateien.
+    """
+    routen = set()
+    if uebersicht_indexierbar():
+        routen.add('wissen')
+    routen.update(b['url_name'] for b in freigegebene_beitraege().values())
+    return routen
 
 
 #: Wie lange sitemap.xml und llms.txt aus dem Cache kommen. Beide Antworten
@@ -171,9 +189,11 @@ def llms_txt(request):
     else:
         zeilen.append("- Zurzeit ist kein Einzelstueck verfuegbar.")
 
-    if WISSEN_SEITEN:
+    erlaubt = wissen_routen_fuer_llms()
+    wissen_zeilen = [eintrag for eintrag in WISSEN_SEITEN if eintrag[0] in erlaubt]
+    if wissen_zeilen:
         zeilen += ["", "## Wissen", ""]
-        for routenname, ankertext, beschreibung in WISSEN_SEITEN:
+        for routenname, ankertext, beschreibung in wissen_zeilen:
             zeilen.append(f"- [{ankertext}]({basis}{reverse(routenname)}): {beschreibung}")
 
     zeilen += [
@@ -237,12 +257,19 @@ def sitemap_xml(request):
         {'name': 'kontakt',      'loc': reverse('kontakt'),      'priority': '0.6', 'changefreq': 'monthly'},
         {'name': 'datenschutz',  'loc': reverse('datenschutz'),  'priority': '0.2', 'changefreq': 'yearly'},
         {'name': 'agb',          'loc': reverse('agb'),          'priority': '0.2', 'changefreq': 'yearly'},
-        # Wissensbereich: Redaktionsinhalt, lastmod aus demselben Register.
-        {'name': 'wissen',           'loc': reverse('wissen'),           'priority': '0.6', 'changefreq': 'monthly'},
-        {'name': 'wissen_pflege',    'loc': reverse('wissen_pflege'),    'priority': '0.6', 'changefreq': 'monthly'},
-        {'name': 'wissen_upcycling', 'loc': reverse('wissen_upcycling'), 'priority': '0.6', 'changefreq': 'monthly'},
-        {'name': 'wissen_groesse',   'loc': reverse('wissen_groesse'),   'priority': '0.6', 'changefreq': 'monthly'},
     ]
+    # Wissensbereich: Redaktionsinhalt, lastmod aus demselben Register. Nur
+    # freigegebene Beiträge (und die Übersicht, sobald einer freigegeben ist);
+    # die übrigen liefern "noindex" und dürfen deshalb hier nicht stehen.
+    if uebersicht_indexierbar():
+        static_pages.append(
+            {'name': 'wissen', 'loc': reverse('wissen'), 'priority': '0.6', 'changefreq': 'monthly'}
+        )
+    for beitrag in freigegebene_beitraege().values():
+        static_pages.append({
+            'name': beitrag['url_name'], 'loc': reverse(beitrag['url_name']),
+            'priority': '0.6', 'changefreq': 'monthly',
+        })
     # /impressum/ steht bewusst NICHT in dieser Liste: impressum.html setzt
     # meta robots auf "noindex, follow". Eine Adresse gleichzeitig zur
     # Aufnahme anzumelden und die Aufnahme zu verbieten, meldet die Search
