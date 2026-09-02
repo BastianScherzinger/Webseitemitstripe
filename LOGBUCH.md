@@ -112,9 +112,191 @@ Textarbeit an Dateien, die nicht ausgeliefert werden.
 
 ## Verbesserungslauf 4 (Zweig `cockpit/2026-09-01-verbesserung-4`)
 
-Die Wellen 1 und 2 (Schritte 1–10, Commits `65a1bd0` bis `8222aed`) haben
-keinen Logbuch-Eintrag hinterlassen; ihre Commit-Nachrichten nennen das
-*Was*. Ab Welle 3 wird je Schritt hier eingetragen.
+Neun Wellen, 45 Schritte, Ausgangsstand `bc127d1`. Die Einträge der Wellen
+1 und 2 wurden nach der Gegenprüfung nachgetragen (Auflage 5, siehe Ende
+dieses Abschnitts); Quelle sind die Umsetzungsberichte der beiden Wellen und
+die Commits selbst.
+
+### 2026-09-01 — Welle 1, Schritt 1: Prüfbefehl `pruefe_seite` unter Versionskontrolle (`65a1bd0`)
+
+**Was:** `shop1/management/commands/pruefe_seite.py` (176 Zeilen) und die
+Klasse `PruefbefehlTest` in `shop1/tests/test_einstellungen.py` (70 Zeilen,
+sechs Tests) lagen unversioniert im Arbeitsbaum und sind gemeinsam
+eingecheckt. Am Inhalt des Befehls wurde keine Zeile geändert.
+
+**Warum:** Sechs Tests der Suite hingen an einer Datei, die es in Git nicht
+gab – auf jedem anderen Arbeitsplatz wäre die Suite mit `ImportError`
+gescheitert. Die Tests gehören zum Befehl und sind deshalb mit ihm gelandet.
+
+### 2026-09-01 — Welle 1, Schritt 2: Vertauschte Rechte-Beschriftungen Staff/Admin (`181030e`)
+
+**Was:** In `shop1/templates/shop1/admin/user_create.html` und
+`user_edit.html` je zwei Textknoten getauscht: „Staff" steht jetzt am
+`is_staff`-Feld, „Admin" am `is_superuser`-Feld (vorher umgekehrt). Kein
+Element, keine Klasse, keine Reihenfolge berührt.
+
+**Warum:** Wer im Admin-Panel „Staff" ankreuzte, vergab in Wirklichkeit
+`is_superuser` – volle Rechte unter falscher Beschriftung. Offene Frage an
+die Betreiberin: welche Konten in der Betriebsdatenbank tragen deshalb
+`is_superuser=True`, und ist das gewollt?
+
+### 2026-09-01 — Welle 1, Schritt 3: Verschluckte Ausnahmen protokollieren (`2fbf8bd`)
+
+**Was:** Acht `except`-Blöcke, die bisher stumm `pass` oder einen
+Rückfallwert lieferten, schreiben jetzt per `_log.exception(...)` in den
+Logger `shop1` (den `settings.py` bereits auf der Konsole ausgibt):
+`context_processors.py` (2), `management/commands/fix_pystore_schema.py`,
+`views/checkout.py`, `views/shop.py`, `middleware.py`, `models.py`,
+`signals.py` (dort `UserProfile.DoesNotExist` statt `Exception`). Feste
+Formatstrings, als Platzhalter nur Ganzzahlen, Variablennamen oder ein `%r`
+eines Sessionwerts. Die zwei ausdrücklich ausgenommenen Stellen
+(`middleware.py` Geo-Lookup, `admin_views.py` Newsletter) sind unverändert.
+Verhalten unverändert: jeder Block liefert weiterhin denselben Rückfallwert.
+
+**Warum:** Ein Fehler, der in einem stummen `except` verschwindet, ist im
+Container-Log unsichtbar; der Betreiber erfährt erst von Kundschaft, dass
+etwas nicht geht. Belegt, dass keine der neuen Meldungen im normalen
+Testlauf erscheint – sie feuern nur im Fehlerfall.
+
+### 2026-09-01 — Welle 1, Schritt 4: Tote und doppelte Importe in `admin_views.py` (`013c5f8`)
+
+**Was:** Fünf ungenutzte Importe entfernt (`settings`, `Count`, `Q`,
+`UserProfile`, `OrderItem`) sowie der zweite `timedelta`-Import in einer
+Funktion. Jeder Name wurde einzeln über die Datei gesucht; `json` ist in
+Gebrauch und bleibt. Nicht angefasst: ein lokaler `import json as _json`
+innerhalb einer Funktion (nicht im Plan).
+
+**Warum:** Tote Importe täuschen Abhängigkeiten vor und verdecken beim
+nächsten Umbau, was wirklich gebraucht wird. Reines Aufräumen, kein
+Verhalten geändert – die fünf `ADMIN_SEITEN` antworten als Shopbesitzerin
+weiter mit 200.
+
+### 2026-09-01 — Welle 1, Schritt 5: Fünf schwache Tests scharf gestellt (`f578fed`)
+
+**Was:** (1) `test_seiten.py`: die URL-Auflösung sammelt alle benannten
+Routen samt Pfadkonvertern (Django-Admin-Namensraum ausgenommen), löst jede
+mit Beispielwerten auf und löst die Adresse **wieder zurück** – sie muss bei
+ihrem eigenen Namen ankommen; vorher wurde `NoReverseMatch` mit `pass`
+geschluckt. (2) `test_einstellungen.py`: der Prüfbefehl-Test prüft den
+Vertrag zwischen Bericht und Exitcode (Summenzeile zählt die FEHLER-/
+WARNUNG-Zeilen, Exitcode 1 genau bei mindestens einem FEHLER) statt den
+Exitcode zu verwerfen. (3) `test_seo.py`: das Testprodukt heißt
+`Jacke "Rot & Gold" <Unikat>` und trägt ein Bild; die Sitemap muss gültiges
+XML mit der Wurzel `urlset`, mindestens acht `<loc>`-Einträgen und dem
+unversehrten Namen liefern. (4) `test_seo.py`: der robots-Test ermittelt den
+tatsächlich geltenden Block (eigener, sonst `*`) und schlägt fehl, wenn
+keiner da ist oder `Disallow: /` darin steht. (5) `test_geo.py`: Brotkrume
+genau einmal mit mindestens zwei Stationen; FAQ-Schema genau auf den Seiten
+in `FAQ_SEITEN`, nie mit leerer Fragenliste – vorher waren beide grün,
+sobald das Schema ganz fehlte. `FAQ_SEITEN` enthielt zunächst
+fälschlich die Startseite (Schema dort bewusst entfernt, siehe Kommentar in
+`index.html`); korrigiert auf `/kontakt/` und `/liefergebiet/`.
+
+**Warum:** Ein Test, der nur prüft, dass nichts wirft, ist keiner. Zwei
+Gegenbeweise geführt und zurückgenommen: `kontakte` aus
+`views/__init__.py` entfernt → rot; `produkt/<slug>` vor `produkt/<int>`
+gestellt → rot (der Fehler, den das Projekt schon einmal hatte).
+
+### 2026-09-01 — Welle 2, Schritt 6: Jedem Formularfeld einen zugänglichen Namen (`4f0f878`)
+
+**Was:** 44 Felder. `aria-label` an allen Feldern, die als reines HTML im
+Template stehen: `_reviews_map.html` (Kommentarfeld, wirkt auf `/` und im
+Gästebuch), `checkout.html` (acht Adressfelder), `admin/orders_list.html`
+(Statusfilter), `admin/produkte_list.html` (Sammelaktion, „Alle Produkte
+auswählen", je Zeile „<Name> auswählen"), `admin/werbung_list.html` (zwölf
+Felder, je mit Kampagnentitel im Namen). Die 19 Felder in
+`admin/user_create.html` und `user_edit.html` rendert Django über
+`{{ form.feld }}`; dort bekommen die vorhandenen `<label>`-Elemente
+`for="{{ form.feld.id_for_label }}"` – das nutzt die Kennung, die Django
+ohnehin vergibt, und fügt keine neue hinzu. Checkbox „Aktiv schalten" und
+die Zahlungsart-Radios stehen in einem `<label>` und waren schon
+beschriftet.
+
+**Warum:** Ein Feld ohne Namen liest ein Bildschirmleser als „Eingabefeld,
+leer" (Befund BF-Formulare). Kein Element, keine Klasse, keine Kennung
+geändert. **Nachtrag (Auflage 1 der Gegenprüfung):** in `checkout.html`
+fehlte bei den acht Feldern das Leerzeichen zwischen `aria-label="…"` und
+`value=`; behoben in `b750337`, siehe unten.
+
+### 2026-09-01 — Welle 2, Schritt 7: Symbol-Links benannt, halbes ARIA-Tabmuster ersetzt (`5eb59b9`)
+
+**Was:** `aria-label` an den Symbol-Links im Admin-Panel
+(`orders_list.html`: „Bestellung #<id> ansehen/löschen", `stats.html`:
+„Bestellung #<id> ansehen"). Im Karussell von `index.html` entfallen
+`role="tablist"` und `role="tab"`; der Container trägt `role="group"` mit
+dem bisherigen `aria-label="Produkte wechseln"`, `aria-selected` wird zu
+`aria-pressed`. Ein Template-Kommentar hält die Begründung fest.
+
+**Warum:** Ein Link, der nur „👁️" enthält, hat keinen Namen. Das
+vollständige Tabmuster verlangt je Folie `role="tabpanel"` mit einer
+Kennung; Kennungen sind nach Regel 1 geschützt und stehen in
+`aufbau_referenz.json` – also der im Plan vorgesehene Rückfallweg: eine
+Schaltflächengruppe, die wahrheitsgemäß sagt, welche Folie gedrückt ist,
+statt eines halben Musters, das Bildschirmlesern ein Tabpanel verspricht,
+das es nicht gibt. Offene Frage an die Betreiberin: vollständiges Tabmuster
+mit neuen Kennungen und bewusster Aktualisierung der Designwache-Referenz?
+
+### 2026-09-01 — Welle 2, Schritt 8: Verbliebene Alternativtexte auf Beschreibungen (`9b041d1`)
+
+**Was:** Vier `alt`-Texte. `base.html` (Logo, Bild angesehen): „Luviq-
+Schriftzug in heller Schrift auf dunklem Grund mit dem Leitspruch „Less
+noise. More power."". `index.html` (Karussell): „Produktfoto: <Name>,
+Upcycling-Einzelstück von Luviq Universe" – „Upcycling" und „Einzelstück"
+stehen belegt in der Seitenbeschreibung derselben Datei. `werbung_list.html`:
+„Werbebild der Kampagne „<Titel>"" und (vorher leer) „Bisheriges Werbebild
+der Kampagne „<Titel>" (Vorschau)".
+
+**Warum:** „Luviq Universe Logo" nennt den Zweck, nicht den Inhalt; ein
+leerer `alt` an einem Vorschaubild sagt gar nichts. Offene Frage: die
+Werbebild-Texte nennen nur den Kampagnentitel – was auf dem Bild ist, weiß
+nur, wer es hochlädt; ein Feld „Bildbeschreibung" wäre eine
+Modelländerung.
+
+### 2026-09-01 — Welle 2, Schritt 9: Tastaturfokus sichtbar (`508d0ec`)
+
+**Was:** `shop1/static/shop1/style.css`: die Fokusregel heißt jetzt
+`body :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible`
+(Spezifität 0,2,1) statt `input:focus-visible` (0,1,1). Deklarationen
+unverändert (`outline: 3px solid var(--text-main)`, `outline-offset: 3px`,
+`border-radius: 4px`) – keine Farbe, kein Abstand neu. Der Kommentar über
+der Regel erklärt die Spezifitätsfrage.
+
+**Warum:** Die alte Regel verlor gegen `.form-input:focus` (setzt
+`outline: none`, 0,2,0) und Tailwinds `.focus\:outline-none:focus` (0,2,0)
+– obwohl `style.css` nach `tailwind.css` geladen wird, denn Reihenfolge
+zählt nur bei gleicher Spezifität. Auf dem dunklen Hintergrund war beim
+Tabben nicht zu erkennen, wo man steht. **Nachtrag (Gegenprüfung, Befund
+4.1/Auflage 2):** Browser lassen `:focus-visible` bei Textfeldern auch nach
+einem Mausklick zutreffen; der Ring erscheint deshalb jetzt auch beim
+Klicken in Kontakt-, Gästebuch-, Login- und Checkout-Felder, wo vorher nur
+der goldene Rahmen von `.form-input:focus` zu sehen war. Farbe und Abstand
+sind unverändert, die Sichtbarkeit ist neu. Ob das so bleibt, entscheidet
+die Betreiberin nach Sichtprüfung im Browser (offene Frage, nicht von der
+Sandbox aus prüfbar).
+
+### 2026-09-01 — Welle 2, Schritt 10: Barrierefreiheitstests ausgeweitet, 124 → 129 (`8222aed`)
+
+**Was:** Fünf neue Tests in `shop1/tests/test_barrierefreiheit.py`:
+(1) `AngemeldeteBedienungTest` – meldet eine Kundin an, legt Kommentar und
+Warenkorb an und prüft die Felder auf `INHALTSSEITEN` und `/checkout/`; der
+anonyme Test sah das Kommentarfeld der Startseite nie. (2) und (3)
+`AdminPanelBedienungTest` – als Shopbesitzerin über die `ADMIN_SEITEN` plus
+Benutzer anlegen/bearbeiten mit Produkt, Bestellung und Werbung als
+Testdaten; ein Text nur aus Symbolen („👁️", „🗑️", „→") gilt nicht als
+Name; `<label for>` auf Django-Kennung, `aria-label` und umschließendes
+`<label>` gelten als Beschriftung. (4) Logo-Alternativtext innerhalb von
+`<nav>` darf nicht nur den Zweck nennen. (5) Ein Spezifitätsrechner liest
+die `:focus-visible`-Regel aus `style.css` und verlangt, dass ihr
+schwächstes Glied strikt über `.form-input:focus` und
+`.focus\:outline-none:focus` liegt. Der bestehende Feldtest nutzt jetzt die
+gemeinsame Hilfsfunktion `_ist_beschriftet`.
+
+**Warum:** Die Schritte 6–9 sind Zusagen, die eine spätere Änderung still
+brechen kann. Vier Gegenbeweise geführt und zurückgenommen: `aria-label`
+vom Feld `betreff` entfernt → rot; Logo-Alt zurück auf „Luviq Universe
+Logo" → rot auf allen Inhaltsseiten; `aria-label` vom Löschen-Link entfernt
+→ rot (erst nach der Symbolregel – das Emoji zählte vorher als Text);
+Fokusregel zurück auf 0,1,1 → rot gegen beide Gegner.
 
 ### 2026-09-01 — Welle 3, Schritt 11: Meta-Beschreibungen auf 110–175 Zeichen, Schluss mit Aufforderung
 
@@ -1013,3 +1195,66 @@ schliesst das Feld aus; Modell nicht geändert (nicht im Plan).
 
 **Warum:** Befunde PJ02, PJ04, IS23, 01-BEFUND 4.11, 6.1 (3). Geprüft:
 `manage.py check` grün; `manage.py test shop1`: 211 von 211 grün.
+
+### 2026-09-02 — Auflagen der Gegenprüfung (Stufe 4 → 6)
+
+Die unabhängige Gegenprüfung (`04-PRUEFUNG.md`) hat mit „mit Auflagen"
+geurteilt. Je Auflage ein Commit; Auflagen, die nur die Betreiberin
+entscheiden kann, stehen als offene Fragen im Bericht `06-AUFLAGEN.md`.
+
+**Auflage 4 (`270c5f9`) – `test_geo` in der Zeitzone der Seite.**
+`test_die_produktseite_nennt_ihr_aenderungsdatum` vergleicht
+`dateModified` (im Template über `|date:'c'` in Europe/Berlin gerendert)
+jetzt mit `timezone.localtime(aktualisiert_am).date()` statt mit dem
+UTC-Datum. Warum: die Suite war täglich zwischen 22:00 und 24:00 UTC rot
+(in drei Berichten angekündigt, nie gemacht).
+
+**Auflage 1 (`b750337`) – ungültiges HTML im Checkout.** Acht fehlende
+Leerzeichen zwischen `aria-label="…"` und `value=` in `checkout.html`
+gesetzt (Rest von Schritt 6). Neuer `AttributSyntaxTest` in
+`test_seiten.py`: prüft den **Rohtext** jedes Start-Tags
+(`HTMLParser.get_starttag_text`) auf aneinanderklebende Attribute – der
+Parser selbst liest den Fehler stillschweigend richtig, deshalb sah ihn
+kein anderer Test. Geprüft werden alle öffentlichen Seiten, angemeldet
+Startseite, Gästebuch, Warenkorb, Checkout und Profil sowie das
+Admin-Panel. Gegenbeweis: vor der Korrektur genau die acht Checkout-Felder
+rot, keine andere Seite. `test_aufbau` und `test_barrierefreiheit` grün,
+Referenz unberührt.
+
+**Auflage 3 (`60555d0`) – Wissensbeiträge bis zur Bestätigung aus dem
+Index.** Jeder Eintrag in `WISSEN_BEITRAEGE` (`views/wissen.py`) trägt
+`freigegeben` (heute dreimal `False`). Nicht freigegebene Beiträge liefern
+`noindex, follow` (Bedingung **im** Block `meta_robots`), stehen nicht in
+der Sitemap und nicht in der llms.txt; die Übersicht `/wissen/` folgt und
+ist erst indexierbar, sobald ein Beitrag freigegeben ist (ihr Kurztext
+wiederholt „Waschen auf links bei 30 °C"; eine Übersicht nur auf
+`noindex`-Seiten wäre für Suchmaschinen leer). Die Seiten bleiben
+erreichbar, verlinkt und unter der Designwache; Sitemap und llms.txt lesen
+das Register selbst (`freigegebene_beitraege`, `uebersicht_indexierbar`,
+`wissen_routen_fuer_llms`). Tests: `NICHT_INDEXIERBARE_SEITEN` und
+`INDEXIERBARE_SEITEN` in `_basis.py` aus dem Register abgeleitet, damit
+sie beim Umschalten von selbst folgen; llms-Test in `test_geo` und die
+Prüfbefehl-Schwelle in `test_einstellungen` (Anzahl `<loc>` der Sitemap
+statt fest 13) nachgezogen; neuer `WissensfreigabeTest` in `test_seo`
+prüft sperren und – per Patch am Register – öffnen an allen drei Stellen.
+Warum: die Pflegeangaben (30 °C, kein Trockner, kein Weichspüler, Bügeln
+von links) und die Faustregel „fünf Zentimeter sind eine ganze Grösse"
+sind im Projekt nicht belegt; auf der eigenen Shopseite liest man sie als
+Anweisung der Verkäuferin. Der Rest des Laufs kann veröffentlicht werden,
+ohne auf die Antwort zu warten; die Freigabe ist je Beitrag ein Wort.
+
+**Auflage 5 (dieser Eintrag) – Logbuch und `CLAUDE.md`.** Einträge für
+die Schritte 1–10 nachgetragen (oben); `CLAUDE.md` nennt jetzt vierzehn
+Testmodule, `VISITOR_TRACKING` und den Geo-Pool der Besuchs-Middleware,
+die CSP-Middleware mit `CSP_MODUS`, die Weiterleitung auf `CANONICAL_HOST`,
+den Wissensbereich mit Freigabeschalter, den Prüfbefehl in `start.sh` und
+die Gunicorn-Parameter.
+
+**Auflage 2, 6, 7 – ohne Codeänderung.** Fokusring (2): Sichtprüfung im
+Browser und Entscheidung der Betreiberin, siehe Nachtrag zu Schritt 9.
+CSP (6): Vorgabe bleibt `report-only` (belegt in `settings.py`,
+`test_einstellungen`); vor `CSP_MODUS=scharf` sind `/`, `/produkte/`,
+`/gaestebuch/`, `/checkout/`, `/payment/<id>/` und das Admin-Panel mit
+offener Browserkonsole zu prüfen. Nächster Lauf (7): Schritt 38 mit Docker,
+GET-Lücke nach Freigabe, ein Konto je E-Mail, `/favicon.ico` → `.ico`,
+Pflichtmenge des Sitemap-Tests aus `INHALTSSEITEN` ableiten.
