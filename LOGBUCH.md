@@ -858,3 +858,39 @@ Klassen erben von `LuviqTestCase` (`secure=True`, beide Datenbanken).
 Geprüft: `manage.py check` grün; `manage.py test shop1`: 174 von 175
 grün, derselbe zeitbedingte, vorbestehende Fehlschlag in `test_geo`
 (Lauf um 23:55 UTC).
+
+### 2026-09-02 — Welle 9, Schritt 42: Zahlungspfad-Tests
+
+**Was:** Neues Modul `shop1/tests/test_zahlung.py`, 11 Tests über
+`views/checkout.py`. Der PayPal-Aufruf (`requests` im Modul `checkout`)
+und der Mailversand werden ersetzt, geprüft wird die Entscheidung der
+Anwendung: (1) ein zu niedrig bezahlter Betrag (1 € für 80 €, Status
+`COMPLETED`, echte Kennung) wird abgelehnt – die Bestellung bleibt
+`pending`, Lagerbestand und `aktiv` unverändert; (2) 80 in USD werden
+abgelehnt; (3) eine PayPal unbekannte Kennung (404) wird abgelehnt, die
+Abfrage geht an `api-m.sandbox.paypal.com/v2/checkout/orders/<Kennung>`;
+(4) Status `CREATED` statt `COMPLETED` wird abgelehnt; (5) `/checkout/`
+legt genau eine Bestellung an, `OrderItem` kopiert Name, Preis und
+Menge, und Umbenennen, Umpreisen oder Löschen des Produkts ändert die
+Bestellung nicht; (6) Gegenprobe: eine passende Zahlung markiert die
+Bestellung als `paid`, bucht das Einzelstück ab (Bestand 0, inaktiv)
+und die Erfolgsseite leert den Warenkorb; (7) dieselbe Kennung ein
+zweites Mal: für dieselbe Bestellung antwortet der Server ohne PayPal
+erneut zu fragen, für eine andere Bestellung mit 400 „bereits
+verwendet" – es bleibt bei einer bezahlten Bestellung; (8) wirft der
+Mailversand, bleibt die Bestellung bezahlt und der Ausfall steht mit
+Bestellnummer im Protokoll `shop1`; (9) eine fremde Bestellung lässt
+sich nicht bezahlt melden (404, kein PayPal-Aufruf); (10) der
+Willkommensrabatt senkt den Betrag auf 72 € und erlischt nach der
+Zahlung; (11) Checkout (GET und POST) und Zahlungsmeldung verlangen eine
+Anmeldung.
+
+**Warum:** `checkout.py` hatte null Tests, einschliesslich
+`_verify_paypal_order` (Befunde PJ02, PJ04, 01-BEFUND 3.3, 6.1 (5)).
+Gegenbeweis nach Plan: Betragsvergleich in `_verify_paypal_order` auf
+`return True` gesetzt → Test (1) und Test (2) rot, danach
+zurückgenommen (`git status` zeigt `checkout.py` unverändert). Der
+Betragsvergleich hat dabei keinen Fehler gezeigt – kein
+Sicherheitsbefund. Geprüft: `manage.py check` grün; `manage.py test
+shop1`: 186 von 186 grün (Lauf nach 00:00 UTC, daher auch der
+zeitbedingte Test in `test_geo` grün).
