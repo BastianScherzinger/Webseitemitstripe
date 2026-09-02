@@ -50,7 +50,42 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-_Wird vom Werkzeug geschrieben._
+**Messung vom 02.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-02a) — **Gesamtstand 70,1 von 100**, Reifegrad „Brauchbar“. 230 von 244 Regeln an 14 URLs und 114 Dateien (23.859 Zeilen) geprüft.
+
+| Bereich | Wert | Reifegrad |
+|---|---:|---|
+| Substanz & Reichweite | **40** | Rohbau |
+| Vorlagen-Konformität | **60** | Brauchbar |
+| GEO — KI-Sichtbarkeit | **61** | Brauchbar |
+| Konversion | **62** | Brauchbar |
+| SEO — Inhalt | **70** | Brauchbar |
+| Performance & Core Web Vitals | **70** | Brauchbar |
+| Recht & Vertrauen | **70** | Brauchbar |
+| Code-Qualität & Projektreife | **74** | Brauchbar |
+| Barrierefreiheit | **77** | Solide |
+| Sicherheit | **87** | Solide |
+| Betrieb & Auslieferung | **89** | Solide |
+| SEO — Technik | **90** | Solide |
+
+Keine Sperre greift.
+
+Quelltext: 114 Dateien, **115 Befunde**, davon 2 kritisch und 36 wichtig.
+
+Kritische Befunde:
+
+- **Alle Domainvarianten landen auf einer Adresse** (`TS11`) — 0 von 1 Nebenadressen landen auf der Hauptadresse — offen: https://luviq-alsfeld.com
+- **Umfang passt zur Aufgabe der Seite** (`IS18`) — Unter dem Umfang, den ihre Aufgabe verlangt: 7 von 7 Seiten — / (390/700 W), /produkte/ (62/600 W), /produkt/custom-hoodie-mit-print/ (26/600 W), /produkt/custom-print-hoodie-1/ (25/600 W), /produkt/custom-pants-sold/ (25/600 W) … (+2)
+- **Kein nennenswerter Anteil dünner Seiten** (`IS19`) — 85% der Seiten sind dünn (11 von 13): /produkte/ (62 W), /kontakt/ (91 W), /datenschutz/ (185 W), /agb/ (179 W), /gaestebuch/ (70 W) … (+6)
+- **Wissensinhalte vorhanden** (`SU04`) — 0 Wissensseiten, Zielgröße 3 — es gibt keinen einzigen Ratgeberbereich
+- **Alle Formularfelder sind beschriftet** (`BF05`) — 5 von 5 Feldern ohne Beschriftung: / (1), /kontakt/ (4) (Spamfallen sind ausgenommen)
+- **Die Datenschutzerklärung nennt die tatsächlich eingebundenen Dienste** (`RE06`) — 3 von 3 eingebundenen Diensten stehen nicht in der Datenschutzerklärung: cdn.jsdelivr.net, fonts.googleapis.com, maps.google.com
+- **Keine Google-Schriften von fremden Servern nachgeladen** (`RE07`) — 13 von 13 Seiten laden Google-Schriften von fremden Servern: fonts.googleapis.com, https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700 · betroffen: /, /produkte/, /kontakt/ … (+10)
+- **Antwort zuerst: der erste Absatz beantwortet die Frage** (`GE23`) — 1 von 13 Seiten beginnen mit einer zitierfähigen Antwort — schwach: / (weder Definition noch Zahl), /produkte/ (nur 4 Wörter), /kontakt/ (weder Definition noch Zahl), /datenschutz/ (weder Definition noch Zahl), /agb/ (weder Definition noch 
+- **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 1 von 13 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /datenschutz/, /agb/, /gaestebuch/ … (+7)
+- **Genug eigener Inhalt insgesamt** (`SU02`) — 1.557 Eigenwörter über 13 Seiten, Zielgröße 12.000 (von 2.434 Wörtern Gesamttext); die umfangreichsten Seiten: / (390 W), /liefergebiet/ (259 W), /ueber_uns/ (194 W)
+- **Das Projektgerüst liegt an der vereinbarten Stelle** (`VL01`) — Projektgerüst: 1 von 6 Gerüst-Merkmalen erfüllt — es fehlt: config/settings.py, config/urls.py, config/wsgi.py, apps/-Paket statt Wurzelmodule, reine Datenmodule (data/)
+- **Es gibt keinen kritischen Datei-Befund** (`PJ05`) — 2 kritische Befunde: mainweb/settings.py:59 ALLOWED_HOSTS steht auf '*', shop1/middleware.py:218 Ausnahme wird verschluckt
+- … und 3 weitere
 <!-- messung:ende -->
 
 **Letzter bekannter Stand** (Messung vom 02.09.2026, Regelstand 2026-09-02a): Gesamt **70,1 — „Brauchbar"**, 230 von 244 Regeln gemessen, 123 bestanden, 14 nicht messbar, keine Sperre. Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen Ordner (Zweig)** — die Zahl mischt also zwei Stände (siehe [90-NOTIZEN.md](90-NOTIZEN.md)).

@@ -8,7 +8,7 @@ zusammenfassung: PageSpeed mobil 68 (Start) bis 89, LCP mobil 5,3 s auf der Star
 offen: 8
 pagespeed_mobil: 81
 pagespeed_desktop: 92
-antwortzeit_ms: 721
+antwortzeit_ms: 10097
 quellen: DOCUMENTATION.md, LOGBUCH.md, start.sh
 ---
 
