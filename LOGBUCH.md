@@ -894,3 +894,42 @@ Betragsvergleich hat dabei keinen Fehler gezeigt – kein
 Sicherheitsbefund. Geprüft: `manage.py check` grün; `manage.py test
 shop1`: 186 von 186 grün (Lauf nach 00:00 UTC, daher auch der
 zeitbedingte Test in `test_geo` grün).
+
+### 2026-09-02 — Welle 9, Schritt 43: Konto-Tests (Registrierung, Verifizierung, Passwort, Löschung, Axes)
+
+**Was:** Neues Modul `shop1/tests/test_konto.py`, 10 Tests. Registrierung
+legt Nutzer und `UserProfile` an (unbestätigt) und verschickt genau eine
+Mail an die eingetragene Adresse, deren Inhalt den Link mit dem Token
+des Profils trägt; ein gültiger Verifizierungslink setzt
+`email_verified`, ein zweiter Aufruf schadet nicht und verbrennt den
+Token nicht; ein gefälschter Token (fremde UUID, kein UUID, Nullen)
+verifiziert nichts und leitet ohne 500 zur Startseite; ein vergebener
+Benutzername legt kein zweites Konto an und verschickt nichts; der
+Passwortwechsel verlangt das alte Passwort und meldet nicht ab; die
+Kontolöschung löscht nur per POST (GET leitet zum Profil), entfernt
+Konto und Profil und meldet ab; das Konto der Shopbesitzerin lässt sich
+nicht löschen; `django-axes` sperrt nach `AXES_FAILURE_LIMIT`
+Fehlversuchen den Benutzernamen von dieser Adresse auch mit richtigem
+Passwort (Sperrstatus laut `AXES_HTTP_RESPONSE_CODE`, Vorgabe 429, mit
+`AXES_LOCKOUT_TEMPLATE`), während eine andere Kundin von derselben
+Adresse weiter hineinkommt; ein einzelner Fehlversuch sperrt nicht und
+eine gelungene Anmeldung setzt die Zählung zurück. Sperrzustand wird in
+`setUp`/`tearDown` per `axes.utils.reset()` geleert. Die Anmeldeklassen
+laufen mit dem MD5-Test-Hasher (`override_settings`), weil rund
+dreissig PBKDF2-Hashes den Lauf um über eine Minute verlängerten.
+
+**Befund:** Der Plan erwartete „eine vorhandene E-Mail legt kein
+zweites Konto an". Das stimmt nicht: `CustomUserCreationForm` prüft die
+Adresse nicht auf Eindeutigkeit, die zweite Registrierung legt ein
+zweites Konto an und verschickt eine zweite Mail. Nicht behoben (Formular
+steht nicht im Plan, Verhalten der Registrierung ist eine Entscheidung
+über den Shop); stattdessen hält
+`test_eine_vorhandene_email_legt_heute_ein_zweites_konto_an` den
+heutigen Zustand fest und nennt im Docstring, wie er umzudrehen ist,
+sobald eine `clean_email`-Prüfung kommt.
+
+**Warum:** Null funktionale Tests für Registrierung, Verifizierung,
+Passwortwechsel, Kontolöschung (Befunde PJ02, PJ04, 01-BEFUND 3.3); die
+Axes-Einstellung „Benutzername und Adresse" war nur als Wert, nicht im
+Verhalten geprüft. Geprüft: `manage.py check` grün; `manage.py test
+shop1`: 196 von 196 grün.
