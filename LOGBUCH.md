@@ -933,3 +933,39 @@ Passwortwechsel, Kontolöschung (Befunde PJ02, PJ04, 01-BEFUND 3.3); die
 Axes-Einstellung „Benutzername und Adresse" war nur als Wert, nicht im
 Verhalten geprüft. Geprüft: `manage.py check` grün; `manage.py test
 shop1`: 196 von 196 grün.
+
+### 2026-09-02 — Welle 9, Schritt 44: Zugriffsschutz auf allen Admin-Routen
+
+**Was:** Neues Modul `shop1/tests/test_zugriffsschutz.py`, 10 Tests. Die
+Routen werden programmatisch aus dem URL-Verzeichnis gesammelt (alles
+unter `shop-admin/`, heute 24 Routen; die Zahl wird ausgegeben). Je
+Route: nicht angemeldet → 302 weg vom Panel (GET und POST); angemeldet
+als Kundin → 302 weg vom Panel (GET und POST), und der Datenstand
+(Produkte, `aktiv`, `newsletter_gesendet`, Bestellungen, Benutzer,
+Werbungen) ist danach unverändert, der Newsletterversand wurde nicht
+aufgerufen; Mitarbeiterin (`is_staff`) erreicht nur die
+`product_manager_required`-Routen, alle `admin_required`-Routen weisen
+sie ab; Superuser erreicht jede Route (200 oder Weiterleitung innerhalb
+des Panels, nie zur Startseite); `ADMIN_USERNAME` aus der Umgebung
+öffnet das Panel auch ohne `is_superuser`. Der Decorator wird am
+Funktionsobjekt geprüft: jede Route trägt das Wrapper-Codeobjekt von
+`admin_required` oder `product_manager_required`. Vollständigkeit: die
+Sammlung muss über 20 Routen finden, fünf namentlich genannte kritische
+Routen enthalten, und keine View aus `admin_views` darf ausserhalb von
+`shop-admin/` liegen. Dazu `GetLueckeHeutigerStandTest` mit drei Tests,
+die die GET-Lücke aus 01-BEFUND 6.1 (2) im heutigen Zustand festhalten:
+GET löscht einen eigenen Kommentar, GET schaltet ein Produkt um, GET
+verschickt den Newsletter an alle Abonnenten (zweimal hintereinander
+zwei Versände). Docstring: dokumentiert, nicht gebilligt; nach der
+Freigabe (Plan, Verworfen Zeile 8) bewusst umzudrehen.
+
+**Abweichung vom Plan:** Die Schwelle „über 25 Routen" ist mit 24
+tatsächlich vorhandenen Routen nicht erfüllbar (der Plan schätzte „rund
+30"). Statt einer unerreichbaren Zahl: Schwelle 20 plus die genannte
+Vollständigkeitsprüfung gegen das Modul `admin_views`.
+
+**Warum:** Bisher waren 5 von 24 Routen geprüft (Befunde PJ02, PJ04,
+01-BEFUND 3.3, 6.1 (2)); ungeprüft waren u. a. `admin_resend_newsletter`,
+`admin_user_delete`, `admin_order_delete`, `admin_produkt_toggle` und
+alle `admin_werbung_*`. Geprüft: `manage.py check` grün; `manage.py test
+shop1`: 206 von 206 grün.
