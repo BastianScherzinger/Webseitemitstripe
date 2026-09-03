@@ -1,15 +1,17 @@
 ---
 bereich: aufgaben
 titel: Aufgaben
-stand: 2026-09-02
+stand: 2026-09-03
 status: teilweise
-fortschritt: 50
+fortschritt: 40
 zusammenfassung: Nächster Schritt ist der Merge des Zweigs nach main samt CANONICAL_HOST; danach Schriften lokal, Sprungmarke, Permissions-Policy, Danke-Seite; drei Freigaben liegen bei der Betreiberin.
 offen: 9
 quellen: LOGBUCH.md, CLAUDE.md, GOOGLE_SEO_GUIDE.md
 ---
 
 # Aufgaben — Luviq Universe
+
+*Woran sich der Fortschritt bemisst: am Anteil der erledigten an allen in dieser Datei geführten Aufgaben — „Erledigt“ gegen „Erledigt + Offen + Fehlt + Beim Kunden“, auf Zehner gerundet. „Verbesserungsmöglichkeiten“ zählen nicht mit, sie sind Kür, keine Zusage. Bei allen sechs betreuten Seiten dieselbe Rechnung.*
 
 Regelkennungen verweisen auf die **Messung vom 02.09.2026 (Regelstand 2026-09-02a)**.
 „Offen" = konkret als Nächstes · „Fehlt" = noch nicht begonnen ·

@@ -1,7 +1,7 @@
 ---
 bereich: inhalte
 titel: Inhalte und Seitenbestand
-stand: 2026-09-02
+stand: 2026-09-03
 status: teilweise
 fortschritt: 40
 zusammenfassung: Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); der Zweig füllt neun Seiten mit Auskunft und bringt drei Wissensbeiträge, die bis zur Freigabe auf noindex stehen.
@@ -10,6 +10,8 @@ quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/l
 ---
 
 # Inhalte — Luviq Universe
+
+*Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Substanz** des Laufs vom 02.09.2026 (Regelstand `2026-09-02a`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
 
 ## Seitenbestand
 

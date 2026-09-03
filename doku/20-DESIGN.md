@@ -1,15 +1,17 @@
 ---
 bereich: design
 titel: Design und Gestaltungslinie
-stand: 2026-09-02
-status: vollständig
-fortschritt: 90
+stand: 2026-09-03
+status: teilweise
+fortschritt: 77
 zusammenfassung: Dunkelbraun-Gold-Linie mit Glas-Karten steht und ist durch die Designwache eingefroren; offen sind Google-Schriften von fremdem Server und englische Restbeschriftungen.
-offen: 4
+offen: 5
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, shop1/static/shop1/style.css, tailwind.config.js, templates/base.html
 ---
 
 # Design — Luviq Universe
+
+*Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Barrierefreiheit** des Laufs vom 02.09.2026 (Regelstand `2026-09-02a`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
 
 ## Gestaltungslinie
 

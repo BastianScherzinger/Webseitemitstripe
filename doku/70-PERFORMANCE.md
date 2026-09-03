@@ -1,18 +1,20 @@
 ---
 bereich: performance
 titel: Performance und Core Web Vitals
-stand: 2026-09-02
+stand: 2026-09-03
 status: teilweise
 fortschritt: 70
 zusammenfassung: PageSpeed mobil 68 (Start) bis 89, LCP mobil 5,3 s auf der Startseite und 23 s auf /produkte/; der Zweig bringt WebP, GZip, Cache und gthread, live ist davon nichts.
 offen: 8
-pagespeed_mobil: 81
-pagespeed_desktop: 92
-antwortzeit_ms: 10097
+pagespeed_mobil: 91
+pagespeed_desktop: 78
+antwortzeit_ms: 5453
 quellen: DOCUMENTATION.md, LOGBUCH.md, start.sh
 ---
 
 # Performance — Luviq Universe
+
+*Woran sich der Fortschritt bemisst: am gemessenen Tempo-Wert des Laufs vom 02.09.2026 (PageSpeed mobil doppelt, Desktop einfach gewichtet), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
 
 Alle Zahlen: **Messung vom 02.09.2026 (Regelstand 2026-09-02a)**, gemessen an der Live-Seite,
 also am Stand `main`. Der Verbesserungslauf 4 (Zweig) ist **nicht** enthalten — seine

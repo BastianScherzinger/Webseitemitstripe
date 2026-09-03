@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-09-02
+stand: 2026-09-03
 status: teilweise
 fortschritt: 70
 zusammenfassung: Gesamtstand 70,1 „Brauchbar" (02.09.2026); Verbesserungslauf 4 ist gepusht, aber nicht auf main — wartet auf die Betreiberin.
@@ -10,6 +10,8 @@ quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 ---
 
 # Stand — Luviq Universe
+
+*Woran sich der Fortschritt bemisst: am Gesamtstand der letzten Messung. Die Bezugsgröße jedes Bereichs steht in der jeweiligen Datei unter der Überschrift; sie ist bei allen sechs betreuten Seiten dieselbe.*
 
 ## Steckbrief
 
@@ -37,55 +39,55 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.2026).
 | Bereich | Status | Fortschritt | Zusammenfassung | Datei |
 |---|---|---:|---|---|
 | Wegweiser | vollständig | 100 | Elf Dateien nach Doku-Standard; die Original-Doku im Projektstamm bleibt die Detailquelle. | [README.md](README.md) |
-| Technik | teilweise | 75 | Stack läuft stabil; im Zweig warten Testsuite (215 Tests), Prüfbefehl, CSP (Report-Only) und Canonical-Host; offen bleiben `ALLOWED_HOSTS='*'`, ungepinnte Abhängigkeiten und der Python-Versionsunterschied. | [10-TECHNIK.md](10-TECHNIK.md) |
-| Design | vollständig | 90 | Dunkelbraun-Gold-Linie mit Glas-Karten steht und ist durch die Designwache eingefroren; offen sind Google-Schriften von fremdem Server und englische Restbeschriftungen. | [20-DESIGN.md](20-DESIGN.md) |
+| Technik | teilweise | 74 | Stack läuft stabil; im Zweig warten Testsuite (215 Tests), Prüfbefehl, CSP (Report-Only) und Canonical-Host; offen bleiben `ALLOWED_HOSTS='*'`, ungepinnte Abhängigkeiten und der Python-Versionsunterschied. | [10-TECHNIK.md](10-TECHNIK.md) |
+| Design | teilweise | 77 | Dunkelbraun-Gold-Linie mit Glas-Karten steht und ist durch die Designwache eingefroren; offen sind Google-Schriften von fremdem Server und englische Restbeschriftungen. | [20-DESIGN.md](20-DESIGN.md) |
 | Inhalte | teilweise | 40 | Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); der Zweig füllt neun Seiten mit Auskunft und bringt drei Wissensbeiträge, die bis zur Freigabe auf noindex stehen. | [30-INHALTE.md](30-INHALTE.md) |
-| SEO / GEO | teilweise | 60 | SEO-Technik live solide (90), Inhalt 70, GEO 61; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten und 301 auf www liegen fertig im Zweig, nicht live. | [40-SEO.md](40-SEO.md) |
-| Local SEO | fehlt | 10 | Unternehmensprofil, Search Console und Bewertungen sind nirgends dokumentiert; NAP steht konsistent im Impressum und im Schema, live auf /kontakt/ aber noch Platzhalterdaten. | [50-LOCAL-SEO.md](50-LOCAL-SEO.md) |
+| SEO / GEO | teilweise | 74 | SEO-Technik live solide (90), Inhalt 70, GEO 61; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten und 301 auf www liegen fertig im Zweig, nicht live. | [40-SEO.md](40-SEO.md) |
+| Local SEO | teilweise | 25 | Search Console seit 03.09.2026 verbunden (Property `sc-domain:luviq-alsfeld.com` im Konto …05@gmail.com); Unternehmensprofil und Bewertungen bleiben nicht dokumentiert, live auf /kontakt/ stehen noch Platzhalterdaten. | [50-LOCAL-SEO.md](50-LOCAL-SEO.md) |
 | Ads | nicht zutreffend | — | Es gibt keine Google-Ads-Kampagne und kein Konto; Voraussetzungen für Shopping-/Suchanzeigen sind benannt. | [60-ADS.md](60-ADS.md) |
 | Performance | teilweise | 70 | PageSpeed mobil 68 (Start) bis 89, LCP mobil 5,3 s auf der Startseite und 23 s auf /produkte/; der Zweig bringt WebP, GZip, Cache und gthread, live ist davon nichts. | [70-PERFORMANCE.md](70-PERFORMANCE.md) |
-| Aufgaben | teilweise | 50 | Nächster Schritt ist der Merge des Zweigs nach main samt `CANONICAL_HOST`; danach Schriften lokal, Sprungmarke, Permissions-Policy, Danke-Seite; drei Freigaben liegen bei der Betreiberin. | [80-AUFGABEN.md](80-AUFGABEN.md) |
+| Aufgaben | teilweise | 40 | Nächster Schritt ist der Merge des Zweigs nach main samt `CANONICAL_HOST`; danach Schriften lokal, Sprungmarke, Permissions-Policy, Danke-Seite; drei Freigaben liegen bei der Betreiberin. | [80-AUFGABEN.md](80-AUFGABEN.md) |
 | Notizen | vollständig | 100 | Vier Namen für ein Projekt, PayPal statt Stripe, Zweig gegenüber main, zehn Widersprüche zwischen Quellen und Live-Seite. | [90-NOTIZEN.md](90-NOTIZEN.md) |
 
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 02.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-02a) — **Gesamtstand 70,1 von 100**, Reifegrad „Brauchbar“. 230 von 244 Regeln an 14 URLs und 114 Dateien (23.859 Zeilen) geprüft.
+**Messung vom 03.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-03a) — **Gesamtstand 75,8 von 100**, Reifegrad „Solide“. 230 von 244 Regeln an 14 URLs und 126 Dateien (25.266 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Substanz & Reichweite | **40** | Rohbau |
-| Vorlagen-Konformität | **60** | Brauchbar |
-| GEO — KI-Sichtbarkeit | **61** | Brauchbar |
-| Konversion | **62** | Brauchbar |
-| SEO — Inhalt | **70** | Brauchbar |
-| Performance & Core Web Vitals | **70** | Brauchbar |
-| Recht & Vertrauen | **70** | Brauchbar |
-| Code-Qualität & Projektreife | **74** | Brauchbar |
-| Barrierefreiheit | **77** | Solide |
+| Substanz & Reichweite | **44** | Lückenhaft |
+| Konversion | **58** | Lückenhaft |
+| Vorlagen-Konformität | **64** | Brauchbar |
+| Code-Qualität & Projektreife | **69** | Brauchbar |
+| SEO — Inhalt | **73** | Brauchbar |
+| GEO — KI-Sichtbarkeit | **76** | Solide |
+| Recht & Vertrauen | **79** | Solide |
 | Sicherheit | **87** | Solide |
-| Betrieb & Auslieferung | **89** | Solide |
-| SEO — Technik | **90** | Solide |
+| Performance & Core Web Vitals | **89** | Solide |
+| Barrierefreiheit | **90** | Solide |
+| SEO — Technik | **92** | Referenz |
+| Betrieb & Auslieferung | **93** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 114 Dateien, **115 Befunde**, davon 2 kritisch und 36 wichtig.
+Quelltext: 126 Dateien, **115 Befunde**, davon 2 kritisch und 36 wichtig.
 
 Kritische Befunde:
 
 - **Alle Domainvarianten landen auf einer Adresse** (`TS11`) — 0 von 1 Nebenadressen landen auf der Hauptadresse — offen: https://luviq-alsfeld.com
-- **Umfang passt zur Aufgabe der Seite** (`IS18`) — Unter dem Umfang, den ihre Aufgabe verlangt: 7 von 7 Seiten — / (390/700 W), /produkte/ (62/600 W), /produkt/custom-hoodie-mit-print/ (26/600 W), /produkt/custom-print-hoodie-1/ (25/600 W), /produkt/custom-pants-sold/ (25/600 W) … (+2)
-- **Kein nennenswerter Anteil dünner Seiten** (`IS19`) — 85% der Seiten sind dünn (11 von 13): /produkte/ (62 W), /kontakt/ (91 W), /datenschutz/ (185 W), /agb/ (179 W), /gaestebuch/ (70 W) … (+6)
+- **Umfang passt zur Aufgabe der Seite** (`IS18`) — Unter dem Umfang, den ihre Aufgabe verlangt: 7 von 7 Seiten — / (533/700 W), /produkte/ (160/600 W), /produkt/custom-hoodie-mit-print/ (111/600 W), /produkt/custom-print-hoodie-1/ (110/600 W), /produkt/custom-pants-sold/ (110/600 W) … (+2)
+- **Kein nennenswerter Anteil dünner Seiten** (`IS19`) — 69% der Seiten sind dünn (9 von 13): /produkte/ (160 W), /kontakt/ (142 W), /agb/ (179 W), /gaestebuch/ (78 W), /produkt/custom-hoodie-mit-print/ (111 W) … (+4)
+- **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (98%), /produkt/custom-print-ho
 - **Wissensinhalte vorhanden** (`SU04`) — 0 Wissensseiten, Zielgröße 3 — es gibt keinen einzigen Ratgeberbereich
-- **Alle Formularfelder sind beschriftet** (`BF05`) — 5 von 5 Feldern ohne Beschriftung: / (1), /kontakt/ (4) (Spamfallen sind ausgenommen)
-- **Die Datenschutzerklärung nennt die tatsächlich eingebundenen Dienste** (`RE06`) — 3 von 3 eingebundenen Diensten stehen nicht in der Datenschutzerklärung: cdn.jsdelivr.net, fonts.googleapis.com, maps.google.com
+- **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 13 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /kontakt/, /datenschutz/, /agb/ … (+8)
 - **Keine Google-Schriften von fremden Servern nachgeladen** (`RE07`) — 13 von 13 Seiten laden Google-Schriften von fremden Servern: fonts.googleapis.com, https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700 · betroffen: /, /produkte/, /kontakt/ … (+10)
-- **Antwort zuerst: der erste Absatz beantwortet die Frage** (`GE23`) — 1 von 13 Seiten beginnen mit einer zitierfähigen Antwort — schwach: / (weder Definition noch Zahl), /produkte/ (nur 4 Wörter), /kontakt/ (weder Definition noch Zahl), /datenschutz/ (weder Definition noch Zahl), /agb/ (weder Definition noch 
-- **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 1 von 13 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /datenschutz/, /agb/, /gaestebuch/ … (+7)
-- **Genug eigener Inhalt insgesamt** (`SU02`) — 1.557 Eigenwörter über 13 Seiten, Zielgröße 12.000 (von 2.434 Wörtern Gesamttext); die umfangreichsten Seiten: / (390 W), /liefergebiet/ (259 W), /ueber_uns/ (194 W)
+- **Das Arbeitsverzeichnis ist sauber** (`PJ15`) — 8 unversionierte Änderungen auf Zweig main: M doku/00-STATUS.md, M doku/10-TECHNIK.md, M doku/20-DESIGN.md, M doku/30-INHALTE.md, M doku/40-SEO.md … (+3)
 - **Das Projektgerüst liegt an der vereinbarten Stelle** (`VL01`) — Projektgerüst: 1 von 6 Gerüst-Merkmalen erfüllt — es fehlt: config/settings.py, config/urls.py, config/wsgi.py, apps/-Paket statt Wurzelmodule, reine Datenmodule (data/)
+- **Genug eigener Inhalt insgesamt** (`SU02`) — 2.650 Eigenwörter über 13 Seiten, Zielgröße 12.000 (von 3.586 Wörtern Gesamttext); die umfangreichsten Seiten: / (533 W), /ueber_uns/ (376 W), /datenschutz/ (371 W)
 - **Es gibt keinen kritischen Datei-Befund** (`PJ05`) — 2 kritische Befunde: mainweb/settings.py:59 ALLOWED_HOSTS steht auf '*', shop1/middleware.py:218 Ausnahme wird verschluckt
-- … und 3 weitere
+- **Keine Kannibalisierung durch gleiche Hauptbegriffe** (`IS23`) — Von mehreren Seiten besetzte Hauptbegriffe: 1; betroffen sind 3 von 5 Seiten — custom print auf 3 Seiten (/produkt/custom-print-hoodie-1/, /produkt/custom-print-jacke/ … (+1))
+- … und 2 weitere
 <!-- messung:ende -->
 
 **Letzter bekannter Stand** (Messung vom 02.09.2026, Regelstand 2026-09-02a): Gesamt **70,1 — „Brauchbar"**, 230 von 244 Regeln gemessen, 123 bestanden, 14 nicht messbar, keine Sperre. Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen Ordner (Zweig)** — die Zahl mischt also zwei Stände (siehe [90-NOTIZEN.md](90-NOTIZEN.md)).

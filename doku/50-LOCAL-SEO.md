@@ -1,21 +1,23 @@
 ---
 bereich: local-seo
 titel: Local SEO
-stand: 2026-09-02
-status: fehlt
-fortschritt: 10
-zusammenfassung: Unternehmensprofil, Search Console und Bewertungen sind nirgends dokumentiert; NAP steht konsistent im Impressum und im Schema, live auf /kontakt/ aber noch Platzhalterdaten.
+stand: 2026-09-03
+status: teilweise
+fortschritt: 25
+zusammenfassung: Search Console seit 03.09.2026 verbunden (Property sc-domain:luviq-alsfeld.com im Konto …05@gmail.com); Unternehmensprofil und Bewertungen bleiben nicht dokumentiert, live auf /kontakt/ stehen noch Platzhalterdaten.
 offen: 5
 unternehmensprofil: unbekannt
-search_console: unbekannt
-gsc_property: nicht dokumentiert
-gsc_konto: nicht dokumentiert
+search_console: ja
+gsc_property: sc-domain:luviq-alsfeld.com
+gsc_konto: bastian.scherzinger05@gmail.com
 bewertung: nicht dokumentiert
 bewertungen_anzahl: nicht dokumentiert
 quellen: GOOGLE_SEO_GUIDE.md, templates/base.html, shop1/templates/shop1/_reviews_map.html, shop1/templates/shop1/legal/impressum.html
 ---
 
 # Local SEO — Luviq Universe
+
+*Woran sich der Fortschritt bemisst: an vier Punkten zu je 25 — Unternehmensprofil vorhanden · Search Console verbunden · Bewertungen vorhanden · NAP überall gleich. Bei allen sechs betreuten Seiten dieselben vier Punkte.*
 
 **Vorbemerkung:** Luviq ist ein Online-Shop **ohne Ladengeschäft** (belegt in `agb.html`, `ueber_uns.html`,
 llms.txt des Zweigs). Der Ortsbezug Alsfeld ist Marke und Herkunft, kein Besuchsort. Was Local SEO hier
@@ -35,14 +37,20 @@ Hinweise im Code:
 
 ## Search Console
 
-**Nicht dokumentiert.** `GOOGLE_SEO_GUIDE.md` (Schritt 1) beschreibt das Vorgehen — Property anlegen,
-Verifizierungs-Tag oder -Datei an Bastian schicken, `sitemap.xml` einreichen — als **offene Aufgabe der
-Betreiberin**; der Guide nennt als Beispiel noch die Railway-Adresse als Property. Kein Verifizierungs-Tag
-im `base.html`, keine Verifizierungsdatei im `static`-Ordner gefunden (02.09.2026). Im Werkzeug ist für
-`luviq` keine `gsc_property` hinterlegt (`sites.json`); das Werkzeug würde `sc-domain:luviq-alsfeld.com`
-**raten** — das ist ein Vorschlag, keine Tatsache.
+**Verbunden.** Am 03.09.2026 einzeln nachgeprüft: die Property **`sc-domain:luviq-alsfeld.com`** existiert
+und liegt im Konto **`bastian.scherzinger05@gmail.com`** — zusammen mit den sechs übrigen Properties; das
+zweite Konto (`…69@gmail.com`) hat keine einzige. Sie steht seither in `sites.json` des Werkzeugs, und die
+Search Console ist **per OAuth** angebunden (Cloud-Projekt `gen-lang-client-0179494625`). Damit ist die
+frühere Aussage dieser Datei überholt, das Werkzeug „würde raten": es rät nichts mehr.
 
-Folge: **Sichtbarkeit ist nicht gemessen** — keine Klicks, Impressionen oder Positionen bekannt.
+Was weiterhin gilt: `GOOGLE_SEO_GUIDE.md` (Schritt 1) beschreibt das Vorgehen aus Sicht der Betreiberin
+(Property anlegen, Verifizierungs-Tag schicken, `sitemap.xml` einreichen) und nennt als Beispiel noch die
+Railway-Adresse; im `base.html` steckt kein Verifizierungs-Tag und im `static`-Ordner keine
+Verifizierungsdatei (02.09.2026) — die Domain-Property braucht beides nicht, sie hängt am DNS-Eintrag.
+**Ob die Property auf ein Konto der Betreiberin übergehen soll, ist nicht entschieden** (siehe „Offen").
+
+Folge: Klicks, Impressionen und Positionen sind ab jetzt abrufbar; **eine erste Auswertung liegt noch
+nicht vor**.
 
 ## Bewertungen
 
@@ -70,6 +78,6 @@ Die Messung meldet KV01 „1 von 13 Seiten mit tel:-Link" — dieser eine Link i
 |---|---|
 | Zweig mergen — beseitigt das falsche NAP (Berlin, 030-Nummer, `info@luviq.universe`) und „www.luviq.de" im Impressum | Bastian |
 | Gibt es ein Google-Unternehmensprofil? Wohin zeigt `GOOGLE_REVIEW_URL`? — nachsehen, dokumentieren, ggf. anlegen (Profil muss auf die Betreiberin laufen) | Betreiberin + Bastian |
-| Search Console: Property (empfohlen `sc-domain:luviq-alsfeld.com`) auf ein Konto der Betreiberin, Bastian als Nutzer; danach `gsc_property` in `sites.json` | Betreiberin |
+| Search Console: die Property `sc-domain:luviq-alsfeld.com` liegt seit dem 03.09.2026 nachweislich im Agenturkonto `…05@gmail.com` und ist im Werkzeug eingetragen — offen bleibt die Entscheidung, ob sie auf ein Konto der Betreiberin übergeht (Bastian dann als Nutzer) | Betreiberin |
 | Telefonnummer und Erreichbarkeitszeiten — nur wenn es sie gibt (KV01, KV11, GE09) | Betreiberin |
 | Schema-Typ (`ClothingStore` vs. `OnlineStore`) und `sameAs`-Erweiterung (Profil, TikTok) | Bastian nach Angaben der Betreiberin |

@@ -1,15 +1,17 @@
 ---
 bereich: seo
 titel: SEO und GEO
-stand: 2026-09-02
+stand: 2026-09-03
 status: teilweise
-fortschritt: 60
+fortschritt: 74
 zusammenfassung: SEO-Technik live solide (90), Inhalt 70, GEO 61; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten und 301 auf www liegen fertig im Zweig, nicht live.
 offen: 9
 quellen: GOOGLE_SEO_GUIDE.md, LOGBUCH.md, DOCUMENTATION.md, shop1/views/legal.py, shop1/seiten_stand.py, templates/base.html
 ---
 
 # SEO und GEO — Luviq Universe
+
+*Woran sich der Fortschritt bemisst: am Mittel der drei gemessenen Bereichswerte **SEO-Technik, SEO-Inhalt und GEO** des Laufs vom 02.09.2026 (Regelstand `2026-09-02a`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße. Nennt die Datei zusätzlich einen Planfortschritt (etwa „52 von 73 Aufgaben“), steht der im Abschnitt „Stand“ — er misst den Plan, nicht die Seite.*
 
 ## Stand
 
@@ -24,8 +26,9 @@ Nummern. Was es gibt: `GOOGLE_SEO_GUIDE.md` (Grundausstattung + Aufgaben der Bet
 | GEO — KI-Sichtbarkeit | 61,3 | Brauchbar |
 | Substanz & Reichweite | 39,8 | Rohbau |
 
-**Sichtbarkeit ist nicht gemessen** — keine Search-Console-Anbindung, keine Klick- oder
-Positionsdaten (siehe [50-LOCAL-SEO.md](50-LOCAL-SEO.md)).
+**Sichtbarkeit: seit dem 03.09.2026 messbar.** Die Property `sc-domain:luviq-alsfeld.com` ist geprüft,
+eingetragen und per OAuth angebunden (siehe [50-LOCAL-SEO.md](50-LOCAL-SEO.md)); Klick- und Positionsdaten
+liegen aber noch nicht ausgewertet vor.
 
 **Ziel-Suchbegriffe** (`meta name="keywords"` in `base.html`, laut `GOOGLE_SEO_GUIDE.md` massgeblich):
 „Luviq", „Luviq Universe", „Second Hand Mode Alsfeld", „Vintage Mode Hessen", „handbemalte Kleidung

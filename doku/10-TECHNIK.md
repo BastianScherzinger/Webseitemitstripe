@@ -1,15 +1,17 @@
 ---
 bereich: technik
 titel: Technik, Hosting und Aufbau
-stand: 2026-09-02
+stand: 2026-09-03
 status: teilweise
-fortschritt: 75
+fortschritt: 74
 zusammenfassung: Stack läuft stabil; im Zweig warten Testsuite (215 Tests), Prüfbefehl, CSP (Report-Only) und Canonical-Host; offen bleiben ALLOWED_HOSTS='*', ungepinnte Abhängigkeiten und der Python-Versionsunterschied.
-offen: 7
+offen: 10
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, paypal_sandbox_tutorial.md, start.sh, Dockerfile, requirements.txt
 ---
 
 # Technik — Luviq Universe
+
+*Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Code-Qualität** des Laufs vom 02.09.2026 (Regelstand `2026-09-02a`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
 
 Detailquelle bleibt [`../CLAUDE.md`](../CLAUDE.md) (Architektur, Fallstricke) und
 [`../DOCUMENTATION.md`](../DOCUMENTATION.md) (Modelle, E-Mail-Flows, Admin, Sicherheit).
