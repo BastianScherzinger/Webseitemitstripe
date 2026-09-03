@@ -40,7 +40,7 @@
             
             <div class="flex items-center gap-4">
                 <form method="GET" class="flex items-center gap-2">
-                    <select name="status" class="glass px-6 py-3 rounded-xl text-[10px] font-bold text-white uppercase tracking-widest outline-none border-white/10" onchange="this.form.submit()">
+                    <select name="status" aria-label="Bestellungen nach Status filtern" class="glass px-6 py-3 rounded-xl text-[10px] font-bold text-white uppercase tracking-widest outline-none border-white/10" onchange="this.form.submit()">
                         <option value="">Alle Stati</option>
                         {% for code, label in status_choices %}
                             <option value="{{ code }}" {% if current_status == code %}selected{% endif %}>{{ label }}</option>
@@ -87,10 +87,10 @@
                             </td>
                             <td class="text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <a href="{% url 'admin_order_detail' order.id %}" class="inline-flex w-10 h-10 glass rounded-xl items-center justify-center hover:bg-glow-orange transition-all transform group-hover:scale-110">
+                                    <a href="{% url 'admin_order_detail' order.id %}" aria-label="Bestellung #{{ order.id }} ansehen" class="inline-flex w-10 h-10 glass rounded-xl items-center justify-center hover:bg-glow-orange transition-all transform group-hover:scale-110">
                                         👁️
                                     </a>
-                                    <a href="{% url 'admin_order_delete' order.id %}" class="inline-flex w-10 h-10 glass border-red-500/10 text-red-400/40 hover:text-red-400 hover:bg-red-500/10 rounded-xl items-center justify-center transition-all transform group-hover:scale-110">
+                                    <a href="{% url 'admin_order_delete' order.id %}" aria-label="Bestellung #{{ order.id }} löschen" class="inline-flex w-10 h-10 glass border-red-500/10 text-red-400/40 hover:text-red-400 hover:bg-red-500/10 rounded-xl items-center justify-center transition-all transform group-hover:scale-110">
                                         🗑️
                                     </a>
                                 </div>

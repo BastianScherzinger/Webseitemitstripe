@@ -1,11 +1,22 @@
-Django>=5.0,<7.0
-python-dotenv
-pillow
-django-axes
-gunicorn
-whitenoise
-requests
-dj-database-url
-psycopg2-binary
-cloudinary
-django-cloudinary-storage
+# Obergrenzen je Paket: ein Hauptversionssprung soll den naechsten Deploy
+# nicht ueberraschen. Die Untergrenzen bleiben offen, damit dieser Schritt
+# keine Version erzwingt, die im Container nicht geprueft werden konnte.
+#
+# ACHTUNG, ungeloester Unterschied: Der Dockerfile setzt python:3.11-slim.
+# Django 6.0 verlangt Python >= 3.12, im Container installiert pip deshalb
+# Django 5.2. Auf dem Entwicklungsrechner (Python 3.14) laeuft dagegen
+# Django 6.0 - die Testsuite prueft also eine andere Hauptversion als der
+# Betrieb. Das gehoert aufgeloest, indem entweder das Basis-Image auf
+# python:3.12-slim angehoben oder Django hier auf <6.0 begrenzt wird. Beides
+# ist ein Deploy-Eingriff und braucht einen Build zum Nachweis.
+Django>=5.0,<6.1
+python-dotenv<2.0
+pillow<12.0
+django-axes<9.0
+gunicorn<27.0
+whitenoise<7.0
+requests<3.0
+dj-database-url<4.0
+psycopg2-binary<3.0
+cloudinary<2.0
+django-cloudinary-storage<1.0

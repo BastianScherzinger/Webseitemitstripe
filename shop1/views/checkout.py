@@ -234,7 +234,7 @@ def paypal_capture(request, order_id):
         try:
             send_order_confirmation_email(order)
         except Exception:
-            pass
+            _log.exception('Bestellbestätigung konnte nicht versendet werden (Bestellung %s)', order.id)
 
         return JsonResponse({'status': 'success', 'redirect': f'/payment/success/{order.id}/'})
 

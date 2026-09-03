@@ -27,15 +27,15 @@
                     <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange">Access Credentials</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="md:col-span-2">
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Username</label>
+                            <label for="{{ form.username.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Username</label>
                             {{ form.username }}
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Master Key (Password)</label>
+                            <label for="{{ form.password1.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Master Key (Password)</label>
                             {{ form.password1 }}
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Confirm Key</label>
+                            <label for="{{ form.password2.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Confirm Key</label>
                             {{ form.password2 }}
                         </div>
                     </div>
@@ -48,15 +48,15 @@
                     <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange">Identity & Status</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">First Name</label>
+                            <label for="{{ form.first_name.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">First Name</label>
                             {{ form.first_name }}
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Last Name</label>
+                            <label for="{{ form.last_name.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Last Name</label>
                             {{ form.last_name }}
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Email Address</label>
+                            <label for="{{ form.email.id_for_label }}" class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Email Address</label>
                             {{ form.email }}
                         </div>
                     </div>
@@ -64,15 +64,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
                         <div class="flex items-center space-x-4 p-6 glass rounded-2xl border-white/5 bg-white/[0.02]">
                             {{ form.is_staff }}
-                            <label class="text-[10px] font-bold text-white uppercase tracking-widest">Admin</label>
+                            <label for="{{ form.is_staff.id_for_label }}" class="text-[10px] font-bold text-white uppercase tracking-widest">Staff</label>
                         </div>
                         <div class="flex items-center space-x-4 p-6 glass rounded-2xl border-white/5 bg-white/[0.02]">
                             {{ form.is_superuser }}
-                            <label class="text-[10px] font-bold text-white uppercase tracking-widest">Staff</label>
+                            <label for="{{ form.is_superuser.id_for_label }}" class="text-[10px] font-bold text-white uppercase tracking-widest">Admin</label>
                         </div>
                         <div class="flex items-center space-x-4 p-6 glass rounded-2xl border-white/5 bg-white/[0.02]">
                             {{ form.email_verified }}
-                            <label class="text-[10px] font-bold text-white uppercase tracking-widest">Verified</label>
+                            <label for="{{ form.email_verified.id_for_label }}" class="text-[10px] font-bold text-white uppercase tracking-widest">Verified</label>
                         </div>
                     </div>
                 </section>

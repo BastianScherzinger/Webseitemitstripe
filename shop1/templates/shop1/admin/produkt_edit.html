@@ -69,7 +69,7 @@
                             <label class="block text-[10px] font-black uppercase tracking-widest text-glow-orange mb-3">Visual Capture</label>
                             <div class="glass p-4 rounded-2xl border-white/5 bg-white/[0.02]">
                                 {% if produkt.bild %}
-                                    <img src="{{ produkt.bild.url }}" class="w-full h-32 object-cover rounded-xl mb-4 border border-white/5">
+                                    <img src="{{ produkt.bild.url }}" alt="Aktuelles Produktbild: {{ produkt.name }}" loading="lazy" decoding="async" class="w-full h-32 object-cover rounded-xl mb-4 border border-white/5">
                                 {% endif %}
                                 {{ form.bild }}
                             </div>

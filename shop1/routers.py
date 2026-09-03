@@ -1,3 +1,5 @@
+from django.conf import settings
+
 _PYSTORE_MODELS = frozenset({'werbung', 'werbungstat', 'visitorlog'})
 _NO_MIGRATE_MODELS = frozenset({'werbung', 'werbungstat'})  # von pystore-Projekt verwaltet
 
@@ -23,6 +25,12 @@ class WerbungRouter:
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
+        # Die Sperre gilt nur, solange die pystore-Datenbank wirklich vom
+        # pystore-Projekt verwaltet wird (PYSTORE_DATABASE_URL gesetzt). Ohne
+        # die Variable ist 'pystore' die eigene Datenbank; dort zu sperren
+        # liesse die Tabellen lokal und im Testlauf komplett fehlen.
+        if not getattr(settings, 'PYSTORE_IS_EXTERNAL', True):
+            return None
         if db == 'pystore':
             return False  # pystore-DB wird vom pystore-Projekt verwaltet
         if model_name in _NO_MIGRATE_MODELS:

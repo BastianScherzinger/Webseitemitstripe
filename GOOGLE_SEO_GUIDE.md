@@ -1,6 +1,8 @@
 # 🚀 Luviq Universe – Google SEO Guide
 
-Ich habe den Code deines Shops bereits für Google optimiert. Damit deine Seite aber auch wirklich gefunden wird (besonders unter dem Begriff "railway hosting luviq"), musst du noch ein paar manuelle Schritte durchführen.
+Der Code des Shops ist für Google vorbereitet. Damit die Seite auch wirklich gefunden wird, sind noch ein paar manuelle Schritte nötig.
+
+**Ziel-Suchbegriffe:** maßgeblich sind die Begriffe, die in `templates/base.html` als `meta name="keywords"` hinterlegt sind — also Marke plus Angebot plus Ort: „Luviq", „Luviq Universe", „Second Hand Mode Alsfeld", „Vintage Mode Hessen", „handbemalte Kleidung kaufen", „Upcycling Mode Deutschland", „1 of 1 Unikate". Der früher hier genannte Begriff „railway hosting luviq" war falsch: Railway ist der Hosting-Anbieter, kein Wort, nach dem Kundschaft sucht. Auf Hosting-Begriffe zu optimieren bringt keine Käufer und verwässert das Markenprofil.
 
 ## ✅ Was ich bereits getan habe:
 1.  **Dynamische Sitemap**: Unter `/sitemap.xml` wird nun automatisch eine Liste aller deiner Produkte und Seiten für Google bereitgestellt.
@@ -24,15 +26,15 @@ Wenn du "Luviq" lokal oder als Marke stärken willst:
 *   Erstelle ein kostenloses [Google Business Profil](https://www.google.com/business/).
 *   Verlinke dort deine Railway-URL. Das gibt der Seite einen massiven Boost in der Vertrauenswürdigkeit bei Google.
 
-### 3. Backlinks (Warum Railway Hosting Luviq?)
-Damit man dich unter "railway hosting luviq" findet:
-*   Verlinke deine Seite von deinen Social Media Profilen (Instagram, TikTok).
-*   Erwähne in deiner Bio Begriffe wie "Handbemalte Kunst auf Railway gehostet" oder ähnliches. Google verknüpft diese Begriffe dann mit deiner Seite.
+### 3. Backlinks
+Damit man dich unter deinen echten Suchbegriffen findet:
+*   Verlinke deine Seite von deinen Social-Media-Profilen (Instagram, TikTok).
+*   Erwähne in deiner Bio das, was du tatsächlich anbietest — z. B. „handbemalte 1-of-1 Vintage-Unikate aus Alsfeld". Google verknüpft diese Begriffe dann mit deiner Seite. Den Hosting-Anbieter dort zu nennen bringt nichts.
 
 ---
 
 ## 🛡️ Sicherheit & Dauerhaftigkeit
 *   **HTTPS**: Deine Seite läuft bereits über HTTPS (durch Railway). Das ist ein positiver Ranking-Faktor.
-*   **DEBUG-Mode**: Sobald du mit dem Testen fertig bist, sollten wir `DEBUG="False"` in der `.env` setzen. Ich habe es aktuell auf `True` gelassen, damit du PayPal testen kannst. **Wichtig:** Für Google ist eine schnelle, fehlerfreie Seite (ohne Debug-Infos) besser.
+*   **DEBUG-Mode**: `DEBUG` steht **nicht** auf `True`. `mainweb/settings.py` liest `DEBUG` aus der Umgebung und nimmt ohne gesetzte Variable `False` an (`os.getenv('DEBUG', 'False') == 'True'`). Das ist der richtige Zustand und muss so bleiben: Mit `DEBUG=True` würden bei Fehlern interne Details öffentlich angezeigt, HSTS und die Secure-Cookies wären abgeschaltet und `ALLOWED_HOSTS` stünde auf `*`. Für Google ist eine schnelle, fehlerfreie Seite ohne Debug-Infos ohnehin besser.
 
 Wenn du den Verifizierungs-Code von Google hast, sag Bescheid!

@@ -30,6 +30,26 @@ _extra_raw = [
     h.strip().removeprefix('https://').removeprefix('http://').rstrip('/')
     for h in os.getenv('ALLOWED_HOSTS_EXTRA', '').split(',') if h.strip()
 ]
+
+# ═══ KANONISCHER HOST ═══
+# Die eine Adresse, unter der die Seite laufen soll (z. B.
+# www.luviq-alsfeld.com). shop1.middleware.CanonicalHostMiddleware leitet
+# die jeweils andere www-Variante (luviq-alsfeld.com) per 301 dorthin –
+# und NUR diese: die Railway-Adresse *.up.railway.app, localhost und alles
+# andere bleiben unberührt, sonst bräche der Deploy-Zugang. Ist die
+# Variable leer, tut die Middleware nichts. PREPEND_WWW wäre falsch, es
+# schriebe auch *.up.railway.app auf www. um.
+# Wichtig: Der DNS-Eintrag beider Varianten muss auf denselben Dienst
+# zeigen, sonst kommt die Anfrage nie hier an.
+CANONICAL_HOST = (
+    os.getenv('CANONICAL_HOST', '').strip().lower()
+    .removeprefix('https://').removeprefix('http://').split('/')[0]
+)
+if CANONICAL_HOST:
+    # Beide Varianten müssen erlaubt sein, damit die Nebenvariante die
+    # Weiterleitung überhaupt erreicht statt mit 400 abgewiesen zu werden.
+    _extra_raw.append(CANONICAL_HOST)
+
 _extra = set(_extra_raw)
 for _h in _extra_raw:
     _extra.add(_h[4:] if _h.startswith('www.') else f'www.{_h}')
@@ -75,8 +95,24 @@ INSTALLED_APPS = [
 # ═══ MIDDLEWARE ═══
 
 MIDDLEWARE = [
+    # Ganz vorn, noch vor der HTTPS-Weiterleitung der SecurityMiddleware:
+    # so springt luviq-alsfeld.com in EINER 301 auf https://www.…, nicht
+    # erst auf https://luviq-alsfeld.com und dann weiter. Tut ohne
+    # CANONICAL_HOST nichts (siehe oben).
+    'shop1.middleware.CanonicalHostMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    # Content-Security-Policy (Schritt 36). Steht hinter WhiteNoise, damit
+    # statische Dateien die Kopfzeile nicht tragen – sie brauchen keine.
+    # Betriebsart und Positivliste: CSP_MODUS / CSP_QUELLEN weiter unten.
+    'shop1.middleware.ContentSecurityPolicyMiddleware',
+    # GZip für alle dynamischen Antworten (HTML, sitemap.xml, llms.txt).
+    # Steht bewusst NACH WhiteNoise: statische Dateien liefert WhiteNoise
+    # vorher aus und sie sollen nicht bei jedem Abruf neu gepackt werden.
+    # Django polstert gzip-Antworten seit 4.2 mit Zufallsbytes gegen BREACH;
+    # Antworten unter 200 Byte und solche mit eigenem Content-Encoding
+    # bleiben unangetastet.
+    'django.middleware.gzip.GZipMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -136,12 +172,39 @@ DATABASES = {
 # Railway-Variable: PYSTORE_DATABASE_URL
 # Ohne Variable: Fallback auf lokale DB (Entwicklung)
 _pystore_url = os.getenv('PYSTORE_DATABASE_URL')
+
+# Nur mit eigener PYSTORE_DATABASE_URL ist die pystore-Datenbank tatsächlich
+# fremdverwaltet (vom separaten pystore-Projekt). Ohne die Variable zeigt der
+# Alias auf die eigene Datenbank – dann muss dieses Projekt die Tabellen dort
+# selbst anlegen, sonst fehlen sie lokal und im Testlauf. WerbungRouter liest
+# dieses Flag in allow_migrate().
+PYSTORE_IS_EXTERNAL = bool(_pystore_url)
+
 if _pystore_url:
     DATABASES['pystore'] = dj_database_url.parse(_pystore_url, conn_max_age=600)
 else:
-    DATABASES['pystore'] = DATABASES['default']
+    # Bewusst eine Kopie, kein zweiter Verweis auf dasselbe dict: der
+    # Test-Runner schreibt den Namen der Testdatenbank in das
+    # Einstellungs-dict jedes Alias und würde sonst den Eintrag von
+    # 'default' überschreiben.
+    DATABASES['pystore'] = dict(DATABASES['default'])
 
 DATABASE_ROUTERS = ['shop1.routers.WerbungRouter']
+
+# ═══ CACHE ═══
+# Bisher stand hier nichts – Django nahm still einen LocMemCache. Jetzt
+# ausdrücklich, damit die Eigenschaften sichtbar sind: der Speicher lebt im
+# Prozess, jeder Gunicorn-Worker hält also seinen eigenen; Threads eines
+# Workers teilen ihn. Genutzt von cache_page (sitemap.xml, llms.txt) und der
+# Werbeliste im Kontextprozessor. CACHE_MAX_ENTRIES begrenzt den Speicher
+# je Worker; bei Erreichen wird per CULL_FREQUENCY ein Drittel verworfen.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'luviq',
+        'OPTIONS': {'MAX_ENTRIES': 300, 'CULL_FREQUENCY': 3},
+    },
+}
 
 # ═══ PASSWORT-VALIDIERUNG ═══
 
@@ -238,6 +301,56 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
 
 APPEND_SLASH = True
+
+# ═══ CONTENT-SECURITY-POLICY ═══
+# Gesetzt von shop1.middleware.ContentSecurityPolicyMiddleware, ohne Paket.
+#
+# Eine strenge Richtlinie (Nonces, kein Inline-Code) ist mit dieser Seite
+# nicht möglich: sie ist mit Inline-<script>/<style>, style="…"-Attributen,
+# on*-Handlern und Alpine.js (braucht 'unsafe-eval') gebaut, und der sicht-
+# bare Aufbau darf nicht verändert werden. Deshalb bleiben script-src und
+# style-src offen für Inline-Code – scharf sind dafür die Direktiven, die
+# Inline-Code nicht brauchen: frame-ancestors (niemand darf die Seite
+# einbetten), base-uri, form-action (Formulare gehen nur an die eigene
+# Seite) und object-src.
+#
+# Positivliste der Fremdquellen, belegt durch die Templates:
+#   cdn.jsdelivr.net   Alpine.js, GSAP, Three.js (base.html, index.html),
+#                      Chart.js (admin/stats.html, admin/werbung_list.html)
+#   fonts.googleapis.com / fonts.gstatic.com   Schriften (base.html)
+#   *.paypal.com / *.paypalobjects.com   PayPal-SDK, seine Iframes, Bilder
+#                      und Telemetrie (payment.html)
+#   maps.google.com / www.google.com   Karten-Iframe (_reviews_map.html)
+#   img-src https:     Produktbilder liegen auf res.cloudinary.com; die
+#                      Werbebilder (Werbung.bild) sind frei eingetragene
+#                      URLs beliebiger Hosts – eine engere Liste bräche sie.
+#
+# CSP_MODUS (Umgebungsvariable, ohne Deploy umschaltbar):
+#   report-only  Vorgabe. Der Browser meldet Verstösse nur in der Konsole,
+#                blockiert nichts. So lange, bis alle Seiten samt Checkout,
+#                Bezahlseite, Gästebuch-Karte und Admin-Panel im Browser
+#                ohne Meldung geprüft sind.
+#   scharf       Content-Security-Policy – der Browser blockiert.
+#   aus          keine Kopfzeile.
+CSP_MODUS = os.getenv('CSP_MODUS', 'report-only').strip().lower()
+
+CSP_QUELLEN = {
+    'default-src': ["'self'"],
+    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'",
+                   'https://cdn.jsdelivr.net',
+                   'https://*.paypal.com', 'https://*.paypalobjects.com'],
+    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+    'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
+    'img-src': ["'self'", 'data:', 'blob:', 'https:'],
+    'connect-src': ["'self'", 'https://*.paypal.com', 'https://*.paypalobjects.com'],
+    'frame-src': ['https://maps.google.com', 'https://www.google.com',
+                  'https://*.paypal.com'],
+    'manifest-src': ["'self'"],
+    'frame-ancestors': ["'none'"],
+    'base-uri': ["'self'"],
+    'form-action': ["'self'"],
+    'object-src': ["'none'"],
+}
 
 # ═══ PAYPAL ═══
 

@@ -1,10 +1,23 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static custom_tags %}
 
 {% block title %}Second Hand & Vintage Mode kaufen | Luviq Universe – Alsfeld, Hessen{% endblock %}
-{% block meta_description %}Handbemalte 1-of-1 Vintage-Unikate kaufen bei Luviq Universe aus Alsfeld, Hessen. Nachhaltige Second-Hand-Mode – einzigartig, handgemacht, deutschlandweit. Gießen, Fulda & überall.{% endblock %}
+{% block meta_description %}Alle handbemalten 1-of-1 Vintage-Unikate von Luviq Universe aus Alsfeld, Hessen: nachhaltige Second-Hand-Mode, jedes Stück nur einmal zu haben. Jetzt bestellen.{% endblock %}
 {% block og_title %}Second Hand & Vintage Mode | Luviq Universe Alsfeld{% endblock %}
 {% block og_description %}Handbemalte Vintage-Unikate aus Alsfeld, Hessen. 1-of-1 Second-Hand-Mode – nachhaltig und einzigartig. Jetzt bei Luviq Universe entdecken.{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Produkte", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}"}
+  ]
+}
+</script>
+{% endblock %}
 
 {% block schema_ld %}
 <script type="application/ld+json">
@@ -49,7 +62,7 @@
             <h1 class="text-5xl md:text-[7rem] font-black heading-font text-white uppercase tracking-tighter mb-4 animate-float">
                 The <span class="text-glow">Drop</span>
             </h1>
-            <p class="text-white/40 text-lg md:text-xl font-light tracking-[0.4em] uppercase">Handverlesene Vintage-Unikate, neu interpretiert.</p>
+            <p class="text-white/40 text-lg md:text-xl font-light tracking-[0.4em] uppercase">Hier stehen alle Einzelstücke, die zurzeit bei Luviq Universe zu haben sind: handverlesene Second-Hand- und Vintage-Kleidung, von Luisa Brehler in Alsfeld von Hand bemalt. Jedes Stück gibt es nur einmal – 1-of-1 heißt: ein Motiv, ein Teil, keine zweite Auflage und keine Nachbestellung. Jedes Stück entsteht aus einem getragenen Basisteil, das Luisa Brehler auswählt und mit Pinsel und Textilfarbe bemalt. Bestellt wird nach der Anmeldung über den Warenkorb, bezahlt per PayPal oder Vorab-Überweisung; alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen. Ein verkauftes Stück wird nicht neu aufgelegt.</p>
             <div class="h-1 w-32 bg-glow-orange mt-12 rounded-full"></div>
         </div>
 
@@ -65,7 +78,10 @@
                 <!-- Image Container -->
                 <div class="relative h-[20rem] sm:h-[28rem] overflow-hidden group">
                     {% if produkt.bild %}
-                        <img src="{{ produkt.bild.url }}" alt="{{ produkt.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[10%] group-hover:grayscale-0" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" decoding="async">
+                        <img src="{{ produkt.bild.url|cloud:'w_800,h_1000,c_fill' }}"
+                             srcset="{{ produkt.bild.url|cloud:'w_400,h_500,c_fill' }} 400w, {{ produkt.bild.url|cloud:'w_800,h_1000,c_fill' }} 800w, {{ produkt.bild.url|cloud:'w_1200,h_1500,c_fill' }} 1200w"
+                             sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw"
+                             alt="{{ produkt.name }} – handbemaltes Upcycling-Unikat von Luviq Universe" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[10%] group-hover:grayscale-0" width="800" height="1000" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" {% if forloop.first %}fetchpriority="high"{% endif %} decoding="async">
                     {% endif %}
                     <div class="shimmer-mask absolute inset-0 opacity-20"></div>
                     
@@ -83,16 +99,16 @@
                 <div class="p-6 sm:p-10 flex flex-col flex-grow">
                     <div class="mb-6">
                         <h3 class="text-2xl font-bold heading-font text-white mb-2">{{ produkt.name }}</h3>
-                        <p class="text-white/30 text-xs font-light tracking-widest uppercase">Vintage Custom Art</p>
+                        <p class="text-white/30 text-xs font-light tracking-widest uppercase">Handbemaltes 1-of-1 Unikat</p>
                     </div>
                     
                     <div class="mt-auto flex items-center justify-between">
                         <div class="flex flex-col">
-                            <span class="text-[10px] text-white/30 uppercase tracking-widest mb-1">Investition</span>
+                            <span class="text-[10px] text-white/30 uppercase tracking-widest mb-1">Endpreis</span>
                             <span class="text-2xl font-black text-glow">{{ produkt.preis }} €</span>
                         </div>
-                        <a href="{{ produkt.get_absolute_url }}" class="w-14 h-14 btn-glow rounded-2xl flex items-center justify-center text-white transition-all transform hover:rotate-12 group shadow-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        <a href="{{ produkt.get_absolute_url }}" aria-label="{{ produkt.name }} ansehen" class="w-14 h-14 btn-glow rounded-2xl flex items-center justify-center text-white transition-all transform hover:rotate-12 group shadow-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                         </a>
                     </div>
                 </div>

@@ -7,8 +7,6 @@ from functools import wraps
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.conf import settings
-from django.db.models import Count, Q
 
 import json
 from datetime import timedelta
@@ -16,7 +14,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 from .forms import ProduktForm, AdminUserEditForm, AdminUserCreationForm
-from .models import Produkt, UserProfile, Order, OrderItem, PageVisit, Werbung, WerbungStat, VisitorLog
+from .models import Produkt, Order, PageVisit, Werbung, WerbungStat, VisitorLog
 
 _log = logging.getLogger('shop1')
 
@@ -147,7 +145,6 @@ def admin_werbung_list(request):
     """Werbungen verwalten – Budget, Klicks, Views + Charts (nur eigene Kampagnen)."""
     from django.db.models import Sum
     from django.db.models.functions import Lower
-    from datetime import timedelta
 
     site_name = os.getenv('SITE_NAME', 'luviq')
 

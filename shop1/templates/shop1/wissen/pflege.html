@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Handbemalte Kleidung pflegen: Waschen, Trocknen, Bügeln | Luviq{% endblock %}
+{% block meta_description %}Wie man handbemalte Kleidung wäscht, trocknet, bügelt und lagert, damit die Bemalung möglichst lange hält – Pflegehinweise von Luviq Universe aus Alsfeld. Jetzt nachlesen.{% endblock %}
+{% block og_title %}Wie pflege ich handbemalte Kleidung? – Luviq Universe{% endblock %}
+{% block og_description %}Waschen auf links bei 30 °C, Lufttrocknung, Bügeln nur von links, Lagerung ohne Druck auf die Bemalung – die Pflegeregeln für handbemalte Einzelstücke.{% endblock %}
+{% block twitter_title %}Wie pflege ich handbemalte Kleidung? – Luviq Universe{% endblock %}
+{% block twitter_description %}Pflegeregeln für handbemalte Kleidung: Waschen, Trocknen, Bügeln, Lagern, Flecken.{% endblock %}
+{% comment %}Freigabe der Betreiberin: siehe views/wissen.py. Die Bedingung steht IM Block, nicht darum herum (CLAUDE.md).{% endcomment %}
+{% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Wissen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen' %}"},
+    {"@type": "ListItem", "position": 3, "name": "Wie pflege ich handbemalte Kleidung?", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen_pflege' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block schema_ld %}
+{% comment %}Jede Frage steht wortgleich als h2 auf der Seite, jede Antwort wortgleich als erster Absatz unter dieser h2. Wer hier etwas aendert, muss es dort mitaendern - test_geo prueft beides. Textilpflege ist allgemeines Sachwissen; ueber Luviq steht hier nur, was Ueber-uns, Liefergebiet und AGB belegen.{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Wie wasche ich handbemalte Kleidung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Auf links drehen, damit die bemalte Fläche innen liegt, und einzeln oder mit ähnlichen Farben im Schonprogramm bei kaltem Wasser oder 30 °C waschen. Ein mildes Flüssigwaschmittel ohne Bleiche und ohne optische Aufheller ist die sichere Wahl; Weichspüler kann Textilfarbe anlösen und bleibt deshalb weg. Niedrige Schleuderzahl, kein Vorwaschprogramm, kein Einweichen."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie trockne ich ein handbemaltes Stück?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An der Luft, liegend auf einem Handtuch oder hängend auf einem breiten Bügel, nicht in der prallen Sonne und nicht auf der Heizung. Der Wäschetrockner bleibt aus: Hitze und Reibung in der Trommel setzen der Farbe stärker zu als jede Wäsche."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Darf ich handbemalte Kleidung bügeln?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja, aber nur von links und mit einem Tuch zwischen Stoff und Eisen, bei niedriger bis mittlerer Temperatur und ohne Dampf direkt auf der Bemalung. Das heiße Eisen darf die Farbe nie unmittelbar berühren – sie kann sonst glänzend werden, kleben oder am Eisen haften bleiben."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie lagere ich handbemalte Kleidung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Trocken, dunkel und ohne Druck auf die bemalte Fläche: Jacken und Hemden hängen auf einem breiten Bügel, Shirts liegen gefaltet, am besten mit Seidenpapier auf der Bemalung. Nicht in Plastik einschweißen, nicht direkt neben der Heizung und nicht wochenlang in der Sonne am Fenster."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was mache ich bei einem Fleck auf der bemalten Fläche?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sofort mit kaltem Wasser abtupfen, nicht reiben, keinen Fleckenentferner und keine Bleiche auf die Bemalung geben. Danach das Stück wie gewohnt schonend waschen. Chemische Reinigung ist für Textilfarbe keine gute Idee – die Lösungsmittel können sie anlösen."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was gilt für ein einzelnes Stück von Luviq Universe?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Jedes Stück von Luviq Universe ist ein von Hand bemaltes Einzelstück auf getragener Second-Hand- oder Vintage-Kleidung. Weil das Basisteil jedes Mal ein anderes ist, gibt es keine einheitliche Pflegeanleitung: Maßgeblich ist das Pflegeetikett des Basisteils, für die Bemalung gelten die Regeln auf dieser Seite. Ob ein bestimmtes Stück eine Besonderheit hat, lässt sich vor dem Kauf über das Kontaktformular nachfragen."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <!-- Kopf: Antwort zuerst -->
+        <div class="mb-20 animate-reveal text-center">
+            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-glow-orange mb-6"><a href="{% url 'wissen' %}" class="hover:text-white transition-colors">Wissen</a></p>
+            <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
+                Wie pflege ich <span class="text-glow">handbemalte Kleidung?</span>
+            </h1>
+            <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
+                Handbemalte Kleidung wäscht man auf links gedreht, kalt oder bei 30 °C im Schonprogramm, ohne Bleichmittel und ohne Weichspüler – und lässt sie an der Luft trocknen statt im Trockner. Gebügelt wird nur von links, nie direkt auf der Farbe. Gelagert wird das Stück trocken, ohne direktes Sonnenlicht und so, dass die bemalte Fläche nicht an anderen Stoffen reibt. Diese Regeln sind allgemeine Textilpflege für Textilfarbe auf Baumwolle und ähnlichen Stoffen; sie gelten auch für die Einzelstücke von Luviq Universe aus Alsfeld, die Luisa Brehler mit Pinsel und Textilfarbe auf getragener Second-Hand-Kleidung bemalt.
+            </p>
+            <div class="h-px w-32 bg-glow-orange mt-16 rounded-full mx-auto"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto space-y-6">
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie wasche ich handbemalte Kleidung?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Auf links drehen, damit die bemalte Fläche innen liegt, und einzeln oder mit ähnlichen Farben im Schonprogramm bei kaltem Wasser oder 30 °C waschen. Ein mildes Flüssigwaschmittel ohne Bleiche und ohne optische Aufheller ist die sichere Wahl; Weichspüler kann Textilfarbe anlösen und bleibt deshalb weg. Niedrige Schleuderzahl, kein Vorwaschprogramm, kein Einweichen.</p>
+                <p class="text-white/50 leading-relaxed font-light">Handwäsche ist die schonendste Variante: lauwarmes Wasser, das Waschmittel vorher auflösen, das Stück kurz bewegen, nicht reiben und nicht auswringen. Wer die Maschine benutzt, steckt das Teil in einen Wäschebeutel, damit Reißverschlüsse und Knöpfe anderer Kleidung nicht an der Farbe kratzen. Vor der ersten Wäsche lohnt ein Blick auf das Pflegeetikett des Basisteils – bei Second-Hand-Kleidung ist es oft noch vorhanden und sagt, was der Stoff selbst verträgt. Wie oft gewaschen wird, entscheidet die Trägerin: Lüften nach dem Tragen ersetzt bei Jacken viele Wäschen ganz.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie trockne ich ein handbemaltes Stück?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">An der Luft, liegend auf einem Handtuch oder hängend auf einem breiten Bügel, nicht in der prallen Sonne und nicht auf der Heizung. Der Wäschetrockner bleibt aus: Hitze und Reibung in der Trommel setzen der Farbe stärker zu als jede Wäsche.</p>
+                <p class="text-white/50 leading-relaxed font-light">Nasse Textilfarbe ist weicher als trockene. Deshalb das Stück nach dem Waschen in Form ziehen, die bemalte Fläche glatt streichen und erst wieder tragen oder zusammenlegen, wenn alles vollständig trocken ist – auch Nähte, Bund und Kragen. Ein Stück, das noch feucht gefaltet wird, kann an den Knickstellen der Bemalung Abdrücke bekommen. Ein Bügel mit schmalem Drahtbogen drückt sich bei schweren Jacken in die Schultern; ein breiter Holz- oder Kunststoffbügel verteilt das Gewicht.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Darf ich handbemalte Kleidung bügeln?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Ja, aber nur von links und mit einem Tuch zwischen Stoff und Eisen, bei niedriger bis mittlerer Temperatur und ohne Dampf direkt auf der Bemalung. Das heiße Eisen darf die Farbe nie unmittelbar berühren – sie kann sonst glänzend werden, kleben oder am Eisen haften bleiben.</p>
+                <p class="text-white/50 leading-relaxed font-light">Am einfachsten ist es, die Bemalung ganz auszusparen und nur die unbemalten Flächen zu bügeln. Falten in der bemalten Fläche verschwinden meist schon, wenn das Stück nach dem Waschen glatt gezogen und liegend getrocknet wird. Ein Dampfglätter mit Abstand ist eine Alternative für die Ränder – auch damit nicht direkt auf die Farbe halten. Welche Temperatur der Stoff selbst verträgt, steht auf dem Pflegeetikett des Basisteils; Baumwolle verträgt mehr als Mischgewebe mit Kunstfaser.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie lagere ich handbemalte Kleidung?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Trocken, dunkel und ohne Druck auf die bemalte Fläche: Jacken und Hemden hängen auf einem breiten Bügel, Shirts liegen gefaltet, am besten mit Seidenpapier auf der Bemalung. Nicht in Plastik einschweißen, nicht direkt neben der Heizung und nicht wochenlang in der Sonne am Fenster.</p>
+                <p class="text-white/50 leading-relaxed font-light">Zwei Stücke, deren bemalte Flächen aufeinander liegen, können bei Wärme aneinander haften – deshalb Papier oder ein Stück Baumwollstoff dazwischen legen. Wer ein Stück lange nicht trägt, faltet es gelegentlich neu, damit keine dauerhaften Knicke in der Bemalung entstehen. Sonnenlicht bleicht Farben über Monate aus; das gilt für bedruckte wie für bemalte Kleidung. Ein luftdurchlässiger Kleidersack aus Stoff schützt vor Staub, ohne Feuchtigkeit einzuschließen.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Was mache ich bei einem Fleck auf der bemalten Fläche?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Sofort mit kaltem Wasser abtupfen, nicht reiben, keinen Fleckenentferner und keine Bleiche auf die Bemalung geben. Danach das Stück wie gewohnt schonend waschen. Chemische Reinigung ist für Textilfarbe keine gute Idee – die Lösungsmittel können sie anlösen.</p>
+                <p class="text-white/50 leading-relaxed font-light">Ein Fleck neben der Bemalung darf mit einem milden Mittel behandelt werden, solange die Farbe selbst trocken bleibt und nichts über den Rand läuft. Sitzt der Fleck auf der Bemalung, helfen am ehesten ein weiches Tuch, kaltes Wasser und Geduld. Ein handbemaltes Stück ist ein Unikat: Was beschädigt ist, lässt sich nicht nachkaufen – deshalb lieber einmal zu vorsichtig als einmal zu kräftig.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Was gilt für ein einzelnes Stück von Luviq Universe?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Jedes Stück von Luviq Universe ist ein von Hand bemaltes Einzelstück auf getragener Second-Hand- oder Vintage-Kleidung. Weil das Basisteil jedes Mal ein anderes ist, gibt es keine einheitliche Pflegeanleitung: Maßgeblich ist das Pflegeetikett des Basisteils, für die Bemalung gelten die Regeln auf dieser Seite. Ob ein bestimmtes Stück eine Besonderheit hat, lässt sich vor dem Kauf über das Kontaktformular nachfragen.</p>
+                <p class="text-white/50 leading-relaxed font-light">Wie lange eine Bemalung schön bleibt, hängt von Stoff, Farbe und Pflege ab; eine Zahl dafür nennt diese Seite bewusst nicht. Die verfügbaren Einzelstücke stehen unter <a href="{% url 'produkte' %}" class="text-glow-orange hover:underline">Alle Unikate</a>; versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen. Fragen zu Material, Farbe oder Maßen eines bestimmten Teils nimmt das <a href="{% url 'kontakt' %}" class="text-glow-orange hover:underline">Kontaktformular</a> entgegen.</p>
+            </section>
+        </div>
+
+        <!-- Weiterlesen -->
+        <div class="text-center mt-16">
+            <a href="{% url 'wissen' %}" class="inline-block px-12 py-5 rounded-full bg-glow-orange text-white text-sm font-black uppercase tracking-widest hover:shadow-[0_0_30px_rgba(200,150,92,0.5)] transition-all transform hover:scale-105 active:scale-95">
+                Alle Wissensbeiträge
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

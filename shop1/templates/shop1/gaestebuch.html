@@ -2,9 +2,22 @@
 {% load static %}
 
 {% block title %}Gästebuch – Community bei Luviq Universe | Vintage Upcycling Mode{% endblock %}
-{% block meta_description %}Lies Erfahrungen unserer Community mit handbemalten Vintage-Unikaten von Luviq Universe. Teile deine eigene Erfahrung mit nachhaltiger Upcycling-Mode aus Deutschland.{% endblock %}
+{% block meta_description %}Gästebuch von Luviq Universe aus Alsfeld: Rückmeldungen von Kundinnen und Kunden zu ihren handbemalten Einzelstücken. Jetzt lesen oder selbst einen Beitrag schreiben.{% endblock %}
 {% block og_title %}Gästebuch – Luviq Universe Community{% endblock %}
 {% block og_description %}Was unsere Kunden über handbemalte Upcycling-Mode von Luviq Universe sagen. Echte Erfahrungen mit nachhaltigem Second-Hand-Fashion aus Deutschland.{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Gästebuch", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'gaestebuch' %}"}
+  ]
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <div class="relative min-h-screen pt-32 pb-40">
@@ -18,7 +31,7 @@
             <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                 Guest <span class="text-glow">Book</span>
             </h1>
-            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Teile deine Gedanken mit dem Orbit</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Im Gästebuch von Luviq Universe stehen Rückmeldungen von Kundinnen und Kunden zu ihren handbemalten Einzelstücken. Wer angemeldet ist, kann selbst einen Beitrag schreiben. Luviq Universe ist ein reiner Online-Shop aus 36304 Alsfeld in Hessen ohne Ladengeschäft: Luisa Brehler bemalt gebrauchte Vintage-Kleidung von Hand, jedes Stück gibt es nur einmal, versendet wird deutschlandweit in der Regel innerhalb von 1-2 Werktagen.</p>
         </header>
 
         <!-- Google Maps + Bewertungen -->
@@ -34,7 +47,7 @@
             <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-10">Neuer Beitrag</h3>
             <form action="{% url 'comment_add' %}" method="POST">
                 {% csrf_token %}
-                <textarea name="text" rows="4" required
+                <textarea name="text" rows="4" required aria-label="Dein Beitrag fürs Gästebuch"
                     class="w-full bg-white/5 border border-white/10 rounded-3xl p-8 text-white focus:outline-none focus:border-glow-orange transition-all font-light tracking-wide placeholder:text-white/10 mb-8"
                     placeholder="Wie gefällt dir dein Unikat?"></textarea>
                 
@@ -48,7 +61,7 @@
         {% else %}
         <div class="glass-card p-10 text-center rounded-[3rem] mb-24 border-white/5">
             <p class="text-white/30 text-xs uppercase tracking-widest">
-                Bitte <a href="{% url 'login' %}" class="text-glow-orange hover:underline">logge dich ein</a>, um einen Beitrag zu schreiben.
+                Beiträge können nur angemeldete Nutzerinnen und Nutzer schreiben. Bitte <a href="{% url 'login' %}" class="text-glow-orange hover:underline">logge dich ein</a>, um einen Beitrag zu schreiben.
             </p>
         </div>
         {% endif %}
@@ -119,7 +132,7 @@
                 <!-- Reply Form (Toggle) -->
                 {% if user.is_authenticated %}
                 <div class="mt-10 pt-8 border-t border-white/5">
-                    <button @click="showReply = !showReply" class="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-glow-orange transition-all">
+                    <button type="button" @click="showReply = !showReply" aria-label="Antwortfeld ein- oder ausblenden" :aria-expanded="showReply ? 'true' : 'false'" class="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-glow-orange transition-all">
                         ← Antworten
                     </button>
                     
@@ -127,7 +140,7 @@
                         <form action="{% url 'comment_add' %}" method="POST" class="flex gap-4">
                             {% csrf_token %}
                             <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                            <input type="text" name="text" required
+                            <input type="text" name="text" required aria-label="Deine Antwort auf diesen Beitrag"
                                 class="flex-grow bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-xs text-white focus:outline-none focus:border-glow-orange transition-all font-light"
                                 placeholder="Deine Antwort...">
                             <button type="submit" class="btn-glow px-6 py-4 rounded-2xl text-white font-black uppercase tracking-widest text-[8px]">Send</button>

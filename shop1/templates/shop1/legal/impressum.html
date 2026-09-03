@@ -1,12 +1,26 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Impressum – Luviq Universe | Alsfeld, Hessen{% endblock %}
+{% block meta_description %}Anbieterkennzeichnung von Luviq Universe: Luisa Brehler, Grünberger Str. 16, 36304 Alsfeld. Kontaktdaten, Verantwortliche und rechtliche Hinweise hier nachlesen.{% endblock %}
 {% block meta_robots %}noindex, follow{% endblock %}
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Impressum", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'impressum' %}"}
+  ]
+}
+</script>
+{% endblock %}
 {% block schema_ld %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
+  "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
   "name": "Luviq Universe",
   "legalName": "Luisa Brehler – Luviq Universe",
   "address": {
@@ -38,7 +52,7 @@
                 <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                     Legal <span class="text-glow">Notice</span>
                 </h1>
-                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Impressum & Transparency</p>
+                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Impressum & Transparency – dieses Impressum nennt die Anbieterin von Luviq Universe, Luisa Brehler aus 36304 Alsfeld in Hessen, ihre Kontaktadresse und den Hinweis zur Streitschlichtung.</p>
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-20">
@@ -63,7 +77,8 @@
                         </div>
                         <div class="text-white/40 leading-relaxed font-light pl-12">
                             <p>E-Mail: <a href="mailto:brehlerluisa@gmail.com" class="text-glow-orange hover:underline">brehlerluisa@gmail.com</a></p>
-                            <p>Website: <a href="https://luviq.de" class="hover:text-white transition-colors">www.luviq.de</a></p>
+                            {# Hier stand "www.luviq.de" - eine Adresse, unter der dieses Projekt nicht erreichbar ist. Die Seite nennt jetzt den Host, unter dem sie tatsaechlich ausgeliefert wird; damit stimmt die Angabe unabhaengig davon, welche Domain gerade davorsteht. #}
+                            <p>Website: <a href="{{ request.scheme }}://{{ request.get_host }}/" class="hover:text-white transition-colors">{{ request.get_host }}</a></p>
                         </div>
                     </section>
                 </div>

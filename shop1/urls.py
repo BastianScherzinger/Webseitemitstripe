@@ -9,6 +9,8 @@ urlpatterns = [
     path('werbung/klick/<int:werbung_id>/', views.werbung_klick, name='werbung_klick'),
     path('paypal/capture/<int:order_id>/', views.paypal_capture, name='paypal_capture'),
     path('produkte/', views.produkte, name='produkte'),
+    # Muss vor produkt/<slug:slug>/ stehen: /produkt/ ohne Kennung -> 301 auf die Uebersicht.
+    path('produkt/', views.produkt_uebersicht_redirect, name='produkt_uebersicht_redirect'),
     path('produkt/<int:produkt_id>/', views.produkt_detail_redirect, name='produkt_detail'),
     path('produkt/<slug:slug>/', views.produkt_detail_slug, name='produkt_detail_slug'),
     path('kontakt/', views.kontakt, name='kontakt'),
@@ -58,6 +60,7 @@ urlpatterns = [
     # ═══ SEO ═══
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
+    path('llms.txt', views.llms_txt, name='llms_txt'),
 
     # ═══ GÄSTEBUCH & KOMMENTARE ═══
     path('gaestebuch/', views.gaestebuch, name='gaestebuch'),
@@ -65,9 +68,26 @@ urlpatterns = [
     path('comment/<int:comment_id>/like/', views.comment_like, name='comment_like'),
     path('comment/<int:comment_id>/delete/', views.comment_delete, name='comment_delete'),
 
-    # Favicon Fix
-    path('favicon.ico', RedirectView.as_view(url='/static/shop1/favicon.ico')),
-    path('favicon.png', RedirectView.as_view(url='/static/shop1/favicon.png')),
+    # ═══ WISSEN ═══
+    # Übersicht plus eine Route je Beitrag aus dem Register views/wissen.py:
+    # fester Pfad /wissen/<slug>/ und ein eigener Routenname, weil Sitemap,
+    # seiten_stand.py und llms.txt Seiten über den Routennamen ansprechen.
+    path('wissen/', views.wissen, name='wissen'),
+    *[
+        path(f'wissen/{slug}/', views.wissen_beitrag, {'slug': slug}, name=beitrag['url_name'])
+        for slug, beitrag in views.WISSEN_BEITRAEGE.items()
+    ],
+
+    # Favicon: Browser fragen /favicon.ico unabhaengig vom <link> im <head> an.
+    # Beide Routen zeigten bisher auf /static/shop1/favicon.ico bzw. .png –
+    # keine der beiden Dateien existiert. Das einzige vorhandene Symbol ist
+    # shop1/images/flavicon.jpeg; collectstatic legt es unter diesem Namen
+    # zusaetzlich zur inhaltsgehashten Fassung ab, der Pfad traegt also auch
+    # mit ManifestStaticFilesStorage.
+    path('favicon.ico', RedirectView.as_view(
+        url='/static/shop1/images/flavicon.jpeg', permanent=True)),
+    path('favicon.png', RedirectView.as_view(
+        url='/static/shop1/images/flavicon.jpeg', permanent=True)),
 
     # ═══ ADMIN ROUTES ═══
     path('shop-admin/dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),

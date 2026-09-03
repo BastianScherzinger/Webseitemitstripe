@@ -1,29 +1,150 @@
 import logging
 import os
-import re
 import threading
+from concurrent.futures import ThreadPoolExecutor
+from urllib.parse import urlsplit
+from django.conf import settings
+from django.http import HttpResponsePermanentRedirect
 from django.utils import timezone
 from django.db.models import F
 from .models import PageVisit, VisitorLog
 
 _log = logging.getLogger('shop1')
 
-_SKIP = ('/static/', '/media/', '/admin/', '/favicon', '/robots.txt',
-         '/sitemap.xml', '/health', '/__debug__')
 
-# Bots/Crawler/Scanner senden i.d.R. keine Cookies zurück -> jede ihrer
-# Anfragen sieht fuer das Session-Dedup wie ein "neuer Besucher" aus und
-# hat sonst bei jedem Hit eine Admin-Mail ausgelöst (Ursache der Mail-Flut).
-_BOT_UA_RE = re.compile(
-    r'bot|crawl|spider|slurp|facebookexternalhit|telegrambot|whatsapp|'
-    r'discordbot|slackbot|linkedinbot|embedly|quora link preview|'
-    r'pinterest|vkshare|redditbot|applebot|ia_archiver|semrushbot|'
-    r'ahrefsbot|mj12bot|dotbot|petalbot|bytespider|gptbot|ccbot|'
-    r'python-requests|curl/|wget/|go-http-client|okhttp|scrapy|'
-    r'headlesschrome|phantomjs|uptimerobot|pingdom|statuscake|gtmetrix|'
-    r'monitor',
-    re.IGNORECASE,
-)
+# ═══ KANONISCHER HOST ══════════════════════════════════════════════════════
+
+def kanonischer_host():
+    """``settings.CANONICAL_HOST`` in Kleinbuchstaben, leer = abgeschaltet.
+
+    Je Anfrage gelesen, damit Tests den Wert überschreiben können und ein
+    Umschalten der Variablen ohne Neustart wirkt.
+    """
+    return str(getattr(settings, 'CANONICAL_HOST', '') or '').strip().lower()
+
+
+def nebenvariante(host):
+    """Die jeweils andere www-Schreibweise: ``www.x.de`` ↔ ``x.de``."""
+    return host[4:] if host.startswith('www.') else f'www.{host}'
+
+
+class CanonicalHostMiddleware:
+    """Leitet die www-/Nicht-www-Nebenvariante per 301 auf CANONICAL_HOST.
+
+    Bewusst eng: umgeleitet wird ausschliesslich der Host, der sich vom
+    kanonischen nur durch das ``www.`` unterscheidet. Die Railway-Adresse,
+    ``localhost`` und jeder andere erlaubte Host bleiben, wie sie sind – eine
+    breitere Regel könnte den Deploy-Zugang oder die Health-Checks treffen
+    und im schlimmsten Fall eine Endlosschleife bauen. Der kanonische Host
+    selbst wird nie umgeleitet, deshalb kann es keine Schleife geben.
+
+    Pfad und Query bleiben erhalten; das Schema ist ``https``, sobald die
+    Anfrage sicher ist oder ``SECURE_SSL_REDIRECT`` gilt – so entsteht eine
+    einzige Weiterleitung statt der Kette http → https → www.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        ziel = kanonischer_host()
+        if ziel:
+            # get_host() prüft gegen ALLOWED_HOSTS; DisallowedHost wird von
+            # Django wie überall sonst zu 400.
+            host = (urlsplit('//' + request.get_host()).hostname or '').lower()
+            if host == nebenvariante(ziel):
+                sicher = request.is_secure() or getattr(settings, 'SECURE_SSL_REDIRECT', False)
+                schema = 'https' if sicher else 'http'
+                return HttpResponsePermanentRedirect(
+                    f'{schema}://{ziel}{request.get_full_path()}'
+                )
+        return self.get_response(request)
+
+
+# ═══ CONTENT-SECURITY-POLICY ═══════════════════════════════════════════════
+
+#: Betriebsarten der Richtlinie, gesetzt über ``settings.CSP_MODUS``
+#: (Umgebungsvariable ``CSP_MODUS``). Die Erklärung der Quellen und der
+#: Reihenfolge report-only → scharf steht in ``mainweb/settings.py``.
+CSP_REPORT_ONLY = 'report-only'
+CSP_SCHARF = 'scharf'
+CSP_AUS = 'aus'
+
+#: Betriebsart → Name der Kopfzeile.
+CSP_KOPF = {
+    CSP_REPORT_ONLY: 'Content-Security-Policy-Report-Only',
+    CSP_SCHARF: 'Content-Security-Policy',
+}
+
+
+def csp_wert(quellen=None):
+    """Die Richtlinie als Kopfzeilenwert, ``direktive quelle quelle; …``."""
+    if quellen is None:
+        quellen = settings.CSP_QUELLEN
+    return '; '.join(
+        f'{direktive} {" ".join(werte)}' for direktive, werte in quellen.items()
+    )
+
+
+def csp_kopfname():
+    """Name der zu setzenden Kopfzeile oder ``None`` (``CSP_MODUS=aus``).
+
+    Ein unbekannter Wert der Variablen fällt auf Report-Only zurück: ein
+    Tippfehler darf weder die Seite blockieren noch die Richtlinie still
+    abschalten.
+    """
+    modus = str(getattr(settings, 'CSP_MODUS', CSP_REPORT_ONLY)).strip().lower()
+    if modus == CSP_AUS:
+        return None
+    return CSP_KOPF.get(modus, CSP_KOPF[CSP_REPORT_ONLY])
+
+
+class ContentSecurityPolicyMiddleware:
+    """Setzt die Content-Security-Policy aus ``settings.CSP_QUELLEN``.
+
+    Eine Kopfzeile, die eine View selbst gesetzt hat, bleibt unangetastet.
+    Die Betriebsart wird je Antwort gelesen, damit ein Umschalten von
+    ``CSP_MODUS`` ohne Neustart wirkt und Tests beide Kopfzeilen prüfen
+    können.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        kopf = csp_kopfname()
+        if kopf and not any(response.has_header(k) for k in CSP_KOPF.values()):
+            response[kopf] = csp_wert()
+        return response
+
+
+# ═══ BESUCHSPROTOKOLL ══════════════════════════════════════════════════════
+
+#: Umgebungsvariable, die das Besuchsprotokoll abschaltet. Vorgabe: an.
+#: Gedacht für den Fall, dass die pystore-Datenbank hakt – dann wartete
+#: sonst jeder Besucher beim synchronen VisitorLog-Schreiben auf den
+#: Verbindungstimeout. Wird je Anfrage gelesen, damit ein Umschalten ohne
+#: Neustart wirkt und Tests beide Seiten prüfen können.
+TRACKING_ENV = 'VISITOR_TRACKING'
+_AUS = {'0', 'false', 'off', 'no', 'nein', 'aus'}
+
+
+def tracking_aktiv():
+    """True, solange VISITOR_TRACKING nicht ausdrücklich auf aus steht."""
+    return os.getenv(TRACKING_ENV, 'True').strip().lower() not in _AUS
+
+
+#: Geo-Lookups laufen in einem festen, kleinen Pool statt in einem neuen
+#: Betriebssystem-Thread je Seitenaufruf. Die Semaphore zählt die belegten
+#: Plätze: ist der Pool voll, entfällt der Lookup für diesen Eintrag –
+#: Land und Stadt bleiben dann leer, die Antwort wartet nie.
+GEO_PLAETZE = 4
+_geo_pool = ThreadPoolExecutor(max_workers=GEO_PLAETZE, thread_name_prefix='geo')
+_geo_frei = threading.BoundedSemaphore(GEO_PLAETZE)
+
+_SKIP = ('/static/', '/media/', '/admin/', '/favicon', '/robots.txt',
+         '/sitemap.xml', '/llms.txt', '/health', '/__debug__')
 
 _PRIVATE = ('127.', '10.', '192.168.', '::1', '172.16.', '172.17.',
             '172.18.', '172.19.', '172.20.', '172.21.', '172.22.',
@@ -44,19 +165,39 @@ _PRIVATE = ('127.', '10.', '192.168.', '::1', '172.16.', '172.17.',
             '100.124.', '100.125.', '100.126.', '100.127.')
 
 
+def _geo_einreihen(log_pk, ip):
+    """Reiht den Geo-Lookup in den Pool ein; False, wenn er ausgelassen wird.
+
+    Ausgelassen wird er für leere und private Adressen (dafür gibt es nichts
+    nachzuschlagen) und wenn alle GEO_PLAETZE belegt sind. Den Platz gibt
+    ``_geo_enrich`` am Ende wieder frei.
+    """
+    if not ip or any(ip.startswith(p) for p in _PRIVATE):
+        return False
+    if not _geo_frei.acquire(blocking=False):
+        _log.info('Geo-Lookup ausgelassen, Pool voll: pk=%s ip=%s', log_pk, ip)
+        return False
+    try:
+        _geo_pool.submit(_geo_enrich, log_pk, ip)
+    except RuntimeError:
+        # Pool bereits heruntergefahren (Prozessende) – Platz zurückgeben.
+        _geo_frei.release()
+        return False
+    return True
+
+
 def _geo_enrich(log_pk, ip):
-    """Background thread: Geo-Daten nachschlagen und VisitorLog aktualisieren.
+    """Pool-Thread: Geo-Daten nachschlagen und VisitorLog aktualisieren.
 
     VisitorLog wird via WerbungRouter in pystore-DB geschrieben – Connection
-    muss im Thread explizit verwaltet werden.
+    muss im Thread explizit verwaltet werden. Läuft nur über
+    ``_geo_einreihen``; das ``finally`` gibt den Pool-Platz zurück.
     """
     from django.db import close_old_connections, connections
-    close_old_connections()
     import urllib.request as _req
     import json as _json
     try:
-        if not ip or any(ip.startswith(p) for p in _PRIVATE):
-            return
+        close_old_connections()
         url = f'http://ip-api.com/json/{ip}?fields=status,country,countryCode,city'
         with _req.urlopen(url, timeout=4) as resp:
             data = _json.loads(resp.read())
@@ -76,9 +217,19 @@ def _geo_enrich(log_pk, ip):
             connections['pystore'].close()
         except Exception:
             pass
+        _geo_frei.release()
 
 
 class PageVisitMiddleware:
+    """Zählt Besuche (PageVisit, VisitorLog) nach jeder Antwort.
+
+    Die Datenbankschreibvorgänge laufen bewusst synchron im Anfragezyklus:
+    sie hängen an der Session (``visited_paths``, ``last_visit_date``), und
+    ein Thread machte die Reihenfolge der Session-Schreibvorgänge
+    unbestimmt. Nur der Geo-Lookup läuft nebenher, im festen Pool oben.
+    ``VISITOR_TRACKING`` schaltet das Ganze ab.
+    """
+
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -86,6 +237,8 @@ class PageVisitMiddleware:
         response = self.get_response(request)
         path = request.path
         if any(path.startswith(s) for s in _SKIP):
+            return response
+        if not tracking_aktiv():
             return response
         try:
             self._track(request)
@@ -113,7 +266,8 @@ class PageVisitMiddleware:
             except Exception as e:
                 _log.error('PageVisit error: %s', e)
 
-        # ── VisitorLog: one entry per unique path per session (30-min window) ──
+        # ── VisitorLog: one entry per unique path per session (5-min window) ──
+        # 5 Minuten, nicht 30: massgeblich ist "diff < 300" weiter unten.
         visited = request.session.get('visited_paths', {})
         now_iso = timezone.now().isoformat()
         last_seen = visited.get(path, '')
@@ -129,7 +283,7 @@ class PageVisitMiddleware:
                 if diff < 300:
                     should_log = False
             except Exception:
-                pass
+                _log.exception('Zeitstempel in visited_paths nicht lesbar: %r', last_seen)
 
         # ── Admin-Benachrichtigung pro Seitenbesuch: bewusst deaktiviert. ──
         # Frueher wurde hier pro (vermeintlich neuem) Besucher eine Admin-Mail
@@ -152,7 +306,7 @@ class PageVisitMiddleware:
                 request.session['visited_paths'] = visited
                 request.session.modified = True
                 _log.info('VisitorLog created: ip=%s path=%s site=%s', ip, path, site_name)
-                threading.Thread(target=_geo_enrich, args=(log_obj.pk, ip), daemon=True).start()
+                _geo_einreihen(log_obj.pk, ip)
             except Exception as e:
                 _log.error('VisitorLog create error: ip=%s path=%s err=%s', ip, path, e)
 

@@ -43,9 +43,9 @@
                                     <div class="flex items-center space-x-6">
                                         <div class="w-16 h-16 rounded-xl overflow-hidden glass border-white/5">
                                             {% if entry.db_produkt and entry.db_produkt.bild %}
-                                                <img src="{{ entry.db_produkt.bild.url }}" class="w-full h-full object-cover">
+                                                <img src="{{ entry.db_produkt.bild.url }}" alt="Produktbild: {{ entry.item.produkt_name }}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                                             {% elif entry.item.produkt_bild %}
-                                                <img src="{% if not entry.item.produkt_bild|slice:':1' == '/' %}/{% endif %}{{ entry.item.produkt_bild }}" class="w-full h-full object-cover">
+                                                <img src="{% if not entry.item.produkt_bild|slice:':1' == '/' %}/{% endif %}{{ entry.item.produkt_bild }}" alt="Produktbild: {{ entry.item.produkt_name }}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                                             {% else %}
                                                 <div class="w-full h-full flex items-center justify-center text-white/10 text-xs">N/A</div>
                                             {% endif %}

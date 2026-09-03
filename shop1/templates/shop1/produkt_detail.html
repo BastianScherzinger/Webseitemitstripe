@@ -1,36 +1,40 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static custom_tags %}
 
 {% block title %}{{ produkt.meta_title }}{% endblock %}
 {% block meta_description %}{{ produkt.meta_description }}{% endblock %}
+{% block preload %}{% if produkt.bild %}<link rel="preload" as="image" href="{{ produkt.bild.url|cloud:'w_1200,c_limit' }}" imagesrcset="{{ produkt.bild.url|cloud:'w_600,c_limit' }} 600w, {{ produkt.bild.url|cloud:'w_900,c_limit' }} 900w, {{ produkt.bild.url|cloud:'w_1200,c_limit' }} 1200w" imagesizes="(min-width: 1024px) 50vw, 100vw" fetchpriority="high">{% endif %}{% endblock %}
 {% block og_type %}product{% endblock %}
 {% block og_title %}{{ produkt.meta_title }}{% endblock %}
 {% block og_description %}{{ produkt.meta_description }}{% endblock %}
 {% block twitter_title %}{{ produkt.meta_title }}{% endblock %}
 {% block twitter_description %}{{ produkt.meta_description }}{% endblock %}
-{% if produkt.bild %}
-{% block og_image_tag %}
+{# Die Pruefung auf produkt.bild steht bewusst INNERHALB der Bloecke: eine Bedingung um einen Block herum wirkt in einem erbenden Template nicht, weil Bloecke beim Uebersetzen eingesammelt werden und nicht beim Rendern. Stand sie aussen, wurde produkt.bild.url auch ohne Bild ausgewertet und warf einen ValueError - also 500 auf jeder bildlosen Produktseite. #}
+{% block og_image_tag %}{% if produkt.bild %}
 <meta property="og:image" content="{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="800">
-{% endblock %}
-{% block twitter_image_tag %}
+{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block twitter_image_tag %}{% if produkt.bild %}
 <meta name="twitter:image" content="{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}">
-{% endblock %}
-{% endif %}
+{% else %}{{ block.super }}{% endif %}{% endblock %}
 
-{% block schema_ld %}
+{% block brotkrume_ld %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
-    {"@type": "ListItem", "position": 2, "name": "Produkte", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}"},
+    {# Die Namen muessen woertlich den sichtbaren Beschriftungen der Brotkrume weiter unten entsprechen ("Orbit", "Objekte") - ein Schema, das etwas anderes behauptet als die Seite, ist schlimmer als keines. #}
+    {"@type": "ListItem", "position": 1, "name": "Orbit", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Objekte", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}"},
     {"@type": "ListItem", "position": 3, "name": "{{ produkt.name|escapejs }}", "item": "{{ request.build_absolute_uri }}"}
   ]
 }
 </script>
+{% endblock %}
+
+{% block schema_ld %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -40,6 +44,8 @@
   "image": "{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}",{% endif %}
   "brand": {"@type": "Brand", "name": "Luviq Universe"},
   "sku": "LUVIQ-{{ produkt.id }}",
+  "dateModified": "{{ produkt.aktualisiert_am|date:'c' }}",
+  "datePublished": "{{ produkt.erstellt_am|date:'c' }}",
   "offers": {
     "@type": "Offer",
     "priceCurrency": "EUR",
@@ -79,10 +85,13 @@
             <div class="relative">
                 <div class="glass-card rounded-[4rem] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.5)] group">
                     {% if produkt.bild %}
+                        {# c_limit statt c_fill: das Hauptbild darf nicht beschnitten werden. #}
                         <img
-                          src="{{ produkt.bild.url }}"
+                          src="{{ produkt.bild.url|cloud:'w_1200,c_limit' }}"
+                          srcset="{{ produkt.bild.url|cloud:'w_600,c_limit' }} 600w, {{ produkt.bild.url|cloud:'w_900,c_limit' }} 900w, {{ produkt.bild.url|cloud:'w_1200,c_limit' }} 1200w"
+                          sizes="(min-width: 1024px) 50vw, 100vw"
                           class="w-full h-auto object-cover transform transition-transform duration-[2000ms] group-hover:scale-110"
-                          alt="{{ produkt.name }}"
+                          alt="{{ produkt.name }} – handbemaltes Upcycling-Unikat von Luviq Universe"
                           loading="eager"
                           fetchpriority="high"
                           decoding="async"
@@ -109,7 +118,7 @@
                     <div class="flex items-center mb-12">
                         <span class="text-4xl font-black text-glow mr-6">{{ produkt.preis|floatformat:2 }} €</span>
                         <div class="px-4 py-2 glass rounded-full border-white/5">
-                            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Status: Active</span>
+                            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Einzelstück · 1 of 1</span>
                         </div>
                     </div>
                     
@@ -117,6 +126,8 @@
                         <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-6">Spezifikationen</h3>
                         <p class="text-white/50 leading-relaxed text-lg font-light">
                             {{ produkt.beschreibung|linebreaksbr }}
+                            {# Statischer Teil, gilt fuer jedes Stueck: nur Aussagen, die fuer alle Unikate zutreffen (belegt in agb.html, kontakt.html, liefergebiet.html). Kein eigenes Element, weil die Designwache jedes Tag erfasst. #}
+                            Wie jedes Stück bei Luviq Universe ist dieses Teil ein handbemaltes 1-of-1 Unikat von Luisa Brehler aus Alsfeld: Es existiert genau einmal, eine Nachbestellung oder zweite Auflage gibt es nicht. Bezahlt wird per PayPal oder Vorab-Überweisung; der angezeigte Preis ist ein Endpreis, nach § 19 UStG wird keine Umsatzsteuer berechnet. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen; innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt.
                         </p>
                     </div>
                     
@@ -124,11 +135,11 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
                         <div class="flex items-center p-6 glass rounded-3xl border-white/5">
                             <span class="text-3xl mr-4">🛰️</span>
-                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Galaxy-Wide Delivery</span>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Versand deutschlandweit · in der Regel 1-2 Werktage</span>
                         </div>
                         <div class="flex items-center p-6 glass rounded-3xl border-white/5">
                             <span class="text-3xl mr-4">💠</span>
-                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Premium Energy Matrix</span>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">PayPal oder Vorab-Überweisung · Endpreis nach § 19 UStG</span>
                         </div>
                     </div>
 

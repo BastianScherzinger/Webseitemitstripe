@@ -1,6 +1,9 @@
+import logging
 import os
 from django.core.management.base import BaseCommand
 from django.db import connections
+
+_log = logging.getLogger('shop1')
 
 
 class Command(BaseCommand):
@@ -23,7 +26,7 @@ class Command(BaseCommand):
                         "WHERE site = '' AND seite IS NOT NULL AND seite != ''"
                     )
                 except Exception:
-                    pass
+                    _log.exception('pystore: Backfill seite -> site in shop1_visitorlog fehlgeschlagen')
             self.stdout.write(self.style.SUCCESS('pystore: site-Spalte in shop1_visitorlog OK'))
         except Exception as e:
             self.stderr.write(f'pystore Schema-Fix fehlgeschlagen: {e}')

@@ -2,29 +2,67 @@
 {% load static %}
 
 {% block title %}Kontakt – Luviq Universe | Handbemalte Vintage Mode{% endblock %}
-{% block meta_description %}Nimm Kontakt zu Luviq Universe auf – dein Shop für handbemalte Vintage-Mode und 1-of-1 Upcycling-Unikate in Deutschland. Wir antworten so schnell wie möglich.{% endblock %}
+{% block meta_description %}Kontakt zu Luviq Universe aus Alsfeld, Hessen: Fragen zu handbemalten Vintage-Unikaten, Bestellung oder Versand über das Formular oder per E-Mail. Jetzt anfragen.{% endblock %}
 {% block og_title %}Kontakt – Luviq Universe{% endblock %}
 {% block og_description %}Fragen zu deiner Bestellung oder unseren handbemalten Upcycling-Unikaten? Schreib uns – Luviq Universe antwortet schnell.{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Kontakt", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'kontakt' %}"}
+  ]
+}
+</script>
+{% endblock %}
 
 {% block schema_ld %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "ContactPage",
-  "name": "Kontakt – Luviq Universe",
-  "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'kontakt' %}",
-  "description": "Kontaktformular für Luviq Universe – handbemalte Vintage-Mode und Upcycling-Unikate.",
-  "mainEntity": {
-    "@type": "Organization",
-    "name": "Luviq Universe",
-    "url": "{{ request.scheme }}://{{ request.get_host }}/",
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "customer service",
-      "availableLanguage": {"@type": "Language", "name": "German"},
-      "contactOption": "TollFree"
+  "@graph": [
+    {
+      "@type": "ContactPage",
+      "name": "Kontakt – Luviq Universe",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'kontakt' %}",
+      "description": "Kontaktformular für Luviq Universe – handbemalte Vintage-Mode und Upcycling-Unikate.",
+      "mainEntity": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
+    },
+    {
+      "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "availableLanguage": {"@type": "Language", "name": "German"},
+        "email": "brehlerluisa@gmail.com"
+      }
+    },
+    {% comment %}Beide Fragen und beide Antworten stehen woertlich im sichtbaren Text weiter unten. Wer hier etwas aendert, muss es dort mitaendern - der Test test_jede_frage_im_schema_steht_auch_auf_der_seite schlaegt sonst an.{% endcomment %}
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Wie lange dauert die Lieferung?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Innerhalb von Hessen ist ein Unikat meist nach 1-3 Werktagen im Briefkasten, versendet wird deutschlandweit."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Zahlungsmethoden?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bezahlt wird per PayPal oder Vorab-Überweisung. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet."
+          }
+        }
+      ]
     }
-  }
+  ]
 }
 </script>
 {% endblock %}
@@ -40,7 +78,7 @@
             <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                 Get in <span class="text-glow">Touch</span>
             </h1>
-            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">Wir antworten schneller als das Licht.</p>
+            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">Luviq Universe erreichst du über das Formular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Der Shop sitzt in Alsfeld in Hessen.</p>
             <div class="h-1 w-32 bg-glow-orange mt-8 rounded-full"></div>
         </div>
 
@@ -53,22 +91,22 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Dein Name</label>
-                                <input type="text" name="name" placeholder="Eingabe..." class="w-full form-input rounded-2xl px-6 py-4" required>
+                                <input type="text" name="name" aria-label="Dein Name" autocomplete="name" placeholder="Eingabe..." class="w-full form-input rounded-2xl px-6 py-4" required>
                             </div>
                             <div>
                                 <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Deine E-Mail</label>
-                                <input type="email" name="email" placeholder="Eingabe..." class="w-full form-input rounded-2xl px-6 py-4" required>
+                                <input type="email" name="email" aria-label="Deine E-Mail-Adresse" autocomplete="email" placeholder="Eingabe..." class="w-full form-input rounded-2xl px-6 py-4" required>
                             </div>
                         </div>
                         
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Betreff</label>
-                            <input type="text" name="betreff" placeholder="Worum geht es?" class="w-full form-input rounded-2xl px-6 py-4" required>
+                            <input type="text" name="betreff" aria-label="Betreff deiner Nachricht" placeholder="Worum geht es?" class="w-full form-input rounded-2xl px-6 py-4" required>
                         </div>
                         
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Nachricht</label>
-                            <textarea name="nachricht" rows="6" placeholder="Schreib uns..." class="w-full form-input rounded-2xl px-6 py-4 resize-none" required></textarea>
+                            <textarea name="nachricht" rows="6" aria-label="Deine Nachricht" placeholder="Schreib uns..." class="w-full form-input rounded-2xl px-6 py-4 resize-none" required></textarea>
                         </div>
                         
                         <button type="submit" class="w-full btn-glow py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm shadow-2xl">
@@ -82,7 +120,7 @@
             <div class="space-y-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
                 <!-- Me Section -->
                 <div class="glass-card p-4 rounded-[3rem] border-white/5 group overflow-hidden">
-                    <img src="{% static 'shop1/images/ich.jpg' %}" alt="Luisa" class="w-full h-64 object-cover rounded-[2.5rem] grayscale group-hover:grayscale-0 transition-all duration-700" width="900" height="1350" loading="lazy" decoding="async">
+                    <img src="{% static 'shop1/images/ich-900.webp' %}" srcset="{% static 'shop1/images/ich-450.webp' %} 450w, {% static 'shop1/images/ich-900.webp' %} 900w" sizes="(min-width: 1024px) 33vw, 100vw" alt="Luisa Brehler, Gründerin von Luviq Universe" class="w-full h-64 object-cover rounded-[2.5rem] grayscale group-hover:grayscale-0 transition-all duration-700" width="900" height="1350" loading="lazy" decoding="async">
                     <div class="absolute inset-0 bg-gradient-to-t from-space-dark/80 to-transparent"></div>
                     <div class="absolute bottom-6 left-6">
                         <p class="text-white/40 text-[10px] uppercase tracking-widest leading-relaxed">Luisa Brehler</p>
@@ -92,22 +130,23 @@
                 <div class="glass-card p-10 rounded-[3rem] border-white/5">
                     <h4 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Zentrale</h4>
                     <p class="text-white/60 leading-relaxed font-light">
-                        <strong class="text-white">Luviq Universe HQ</strong><br>
-                        Musterstraße 123<br>
-                        12345 Berlin, DE
+                        <strong class="text-white">Luviq Universe – Luisa Brehler</strong><br>
+                        Grünberger Str. 16<br>
+                        36304 Alsfeld, Hessen, DE
                     </p>
                 </div>
 
                 <div class="glass-card p-10 rounded-[3rem] border-white/5">
                     <h4 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Channels</h4>
                     <div class="space-y-4">
-                        <a href="tel:+4930123456" class="block text-white/60 hover:text-white transition-colors flex items-center group">
-                            <span class="mr-3 p-3 glass rounded-xl group-hover:bg-glow-orange transition-all">📞</span>
-                            +49 (0) 30 123456
+                        {# Hier stand eine Platzhalter-Telefonnummer ("+49 (0) 30 123456"). Es gibt keine belegte Nummer im Projekt - auch das Impressum nennt keine -, und eine zu erfinden ist ausgeschlossen. Der Verweis fuehrt deshalb auf die Anbieterangaben. Sobald eine Nummer vorliegt, wird daraus wieder ein tel:-Link. #}
+                        <a href="{% url 'impressum' %}" class="block text-white/60 hover:text-white transition-colors flex items-center group">
+                            <span class="mr-3 p-3 glass rounded-xl group-hover:bg-glow-orange transition-all">📄</span>
+                            Anbieterangaben im Impressum
                         </a>
-                        <a href="mailto:info@luviq.universe" class="block text-white/60 hover:text-white transition-colors flex items-center group">
+                        <a href="mailto:brehlerluisa@gmail.com" class="block text-white/60 hover:text-white transition-colors flex items-center group">
                             <span class="mr-3 p-3 glass rounded-xl group-hover:bg-glow-orange transition-all">📧</span>
-                            info@luviq.universe
+                            brehlerluisa@gmail.com
                         </a>
                     </div>
                 </div>
@@ -116,7 +155,7 @@
                     <h4 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Status</h4>
                     <div class="flex items-center space-x-2">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Operationell: 24/7</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Anfragen jederzeit möglich</span>
                     </div>
                 </div>
             </div>
@@ -129,11 +168,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="glass-card p-10 rounded-[2.5rem]">
                     <h4 class="text-lg font-bold text-white mb-4">Wie lange dauert die Lieferung?</h4>
-                    <p class="text-white/40 leading-relaxed font-light">Normalerweise 2-3 Werktage innerhalb der lokalen Galaxie.</p>
+                    <p class="text-white/40 leading-relaxed font-light">Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Innerhalb von Hessen ist ein Unikat meist nach 1-3 Werktagen im Briefkasten, versendet wird deutschlandweit.</p>
                 </div>
                 <div class="glass-card p-10 rounded-[2.5rem]">
                     <h4 class="text-lg font-bold text-white mb-4">Zahlungsmethoden?</h4>
-                    <p class="text-white/40 leading-relaxed font-light">PayPal, Kreditkarte, und Krypto-Transfers werden akzeptiert.</p>
+                    <p class="text-white/40 leading-relaxed font-light">Bezahlt wird per PayPal oder Vorab-Überweisung. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.</p>
                 </div>
             </div>
         </div>
@@ -158,7 +197,7 @@
                     {% if user.is_authenticated %}
                     <form action="{% url 'comment_add' %}" method="POST" class="space-y-6">
                         {% csrf_token %}
-                        <textarea name="text" rows="4" required
+                        <textarea name="text" rows="4" required aria-label="Dein Feedback fürs Gästebuch"
                             class="w-full bg-white/5 border border-white/10 rounded-3xl p-6 text-white focus:outline-none focus:border-glow-orange transition-all font-light text-sm"
                             placeholder="Schreib ein kurzes Feedback..."></textarea>
                         <button type="submit" class="w-full btn-glow py-4 rounded-2xl text-white font-black uppercase tracking-widest text-[10px]">

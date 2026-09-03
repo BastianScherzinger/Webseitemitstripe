@@ -63,11 +63,7 @@
             "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}"
           },
           "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}",
-          "founder": {
-            "@type": "Person",
-            "name": "Luisa Brehler",
-            "jobTitle": "Gründerin & Creative Director"
-          },
+          "founder": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
           "description": "Luviq Universe ist ein nachhaltiger Second-Hand-Shop aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Versand deutschlandweit.",
           "address": {
             "@type": "PostalAddress",
@@ -109,12 +105,6 @@
           "priceRange": "€€",
           "currenciesAccepted": "EUR",
           "paymentAccepted": "PayPal, Banküberweisung",
-          "openingHoursSpecification": {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-            "opens": "00:00",
-            "closes": "23:59"
-          },
           "hasOfferCatalog": {
             "@type": "OfferCatalog",
             "name": "Handbemalte Vintage & Second Hand Mode",
@@ -134,24 +124,39 @@
           "url": "{{ request.scheme }}://{{ request.get_host }}/",
           "name": "Luviq Universe",
           "description": "Handbemalte Second Hand Mode und Vintage-Unikate aus Alsfeld, Hessen – deutschlandweit bestellen.",
-          "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": {
-              "@type": "EntryPoint",
-              "urlTemplate": "{{ request.scheme }}://{{ request.get_host }}/produkte/?q={search_term_string}"
-            },
-            "query-input": "required name=search_term_string"
-          }
+          "inLanguage": "de-DE",
+          "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
+        },
+        {
+          {% comment %}Die eine Person hinter der Seite, einmal mit eigener Kennung: founder (oben) und author (unten) verweisen darauf, statt sie je einzubetten. Dieselbe Kennung #luisa nutzt ueber_uns.html fuer seinen ausfuehrlicheren Person-Knoten - JSON-LD fuehrt beide zu einer Person zusammen. Nur belegte Angaben: Name (Impressum) und Rolle; keine Biografie, keine Jahreszahl.{% endcomment %}
+          "@type": "Person",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa",
+          "name": "Luisa Brehler",
+          "jobTitle": "Gründerin & Creative Director",
+          "worksFor": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
+        },
+        {
+          {% comment %}name und dateModified kommen aus dem gepflegten Register shop1/seiten_stand.py (ueber den Kontextprozessor als "seite"). Dasselbe Register speist das lastmod der Sitemap - beide koennen so nicht auseinanderlaufen. Auf Seiten ohne Registereintrag (Produkt, Konto) fehlen die beiden Angaben, statt erfunden zu werden.{% endcomment %}
+          "@type": "WebPage",
+          "@id": "{{ request.build_absolute_uri }}#webpage",
+          "url": "{{ request.build_absolute_uri }}",{% if seite %}
+          "name": "{{ seite.name|escapejs }}",
+          "dateModified": "{{ seite.stand }}",{% endif %}
+          "isPartOf": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#website"},
+          "author": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
+          "inLanguage": "de-DE"
         }
       ]
     }
     </script>
+    {% comment %}Brotkrumenpfad (BreadcrumbList) der Seite: jede Unterseite fuellt den Block mit ihrem eigenen Pfad, die Startseite laesst ihn leer. Die Stationsnamen muessen woertlich einer sichtbaren Beschriftung derselben Seite entsprechen (Menue "Home", "Produkte", ... in dieser Datei oder die sichtbare Brotkrume der Produktseite) - ein Schema, das etwas anderes behauptet als die Seite, ist schlimmer als keines. Eine Bedingung gehoert IN den Block, nicht darum herum.{% endcomment %}
+    {% block brotkrume_ld %}{% endblock %}
     {% block schema_ld %}{% endblock %}
 
     <!-- Favicon & PWA -->
-    <link rel="icon" type="image/jpeg" href="{% static 'shop1/images/flavicon.jpeg' %}">
-    <link rel="shortcut icon" type="image/jpeg" href="{% static 'shop1/images/flavicon.jpeg' %}">
+    {# flavicon.ico (16/32/48 px, aus flavicon.jpeg erzeugt) statt des 1254-px-JPEGs: 7 KB statt 69 KB auf jeder Seite. #}
+    <link rel="icon" type="image/x-icon" href="{% static 'shop1/images/flavicon.ico' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'shop1/images/flavicon.ico' %}">
     <link rel="apple-touch-icon" href="{% static 'shop1/images/logo-luviq.jpeg' %}">
     <link rel="manifest" href="{% static 'shop1/manifest.json' %}">
     <meta name="theme-color" content="#0d0907">
@@ -230,6 +235,9 @@
         }
     </style>
 
+    {% comment %}Vorabladen des groessten Bildes im ersten Bildschirm: der Browser findet es sonst erst beim Uebersetzen des Seitenkoerpers. Jede Seite fuellt den Block selbst, leer bleibt er ohne Wirkung.{% endcomment %}
+    {% block preload %}{% endblock %}
+
     {% block extra_css %}{% endblock %}
 </head>
 <body class="min-h-screen flex flex-col">
@@ -244,7 +252,7 @@
                 <div class="flex items-center">
                     <a href="{% url 'home' %}" class="flex-shrink-0 flex items-center group">
                         <div class="h-12 w-12 rounded-full glass flex items-center justify-center p-2 group-hover:shadow-[0_0_20px_rgba(200,150,92,0.5)] transition-all">
-                            <img class="h-full w-auto" src="{% static 'shop1/images/logo-luviq.jpeg' %}" alt="Luviq Universe Logo" width="40" height="40">
+                            <img class="h-full w-auto" src="{% static 'shop1/images/logo-luviq-96.webp' %}" srcset="{% static 'shop1/images/logo-luviq-96.webp' %} 96w, {% static 'shop1/images/logo-luviq-192.webp' %} 192w" sizes="48px" alt="Luviq-Schriftzug in heller Schrift auf dunklem Grund mit dem Leitspruch „Less noise. More power.“" width="40" height="40" loading="eager" decoding="async">
                         </div>
                         <span class="ml-3 text-2xl font-black heading-font tracking-tighter text-white uppercase">Luviq</span>
                     </a>
@@ -261,13 +269,13 @@
                 </div>
                 <div class="hidden md:flex items-center space-x-6">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'warenkorb' %}" class="p-2 text-white/70 hover:text-glow-orange transition-colors relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <a href="{% url 'warenkorb' %}" aria-label="Warenkorb ansehen" class="p-2 text-white/70 hover:text-glow-orange transition-colors relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                         </a>
                         <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="flex items-center space-x-2 text-sm font-semibold text-white/90 hover:text-glow-orange transition-colors">
+                            <button type="button" @click="open = !open" aria-label="Benutzermenü" aria-haspopup="true" :aria-expanded="open ? 'true' : 'false'" class="flex items-center space-x-2 text-sm font-semibold text-white/90 hover:text-glow-orange transition-colors">
                                 <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">👤</div>
                                 <span>{{ user.first_name|default:user.username }}</span>
                             </button>
@@ -293,9 +301,9 @@
                 </div>
                 
                 <div id="hamburger-wrap" class="md:hidden flex items-center">
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-white/70">
-                        <svg class="h-6 w-6" x-show="!mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                        <svg class="h-6 w-6" x-show="mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    <button type="button" @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Hauptmenü" :aria-expanded="mobileMenuOpen ? 'true' : 'false'" class="text-white/70">
+                        <svg class="h-6 w-6" aria-hidden="true" focusable="false" x-show="!mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                        <svg class="h-6 w-6" aria-hidden="true" focusable="false" x-show="mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
             </div>
@@ -339,7 +347,7 @@
         {% for message in messages %}
         <div x-data="{ show: true }" x-show="show" x-transition class="rounded-2xl p-4 mb-4 glass flex items-center justify-between border-l-4 {% if message.tags == 'success' %}border-emerald-500{% elif message.tags == 'error' %}border-red-500{% else %}border-glow-orange{% endif %}">
             <span class="text-white/90 text-sm font-medium">{{ message }}</span>
-            <button @click="show = false" class="text-white/50 hover:text-white">&times;</button>
+            <button type="button" @click="show = false" aria-label="Meldung ausblenden" class="text-white/50 hover:text-white">&times;</button>
         </div>
         {% endfor %}
     </div>
