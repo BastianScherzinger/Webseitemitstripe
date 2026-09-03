@@ -56,8 +56,7 @@ Noch nicht begonnen — kein Code, kein Plan, kein Termin.
 ## Verbesserungsmöglichkeiten
 
 Die grössten Hebel aus den offenen Regeln der Messung vom 02.09.2026. Der schwächste Bereich ist
-**Substanz & Reichweite mit 39,8 („Rohbau")** — dort liegt fast alles, was den Gesamtstand von
-70,1 nach oben zieht.
+**Substanz & Reichweite mit 43,6 („Lückenhaft“)** — dort liegt fast alles, was den Gesamtstand von 75,8 nach oben zieht.
 
 ### Substanz — der grösste Hebel
 

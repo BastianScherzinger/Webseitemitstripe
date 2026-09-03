@@ -4,7 +4,7 @@ titel: SEO und GEO
 stand: 2026-09-03
 status: teilweise
 fortschritt: 74
-zusammenfassung: SEO-Technik live solide (90), Inhalt 70, GEO 61; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten und 301 auf www liegen fertig im Zweig, nicht live.
+zusammenfassung: SEO-Technik live solide (92), Inhalt 73, GEO 76; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten und 301 auf www liegen fertig im Zweig, nicht live.
 offen: 9
 quellen: GOOGLE_SEO_GUIDE.md, LOGBUCH.md, DOCUMENTATION.md, shop1/views/legal.py, shop1/seiten_stand.py, templates/base.html
 ---

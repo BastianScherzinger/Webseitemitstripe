@@ -4,7 +4,7 @@ titel: Stand der Seite
 stand: 2026-09-03
 status: teilweise
 fortschritt: 70
-zusammenfassung: Gesamtstand 70,1 „Brauchbar" (02.09.2026); Verbesserungslauf 4 ist gepusht, aber nicht auf main — wartet auf die Betreiberin.
+zusammenfassung: Gesamtstand 75,8 „Solide“ (03.09.2026); Verbesserungslauf 4 ist gepusht, aber nicht auf main — wartet auf die Betreiberin.
 offen: 3
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 ---
@@ -42,7 +42,7 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.2026).
 | Technik | teilweise | 74 | Stack läuft stabil; im Zweig warten Testsuite (215 Tests), Prüfbefehl, CSP (Report-Only) und Canonical-Host; offen bleiben `ALLOWED_HOSTS='*'`, ungepinnte Abhängigkeiten und der Python-Versionsunterschied. | [10-TECHNIK.md](10-TECHNIK.md) |
 | Design | teilweise | 77 | Dunkelbraun-Gold-Linie mit Glas-Karten steht und ist durch die Designwache eingefroren; offen sind Google-Schriften von fremdem Server und englische Restbeschriftungen. | [20-DESIGN.md](20-DESIGN.md) |
 | Inhalte | teilweise | 40 | Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); der Zweig füllt neun Seiten mit Auskunft und bringt drei Wissensbeiträge, die bis zur Freigabe auf noindex stehen. | [30-INHALTE.md](30-INHALTE.md) |
-| SEO / GEO | teilweise | 74 | SEO-Technik live solide (90), Inhalt 70, GEO 61; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten und 301 auf www liegen fertig im Zweig, nicht live. | [40-SEO.md](40-SEO.md) |
+| SEO / GEO | teilweise | 74 | SEO-Technik live solide (92), Inhalt 73, GEO 76; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten und 301 auf www liegen fertig im Zweig, nicht live. | [40-SEO.md](40-SEO.md) |
 | Local SEO | teilweise | 25 | Search Console seit 03.09.2026 verbunden (Property `sc-domain:luviq-alsfeld.com` im Konto …05@gmail.com); Unternehmensprofil und Bewertungen bleiben nicht dokumentiert, live auf /kontakt/ stehen noch Platzhalterdaten. | [50-LOCAL-SEO.md](50-LOCAL-SEO.md) |
 | Ads | nicht zutreffend | — | Es gibt keine Google-Ads-Kampagne und kein Konto; Voraussetzungen für Shopping-/Suchanzeigen sind benannt. | [60-ADS.md](60-ADS.md) |
 | Performance | teilweise | 70 | PageSpeed mobil 68 (Start) bis 89, LCP mobil 5,3 s auf der Startseite und 23 s auf /produkte/; der Zweig bringt WebP, GZip, Cache und gthread, live ist davon nichts. | [70-PERFORMANCE.md](70-PERFORMANCE.md) |
@@ -90,22 +90,9 @@ Kritische Befunde:
 - … und 2 weitere
 <!-- messung:ende -->
 
-**Letzter bekannter Stand** (Messung vom 02.09.2026, Regelstand 2026-09-02a): Gesamt **70,1 — „Brauchbar"**, 230 von 244 Regeln gemessen, 123 bestanden, 14 nicht messbar, keine Sperre. Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen Ordner (Zweig)** — die Zahl mischt also zwei Stände (siehe [90-NOTIZEN.md](90-NOTIZEN.md)).
-
-| Bereich | Wert | Reifegrad |
-|---|---:|---|
-| SEO — Technik | 89,5 | Solide |
-| Betrieb & Auslieferung | 88,6 | Solide |
-| Sicherheit | 86,7 | Solide |
-| Barrierefreiheit | 77,3 | Solide |
-| Code-Qualität & Projektreife | 74,0 | Brauchbar |
-| Recht & Vertrauen | 70,5 | Brauchbar |
-| SEO — Inhalt | 70,4 | Brauchbar |
-| Performance & Core Web Vitals | 70,4 | Brauchbar |
-| Konversion | 62,1 | Brauchbar |
-| GEO — KI-Sichtbarkeit | 61,3 | Brauchbar |
-| Vorlagen-Konformität | 60,1 | Brauchbar |
-| **Substanz & Reichweite** | **39,8** | **Rohbau** |
+Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen
+Ordner (Zweig)** — die Zahl mischt also zwei Stände, siehe
+[90-NOTIZEN.md](90-NOTIZEN.md).
 
 ## Die drei wichtigsten offenen Punkte
 
