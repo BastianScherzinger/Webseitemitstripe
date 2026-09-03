@@ -154,3 +154,17 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | 05.07.2026 | Bot-Filter geschärft, Hero-Showcase überarbeitet | `8b854c2` |
 | 03.07.2026 | Hero der Startseite mit Produktfoto, Trust-Badges und Ticker | `82f3077`, `67fb4fb` |
 | 25.05.2026 | Grundausstattung SEO: dynamische Sitemap, robots.txt, Meta und Open Graph, Schema `Organization`/`ClothingStore`/`WebSite`/`ItemList`/`Product` | `GOOGLE_SEO_GUIDE.md`, `DOCUMENTATION.md` |
+
+## Bewertung der Messpunkte
+
+<!-- bewertung:anfang -->
+| Punkt | Zustand | Grund | seit |
+|---|---|---|---|
+<!-- bewertung:ende -->
+
+## Eigene Punkte
+
+<!-- eigenepunkte:anfang -->
+| Punkt | Titel | Bereich | Zustand | Beleg | seit |
+|---|---|---|---|---|---|
+<!-- eigenepunkte:ende -->
