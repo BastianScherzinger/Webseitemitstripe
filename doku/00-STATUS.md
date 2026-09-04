@@ -52,7 +52,7 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 04.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-04a) — **Gesamtstand 76,5 von 100**, Reifegrad „Solide“. 230 von 244 Regeln an 14 URLs und 126 Dateien (25.266 Zeilen) geprüft.
+**Messung vom 04.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-05a) — **Gesamtstand 76,5 von 100**, Reifegrad „Solide“. 230 von 244 Regeln an 14 URLs und 126 Dateien (25.340 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
@@ -60,13 +60,13 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.2026).
 | Konversion | **58** | Lückenhaft |
 | Vorlagen-Konformität | **64** | Brauchbar |
 | SEO — Inhalt | **73** | Brauchbar |
-| Code-Qualität & Projektreife | **75** | Brauchbar |
+| Code-Qualität & Projektreife | **73** | Brauchbar |
 | GEO — KI-Sichtbarkeit | **76** | Solide |
 | Recht & Vertrauen | **79** | Solide |
 | Sicherheit | **87** | Solide |
 | Barrierefreiheit | **90** | Solide |
-| Performance & Core Web Vitals | **91** | Referenz |
 | SEO — Technik | **92** | Referenz |
+| Performance & Core Web Vitals | **93** | Referenz |
 | Betrieb & Auslieferung | **93** | Referenz |
 
 Keine Sperre greift.
@@ -75,7 +75,7 @@ Quelltext: 126 Dateien, **115 Befunde**, davon 2 kritisch und 36 wichtig.
 
 Kritische Befunde:
 
-- **Alle Domainvarianten landen auf einer Adresse** (`TS11`) — 0 von 1 Nebenadressen landen auf der Hauptadresse — offen: https://luviq-alsfeld.com
+- **Alle Domainvarianten landen auf einer Adresse** (`TS11`) — 0 von 1 Nebenadressen landen dauerhaft auf der Hauptadresse — offen: https://luviq-alsfeld.com: 200 → https://luviq-alsfeld.com/
 - **Umfang passt zur Aufgabe der Seite** (`IS18`) — Unter dem Umfang, den ihre Aufgabe verlangt: 7 von 7 Seiten — / (533/700 W), /produkte/ (160/600 W), /produkt/custom-hoodie-mit-print/ (111/600 W), /produkt/custom-print-hoodie-1/ (110/600 W), /produkt/custom-pants-sold/ (110/600 W) … (+2)
 - **Kein nennenswerter Anteil dünner Seiten** (`IS19`) — 69% der Seiten sind dünn (9 von 13): /produkte/ (160 W), /kontakt/ (142 W), /agb/ (179 W), /gaestebuch/ (78 W), /produkt/custom-hoodie-mit-print/ (111 W) … (+4)
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (98%), /produkt/custom-print-ho
