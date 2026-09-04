@@ -6,9 +6,9 @@ status: teilweise
 fortschritt: 70
 zusammenfassung: PageSpeed mobil 68 (Start) bis 89, LCP mobil 5,3 s auf der Startseite und 23 s auf /produkte/; der Zweig bringt WebP, GZip, Cache und gthread, live ist davon nichts.
 offen: 8
-pagespeed_mobil: 91
-pagespeed_desktop: 78
-antwortzeit_ms: 5453
+pagespeed_mobil: 89
+pagespeed_desktop: 92
+antwortzeit_ms: 5797
 quellen: DOCUMENTATION.md, LOGBUCH.md, start.sh
 ---
 

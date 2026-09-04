@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-09-03
+stand: 2026-09-04
 status: teilweise
 fortschritt: 70
 zusammenfassung: Gesamtstand 75,8 „Solide“ (03.09.2026); Verbesserungslauf 4 ist gepusht, aber nicht auf main — wartet auf die Betreiberin.
@@ -52,19 +52,19 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 03.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-03a) — **Gesamtstand 75,8 von 100**, Reifegrad „Solide“. 230 von 244 Regeln an 14 URLs und 126 Dateien (25.266 Zeilen) geprüft.
+**Messung vom 04.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-03a) — **Gesamtstand 76,2 von 100**, Reifegrad „Solide“. 230 von 244 Regeln an 14 URLs und 126 Dateien (25.266 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
 | Substanz & Reichweite | **44** | Lückenhaft |
 | Konversion | **58** | Lückenhaft |
 | Vorlagen-Konformität | **64** | Brauchbar |
-| Code-Qualität & Projektreife | **69** | Brauchbar |
 | SEO — Inhalt | **73** | Brauchbar |
+| Code-Qualität & Projektreife | **73** | Brauchbar |
 | GEO — KI-Sichtbarkeit | **76** | Solide |
 | Recht & Vertrauen | **79** | Solide |
 | Sicherheit | **87** | Solide |
-| Performance & Core Web Vitals | **89** | Solide |
+| Performance & Core Web Vitals | **90** | Solide |
 | Barrierefreiheit | **90** | Solide |
 | SEO — Technik | **92** | Referenz |
 | Betrieb & Auslieferung | **93** | Referenz |
@@ -82,12 +82,12 @@ Kritische Befunde:
 - **Wissensinhalte vorhanden** (`SU04`) — 0 Wissensseiten, Zielgröße 3 — es gibt keinen einzigen Ratgeberbereich
 - **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 13 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /kontakt/, /datenschutz/, /agb/ … (+8)
 - **Keine Google-Schriften von fremden Servern nachgeladen** (`RE07`) — 13 von 13 Seiten laden Google-Schriften von fremden Servern: fonts.googleapis.com, https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700 · betroffen: /, /produkte/, /kontakt/ … (+10)
-- **Das Arbeitsverzeichnis ist sauber** (`PJ15`) — 8 unversionierte Änderungen auf Zweig main: M doku/00-STATUS.md, M doku/10-TECHNIK.md, M doku/20-DESIGN.md, M doku/30-INHALTE.md, M doku/40-SEO.md … (+3)
 - **Das Projektgerüst liegt an der vereinbarten Stelle** (`VL01`) — Projektgerüst: 1 von 6 Gerüst-Merkmalen erfüllt — es fehlt: config/settings.py, config/urls.py, config/wsgi.py, apps/-Paket statt Wurzelmodule, reine Datenmodule (data/)
 - **Genug eigener Inhalt insgesamt** (`SU02`) — 2.650 Eigenwörter über 13 Seiten, Zielgröße 12.000 (von 3.586 Wörtern Gesamttext); die umfangreichsten Seiten: / (533 W), /ueber_uns/ (376 W), /datenschutz/ (371 W)
 - **Es gibt keinen kritischen Datei-Befund** (`PJ05`) — 2 kritische Befunde: mainweb/settings.py:59 ALLOWED_HOSTS steht auf '*', shop1/middleware.py:218 Ausnahme wird verschluckt
 - **Keine Kannibalisierung durch gleiche Hauptbegriffe** (`IS23`) — Von mehreren Seiten besetzte Hauptbegriffe: 1; betroffen sind 3 von 5 Seiten — custom print auf 3 Seiten (/produkt/custom-print-hoodie-1/, /produkt/custom-print-jacke/ … (+1))
-- … und 2 weitere
+- **Die Qualitätssicherung der Vorlage ist verdrahtet** (`VL19`) — Prüfbefehle: pruefe_seite; 215 Testfunktionen in 14 Dateien: 3 von 7 QS-Bausteinen erfüllt — es fehlt: zweiter Prüfbefehl (Links, Konsistenz), eigene Management-Befehle, CI-Lauf bei jedem Push, Fehler-Monitoring (Sentry o. ä.)
+- … und 1 weitere
 <!-- messung:ende -->
 
 Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen
