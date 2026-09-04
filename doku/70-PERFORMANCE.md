@@ -4,70 +4,102 @@ titel: Performance und Core Web Vitals
 stand: 2026-09-03
 status: teilweise
 fortschritt: 70
-zusammenfassung: PageSpeed mobil 68 (Start) bis 89, LCP mobil 5,3 s auf der Startseite und 23 s auf /produkte/; der Zweig bringt WebP, GZip, Cache und gthread, live ist davon nichts.
-offen: 8
+zusammenfassung: Der LCP der Produktseite ist der teuerste Posten der Seite (Cloudinary-Bilder ohne WebP und ohne srcset); der Zweig bringt WebP, GZip, Cache und gthread, live ist davon nichts. Die gemessenen Werte stehen im erzeugten Block unter „Messwerte".
+offen: 7
 pagespeed_mobil: 87
 pagespeed_desktop: 70
-antwortzeit_ms: 6204
+antwortzeit_ms: 2
 quellen: DOCUMENTATION.md, LOGBUCH.md, start.sh
+antwortzeit_quelle: PageSpeed server-response-time
 ---
 
 # Performance — Luviq Universe
 
-*Woran sich der Fortschritt bemisst: am gemessenen Tempo-Wert des Laufs vom 02.09.2026 (PageSpeed mobil doppelt, Desktop einfach gewichtet), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
+*Woran sich der Fortschritt bemisst: am gemessenen Tempo-Wert des **letzten** Laufs (PageSpeed mobil doppelt, Desktop einfach gewichtet), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße. Die Zahl selbst steht im erzeugten Block unter „Messwerte“, nicht in diesem Satz.*
 
-Alle Zahlen: **Messung vom 02.09.2026 (Regelstand 2026-09-02a)**, gemessen an der Live-Seite,
-also am Stand `main`. Der Verbesserungslauf 4 (Zweig) ist **nicht** enthalten — seine
-Tempomassnahmen sind unten unter „Umgesetzt (im Zweig)" aufgeführt und live noch nicht wirksam.
+Gemessen wird die **Live-Seite**, also der Stand `main`. Der Verbesserungslauf 4 (Zweig) ist
+**nicht** enthalten — seine Tempomassnahmen sind unten unter „Umgesetzt (im Zweig)" aufgeführt
+und live noch nicht wirksam.
 
 ## Messwerte
 
+<!-- tempo:anfang -->
+**Messung vom 04.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-04a). Bereich „Performance & Core Web Vitals“: **91,3 von 100**, Reifegrad „Referenz“.
+
 ### Lighthouse je Seite
 
-| Seite | Leistung mobil | Leistung Desktop | LCP mobil | LCP Desktop | CLS | TBT mobil | Barrierefreiheit mobil | SEO |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| `/` | **68** | 84 | **5,26 s** | 1,29 s | 0 | 296 ms | 100 | 100 |
-| `/produkte/` | **70** | 78 | **23,03 s** | 4,18 s | 0 | 0 ms | 93 | 100 |
-| `/kontakt/` | 88 | 98 | 3,14 s | 0,84 s | 0 | 0 ms | 98 | 100 |
-| `/impressum/` | 89 | 99 | 3,16 s | 0,70 s | 0 | 0 ms | 98 | **69** (wegen `noindex`) |
-| `/datenschutz/` | 88 | 99 | 3,17 s | 0,70 s | 0 | 0 ms | 98 | 100 |
+| Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
+|---|---|---:|---:|---:|---:|---:|
+| `/` | mobile | **75** | 3,90 s | 0,000 | 308 ms | 3 ms |
+| `/` | desktop | **58** | 1,08 s | 0,000 | 4.078 ms | 4 ms |
+| `/datenschutz/` | mobile | **90** | 2,74 s | 0,000 | 0 ms | 2 ms |
+| `/datenschutz/` | desktop | **58** | 1,09 s | 0,000 | 10.334 ms | 1 ms |
+| `/impressum/` | mobile | **92** | 2,71 s | 0,000 | 0 ms | 2 ms |
+| `/impressum/` | desktop | **66** | 0,69 s | 0,000 | 1.330 ms | 2 ms |
+| `/kontakt/` | mobile | **89** | 2,71 s | 0,014 | 0 ms | 2 ms |
+| `/kontakt/` | desktop | **96** | 0,70 s | 0,000 | 132 ms | 1 ms |
+| `/produkte/` | mobile | **88** | 3,31 s | 0,000 | 0 ms | 2 ms |
+| `/produkte/` | desktop | _nicht gemessen_ | — | — | — | — |
 
-Mittel: **mobil 81 von 100** (PF01, Ziel 90), **Desktop 92 von 100** (PF02, Ziel 95), je 5 Messungen.
-**LCP im Labor 4,55 s** im Mittel über 10 Messungen (PF03, Ziel < 2,5 s). CLS überall 0 — gut.
-Best Practices durchgehend 100. Feldwerte (CrUX) gibt es nicht: PF06 (INP), PF07 (LCP), PF08 (CLS)
-sind **nicht messbar** — zu wenig Verkehr.
+10 Abrufe, davon 0 wiederholt und **1 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 
-Der Ausreisser `/produkte/` mit 23 s LCP mobil betrifft die Produktbilder von Cloudinary
-(kein `srcset`, kein modernes Format, kein Preload auf dieser Seite).
+**Serverzeit (`server-response-time` aus PageSpeed): 2,1 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
 
-### Antwortzeit des Servers
+### Tempo-Regeln, die offen sind
 
-| Messung | Wert |
-|---|---|
-| Mittlere Antwortzeit über 14 Seiten (PF10, Ziel < 600 ms) | **5.475 ms** |
-| Median (BT04) | 3.220 ms |
-| Langsamste Seiten | `/` 10.097 ms · `/agb/` 9.962 ms · `/produkte/` 9.833 ms · `/datenschutz/` 9.811 ms · `/impressum/` 7.706 ms · `/kontakt/` 7.177 ms |
-| Einzelabruf Startseite (Uptime-Prüfung 02.09.2026) | 721 ms |
-| Verfügbarkeit 24 h | 100 %, 1.670 Messungen, Ø 1.029 ms |
-| Verfügbarkeit 7 Tage | 99,92 %, 3.935 Messungen, Ø 1.099 ms |
-| TTFB laut PageSpeed | 2–12 ms (Railway-Kante; die langen Zeiten entstehen dahinter in der Anwendung) |
-| Frühere Messung 29.08.2026 | **1,35 s** — damals die **langsamste der sechs betreuten Seiten** |
+| Regel | Titel | Ergebnis | Beleg |
+|---|---|---|---|
+| `PF01` | Lighthouse Leistung mobil erreicht 90 von 100 | teilweise | Lighthouse Leistung mobil: 87 von 100 über 5 Messungen; unter 90: / (75), /produkte/ (88), /kontakt/ (89) |
+| `PF02` | Lighthouse Leistung Desktop erreicht 95 von 100 | teilweise | Lighthouse Leistung Desktop: 70 von 100 über 4 Messungen; unter 95: / (58), /impressum/ (66), /datenschutz/ (58) |
+| `PF15` | Bilder liegen in einem modernen Format vor | teilweise | 19 von 44 Bildern in WebP oder AVIF, 25 im alten Format: / → IMG_4376_fupstq, / → Photoroom_20260504_222908_zundp7, / → Photoroom_20260504_222730_jjwtm5, / → Photoroom_20260504_222549_kmlpwf, / → Photoroom_20260504_22182 |
+| `PF17` | Lazy-Loading unterhalb des Falzes, nicht auf dem LCP-Bild | teilweise | 23 von 31 Bildern unterhalb des ersten sind lazy; 3 von 13 Seiten laden ihr erstes Bild lazy: /kontakt/ → ich-900.5b4b9566ab5b.webp, /gaestebuch/ → logo-luviq-96.72290a22b8e2.webp, /ueber_uns/ → ich-900.5b4b9566ab5b.webp |
+| `PF16` | Bilder werden in mehreren Grössen angeboten | teilweise | 29 von 44 Bildern mit srcset; ohne: / → IMG_4376_fupstq, / → Photoroom_20260504_222908_zundp7, / → Photoroom_20260504_222730_jjwtm5, / → Photoroom_20260504_222549_kmlpwf, / → Photoroom_20260504_221823_rh0ykx |
+| `PF18` | Das Hero-Bild trägt fetchpriority=high | teilweise | 3 von 10 Seiten ohne fetchpriority=high am ersten Bild: /kontakt/ → ich-900.5b4b9566ab5b.webp, /gaestebuch/ → logo-luviq-96.72290a22b8e2.webp, /ueber_uns/ → ich-900.5b4b9566ab5b.webp |
+| `PF19` | Das LCP-Bild wird vorgeladen, und nur dort, wo es eins gibt | teilweise | 2 von 3 Schlüsselseiten mit Bild laden es nicht vor: /produkte/, /kontakt/ |
 
-Die grossen Werte stammen aus Reihenmessungen mit Kaltstart-Anteil; ein einzelner warmer Abruf
-liegt bei 0,7–1,0 s. Beides zusammen ergibt das Bild: die Seite ist nicht schnell, aber erreichbar.
-Bekannte Ursachen im Code: die Besuchs-Middleware schreibt `PageVisit` und `VisitorLog`
-**synchron im Request** (zwei Datenbanken), und auf main läuft Gunicorn mit nur zwei
-gleichzeitigen Anfragen für den ganzen Shop.
+### Die grössten Bremsen laut Lighthouse
+
+Keine Einsparchance über 150 ms.
+<!-- tempo:ende -->
+
+**Was hier erzeugt wird und was von Hand kommt.** Jede gemessene Zahl steht im Block
+darüber; geschrieben hat ihn das Werkzeug („Messung nachziehen"). Von Hand steht hier nur,
+was keine Messung hergibt. Bis zum 04.09.2026 stand an dieser Stelle eine PageSpeed-Tabelle
+aus `2026-09-02a` — richtig beim Schreiben, zwei Katalogstände später falsch (CLAUDE.md §14).
+
+**Die drei Deutungen, die keine Messung ersetzt:**
+- **`/produkte/` ist der Ausreisser** — die Produktbilder kommen von Cloudinary ohne
+  `srcset`, ohne modernes Format und ohne Preload auf dieser Seite. Das ist die eine Stelle,
+  an der der LCP der Seite entschieden wird.
+- **CLS ist überall null**, Best Practices durchgehend 100. Feldwerte (CrUX) gibt es nicht:
+  `PF06` (INP), `PF07` (LCP) und `PF08` (CLS) sind **nicht messbar** — zu wenig Verkehr.
+- Der **SEO-Wert auf `/impressum/`** liegt tief, weil die Seite `noindex` trägt. Kein Befund.
+
+**Die „mittlere Antwortzeit über 14 Seiten" war kein offener Punkt, sondern eine Eigenschaft
+der Messung.** Der eigene Prüfstand ruft die Seiten gleichzeitig ab und misst die Wanduhr,
+Kaltstart inbegriffen; PageSpeed meldete für dieselben Adressen im selben Lauf einstellige
+Millisekunden Serverzeit. `PF09` bis `PF12` nehmen seit `2026-09-04a` die PageSpeed-Zahl und
+sind bestanden; seit `2026-09-05a` schreibt das Werkzeug auch `antwortzeit_ms` im Kopf aus
+derselben Quelle. **Was im Code trotzdem bleibt und unabhängig davon zu tun ist:** die
+Besuchs-Middleware schreibt `PageVisit` und `VisitorLog` **synchron im Request** (zwei
+Datenbanken), und auf `main` läuft Gunicorn mit nur zwei gleichzeitigen Anfragen für den
+ganzen Shop.
+
+**Verfügbarkeit** (Monitor des Werkzeugs, 02.09.2026): 100 % über 24 Stunden bei 1.670
+Messungen, 99,92 % über 7 Tage bei 3.935 Messungen.
 
 ### Bilder
 
-| Regel | Befund |
+Der grösste Tempohebel der Seite, und der einzige Bereich, in dem alle Regeln zugleich offen
+sind — die Zahlen dazu stehen im Block oben:
+
+| Regel | Was offen ist |
 |---|---|
-| PF15 modernes Format | 0 von 44 Bildern in WebP/AVIF |
-| PF16 mehrere Grössen | 0 von 44 Bildern mit `srcset` |
-| PF18 `fetchpriority=high` | 13 von 13 Seiten ohne — erstes Bild ist überall das Logo |
-| PF19 LCP-Preload | 2 von 3 Schlüsselseiten ohne (`/produkte/`, `/kontakt/`) |
-| VL15 Bilder nach Vorlage | 44 geprüft: 44 nicht WebP/AVIF, 10 ohne `width`/`height`, 0 ohne `alt`, 14 weder lazy noch als LCP ausgezeichnet |
+| PF15 modernes Format | kein einziges Bild in WebP/AVIF |
+| PF16 mehrere Grössen | kein einziges Bild mit `srcset` |
+| PF18 `fetchpriority=high` | fehlt am ersten Bild im `<main>` |
+| PF19 LCP-Preload | fehlt auf `/produkte/` und `/kontakt/` |
+| VL15 Bilder nach Vorlage | kein WebP/AVIF, ein Teil ohne `width`/`height`, ein Teil weder lazy noch als LCP ausgezeichnet |
 
 ## Umgesetzt
 
@@ -97,13 +129,15 @@ gleichzeitigen Anfragen für den ganzen Shop.
 
 ## Offen
 
-| Punkt | Beleg (Messung 02.09.2026) | Regel |
-|---|---|---|
-| Zweig nach `main` — WebP, GZip, Cache, gthread und die kleinere Startseite wirken erst dann | — | PF15, PF16, PF10 |
-| Produktbilder aus Cloudinary in WebP/AVIF und mit `srcset` ausliefern (Cloudinary kann das über Transformationsparameter) — der Zweig fasst nur die statischen Bilder an | 0 von 44 mit `srcset`; `/produkte/` LCP mobil 23,0 s | PF15, PF16, VL15 |
-| LCP-Bild je Schlüsselseite vorladen und mit `fetchpriority="high"` auszeichnen; das Logo ist heute überall das erste Bild | PF18, PF19 | PF18, PF19 |
-| Mittlere Antwortzeit unter 600 ms bringen: `PageVisit`/`VisitorLog`-Schreibvorgänge aus dem Request nehmen, Abfragen der Startseite und von `/agb/`, `/datenschutz/` einzeln nachmessen | 5.475 ms Mittel, 4 Seiten über 9,6 s | PF10, BT04 |
-| Seitencache für die reinen Textseiten (`/agb/`, `/datenschutz/`, `/impressum/`) — sie sind statisch und trotzdem unter den langsamsten | | PF10 |
-| Critical CSS je Seitentyp inline, Hauptstilblatt asynchron; Schriften lokal (heute von `fonts.googleapis.com`) | 4 von 6 Tempo-Vorkehrungen | VL16, RE07 |
-| `width`/`height` an den 10 Bildern ohne Masse (Admin-Vorlagen, `index.html:38`, `produkt_detail.html:89`) | | VL15 |
-| Lighthouse mobil auf 90 und Desktop auf 95 heben — die drei grössten Posten sind unbenutztes JavaScript, Bildformate, Serverantwortzeit | mobil 81, Desktop 92 | PF01, PF02 |
+Was zu tun ist. Wie weit die genannten Regeln gerade sind und mit welchem Beleg, steht im
+erzeugten Block unter „Messwerte" — hier steht keine Messzahl.
+
+| Punkt | Regel |
+|---|---|
+| Zweig nach `main` — WebP, GZip, Cache, gthread und die kleinere Startseite wirken erst dann | PF15, PF16 |
+| Produktbilder aus Cloudinary in WebP/AVIF und mit `srcset` ausliefern (Cloudinary kann das über Transformationsparameter) — der Zweig fasst nur die statischen Bilder an. **`/produkte/` ist der teuerste LCP der Seite** | PF15, PF16, VL15 |
+| LCP-Bild je Schlüsselseite vorladen und mit `fetchpriority="high"` auszeichnen; das Logo ist heute überall das erste Bild | PF18, PF19 |
+| `PageVisit`/`VisitorLog`-Schreibvorgänge aus dem Request nehmen — sie laufen synchron gegen zwei Datenbanken. **Nicht wegen `PF10`** (das misst seit `2026-09-04a` die Serverzeit aus PageSpeed und ist bestanden), sondern weil eine Schreiboperation im Request unter Last der erste Engpass ist | — |
+| Critical CSS je Seitentyp inline, Hauptstilblatt asynchron; Schriften lokal (heute von `fonts.googleapis.com`) | VL16, RE07 |
+| `width`/`height` an den Bildern ohne Masse (Admin-Vorlagen, `index.html:38`, `produkt_detail.html:89`) | VL15 |
+| Lighthouse mobil auf 90 und Desktop auf 95 heben — die grössten Posten sind unbenutztes JavaScript und die Bildformate | PF01, PF02 |
