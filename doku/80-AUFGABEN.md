@@ -1,7 +1,7 @@
 ---
 bereich: aufgaben
 titel: Aufgaben
-stand: 2026-09-03
+stand: 2026-09-04
 status: teilweise
 fortschritt: 40
 zusammenfassung: Nächster Schritt ist der Merge des Zweigs nach main samt CANONICAL_HOST; danach Schriften lokal, Sprungmarke, Permissions-Policy, Danke-Seite; drei Freigaben liegen bei der Betreiberin.
@@ -17,6 +17,20 @@ Regelkennungen verweisen auf die **Messung vom 02.09.2026 (Regelstand 2026-09-02
 „Offen" = konkret als Nächstes · „Fehlt" = noch nicht begonnen ·
 „Verbesserungsmöglichkeiten" = die grössten Hebel aus den offenen Regeln ·
 „Beim Kunden" = braucht Zuarbeit der Betreiberin · „Erledigt" = mit Datum.
+
+## Missbrauchsschutz am Formular (Erhebung 04.09.2026)
+
+Aus dem Pflichtabschnitt in [10-TECHNIK.md](10-TECHNIK.md). Jede Zeile ist ein
+Baustein, der im Quelltext dieses Projekts **nicht** gefunden wurde. Die
+Hauptseite führt alle; was dort steht, lässt sich übernehmen.
+
+- [ ] **Honeypot**
+- [ ] **Zeitfalle (signierter Zeitstempel)**
+- [ ] **Inhalts-Score mit Schwelle**
+- [ ] **Adresse ohne `http://` erkannt**
+- [ ] **Fremde Domain mit eigenem Markennamen**
+- [ ] **Mail-Obergrenze je Tag**
+- [ ] **Prüfbefehl für die Abwehr**
 
 ## Offen
 

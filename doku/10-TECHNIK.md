@@ -1,7 +1,7 @@
 ---
 bereich: technik
 titel: Technik, Hosting und Aufbau
-stand: 2026-09-03
+stand: 2026-09-04
 status: teilweise
 fortschritt: 74
 zusammenfassung: Stack läuft stabil; im Zweig warten Testsuite (215 Tests), Prüfbefehl, CSP (Report-Only) und Canonical-Host; offen bleiben ALLOWED_HOSTS='*', ungepinnte Abhängigkeiten und der Python-Versionsunterschied.
@@ -78,6 +78,32 @@ Nur Namen. Werte stehen in Railway bzw. in der lokalen `.env` (nicht in Git).
 | Sonstiges | `GOOGLE_REVIEW_URL` (Bewertungslink im Kontextprozessor) |
 | **Nur Zweig** | `CANONICAL_HOST`, `CSP_MODUS` (`report-only` · `scharf` · `aus`), `VISITOR_TRACKING`, `GUNICORN_WORKERS`, `GUNICORN_THREADS`, `GUNICORN_TIMEOUT` |
 | **Altlast in Railway** | `STRIPE_*` — aus einer frühen Planungsphase; kein Code im Projekt liest sie (Suche 02.09.2026 ohne Treffer). Entfernen, sobald jemand im Railway-Dienst nachgesehen hat, welche Namen dort genau stehen — sie sind nirgends dokumentiert. |
+
+## Formular und Missbrauchsschutz
+
+*Pflichtabschnitt nach [DOKU-STANDARD §3a](file:///C:/Users/basti/Desktop/pystore-overview/docs/DOKU-STANDARD.md).
+Erhoben am 04.09.2026 aus dem Quelltext dieses Projekts — „ja" heisst gefunden,
+nicht bewiesen. Anlass war eine Spam-Einsendung, die auf der Hauptseite mit
+Spam-Score 0 durchkam und eine Mail auslöste.*
+
+| Baustein | Was er verhindert | Stand |
+|---|---|---|
+| CSRF-Token | fremde Seiten schicken in fremdem Namen ab | ja |
+| Honeypot | einfache Formular-Bots | **nein** |
+| Zeitfalle (signierter Zeitstempel) | der POST ohne gerendertes Formular | **nein** |
+| Inhalts-Score mit Schwelle | Werbetexte, fremde Schriften, Linklisten | **nein** |
+| Adresse ohne `http://` erkannt | die Masche vom 04.09.2026 | **nein** |
+| Fremde Domain mit eigenem Markennamen | Vertrauen erschleichen | **nein** |
+| Rate-Limit je IP | Serien aus einer Quelle | ja |
+| Erst speichern, dann mailen | verlorene Anfrage bei Mailausfall | ja |
+| Mail-Obergrenze je Tag | ein volles Postfach | **nein** |
+| Prüfbefehl für die Abwehr | dass niemand es nachrechnet | **nein** |
+
+**Was diese Tabelle nicht leistet:** Ein ferngesteuerter echter Browser mit
+einem unauffälligen deutschen Satz besteht Honeypot, Zeitfalle und
+Inhaltsprüfung. Dagegen tragen nur Rate-Limit, Duplikatsperre und
+Mail-Obergrenze — und die verhindern nicht die Anfrage, sondern das volle
+Postfach.
 
 ## Prüfbefehle und Tests
 
