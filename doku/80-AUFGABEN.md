@@ -174,6 +174,7 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 <!-- bewertung:anfang -->
 | Punkt | Zustand | Grund | seit |
 |---|---|---|---|
+| SU09 | beim Kunden | `/produkt/` leitet seit Welle 3 per 301 auf die Übersicht `/produkte/` (`shop1/views/legal.py::produkt_uebersicht_redirect`, Test `test_seo.test_produkt_ohne_kennung_leitet_auf_die_uebersicht`); gemessen wurde die Live-Seite, auf der der Zweig noch nicht ausgeliefert ist — eine zweite Übersichtsseite unter `/produkt/` wäre ein Volltext-Duplikat von `/produkte/` und träfe den Befund IS21. | 2026-09-05 |
 <!-- bewertung:ende -->
 
 ## Eigene Punkte
