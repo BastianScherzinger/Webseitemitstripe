@@ -1,11 +1,11 @@
 ---
 bereich: aufgaben
 titel: Aufgaben
-stand: 2026-09-04
+stand: 2026-09-06
 status: teilweise
 fortschritt: 40
-zusammenfassung: Nächster Schritt ist der Merge des Zweigs nach main samt CANONICAL_HOST; danach Schriften lokal, Sprungmarke, Permissions-Policy, Danke-Seite; drei Freigaben liegen bei der Betreiberin.
-offen: 9
+zusammenfassung: Neu und kritisch ist V11 — die Newsletter-Abonnenten lassen sich nirgends ansehen. Nächster Schritt bleibt der Merge des Zweigs nach main samt CANONICAL_HOST; danach Schriften lokal, Sprungmarke, Permissions-Policy, Danke-Seite; drei Freigaben liegen bei der Betreiberin.
+offen: 10
 quellen: LOGBUCH.md, CLAUDE.md, GOOGLE_SEO_GUIDE.md
 ---
 
@@ -38,6 +38,7 @@ Alles hier ist vorbereitet und wartet nur auf Ausführung.
 
 | # | Aufgabe | Warum jetzt | Wo |
 |---|---|---|---|
+| 0 | **`Subscriber` in `shop1/admin.py` registrieren** (`shop1/models.py:76`) | Das Modell sammelt E-Mail-Adressen und steht in **keiner** Verwaltung. Es ist nicht tot — `admin_resend_newsletter` liest `Subscriber.objects.all()` und verschickt daran —, aber **es gibt keine Ansicht, die die Liste zeigt**: wer wissen will, wer abonniert hat, wer eine Adresse austragen oder exportieren will, kommt nur über die Datenbank daran. Bei Flügel Haus war dieselbe Lage der Grund, warum fünf Tage lang keine Anfrage jemanden erreichte | `V11` (kritisch, neu mit Regelstand `2026-09-06a`); `shop1/admin.py` |
 | 1 | **Zweig `cockpit/2026-09-01-verbesserung-4` nach `main` mergen und pushen** (63 Commits, gepusht, Arbeitsbaum sauber, 215/215 Tests grün) | Der ganze Lauf 4 ist „live-fertig"; nur die drei Wissensbeiträge warten auf die Betreiberin, und die stehen bis dahin auf `noindex` — der Rest kann ohne ihre Antwort raus | `git merge` + Push, Railway baut selbst |
 | 2 | **`CANONICAL_HOST=www.luviq-alsfeld.com` in Railway setzen** (Dienst `Luviq-Luisa`, Umgebung `shop`) | Ohne die Variable tut die `CanonicalHostMiddleware` nichts, und `luviq-alsfeld.com` antwortet weiter mit 200 statt 301 (`TS11`, kritisch) | Railway-Variablen |
 | 3 | Nach dem Deploy nachmessen: 301 des Apex, `llms.txt` = 200, Sitemap mit `lastmod`, `/kontakt/` ohne Platzhalterdaten, Datenschutz mit allen Diensten | Der Merge trifft laut Logbuch `TS11`, `GE30`, `GE18`, `RE06`, `BF05` und mehrere Meta-Regeln — belegt ist das erst nach der Messung | Werkzeug, Messlauf |
@@ -54,6 +55,7 @@ Noch nicht begonnen — kein Code, kein Plan, kein Termin.
 
 | Bereich | Was fehlt | Regel |
 |---|---|---|
+| **Tor** | **Ein einziger Eintrag in `sites.json` → `pruefbefehle`** — die Liste ist **leer**, und damit fährt das Paket-Tor an dieser Seite **keinen** Prüfbefehl: `tor_hindernisse()` prüft Bedingung 3 als `if rot:`, und was nie gefahren wurde, ist nie rot. Ein Paket passiert hier mit „0 von 0 grün“. Die Testsuite ist vorhanden und **grün** (215 Funktionen, 137 s, gemessen 06.09.2026); es fehlt nur `"python manage.py test"` in der Liste. Erhebung über alle sechs Seiten: `pystore-overview/docs/BEFUNDE-UEBERTRAGBAR.md` **B22** | — (Werkzeugseite) |
 | Qualitätssicherung | CI-Lauf bei jedem Push, Fehler-Monitoring (Sentry o. ä.), zweiter Prüfbefehl für Links und Konsistenz | `VL19`, `PJ01` |
 | Auslieferung | `requirements.txt` mit `==` festnageln plus Lockfile, `runtime.txt`, `railway.json` | `PJ11`, `VL02` |
 | Container | Python-Fassung angleichen: Basis-Image auf `python:3.12-slim` **oder** `Django<6.0` — heute prüft die Testsuite Django 6.0, der Container fährt 5.2 | Kommentar in `requirements.txt`, Logbuch „Schritt 38" |
