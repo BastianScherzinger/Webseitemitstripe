@@ -177,6 +177,7 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | Punkt | Zustand | Grund | seit |
 |---|---|---|---|
 | SU09 | beim Kunden | `/produkt/` leitet seit Welle 3 per 301 auf die Übersicht `/produkte/` (`shop1/views/legal.py::produkt_uebersicht_redirect`, Test `test_seo.test_produkt_ohne_kennung_leitet_auf_die_uebersicht`); gemessen wurde die Live-Seite, auf der der Zweig noch nicht ausgeliefert ist — eine zweite Übersichtsseite unter `/produkt/` wäre ein Volltext-Duplikat von `/produkte/` und träfe den Befund IS21. | 2026-09-05 |
+| SU02 | beim Kunden | Von 9.350 fehlenden Eigenwörtern liegen 2.913 fertig, aber wegen `'freigegeben': False` auf `noindex`, und die restlichen rund 6.400 verlangen Preisrahmen, Abläufe und echte Fälle, die im Repository nirgends stehen — beides kann nur die Betreiberin liefern. | 2026-09-06 |
 <!-- bewertung:ende -->
 
 ## Eigene Punkte
