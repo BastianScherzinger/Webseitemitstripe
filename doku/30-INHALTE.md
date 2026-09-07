@@ -1,10 +1,10 @@
 ---
 bereich: inhalte
 titel: Inhalte und Seitenbestand
-stand: 2026-09-03
+stand: 2026-09-07
 status: teilweise
 fortschritt: 40
-zusammenfassung: Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); der Zweig füllt neun Seiten mit Auskunft und bringt drei Wissensbeiträge, die bis zur Freigabe auf noindex stehen.
+zusammenfassung: Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); der Zweig füllt neun Seiten mit Auskunft und bringt sechs Wissensbeiträge — drei warten auf die Freigabe der Betreiberin, drei sind belegt und indexiert.
 offen: 7
 quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/legal.py
 ---
@@ -38,15 +38,18 @@ Summe: **1.557 Eigenwörter** über 13 abgerufene Seiten (von 2.434 Wörtern Ges
 
 **Nicht in der Sitemap, aber erreichbar:** `/login/`, `/register/`, `/profil/`, `/warenkorb/`, `/checkout/`, `/payment/…`, `/verify/…`, `/password-reset/…`, `/delete-account/`, `/newsletter/subscribe/`, `/shop-admin/…` — alle per `robots.txt` gesperrt. `/produkt/<id>/` leitet auf die Slug-URL um (Altlink-Kompatibilität); `/produkt/` → 301 auf `/produkte/` (Zweig; live 404).
 
-**Zweig zusätzlich:** `/wissen/` (Übersicht) und drei Beiträge — alle `freigegeben: False`, daher `noindex, follow`, nicht in Sitemap und llms.txt, aber erreichbar und getestet.
+**Zweig zusätzlich:** `/wissen/` (Übersicht) und sechs Beiträge. Die drei ersten stehen auf `freigegeben: False`, also `noindex, follow` und nicht in Sitemap und llms.txt, sind aber erreichbar und getestet; die drei aus SU04 (07.09.2026) sind `freigegeben: True` und damit indexiert — sie geben ausschliesslich wieder, was an anderer Stelle dieser Seite belegt ist, und brauchen keine Zuarbeit. Die Übersicht ist damit indexierbar.
 
-| URL (Zweig) | Titel (= h1) | Wörter (Logbuch) | Offene Sachangabe |
-|---|---|---:|---|
-| `/wissen/pflege-handbemalte-kleidung/` | Wie pflege ich handbemalte Kleidung? | 821 | 30 °C, kein Trockner, kein Weichspüler, Bügeln nur von links |
-| `/wissen/upcycling-mode-second-hand-vintage/` | Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand? | 941 | keine strittige Zahl; Auflage nennt alle drei |
-| `/wissen/groesse-bei-einzelstuecken/` | Wie finde ich bei Einzelstücken die richtige Größe? | 890 | „fünf Zentimeter Unterschied in der Brustweite sind eine ganze Grösse" |
+| URL (Zweig) | Titel (= h1) | Wörter | Index | Offene Sachangabe |
+|---|---|---:|---|---|
+| `/wissen/pflege-handbemalte-kleidung/` | Wie pflege ich handbemalte Kleidung? | 821 | nein | 30 °C, kein Trockner, kein Weichspüler, Bügeln nur von links |
+| `/wissen/upcycling-mode-second-hand-vintage/` | Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand? | 941 | nein | keine strittige Zahl; Auflage nennt alle drei |
+| `/wissen/groesse-bei-einzelstuecken/` | Wie finde ich bei Einzelstücken die richtige Größe? | 890 | nein | „fünf Zentimeter Unterschied in der Brustweite sind eine ganze Grösse" |
+| `/wissen/bestellen-und-bezahlen/` | Wie bestelle und bezahle ich bei Luviq Universe? | 1.129 | **ja** | keine — Belege: `cart.py`, `checkout.py`, `forms.py`, `agb.html` § 2/§ 4, `liefergebiet.html` |
+| `/wissen/widerruf-und-ruecksendung/` | Widerruf und Rücksendung: was gilt bei einem Einzelstück? | 1.034 | **ja** | keine — Belege: `agb.html` § 3/§ 4/§ 5, Impressum, Datenschutz; Rückporto und Rückzahlungsfrist stehen als offene Frage **im Text** |
+| `/wissen/konto-und-daten/` | Was speichert der Shop – und warum braucht der Kauf ein Konto? | 1.000 | **ja** | keine — Belege: `datenschutz.html`, `forms.py`, `settings.py` (`AXES_*`), `views/auth.py` |
 
-Jeder Beitrag: Antwort zuerst, sechs bis sieben Fragen als `h2`, `FAQPage` deckungsgleich, Verweise auf Über uns, Liefergebiet, AGB, Kontakt. Kein neuer Beitrag ohne Eintrag in `WISSEN_BEITRAEGE`, `seiten_stand.py`, `WISSEN_SEITEN` (`legal.py`), `tests/_basis.py`, `FAQ_SEITEN`, `MINDESTWOERTER` und der Aufbau-Referenz (`CLAUDE.md`).
+Jeder Beitrag: Antwort zuerst, sechs bis zehn Fragen als `h2`, `FAQPage` deckungsgleich, Verweise auf Über uns, Liefergebiet, AGB, Kontakt, Datenschutz. Kein neuer Beitrag ohne Eintrag in `WISSEN_BEITRAEGE`, `seiten_stand.py`, `WISSEN_SEITEN` (`legal.py`), `tests/_basis.py`, `FAQ_SEITEN`, `MINDESTWOERTER` und der Aufbau-Referenz (`CLAUDE.md`).
 
 ## Themen und Silos
 
@@ -54,7 +57,7 @@ Jeder Beitrag: Antwort zuerst, sechs bis sieben Fragen als `h2`, `FAQPage` decku
 |---|---:|---|
 | `/produkt/` (Einzelstücke) | 5 | hält 56 % aller Unterseiten (SU10); Übersicht ist `/produkte/`, der Pfad `/produkt/` selbst hat live keine Seite (SU09; Zweig: 301) |
 | `/produkte/` | 1 | Kategorieseite; im Zweig mit Auskunft zu 1-of-1, Bestellung, Zahlung, Versand |
-| `/wissen/` | 0 live / 3 + Übersicht im Zweig | Ratgeber; Zielgrösse 3 (SU04) — erreicht, sobald freigegeben |
+| `/wissen/` | 0 live / 6 + Übersicht im Zweig | Ratgeber; Zielgrösse 3 (SU04) im Zweig **erreicht**: drei belegte Beiträge indexiert, drei warten auf Freigabe |
 | Betrieb | `/ueber_uns/`, `/liefergebiet/`, `/kontakt/`, `/gaestebuch/` | je eine Seite (SU08) |
 | Recht | `/impressum/`, `/datenschutz/`, `/agb/` | |
 
@@ -79,7 +82,7 @@ Luisa Brehler · Grünberger Str. 16, 36304 Alsfeld, Hessen · brehlerluisa@gmai
 
 | Was fehlt | Beleg (Messung 02.09.2026) | Regel |
 |---|---|---|
-| Ratgeber live — 0 Wissensseiten (im Zweig 3, `noindex` bis Freigabe) | Zielgrösse 3 | SU04, SU07, VL11, VL12 |
+| Ratgeber live — 0 Wissensseiten (im Zweig 6: drei indexiert, drei `noindex` bis Freigabe) | Zielgrösse 3 | SU04 (Zweig erfüllt), SU07, VL11, VL12 |
 | Umfang: 13 statt 30 rankfähige Seiten; Startseite 390/700, Produktseiten 25/600 Wörter | | SU01, IS18, IS17 |
 | Konkrete Zahlen auf `/`, `/datenschutz/`, `/agb/`, `/ueber_uns/`, `/liefergebiet/` (live) — Zweig ergänzt Versandzeiten, PLZ, § 19 | 0 von 5 | GE25 |
 | Frage-Überschriften (live 2 von 13 Seiten; Zweig: Wissensseiten durchgehend) | | GE24 |
@@ -96,6 +99,6 @@ Luisa Brehler · Grünberger Str. 16, 36304 Alsfeld, Hessen · brehlerluisa@gmai
 2. Zweig mergen, damit die neuen Texte, Meta-Angaben und die Platzhalter-Korrektur auf `/kontakt/` live sind.
 3. Impressum aus der Sitemap nehmen **oder** `noindex` entfernen — heute widersprechen sich beide (SU11).
 4. Produktnamen im Shop-Admin eindeutig machen („Custom print hoodie" ×2) — Pflegeaufgabe der Betreiberin, oder `seo_titel` setzen.
-5. Weitere Wissensbeiträge nach Kundenfragen (Versand, Rückgabe, Bestellablauf) — erst nach Freigabe der ersten drei.
+5. Weitere Wissensbeiträge nach Kundenfragen. Bestellablauf, Widerruf und Konto sind mit SU04 (07.09.2026) gebaut; alles Weitere braucht Angaben der Betreiberin — namentlich die Kosten der Rücksendung und die Frist der Rückzahlung, die heute in `/wissen/widerruf-und-ruecksendung/` ausdrücklich als ungeklärt stehen.
 6. Muster-Widerrufsformular als eigene Seite.
 7. Entscheidung Öffnungs-/Antwortzeiten und Telefonnummer — nur die Betreiberin kann sie nennen.

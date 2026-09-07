@@ -1,10 +1,10 @@
 ---
 bereich: seo
 titel: SEO und GEO
-stand: 2026-09-03
+stand: 2026-09-07
 status: teilweise
 fortschritt: 74
-zusammenfassung: SEO-Technik live solide (92), Inhalt 73, GEO 76; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten und 301 auf www liegen fertig im Zweig, nicht live.
+zusammenfassung: SEO-Technik live solide (92), Inhalt 73, GEO 76; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten, 301 auf www und seit SU04 drei indexierte Wissensseiten liegen fertig im Zweig, nicht live.
 offen: 9
 quellen: GOOGLE_SEO_GUIDE.md, LOGBUCH.md, DOCUMENTATION.md, shop1/views/legal.py, shop1/seiten_stand.py, templates/base.html
 ---
@@ -40,8 +40,8 @@ luviq" war falsch und ist gestrichen.
 | Baustein | Live (main, 02.09.2026) | Zweig |
 |---|---|---|
 | `robots.txt` | 200; sperrt `/shop-admin/`, `/profil/`, `/warenkorb/`, `/checkout/`, `/payment/`, `/verify/`, `/login/`, `/logout/`, `/register/`, `/password-reset/`, `/reset/`, `/resend-verification/`, `/delete-account/`; **Sitemap-Zeile vorhanden**; keine KI-Crawler genannt (GE02) | zusätzlich `Allow: /` und **13 Antwort-Crawler namentlich zugelassen** (u. a. GPTBot, PerplexityBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot, meta-externalagent, Bytespider) |
-| `sitemap.xml` | 200, 14 URLs, `lastmod` nur bei 5 Produkten (2 Daten: 14.06./11.05.2026), Bild-Auszeichnung bei 5 (TS16, TS19); eine Klasse im Code (VL07) | `lastmod` für alle statischen Seiten aus dem Register `seiten_stand.py` (alle `2026-09-01`); Wissensseiten sobald freigegeben; 15 min Cache |
-| `llms.txt` | **404** | vorhanden: Antwortabsatz (Ort, PLZ 36304, Versandzeiten), Eckdaten (Betreiberin, Anschrift, E-Mail, Instagram, Zahlungsarten, § 19), Seitenliste, Abschnitt Wissen nach Freigabe; 15 min Cache. `llms-full.txt` gibt es nicht (GE31) |
+| `sitemap.xml` | 200, 14 URLs, `lastmod` nur bei 5 Produkten (2 Daten: 14.06./11.05.2026), Bild-Auszeichnung bei 5 (TS16, TS19); eine Klasse im Code (VL07) | `lastmod` für alle statischen Seiten aus dem Register `seiten_stand.py` (`2026-09-01`, die drei SU04-Beiträge `2026-09-07`); `/wissen/` und die drei belegten Beiträge stehen drin, die drei unbestätigten erst nach Freigabe; 15 min Cache |
+| `llms.txt` | **404** | vorhanden: Antwortabsatz (Ort, PLZ 36304, Versandzeiten), Eckdaten (Betreiberin, Anschrift, E-Mail, Instagram, Zahlungsarten, § 19), Seitenliste, Abschnitt Wissen mit Übersicht und den drei belegten Beiträgen (die drei unbestätigten erst nach Freigabe); 15 min Cache. `llms-full.txt` gibt es nicht (GE31) |
 | Canonical | Canonical-Tag je Seite; **Apex `luviq-alsfeld.com` antwortet 200 ohne 301** (TS11, kritisch) | `CanonicalHostMiddleware`: 301 mit vollem Pfad und `https` für die www-Nebenvariante von `CANONICAL_HOST`; **wirkt erst mit gesetzter Variable in Railway** |
 | Meta | Titel 7 von 13 in 30–65 Zeichen (IS02), Beschreibungen 5 von 13 in 110–175 (IS09), 4 mit Aufforderung (IS11), 2 Titel mit Ort/Nutzen (IS06), 1 Titel doppelt (IS03), 4 Seiten teilen Beschreibungen (IS10), Marke am Ende bei 9 (IS07) | Beschreibungen aller neun Inhaltsseiten 157–171 Zeichen mit Aufforderung; Ortsbezug im automatischen Produkttitel; Produkt-Meta auf 60/160 begrenzt; Tests in `test_seo` |
 | Open Graph / Twitter | vorhanden (`GOOGLE_SEO_GUIDE.md`, VL06: 80 von 91 Kopf-Bausteinen) | unverändert; og-Bild bleibt JPEG |
@@ -105,13 +105,14 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 | 01.09.2026 (Zweig) | Antwort-zuerst-Texte auf sieben Seiten; Wissensbereich mit drei Beiträgen | Schritte 21–30 |
 | 02.09.2026 (Zweig) | `CanonicalHostMiddleware` (301 auf www) | Schritt 37 (`6bd5eb4`) |
 | 02.09.2026 (Zweig) | Wissensbeiträge auf `noindex` bis zur Freigabe; Sitemap/llms.txt lesen das Register | Auflage 3 (`60555d0`) |
+| 07.09.2026 (Zweig) | Drei belegte Wissensbeiträge (Bestellen, Widerruf, Konto), `freigegeben` ohne Vorbehalt; `/wissen/` damit indexierbar, Sitemap und llms.txt führen vier Wissensadressen | SU04 (`d7d2e0b`) |
 
 ## Offen
 
 | Punkt | Regel | Wo |
 |---|---|---|
 | Zweig nach main + `CANONICAL_HOST` in Railway → 301 für den Apex, llms.txt, Schema-Knoten, Meta live | TS11, GE30, GE12, GE16, GE18 | Merge + Railway |
-| Freigabe der Wissensbeiträge → aus `noindex`, in Sitemap und llms.txt | SU04, SU07, VL11 | Betreiberin, dann `views/wissen.py` |
+| Freigabe der **drei ersten** Wissensbeiträge (Pflege, Upcycling, Grösse) → aus `noindex`, in Sitemap und llms.txt. Die drei Beiträge aus SU04 (Bestellen, Widerruf, Konto) stehen bereits drin — sie brauchen keine Freigabe | SU07, VL11 | Betreiberin, dann `views/wissen.py` |
 | Impressum: `noindex` **und** Sitemap-Eintrag widersprechen sich | SU11 | `legal.py` oder `impressum.html` |
 | Überschriftensprünge `h1 → h3` auf 10 Bestandsseiten — nur mit bewusster Änderung der Designwache-Referenz | IS14, BF15 | Templates + `aufbau_referenz.json` |
 | Sitemap in drei Klassen segmentieren, Sitemap-Index, Bild-Erweiterung für alle Einträge | VL07, TS19 | `legal.py` |
