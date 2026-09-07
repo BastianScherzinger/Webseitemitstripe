@@ -92,13 +92,19 @@ def robots_txt(request):
 #: Überschrift wäre für Antwortmaschinen ein Versprechen ohne Inhalt.
 WISSEN_SEITEN = [
     ('wissen', 'Wissen: Uebersicht',
-     'Einstieg in die Beitraege zu Pflege, Upcycling-Begriff und Groessenwahl; nennt, woher die Angaben stammen'),
+     'Einstieg in die Beitraege zu Bestellablauf, Widerruf, Konto und Pflege handbemalter Einzelstuecke; nennt, woher die Angaben stammen'),
     ('wissen_pflege', 'Wie pflege ich handbemalte Kleidung?',
      'Waschen auf links bei 30 Grad, Trocknen an der Luft, Buegeln nur von links, Lagern ohne Druck auf die Bemalung, Flecken'),
     ('wissen_upcycling', 'Was ist Upcycling-Mode - und was unterscheidet sie von Second Hand?',
      'Begriffsklaerung Upcycling, Second Hand und Vintage; warum ein Einzelstueck nicht nachbestellbar ist; Handbemalung von Druck unterscheiden'),
     ('wissen_groesse', 'Wie finde ich bei Einzelstuecken die richtige Groesse?',
      'Masse mit eigener Kleidung vergleichen statt Etikett, warum Vintage-Schnitte abweichen, vorab nachfragen, Widerruf'),
+    ('wissen_bestellen', 'Wie bestelle und bezahle ich bei Luviq Universe?',
+     'Anmeldepflicht, Weg in den Warenkorb, Pflichtangaben, PayPal oder Vorab-Ueberweisung, Pruefung der Zahlung, Bestaetigung, Versand in 1-2 Werktagen'),
+    ('wissen_widerruf', 'Widerruf und Ruecksendung: was gilt bei einem Einzelstueck?',
+     'Vierzehn Tage Widerrufsrecht ab Erhalt, Anschrift der Anbieterin, kein Umtausch bei Unikaten, Unregelmaessigkeiten der Bemalung sind kein Mangel'),
+    ('wissen_konto', 'Was speichert der Shop - und warum braucht der Kauf ein Konto?',
+     'Warum der Warenkorb ein Konto verlangt, Angaben der Registrierung, Besuchsprotokoll, eingebundene Dienste, Zahlungsdaten, Kontoloeschung'),
 ]
 
 

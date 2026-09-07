@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Konto und Daten im Shop | Luviq Universe, Alsfeld{% endblock %}
+{% block meta_description %}Warum der Kauf bei Luviq Universe in Alsfeld ein Konto braucht, welche Angaben nötig sind und welche Daten der Shop dabei speichert. Jetzt nachlesen.{% endblock %}
+{% block og_title %}Konto und Daten – Luviq Universe, Alsfeld{% endblock %}
+{% block og_description %}Anmeldepflicht im Warenkorb, Angaben bei der Registrierung, gespeicherte Daten, eingebundene Dienste und wie ein Konto gelöscht wird.{% endblock %}
+{% block twitter_title %}Konto und Daten – Luviq Universe{% endblock %}
+{% block twitter_description %}Warum der Kauf ein Konto braucht, welche Angaben nötig sind und was der Shop speichert.{% endblock %}
+{% comment %}Freigabe der Betreiberin: siehe views/wissen.py. Die Bedingung steht IM Block, nicht darum herum (CLAUDE.md).{% endcomment %}
+{% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Wissen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen' %}"},
+    {"@type": "ListItem", "position": 3, "name": "Was speichert der Shop – und warum braucht der Kauf ein Konto?", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen_konto' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block schema_ld %}
+{% comment %}Jede Frage steht wortgleich als h2 auf der Seite, jede Antwort wortgleich als erster Absatz unter dieser h2 - test_geo prueft beides. Belegt aus der Datenschutzerklaerung (legal/datenschutz.html: Besuchsprotokoll, Hosting und Drittanbieter, Registrierung, Cookies, Zahlungsdaten, Gaestebuch, Rechte), forms.py (Felder der Registrierung und des Profils), views/cart.py und views/checkout.py (Anmeldepflicht, Vorbelegung), views/auth.py (Kontoloeschung) und settings.py (Sperre nach zehn Fehlversuchen). Keine Speicherfrist, keine Zahl, die nirgends steht.{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Warum brauche ich ein Konto, um zu bestellen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Weil der Warenkorb am Konto hängt und nicht an der Sitzung im Browser. Hinzufügen, Warenkorb, Bestellvorgang, Zahlungsseite und Bestellübersicht sind angemeldeten Kundinnen und Kunden vorbehalten; ohne Anmeldung führt die Detailseite eines Stücks zuerst zur Anmeldung oder zur Registrierung. Eine Gastbestellung ohne Konto gibt es nicht."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Welche Angaben verlangt die Registrierung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Benutzername, E-Mail-Adresse, Vorname, Nachname und zweimal dasselbe Passwort. Telefonnummer, Straße mit Hausnummer, Postleitzahl, Stadt und Land lassen sich gleich mit eintragen, sind aber freiwillig; gebraucht werden sie erst beim Bestellen. Ein Geburtsdatum ist nirgends Pflicht und kann später im Profil ergänzt werden."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was mache ich, wenn ich mein Passwort vergessen habe?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Auf der Anmeldeseite steht unter dem Formular ein Link zum Zurücksetzen. Er führt zu einem Feld für die E-Mail-Adresse; an diese Adresse geht dann eine Nachricht mit einem Link, über den ein neues Passwort gesetzt wird. Das alte Passwort lässt sich nicht anzeigen – es wird nicht im Klartext gespeichert."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was passiert nach mehreren falschen Anmeldeversuchen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nach zehn Fehlversuchen wird für eine Stunde gesperrt, und zwar die Kombination aus Benutzername und IP-Adresse – nicht die IP-Adresse allein. In dieser Zeit erscheint eine eigene Hinweisseite statt des Anmeldeformulars. Eine erfolgreiche Anmeldung setzt den Zähler zurück."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Welche Daten fallen schon beim Besuch der Seite an?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bei jedem Seitenaufruf werden der aufgerufene Pfad, der Zeitpunkt, die IP-Adresse und die Browserkennung gespeichert, um die Nutzung der Seite auszuwerten. Zur groben Bestimmung von Land und Stadt wird die IP-Adresse an den Dienst ip-api.com übermittelt. Rechtsgrundlage ist das berechtigte Interesse an einer nachvollziehbaren Reichweitenmessung."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Welche fremden Dienste sind eingebunden?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Die Seite läuft bei Railway; beim Aufruf werden Inhalte von Cloudinary (Produktbilder), jsDelivr (Programmbibliotheken), Google Fonts (Schriftarten) und Google Maps (Karte auf Startseite und im Gästebuch) nachgeladen, die dabei die IP-Adresse erhalten. Dazu kommen ip-api.com für Land und Stadt, Brevo für E-Mails und Newsletter sowie PayPal bei der Zahlung."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was passiert mit meinen Zahlungsdaten?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bei einer Zahlung über PayPal werden sie verschlüsselt an den Zahlungsdienstleister übertragen; Kreditkarteninformationen speichert der Shop nicht auf seinen Servern. Vom Vorgang selbst bleiben die Bestellung mit Betrag, Artikeln und Lieferanschrift sowie die Kennung der PayPal-Zahlung. Bei der Vorab-Überweisung erfährt der Shop nur, was auf dem Kontoauszug steht."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wofür werden die Angaben im Profil verwendet?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sie füllen den Bestellvorgang vor, damit Anschrift und Telefonnummer nicht jedes Mal neu eingetippt werden müssen. Abgeschickte Bestellungen ändern sie nicht: Name, Anschrift und E-Mail-Adresse werden bei der Bestellung mitgespeichert, damit eine spätere Änderung im Profil eine alte Bestellung nicht rückwirkend verändert."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kann ich mein Konto wieder löschen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja, im Profil gibt es dafür eine eigene Schaltfläche; sie löscht das Konto und die daran hängenden Daten. Unabhängig davon besteht das Recht auf unentgeltliche Auskunft über Herkunft, Empfänger und Zweck der gespeicherten Daten sowie auf Berichtigung oder Löschung – dafür genügt eine Nachricht an brehlerluisa@gmail.com."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Sind meine Beiträge im Gästebuch öffentlich?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja. Beiträge im Gästebuch sind öffentlich sichtbar und werden zusammen mit dem Benutzernamen und dem Zeitpunkt gespeichert, bis du oder die Anbieterin sie löscht. Wer etwas nicht öffentlich schreiben möchte, nimmt das Kontaktformular – dessen Nachrichten gehen als E-Mail an die Anbieterin und stehen nicht auf der Seite."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <!-- Kopf: Antwort zuerst -->
+        <div class="mb-20 animate-reveal text-center">
+            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-glow-orange mb-6"><a href="{% url 'wissen' %}" class="hover:text-white transition-colors">Wissen</a></p>
+            <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
+                Was speichert der Shop – <span class="text-glow">und warum braucht der Kauf ein Konto?</span>
+            </h1>
+            <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
+                Wer bei Luviq Universe in 36304 Alsfeld etwas kaufen will, braucht ein Konto: Warenkorb, Bestellvorgang und Bestellübersicht sind an eine Anmeldung gebunden. Die Registrierung verlangt Benutzername, E-Mail-Adresse, Vorname, Nachname und ein Passwort; Anschrift und Telefonnummer sind dabei freiwillig und werden erst beim Bestellen gebraucht. Gespeichert werden außerdem Warenkorb und Anmeldestand in funktionalen Cookies sowie bei jedem Seitenaufruf Pfad, Zeitpunkt, IP-Adresse und Browserkennung. Wer alles nachlesen will, findet es in der Datenschutzerklärung.
+            </p>
+            <div class="h-px w-32 bg-glow-orange mt-16 rounded-full mx-auto"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto space-y-6">
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Warum brauche ich ein Konto, um zu bestellen?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Weil der Warenkorb am Konto hängt und nicht an der Sitzung im Browser. Hinzufügen, Warenkorb, Bestellvorgang, Zahlungsseite und Bestellübersicht sind angemeldeten Kundinnen und Kunden vorbehalten; ohne Anmeldung führt die Detailseite eines Stücks zuerst zur Anmeldung oder zur Registrierung. Eine Gastbestellung ohne Konto gibt es nicht.</p>
+                <p class="text-white/50 leading-relaxed font-light">Der praktische Vorteil: Ein Warenkorb überlebt den Wechsel des Geräts und den geschlossenen Browser, und jede Bestellung bleibt im Profil nachvollziehbar – mit Nummer, Datum und Stand. Wie eine Bestellung von dort aus weiterläuft, steht im Beitrag zum Bestellen und Bezahlen in diesem Wissensbereich.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Welche Angaben verlangt die Registrierung?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Benutzername, E-Mail-Adresse, Vorname, Nachname und zweimal dasselbe Passwort. Telefonnummer, Straße mit Hausnummer, Postleitzahl, Stadt und Land lassen sich gleich mit eintragen, sind aber freiwillig; gebraucht werden sie erst beim Bestellen. Ein Geburtsdatum ist nirgends Pflicht und kann später im Profil ergänzt werden.</p>
+                <p class="text-white/50 leading-relaxed font-light">Nach der Datenschutzerklärung werden E-Mail-Adresse, Name und Anschrift gespeichert, um Bestellungen abzuwickeln. Alles, was darüber hinaus im Profil steht, steht dort, weil es jemand eingetragen hat – nicht, weil der Shop es verlangt. Zum Nachlesen: <a href="{% url 'datenschutz' %}" class="text-glow-orange hover:underline">Datenschutzerklärung</a>.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Was mache ich, wenn ich mein Passwort vergessen habe?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Auf der Anmeldeseite steht unter dem Formular ein Link zum Zurücksetzen. Er führt zu einem Feld für die E-Mail-Adresse; an diese Adresse geht dann eine Nachricht mit einem Link, über den ein neues Passwort gesetzt wird. Das alte Passwort lässt sich nicht anzeigen – es wird nicht im Klartext gespeichert.</p>
+                <p class="text-white/50 leading-relaxed font-light">Wer sein Passwort kennt und es nur wechseln möchte, findet den Weg dazu im Profil. Kommt die Nachricht zum Zurücksetzen nicht an, lohnt der Blick in den Spam-Ordner: Die E-Mails dieses Shops werden über einen Versanddienstleister verschickt und landen dort gelegentlich.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Was passiert nach mehreren falschen Anmeldeversuchen?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Nach zehn Fehlversuchen wird für eine Stunde gesperrt, und zwar die Kombination aus Benutzername und IP-Adresse – nicht die IP-Adresse allein. In dieser Zeit erscheint eine eigene Hinweisseite statt des Anmeldeformulars. Eine erfolgreiche Anmeldung setzt den Zähler zurück.</p>
+                <p class="text-white/50 leading-relaxed font-light">Der Schutz richtet sich gegen automatisiertes Durchprobieren von Passwörtern. Dass Benutzername und Adresse gemeinsam gezählt werden, hat einen praktischen Grund: Mehrere Personen hinter demselben Anschluss sperren sich so nicht gegenseitig aus, und wer sein eigenes Passwort sucht, kommt nach einer Stunde wieder hinein.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Welche Daten fallen schon beim Besuch der Seite an?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Bei jedem Seitenaufruf werden der aufgerufene Pfad, der Zeitpunkt, die IP-Adresse und die Browserkennung gespeichert, um die Nutzung der Seite auszuwerten. Zur groben Bestimmung von Land und Stadt wird die IP-Adresse an den Dienst ip-api.com übermittelt. Rechtsgrundlage ist das berechtigte Interesse an einer nachvollziehbaren Reichweitenmessung.</p>
+                <p class="text-white/50 leading-relaxed font-light">Dazu kommen funktionale Cookies, die den Warenkorb und den Anmeldestand halten – ohne sie ließe sich der Shop nicht bedienen. Der genaue Wortlaut samt Anbieter, Rechtsgrundlage und Rechten steht in der Datenschutzerklärung; sie ist die verbindliche Fassung, dieser Beitrag fasst sie nur zusammen.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Welche fremden Dienste sind eingebunden?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Die Seite läuft bei Railway; beim Aufruf werden Inhalte von Cloudinary (Produktbilder), jsDelivr (Programmbibliotheken), Google Fonts (Schriftarten) und Google Maps (Karte auf Startseite und im Gästebuch) nachgeladen, die dabei die IP-Adresse erhalten. Dazu kommen ip-api.com für Land und Stadt, Brevo für E-Mails und Newsletter sowie PayPal bei der Zahlung.</p>
+                <p class="text-white/50 leading-relaxed font-light">Auf die Verarbeitung bei diesen Anbietern hat Luviq Universe keinen Einfluss; es gelten deren Datenschutzhinweise. Die Übertragung zwischen Browser und Shop ist verschlüsselt. Ein Werbenetzwerk und ein Analysedienst, die Besucherinnen über fremde Seiten hinweg verfolgen, gehören nicht dazu – die Auswertung der Zugriffe passiert im Shop selbst.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Was passiert mit meinen Zahlungsdaten?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Bei einer Zahlung über PayPal werden sie verschlüsselt an den Zahlungsdienstleister übertragen; Kreditkarteninformationen speichert der Shop nicht auf seinen Servern. Vom Vorgang selbst bleiben die Bestellung mit Betrag, Artikeln und Lieferanschrift sowie die Kennung der PayPal-Zahlung. Bei der Vorab-Überweisung erfährt der Shop nur, was auf dem Kontoauszug steht.</p>
+                <p class="text-white/50 leading-relaxed font-light">Die Kennung der PayPal-Zahlung wird gespeichert, weil der Shop damit prüft, ob eine Zahlung wirklich abgeschlossen wurde und ob sie nicht schon zu einer anderen Bestellung gehört. Wie diese Prüfung abläuft, steht im Beitrag zum Bestellen und Bezahlen in diesem Wissensbereich.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wofür werden die Angaben im Profil verwendet?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Sie füllen den Bestellvorgang vor, damit Anschrift und Telefonnummer nicht jedes Mal neu eingetippt werden müssen. Abgeschickte Bestellungen ändern sie nicht: Name, Anschrift und E-Mail-Adresse werden bei der Bestellung mitgespeichert, damit eine spätere Änderung im Profil eine alte Bestellung nicht rückwirkend verändert.</p>
+                <p class="text-white/50 leading-relaxed font-light">Dasselbe gilt für die gekauften Stücke: Name und Preis stehen in der Bestellung selbst und bleiben dort, auch wenn das Stück später aus dem Shop verschwindet – was bei einem verkauften Unikat der Regelfall ist. Eine alte Bestellung bleibt so lesbar, wie sie aufgegeben wurde.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Kann ich mein Konto wieder löschen?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Ja, im Profil gibt es dafür eine eigene Schaltfläche; sie löscht das Konto und die daran hängenden Daten. Unabhängig davon besteht das Recht auf unentgeltliche Auskunft über Herkunft, Empfänger und Zweck der gespeicherten Daten sowie auf Berichtigung oder Löschung – dafür genügt eine Nachricht an brehlerluisa@gmail.com.</p>
+                <p class="text-white/50 leading-relaxed font-light">Wer nur den Newsletter nicht mehr möchte, muss dafür kein Konto löschen: Eine kurze Nachricht genügt, und die Anmeldung ist widerrufen. Die Adresse und die weiteren Angaben zur Anbieterin stehen im <a href="{% url 'impressum' %}" class="text-glow-orange hover:underline">Impressum</a>.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Sind meine Beiträge im Gästebuch öffentlich?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Ja. Beiträge im Gästebuch sind öffentlich sichtbar und werden zusammen mit dem Benutzernamen und dem Zeitpunkt gespeichert, bis du oder die Anbieterin sie löscht. Wer etwas nicht öffentlich schreiben möchte, nimmt das Kontaktformular – dessen Nachrichten gehen als E-Mail an die Anbieterin und stehen nicht auf der Seite.</p>
+                <p class="text-white/50 leading-relaxed font-light">Das <a href="{% url 'gaestebuch' %}" class="text-glow-orange hover:underline">Gästebuch</a> ist der Ort für Rückmeldungen, die andere lesen sollen; das <a href="{% url 'kontakt' %}" class="text-glow-orange hover:underline">Kontaktformular</a> der Ort für alles, was nur die Anbieterin angeht – Fragen zu einem Stück, zu einer Bestellung oder zu gespeicherten Daten.</p>
+            </section>
+        </div>
+
+        <!-- Weiterlesen -->
+        <div class="text-center mt-16">
+            <a href="{% url 'wissen' %}" class="inline-block px-12 py-5 rounded-full bg-glow-orange text-white text-sm font-black uppercase tracking-widest hover:shadow-[0_0_30px_rgba(200,150,92,0.5)] transition-all transform hover:scale-105 active:scale-95">
+                Alle Wissensbeiträge
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

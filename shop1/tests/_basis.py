@@ -79,6 +79,9 @@ OEFFENTLICHE_SEITEN = [
     '/wissen/pflege-handbemalte-kleidung/',
     '/wissen/upcycling-mode-second-hand-vintage/',
     '/wissen/groesse-bei-einzelstuecken/',
+    '/wissen/bestellen-und-bezahlen/',
+    '/wissen/widerruf-und-ruecksendung/',
+    '/wissen/konto-und-daten/',
     '/login/',
     '/register/',
     '/password-reset/',
@@ -107,6 +110,12 @@ INHALTSSEITEN = [
     '/wissen/pflege-handbemalte-kleidung/',
     '/wissen/upcycling-mode-second-hand-vintage/',
     '/wissen/groesse-bei-einzelstuecken/',
+    # Belegte Beiträge ohne Freigabevorbehalt (SU04): von Anfang an
+    # indexierbar, weil sie nur wiedergeben, was AGB, Datenschutzerklärung,
+    # Impressum, Liefergebiet und der Code des Bestellvorgangs belegen.
+    '/wissen/bestellen-und-bezahlen/',
+    '/wissen/widerruf-und-ruecksendung/',
+    '/wissen/konto-und-daten/',
 ]
 
 

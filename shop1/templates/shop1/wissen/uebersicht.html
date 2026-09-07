@@ -2,11 +2,11 @@
 {% load static %}
 
 {% block title %}Wissen zu handbemalter Upcycling-Mode – Luviq Universe, Alsfeld{% endblock %}
-{% block meta_description %}Wissen von Luviq Universe aus Alsfeld: handbemalte Kleidung pflegen, Upcycling-Mode von Second Hand unterscheiden, die Größe bei Einzelstücken finden. Jetzt nachlesen.{% endblock %}
+{% block meta_description %}Wissen von Luviq Universe aus Alsfeld: bestellen und bezahlen, Widerruf und Rücksendung, Konto und Daten, handbemalte Kleidung pflegen. Jetzt nachlesen.{% endblock %}
 {% block og_title %}Wissen – Luviq Universe, Alsfeld{% endblock %}
-{% block og_description %}Pflege handbemalter Kleidung, Upcycling gegenüber Second Hand, Größe bei Einzelstücken: der Wissensbereich von Luviq Universe.{% endblock %}
+{% block og_description %}Bestellablauf und Zahlung, Widerruf und Rücksendung, Konto und Daten, Pflege handbemalter Kleidung: der Wissensbereich von Luviq Universe.{% endblock %}
 {% block twitter_title %}Wissen – Luviq Universe, Alsfeld{% endblock %}
-{% block twitter_description %}Pflege, Upcycling-Begriff und Größenwahl bei handbemalten Einzelstücken – erklärt von Luviq Universe.{% endblock %}
+{% block twitter_description %}Bestellen, Widerruf, Konto und Daten sowie Pflege handbemalter Einzelstücke – erklärt von Luviq Universe.{% endblock %}
 {% comment %}Freigabe der Betreiberin: siehe views/wissen.py. Die Bedingung steht IM Block, nicht darum herum (CLAUDE.md).{% endcomment %}
 {% block meta_robots %}{% if indexierbar %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
 
@@ -36,7 +36,7 @@
                 Wissen rund um <span class="text-glow">handbemalte Einzelstücke</span>
             </h1>
             <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
-                Luviq Universe ist ein Online-Shop aus 36304 Alsfeld in Hessen für handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück gibt es genau einmal. In diesem Bereich beantworten wir die Fragen, die sich vor und nach dem Kauf eines solchen Einzelstücks stellen: wie man es wäscht und aufbewahrt, was Upcycling-Mode von Second Hand und Vintage unterscheidet und wie man ohne Anprobe die passende Größe findet.
+                Luviq Universe ist ein Online-Shop aus 36304 Alsfeld in Hessen für handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück gibt es genau einmal. In diesem Bereich beantworten wir die Fragen, die sich vor und nach dem Kauf eines solchen Einzelstücks stellen: wie eine Bestellung abläuft und womit bezahlt wird, was bei Widerruf und Rücksendung gilt, warum der Kauf ein Konto verlangt und was der Shop dabei speichert, wie man ein handbemaltes Teil wäscht und aufbewahrt, was Upcycling-Mode von Second Hand und Vintage unterscheidet und wie man ohne Anprobe die passende Größe findet.
             </p>
             <div class="h-px w-32 bg-glow-orange mt-16 rounded-full mx-auto"></div>
         </div>
@@ -67,7 +67,7 @@
             </h2>
             <div class="scroll-reveal glass-card p-10 md:p-16 rounded-[3.5rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                 <p class="text-white/60 text-lg leading-relaxed font-light mb-6">
-                    Alles, was hier über Luviq Universe steht, steht auch an anderer Stelle dieser Seite: die Arbeitsweise mit Pinsel und Textilfarbe auf getragener Kleidung unter <a href="{% url 'ueber_uns' %}" class="text-glow-orange hover:underline">Über uns</a>, Versanddauer und Versandgebiet unter <a href="{% url 'liefergebiet' %}" class="text-glow-orange hover:underline">Liefergebiet</a>, Zahlungsarten und Widerrufsrecht in den <a href="{% url 'agb' %}" class="text-glow-orange hover:underline">AGB</a>. Bezahlt wird per PayPal oder Vorab-Überweisung; alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet.
+                    Alles, was hier über Luviq Universe steht, steht auch an anderer Stelle dieser Seite: die Arbeitsweise mit Pinsel und Textilfarbe auf getragener Kleidung unter <a href="{% url 'ueber_uns' %}" class="text-glow-orange hover:underline">Über uns</a>, Versanddauer und Versandgebiet unter <a href="{% url 'liefergebiet' %}" class="text-glow-orange hover:underline">Liefergebiet</a>, Zahlungsarten und Widerrufsrecht in den <a href="{% url 'agb' %}" class="text-glow-orange hover:underline">AGB</a>. Bezahlt wird per PayPal oder Vorab-Überweisung; alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet. Die Beiträge zu Bestellablauf, Widerruf und Konto geben nur wieder, was dort und im Shop selbst nachzulesen ist; wo die Seite eine Frage nicht regelt – etwa wer das Rückporto einer Rücksendung trägt –, sagen sie das ausdrücklich, statt eine Zahl zu nennen.
                 </p>
                 <p class="text-white/60 text-lg leading-relaxed font-light">
                     Was über Textilpflege, Upcycling und Konfektionsgrößen gesagt wird, ist allgemeines Sachwissen und gilt nicht nur für Stücke von Luviq. Ob ein einzelnes Stück eine Besonderheit bei Material, Maßen oder Pflege hat, lässt sich vor dem Kauf über das <a href="{% url 'kontakt' %}" class="text-glow-orange hover:underline">Kontaktformular</a> nachfragen.
