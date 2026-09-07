@@ -1,10 +1,10 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-09-04
+stand: 2026-09-07
 status: teilweise
 fortschritt: 70
-zusammenfassung: Gesamtstand 75,8 „Solide“ (03.09.2026); Verbesserungslauf 4 ist gepusht, aber nicht auf main — wartet auf die Betreiberin.
+zusammenfassung: Gesamtstand 75,8 „Solide“ (03.09.2026); der Verbesserungslauf ist nicht live. Mit SU04 (07.09.2026) hat der Ratgeberbereich drei belegte, indexierte Beiträge — dafür war keine Antwort der Betreiberin nötig; die drei ersten Beiträge warten weiter auf ihre Freigabe.
 offen: 3
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 ---
@@ -34,19 +34,19 @@ quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 
 ## Ampel je Bereich
 
-Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.2026).
+Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–07.09.2026).
 
 | Bereich | Status | Fortschritt | Zusammenfassung | Datei |
 |---|---|---:|---|---|
 | Wegweiser | vollständig | 100 | Elf Dateien nach Doku-Standard; die Original-Doku im Projektstamm bleibt die Detailquelle. | [README.md](README.md) |
 | Technik | teilweise | 74 | Stack läuft stabil; im Zweig warten Testsuite (215 Tests), Prüfbefehl, CSP (Report-Only) und Canonical-Host; offen bleiben `ALLOWED_HOSTS='*'`, ungepinnte Abhängigkeiten und der Python-Versionsunterschied. | [10-TECHNIK.md](10-TECHNIK.md) |
 | Design | teilweise | 77 | Dunkelbraun-Gold-Linie mit Glas-Karten steht und ist durch die Designwache eingefroren; offen sind Google-Schriften von fremdem Server und englische Restbeschriftungen. | [20-DESIGN.md](20-DESIGN.md) |
-| Inhalte | teilweise | 40 | Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); der Zweig füllt neun Seiten mit Auskunft und bringt drei Wissensbeiträge, die bis zur Freigabe auf noindex stehen. | [30-INHALTE.md](30-INHALTE.md) |
-| SEO / GEO | teilweise | 74 | SEO-Technik live solide (92), Inhalt 73, GEO 76; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten und 301 auf www liegen fertig im Zweig, nicht live. | [40-SEO.md](40-SEO.md) |
+| Inhalte | teilweise | 40 | Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); der Zweig füllt neun Seiten mit Auskunft und bringt sechs Wissensbeiträge — drei warten auf die Freigabe der Betreiberin, drei sind belegt und indexiert. | [30-INHALTE.md](30-INHALTE.md) |
+| SEO / GEO | teilweise | 74 | SEO-Technik live solide (92), Inhalt 73, GEO 76; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten, 301 auf www und seit SU04 drei indexierte Wissensseiten liegen fertig im Zweig, nicht live. | [40-SEO.md](40-SEO.md) |
 | Local SEO | teilweise | 25 | Search Console seit 03.09.2026 verbunden (Property `sc-domain:luviq-alsfeld.com` im Konto …05@gmail.com); Unternehmensprofil und Bewertungen bleiben nicht dokumentiert, live auf /kontakt/ stehen noch Platzhalterdaten. | [50-LOCAL-SEO.md](50-LOCAL-SEO.md) |
 | Ads | nicht zutreffend | — | Es gibt keine Google-Ads-Kampagne und kein Konto; Voraussetzungen für Shopping-/Suchanzeigen sind benannt. | [60-ADS.md](60-ADS.md) |
 | Performance | teilweise | 70 | PageSpeed mobil 68 (Start) bis 89, LCP mobil 5,3 s auf der Startseite und 23 s auf /produkte/; der Zweig bringt WebP, GZip, Cache und gthread, live ist davon nichts. | [70-PERFORMANCE.md](70-PERFORMANCE.md) |
-| Aufgaben | teilweise | 40 | Nächster Schritt ist der Merge des Zweigs nach main samt `CANONICAL_HOST`; danach Schriften lokal, Sprungmarke, Permissions-Policy, Danke-Seite; drei Freigaben liegen bei der Betreiberin. | [80-AUFGABEN.md](80-AUFGABEN.md) |
+| Aufgaben | teilweise | 40 | SU04 ist im Zweig erledigt; nächster Schritt bleibt der Merge nach main samt `CANONICAL_HOST`, danach Schriften lokal, Sprungmarke, Permissions-Policy, Danke-Seite; drei Freigaben liegen weiter bei der Betreiberin. | [80-AUFGABEN.md](80-AUFGABEN.md) |
 | Notizen | vollständig | 100 | Vier Namen für ein Projekt, PayPal statt Stripe, Zweig gegenüber main, zehn Widersprüche zwischen Quellen und Live-Seite. | [90-NOTIZEN.md](90-NOTIZEN.md) |
 
 ## Messung
@@ -97,13 +97,14 @@ Ordner (Zweig)** — die Zahl mischt also zwei Stände, siehe
 ## Die drei wichtigsten offenen Punkte
 
 1. **Den Zweig `cockpit/2026-09-01-verbesserung-4` nach `main` bringen** und in Railway `CANONICAL_HOST=www.luviq-alsfeld.com` setzen. Damit gehen auf einen Schlag live: 215 Tests, `pruefe_seite`, llms.txt, 301 für `luviq-alsfeld.com` (TS11), Inhalt auf neun Seiten, WebP-Bilder, GZip, Datenschutzerklärung mit allen Diensten (RE06), echte Kontaktdaten statt „Musterstraße 123, Berlin" auf /kontakt/. Der Rest des Laufs braucht **keine** Antwort der Betreiberin (Logbuch, Auflage 3).
-2. **Freigabe der Betreiberin** für die drei Wissensbeiträge (Pflegeangaben 30 °C / kein Trockner / kein Weichspüler / Bügeln von links; Faustregel „fünf Zentimeter sind eine ganze Grösse"). Danach je Beitrag `'freigegeben': True` in `shop1/views/wissen.py` — Sitemap, llms.txt und robots-Meta folgen von selbst. Bis dahin bleibt Substanz bei 40 (SU04, SU01, SU07).
+2. **Freigabe der Betreiberin** für die drei **ersten** Wissensbeiträge (Pflegeangaben 30 °C / kein Trockner / kein Weichspüler / Bügeln von links; Faustregel „fünf Zentimeter sind eine ganze Grösse"). Danach je Beitrag `'freigegeben': True` in `shop1/views/wissen.py` — Sitemap, llms.txt und robots-Meta folgen von selbst. `SU04` hängt seit dem 07.09.2026 **nicht mehr** daran: drei belegte Beiträge (Bestellen, Widerruf, Konto) sind ohne Vorbehalt freigegeben und erreichen die Zielgrösse 3. Die Freigabe trifft weiter `SU07`, `SU01` und den grösseren Teil von `SU02`.
 3. **Google-Schriften lokal hosten** (RE07, 13 von 13 Seiten laden Inter/Outfit von `fonts.googleapis.com`) — der einzige kritische Rechtsbefund, den der Zweig **nicht** behebt; `base.html` Zeile 172–175.
 
 ## Zuletzt erledigt
 
 | Datum | Was | Beleg |
 |---|---|---|
+| 07.09.2026 | `SU04`: drei belegte Wissensbeiträge ohne Freigabevorbehalt (Bestellen und Bezahlen, Widerruf und Rücksendung, Konto und Daten); `/wissen/` damit indexierbar, Sitemap und llms.txt führen vier Wissensadressen | `d7d2e0b` |
 | 02.09.2026 | Auflagen der Gegenprüfung (1, 3, 4, 5) umgesetzt; Lauf 4 damit „live-fertig", Zweig gepusht | `b750337`, `60555d0`, `270c5f9`, `511ffe5` |
 | 02.09.2026 | Welle 9: Warenkorb-, Zahlungs-, Konto-, Zugriffsschutz- und Invarianten-Tests (174 → 215 Tests) | `87a4e85` … `2e9b051` |
 | 02.09.2026 | Welle 8: CSP-Middleware (Report-Only), Canonical-Host-Middleware, `pruefe_seite` in `start.sh` | `3a9c2d3`, `6bd5eb4`, `50d68da` |

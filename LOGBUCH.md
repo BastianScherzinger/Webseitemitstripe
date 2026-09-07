@@ -1258,3 +1258,60 @@ CSP (6): Vorgabe bleibt `report-only` (belegt in `settings.py`,
 offener Browserkonsole zu prüfen. Nächster Lauf (7): Schritt 38 mit Docker,
 GET-Lücke nach Freigabe, ein Konto je E-Mail, `/favicon.ico` → `.ico`,
 Pflichtmenge des Sitemap-Tests aus `INHALTSSEITEN` ableiten.
+
+## SU04 (07.09.2026, `d7d2e0b`) – drei belegte Wissensbeiträge, ohne Freigabevorbehalt
+
+**Was.** Der Wissensbereich hatte auf diesem Zweig drei Beiträge, aber null
+indexierbare: Pflege, Upcycling und Grösse stehen seit Auflage 3 (`60555d0`)
+auf `'freigegeben': False`. Dazu kommen jetzt drei Beiträge, die von Anfang an
+freigegeben sind – `/wissen/bestellen-und-bezahlen/` (1.129 Wörter),
+`/wissen/widerruf-und-ruecksendung/` (1.034) und `/wissen/konto-und-daten/`
+(1.000). Damit ist die Zielgrösse 3 des Punktes SU04 erfüllt, ohne dass die
+Betreiberin eine Angabe bestätigen muss.
+
+**Warum ohne Freigabevorbehalt.** Die drei alten Beiträge nennen Sachangaben,
+die im Projekt nicht belegt sind (Waschtemperatur, Trockner-, Weichspüler- und
+Bügelregel, „fünf Zentimeter sind eine ganze Grösse"). Die neuen tun das
+nicht: Jede Aussage steht bereits an anderer Stelle dieser Seite – AGB § 2 bis
+§ 5, Datenschutzerklärung, Impressum, Liefergebiet – oder ergibt sich aus dem
+Verhalten des Shops selbst (`views/cart.py`, `views/checkout.py`,
+`views/auth.py`, `forms.py`, `settings.py`). Wo die Seite eine Frage **nicht**
+regelt, sagt der Beitrag genau das: Wer das Rückporto einer Rücksendung trägt
+und wie schnell zurückgezahlt wird, steht im Text als offene Frage mit dem
+Hinweis, das vorab zu klären – statt eine Zahl zu erfinden.
+
+**Zwei Stellen, an denen die Seite sich selbst widerspricht** – festgehalten,
+nicht geändert (Umfang des Pakets): Die AGB nennen für den Vertragsschluss
+einen Klick auf „Zahlungspflichtig bestellen" (`legal/agb.html:42`); der
+Bestellvorgang trägt dort „Continue to Payment" (`checkout.html:113`). Und
+`/produkte/` hat keinen Warenkorb-Knopf – die Übersicht führt nur auf die
+Detailseite (`produkte.html:110`), erst dort liegen die beiden Knöpfe
+(`produkt_detail.html:149-152`). Die neuen Beiträge beschreiben deshalb den
+Vorgang und nicht die Beschriftung, und sie schicken niemanden auf einen Knopf,
+den es nicht gibt.
+
+**Angemeldet** an allen sieben Stellen, die ein Beitrag berührt:
+`WISSEN_BEITRAEGE` (`views/wissen.py`; `urls.py` baut daraus je Beitrag eine
+Route mit eigenem Namen), `SEITEN_STAND`/`SEITEN_NAME` (`seiten_stand.py`,
+Stand `2026-09-07`), `WISSEN_SEITEN` der llms.txt (`views/legal.py`),
+`OEFFENTLICHE_SEITEN`/`INHALTSSEITEN` (`tests/_basis.py`), `FAQ_SEITEN`
+(`test_geo`), `MINDESTWOERTER` (`test_inhalt`) und `aufbau_referenz.json`.
+Sitemap, llms.txt und die robots-Angabe folgen dem Register von selbst;
+`/wissen/` ist damit indexierbar, die drei alten Beiträge bleiben unverändert
+auf `noindex`.
+
+**Designwache.** Die Referenz ist gezielt um die drei neuen Adressen ergänzt,
+nicht neu erzeugt. Geändert hat sich ausserdem nur `/wissen/`, weil die
+Übersicht dem Register folgt und drei Ankündigungen dazukommen; ein Vergleich
+der alten mit der neuen Referenz zeigt für jede andere Seite keinen
+Unterschied. `WissensfreigabeTest` (`test_seo`) vergleicht jetzt gegen die noch
+gesperrten Beiträge statt gegen alle übrigen – sonst prüfte er einen Zustand,
+den es nicht mehr gibt. Schwelle für `/wissen/` von 250 auf 390 nachgezogen
+(gemessen 404).
+
+**Gegenbeweis.** `python manage.py check` grün, 215/215 Tests grün.
+
+**Offene Frage an die Betreiberin.** Wer trägt das Rückporto einer
+Rücksendung, wird ein Rücksendeetikett gestellt, und in welcher Frist und auf
+welchem Weg wird der Kaufpreis erstattet? Heute steht dazu nichts in den AGB;
+sobald es eine Antwort gibt, gehört sie in `/agb/` und in den Widerrufsbeitrag.

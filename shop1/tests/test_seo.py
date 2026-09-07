@@ -244,10 +244,19 @@ class WissensfreigabeTest(LuviqTestCase):
         öffnen kann: wird ein Beitrag im Register freigegeben, meldet er
         ``index, follow``, steht mit dem ``lastmod`` aus ``SEITEN_STAND`` in
         der Sitemap und in der llms.txt – und die Übersicht wird mit ihm
-        indexierbar, während die übrigen Beiträge gesperrt bleiben."""
+        indexierbar, während die übrigen **gesperrten** Beiträge gesperrt
+        bleiben.
+
+        Verglichen wird nur gegen die Beiträge, die im Register auf
+        ``freigegeben: False`` stehen: seit SU04 (2026-09-07) gibt es
+        Beiträge, die von sich aus freigegeben sind (Bestellen, Widerruf,
+        Konto – sie geben nur belegtes Material wieder). Sie müssen hier
+        indexierbar bleiben, sonst prüfte der Test einen Zustand, den es
+        nicht mehr gibt."""
         slug = 'pflege-handbemalte-kleidung'
         pfad = f'/wissen/{slug}/'
-        andere = [f'/wissen/{s}/' for s in WISSEN_BEITRAEGE if s != slug]
+        andere = [f'/wissen/{s}/' for s, b in WISSEN_BEITRAEGE.items()
+                  if s != slug and not b.get('freigegeben')]
         with mock.patch.dict(WISSEN_BEITRAEGE[slug], {'freigegeben': True}):
             self.assertEqual(self._robots(pfad), 'index, follow')
             self.assertEqual(self._robots('/wissen/'), 'index, follow')

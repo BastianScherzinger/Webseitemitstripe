@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bestellen und bezahlen im Unikat-Shop | Luviq Alsfeld{% endblock %}
+{% block meta_description %}Wie eine Bestellung bei Luviq Universe in Alsfeld abläuft: Konto, Warenkorb, Pflichtangaben, PayPal oder Vorab-Überweisung und Versand. Jetzt nachlesen.{% endblock %}
+{% block og_title %}Bestellen und bezahlen bei Luviq Universe, Alsfeld{% endblock %}
+{% block og_description %}Vom Warenkorb bis zur Bestätigung: Konto, Pflichtangaben, PayPal oder Vorab-Überweisung, Versand deutschlandweit.{% endblock %}
+{% block twitter_title %}Bestellen und bezahlen bei Luviq Universe{% endblock %}
+{% block twitter_description %}Ablauf einer Bestellung: Konto, Warenkorb, Adressdaten, PayPal oder Vorab-Überweisung, Versand.{% endblock %}
+{% comment %}Freigabe der Betreiberin: siehe views/wissen.py. Die Bedingung steht IM Block, nicht darum herum (CLAUDE.md).{% endcomment %}
+{% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Wissen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen' %}"},
+    {"@type": "ListItem", "position": 3, "name": "Wie bestelle und bezahle ich bei Luviq Universe?", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen_bestellen' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block schema_ld %}
+{% comment %}Jede Frage steht wortgleich als h2 auf der Seite, jede Antwort wortgleich als erster Absatz unter dieser h2 - test_geo prueft beides. Jede Sachangabe ist im Projekt belegt: Anmeldepflicht views/cart.py und views/checkout.py, Registrierungsfelder forms.py, Pflichtfelder und Profil-Vorbelegung views/checkout.py, Vertragsschluss und Preise legal/agb.html, PayPal-Pruefung und Folgen der Zahlung views/checkout.py, Lieferzeiten liefergebiet.html. Keine Versandkosten, keine Bearbeitungsdauer, keine Zahl, die nirgends steht.{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Brauche ich ein Konto, um bei Luviq Universe zu bestellen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja. Der Warenkorb hängt am Konto: Hinzufügen, Warenkorb, Bestellvorgang und Zahlungsseite sind angemeldeten Kundinnen und Kunden vorbehalten. Wer nicht angemeldet ist, sieht auf der Detailseite eines Stücks statt der beiden Warenkorb-Schaltflächen die Wege zur Anmeldung und zur Registrierung. Eine Bestellung ohne Konto sieht der Shop nicht vor."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie kommt ein Unikat in den Warenkorb?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Über die Detailseite des Stücks. Die Übersicht Alle Unikate zeigt jedes verfügbare Teil und führt von dort auf seine eigene Seite; erst dort stehen die beiden Schaltflächen, die das Stück in den Warenkorb legen – die eine bleibt auf der Produktseite, die andere führt gleich zum Warenkorb. Über den vorhandenen Bestand hinaus lässt sich die Menge nicht erhöhen, und bei einem Einzelstück ist das genau ein Exemplar."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Welche Angaben verlangt der Bestellvorgang?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pflicht sind Vorname, Nachname, E-Mail-Adresse, Straße mit Hausnummer, Stadt, Postleitzahl und Land; fehlt eine dieser Angaben, bricht der Bestellvorgang mit einem Hinweis ab und führt zurück zum Formular. Die Telefonnummer ist freiwillig. Wer die Felder im Profil gefüllt hat, findet sie vorbelegt und muss sie nur noch prüfen."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wann kommt der Kaufvertrag zustande?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nicht schon mit der Anzeige im Shop. Nach § 2 der AGB ist die Darstellung eines Stücks kein rechtlich bindendes Angebot, sondern eine Einladung, eine Bestellung abzugeben; das verbindliche Angebot geht von der Bestellerin aus. Bis zur vollständigen Bezahlung bleibt die Ware nach § 4 Eigentum von Luviq."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Welche Zahlungsarten gibt es?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Zwei, und beide stehen im Bestellvorgang zur Auswahl: PayPal und Vorab-Überweisung. Bei PayPal folgt unmittelbar die Zahlungsseite mit den PayPal-Schaltflächen. Bei der Vorab-Überweisung verschickt der Shop stattdessen eine E-Mail mit Kontoinhaberin, IBAN, Betrag und einem Verwendungszweck, der die Bestellnummer trägt. Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie prüft der Shop, ob eine PayPal-Zahlung wirklich angekommen ist?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Auf dem Server, nicht im Browser. Nach dem Abschluss bei PayPal fragt der Shop die Zahlung selbst bei PayPal ab und übernimmt sie nur, wenn sie dort als abgeschlossen geführt wird und der gezahlte Betrag mit dem Rechnungsbetrag übereinstimmt. Dieselbe PayPal-Zahlung lässt sich außerdem kein zweites Mal verwenden. Erst wenn beides zutrifft, gilt die Bestellung als bezahlt."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was passiert nach der Zahlung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Die Bestellung wechselt auf bezahlt, das gekaufte Stück wird im Shop abgeschaltet – ein verkauftes Unikat kommt nicht zurück in die Übersicht –, und an die im Bestellvorgang angegebene E-Mail-Adresse geht eine Bestätigung mit Bestellnummer, Artikeln, Gesamtbetrag und Lieferanschrift. Der Warenkorb ist danach leer, und im Profil steht die Bestellung mit ihrem Stand in der Übersicht."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie lange dauert der Versand?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet; innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt. Versendet wird deutschlandweit. Einen Laden, in dem man ein Stück abholen oder anprobieren könnte, gibt es nicht: Luviq Universe ist ein reiner Online-Shop mit Sitz in Alsfeld."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Gibt es einen Rabatt auf die erste Bestellung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ein neues Konto trägt einen Willkommensrabatt. Solange er auf dem Konto liegt, zieht der Bestellvorgang zehn Prozent vom Warenwert ab und weist den Abzug in der Zusammenfassung eigens aus; mit der ersten über PayPal bezahlten Bestellung ist er verbraucht. Einen Gutscheincode, den man eingeben müsste, gibt es nicht."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was passiert, wenn ich die Zahlung abbreche?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Dann bleibt der Warenkorb erhalten. Der Shop meldet den Abbruch und führt zurück zum Warenkorb; die angelegte Bestellung bleibt offen stehen. Auch bei der Vorab-Überweisung bleibt sie so lange offen, bis das Geld eingegangen ist – die Bestätigung kommt erst danach."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <!-- Kopf: Antwort zuerst -->
+        <div class="mb-20 animate-reveal text-center">
+            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-glow-orange mb-6"><a href="{% url 'wissen' %}" class="hover:text-white transition-colors">Wissen</a></p>
+            <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
+                Wie bestelle und bezahle ich <span class="text-glow">bei Luviq Universe?</span>
+            </h1>
+            <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
+                Eine Bestellung bei Luviq Universe aus Alsfeld läuft in fünf Schritten: ein Stück auf seiner Detailseite aussuchen, anmelden oder registrieren, es in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und zwischen PayPal und Vorab-Überweisung wählen. Ein Konto ist dafür nötig – ohne Anmeldung führt die Detailseite zuerst zur Anmeldung. Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet; versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.
+            </p>
+            <div class="h-px w-32 bg-glow-orange mt-16 rounded-full mx-auto"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto space-y-6">
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Brauche ich ein Konto, um bei Luviq Universe zu bestellen?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Ja. Der Warenkorb hängt am Konto: Hinzufügen, Warenkorb, Bestellvorgang und Zahlungsseite sind angemeldeten Kundinnen und Kunden vorbehalten. Wer nicht angemeldet ist, sieht auf der Detailseite eines Stücks statt der beiden Warenkorb-Schaltflächen die Wege zur Anmeldung und zur Registrierung. Eine Bestellung ohne Konto sieht der Shop nicht vor.</p>
+                <p class="text-white/50 leading-relaxed font-light">Die Registrierung verlangt einen Benutzernamen, eine E-Mail-Adresse, Vorname, Nachname und zweimal dasselbe Passwort. Telefonnummer, Straße, Postleitzahl, Stadt und Land lassen sich gleich mit angeben, sind an dieser Stelle aber freiwillig; wer sie einträgt, findet sie später im Bestellvorgang vorbelegt. Was der Shop dabei speichert, steht im Beitrag zu Konto und Daten in diesem Wissensbereich und in der <a href="{% url 'datenschutz' %}" class="text-glow-orange hover:underline">Datenschutzerklärung</a>.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie kommt ein Unikat in den Warenkorb?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Über die Detailseite des Stücks. Die Übersicht Alle Unikate zeigt jedes verfügbare Teil und führt von dort auf seine eigene Seite; erst dort stehen die beiden Schaltflächen, die das Stück in den Warenkorb legen – die eine bleibt auf der Produktseite, die andere führt gleich zum Warenkorb. Über den vorhandenen Bestand hinaus lässt sich die Menge nicht erhöhen, und bei einem Einzelstück ist das genau ein Exemplar.</p>
+                <p class="text-white/50 leading-relaxed font-light">Auf der <a href="{% url 'produkte' %}" class="text-glow-orange hover:underline">Übersicht</a> selbst gibt es bewusst keinen Warenkorb-Knopf: Sie führt zu jedem Stück, und die Entscheidung fällt auf der Detailseite, wo Beschreibung, Preis und Bild stehen. Ein Stück, das dort nicht mehr auftaucht, ist verkauft – Luviq legt kein Motiv ein zweites Mal auf.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Welche Angaben verlangt der Bestellvorgang?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Pflicht sind Vorname, Nachname, E-Mail-Adresse, Straße mit Hausnummer, Stadt, Postleitzahl und Land; fehlt eine dieser Angaben, bricht der Bestellvorgang mit einem Hinweis ab und führt zurück zum Formular. Die Telefonnummer ist freiwillig. Wer die Felder im Profil gefüllt hat, findet sie vorbelegt und muss sie nur noch prüfen.</p>
+                <p class="text-white/50 leading-relaxed font-light">Die E-Mail-Adresse im Bestellvorgang ist die Adresse, an die Bestätigung und Zahlungsinformationen gehen – sie muss nicht die des Kontos sein, sollte aber gelesen werden. Die Anschrift wird zusammen mit der Bestellung gespeichert und nicht nachträglich aus dem Profil überschrieben: Eine spätere Änderung im Profil ändert eine bereits abgeschickte Bestellung nicht.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wann kommt der Kaufvertrag zustande?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Nicht schon mit der Anzeige im Shop. Nach § 2 der AGB ist die Darstellung eines Stücks kein rechtlich bindendes Angebot, sondern eine Einladung, eine Bestellung abzugeben; das verbindliche Angebot geht von der Bestellerin aus. Bis zur vollständigen Bezahlung bleibt die Ware nach § 4 Eigentum von Luviq.</p>
+                <p class="text-white/50 leading-relaxed font-light">Der genaue Wortlaut steht in den <a href="{% url 'agb' %}" class="text-glow-orange hover:underline">AGB</a>; dort ist auch das Widerrufsrecht von vierzehn Tagen geregelt, das für Einzelstücke genauso gilt wie für Serienware. Was das im Alltag bedeutet – Frist, Anschrift, Reklamation –, steht im Beitrag zu Widerruf und Rücksendung in diesem Wissensbereich.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Welche Zahlungsarten gibt es?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Zwei, und beide stehen im Bestellvorgang zur Auswahl: PayPal und Vorab-Überweisung. Bei PayPal folgt unmittelbar die Zahlungsseite mit den PayPal-Schaltflächen. Bei der Vorab-Überweisung verschickt der Shop stattdessen eine E-Mail mit Kontoinhaberin, IBAN, Betrag und einem Verwendungszweck, der die Bestellnummer trägt. Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet.</p>
+                <p class="text-white/50 leading-relaxed font-light">Eine Zahlung auf Rechnung, per Lastschrift oder bei Abholung gibt es nicht. Kreditkartendaten speichert der Shop nicht auf seinen Servern; bei PayPal werden die Zahlungsdaten verschlüsselt an den Zahlungsdienstleister übertragen. Beide Wege stehen auch in der E-Mail zur Vorab-Überweisung nebeneinander, sodass sich eine begonnene Überweisung noch in eine PayPal-Zahlung ändern lässt.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie prüft der Shop, ob eine PayPal-Zahlung wirklich angekommen ist?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Auf dem Server, nicht im Browser. Nach dem Abschluss bei PayPal fragt der Shop die Zahlung selbst bei PayPal ab und übernimmt sie nur, wenn sie dort als abgeschlossen geführt wird und der gezahlte Betrag mit dem Rechnungsbetrag übereinstimmt. Dieselbe PayPal-Zahlung lässt sich außerdem kein zweites Mal verwenden. Erst wenn beides zutrifft, gilt die Bestellung als bezahlt.</p>
+                <p class="text-white/50 leading-relaxed font-light">Das ist der Grund, warum zwischen dem Abschluss bei PayPal und der Bestätigungsseite ein kurzer Moment liegt: In dieser Zeit spricht der Shop mit PayPal. Schlägt die Prüfung fehl, bleibt die Bestellung unbezahlt stehen, statt fälschlich als bezahlt zu gelten – lieber eine Rückfrage als eine Bestellung, die niemand beglichen hat.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Was passiert nach der Zahlung?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Die Bestellung wechselt auf bezahlt, das gekaufte Stück wird im Shop abgeschaltet – ein verkauftes Unikat kommt nicht zurück in die Übersicht –, und an die im Bestellvorgang angegebene E-Mail-Adresse geht eine Bestätigung mit Bestellnummer, Artikeln, Gesamtbetrag und Lieferanschrift. Der Warenkorb ist danach leer, und im Profil steht die Bestellung mit ihrem Stand in der Übersicht.</p>
+                <p class="text-white/50 leading-relaxed font-light">Kommt die Bestätigung nicht an, ist die Bestellung trotzdem angelegt: Der Versand der E-Mail läuft getrennt von der Zahlung, ein Fehler dort lässt die Bestellung bestehen. Im Zweifel hilft ein Blick ins Profil, wo jede Bestellung mit Nummer, Datum und Stand steht, oder eine kurze Nachricht über das <a href="{% url 'kontakt' %}" class="text-glow-orange hover:underline">Kontaktformular</a>.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie lange dauert der Versand?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet; innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt. Versendet wird deutschlandweit. Einen Laden, in dem man ein Stück abholen oder anprobieren könnte, gibt es nicht: Luviq Universe ist ein reiner Online-Shop mit Sitz in Alsfeld.</p>
+                <p class="text-white/50 leading-relaxed font-light">Welche Orte besonders oft beliefert werden und wie der Weg von Alsfeld aus in die Region zwischen Fulda und Gießen läuft, steht unter <a href="{% url 'liefergebiet' %}" class="text-glow-orange hover:underline">Liefergebiet</a>. Der Bestellvorgang schlägt auf den Warenwert keinen Versandbetrag auf: Der Gesamtbetrag ist die Summe der Artikelpreise, abzüglich eines eventuellen Rabatts.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Gibt es einen Rabatt auf die erste Bestellung?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Ein neues Konto trägt einen Willkommensrabatt. Solange er auf dem Konto liegt, zieht der Bestellvorgang zehn Prozent vom Warenwert ab und weist den Abzug in der Zusammenfassung eigens aus; mit der ersten über PayPal bezahlten Bestellung ist er verbraucht. Einen Gutscheincode, den man eingeben müsste, gibt es nicht.</p>
+                <p class="text-white/50 leading-relaxed font-light">In der Zusammenfassung rechts im Bestellvorgang stehen deshalb drei Zeilen: der Warenwert, der Abzug und der Betrag, der tatsächlich zu zahlen ist. Wer den Abzug dort nicht sieht, hat ihn bereits eingelöst – er wird nicht erneut gewährt.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Was passiert, wenn ich die Zahlung abbreche?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Dann bleibt der Warenkorb erhalten. Der Shop meldet den Abbruch und führt zurück zum Warenkorb; die angelegte Bestellung bleibt offen stehen. Auch bei der Vorab-Überweisung bleibt sie so lange offen, bis das Geld eingegangen ist – die Bestätigung kommt erst danach.</p>
+                <p class="text-white/50 leading-relaxed font-light">Ein Stück wird erst dann aus dem Shop genommen, wenn die Zahlung geprüft und die Bestellung bezahlt ist. Wer sich nach dem Abbruch anders entscheidet, kann dasselbe Stück also weiter kaufen, solange es niemand anders bezahlt hat. Wer eine begonnene Überweisung doch nicht ausführen möchte, gibt am besten kurz über das Kontaktformular Bescheid.</p>
+            </section>
+        </div>
+
+        <!-- Weiterlesen -->
+        <div class="text-center mt-16">
+            <a href="{% url 'wissen' %}" class="inline-block px-12 py-5 rounded-full bg-glow-orange text-white text-sm font-black uppercase tracking-widest hover:shadow-[0_0_30px_rgba(200,150,92,0.5)] transition-all transform hover:scale-105 active:scale-95">
+                Alle Wissensbeiträge
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

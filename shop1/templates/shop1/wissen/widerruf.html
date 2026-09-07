@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Widerruf und Rücksendung beim Unikat | Luviq Alsfeld{% endblock %}
+{% block meta_description %}Widerruf bei Luviq Universe in Alsfeld: vierzehn Tage Frist, wohin eine Rücksendung geht, was bei Farb- und Gebrauchsspuren gilt. Jetzt nachlesen.{% endblock %}
+{% block og_title %}Widerruf und Rücksendung – Luviq Universe, Alsfeld{% endblock %}
+{% block og_description %}Vierzehn Tage Widerrufsrecht, auch für handbemalte Einzelstücke: Frist, Anschrift, Reklamation und was vorab zu klären ist.{% endblock %}
+{% block twitter_title %}Widerruf und Rücksendung – Luviq Universe{% endblock %}
+{% block twitter_description %}Vierzehn Tage Frist, Anschrift für die Rücksendung, Unregelmäßigkeiten der Bemalung und echte Mängel.{% endblock %}
+{% comment %}Freigabe der Betreiberin: siehe views/wissen.py. Die Bedingung steht IM Block, nicht darum herum (CLAUDE.md).{% endcomment %}
+{% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Wissen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen' %}"},
+    {"@type": "ListItem", "position": 3, "name": "Widerruf und Rücksendung: was gilt bei einem Einzelstück?", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen_widerruf' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block schema_ld %}
+{% comment %}Jede Frage steht wortgleich als h2 auf der Seite, jede Antwort wortgleich als erster Absatz unter dieser h2 - test_geo prueft beides. Belegt aus AGB § 2, § 3, § 4 und § 5 (legal/agb.html), Anschrift und E-Mail aus Impressum und Datenschutzerklaerung, Ablauf der Vorab-Ueberweisung aus views/checkout.py. Was die Seite nicht regelt - Kosten der Ruecksendung, Ruecksendeverfahren, Frist der Rueckzahlung - steht hier als offene Frage und wird nicht erfunden.{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Wie lange kann ich eine Bestellung widerrufen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Vierzehn Tage, ohne Angabe von Gründen. Die Frist beginnt nach § 5 der AGB an dem Tag, an dem du die Ware in Besitz genommen hast – nicht mit der Bestellung und nicht mit der Zahlung. Maßgeblich ist also der Tag der Zustellung."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Gilt das Widerrufsrecht auch für ein handbemaltes Unikat?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja. Die AGB nennen für Unikate keine Ausnahme: § 5 gilt für jede Bestellung in diesem Shop. Ein Stück von Luviq Universe wird auch nicht auf Bestellung angefertigt – Luisa Brehler sucht ein getragenes Basisteil aus, bemalt es und stellt es fertig in den Shop. Gekauft wird ein vorhandenes Stück, kein Auftrag."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie erkläre ich den Widerruf?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Mit einer Nachricht an Luisa Brehler. Die AGB schreiben dafür keine bestimmte Form vor; es gibt kein Rücksendeportal und kein Formular im Konto. Die Wege stehen auf der Seite: das Kontaktformular, die E-Mail-Adresse brehlerluisa@gmail.com aus Impressum und Datenschutzerklärung oder ein Brief an die Anschrift im Impressum."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wohin schicke ich ein Stück zurück?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An die Anschrift der Anbieterin: Luisa Brehler, Grünberger Str. 16, 36304 Alsfeld. Einen Laden, in dem sich ein Stück abgeben ließe, gibt es nicht – Luviq Universe ist ein reiner Online-Shop. Sinnvoll ist, die Rücksendung vorher kurz anzukündigen, damit sie zugeordnet werden kann."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wer trägt die Kosten der Rücksendung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Dazu macht diese Seite keine Angabe. Weder die AGB noch eine andere Seite dieses Shops regeln, wer das Rückporto zahlt und ob ein Rücksendeetikett gestellt wird. Statt hier eine Zahl zu nennen, die nirgends steht: vor der Rücksendung kurz über das Kontaktformular oder per E-Mail klären."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Sind Farbspuren oder Gebrauchsspuren ein Grund zur Reklamation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nein. Nach § 3 der AGB sind leichte Unregelmäßigkeiten in der Bemalung und minimale Gebrauchsspuren des Vintage-Basisteils Teil des künstlerischen Konzepts und stellen keinen Mangel dar. Das ist bei einem von Hand bemalten, getragenen Kleidungsstück der Normalzustand und keine Einschränkung der Rechte bei einem echten Mangel."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was ist bei einem echten Mangel oder einer falschen Lieferung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ein Riss, eine offene Naht, ein Schaden aus dem Transport oder ein falsch geliefertes Stück ist etwas anderes als eine Unregelmäßigkeit der Bemalung; § 3 der AGB stellt nur klar, was kein Mangel ist, und schränkt die gesetzlichen Rechte nicht ein. Der Weg ist derselbe: Nachricht mit Bestellnummer und einem Foto über das Kontaktformular oder per E-Mail."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kann ich ein Stück in einer anderen Größe umtauschen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nein, das geht bei Luviq Universe technisch nicht: Jedes Stück existiert genau einmal, es gibt kein zweites Exemplar in einer anderen Größe und keine Nachbestellung. Wenn ein Stück nicht passt, bleibt der Widerruf – und danach ist das Stück wieder für andere zu haben, nicht in einer anderen Größe für dich."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Gilt das Widerrufsrecht auch bei Vorab-Überweisung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja, die AGB unterscheiden beim Widerruf nicht nach Zahlungsart. Vor der Überweisung ist ohnehin nichts geschehen, was zu widerrufen wäre: Die Bestellung bleibt so lange offen, bis das Geld eingegangen ist, und die Bestätigung kommt erst danach. Wer es sich vorher anders überlegt, sagt am besten kurz Bescheid."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie vermeide ich, dass es überhaupt zum Widerruf kommt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Vor dem Kauf fragen. Da ein Einzelstück weder in einer anderen Größe noch ein zweites Mal zu haben ist, lohnt sich die Frage nach Maßen, Material und Zustand vorab – über das Kontaktformular, unter Angabe des Stücks. Wie man ohne Anprobe die Größe einschätzt, steht im Beitrag zur Größenwahl in diesem Wissensbereich."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen pt-20 pb-32">
+    <!-- Nebula Background Layer -->
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <!-- Kopf: Antwort zuerst -->
+        <div class="mb-20 animate-reveal text-center">
+            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-glow-orange mb-6"><a href="{% url 'wissen' %}" class="hover:text-white transition-colors">Wissen</a></p>
+            <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
+                Widerruf und Rücksendung: <span class="text-glow">was gilt bei einem Einzelstück?</span>
+            </h1>
+            <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
+                Für eine Bestellung bei Luviq Universe in Alsfeld gilt das Widerrufsrecht von vierzehn Tagen ohne Angabe von Gründen, gerechnet ab dem Tag, an dem du die Ware in Besitz genommen hast (§ 5 der AGB). Für handbemalte Einzelstücke nennen die AGB keine Ausnahme. Erklärt wird der Widerruf gegenüber Luisa Brehler, Grünberger Str. 16, 36304 Alsfeld – über das Kontaktformular, per E-Mail oder per Brief. Was die Seite nicht regelt, etwa wer das Rückporto trägt, steht hier als offene Frage und wird vorab geklärt, nicht geraten.
+            </p>
+            <div class="h-px w-32 bg-glow-orange mt-16 rounded-full mx-auto"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto space-y-6">
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie lange kann ich eine Bestellung widerrufen?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Vierzehn Tage, ohne Angabe von Gründen. Die Frist beginnt nach § 5 der AGB an dem Tag, an dem du die Ware in Besitz genommen hast – nicht mit der Bestellung und nicht mit der Zahlung. Maßgeblich ist also der Tag der Zustellung.</p>
+                <p class="text-white/50 leading-relaxed font-light">Der vollständige Wortlaut steht in den <a href="{% url 'agb' %}" class="text-glow-orange hover:underline">AGB</a>. Wer die Frist im Blick behalten will, nimmt das Zustelldatum des Pakets als Anfang; die Bestellnummer und das Bestelldatum stehen im Profil und in der Bestätigungsmail.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Gilt das Widerrufsrecht auch für ein handbemaltes Unikat?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Ja. Die AGB nennen für Unikate keine Ausnahme: § 5 gilt für jede Bestellung in diesem Shop. Ein Stück von Luviq Universe wird auch nicht auf Bestellung angefertigt – Luisa Brehler sucht ein getragenes Basisteil aus, bemalt es und stellt es fertig in den Shop. Gekauft wird ein vorhandenes Stück, kein Auftrag.</p>
+                <p class="text-white/50 leading-relaxed font-light">Der Unterschied ist wichtig, weil er oft verwechselt wird: „handgemacht" heißt nicht „nach deinen Angaben angefertigt". Wer in einem Shop ein fertiges Stück auswählt, das dort schon liegt, kauft Ware von der Stange – auch wenn es diese Stange nur einmal gibt.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie erkläre ich den Widerruf?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Mit einer Nachricht an Luisa Brehler. Die AGB schreiben dafür keine bestimmte Form vor; es gibt kein Rücksendeportal und kein Formular im Konto. Die Wege stehen auf der Seite: das Kontaktformular, die E-Mail-Adresse brehlerluisa@gmail.com aus Impressum und Datenschutzerklärung oder ein Brief an die Anschrift im Impressum.</p>
+                <p class="text-white/50 leading-relaxed font-light">Hilfreich in der Nachricht: die Bestellnummer, der Name des Stücks und ein Satz, dass die Bestellung widerrufen wird. Zum <a href="{% url 'kontakt' %}" class="text-glow-orange hover:underline">Kontaktformular</a> geht es über das Menü jeder Seite; die vollständigen Anbieterangaben stehen im <a href="{% url 'impressum' %}" class="text-glow-orange hover:underline">Impressum</a>.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wohin schicke ich ein Stück zurück?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">An die Anschrift der Anbieterin: Luisa Brehler, Grünberger Str. 16, 36304 Alsfeld. Einen Laden, in dem sich ein Stück abgeben ließe, gibt es nicht – Luviq Universe ist ein reiner Online-Shop. Sinnvoll ist, die Rücksendung vorher kurz anzukündigen, damit sie zugeordnet werden kann.</p>
+                <p class="text-white/50 leading-relaxed font-light">Für den Rückweg gilt, was für den Hinweg gilt: Ein handbemaltes Teil verträgt keinen Druck auf die Bemalung. Also flach zusammenlegen statt eng rollen, und die bemalte Seite nach innen. Wie ein solches Stück auf Dauer behandelt wird, steht im Beitrag zur Pflege in diesem Wissensbereich.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wer trägt die Kosten der Rücksendung?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Dazu macht diese Seite keine Angabe. Weder die AGB noch eine andere Seite dieses Shops regeln, wer das Rückporto zahlt und ob ein Rücksendeetikett gestellt wird. Statt hier eine Zahl zu nennen, die nirgends steht: vor der Rücksendung kurz über das Kontaktformular oder per E-Mail klären.</p>
+                <p class="text-white/50 leading-relaxed font-light">Dasselbe gilt für die Frage, wie schnell der Kaufpreis zurückkommt und auf welchem Weg – auch dazu steht nichts in den AGB. Beides gehört in dieselbe kurze Nachricht wie der Widerruf selbst; dann ist es geklärt, bevor das Paket unterwegs ist.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Sind Farbspuren oder Gebrauchsspuren ein Grund zur Reklamation?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Nein. Nach § 3 der AGB sind leichte Unregelmäßigkeiten in der Bemalung und minimale Gebrauchsspuren des Vintage-Basisteils Teil des künstlerischen Konzepts und stellen keinen Mangel dar. Das ist bei einem von Hand bemalten, getragenen Kleidungsstück der Normalzustand und keine Einschränkung der Rechte bei einem echten Mangel.</p>
+                <p class="text-white/50 leading-relaxed font-light">Genau diese Unregelmäßigkeiten sind das Erkennungszeichen der Handarbeit: unterschiedlich dichte Pinselstriche, Kanten, die nicht wie gedruckt verlaufen, Stellen mit mehr und weniger Farbe. Was das von einem Druck unterscheidet, steht im Beitrag zu Upcycling-Mode in diesem Wissensbereich.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Was ist bei einem echten Mangel oder einer falschen Lieferung?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Ein Riss, eine offene Naht, ein Schaden aus dem Transport oder ein falsch geliefertes Stück ist etwas anderes als eine Unregelmäßigkeit der Bemalung; § 3 der AGB stellt nur klar, was kein Mangel ist, und schränkt die gesetzlichen Rechte nicht ein. Der Weg ist derselbe: Nachricht mit Bestellnummer und einem Foto über das Kontaktformular oder per E-Mail.</p>
+                <p class="text-white/50 leading-relaxed font-light">Ein Foto hilft, weil ein Einzelstück nicht einfach durch ein gleiches ersetzt werden kann – es gibt kein zweites. Was in einem solchen Fall geschieht, hängt vom Stück ab und wird zwischen dir und der Anbieterin geklärt; eine Pauschalregel dazu enthalten die AGB nicht.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Kann ich ein Stück in einer anderen Größe umtauschen?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Nein, das geht bei Luviq Universe technisch nicht: Jedes Stück existiert genau einmal, es gibt kein zweites Exemplar in einer anderen Größe und keine Nachbestellung. Wenn ein Stück nicht passt, bleibt der Widerruf – und danach ist das Stück wieder für andere zu haben, nicht in einer anderen Größe für dich.</p>
+                <p class="text-white/50 leading-relaxed font-light">Deshalb ist die Größenfrage bei Einzelstücken wichtiger als in einem Shop mit Serienware: Ein Umtausch, der die Sache still korrigiert, existiert hier nicht. Die verfügbaren Stücke stehen unter <a href="{% url 'produkte' %}" class="text-glow-orange hover:underline">Alle Unikate</a>, mit Bild und Beschreibung zu jedem Teil.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Gilt das Widerrufsrecht auch bei Vorab-Überweisung?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Ja, die AGB unterscheiden beim Widerruf nicht nach Zahlungsart. Vor der Überweisung ist ohnehin nichts geschehen, was zu widerrufen wäre: Die Bestellung bleibt so lange offen, bis das Geld eingegangen ist, und die Bestätigung kommt erst danach. Wer es sich vorher anders überlegt, sagt am besten kurz Bescheid.</p>
+                <p class="text-white/50 leading-relaxed font-light">Bis zur vollständigen Bezahlung bleibt die Ware nach § 4 der AGB ohnehin Eigentum von Luviq. Wie eine Bestellung von der Auswahl bis zur Bestätigung abläuft und welche Zahlungswege es gibt, steht im Beitrag zum Bestellen und Bezahlen in diesem Wissensbereich.</p>
+            </section>
+
+            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie vermeide ich, dass es überhaupt zum Widerruf kommt?</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Vor dem Kauf fragen. Da ein Einzelstück weder in einer anderen Größe noch ein zweites Mal zu haben ist, lohnt sich die Frage nach Maßen, Material und Zustand vorab – über das Kontaktformular, unter Angabe des Stücks. Wie man ohne Anprobe die Größe einschätzt, steht im Beitrag zur Größenwahl in diesem Wissensbereich.</p>
+                <p class="text-white/50 leading-relaxed font-light">Zwei Angaben helfen fast immer weiter: die Brustweite flach gemessen und die Länge von der Schulter bis zum Saum, verglichen mit einem Teil, das gut sitzt. Bei Vintage-Schnitten lohnt sich das besonders, weil das Etikett wenig über die tatsächlichen Maße sagt.</p>
+            </section>
+        </div>
+
+        <!-- Weiterlesen -->
+        <div class="text-center mt-16">
+            <a href="{% url 'wissen' %}" class="inline-block px-12 py-5 rounded-full bg-glow-orange text-white text-sm font-black uppercase tracking-widest hover:shadow-[0_0_30px_rgba(200,150,92,0.5)] transition-all transform hover:scale-105 active:scale-95">
+                Alle Wissensbeiträge
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

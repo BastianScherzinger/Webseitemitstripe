@@ -32,6 +32,16 @@ llms.txt und robots-Angabe folgen dann von selbst, ebenso die Tests
 Beiträgen: sie ist indexierbar, sobald mindestens ein Beitrag freigegeben ist
 – eine Übersicht, die nur auf ``noindex``-Seiten zeigt, wäre für
 Suchmaschinen eine leere Seite, und ihr Kurztext wiederholt die Pflegeangaben.
+
+Die drei später hinzugekommenen Beiträge – Bestellen und Bezahlen, Widerruf
+und Rücksendung, Konto und Daten – stehen dagegen von Anfang an auf
+``freigegeben``: Sie geben ausschliesslich wieder, was an anderer Stelle
+dieser Seite belegt ist (AGB, Datenschutzerklärung, Impressum, Liefergebiet
+und das Verhalten von Warenkorb, Bestellvorgang und Anmeldung im Code). Sie
+brauchen deshalb keine Bestätigung der Betreiberin. Wo die Seite eine Frage
+nicht regelt – wer das Rückporto trägt, wie schnell zurückgezahlt wird –,
+sagt der Beitrag das ausdrücklich, statt eine Zahl zu nennen, die nirgends
+steht.
 """
 
 from django.http import Http404
@@ -69,6 +79,37 @@ WISSEN_BEITRAEGE = {
                 'warum Vintage-Schnitte abweichen und wie man vor dem Kauf nachfragt.',
         # Offen: „fünf Zentimeter Unterschied in der Brustweite sind eine ganze Grösse".
         'freigegeben': False,
+    },
+    # Ab hier: Beiträge, die ausschliesslich aus dem Projekt belegte Angaben
+    # wiedergeben (AGB, Datenschutzerklärung, Impressum, Liefergebiet und der
+    # Code von Warenkorb, Bestellvorgang und Anmeldung). Sie brauchen keine
+    # Bestätigung der Betreiberin, weil sie keine Sachangabe treffen, die nicht
+    # schon an anderer Stelle dieser Seite steht – deshalb ``freigegeben``.
+    # Wo die Seite etwas nicht regelt (Kosten der Rücksendung, Frist der
+    # Rückzahlung), sagt der Beitrag genau das, statt eine Zahl zu erfinden.
+    'bestellen-und-bezahlen': {
+        'url_name': 'wissen_bestellen',
+        'template': 'shop1/wissen/bestellen.html',
+        'titel': 'Wie bestelle und bezahle ich bei Luviq Universe?',
+        'kurz': 'Konto, Warenkorb, Pflichtangaben im Bestellvorgang, PayPal oder '
+                'Vorab-Überweisung, Prüfung der Zahlung, Bestätigung und Versand.',
+        'freigegeben': True,
+    },
+    'widerruf-und-ruecksendung': {
+        'url_name': 'wissen_widerruf',
+        'template': 'shop1/wissen/widerruf.html',
+        'titel': 'Widerruf und Rücksendung: was gilt bei einem Einzelstück?',
+        'kurz': 'Vierzehn Tage Widerrufsrecht nach § 5 der AGB, Anschrift für die '
+                'Rücksendung, Unregelmäßigkeiten der Bemalung und echte Mängel.',
+        'freigegeben': True,
+    },
+    'konto-und-daten': {
+        'url_name': 'wissen_konto',
+        'template': 'shop1/wissen/konto.html',
+        'titel': 'Was speichert der Shop – und warum braucht der Kauf ein Konto?',
+        'kurz': 'Anmeldepflicht im Warenkorb, Angaben bei der Registrierung, '
+                'Besuchsprotokoll, eingebundene Dienste und wie ein Konto gelöscht wird.',
+        'freigegeben': True,
     },
 }
 

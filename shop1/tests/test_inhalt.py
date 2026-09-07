@@ -85,6 +85,11 @@ UMFANG_PRODUKT_SEITE = '/produkt/bemalte-bomberjacke/'
 #: ``/wissen/`` 261, Pflege 821, Upcycling 941, Grösse 890. Die drei Beiträge
 #: liegen über der Zielgrösse 600 des Plans; die Schwellen halten auch hier
 #: den gemessenen Stand fest, nicht die Zielgrösse.
+#:
+#: Drei belegte Beiträge dazu (SU04, 2026-09-07), am selben Tag gemessen:
+#: Bestellen 1129, Widerruf 1034, Konto 1000; ``/wissen/`` steht durch die
+#: drei zusätzlichen Ankündigungen und den erweiterten Einleitungsabsatz
+#: jetzt bei 404 statt 261, die Schwelle wird entsprechend nachgezogen.
 MINDESTWOERTER = {
     '/': 390,
     '/produkte/': 105,
@@ -96,10 +101,13 @@ MINDESTWOERTER = {
     '/datenschutz/': 360,
     '/agb/': 170,
     UMFANG_PRODUKT_SEITE: 95,
-    '/wissen/': 250,
+    '/wissen/': 390,
     '/wissen/pflege-handbemalte-kleidung/': 800,
     '/wissen/upcycling-mode-second-hand-vintage/': 920,
     '/wissen/groesse-bei-einzelstuecken/': 870,
+    '/wissen/bestellen-und-bezahlen/': 1110,
+    '/wissen/widerruf-und-ruecksendung/': 1015,
+    '/wissen/konto-und-daten/': 980,
 }
 
 #: Seiten, deren erstes Drittel noch keine Zahl nennt. ``/liefergebiet/``

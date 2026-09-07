@@ -33,6 +33,9 @@ FAQ_SEITEN = (
     '/wissen/pflege-handbemalte-kleidung/',
     '/wissen/upcycling-mode-second-hand-vintage/',
     '/wissen/groesse-bei-einzelstuecken/',
+    '/wissen/bestellen-und-bezahlen/',
+    '/wissen/widerruf-und-ruecksendung/',
+    '/wissen/konto-und-daten/',
 )
 
 
