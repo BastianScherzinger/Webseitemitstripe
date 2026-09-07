@@ -185,4 +185,5 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 <!-- eigenepunkte:anfang -->
 | Punkt | Titel | Bereich | Zustand | Beleg | seit |
 |---|---|---|---|---|---|
+| EIG01 | Impressum zitiert drei aufgehobene Rechtsgrundlagen | recht | offen | an RTC-Service gefunden am 07.09.2026: templates/impressum.html:48` „Angaben gemäß § 5 TMG" (TMG seit 14.05.2024 durch das DDG ersetzt), `:72` „§ 55 Abs. 2 RStV" (RStV seit 07.11.2020 durch den MStV, § 18 Abs. 2), `:83` Link auf die EU-OS-Plattform, deren Betrieb am 20.07.2025 eingestellt wurde. **An dieser Seite noch nicht geprüft.** | 2026-09-07 |
 <!-- eigenepunkte:ende -->
