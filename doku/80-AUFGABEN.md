@@ -184,6 +184,7 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | SU02 | beim Kunden | Von 9.350 fehlenden Eigenwörtern liegen 2.913 fertig, aber wegen `'freigegeben': False` auf `noindex`, und die restlichen rund 6.400 verlangen Preisrahmen, Abläufe und echte Fälle, die im Repository nirgends stehen — beides kann nur die Betreiberin liefern. | 2026-09-06 |
 | SU07 | beim Kunden | Drei fertige Wissensbeiträge auf sechs Verkaufsseiten übertreffen die Zielgrösse bereits, stehen aber wegen unbelegter Pflege- und Grössenangaben auf `'freigegeben': False` (`shop1/views/wissen.py:53,62,71`) und damit auf `noindex` — nur die Betreiberin kann diese Angaben bestätigen. | 2026-09-07 |
 | KV01 | beim Kunden | Im ganzen Projekt steht keine geschäftliche Telefonnummer; die frühere Platzhalternummer wurde entfernt und steht als verbotenes Ziel in `FALSCHE_ZIELE` (`shop1/tests/test_inhalt.py`). Eine Nummer zu erfinden hiesse, Kunden auf einen Anschluss zu schicken, der der Betreiberin nicht gehört — nur Luisa Brehler kann eine nennen (siehe „Beim Kunden" Nr. 4). Es wurde dafür keine Zeile geändert. | 2026-09-08 |
+| IS21 | beim Kunden | Alle zehn gemeldeten Paare sind Produktseiten-Paare, und deren Text unterscheidet sich laut `produkt_detail.html:78,115,119,129,130` allein durch Name, Preis und Beschreibung — zwei aktive Stücke tragen beide identisch, und `models.py:85-99` bietet kein weiteres Feld, aus dem sich Unterschied gewinnen liesse. | 2026-09-08 |
 <!-- bewertung:ende -->
 
 ## Eigene Punkte
