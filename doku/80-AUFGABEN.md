@@ -226,4 +226,5 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | EIG32 | /favicon.ico` und `/apple-touch-icon.png` lösen statische Pfade in Python auf, die keine Prüfung abdeckt | technik | offen | bei einer anderen betreuten Seite aufgefallen am 08.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-08 |
 | EIG33 | Der Messbefund PJ10 „zwei Views ohne Route" trifft nicht zu | technik | offen | bei einer anderen betreuten Seite aufgefallen am 08.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-08 |
 | EIG34 | anfrage_verarbeiten` sagt im Vertrag „False bei Fehler" und gibt immer True | technik | offen | bei einer anderen betreuten Seite aufgefallen am 08.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-08 |
+| EIG35 | priceRange` im Schema nennt 500 € als Untergrenze, die es einzeln nicht gibt | seo | offen | bei einer anderen betreuten Seite aufgefallen am 08.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-08 |
 <!-- eigenepunkte:ende -->
