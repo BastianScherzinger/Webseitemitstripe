@@ -180,6 +180,7 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 |---|---|---|---|
 | SU09 | beim Kunden | `/produkt/` leitet seit Welle 3 per 301 auf die Übersicht `/produkte/` (`shop1/views/legal.py::produkt_uebersicht_redirect`, Test `test_seo.test_produkt_ohne_kennung_leitet_auf_die_uebersicht`); gemessen wurde die Live-Seite, auf der der Zweig noch nicht ausgeliefert ist — eine zweite Übersichtsseite unter `/produkt/` wäre ein Volltext-Duplikat von `/produkte/` und träfe den Befund IS21. | 2026-09-05 |
 | SU02 | beim Kunden | Von 9.350 fehlenden Eigenwörtern liegen 2.913 fertig, aber wegen `'freigegeben': False` auf `noindex`, und die restlichen rund 6.400 verlangen Preisrahmen, Abläufe und echte Fälle, die im Repository nirgends stehen — beides kann nur die Betreiberin liefern. | 2026-09-06 |
+| SU07 | beim Kunden | Drei fertige Wissensbeiträge auf sechs Verkaufsseiten übertreffen die Zielgrösse bereits, stehen aber wegen unbelegter Pflege- und Grössenangaben auf `'freigegeben': False` (`shop1/views/wissen.py:53,62,71`) und damit auf `noindex` — nur die Betreiberin kann diese Angaben bestätigen. | 2026-09-07 |
 <!-- bewertung:ende -->
 
 ## Eigene Punkte
@@ -187,5 +188,9 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 <!-- eigenepunkte:anfang -->
 | Punkt | Titel | Bereich | Zustand | Beleg | seit |
 |---|---|---|---|---|---|
-| EIG01 | Impressum zitiert drei aufgehobene Rechtsgrundlagen | recht | offen | an RTC-Service gefunden am 07.09.2026: templates/impressum.html:48` „Angaben gemäß § 5 TMG" (TMG seit 14.05.2024 durch das DDG ersetzt), `:72` „§ 55 Abs. 2 RStV" (RStV seit 07.11.2020 durch den MStV, § 18 Abs. 2), `:83` Link auf die EU-OS-Plattform, deren Betrieb am 20.07.2025 eingestellt wurde. **An dieser Seite noch nicht geprüft.** | 2026-09-07 |
+| EIG01 | Eine gelöschte Datenvariable steht noch in llms.txt und llms-full.txt | technik | offen | bei einer anderen betreuten Seite aufgefallen am 07.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-07 |
+| EIG02 | Startseite und Über-mich melden lastmod 04.09., obwohl sie am 06./07.09. geändert wurden | seo | offen | bei einer anderen betreuten Seite aufgefallen am 07.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-07 |
+| EIG03 | Die Inhalte-Doku kennt vier Ratgebertexte nicht und widerspricht ihrem eigenen Kopf | inhalte | offen | bei einer anderen betreuten Seite aufgefallen am 07.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-07 |
+| EIG04 | Ratgebertexte melden og:type „website", das Schema nennt sie Article | seo | offen | bei einer anderen betreuten Seite aufgefallen am 07.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-07 |
+| EIG05 | Impressum zitiert drei aufgehobene Rechtsgrundlagen | recht | offen | bei einer anderen betreuten Seite aufgefallen am 07.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-07 |
 <!-- eigenepunkte:ende -->
