@@ -221,4 +221,5 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | EIG27 | /ueber-mich/` steht in keiner Navigation und in keiner Fußzeile | konversion | offen | bei einer anderen betreuten Seite aufgefallen am 08.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-08 |
 | EIG28 | Der Kopf von `00-STATUS.md` nennt 84,4, der Messblock darunter 93,1 | status | offen | bei einer anderen betreuten Seite aufgefallen am 08.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-08 |
 | EIG29 | Fünf Punkte stehen als „offen" oder „fehlt", sind live erledigt | aufgaben | offen | bei einer anderen betreuten Seite aufgefallen am 08.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-08 |
+| EIG30 | Die Tabelle „Zahlen, die in mehreren Quellen unterschiedlich stehen" nennt selbst drei überholte Werte | notizen | offen | bei einer anderen betreuten Seite aufgefallen am 08.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-08 |
 <!-- eigenepunkte:ende -->
