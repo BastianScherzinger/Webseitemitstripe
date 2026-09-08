@@ -1,0 +1,81 @@
+# Die Prüfbefehle von Luviq Universe, bei jedem Push und jedem Pull Request.
+#
+# Erzeugt vom Overview-Werkzeug der Webagentur Scherzinger; das Werkzeug und
+# seine Liste der Prüfbefehle liegen **nicht in diesem Repository**. Wer hier
+# einen Prüfbefehl ergänzt, sagt es dort auch — sonst prüft dieser Lauf etwas
+# anderes als das Tor des Werkzeugs, und zwei Prüfungen mit zwei Wahrheiten
+# sind schlechter als eine.
+#
+# Von den hinterlegten Prüfbefehlen wurde hier ausgelassen:
+#   * nichts — es läuft genau das, was hinterlegt ist
+#
+# Grün heisst wie überall nur, dass die Prüfungen nichts gefunden haben.
+
+name: Prüfungen
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# Ein zweiter Push auf denselben Zweig macht den ersten Lauf gegenstandslos.
+concurrency:
+  group: pruefungen-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      # ⚠ Ohne diese Zeile bricht ein Lauf am ersten „→" ab — und zwar
+      # NACHDEM alles geprüft wurde. Der Befund geht mit dem Absturz verloren.
+      PYTHONIOENCODING: utf-8
+      # Testwerte, keine Geheimnisse.
+      # ⚠ **Projektabhängig und belegt**, nicht geraten:
+      #   2 Prüfbefehl(e) grün, ohne die Zeile — der Zustand eines frischen Klons.
+      #   Ein falscher Wert schaltet DEBUG **lautlos** um und damit den
+      #   Produktionszweig (`SECURE_SSL_REDIRECT`, HSTS) — je nach Projekt
+      #   bekommt dann jeder View-Test 301 statt 200, oder die
+      #   Sicherheitstests finden ihre Kopfzeilen nicht.
+      #   DEBUG=(nicht gesetzt): alle grün
+      # (DEBUG bleibt ungesetzt — so war der Lauf grün.)
+      SECRET_KEY: nur-fuer-den-pruef-lauf-kein-geheimnis
+      ALLOWED_HOSTS: "*"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # ⚠ Ohne `fetch-depth: 0` klont die Action **flach** (Standard 1).
+          # Prüfbefehle, die ein Änderungsdatum aus der Historie lesen —
+          # `git log -1 --format=%cs -- <pfad>` in `pruefe_seite`, `check_seo`,
+          # `stand_schreiben` —, sehen dann genau einen Commit: **jede** Quelle
+          # datiert auf den Push-Tag, und jeder `lastmod`-Vergleich schlägt an.
+          #
+          # Gefunden am 08.09.2026 von der Auslieferungsprüfung 40, **bevor**
+          # der Workflow hinausging: „in einem flachen Checkout kennt Git genau
+          # einen Commit … pruefe_lastmod meldet alle neun Einträge als
+          # überholt, handle wirft dann CommandError.“ Ein Workflow, der beim
+          # ersten Lauf rot wird, ist schlimmer als keiner.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Abhängigkeiten
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Datenbank anlegen
+        run: python manage.py migrate --no-input
+
+      - name: Systemcheck
+        run: python manage.py check
+
+      - name: test
+        run: python manage.py test
