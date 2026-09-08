@@ -81,7 +81,7 @@
         <!-- Story -->
         <section class="scroll-reveal glass-card p-10 md:p-16 rounded-[3.5rem] mb-24 max-w-4xl mx-auto" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
             <p class="text-white/60 text-lg leading-relaxed font-light">
-                Luisa Brehler bemalt jedes Unikat mit der Hand in ihrem Atelier in Alsfeld, mitten im Vogelsbergkreis – genau zwischen Fulda und Gießen. Einen Ladenverkauf gibt es bewusst nicht: Luviq Universe ist ein reiner Online-Shop. Dafür kommt der Versand aus Hessen heraus besonders schnell bei dir an, egal ob du eher Richtung Fulda oder Richtung Gießen wohnst.
+                Luisa Brehler bemalt jedes Unikat mit der Hand in ihrem Atelier in Alsfeld, mitten im Vogelsbergkreis – genau zwischen Fulda und Gießen. Einen Ladenverkauf gibt es bewusst nicht: Luviq Universe ist ein reiner Online-Shop. Dafür kommt der Versand aus Hessen heraus besonders schnell bei dir an, egal ob du eher Richtung Fulda oder Richtung Gießen wohnst. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet –, und für jede Bestellung gilt das Widerrufsrecht von 14 Tagen (§ 5 der AGB).
             </p>
         </section>
 
@@ -91,7 +91,7 @@
                 Beliebt in <span class="text-glow">deiner Nähe</span>
             </h2>
             <p class="text-white/30 text-xs sm:text-sm text-center max-w-2xl mx-auto mb-14 uppercase tracking-widest">
-                Ein Auszug aus unserer Community entlang der Strecke Fulda – Alsfeld – Gießen
+                Ein Auszug aus unserer Community: {{ orte|length }} Orte entlang der Strecke Fulda – Alsfeld – Gießen
             </p>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
                 {% for ort in orte %}
