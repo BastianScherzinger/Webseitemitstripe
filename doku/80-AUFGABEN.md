@@ -193,4 +193,5 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | EIG03 | Die Inhalte-Doku kennt vier Ratgebertexte nicht und widerspricht ihrem eigenen Kopf | inhalte | offen | bei einer anderen betreuten Seite aufgefallen am 07.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-07 |
 | EIG04 | Ratgebertexte melden og:type „website", das Schema nennt sie Article | seo | offen | bei einer anderen betreuten Seite aufgefallen am 07.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-07 |
 | EIG05 | Impressum zitiert drei aufgehobene Rechtsgrundlagen | recht | offen | bei einer anderen betreuten Seite aufgefallen am 07.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-07 |
+| EIG06 | Die Bewertung des eigenen Entwicklers steht sichtbar als Kundenstimme | inhalte | offen | bei einer anderen betreuten Seite aufgefallen am 08.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-08 |
 <!-- eigenepunkte:ende -->
