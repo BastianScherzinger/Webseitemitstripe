@@ -1,10 +1,10 @@
 ---
 bereich: aufgaben
 titel: Aufgaben
-stand: 2026-09-07
+stand: 2026-09-08
 status: teilweise
 fortschritt: 40
-zusammenfassung: SU04 ist im Zweig erledigt — drei belegte Wissensbeiträge sind indexiert, ohne Zuarbeit der Betreiberin. Kritisch bleibt V11 (Newsletter-Abonnenten nirgends einsehbar), nächster Schritt der Merge des Zweigs nach main samt CANONICAL_HOST; danach Schriften lokal, Sprungmarke, Permissions-Policy, Danke-Seite; drei Freigaben liegen weiter bei der Betreiberin.
+zusammenfassung: Im Zweig sind SU04 (drei belegte Wissensbeiträge) und seit dem 08.09.2026 GE23, GE25 und IS19 erledigt — jede Inhaltsseite beginnt mit einem Antwortabsatz, nennt belegte Zahlen und liegt über 200 Wörtern. Kritisch bleibt V11 (Newsletter-Abonnenten nirgends einsehbar), nächster Schritt der Merge des Zweigs nach main samt CANONICAL_HOST; danach Schriften lokal, Sprungmarke, Permissions-Policy, Danke-Seite; drei Freigaben und die Produktbeschreibungen liegen weiter bei der Betreiberin.
 offen: 10
 quellen: LOGBUCH.md, CLAUDE.md, GOOGLE_SEO_GUIDE.md
 ---
@@ -82,15 +82,15 @@ Die grössten Hebel aus den offenen Regeln der Messung vom 02.09.2026. Der schw�
 | **`SU01`** | **13 rankfähige Seiten, Zielgrösse 30** für diese Geschäftsart | Je wiederkehrender Kundenfrage eine Seite. Bestellablauf, Widerruf und Konto sind mit SU04 gebaut; offen bleiben Themen, die Angaben der Betreiberin brauchen (Materialien, Preisrahmen, Rückporto) |
 | **`SU04`** | **0 Wissensseiten, Zielgrösse 3** — kein einziger Ratgeberbereich | **Im Zweig erfüllt** (07.09.2026, `d7d2e0b`): drei Beiträge, deren jede Sachangabe aus AGB, Datenschutz, Impressum, Liefergebiet oder dem Shop-Code belegt ist, stehen auf `freigegeben: True` — `/wissen/bestellen-und-bezahlen/`, `/wissen/widerruf-und-ruecksendung/`, `/wissen/konto-und-daten/`. Sie brauchen keine Zuarbeit; Sitemap und `llms.txt` führen sie samt Übersicht (vier Adressen), `/wissen/` ist dadurch indexierbar. Live zählt der Punkt erst nach dem Merge |
 | `SU07` | 0 Wissensseiten auf 6 Verkaufsseiten; Ziel eine je drei | Die drei belegten Beiträge zählen ab dem Merge mit; die drei gesperrten erst nach der Freigabe |
-| `SU06` | im Schnitt 120 Eigenwörter je Seite, Ziel 400; dünnste: Produktseiten mit 25 W | Echte Produktbeschreibungen der Betreiberin; der Zweig ergänzt nur den für alle Produkte gleichen Zusatz |
+| `SU06` | im Schnitt 120 Eigenwörter je Seite, Ziel 400; dünnste: Produktseiten mit 25 W | Echte Produktbeschreibungen der Betreiberin. Der Zweig ergänzt nur den für alle Produkte gleichen Zusatz — mit IS19 (08.09.2026) ist dieser Zusatz länger geworden, aber auf allen fünf Stücken **derselbe Text**. Das hebt die Wortzahl, nicht die Eigenständigkeit: die Textgleichheit zwischen den Produktseiten (`IS21`) sinkt dadurch nicht |
 | `SU08` · `SU09` · `SU10` | 4 von 5 Themenbereichen mit nur einer Seite; `/produkt/` ohne Übersichtsseite (Zweig: 301 auf `/produkte/`); `/produkt/` hält 56 % aller Unterseiten | Bereiche ausbauen statt weitere Einzelseiten anlegen |
 
 ### Inhalt und Titel
 
 | Regel | Befund | Was es braucht |
 |---|---|---|
-| **`IS19`** | **85 % der Seiten sind dünn (11 von 13)**: `/produkte/` 62 W, `/kontakt/` 91 W, `/datenschutz/` 185 W, `/agb/` 179 W, `/gaestebuch/` 70 W … (+6) | Seiten unter 200 Eigenwörtern ausbauen, zusammenlegen oder auf `noindex` — sie senken die Bewertung der ganzen Domain, nicht nur ihre eigene |
-| **`IS18`** | **Umfang passt nicht zur Aufgabe: 7 von 7 Seiten darunter** — `/` 390/700 W, `/produkte/` 62/600 W, Produktseiten je 25/600 W | Mindestumfang je Seitenart halten; bei Produktseiten heisst das eine echte Beschreibung je Einzelstück |
+| **`IS19`** | **85 % der Seiten sind dünn (11 von 13)**: `/produkte/` 62 W, `/kontakt/` 91 W, `/datenschutz/` 185 W, `/agb/` 179 W, `/gaestebuch/` 70 W … (+6) | **Im Zweig behoben** (08.09.2026, `b35f6e4`): keine indexierbare Seite liegt noch unter 200 Wörtern im Inhaltsbereich (gemessen mit einem Produkt und ohne Kommentare). `/impressum/` bleibt bei 75 Wörtern — es trägt `noindex` und steht weder in der Sitemap noch in `llms.txt`. Live gilt weiter der Messwert |
+| **`IS18`** | **Umfang passt nicht zur Aufgabe: 7 von 7 Seiten darunter** — `/` 390/700 W, `/produkte/` 62/600 W, Produktseiten je 25/600 W | Mindestumfang je Seitenart halten. Der Zweig hebt `/produkte/` auf 238 und die Produktseiten auf 211 Wörter — die Zielgrösse 600 erreicht keine davon; dafür braucht es eine echte Beschreibung je Einzelstück, die nur die Betreiberin liefern kann (`SU06`) |
 | `IS17` | 12 von 13 Seiten unter 300 Eigenwörtern | dito |
 | **`IS23`** | **Kannibalisierung: „custom print" auf 3 Seiten** (`/produkt/custom-print-hoodie-1/`, `/produkt/custom-print-jacke/`, `/produkt/custom-print-hoodie/`), 3 von 5 Seiten betroffen | Je Begriff eine Seite: Produktnamen im Shop-Admin unterscheidbar machen oder `seo_titel` setzen; zwei Produkte tragen sogar denselben Titel (`IS03`, `BF21`) |
 | `IS02` · `IS09` · `IS11` · `IS06` | Titel 7 von 13 in der Zielspanne, Beschreibungen 5 von 13, Handlungsaufforderung in 4 von 13, Ort oder Nutzen im Titel bei 2 von 13 | Grösstenteils im Zweig erledigt (Schritte 11–13); nach dem Merge nachmessen |
@@ -145,11 +145,13 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | 11 | **Sichtprüfung des Fokusrings** im Browser (Auflage 2 der Gegenprüfung) | Geschmacksentscheidung, keine Messfrage | Anpassung oder Bestätigung |
 | 12 | **Dedup-Fenster der Besuchszählung**: 5 oder 30 Minuten? | Der Kommentar im Code nannte bis `93b3cde` fälschlich 30 Minuten; der Ist-Zustand sind 5 (`middleware.py`) | Wert bestätigen oder ändern |
 | 13 | **Rücksendung: wer trägt das Rückporto, und binnen welcher Frist wird zurückgezahlt?** (neu mit SU04) | Weder AGB noch Datenschutzerklärung noch der Code regeln das. `/wissen/widerruf-und-ruecksendung/` sagt deshalb ausdrücklich, dass die Seite dazu nichts festlegt, statt eine Zahl zu nennen — eine erfundene Angabe wäre hier eine Zusage an den Käufer | Satz im Beitrag ersetzen, Aufnahme in die AGB und in `/wissen/` prüfen |
+| 14 | **Eine eigene Beschreibung je Einzelstück** — welches Basisteil, welches Motiv, welche Grösse, welcher Zustand (neu mit IS19) | Der Zuwachs aus IS19 ist auf allen fünf Produktseiten wortgleich; er stammt aus AGB, Datenschutzerklärung und dem Code des Bestellvorgangs und beschreibt deshalb den **Kauf**, nicht das **Stück**. Was ein einzelnes Teil ausmacht, steht nirgends im Projekt und lässt sich nicht aus dem Code ableiten | `SU06`, `IS18`, `IS21`: eigener Text je Produkt im Shop-Admin (`Produkt.beschreibung`); die Produktseite gibt ihn ungeändert aus |
 
 ## Erledigt
 
 | Datum | Was | Beleg |
 |---|---|---|
+| 08.09.2026 | `GE23`, `GE25`, `IS19` — drei Textpunkte, je ein Commit, **ohne eine Änderung am Aufbau** (kein neues Element, keine geänderte Klasse, keine Kennung; der Zuwachs steht in Absätzen, die es schon gab). *Antwort zuerst:* jeder erste Absatz nennt im ersten Satz, was die Seite ist, und trägt eine belegte Zahl — `/produkte/` und `/gaestebuch/` die Bestandszahl aus der Datenbank (`produkte_liste\|length`, `comments\|length`), `/kontakt/`, `/ueber_uns/` und `/liefergebiet/` die PLZ 36304 und die Versanddauer, `/datenschutz/` seine vier Abschnitte, `/agb/` seine fünf Paragraphen und die 14-Tage-Frist, jede Produktseite Name, Preis und Herkunft aus dem Datensatz; die Ausnahmemenge `OHNE_ZAHL_IM_ERSTEN_DRITTEL` ist damit leer. *Zahlen:* nur Angaben mit Beleg im Projekt (14 Tage aus § 5 AGB, Versand 1–2 und Zustellung 1–3 Werktage, 5 Minuten Sperrfrist und ein Besuch je Sitzung und Tag aus `middleware.py`, `SESSION_COOKIE_AGE = 1209600` = 14 Tage). *Dünne Seiten:* keine indexierbare Seite unter 200 Wörtern im Inhaltsbereich — gemessen mit einem Produkt und ohne Kommentare `/produkte/` 111 → 238, `/kontakt/` 135 → 245, `/gaestebuch/` 99 → 300, Produktseite 103 → 211, `/agb/` 177 → 240; `MINDESTWOERTER` nachgezogen, 215/215 Tests grün, `test_aufbau` unverändert | `fd82efd`, `2b26108`, `b35f6e4` |
 | 07.09.2026 | `SU04`: drei Wissensbeiträge ohne Freigabevorbehalt — Bestellen und Bezahlen (1.129 W), Widerruf und Rücksendung (1.034 W), Konto und Daten (1.000 W); jede Sachangabe aus AGB, Datenschutz, Impressum, Liefergebiet oder dem Shop-Code belegt. Angemeldet in `WISSEN_BEITRAEGE`, `seiten_stand.py` (Stand und Name), `WISSEN_SEITEN`, `tests/_basis.py`, `FAQ_SEITEN`, `MINDESTWOERTER` und der Designwache-Referenz (gezielt ergänzt); `/wissen/` damit indexierbar, kein Designwechsel, 215/215 Tests grün | `d7d2e0b` |
 | 02.09.2026 | Auflage 5: Logbuch-Einträge für die Schritte 1–10 nachgetragen, `CLAUDE.md` auf den heutigen Code gezogen (14 Testmodule, Middlewares, Wissensbereich, Prüfbefehl, Gunicorn) | `511ffe5` |
 | 02.09.2026 | Auflage 3: Wissensbeiträge mit Freigabeschalter aus dem Index genommen (`noindex`, nicht in Sitemap und llms.txt), `WissensfreigabeTest` | `60555d0` |

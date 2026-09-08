@@ -1,12 +1,12 @@
 ---
 bereich: inhalte
 titel: Inhalte und Seitenbestand
-stand: 2026-09-07
+stand: 2026-09-08
 status: teilweise
 fortschritt: 40
-zusammenfassung: Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); der Zweig füllt neun Seiten mit Auskunft und bringt sechs Wissensbeiträge — drei warten auf die Freigabe der Betreiberin, drei sind belegt und indexiert.
-offen: 7
-quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/legal.py
+zusammenfassung: Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); der Zweig füllt neun Seiten mit Auskunft, bringt sechs Wissensbeiträge (drei belegt und indexiert, drei warten auf die Freigabe) und hält seit dem 08.09.2026 jede indexierbare Seite über 200 Wörtern — nur eine eigene Beschreibung je Einzelstück fehlt weiterhin.
+offen: 8
+quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/legal.py, shop1/tests/test_inhalt.py
 ---
 
 # Inhalte — Luviq Universe
@@ -74,6 +74,47 @@ Luisa Brehler · Grünberger Str. 16, 36304 Alsfeld, Hessen · brehlerluisa@gmai
 
 **Was der Zweig an Text geändert hat** (Logbuch Schritte 11–13, 21–24): Startseite beginnt mit einer zitierfähigen Antwort („Was ist Luviq Universe?"), drei Feature-Absätze mit Auskunft; `/produkte/` Absatz auf ~100 Wörter; `/ueber_uns/`, `/gaestebuch/`, Produktseiten (statischer Zusatz), Impressum (Unterzeile); Meta-Beschreibungen aller neun Inhaltsseiten auf 157–171 Zeichen mit Aufforderung; Ortsbezug „Alsfeld" im automatischen Produkttitel; Produkt-Metaangaben auf 60/160 Zeichen begrenzt. Drei Beschriftungen ohne Aussage ersetzt („Status: Active", „Galaxy-Wide Delivery", „Premium Energy Matrix").
 
+**Paket 135 (08.09.2026, `fd82efd`, `2b26108`, `b35f6e4`) — GE23, GE25, IS19.** Drei
+Textpunkte, **kein einziger Eingriff in den Aufbau**: kein neues Element, keine
+geänderte Klasse, keine Kennung. Der ganze Zuwachs steht in Absätzen, die es schon
+gab — die Designwache erfasst Tags, Kennungen, Klassen, Überschriften und
+Elementzahlen, den Fliesstext darin bewusst nicht.
+
+- **Antwort zuerst (GE23):** jeder erste Absatz nennt im ersten Satz, was die Seite
+  ist, und trägt eine belegte Zahl. `/produkte/` und `/gaestebuch/` ziehen die
+  Bestandszahl aus der Datenbank (`produkte_liste|length`, `comments|length`),
+  `/kontakt/`, `/ueber_uns/` und `/liefergebiet/` nennen PLZ 36304 und Versanddauer,
+  `/datenschutz/` seine vier Abschnitte, `/agb/` seine fünf Paragraphen und die
+  14-Tage-Frist, jede Produktseite Name, Preis und Herkunft aus dem Datensatz.
+- **Zahlen (GE25):** ergänzt sind nur Angaben mit Beleg im Projekt — 14 Tage
+  Widerruf (§ 5 AGB, dort jetzt zusätzlich in Ziffern), Versand 1–2 und Zustellung
+  1–3 Werktage, 5 Minuten Sperrfrist je Pfad und ein Besuch je Sitzung und Tag
+  (`middleware.py`), 14 Tage Laufzeit des Sitzungs-Cookies (`SESSION_COOKIE_AGE`),
+  Zahl der Wissensbeiträge und der genannten Orte aus dem Kontext. **Nicht** genannt:
+  Preisrahmen, Rückporto, Antwort- und Erreichbarkeitszeiten — sie stehen nirgends im
+  Projekt (siehe „Nicht belegt und deshalb nicht behauptet").
+- **Dünne Seiten (IS19):** keine indexierbare Seite bleibt unter 200 Wörtern.
+  Gemessen im Inhaltsbereich mit einem Produkt und ohne Kommentare (die Zahlen sind
+  in `MINDESTWOERTER` in `shop1/tests/test_inhalt.py` festgehalten, nicht mit den
+  „Eigenwörtern" der Messung oben vergleichbar):
+
+| Seite | vorher | nachher |
+|---|---:|---:|
+| `/produkte/` | 111 | 238 |
+| `/kontakt/` | 135 | 245 |
+| `/gaestebuch/` | 99 | 300 |
+| Produktseite (`/produkt/bemalte-bomberjacke/`) | 103 | 211 |
+| `/agb/` | 177 | 240 |
+| `/ueber_uns/` · `/liefergebiet/` · `/datenschutz/` · `/wissen/` | — | 392 · 312 · 441 · 425 |
+| `/impressum/` | 75 | 75 (`noindex`, nicht in Sitemap und llms.txt) |
+
+Inhaltlich ist der Zuwachs der Kaufablauf, die Widerrufsfrist, die Beschaffenheit der
+gebrauchten Basisteile (§ 3 AGB) und der Weg für Fragen zu einem einzelnen Stück —
+alles aus AGB, Datenschutzerklärung und dem Code des Bestellvorgangs. **Was das
+nicht löst:** auf den Produktseiten ist dieser Zuwachs auf allen fünf Stücken
+derselbe Text. Er hebt die Wortzahl, sagt aber nichts über das einzelne Teil und
+senkt deshalb die Textgleichheit zwischen den Produktseiten (IS21) nicht.
+
 **Bilder (Messung 02.09.2026, live):** 44 Bilder, 0 in WebP/AVIF, 0 mit `srcset`, 10 ohne `width`/`height`, 0 ohne `alt`; 21 von 39 alt-Texten schablonenhaft („Custom print hoodie", „Luviq Universe Logo") — die Produkt-alt-Texte kommen aus dem Produktnamen. Zweig: statische Bilder als WebP in mehreren Breiten, alt-Texte für Logo/Karussell/Werbebilder umgeschrieben (Schritt 8); Produktbilder bleiben Cloudinary-Originale ohne `srcset`.
 
 **Werbung:** Modell `Werbung` (Titel, Bild, URL, Zeitraum) aus der `pystore`-Datenbank, Impressionen/Klicks in `WerbungStat`; wird auf der Startseite ausgespielt; Pflege im Shop-Admin `/shop-admin/werbung/`.
@@ -84,7 +125,8 @@ Luisa Brehler · Grünberger Str. 16, 36304 Alsfeld, Hessen · brehlerluisa@gmai
 |---|---|---|
 | Ratgeber live — 0 Wissensseiten (im Zweig 6: drei indexiert, drei `noindex` bis Freigabe) | Zielgrösse 3 | SU04 (Zweig erfüllt), SU07, VL11, VL12 |
 | Umfang: 13 statt 30 rankfähige Seiten; Startseite 390/700, Produktseiten 25/600 Wörter | | SU01, IS18, IS17 |
-| Konkrete Zahlen auf `/`, `/datenschutz/`, `/agb/`, `/ueber_uns/`, `/liefergebiet/` (live) — Zweig ergänzt Versandzeiten, PLZ, § 19 | 0 von 5 | GE25 |
+| Konkrete Zahlen auf `/`, `/datenschutz/`, `/agb/`, `/ueber_uns/`, `/liefergebiet/` (live) — **im Zweig ergänzt** (08.09.2026): Versandzeiten, PLZ, § 19, 14-Tage-Frist, Cookie-Laufzeit, Dedup-Fenster der Besuchszählung | 0 von 5 | GE25 (Zweig erfüllt) |
+| Eigene Beschreibung je Einzelstück — der Zusatz aus IS19 ist auf allen fünf Produktseiten wortgleich | Produktseiten 211 W, davon nichts über das einzelne Teil | SU06, IS18, IS21 |
 | Frage-Überschriften (live 2 von 13 Seiten; Zweig: Wissensseiten durchgehend) | | GE24 |
 | Über-uns-Seite mit **benannter Person** im Sinne der Vorlage (Luisa Brehler steht als Text, im Zweig auch als `Person`-Knoten `#luisa`) | | VL11 |
 | Muster-Widerrufsformular als eigene, aus dem Fuss verlinkte Seite | Widerrufsbelehrung nur in `/agb/` | RE09 |
@@ -102,3 +144,4 @@ Luisa Brehler · Grünberger Str. 16, 36304 Alsfeld, Hessen · brehlerluisa@gmai
 5. Weitere Wissensbeiträge nach Kundenfragen. Bestellablauf, Widerruf und Konto sind mit SU04 (07.09.2026) gebaut; alles Weitere braucht Angaben der Betreiberin — namentlich die Kosten der Rücksendung und die Frist der Rückzahlung, die heute in `/wissen/widerruf-und-ruecksendung/` ausdrücklich als ungeklärt stehen.
 6. Muster-Widerrufsformular als eigene Seite.
 7. Entscheidung Öffnungs-/Antwortzeiten und Telefonnummer — nur die Betreiberin kann sie nennen.
+8. **Eine eigene Beschreibung je Einzelstück** (`Produkt.beschreibung` im Shop-Admin). Der Zuwachs aus IS19 (08.09.2026) beschreibt den Kauf, nicht das Stück, und steht wortgleich auf allen fünf Produktseiten — siehe [80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 14.

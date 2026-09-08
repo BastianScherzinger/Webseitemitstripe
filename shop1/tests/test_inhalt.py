@@ -90,18 +90,26 @@ UMFANG_PRODUKT_SEITE = '/produkt/bemalte-bomberjacke/'
 #: Bestellen 1129, Widerruf 1034, Konto 1000; ``/wissen/`` steht durch die
 #: drei zusätzlichen Ankündigungen und den erweiterten Einleitungsabsatz
 #: jetzt bei 404 statt 261, die Schwelle wird entsprechend nachgezogen.
+#:
+#: IS19 (2026-09-08): keine indexierbare Seite bleibt mehr unter 200 Wörtern
+#: im Inhaltsbereich. Gemessen mit einem Produkt und ohne Kommentare:
+#: ``/produkte/`` 238 (vorher 111), ``/kontakt/`` 245 (135),
+#: ``/gaestebuch/`` 300 (99), Produktseite 211 (103), ``/agb/`` 240 (177);
+#: durch GE23 und GE25 dazu ``/ueber_uns/`` 392, ``/liefergebiet/`` 312,
+#: ``/datenschutz/`` 441, ``/wissen/`` 425. ``/impressum/`` bleibt bei 75 –
+#: es trägt ``noindex`` und steht weder in der Sitemap noch in llms.txt.
 MINDESTWOERTER = {
     '/': 390,
-    '/produkte/': 105,
-    '/kontakt/': 130,
-    '/ueber_uns/': 350,
-    '/liefergebiet/': 240,
-    '/gaestebuch/': 95,
+    '/produkte/': 230,
+    '/kontakt/': 235,
+    '/ueber_uns/': 380,
+    '/liefergebiet/': 300,
+    '/gaestebuch/': 290,
     '/impressum/': 70,
-    '/datenschutz/': 360,
-    '/agb/': 170,
-    UMFANG_PRODUKT_SEITE: 95,
-    '/wissen/': 390,
+    '/datenschutz/': 430,
+    '/agb/': 230,
+    UMFANG_PRODUKT_SEITE: 200,
+    '/wissen/': 415,
     '/wissen/pflege-handbemalte-kleidung/': 800,
     '/wissen/upcycling-mode-second-hand-vintage/': 920,
     '/wissen/groesse-bei-einzelstuecken/': 870,
@@ -110,11 +118,12 @@ MINDESTWOERTER = {
     '/wissen/konto-und-daten/': 980,
 }
 
-#: Seiten, deren erstes Drittel noch keine Zahl nennt. ``/liefergebiet/``
-#: nennt seine Lieferzeiten erst in der FAQ am Seitenende (Befund 4.14); die
-#: Vorlage gehörte nicht zu den Dateien, die Welle 5 ändern durfte. Wer den
-#: ersten Absatz dort um die Versandangabe ergänzt, streicht die Ausnahme.
-OHNE_ZAHL_IM_ERSTEN_DRITTEL = {'/liefergebiet/'}
+#: Seiten, deren erstes Drittel noch keine Zahl nennt. Die Menge ist seit
+#: GE23 (2026-09-08) leer: ``/liefergebiet/`` war die letzte Ausnahme und
+#: nennt Postleitzahl und Versanddauer jetzt im ersten Absatz statt erst in
+#: der FAQ am Seitenende (Befund 4.14). Wer sie wieder füllt, nimmt einer
+#: Seite ihren zitierfähigen Einstieg.
+OHNE_ZAHL_IM_ERSTEN_DRITTEL = set()
 
 #: Belegt im Impressum (impressum.html) und im seitenweiten JSON-LD.
 ANSCHRIFT = ['Grünberger Str. 16', '36304', 'Alsfeld']

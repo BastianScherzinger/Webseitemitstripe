@@ -1,10 +1,10 @@
 ---
 bereich: seo
 titel: SEO und GEO
-stand: 2026-09-07
+stand: 2026-09-08
 status: teilweise
 fortschritt: 74
-zusammenfassung: SEO-Technik live solide (92), Inhalt 73, GEO 76; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten, 301 auf www und seit SU04 drei indexierte Wissensseiten liegen fertig im Zweig, nicht live.
+zusammenfassung: SEO-Technik live solide (92), Inhalt 73, GEO 76; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten, 301 auf www, drei indexierte Wissensseiten und seit dem 08.09.2026 GE23/GE25/IS19 (Antwortabsatz, belegte Zahlen, keine dünne Seite mehr) liegen fertig im Zweig, nicht live.
 offen: 9
 quellen: GOOGLE_SEO_GUIDE.md, LOGBUCH.md, DOCUMENTATION.md, shop1/views/legal.py, shop1/seiten_stand.py, templates/base.html
 ---
@@ -74,7 +74,7 @@ luviq" war falsch und ist gestrichen.
 
 Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 
-- **Dünn:** 11 von 13 Seiten unter 200 Eigenwörtern, 1.557 Eigenwörter gesamt gegen 12.000 Ziel (IS19, SU02). Der Zweig hebt neun Seiten an, ohne die Zielgrössen zu erreichen — die Designwache lässt keine neuen Absätze zu, nur volle bestehende.
+- **Dünn:** 11 von 13 Seiten unter 200 Eigenwörtern, 1.557 Eigenwörter gesamt gegen 12.000 Ziel (IS19, SU02) — Messwerte für **main**. Im Zweig liegt seit dem 08.09.2026 (`b35f6e4`) keine indexierbare Seite mehr unter 200 Wörtern im Inhaltsbereich; `/impressum/` bleibt bei 75, trägt aber `noindex` und steht weder in der Sitemap noch in `llms.txt`. Die Zielgrössen aus IS18 (600 W je Produktseite) erreicht der Zweig damit nicht — die Designwache lässt keine neuen Absätze zu, nur volle bestehende, und eine eigene Beschreibung je Einzelstück kann nur die Betreiberin liefern.
 - **Kannibalisierung:** „custom print" auf drei Produktseiten; zwei Produkte mit identischem Namen und Titel (IS23, IS03) — Pflege im Shop-Admin.
 - **Ort:** „Alsfeld" bzw. „Hessen" in Startseiten-, Produkte-, Kontakt- und Impressumstitel; im Zweig auch in jedem Produkttitel.
 - **Alt-Texte:** 21 von 39 schablonenhaft (IS25), Produkt-alt = Produktname.
@@ -83,8 +83,8 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 
 | Regel | Live (02.09.2026) | Zweig |
 |---|---|---|
-| GE23 Antwort zuerst | 1 von 13 Seiten | Startseite, `/produkte/`, `/ueber_uns/`, `/gaestebuch/`, Produktseiten, Impressum, Wissensseiten mit Antwortabsatz |
-| GE25 konkrete Zahlen | 0 von 5 | PLZ, Versandzeiten, § 19 auf allen Inhaltsseiten |
+| GE23 Antwort zuerst | 1 von 13 Seiten | **jede** Inhaltsseite: der erste Absatz sagt im ersten Satz, was die Seite ist, und trägt eine belegte Zahl (08.09.2026, `fd82efd`). `/produkte/` und `/gaestebuch/` nennen die Bestandszahl aus der Datenbank (`produkte_liste\|length`, `comments\|length`), `/kontakt/`, `/ueber_uns/` und `/liefergebiet/` PLZ 36304 und Versanddauer, `/datenschutz/` seine vier Abschnitte, `/agb/` seine fünf Paragraphen und die 14-Tage-Frist, jede Produktseite Name, Preis und Herkunft aus dem Datensatz. Die Ausnahmemenge `OHNE_ZAHL_IM_ERSTEN_DRITTEL` in `test_inhalt` ist seither leer |
+| GE25 konkrete Zahlen | 0 von 5 | PLZ, Versandzeiten, § 19 auf allen Inhaltsseiten; dazu seit 08.09.2026 (`2b26108`) auf den fünf Seiten, die noch keine nannten: 14 Tage Widerruf aus § 5 der AGB (dort jetzt zusätzlich in Ziffern), Versand 1–2 und Zustellung 1–3 Werktage in `/agb/` § 4 und `/liefergebiet/`, 5 Minuten Sperrfrist je Pfad und ein Besuch je Sitzung und Tag (`middleware.py`) sowie 14 Tage Laufzeit des Sitzungs-Cookies (`SESSION_COOKIE_AGE`) in der Datenschutzerklärung, Zahl der Beiträge und Orte aus dem Kontext auf `/wissen/` und `/liefergebiet/`. **Nicht** genannt, weil im Projekt nicht belegt: Preisrahmen, Rückporto, Antwort- und Erreichbarkeitszeiten |
 | GE24 Frage-Überschriften | 2 von 13 | Wissensseiten (6–7 Fragen je Seite), FAQ auf `/kontakt/` |
 | GE16 Autor | 0 | `Person #luisa` als `author` |
 | GE18 `dateModified` | 0 | Register, von Hand gepflegt (bewusst kein Build-Datum) |
@@ -106,6 +106,7 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 | 02.09.2026 (Zweig) | `CanonicalHostMiddleware` (301 auf www) | Schritt 37 (`6bd5eb4`) |
 | 02.09.2026 (Zweig) | Wissensbeiträge auf `noindex` bis zur Freigabe; Sitemap/llms.txt lesen das Register | Auflage 3 (`60555d0`) |
 | 07.09.2026 (Zweig) | Drei belegte Wissensbeiträge (Bestellen, Widerruf, Konto), `freigegeben` ohne Vorbehalt; `/wissen/` damit indexierbar, Sitemap und llms.txt führen vier Wissensadressen | SU04 (`d7d2e0b`) |
+| 08.09.2026 (Zweig) | Antwortabsatz mit belegter Zahl auf jeder Inhaltsseite (GE23), konkrete Zahlen auf den fünf Seiten ohne (GE25), keine indexierbare Seite unter 200 Wörtern im Inhaltsbereich (IS19) — ohne eine Änderung am Aufbau, `test_aufbau` unverändert | `fd82efd`, `2b26108`, `b35f6e4` |
 
 ## Offen
 

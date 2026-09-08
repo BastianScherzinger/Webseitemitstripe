@@ -73,7 +73,7 @@
                 Von Alsfeld<br class="md:hidden"> bis <span class="text-glow">Fulda &amp; Gießen</span>
             </h1>
             <p class="text-white/40 text-lg font-light max-w-2xl mx-auto leading-relaxed">
-                Jedes Luviq-Unikat entsteht in Alsfeld, Hessen – und reist von dort in die ganze Region und deutschlandweit zu dir.
+                Luviq Universe versendet jedes handbemalte Unikat von 36304 Alsfeld in Hessen aus deutschlandweit: Bestellungen gehen in der Regel innerhalb von 1-2 Werktagen raus, innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt. Jedes Luviq-Unikat entsteht in Alsfeld, Hessen – und reist von dort in die ganze Region und deutschlandweit zu dir.
             </p>
             <div class="h-px w-32 bg-glow-orange mt-16 rounded-full mx-auto"></div>
         </div>
@@ -81,7 +81,7 @@
         <!-- Story -->
         <section class="scroll-reveal glass-card p-10 md:p-16 rounded-[3.5rem] mb-24 max-w-4xl mx-auto" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
             <p class="text-white/60 text-lg leading-relaxed font-light">
-                Luisa Brehler bemalt jedes Unikat mit der Hand in ihrem Atelier in Alsfeld, mitten im Vogelsbergkreis – genau zwischen Fulda und Gießen. Einen Ladenverkauf gibt es bewusst nicht: Luviq Universe ist ein reiner Online-Shop. Dafür kommt der Versand aus Hessen heraus besonders schnell bei dir an, egal ob du eher Richtung Fulda oder Richtung Gießen wohnst.
+                Luisa Brehler bemalt jedes Unikat mit der Hand in ihrem Atelier in Alsfeld, mitten im Vogelsbergkreis – genau zwischen Fulda und Gießen. Einen Ladenverkauf gibt es bewusst nicht: Luviq Universe ist ein reiner Online-Shop. Dafür kommt der Versand aus Hessen heraus besonders schnell bei dir an, egal ob du eher Richtung Fulda oder Richtung Gießen wohnst. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet –, und für jede Bestellung gilt das Widerrufsrecht von 14 Tagen (§ 5 der AGB).
             </p>
         </section>
 
@@ -91,7 +91,7 @@
                 Beliebt in <span class="text-glow">deiner Nähe</span>
             </h2>
             <p class="text-white/30 text-xs sm:text-sm text-center max-w-2xl mx-auto mb-14 uppercase tracking-widest">
-                Ein Auszug aus unserer Community entlang der Strecke Fulda – Alsfeld – Gießen
+                Ein Auszug aus unserer Community: {{ orte|length }} Orte entlang der Strecke Fulda – Alsfeld – Gießen
             </p>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
                 {% for ort in orte %}

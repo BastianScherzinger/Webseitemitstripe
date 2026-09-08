@@ -1315,3 +1315,48 @@ den es nicht mehr gibt. Schwelle für `/wissen/` von 250 auf 390 nachgezogen
 Rücksendung, wird ein Rücksendeetikett gestellt, und in welcher Frist und auf
 welchem Weg wird der Kaufpreis erstattet? Heute steht dazu nichts in den AGB;
 sobald es eine Antwort gibt, gehört sie in `/agb/` und in den Widerrufsbeitrag.
+
+## Paket 135 (08.09.2026, `fd82efd`, `2b26108`, `b35f6e4`) – GE23, GE25, IS19
+
+**Was.** Drei Messpunkte zum Text der Seiten, je ein Commit, ohne eine einzige
+Änderung am Aufbau: kein neues Element, keine geänderte Klasse, keine
+Kennung. Der ganze Zuwachs steht in Absätzen, die es schon gab – die
+Designwache erfasst Tags, Kennungen, Klassen, Überschriften und Elementzahlen,
+den Fliesstext darin bewusst nicht.
+
+**`GE23` (`fd82efd`) – Antwort zuerst.** Acht Seiten begannen mit einem Satz,
+den keine Antwortmaschine zitieren kann. Jeder erste Absatz nennt jetzt im
+ersten Satz, was die Seite ist, und trägt eine belegte Zahl: `/produkte/` und
+`/gaestebuch/` die Bestandszahl aus der Datenbank (`produkte_liste|length`,
+`comments|length`), `/kontakt/`, `/ueber_uns/` und `/liefergebiet/` die
+Postleitzahl und die Versanddauer, `/datenschutz/` seine vier Abschnitte,
+`/agb/` seine fünf Paragraphen und die Frist von 14 Tagen, jede Produktseite
+Name, Preis und Herkunft aus dem Datensatz. Damit fällt die letzte Ausnahme in
+`OHNE_ZAHL_IM_ERSTEN_DRITTEL` (`/liefergebiet/`) weg – der Kommentar dort hatte
+genau diesen Fall vorgesehen.
+
+**`GE25` (`2b26108`) – konkrete Zahlen.** Fünf Seiten nannten keine. Ergänzt
+sind nur Angaben mit Beleg im Projekt: die 14 Tage aus `§ 5` der AGB (dort
+jetzt zusätzlich in Ziffern), Versand 1-2 und Zustellung 1-3 Werktage, die
+5 Minuten Sperrfrist je Pfad und der eine Besuch je Sitzung und Tag aus
+`middleware.py:270,283` in der Datenschutzerklärung, die 14 Tage Laufzeit des
+Sitzungs-Cookies (`SESSION_COOKIE_AGE = 1209600`, `settings.py:283`) sowie die
+Anzahl der Wissensbeiträge und der genannten Orte aus dem Kontext. **Nicht**
+genannt: Preisrahmen, Rückporto, Antwort- und Erreichbarkeitszeiten – sie
+stehen nirgends im Projekt und bleiben bei der Betreiberin.
+
+**`IS19` (`b35f6e4`) – dünne Seiten.** Gemessen mit einem Produkt und ohne
+Kommentare: `/produkte/` 111 → 238, `/kontakt/` 135 → 245, `/gaestebuch/`
+99 → 300, Produktseite 103 → 211, `/agb/` 177 → 240 (schon durch GE23). Inhalt
+ist der Kaufablauf, die Widerrufsfrist, die Beschaffenheit der gebrauchten
+Basisteile (`§ 3` AGB) und der Weg für Fragen zu einem einzelnen Stück – alles
+aus AGB, Datenschutzerklärung und dem Code des Bestellvorgangs. `MINDESTWOERTER`
+ist auf den gemessenen Stand nachgezogen. `/impressum/` bleibt bei 75 Wörtern:
+es trägt `noindex` und steht weder in der Sitemap noch in llms.txt.
+
+**Was IS19 nicht löst.** Der Zuwachs der Produktseiten ist auf allen fünf
+Stücken derselbe Text; eine eigene Beschreibung je Einzelstück kann nur die
+Betreiberin liefern (`SU06`, `doku/80-AUFGABEN.md`).
+
+**Gegenbeweis.** `python manage.py check` grün, 215/215 Tests grün,
+`test_aufbau` unverändert.
