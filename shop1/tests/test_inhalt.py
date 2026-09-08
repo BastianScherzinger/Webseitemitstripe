@@ -110,11 +110,12 @@ MINDESTWOERTER = {
     '/wissen/konto-und-daten/': 980,
 }
 
-#: Seiten, deren erstes Drittel noch keine Zahl nennt. ``/liefergebiet/``
-#: nennt seine Lieferzeiten erst in der FAQ am Seitenende (Befund 4.14); die
-#: Vorlage gehörte nicht zu den Dateien, die Welle 5 ändern durfte. Wer den
-#: ersten Absatz dort um die Versandangabe ergänzt, streicht die Ausnahme.
-OHNE_ZAHL_IM_ERSTEN_DRITTEL = {'/liefergebiet/'}
+#: Seiten, deren erstes Drittel noch keine Zahl nennt. Die Menge ist seit
+#: GE23 (2026-09-08) leer: ``/liefergebiet/`` war die letzte Ausnahme und
+#: nennt Postleitzahl und Versanddauer jetzt im ersten Absatz statt erst in
+#: der FAQ am Seitenende (Befund 4.14). Wer sie wieder füllt, nimmt einer
+#: Seite ihren zitierfähigen Einstieg.
+OHNE_ZAHL_IM_ERSTEN_DRITTEL = set()
 
 #: Belegt im Impressum (impressum.html) und im seitenweiten JSON-LD.
 ANSCHRIFT = ['Grünberger Str. 16', '36304', 'Alsfeld']
