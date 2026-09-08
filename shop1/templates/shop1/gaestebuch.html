@@ -31,7 +31,7 @@
             <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                 Guest <span class="text-glow">Book</span>
             </h1>
-            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Das Gästebuch von Luviq Universe ist die öffentliche Rückmeldeseite des Shops: Hier stehen zurzeit {{ comments|length }} Beitr{{ comments|length|pluralize:"ag,äge" }} von Kundinnen und Kunden zu ihren handbemalten Einzelstücken. Wer angemeldet ist, kann selbst einen Beitrag schreiben. Luviq Universe ist ein reiner Online-Shop aus 36304 Alsfeld in Hessen ohne Ladengeschäft: Luisa Brehler bemalt gebrauchte Vintage-Kleidung von Hand, jedes Stück gibt es nur einmal, versendet wird deutschlandweit in der Regel innerhalb von 1-2 Werktagen.</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Das Gästebuch von Luviq Universe ist die öffentliche Rückmeldeseite des Shops: Hier stehen zurzeit {{ comments|length }} Beitr{{ comments|length|pluralize:"ag,äge" }} von Kundinnen und Kunden zu ihren handbemalten Einzelstücken. Wer angemeldet ist, kann selbst einen Beitrag schreiben. Luviq Universe ist ein reiner Online-Shop aus 36304 Alsfeld in Hessen ohne Ladengeschäft: Luisa Brehler bemalt gebrauchte Vintage-Kleidung von Hand, jedes Stück gibt es nur einmal, versendet wird deutschlandweit in der Regel innerhalb von 1-2 Werktagen. Die Beiträge sind öffentlich sichtbar und werden zusammen mit dem Benutzernamen und dem Zeitpunkt gespeichert, bis der Verfasser oder der Shop sie löscht – so steht es auch in der Datenschutzerklärung. Wer angemeldet ist, kann auf einen Beitrag antworten und ihn markieren; Antworten von Luisa Brehler sind als Shopbesitzer gekennzeichnet. Hilfreich für andere ist ein Beitrag, der etwas über das gekaufte Stück sagt: wie es sitzt, wie die Bemalung aus der Nähe wirkt, wie lange der Versand gedauert hat. Ein eigener Beitrag lässt sich jederzeit wieder löschen, entweder vom Verfasser selbst oder auf Bitte hin von der Betreiberin. Fragen zu einer laufenden Bestellung gehören nicht ins Gästebuch, sondern ins Kontaktformular – dort werden sie per E-Mail beantwortet. Die Karte auf dieser Seite zeigt den Sitz des Shops in der Grünberger Str. 16 in Alsfeld; einen Laden zum Betreten gibt es dort nicht.</p>
         </header>
 
         <!-- Google Maps + Bewertungen -->
@@ -61,7 +61,7 @@
         {% else %}
         <div class="glass-card p-10 text-center rounded-[3rem] mb-24 border-white/5">
             <p class="text-white/30 text-xs uppercase tracking-widest">
-                Beiträge können nur angemeldete Nutzerinnen und Nutzer schreiben. Bitte <a href="{% url 'login' %}" class="text-glow-orange hover:underline">logge dich ein</a>, um einen Beitrag zu schreiben.
+                Beiträge können nur angemeldete Nutzerinnen und Nutzer schreiben. Bitte <a href="{% url 'login' %}" class="text-glow-orange hover:underline">logge dich ein</a>, um einen Beitrag zu schreiben. Ein Konto ist bei Luviq Universe ohnehin nötig, um zu bestellen: Warenkorb und Bestellvorgang sind an eine Anmeldung gebunden. Die Registrierung verlangt Benutzername, E-Mail-Adresse, Vorname, Nachname und ein Passwort; Anschrift und Telefonnummer sind dabei freiwillig. Wer ohne Konto etwas mitteilen möchte, erreicht Luisa Brehler über das Kontaktformular oder per E-Mail an brehlerluisa@gmail.com.
             </p>
         </div>
         {% endif %}
