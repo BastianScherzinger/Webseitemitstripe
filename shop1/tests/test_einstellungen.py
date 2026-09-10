@@ -232,21 +232,23 @@ class ContentSecurityPolicyTest(LuviqTestCase):
         fremden Server schicken, ohne ``base-uri`` lassen sich alle relativen
         Adressen umbiegen, ohne ``object-src`` laufen Plugins.
 
-        Vorgabe ist Report-Only; ``scharf`` schaltet auf die blockierende
-        Kopfzeile mit demselben Inhalt um; ``aus`` sendet keine."""
+        Vorgabe ist seit dem 11.09.2026 ``scharf`` – die blockierende
+        Kopfzeile (Messpunkt SI08: Report-Only schützt nichts).
+        ``report-only`` bleibt als Rückweg und sendet denselben Inhalt in
+        der meldenden Kopfzeile; ``aus`` sendet keine."""
         antwort = self.hole('/')
-        self.assertFalse(antwort.has_header('Content-Security-Policy'),
-                         'Vorgabe muss Report-Only sein, bis der Browser geprüft ist')
-        richtlinie = antwort.get('Content-Security-Policy-Report-Only', '')
-        self.assertTrue(richtlinie, 'Keine Content-Security-Policy-Report-Only auf /')
+        self.assertFalse(antwort.has_header('Content-Security-Policy-Report-Only'),
+                         'Vorgabe muss die durchgesetzte Richtlinie sein, nicht Report-Only')
+        richtlinie = antwort.get('Content-Security-Policy', '')
+        self.assertTrue(richtlinie, 'Keine Content-Security-Policy auf /')
         for direktive in self.SCHARFE_DIREKTIVEN:
             with self.subTest(direktive=direktive):
                 self.assertIn(direktive, richtlinie)
 
-        with self.settings(CSP_MODUS='scharf'):
-            scharf = self.hole('/')
-        self.assertEqual(scharf.get('Content-Security-Policy'), richtlinie)
-        self.assertFalse(scharf.has_header('Content-Security-Policy-Report-Only'))
+        with self.settings(CSP_MODUS='report-only'):
+            melden = self.hole('/')
+        self.assertEqual(melden.get('Content-Security-Policy-Report-Only'), richtlinie)
+        self.assertFalse(melden.has_header('Content-Security-Policy'))
 
         with self.settings(CSP_MODUS='aus'):
             aus = self.hole('/')
@@ -321,6 +323,16 @@ class ContentSecurityPolicyTest(LuviqTestCase):
             with self.subTest(host=host):
                 self.assertTrue(_quelle_erlaubt(host, quellen['frame-src']))
                 self.assertTrue(_quelle_erlaubt(host, quellen['connect-src']))
+
+        # PayPals eigene Angabe für das JS-SDK (developer.paypal.com/sdk/js/csp/,
+        # abgerufen 11.09.2026): diese drei Hosts in script-, style-, connect-,
+        # frame- und img-src. Seit die Richtlinie blockiert, bräche jede Lücke
+        # hier den Kauf – und zwar ohne dass eine Vorlage sie verriete.
+        for host in ('https://x.paypal.com/x', 'https://x.paypalobjects.com/x',
+                     'https://x.venmo.com/x'):
+            for direktive in ('script-src', 'style-src', 'connect-src', 'frame-src', 'img-src'):
+                with self.subTest(host=host, direktive=direktive):
+                    self.assertTrue(_quelle_erlaubt(host, quellen[direktive]))
 
 
 @override_settings(
@@ -536,15 +548,20 @@ class PruefbefehlTest(LuviqTestCase):
         """Verhindert, dass die Richtlinie aus Schritt 36 abgeschaltet wird
         (``CSP_MODUS=aus``) und niemand es merkt: der Prüfbefehl im
         Container-Start muss es als FEHLER nennen. Als Report-Only ist es
-        eine WARNUNG – der Hinweis, nach der Browserprüfung scharf zu
-        schalten."""
+        eine WARNUNG – die Richtlinie meldet dann nur und blockiert nichts
+        (Messpunkt SI08). Im Auslieferungsstand ist sie scharf, und dann
+        sagt der Befehl zu ihr nichts mehr."""
         with self.settings(CSP_MODUS='aus'):
             code, text = self._laufe()
         self.assertEqual(code, 1)
         self.assertRegex(text, r'FEHLER.*Content-Security-Policy')
 
-        _, text = self._laufe()
+        with self.settings(CSP_MODUS='report-only'):
+            _, text = self._laufe()
         self.assertRegex(text, r'WARNUNG.*Content-Security-Policy.*Report-Only')
+
+        _, text = self._laufe()
+        self.assertNotRegex(text, r'(FEHLER|WARNUNG).*Content-Security-Policy')
 
     def test_der_befehl_hinterlaesst_keine_spuren(self):
         """Verhindert, dass der Prüflauf beim Container-Start selbst Daten

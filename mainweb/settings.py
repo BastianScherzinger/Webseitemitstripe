@@ -323,37 +323,59 @@ APPEND_SLASH = True
 #   cdn.jsdelivr.net   Alpine.js, GSAP, Three.js (base.html, index.html),
 #                      Chart.js (admin/stats.html, admin/werbung_list.html)
 #   fonts.googleapis.com / fonts.gstatic.com   Schriften (base.html)
-#   *.paypal.com / *.paypalobjects.com   PayPal-SDK, seine Iframes, Bilder
-#                      und Telemetrie (payment.html)
+#   *.paypal.com / *.paypalobjects.com / *.venmo.com   PayPal-SDK, seine
+#                      Iframes, Stile, Bilder und Telemetrie (payment.html);
+#                      je Direktive so, wie PayPal es für das JS-SDK angibt
+#                      (developer.paypal.com/sdk/js/csp/, abgerufen 11.09.2026)
 #   maps.google.com / www.google.com   Karten-Iframe (_reviews_map.html)
 #   img-src https:     Produktbilder liegen auf res.cloudinary.com; die
 #                      Werbebilder (Werbung.bild) sind frei eingetragene
 #                      URLs beliebiger Hosts – eine engere Liste bräche sie.
 #
 # CSP_MODUS (Umgebungsvariable, ohne Deploy umschaltbar):
-#   report-only  Vorgabe. Der Browser meldet Verstösse nur in der Konsole,
-#                blockiert nichts. So lange, bis alle Seiten samt Checkout,
-#                Bezahlseite, Gästebuch-Karte und Admin-Panel im Browser
-#                ohne Meldung geprüft sind.
-#   scharf       Content-Security-Policy – der Browser blockiert.
+#   scharf       Vorgabe seit 11.09.2026. Content-Security-Policy – der
+#                Browser blockiert, was nicht in der Liste steht.
+#   report-only  Content-Security-Policy-Report-Only: der Browser meldet
+#                Verstösse nur in der Konsole und blockiert nichts. Der
+#                Rückweg, falls im Betrieb doch etwas ausfällt – die
+#                Variable wird je Antwort gelesen, ohne neuen Stand.
 #   aus          keine Kopfzeile.
-CSP_MODUS = os.getenv('CSP_MODUS', 'report-only').strip().lower()
+#
+# Warum die Vorgabe umgestellt wurde (Messpunkt SI08): Report-Only blockiert
+# nichts. Auf allen 18 gemessenen Seiten lief die Richtlinie nur meldend.
+# Der ursprünglich vorgesehene Weg (jede Seite mit offener Browserkonsole
+# ansehen) setzt einen Menschen vor einem Browser voraus. An seiner Stelle
+# steht der Beleg aus der Testsuite: test_die_csp_erlaubt_jede_fremdquelle…
+# ruft jede öffentliche Seite und jede Seite des Admin-Panels ab und hält
+# jedes <script src>, jedes Stylesheet, jedes Iframe und jedes nachgeladene
+# Skript gegen diese Liste; test_die_csp_deckt_paypal… hält die PayPal-
+# Einträge gegen PayPals eigene Angabe. Die beiden fetch()-Aufrufe der Seite
+# (index.html Newsletter, payment.html Capture) gehen an die eigene Adresse
+# und sind von connect-src 'self' gedeckt; <video>, <audio>, Worker, @import
+# und externe url() gibt es in Vorlagen und Stildateien nicht.
+CSP_MODUS = os.getenv('CSP_MODUS', 'scharf').strip().lower()
+
+#: Hosts, die PayPal für das JS-SDK in script-, style-, connect- und
+#: frame-src verlangt (Quelle siehe oben). img-src deckt sie über 'https:'.
+_PAYPAL = ['https://*.paypal.com', 'https://*.paypalobjects.com', 'https://*.venmo.com']
 
 CSP_QUELLEN = {
     'default-src': ["'self'"],
     'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'",
-                   'https://cdn.jsdelivr.net',
-                   'https://*.paypal.com', 'https://*.paypalobjects.com'],
-    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+                   'https://cdn.jsdelivr.net'] + _PAYPAL,
+    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'] + _PAYPAL,
     'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
     'img-src': ["'self'", 'data:', 'blob:', 'https:'],
-    'connect-src': ["'self'", 'https://*.paypal.com', 'https://*.paypalobjects.com'],
-    'frame-src': ['https://maps.google.com', 'https://www.google.com',
-                  'https://*.paypal.com'],
+    'connect-src': ["'self'"] + _PAYPAL,
+    'frame-src': ['https://maps.google.com', 'https://www.google.com'] + _PAYPAL,
     'manifest-src': ["'self'"],
     'frame-ancestors': ["'none'"],
     'base-uri': ["'self'"],
-    'form-action': ["'self'"],
+    # 'self' und PayPal: die Formulare dieser Seite gehen ausnahmslos an die
+    # eigene Adresse. PayPal steht vorsorglich daneben – PayPals Angabe nennt
+    # form-action nicht, und blockierte die Richtlinie eine Formularübergabe
+    # des SDKs, bräche der Kauf erst beim zahlenden Kunden.
+    'form-action': ["'self'", 'https://*.paypal.com'],
     'object-src': ["'none'"],
 }
 

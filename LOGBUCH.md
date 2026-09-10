@@ -1392,3 +1392,30 @@ vom 11.09.2026, 00:24). Alle acht an ihrer Stelle:
 **Gegenbeweis.** `codeaudit.pruefen()` des Werkzeugs gegen den Arbeitsstand
 (über einen nicht eingecheckten Wegwerf-Test): 0 kritische Befunde.
 `python manage.py check` grün, 215/215 Tests grün.
+
+**`SI08` – die Content-Security-Policy wird durchgesetzt.** Gemessen: 18 von
+18 Seiten sendeten nur `Content-Security-Policy-Report-Only`, die nichts
+blockiert. Die Vorgabe von `CSP_MODUS` ist jetzt `scharf`; `report-only`
+bleibt der Rückweg ohne neuen Stand. Anders als in `a1169a4` ist die
+Positivliste dabei an PayPals eigene Angabe für das JS-SDK angeglichen
+(developer.paypal.com/sdk/js/csp/, abgerufen am 11.09.2026): `*.paypal.com`,
+`*.paypalobjects.com` und `*.venmo.com` in `script-src`, `style-src`,
+`connect-src` und `frame-src`. Bisher fehlten `style-src` ganz und
+`*.paypalobjects.com` in `frame-src` – solange die Richtlinie nur meldete,
+fiel das niemandem auf; durchgesetzt hätte es den Kauf brechen können.
+`form-action` erlaubt wie in `a1169a4` vorsorglich `*.paypal.com`.
+
+Der in `CLAUDE.md` vorgesehene Weg vor dem Umschalten (jede Seite mit
+offener Browserkonsole ansehen) ist in diesem kopflosen Lauf nicht gangbar.
+An seiner Stelle: `test_die_csp_erlaubt_jede_fremdquelle…` (jede öffentliche
+und jede Admin-Seite), `test_die_csp_deckt_paypal…` jetzt zusätzlich gegen
+PayPals Angabe, und die Suche in Vorlagen und Stildateien – zwei `fetch()`
+an die eigene Adresse, kein `<video>`, `<audio>`, Worker, `@import` oder
+externes `url()`. Nach dem Deploy bleibt eine Sichtprüfung von
+`/payment/<id>/` mit offener Konsole ratsam.
+
+Nebenbefund, nicht angefasst: `SECURE_CROSS_ORIGIN_OPENER_POLICY` ist nicht
+gesetzt, Django sendet damit `Cross-Origin-Opener-Policy: same-origin`;
+PayPal empfiehlt auf derselben Seite `same-origin-allow-popups`.
+
+**Gegenbeweis.** `python manage.py check` grün, 215/215 Tests grün.
