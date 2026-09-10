@@ -1,10 +1,10 @@
 ---
 bereich: technik
 titel: Technik, Hosting und Aufbau
-stand: 2026-09-04
+stand: 2026-09-11
 status: teilweise
 fortschritt: 74
-zusammenfassung: Stack läuft stabil; im Zweig warten Testsuite (215 Tests), Prüfbefehl, CSP (Report-Only) und Canonical-Host; offen bleiben ALLOWED_HOSTS='*', ungepinnte Abhängigkeiten und der Python-Versionsunterschied.
+zusammenfassung: Stack läuft stabil; Testsuite, Prüfbefehl und CSP-Middleware liegen auf main. Im Zweig sofort/2026-09-11-pj05-und-2-weitere (nicht ausgeliefert) blockiert die CSP standardmässig, sind alle Paketfassungen samt requirements.lock festgenagelt (Django 5.2.17 für Container und CI) und die kritischen Audit-Funde abgearbeitet oder im Code begründet. Offen bleiben die Bezahlseite mit Browserkonsole, der erste CI-Lauf mit 5.2.17, CANONICAL_HOST in Railway, runtime.txt/railway.json und die Permissions-Policy.
 offen: 10
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, paypal_sandbox_tutorial.md, start.sh, Dockerfile, requirements.txt
 ---
@@ -19,13 +19,19 @@ Detailquelle bleibt [`../CLAUDE.md`](../CLAUDE.md) (Architektur, Fallstricke) un
 > **Der Ordner steht auf dem Zweig `cockpit/2026-09-01-verbesserung-4`, live läuft `main`.**
 > Wo unten „Zweig" steht, ist es noch nicht ausgeliefert. Der Unterschied ist in
 > [90-NOTIZEN.md](90-NOTIZEN.md) aufgeschlüsselt.
+>
+> **Nachtrag 11.09.2026:** `cockpit/2026-09-01-verbesserung-4` ist inzwischen in
+> `main` enthalten (`511ffe5` liegt auf `main`). Der Ordner steht jetzt auf
+> **`sofort/2026-09-11-pj05-und-2-weitere`**, drei Commits vor `main`
+> (`9ebad08` PJ05, `9a3226f` SI08, `51cbf74` PJ11). Was unten mit
+> „Zweig 11.09." markiert ist, steckt nur dort und ist noch nicht ausgeliefert.
 
 ## Stack
 
 | Baustein | Was | Quelle |
 |---|---|---|
-| Framework | Django `>=5.0,<6.1` (Zweig; auf main `<7.0`), eine App `shop1`, Projektkonfiguration `mainweb/` | `requirements.txt`, `CLAUDE.md` |
-| Python | Container `python:3.11-slim` → pip installiert Django 5.2; Entwicklungsrechner Python 3.14 → Django 6.0. **Die Testsuite prüft eine andere Hauptversion als der Betrieb** (ungelöst, Kommentar in `requirements.txt`) | `Dockerfile`, `requirements.txt` |
+| Framework | Django `>=5.0,<6.1` auf main; **Zweig 11.09.: `Django==5.2.17`**, jede Abhängigkeit mit `==`, Unterabhängigkeiten in `requirements.lock` (per `--constraint` aus `requirements.txt` eingebunden). Eine App `shop1`, Projektkonfiguration `mainweb/` | `requirements.txt`, `requirements.lock`, `CLAUDE.md` |
+| Python | Container `python:3.11-slim`, CI Python 3.12, Entwicklungsrechner Python 3.14. Unter der Spanne auf main bekam der Container Django 5.2.x, der CI-Lauf 6.0.x. **Zweig 11.09.:** mit dem Nagel bauen Container und CI dieselbe Fassung 5.2.17 (laut PyPI Python 3.10–3.14). Der Entwicklungsrechner hatte am 11.09.2026 noch Django 6.0.5 — die Suite lief beim Bau damit, nicht mit 5.2.17; erster Nachweis ist der nächste CI-Lauf | `Dockerfile`, `requirements.txt`, `.github/workflows/pruefungen.yml`, `LOGBUCH.md` Paket 155 |
 | Datenbank | PostgreSQL über `DATABASE_URL` (Railway), lokal SQLite; **zweite Datenbank `pystore`** über `PYSTORE_DATABASE_URL` | `mainweb/settings.py` |
 | Server | Gunicorn; Zweig: `gthread`, 2 Worker × 4 Threads, Timeout 30 s, Worker-Erneuerung nach 1.000 Anfragen (main: Standardaufruf) | `start.sh` |
 | Statische Dateien | WhiteNoise + `ManifestStaticFilesStorage` (Content-Hash im Dateinamen) | `DOCUMENTATION.md` §5 |
@@ -45,7 +51,7 @@ Detailquelle bleibt [`../CLAUDE.md`](../CLAUDE.md) (Architektur, Fallstricke) un
 | Railway | Projekt **`webseiten`** → Dienst **`Luviq-Luisa`**, Umgebung **`shop`**; Railway-Adresse `luviq-luisa-shop.up.railway.app` (antwortet 200, 02.09.2026) |
 | Domain | `www.luviq-alsfeld.com`; Apex `luviq-alsfeld.com` zeigt auf denselben Dienst (eigenes Let's-Encrypt-Zertifikat, 200 ohne Weiterleitung — Stand 02.09.2026) |
 | Deploy | Push auf `main` löst den Docker-Bau aus; kein Knopf nötig. Letzte Auslieferung 18.08.2026 (`645842b`, SUCCESS); Erfolgsquote 100 % (1 bewertbare Auslieferung, Messung 02.09.2026) |
-| Container | `Dockerfile`: `python:3.11-slim`, `libpq-dev`/`gcc`, `pip install -r requirements.txt`, `CMD /app/start.sh`, Port 8000 |
+| Container | `Dockerfile`: `python:3.11-slim`, `libpq-dev`/`gcc`, `pip install -r requirements.txt`, `CMD /app/start.sh`, Port 8000. **Zweig 11.09.:** kopiert `requirements.txt` **und** `requirements.lock` — ohne die Lockdatei bricht pip an der `--constraint`-Zeile ab |
 | Push von diesem Rechner | `git -c credential.helper='!gh auth git-credential' push origin <zweig>` (Credential Manager ist auf diesem PC kaputt) |
 
 **Startreihenfolge im Container (`start.sh`, Zweig):**
@@ -60,7 +66,7 @@ Detailquelle bleibt [`../CLAUDE.md`](../CLAUDE.md) (Architektur, Fallstricke) un
 
 Auf main fehlen Schritt 6 und die Gunicorn-Parameter; `DOCUMENTATION.md` §5 nennt nur drei Schritte und ist veraltet.
 
-**Nach dem Merge des Zweigs in Railway zu setzen:** `CANONICAL_HOST=www.luviq-alsfeld.com` (sonst bleibt die 301 für den Apex wirkungslos). Optional: `CSP_MODUS` (Vorgabe `report-only`), `VISITOR_TRACKING` (Vorgabe an), `GUNICORN_*`.
+**In Railway zu setzen:** `CANONICAL_HOST=www.luviq-alsfeld.com` (sonst bleibt die 301 für den Apex wirkungslos — der Zweig vom 11.09. ändert daran nichts, die Vorgabe ist dort weiter leer). Optional: `CSP_MODUS` (Vorgabe auf main `report-only`, **im Zweig 11.09. `scharf`**; `report-only` ist dann der Rückweg, falls die Bezahlseite im Browser etwas blockiert), `VISITOR_TRACKING` (Vorgabe an), `GUNICORN_*`.
 
 ## Umgebungsvariablen
 
@@ -76,7 +82,7 @@ Nur Namen. Werte stehen in Railway bzw. in der lokalen `.env` (nicht in Git).
 | Zahlung | `PAYPAL_CLIENT_ID`, `PAYPAL_SECRET`, `PAYPAL_MODE`, `PAYPAL_EMAIL`, `BANK_IBAN`, `BANK_INHABER` |
 | Medien / Werbung | `CLOUDINARY_URL`, `WERBUNG_CLOUDINARY_URL`, `PYSTORE_CLOUDINARY_CLOUD_NAME`, `PYSTORE_MEDIA_URL` |
 | Sonstiges | `GOOGLE_REVIEW_URL` (Bewertungslink im Kontextprozessor) |
-| **Nur Zweig** | `CANONICAL_HOST`, `CSP_MODUS` (`report-only` · `scharf` · `aus`), `VISITOR_TRACKING`, `GUNICORN_WORKERS`, `GUNICORN_THREADS`, `GUNICORN_TIMEOUT` |
+| **Nur Zweig** | `CANONICAL_HOST`, `CSP_MODUS` (`scharf` · `report-only` · `aus`; Vorgabe im Zweig 11.09. `scharf`), `VISITOR_TRACKING`, `GUNICORN_WORKERS`, `GUNICORN_THREADS`, `GUNICORN_TIMEOUT` |
 | **Altlast in Railway** | `STRIPE_*` — aus einer frühen Planungsphase; kein Code im Projekt liest sie (Suche 02.09.2026 ohne Treffer). Entfernen, sobald jemand im Railway-Dienst nachgesehen hat, welche Namen dort genau stehen — sie sind nirgends dokumentiert. |
 
 ## Formular und Missbrauchsschutz
@@ -140,7 +146,8 @@ WebseiteMAIN/
 │   ├── templates/shop1/  Seiten, legal/, wissen/ (Zweig), admin/
 │   └── static/shop1/   style.css, tailwind.css, images/ (Zweig: WebP in mehreren Breiten, flavicon.ico)
 ├── templates/base.html Navigation, Fusszeile, JSON-LD-Graph, Schriften, Alpine
-├── start.sh · Dockerfile · requirements.txt · tailwind.config.js · tailwind_input.css
+├── start.sh · Dockerfile · requirements.txt · requirements.lock (Zweig 11.09.) · tailwind.config.js · tailwind_input.css
+├── .github/workflows/pruefungen.yml   CI bei jedem Push und Pull Request (Python 3.12, collectstatic, manage.py test)
 ├── CLAUDE.md · DOCUMENTATION.md · GOOGLE_SEO_GUIDE.md · LOGBUCH.md · paypal_sandbox_tutorial.md
 └── projekt1/ · tiktok stream/   unversionierte Altablagen, NICHT Teil der App (in .gitignore)
 ```
@@ -155,27 +162,28 @@ Code-Audit (Messung 02.09.2026, lokaler Ordner = Zweig): 114 Dateien, 23.859 Zei
 4. **Zwei E-Mail-Wege.** (1) Django-`send_mail` über SMTP (Brevo-Relay, `USE_SMTP_EMAIL` oder `DEBUG=False`; sonst Console-Backend). (2) `shop1/utils.py::send_brevo_email()` — direkter HTTP-Aufruf an die Brevo-API in einem Thread, weil Railway SMTP-Ports blockt. **Bestell- und Benachrichtigungsmails gehen über Weg 2.** Ein Mailausfall lässt die Bestellung bestehen (Test in `test_zahlung`).
 5. **Denormalisierte Bestelldaten.** `CartItem` und `OrderItem` speichern Name und Preis als eigene Felder, nicht als Fremdschlüssel — **Absicht**, damit geänderte oder gelöschte Produkte alte Bestellungen nicht verändern. Erhalten.
 6. **`PageVisitMiddleware`** läuft nach jeder Antwort. Geo-IP (`ip-api.com`) im festen `ThreadPoolExecutor` (4 Plätze; voll → kein Lookup), **die Datenbankschreibvorgänge laufen synchron im Request** und verzögern die Auslieferung. Dedup: `PageVisit` einmal je Session und Tag, `VisitorLog` einmal je Pfad alle 5 Minuten. **Keine Admin-Mail pro Besuch mehr** (seit `e58775a`, Mail-Flut durch Bots). Neue externe Aufrufe gehören in den Pool, nicht in einen Thread je Anfrage. Abschalter `VISITOR_TRACKING` (Zweig).
-7. **Zwei Admins.** Eigenes Panel `/shop-admin/…` (`admin_views.py`, `admin_required`: `is_superuser` **oder** Benutzername gleich `ADMIN_USERNAME`); regulärer Django-Admin hinter `ADMIN_URL` (Schutz vor Scannern). Bekannte, dokumentierte Lücken (Tests halten den Ist-Zustand fest): `comment_delete`, `admin_produkt_toggle`, `admin_resend_newsletter`, `admin_newsletter_reset` reagieren auf GET; eine E-Mail-Adresse kann sich zweimal registrieren — **wartet auf Freigabe der Betreiberin**.
+7. **Zwei Admins.** Eigenes Panel `/shop-admin/…` (`admin_views.py`, `admin_required`: `is_superuser` **oder** Benutzername gleich `ADMIN_USERNAME`); regulärer Django-Admin hinter `ADMIN_URL` (Schutz vor Scannern). **Zweig 11.09.:** dort ist zusätzlich `Subscriber` registriert (Liste, Suche nach Adresse, Filter nach Datum, `erstellt_am` schreibgeschützt), damit eine Auskunft oder Löschung nach Art. 15/17 DSGVO ohne Datenbankzugriff geht; das Panel bleibt unverändert. Bekannte, dokumentierte Lücken (Tests halten den Ist-Zustand fest): `comment_delete`, `admin_produkt_toggle`, `admin_resend_newsletter`, `admin_newsletter_reset` reagieren auf GET; eine E-Mail-Adresse kann sich zweimal registrieren — **wartet auf Freigabe der Betreiberin**.
 8. **Werbe-Impressionen** werden nur in `startseite()` gezählt, nicht im Kontextprozessor (war ein Bug).
 9. **Designwache** (`test_aufbau`, `aufbau_referenz.json`): jede Änderung an Tag-Reihenfolge, `id`/`class`, Überschriften oder Elementzahlen einer öffentlichen Seite macht die Suite rot. Referenz für neue Seiten **gezielt ergänzen**, nie neu erzeugen. Siehe [20-DESIGN.md](20-DESIGN.md).
 10. **Template-Blöcke:** eine Bedingung **um** einen `{% block %}` in einer erbenden Datei wirkt nicht — die Bedingung gehört **in** den Block (`produkt_detail.html`, `meta_robots` der Wissensseiten).
 11. **Zeitzone in Tests:** `.date()` eines UTC-Zeitstempels ist zwischen 22:00 und 24:00 UTC falsch → `timezone.localtime()` (Auflage 4, `270c5f9`).
-12. **CSP vor dem Scharfschalten prüfen:** `/`, `/produkte/`, `/gaestebuch/`, `/checkout/`, `/payment/<id>/` und das Admin-Panel mit offener Browserkonsole; null `[Report Only]`-Meldungen sind die Bedingung. `script-src`/`style-src` bleiben wegen Inline-Code offen (`'unsafe-inline'`, `'unsafe-eval'`).
-13. **`ALLOWED_HOSTS = ['*']`** bei `DEBUG=True` (`settings.py` Zeile 59); im Betrieb `['localhost', '127.0.0.1', '.up.railway.app'] + ALLOWED_HOSTS_EXTRA` (+ `CANONICAL_HOST` im Zweig). Der Code-Audit meldet die Zeile als kritisch (K02); `DEBUG` darf in Railway nie auf `True` stehen.
+12. **CSP blockiert im Zweig 11.09. standardmässig.** `CSP_MODUS` hat dort die Vorgabe `scharf`; die geplante Konsolenprüfung aller Seiten vor dem Umschalten ersetzt die Testsuite: `test_einstellungen` hält jedes `<script src>`, jedes Stylesheet, jedes Iframe und nachgeladene Skripte jeder öffentlichen Seite und jeder Panel-Seite gegen `CSP_QUELLEN`, dazu die PayPal-Einträge gegen PayPals Angabe für das JS-SDK (`*.paypal.com`, `*.paypalobjects.com`, `*.venmo.com` in `script-`, `style-`, `connect-`, `frame-src`). **Jede neue Fremdquelle in einem Template gehört in `CSP_QUELLEN`**, sonst blockiert der Browser sie. Ein Browser hat die Bezahlseite nicht gesehen: nach dem Deploy `/payment/<id>/` mit offener Konsole ansehen; fällt etwas aus, `CSP_MODUS=report-only` (wirkt je Antwort, ohne neuen Stand). `script-src`/`style-src` bleiben wegen Inline-Code offen (`'unsafe-inline'`, `'unsafe-eval'`); `form-action` erlaubt neben `'self'` vorsorglich `*.paypal.com`. Nicht angefasst: `SECURE_CROSS_ORIGIN_OPENER_POLICY` ist nicht gesetzt, Django sendet damit `same-origin`, PayPal empfiehlt `same-origin-allow-popups` (`LOGBUCH.md`, Paket 155).
+13. **`ALLOWED_HOSTS = ['*']`** bei `DEBUG=True`; im Betrieb `['localhost', '127.0.0.1', '.up.railway.app'] + ALLOWED_HOSTS_EXTRA` (+ `CANONICAL_HOST`, falls gesetzt). Der Code-Audit meldete die Zeile als kritisch (K02); im Zweig 11.09. trägt sie einen begründeten Vermerk `# audit-ok K02:`, gehalten von `test_die_hostliste_ist_nicht_offen`. `DEBUG` darf in Railway nie auf `True` stehen.
 14. **`db.sqlite3`, `staticfiles/`, `media/`, `.env`, `*.log`** liegen im Ordner, sind aber in `.gitignore`. `runserver.err.log` vom 03.07.2026 ebenfalls.
 15. **Der Superuser wird bei jedem Containerstart mit `ADMIN_PASSWORD` überschrieben** — ein im Panel geändertes Passwort dieses Kontos hält nur bis zum nächsten Deploy.
+16. **Paketfassungen ändern (Zweig 11.09.):** `requirements.txt` und `requirements.lock` gehören zusammen. Wer eine Fassung ändert, schreibt die Lockdatei neu — frische Umgebung, `pip install -r requirements.txt`, Testsuite grün, dann die Fassungen aus `pip freeze` eintragen (Kopf von `requirements.lock`). Das Code-Audit des Werkzeugs liest `.lock`-Dateien nicht und meldet deshalb weiter „kein Lockfile".
 
 ## Offen
 
 | Punkt | Beleg | Regel |
 |---|---|---|
-| Zweig nach `main` mergen, `CANONICAL_HOST` in Railway setzen | live 02.09.2026: Apex antwortet 200 ohne 301 | TS11 |
-| `requirements.txt` mit `==` festnageln, Lockfile beilegen; `runtime.txt`/`railway.json` | 11 von 11 ohne feste Fassung (Zweig: nur Obergrenzen) | PJ11, VL02 |
-| Python-Fassung angleichen (Basis-Image `python:3.12-slim` **oder** `Django<6.0`) — braucht einen Build zum Nachweis | Kommentar `requirements.txt`; Logbuch „Schritt 38 mit Docker" verschoben | — |
-| `ALLOWED_HOSTS='*'`-Zweig im Debug-Fall entschärfen; `shop1/middleware.py:218` verschluckte Ausnahme | Code-Audit K02, P02 | PJ05, VL03 |
-| Permissions-Policy und CSP als echte Kopfzeile (`CSP_MODUS=scharf` nach Konsolenprüfung) | live: 4 von 7 Schutzköpfen | SI07, SI08, VL04 |
+| Zweig `sofort/2026-09-11-pj05-und-2-weitere` nach `main` mergen und pushen; `CANONICAL_HOST` in Railway setzen | live 02.09.2026: Apex antwortet 200 ohne 301; die Vorgabe von `CANONICAL_HOST` ist auch im Zweig 11.09. leer (`mainweb/settings.py:45`) | TS11 |
+| Nach dem Push: ersten CI-Lauf mit Django 5.2.17 abwarten; lokal `pip install -r requirements.txt` | die Suite lief beim Bau mit Django 6.0.5 (`pip install`/`docker build` gesperrt, `LOGBUCH.md` Paket 155) | PJ11 |
+| Nach dem Deploy: `/payment/<id>/` mit offener Browserkonsole ansehen | CSP im Zweig 11.09. scharf, Deckung nur durch Tests belegt | SI08 |
+| `runtime.txt`/`railway.json` | fehlen; `==` und Lockfile im Zweig 11.09. erledigt (`51cbf74`) | VL02 |
+| Permissions-Policy-Kopfzeile | live: 4 von 7 Schutzköpfen; die CSP ist im Zweig 11.09. als echte Kopfzeile erledigt (`9a3226f`) | SI07, VL04 |
 | `integrity`/`crossorigin` an den drei jsdelivr-Skripten | 3 von 3 ohne | SI17 |
 | Gestaltete 404-Seite (kein `404.html` im Projekt) | live: 13 Wörter, ohne Navigation | BT05, TS20 |
-| CI-Lauf bei jedem Push, Fehler-Monitoring, zweiter Prüfbefehl | 3 von 7 QS-Bausteinen | VL19, PJ01 |
+| Fehler-Monitoring, zweiter Prüfbefehl (ein CI-Lauf bei jedem Push steht inzwischen in `.github/workflows/pruefungen.yml`) | 3 von 7 QS-Bausteinen (Messung 02.09.2026) | VL19, PJ01 |
 | `STRIPE_*`-Variablen in Railway entfernen | nicht dokumentiert, welche Namen genau | — |
 | Zehn Module ohne eigenen Test (`forms.py`, `signals.py`, `views/_helpers.py`, `views/auth.py`, `views/cart.py`, `views/checkout.py`, `views/gaestebuch.py`, `views/shop.py`, `pruefe_seite.py`, `tiktok stream/streamtest.py`) — die View-Module sind über Seiten-, Konto- und Zahlungstests indirekt abgedeckt, das Audit zählt nur direkte Importe | PJ03 | PJ03 |
