@@ -232,4 +232,5 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | EIG39 | Auf `/ueber-uns/` ist der auffälligste Knopf ein Verweis auf die Website des Entwicklers | inhalte | offen | bei einer anderen betreuten Seite aufgefallen am 08.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-08 |
 | EIG40 | Die Datenschutzerklärung datiert sich mit `{% now %}` selbst und ist damit immer „aktuell" | technik | offen | bei einer anderen betreuten Seite aufgefallen am 08.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-08 |
 | EIG41 | Der Festpreis der Website und die AGB widersprechen sich | inhalte | offen | bei einer anderen betreuten Seite aufgefallen am 10.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-10 |
+| EIG42 | CLAUDE.md nennt durchgehend eine überholte Testzahl | wegweiser | offen | bei einer anderen betreuten Seite aufgefallen am 10.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-10 |
 <!-- eigenepunkte:ende -->
