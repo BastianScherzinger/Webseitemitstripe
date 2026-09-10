@@ -215,8 +215,12 @@ def _geo_enrich(log_pk, ip):
     finally:
         try:
             connections['pystore'].close()
-        except Exception:
-            pass
+        except Exception as schliessfehler:
+            # Kein Grund, den Lauf zu stoppen – die Verbindung ist am Ende des
+            # Threads ohnehin verloren. Aber sie verschwindet nicht stumm:
+            # gehen hier dauernd Verbindungen auf, steht es im Protokoll.
+            _log.warning('_geo_enrich: pystore-Verbindung nicht geschlossen: %s',
+                         schliessfehler)
         _geo_frei.release()
 
 

@@ -11,8 +11,9 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Abhängigkeiten installieren
-COPY requirements.txt .
+# Abhängigkeiten installieren (requirements.lock: Constraint-Datei, die
+# requirements.txt selbst einbindet – ohne sie bricht pip ab)
+COPY requirements.txt requirements.lock ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Projektdateien kopieren

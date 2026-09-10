@@ -1360,3 +1360,88 @@ Betreiberin liefern (`SU06`, `doku/80-AUFGABEN.md`).
 
 **Gegenbeweis.** `python manage.py check` grün, 215/215 Tests grün,
 `test_aufbau` unverändert.
+
+## Paket 155 (11.09.2026) – PJ05, SI08, PJ11
+
+**Vorgeschichte.** `PJ05` und `SI08` hat Paket 142 am 08.09.2026 schon einmal
+gebaut (Zweig `sofort/2026-09-08-pj05-und-2-weitere`, Commits `e36f4bc`,
+`a1169a4`, Gegenprüfung bestanden). Ausgeliefert wurde der Zweig nicht – der
+dritte Punkt jenes Pakets (`TS11`) war lokal nicht messbar. Dieses Paket baut
+beide Punkte auf dem heutigen Stand neu, bei `PJ05` Zeile für Zeile gleich
+wie `e36f4bc`, damit ein späterer Merge beider Zweige an diesen Stellen
+keinen Konflikt erzeugt.
+
+**`PJ05` – kein kritischer Datei-Befund.** Die Messung nannte fünf Befunde
+`K06`, das Code-Audit des Werkzeugs meldet am heutigen Stand acht (Bericht
+vom 11.09.2026, 00:24). Alle acht an ihrer Stelle:
+
+* `K06` fünfmal (`_helpers.py`, `auth.py`, `legal.py`, `shop.py` zweimal) –
+  keine dieser Stellen darf eine Anmeldepflicht bekommen: eine
+  Hilfsfunktion ohne Route, die Registrierung, die Newsletter-Anmeldung und
+  die beiden Werbezähler der Startseite. `@login_required` sperrte
+  Besucher aus. Jede trägt den Vermerk `# offen-ok:` mit Grund, den das
+  Audit dafür vorsieht – eine Ausnahme im Bewertungsblock nähme dagegen
+  jeden künftigen kritischen Befund mit aus der Wertung.
+* `K02` `settings.py` – `ALLOWED_HOSTS = ['*']` steht nur im DEBUG-Zweig;
+  belegt mit `# audit-ok K02:`, gehalten von `test_die_hostliste_ist_nicht_offen`.
+* `P02` `middleware.py` – die Ausnahme beim Schliessen der
+  pystore-Verbindung steht als Warnung im Protokoll statt in `pass`.
+* `V11` `models.py` – `Subscriber` ist im Django-Admin registriert
+  (ansehen, suchen, einzeln löschen ohne Datenbankzugriff).
+
+**Gegenbeweis.** `codeaudit.pruefen()` des Werkzeugs gegen den Arbeitsstand
+(über einen nicht eingecheckten Wegwerf-Test): 0 kritische Befunde.
+`python manage.py check` grün, 215/215 Tests grün.
+
+**`SI08` – die Content-Security-Policy wird durchgesetzt.** Gemessen: 18 von
+18 Seiten sendeten nur `Content-Security-Policy-Report-Only`, die nichts
+blockiert. Die Vorgabe von `CSP_MODUS` ist jetzt `scharf`; `report-only`
+bleibt der Rückweg ohne neuen Stand. Anders als in `a1169a4` ist die
+Positivliste dabei an PayPals eigene Angabe für das JS-SDK angeglichen
+(developer.paypal.com/sdk/js/csp/, abgerufen am 11.09.2026): `*.paypal.com`,
+`*.paypalobjects.com` und `*.venmo.com` in `script-src`, `style-src`,
+`connect-src` und `frame-src`. Bisher fehlten `style-src` ganz und
+`*.paypalobjects.com` in `frame-src` – solange die Richtlinie nur meldete,
+fiel das niemandem auf; durchgesetzt hätte es den Kauf brechen können.
+`form-action` erlaubt wie in `a1169a4` vorsorglich `*.paypal.com`.
+
+Der in `CLAUDE.md` vorgesehene Weg vor dem Umschalten (jede Seite mit
+offener Browserkonsole ansehen) ist in diesem kopflosen Lauf nicht gangbar.
+An seiner Stelle: `test_die_csp_erlaubt_jede_fremdquelle…` (jede öffentliche
+und jede Admin-Seite), `test_die_csp_deckt_paypal…` jetzt zusätzlich gegen
+PayPals Angabe, und die Suche in Vorlagen und Stildateien – zwei `fetch()`
+an die eigene Adresse, kein `<video>`, `<audio>`, Worker, `@import` oder
+externes `url()`. Nach dem Deploy bleibt eine Sichtprüfung von
+`/payment/<id>/` mit offener Konsole ratsam.
+
+Nebenbefund, nicht angefasst: `SECURE_CROSS_ORIGIN_OPENER_POLICY` ist nicht
+gesetzt, Django sendet damit `Cross-Origin-Opener-Policy: same-origin`;
+PayPal empfiehlt auf derselben Seite `same-origin-allow-popups`.
+
+**Gegenbeweis.** `python manage.py check` grün, 215/215 Tests grün.
+
+**`PJ11` – die Abhängigkeiten sind festgenagelt.** Gemessen: 11 von 11 Zeilen
+der `requirements.txt` ohne feste Fassung, kein Lockfile. Jetzt trägt jede
+Zeile `==`, und `requirements.lock` hält zusätzlich die neun
+Unterabhängigkeiten fest. `requirements.txt` bindet die Lockdatei selbst per
+`--constraint` ein – so wirkt sie im Container, im CI-Lauf und lokal, ohne
+dass der generierte Workflow angefasst werden muss; der Dockerfile kopiert
+beide Dateien vor `pip install`.
+
+Die Fassungen: Django **5.2.17** – die neueste 5.2 laut PyPI (04.08.2026),
+`requires_python >=3.10`, Klassifikatoren 3.10 bis 3.14. Unter der alten
+Spanne `<6.1` bekam der Container (Python 3.11) ohnehin 5.2.x, der CI-Lauf
+(Python 3.12) dagegen 6.0.x; jetzt bauen beide dieselbe Fassung. Alle
+übrigen sind die Fassungen, mit denen die Testsuite lokal lief (gelesen aus
+den Paket-Metadaten des Test-Interpreters); `psycopg2-binary 2.9.12` und
+`charset-normalizer 3.4.7` haben laut PyPI cp311-manylinux-Wheels.
+
+**Was nicht belegt ist.** Die lokale Testsuite lief weiter mit Django 6.0.5,
+nicht mit 5.2.17 – `pip install` und `docker build` sind in diesem Lauf
+gesperrt. Den ersten Nachweis für 5.2.17 liefert der nächste CI-Lauf.
+Das Werkzeug liest `requirements.lock` nicht mit (die Endung `.lock` fehlt
+in `ENDUNGEN` des Code-Audits) und meldet deshalb weiter „kein Lockfile".
+
+**Gegenbeweis.** pip (`parse_requirements`) liest aus `requirements.txt`
+11 Anforderungen und 20 Constraints aus `requirements.lock`; das Code-Audit
+meldet keinen `K03` mehr. `python manage.py check` grün, 215/215 Tests grün.

@@ -1,0 +1,32 @@
+# Lockfile: jede Abhaengigkeit samt Unterabhaengigkeiten mit fester Fassung.
+# Wird als pip-Constraint-Datei gelesen (`--constraint` in requirements.txt):
+# sie legt Fassungen fest, installiert aber nichts, was requirements.txt
+# nicht verlangt - tzdata etwa zieht Django nur unter Windows nach.
+#
+# Neu schreiben, wenn sich requirements.txt aendert: in einer frischen
+# Umgebung `pip install -r requirements.txt`, Testsuite gruen, dann die
+# Fassungen aus `pip freeze` hier eintragen.
+
+# requirements.txt
+Django==5.2.17
+python-dotenv==1.2.2
+pillow==11.3.0
+django-axes==8.3.1
+gunicorn==26.0.0
+whitenoise==6.12.0
+requests==2.34.2
+dj-database-url==3.1.2
+psycopg2-binary==2.9.12
+cloudinary==1.44.2
+django-cloudinary-storage==0.3.0
+
+# Unterabhaengigkeiten
+asgiref==3.11.1
+sqlparse==0.5.5
+tzdata==2026.2
+certifi==2026.4.22
+charset-normalizer==3.4.7
+idna==3.15
+urllib3==2.7.0
+six==1.17.0
+packaging==26.2
