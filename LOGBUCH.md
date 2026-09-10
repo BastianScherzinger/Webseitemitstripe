@@ -1419,3 +1419,29 @@ gesetzt, Django sendet damit `Cross-Origin-Opener-Policy: same-origin`;
 PayPal empfiehlt auf derselben Seite `same-origin-allow-popups`.
 
 **Gegenbeweis.** `python manage.py check` grün, 215/215 Tests grün.
+
+**`PJ11` – die Abhängigkeiten sind festgenagelt.** Gemessen: 11 von 11 Zeilen
+der `requirements.txt` ohne feste Fassung, kein Lockfile. Jetzt trägt jede
+Zeile `==`, und `requirements.lock` hält zusätzlich die neun
+Unterabhängigkeiten fest. `requirements.txt` bindet die Lockdatei selbst per
+`--constraint` ein – so wirkt sie im Container, im CI-Lauf und lokal, ohne
+dass der generierte Workflow angefasst werden muss; der Dockerfile kopiert
+beide Dateien vor `pip install`.
+
+Die Fassungen: Django **5.2.17** – die neueste 5.2 laut PyPI (04.08.2026),
+`requires_python >=3.10`, Klassifikatoren 3.10 bis 3.14. Unter der alten
+Spanne `<6.1` bekam der Container (Python 3.11) ohnehin 5.2.x, der CI-Lauf
+(Python 3.12) dagegen 6.0.x; jetzt bauen beide dieselbe Fassung. Alle
+übrigen sind die Fassungen, mit denen die Testsuite lokal lief (gelesen aus
+den Paket-Metadaten des Test-Interpreters); `psycopg2-binary 2.9.12` und
+`charset-normalizer 3.4.7` haben laut PyPI cp311-manylinux-Wheels.
+
+**Was nicht belegt ist.** Die lokale Testsuite lief weiter mit Django 6.0.5,
+nicht mit 5.2.17 – `pip install` und `docker build` sind in diesem Lauf
+gesperrt. Den ersten Nachweis für 5.2.17 liefert der nächste CI-Lauf.
+Das Werkzeug liest `requirements.lock` nicht mit (die Endung `.lock` fehlt
+in `ENDUNGEN` des Code-Audits) und meldet deshalb weiter „kein Lockfile".
+
+**Gegenbeweis.** pip (`parse_requirements`) liest aus `requirements.txt`
+11 Anforderungen und 20 Constraints aus `requirements.lock`; das Code-Audit
+meldet keinen `K03` mehr. `python manage.py check` grün, 215/215 Tests grün.
