@@ -333,6 +333,9 @@ def produkt_uebersicht_redirect(request):
     return HttpResponsePermanentRedirect(reverse('produkte'))
 
 
+# offen-ok: die Newsletter-Anmeldung steht auf der Startseite und richtet sich
+# an Besucher ohne Konto. Geschrieben wird eine einzelne E-Mail-Adresse, und
+# das unique-Feld verhindert Mehrfacheinträge derselben Adresse.
 def newsletter_subscribe(request):
     """Abonniert den Newsletter."""
     if request.method == 'POST':

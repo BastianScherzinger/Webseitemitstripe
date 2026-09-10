@@ -1360,3 +1360,35 @@ Betreiberin liefern (`SU06`, `doku/80-AUFGABEN.md`).
 
 **Gegenbeweis.** `python manage.py check` grün, 215/215 Tests grün,
 `test_aufbau` unverändert.
+
+## Paket 155 (11.09.2026) – PJ05, SI08, PJ11
+
+**Vorgeschichte.** `PJ05` und `SI08` hat Paket 142 am 08.09.2026 schon einmal
+gebaut (Zweig `sofort/2026-09-08-pj05-und-2-weitere`, Commits `e36f4bc`,
+`a1169a4`, Gegenprüfung bestanden). Ausgeliefert wurde der Zweig nicht – der
+dritte Punkt jenes Pakets (`TS11`) war lokal nicht messbar. Dieses Paket baut
+beide Punkte auf dem heutigen Stand neu, bei `PJ05` Zeile für Zeile gleich
+wie `e36f4bc`, damit ein späterer Merge beider Zweige an diesen Stellen
+keinen Konflikt erzeugt.
+
+**`PJ05` – kein kritischer Datei-Befund.** Die Messung nannte fünf Befunde
+`K06`, das Code-Audit des Werkzeugs meldet am heutigen Stand acht (Bericht
+vom 11.09.2026, 00:24). Alle acht an ihrer Stelle:
+
+* `K06` fünfmal (`_helpers.py`, `auth.py`, `legal.py`, `shop.py` zweimal) –
+  keine dieser Stellen darf eine Anmeldepflicht bekommen: eine
+  Hilfsfunktion ohne Route, die Registrierung, die Newsletter-Anmeldung und
+  die beiden Werbezähler der Startseite. `@login_required` sperrte
+  Besucher aus. Jede trägt den Vermerk `# offen-ok:` mit Grund, den das
+  Audit dafür vorsieht – eine Ausnahme im Bewertungsblock nähme dagegen
+  jeden künftigen kritischen Befund mit aus der Wertung.
+* `K02` `settings.py` – `ALLOWED_HOSTS = ['*']` steht nur im DEBUG-Zweig;
+  belegt mit `# audit-ok K02:`, gehalten von `test_die_hostliste_ist_nicht_offen`.
+* `P02` `middleware.py` – die Ausnahme beim Schliessen der
+  pystore-Verbindung steht als Warnung im Protokoll statt in `pass`.
+* `V11` `models.py` – `Subscriber` ist im Django-Admin registriert
+  (ansehen, suchen, einzeln löschen ohne Datenbankzugriff).
+
+**Gegenbeweis.** `codeaudit.pruefen()` des Werkzeugs gegen den Arbeitsstand
+(über einen nicht eingecheckten Wegwerf-Test): 0 kritische Befunde.
+`python manage.py check` grün, 215/215 Tests grün.

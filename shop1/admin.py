@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserProfile, Produkt, Cart, CartItem, Order, OrderItem
+from .models import UserProfile, Produkt, Cart, CartItem, Order, OrderItem, Subscriber
 
 # Register your models here.
 
@@ -28,6 +28,22 @@ class UserProfileAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+
+@admin.register(Subscriber)
+class SubscriberAdmin(admin.ModelAdmin):
+    """Newsletter-Abonnentinnen: E-Mail-Adressen sind personenbezogene Daten.
+
+    Das Panel unter ``/shop-admin/`` zeigt sie und verschickt an sie; löschen,
+    suchen und einzeln nachsehen liess sich bis hierher nur über die
+    Datenbank. Eine Auskunft oder Löschung nach Art. 15/17 DSGVO braucht aber
+    einen Weg, der ohne Datenbankzugriff auskommt.
+    """
+    list_display = ('email', 'erstellt_am')
+    search_fields = ('email',)
+    list_filter = ('erstellt_am',)
+    readonly_fields = ('erstellt_am',)
+    ordering = ('-erstellt_am',)
 
 
 @admin.register(Produkt)

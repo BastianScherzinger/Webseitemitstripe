@@ -44,6 +44,9 @@ def logout(request):
     return render(request, 'shop1/logout.html')
 
 
+# offen-ok: die Registrierung muss offen sein – wer sich anmelden soll, ist
+# noch nicht angemeldet. Geschrieben wird nur, was das geprüfte Formular
+# durchlässt (CustomUserCreationForm), und django-axes begrenzt die Versuche.
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)

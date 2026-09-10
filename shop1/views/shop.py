@@ -15,6 +15,9 @@ from ..utils import send_brevo_email
 _log = logging.getLogger('shop1')
 
 
+# offen-ok: die Startseite ist die öffentlichste Seite überhaupt. Geschrieben
+# wird nur der eigene Zähler der Werbeeinblendungen (WerbungStat), nichts, was
+# aus der Anfrage stammt.
 def startseite(request):
     produkte_galerie = Produkt.objects.filter(aktiv=True).order_by('-erstellt_am')[:8]
 
@@ -44,6 +47,9 @@ def startseite(request):
     })
 
 
+# offen-ok: der Klick auf eine Anzeige kommt von einem Besucher ohne Konto.
+# Geschrieben wird nur der eigene Klickzähler (WerbungStat); die Kennung wird
+# gegen eine aktive Werbung geprüft und das Ziel muss http/https sein.
 def werbung_klick(request, werbung_id):
     """Zählt einen Klick auf eine Werbung (atomisch) und leitet zur Ziel-URL weiter."""
     try:

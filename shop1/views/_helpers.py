@@ -19,6 +19,8 @@ def _get_or_create_cart(user):
     return cart
 
 
+# offen-ok: keine View, keine URL – Hilfsfunktion, die login() erst nach
+# erfolgreicher Anmeldung mit dem bereits angemeldeten Benutzer aufruft.
 def _sync_session_to_db(request, user):
     """Synct Session-Warenkorb in die Datenbank beim Login."""
     session_cart = request.session.get('warenkorb', {})

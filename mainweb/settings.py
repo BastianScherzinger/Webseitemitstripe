@@ -56,6 +56,11 @@ for _h in _extra_raw:
 _extra = sorted(_extra)
 
 if DEBUG:
+    # Offen ist die Liste ausschliesslich in der Entwicklung: dort wird der
+    # Server auch unter der LAN-Adresse des Rechners aufgerufen (Ansicht auf
+    # dem Handy). Im Betrieb gilt der Zweig darunter, und
+    # test_die_hostliste_ist_nicht_offen hält fest, dass dort kein '*' steht.
+    # audit-ok K02: '*' greift nur bei DEBUG=True, nie im ausgelieferten Stand
     ALLOWED_HOSTS = ['*']
 else:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.up.railway.app'] + _extra
