@@ -34,12 +34,20 @@ jobs:
       PYTHONIOENCODING: utf-8
       # Testwerte, keine Geheimnisse.
       # ⚠ **Projektabhängig und belegt**, nicht geraten:
-      #   2 Prüfbefehl(e) grün, ohne die Zeile — der Zustand eines frischen Klons.
+      #   2 Prüfbefehl(e) grün, ohne die Zeile — nachgestellt über die Vorgabe des Projekts (`DEBUG=False`), damit die `.env` nicht dazwischenkommt.
       #   Ein falscher Wert schaltet DEBUG **lautlos** um und damit den
       #   Produktionszweig (`SECURE_SSL_REDIRECT`, HSTS) — je nach Projekt
       #   bekommt dann jeder View-Test 301 statt 200, oder die
       #   Sicherheitstests finden ihre Kopfzeilen nicht.
-      #   DEBUG=(nicht gesetzt): alle grün
+      #   DEBUG=False (im Workflow weggelassen): alle grün
+      #
+      # ⚠ **Was dieser Beleg NICHT deckt.** Das Projekt liest eine
+      #   `.env`, die in `.gitignore` steht — der lokale Lauf bekam
+      #   daraus Werte, dieser Lauf hier bekommt sie nicht. Fehlt einer
+      #   davon, wird der Lauf rot, ohne dass am Code etwas falsch ist.
+      #   Schlüssel in der `.env`: DEBUG, SECRET_KEY
+      #   Wer sie braucht, hinterlegt sie als GitHub-Secret und trägt
+      #   sie hier ein — **Werte gehören nie in diese Datei.**
       # (DEBUG bleibt ungesetzt — so war der Lauf grün.)
       SECRET_KEY: nur-fuer-den-pruef-lauf-kein-geheimnis
       ALLOWED_HOSTS: "*"
@@ -73,6 +81,12 @@ jobs:
 
       - name: Datenbank anlegen
         run: python manage.py migrate --no-input
+
+      - name: Statische Dateien einsammeln
+        # Ohne diesen Schritt wirft jedes `{% static %}` im Test ein
+        # `Missing staticfiles manifest entry` — `staticfiles/` steht in
+        # `.gitignore`, also gibt es auf dem Runner keins.
+        run: python manage.py collectstatic --no-input
 
       - name: Systemcheck
         run: python manage.py check
