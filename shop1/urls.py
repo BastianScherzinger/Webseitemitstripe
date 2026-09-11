@@ -14,6 +14,7 @@ urlpatterns = [
     path('produkt/<int:produkt_id>/', views.produkt_detail_redirect, name='produkt_detail'),
     path('produkt/<slug:slug>/', views.produkt_detail_slug, name='produkt_detail_slug'),
     path('kontakt/', views.kontakt, name='kontakt'),
+    path('kontakt/danke/', views.kontakt_danke, name='kontakt_danke'),
     path('ueber_uns/', views.ueber_uns, name='ueber_uns'),
     path('liefergebiet/', views.liefergebiet, name='liefergebiet'),
     path('kontakte/<int:produkt_id>/', views.kontakte, name='kontakte'),

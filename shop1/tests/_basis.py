@@ -69,6 +69,9 @@ OEFFENTLICHE_SEITEN = [
     '/',
     '/produkte/',
     '/kontakt/',
+    # Bestätigung nach dem Kontaktformular (KV07): öffentlich, aber noindex –
+    # deshalb nicht in INHALTSSEITEN.
+    '/kontakt/danke/',
     '/ueber_uns/',
     '/liefergebiet/',
     '/gaestebuch/',

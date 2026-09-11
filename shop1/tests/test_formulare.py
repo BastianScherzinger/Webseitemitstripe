@@ -32,9 +32,33 @@ class KontaktformularTest(LuviqTestCase):
         Erfolg, verschickt aber nichts – oder verschickt doppelt."""
         with mock.patch(_MAIL) as versand:
             antwort = self.sende('/kontakt/', GUELTIGE_ANFRAGE)
-        self.assertEqual(antwort.status_code, 200)
+        self.assertRedirects(antwort, '/kontakt/danke/', fetch_redirect_response=False)
         self.assertEqual(versand.call_count, 1)
-        self.assertContains(antwort, 'erfolgreich gesendet')
+
+    def test_nach_dem_absenden_steht_die_bestaetigung_auf_eigener_adresse(self):
+        """Verhindert, dass die Bestätigung wieder als Meldung auf ``/kontakt/``
+        erscheint (KV07): ohne eigene Adresse ist kein abgeschicktes Formular
+        zählbar, und Neuladen schickte die Anfrage ein zweites Mal ab."""
+        # Ohne follow=True: der Testclient folgte der Weiterleitung über HTTP
+        # und prüfte dann nur die 301 von SECURE_SSL_REDIRECT (_basis, Punkt 1).
+        with mock.patch(_MAIL) as versand:
+            weiter = self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+        self.assertEqual(weiter.status_code, 302)
+        antwort = self.hole(weiter['Location'])
+        self.assertEqual(antwort.status_code, 200)
+        self.assertTemplateUsed(antwort, 'shop1/kontakt_danke.html')
+        self.assertContains(antwort, 'Deine Nachricht ist abgeschickt.')
+        self.assertNotContains(antwort, 'erfolgreich gesendet')
+        self.assertEqual(versand.call_count, 1)
+
+    def test_scheitert_der_versand_bleibt_die_anfrage_auf_der_kontaktseite(self):
+        """Gegenprobe: eine Anfrage, deren Versand schon beim Start scheitert,
+        darf nicht auf die Bestätigung führen."""
+        with mock.patch(_MAIL, side_effect=RuntimeError('kein Versand')):
+            antwort = self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+        self.assertEqual(antwort.status_code, 200)
+        self.assertTemplateUsed(antwort, 'shop1/kontakt.html')
+        self.assertContains(antwort, 'Problem beim Senden')
 
     def test_leeres_formular_verschickt_nichts_und_meldet_das(self):
         """Verhindert, dass ein leeres Formular als gültige Anfrage durchgeht –
@@ -88,6 +112,47 @@ class KontaktformularTest(LuviqTestCase):
             antwort = streng.post('/kontakt/', GUELTIGE_ANFRAGE, secure=True)
         self.assertEqual(antwort.status_code, 403)
         versand.assert_not_called()
+
+
+class KontaktDankeTest(LuviqTestCase):
+    """Die Bestätigungsseite ``/kontakt/danke/`` (KV07)."""
+
+    def test_die_seite_ist_direkt_abrufbar_und_zeigt_nichts_aus_einer_anfrage(self):
+        """Verhindert, dass die Adresse nur im Ablauf funktioniert: ein
+        Messwerkzeug oder ein Werbekonto ruft sie direkt auf. Sie darf dabei
+        keine Daten einer früheren Anfrage zeigen."""
+        with mock.patch(_MAIL):
+            self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+        fremd = Client()
+        antwort = fremd.get('/kontakt/danke/', secure=True)
+        self.assertEqual(antwort.status_code, 200)
+        for wert in GUELTIGE_ANFRAGE.values():
+            self.assertNotContains(antwort, wert)
+
+    def test_die_seite_steht_nicht_im_suchindex(self):
+        """Verhindert, dass eine Bestätigung ohne eigenen Inhalt in der
+        Trefferliste landet: ``noindex, follow``, weder in der Sitemap noch in
+        llms.txt."""
+        inhalt = self.hole('/kontakt/danke/').content.decode()
+        self.assertIn('<meta name="robots" content="noindex, follow">', inhalt)
+        self.assertNotIn('/kontakt/danke/', self.hole('/sitemap.xml').content.decode())
+        self.assertNotIn('/kontakt/danke/', self.hole('/llms.txt').content.decode())
+
+    def test_die_seite_wird_nicht_zwischengespeichert(self):
+        """Verhindert, dass ein Zwischenspeicher die Bestätigung ausliefert,
+        ohne dass der Aufruf den Server erreicht – er fehlte dann im
+        Besuchsprotokoll, an dem sich ein Abschluss ablesen lässt."""
+        antwort = self.hole('/kontakt/danke/')
+        self.assertIn('no-store', antwort['Cache-Control'])
+
+    def test_die_seite_nennt_keine_andere_adresse_als_die_kontaktseite(self):
+        """Verhindert erfundene Kontaktwege auf der Bestätigung: die E-Mail-
+        Adresse muss dieselbe sein, die ``/kontakt/`` nennt."""
+        danke = self.hole('/kontakt/danke/').content.decode()
+        kontakt = self.hole('/kontakt/').content.decode()
+        self.assertIn('mailto:brehlerluisa@gmail.com', danke)
+        self.assertIn('mailto:brehlerluisa@gmail.com', kontakt)
+        self.assertNotIn('tel:', danke)
 
 
 class NewsletterTest(LuviqTestCase):
