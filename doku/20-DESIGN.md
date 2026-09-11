@@ -1,11 +1,11 @@
 ---
 bereich: design
 titel: Design und Gestaltungslinie
-stand: 2026-09-03
+stand: 2026-09-11
 status: teilweise
 fortschritt: 77
-zusammenfassung: Dunkelbraun-Gold-Linie mit Glas-Karten steht und ist durch die Designwache eingefroren; offen sind Google-Schriften von fremdem Server und englische Restbeschriftungen.
-offen: 5
+zusammenfassung: Dunkelbraun-Gold-Linie mit Glas-Karten steht und ist durch die Designwache eingefroren; offen sind Google-Schriften von fremdem Server, englische Restbeschriftungen und seit IS18 die Satzart des langen Versalien-Absatzes auf /produkte/ (braucht Freigabe).
+offen: 6
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, shop1/static/shop1/style.css, tailwind.config.js, templates/base.html
 ---
 
@@ -66,7 +66,10 @@ Curated Style`) → Herkunft und Versandgebiet → Markenblock → Trust-/Ticker
 
 **Produkte (`/produkte/`, „The Drop"):** Produktkarten mit Bild, Name, „Handbemaltes 1-of-1 Unikat",
 „Endpreis" (Zweig; auf main „Vintage Custom Art" / „Investition"). Ein einziger Fliesstextabsatz
-in Versalien (`tracking-[0.4em]`), im Zweig auf rund 100 Wörter erweitert.
+in Versalien (`uppercase tracking-[0.4em]`), mit IS19 und zuletzt mit IS18 (11.09.2026, `2591fde`,
+Zweig `sofort/2026-09-11-is18`, nicht gemergt) auf den Umfang einer Kategorieseite erweitert —
+nur Text, Klassen und Aufbau unverändert. Bei diesem Umfang ist der Absatz in dieser Satzart lang
+zu lesen und schiebt das Produktraster nach unten (Nebenbefund in `LOGBUCH.md`, Paket 165; siehe „Offen").
 
 **Produktdetail:** Galerie, Preis, Warenkorb-Knopf, „Spezifikationen"-Absatz (Zweig: statischer
 Zusatz zu 1-of-1, Zahlung, Versand), `Product`/`Offer`/`Brand` + `BreadcrumbList` im JSON-LD.
@@ -108,3 +111,4 @@ zusätzlich nur mit Sandbox-Test ([10-TECHNIK.md](10-TECHNIK.md) → Fallen).
 | `prefers-reduced-motion` auch für die CSS-Animationen (`nebula-evolve`, `rotate`, Ticker) — im ausgelieferten Stilblatt nicht gefunden; nur der Three.js-Pfad prüft es | BF19 | BF19 |
 | Englische Restbeschriftungen ohne Aussage („Get in Touch", „Zentrale/Channels", „Legal Notice", „Art is not a luxury…", „JOIN THE") — Geschmacksfrage der Betreiberin, nicht der Messung | — | — |
 | Menüknopf und Icon-Knöpfe ohne Namen (13 Seiten × 1); 5 namenlose Links auf `/produkte/` | BF12, BF11 | BF12, VL18 |
+| Satzart des Einleitungsabsatzes auf `/produkte/`: Versalien mit weiter Laufweite bei einem Absatz im Umfang einer Kategorieseite (seit IS18, `2591fde`). Eine andere Satzart ist eine Änderung am Aussehen — eigenes Paket, Freigabe, Designwache-Referenz bewusst nachziehen | Nebenbefund `LOGBUCH.md`, Paket 165 (keine Messung) | — |
