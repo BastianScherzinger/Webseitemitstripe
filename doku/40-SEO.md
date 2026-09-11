@@ -1,10 +1,10 @@
 ---
 bereich: seo
 titel: SEO und GEO
-stand: 2026-09-08
+stand: 2026-09-11
 status: teilweise
 fortschritt: 74
-zusammenfassung: SEO-Technik live solide (92), Inhalt 73, GEO 76; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten, 301 auf www, drei indexierte Wissensseiten und seit dem 08.09.2026 GE23/GE25/IS19 (Antwortabsatz, belegte Zahlen, keine dünne Seite mehr) liegen fertig im Zweig, nicht live.
+zusammenfassung: SEO-Technik live solide (92), Inhalt 73, GEO 76; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten, 301 auf www, drei indexierte Wissensseiten und seit dem 08.09.2026 GE23/GE25/IS19 (Antwortabsatz, belegte Zahlen, keine dünne Seite mehr) liegen fertig im Code, nicht nachgemessen. IS18 (11.09.2026, Zweig sofort/2026-09-11-is18, nicht gemergt) bringt Startseite, Produktübersicht und Wissensübersicht laut Commit auf den Umfang ihrer Seitenart und zieht deren lastmod auf den 11.09.2026; die Produktseiten bleiben darunter.
 offen: 9
 quellen: GOOGLE_SEO_GUIDE.md, LOGBUCH.md, DOCUMENTATION.md, shop1/views/legal.py, shop1/seiten_stand.py, templates/base.html
 ---
@@ -40,7 +40,7 @@ luviq" war falsch und ist gestrichen.
 | Baustein | Live (main, 02.09.2026) | Zweig |
 |---|---|---|
 | `robots.txt` | 200; sperrt `/shop-admin/`, `/profil/`, `/warenkorb/`, `/checkout/`, `/payment/`, `/verify/`, `/login/`, `/logout/`, `/register/`, `/password-reset/`, `/reset/`, `/resend-verification/`, `/delete-account/`; **Sitemap-Zeile vorhanden**; keine KI-Crawler genannt (GE02) | zusätzlich `Allow: /` und **13 Antwort-Crawler namentlich zugelassen** (u. a. GPTBot, PerplexityBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot, meta-externalagent, Bytespider) |
-| `sitemap.xml` | 200, 14 URLs, `lastmod` nur bei 5 Produkten (2 Daten: 14.06./11.05.2026), Bild-Auszeichnung bei 5 (TS16, TS19); eine Klasse im Code (VL07) | `lastmod` für alle statischen Seiten aus dem Register `seiten_stand.py` (`2026-09-01`, die drei SU04-Beiträge `2026-09-07`); `/wissen/` und die drei belegten Beiträge stehen drin, die drei unbestätigten erst nach Freigabe; 15 min Cache |
+| `sitemap.xml` | 200, 14 URLs, `lastmod` nur bei 5 Produkten (2 Daten: 14.06./11.05.2026), Bild-Auszeichnung bei 5 (TS16, TS19); eine Klasse im Code (VL07) | `lastmod` für alle statischen Seiten aus dem Register `seiten_stand.py` (`2026-09-01`, die drei SU04-Beiträge `2026-09-07`; im Zweig `sofort/2026-09-11-is18` `home`, `produkte` und `wissen` `2026-09-11`); `/wissen/` und die drei belegten Beiträge stehen drin, die drei unbestätigten erst nach Freigabe; 15 min Cache |
 | `llms.txt` | **404** | vorhanden: Antwortabsatz (Ort, PLZ 36304, Versandzeiten), Eckdaten (Betreiberin, Anschrift, E-Mail, Instagram, Zahlungsarten, § 19), Seitenliste, Abschnitt Wissen mit Übersicht und den drei belegten Beiträgen (die drei unbestätigten erst nach Freigabe); 15 min Cache. `llms-full.txt` gibt es nicht (GE31) |
 | Canonical | Canonical-Tag je Seite; **Apex `luviq-alsfeld.com` antwortet 200 ohne 301** (TS11, kritisch) | `CanonicalHostMiddleware`: 301 mit vollem Pfad und `https` für die www-Nebenvariante von `CANONICAL_HOST`; **wirkt erst mit gesetzter Variable in Railway** |
 | Meta | Titel 7 von 13 in 30–65 Zeichen (IS02), Beschreibungen 5 von 13 in 110–175 (IS09), 4 mit Aufforderung (IS11), 2 Titel mit Ort/Nutzen (IS06), 1 Titel doppelt (IS03), 4 Seiten teilen Beschreibungen (IS10), Marke am Ende bei 9 (IS07) | Beschreibungen aller neun Inhaltsseiten 157–171 Zeichen mit Aufforderung; Ortsbezug im automatischen Produkttitel; Produkt-Meta auf 60/160 begrenzt; Tests in `test_seo` |
@@ -74,7 +74,8 @@ luviq" war falsch und ist gestrichen.
 
 Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 
-- **Dünn:** 11 von 13 Seiten unter 200 Eigenwörtern, 1.557 Eigenwörter gesamt gegen 12.000 Ziel (IS19, SU02) — Messwerte für **main**. Im Zweig liegt seit dem 08.09.2026 (`b35f6e4`) keine indexierbare Seite mehr unter 200 Wörtern im Inhaltsbereich; `/impressum/` bleibt bei 75, trägt aber `noindex` und steht weder in der Sitemap noch in `llms.txt`. Die Zielgrössen aus IS18 (600 W je Produktseite) erreicht der Zweig damit nicht — die Designwache lässt keine neuen Absätze zu, nur volle bestehende, und eine eigene Beschreibung je Einzelstück kann nur die Betreiberin liefern.
+- **Dünn:** 11 von 13 Seiten unter 200 Eigenwörtern, 1.557 Eigenwörter gesamt gegen 12.000 Ziel (IS19, SU02) — Messwerte für **main**. Im Zweig liegt seit dem 08.09.2026 (`b35f6e4`) keine indexierbare Seite mehr unter 200 Wörtern im Inhaltsbereich; `/impressum/` bleibt bei 75, trägt aber `noindex` und steht weder in der Sitemap noch in `llms.txt`. 
+- **Umfang je Seitenart (IS18):** im Zweig `sofort/2026-09-11-is18` (11.09.2026, `2591fde`, nicht gemergt) erreichen `/` (Ziel 700), `/produkte/` (600) und `/wissen/` (900) laut Commit ihr Ziel — gezählt nach dem Verfahren des Werkzeugs und ohne ein Produkt im Bestand, mit belegtem Fliesstext in bestehenden Absätzen (die Designwache lässt keine neuen Elemente zu). Die Produktseiten (600) erreichen es nicht: ihr statischer Teil ist auf allen Stücken wortgleich, mehr davon höbe die Textgleichheit (IS21); eine eigene Beschreibung je Einzelstück kann nur die Betreiberin liefern. Einzelheiten: [30-INHALTE.md](30-INHALTE.md).
 - **Kannibalisierung:** „custom print" auf drei Produktseiten; zwei Produkte mit identischem Namen und Titel (IS23, IS03) — Pflege im Shop-Admin.
 - **Ort:** „Alsfeld" bzw. „Hessen" in Startseiten-, Produkte-, Kontakt- und Impressumstitel; im Zweig auch in jedem Produkttitel.
 - **Alt-Texte:** 21 von 39 schablonenhaft (IS25), Produkt-alt = Produktname.
@@ -107,6 +108,7 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 | 02.09.2026 (Zweig) | Wissensbeiträge auf `noindex` bis zur Freigabe; Sitemap/llms.txt lesen das Register | Auflage 3 (`60555d0`) |
 | 07.09.2026 (Zweig) | Drei belegte Wissensbeiträge (Bestellen, Widerruf, Konto), `freigegeben` ohne Vorbehalt; `/wissen/` damit indexierbar, Sitemap und llms.txt führen vier Wissensadressen | SU04 (`d7d2e0b`) |
 | 08.09.2026 (Zweig) | Antwortabsatz mit belegter Zahl auf jeder Inhaltsseite (GE23), konkrete Zahlen auf den fünf Seiten ohne (GE25), keine indexierbare Seite unter 200 Wörtern im Inhaltsbereich (IS19) — ohne eine Änderung am Aufbau, `test_aufbau` unverändert | `fd82efd`, `2b26108`, `b35f6e4` |
+| 11.09.2026 (Zweig `sofort/2026-09-11-is18`, nicht gemergt) | IS18 anders eingebaut: `/`, `/produkte/` und `/wissen/` mit belegtem Fliesstext auf dem Umfang ihrer Seitenart, `lastmod`/`dateModified` dieser drei Seiten auf `2026-09-11`; die fünf Produktseiten bleiben bei der Betreiberin. Ohne Änderung am Aufbau, 218/218 Tests grün laut Commit | `2591fde` |
 
 ## Offen
 

@@ -1,10 +1,10 @@
 ---
 bereich: inhalte
 titel: Inhalte und Seitenbestand
-stand: 2026-09-08
+stand: 2026-09-11
 status: teilweise
 fortschritt: 40
-zusammenfassung: Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); der Zweig füllt neun Seiten mit Auskunft, bringt sechs Wissensbeiträge (drei belegt und indexiert, drei warten auf die Freigabe) und hält seit dem 08.09.2026 jede indexierbare Seite über 200 Wörtern — nur eine eigene Beschreibung je Einzelstück fehlt weiterhin.
+zusammenfassung: Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); main füllt neun Seiten mit Auskunft, bringt sechs Wissensbeiträge (drei belegt und indexiert, drei warten auf die Freigabe) und hält jede indexierbare Seite über 200 Wörtern. Seit IS18 (11.09.2026, Zweig sofort/2026-09-11-is18, nicht gemergt) erreichen Startseite, Produktübersicht und Wissensübersicht laut Commit mit belegtem Fliesstext die Zielgrösse ihrer Seitenart — nur die Produktseiten brauchen weiter eine eigene Beschreibung je Einzelstück.
 offen: 8
 quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/legal.py, shop1/tests/test_inhalt.py
 ---
@@ -70,7 +70,7 @@ Keine Ortsseiten (VL12: 0/1) — für einen Online-Shop ohne Ladengeschäft frag
 **Belegte Sachangaben**, die überall gleich verwendet werden (Quellen: `agb.html`, `kontakt.html`, `liefergebiet.html`, `ueber_uns.html`, Impressum):
 Luisa Brehler · Grünberger Str. 16, 36304 Alsfeld, Hessen · brehlerluisa@gmail.com · Instagram `luviq.universe` · kein Ladengeschäft · Pinsel und Textilfarbe auf getragener Second-Hand-Kleidung · 1-of-1, keine Nachbestellung · PayPal oder Vorab-Überweisung · Endpreise, § 19 UStG · Versand deutschlandweit in der Regel 1–2 Werktage, in Hessen meist nach 1–3 Werktagen zugestellt · Widerruf nach AGB.
 
-**Nicht belegt und deshalb nicht behauptet:** dass verkaufte Stücke aus dem Shop verschwinden (`views/shop.py` filtert nur `aktiv`); Markt- oder Umweltzahlen; die „5.0 ★★★★★" im Bewertungskasten; eine Telefonnummer; Öffnungs-/Antwortzeiten (live steht auf `/kontakt/` „Operationell: 24/7" und „Wir antworten schneller als das Licht" — Platzhaltertext auf main).
+**Nicht belegt und deshalb nicht behauptet:** dass ein Stück schon mit der Bestellung aus dem Shop verschwindet (`views/shop.py` filtert nur `aktiv`; abgeschaltet wird erst nach der Zahlung — bei PayPal in `checkout.py:231`, bei Vorab-Überweisung erst mit dem Eintrag „bezahlt" im Panel, `admin_views.py:746-751`; so steht es seit IS18 auch auf `/` und `/produkte/`. Beide Stellen suchen das Stück über seinen Namen, siehe `EIG08` in [80-AUFGABEN.md](80-AUFGABEN.md)); Markt- oder Umweltzahlen; die „5.0 ★★★★★" im Bewertungskasten; eine Telefonnummer; Öffnungs-/Antwortzeiten (live steht auf `/kontakt/` „Operationell: 24/7" und „Wir antworten schneller als das Licht" — Platzhaltertext auf main).
 
 **Was der Zweig an Text geändert hat** (Logbuch Schritte 11–13, 21–24): Startseite beginnt mit einer zitierfähigen Antwort („Was ist Luviq Universe?"), drei Feature-Absätze mit Auskunft; `/produkte/` Absatz auf ~100 Wörter; `/ueber_uns/`, `/gaestebuch/`, Produktseiten (statischer Zusatz), Impressum (Unterzeile); Meta-Beschreibungen aller neun Inhaltsseiten auf 157–171 Zeichen mit Aufforderung; Ortsbezug „Alsfeld" im automatischen Produkttitel; Produkt-Metaangaben auf 60/160 Zeichen begrenzt. Drei Beschriftungen ohne Aussage ersetzt („Status: Active", „Galaxy-Wide Delivery", „Premium Energy Matrix").
 
@@ -115,6 +115,36 @@ nicht löst:** auf den Produktseiten ist dieser Zuwachs auf allen fünf Stücken
 derselbe Text. Er hebt die Wortzahl, sagt aber nichts über das einzelne Teil und
 senkt deshalb die Textgleichheit zwischen den Produktseiten (IS21) nicht.
 
+**Paket 165 (11.09.2026, `2591fde`, Zweig `sofort/2026-09-11-is18`, nicht gemergt) —
+IS18, anders eingebaut.** Der Umfang je Seitenart (Startseite 700, Kategorieseite 600,
+Wissensübersicht 900 Wörter) ist für die drei Seiten aufgeholt, die die Beschreibung je
+Stück gar nicht ausgeben. Wie bei IS19 steht der ganze Zuwachs in Absätzen, die es schon
+gab — kein Element, keine Klasse, keine Kennung, keine Überschrift. Gezählt hat der Bau
+nach dem Verfahren des Werkzeugs (Text in `<main>` ohne Navigation, Kopf, Fuss, `aside`,
+Skript und Stil) und **ohne ein Produkt im Bestand**, damit der Umfang nicht mit jedem
+verkauften Stück wieder unter die Grenze fällt; die Zahlen vorher und nachher stehen im
+Commit und in `LOGBUCH.md`, live gezählt ist der Stand nicht.
+
+| Seite | Wo der Text dazukam | Worüber |
+|---|---|---|
+| `/` | die drei Feature-Absätze, Absatz von Luisa Brehler, Newsletter-Absatz, Anmeldehinweis im Kommentarbereich (`_reviews_map.html`, Kompaktfassung) | Unregelmäßigkeiten nach § 3 AGB, eine Größe je Basisteil, Kauf eines vorhandenen Stücks statt Auftrag, bis zu acht neueste Stücke auf der Startseite, Bestellablauf, PayPal-Prüfung und Bankdaten per E-Mail, Versanddauer, Widerruf ab Ankunft der Ware (§ 5), Bestellstand im Profil, Newsletter über Brevo ohne Konto, Kommentare öffentlich mit Benutzername und Datum |
+| `/produkte/` | Einleitungsabsatz | Reihenfolge der Karten, kein Warenkorb-Knopf auf der Übersicht, Menge bis zum Bestand, keine Reservierung durch den Warenkorb, Abschalten nach der Zahlung (PayPal und Vorab-Überweisung getrennt), keine weitere Zahlungsart, Eigentumsvorbehalt (§ 4), kein Umtausch, Widerruf ohne Formvorgabe mit Rücksendeanschrift, Rückporto ungeregelt, echter Mangel gegen § 3, Registrierungsfelder, Bestellbestätigung |
+| `/wissen/` | Einleitungsabsatz, die zwei Absätze unter „Woher die Angaben stammen" | Kernantworten der drei belegten Beiträge (Konto, Zahlung, Widerrufsfrist, § 3, Anmeldesperre, Konto löschen); Zuordnung jeder Angabe zu ihrer Quelle (AGB, Impressum, Datenschutzerklärung, Liefergebiet, Shop-Code); Pflichtfelder des Bestellvorgangs und des Kontaktformulars; kein eigenes Feld für Maße oder Material |
+
+Jede Angabe hat eine Fundstelle im Projekt (Belegliste in `LOGBUCH.md`, Paket 165);
+**nicht** genannt sind weiter Versandkosten, Rückporto und eine Rückzahlungsfrist.
+Die Nachbesserung zu Paket 165 hat zwei Sätze berichtigt, die die Gegenprüfung nicht
+trug: `/produkte/` behauptete, das Foto stehe erst auf der Detailseite (die Karten zeigen
+es), und `/wissen/` erklärte Antworten der Betreiberin auf eine Nachfrage für verbindlich
+(nirgends belegt, quer zu § 2 AGB). Gezählt ohne Produkt bleiben danach `/` 732,
+`/produkte/` 616 und `/wissen/` 921 Wörter.
+`MINDESTWOERTER` hält den Stand in der Zählung der Suite fest (`/` 690, `/produkte/` 595,
+`/wissen/` 895), `seiten_stand.py` führt `home`, `produkte` und `wissen` auf dem
+11.09.2026. **Bewusst ungefüllt bleiben die fünf Produktseiten:** noch mehr gleicher Text
+auf allen Stücken höbe die Wortzahl und zugleich die Textgleichheit (IS21) — ihren Umfang
+kann nur eine eigene Beschreibung je Stück liefern (Offen Nr. 8). Nebenbefund zum Aussehen
+von `/produkte/`: [20-DESIGN.md](20-DESIGN.md).
+
 **Bilder (Messung 02.09.2026, live):** 44 Bilder, 0 in WebP/AVIF, 0 mit `srcset`, 10 ohne `width`/`height`, 0 ohne `alt`; 21 von 39 alt-Texten schablonenhaft („Custom print hoodie", „Luviq Universe Logo") — die Produkt-alt-Texte kommen aus dem Produktnamen. Zweig: statische Bilder als WebP in mehreren Breiten, alt-Texte für Logo/Karussell/Werbebilder umgeschrieben (Schritt 8); Produktbilder bleiben Cloudinary-Originale ohne `srcset`.
 
 **Werbung:** Modell `Werbung` (Titel, Bild, URL, Zeitraum) aus der `pystore`-Datenbank, Impressionen/Klicks in `WerbungStat`; wird auf der Startseite ausgespielt; Pflege im Shop-Admin `/shop-admin/werbung/`.
@@ -124,7 +154,7 @@ senkt deshalb die Textgleichheit zwischen den Produktseiten (IS21) nicht.
 | Was fehlt | Beleg (Messung 02.09.2026) | Regel |
 |---|---|---|
 | Ratgeber live — 0 Wissensseiten (im Zweig 6: drei indexiert, drei `noindex` bis Freigabe) | Zielgrösse 3 | SU04 (Zweig erfüllt), SU07, VL11, VL12 |
-| Umfang: 13 statt 30 rankfähige Seiten; Startseite 390/700, Produktseiten 25/600 Wörter | | SU01, IS18, IS17 |
+| Umfang: 13 statt 30 rankfähige Seiten; Startseite 390/700, Produktseiten 25/600 Wörter — **Umfang je Seitenart im Zweig** (11.09.2026, `2591fde`) für `/`, `/produkte/` und `/wissen/` aufgeholt, für die Produktseiten nicht | | SU01, IS18 (Zweig: 3 Seitenarten), IS17 |
 | Konkrete Zahlen auf `/`, `/datenschutz/`, `/agb/`, `/ueber_uns/`, `/liefergebiet/` (live) — **im Zweig ergänzt** (08.09.2026): Versandzeiten, PLZ, § 19, 14-Tage-Frist, Cookie-Laufzeit, Dedup-Fenster der Besuchszählung | 0 von 5 | GE25 (Zweig erfüllt) |
 | Eigene Beschreibung je Einzelstück — der Zusatz aus IS19 ist auf allen fünf Produktseiten wortgleich | Produktseiten 211 W, davon nichts über das einzelne Teil | SU06, IS18, IS21 |
 | Frage-Überschriften (live 2 von 13 Seiten; Zweig: Wissensseiten durchgehend) | | GE24 |
@@ -144,4 +174,4 @@ senkt deshalb die Textgleichheit zwischen den Produktseiten (IS21) nicht.
 5. Weitere Wissensbeiträge nach Kundenfragen. Bestellablauf, Widerruf und Konto sind mit SU04 (07.09.2026) gebaut; alles Weitere braucht Angaben der Betreiberin — namentlich die Kosten der Rücksendung und die Frist der Rückzahlung, die heute in `/wissen/widerruf-und-ruecksendung/` ausdrücklich als ungeklärt stehen.
 6. Muster-Widerrufsformular als eigene Seite.
 7. Entscheidung Öffnungs-/Antwortzeiten und Telefonnummer — nur die Betreiberin kann sie nennen.
-8. **Eine eigene Beschreibung je Einzelstück** (`Produkt.beschreibung` im Shop-Admin). Der Zuwachs aus IS19 (08.09.2026) beschreibt den Kauf, nicht das Stück, und steht wortgleich auf allen fünf Produktseiten — siehe [80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 14.
+8. **Eine eigene Beschreibung je Einzelstück** (`Produkt.beschreibung` im Shop-Admin). Der Zuwachs aus IS19 (08.09.2026) beschreibt den Kauf, nicht das Stück, und steht wortgleich auf allen fünf Produktseiten — siehe [80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 14. Seit IS18 (11.09.2026) ist das der einzige offene Teil des Umfangs je Seitenart.
