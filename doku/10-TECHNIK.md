@@ -4,8 +4,8 @@ titel: Technik, Hosting und Aufbau
 stand: 2026-09-11
 status: teilweise
 fortschritt: 74
-zusammenfassung: Stack läuft stabil; Testsuite, Prüfbefehl und CSP-Middleware liegen auf main. Im Zweig sofort/2026-09-11-pj05-und-2-weitere (nicht ausgeliefert) blockiert die CSP standardmässig, sind alle Paketfassungen samt requirements.lock festgenagelt (Django 5.2.17 für Container und CI) und die kritischen Audit-Funde abgearbeitet oder im Code begründet. Offen bleiben die Bezahlseite mit Browserkonsole, der erste CI-Lauf mit 5.2.17, CANONICAL_HOST in Railway, runtime.txt/railway.json und die Permissions-Policy.
-offen: 10
+zusammenfassung: Stack läuft stabil. Seit dem Merge 0c18ea7 liegen auf main auch die scharf gestellte CSP, die festgenagelten Paketfassungen samt requirements.lock (Django 5.2.17) und die abgearbeiteten Audit-Funde. Im Zweig sofort/2026-09-11-si09 (ein Commit, nicht gemergt) erlaubt script-src Inline-Code nur noch mit der Nonce der Anfrage, Handler-Attribute sind durch data-Attribute ersetzt, 218 Tests. Offen bleiben der Merge, Bezahlseite und Ersatzskripte mit Browserkonsole, 'unsafe-eval' für Alpine.js, der erste CI-Lauf mit 5.2.17, CANONICAL_HOST in Railway, runtime.txt/railway.json und die Permissions-Policy.
+offen: 12
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, paypal_sandbox_tutorial.md, start.sh, Dockerfile, requirements.txt
 ---
 
@@ -25,6 +25,13 @@ Detailquelle bleibt [`../CLAUDE.md`](../CLAUDE.md) (Architektur, Fallstricke) un
 > **`sofort/2026-09-11-pj05-und-2-weitere`**, drei Commits vor `main`
 > (`9ebad08` PJ05, `9a3226f` SI08, `51cbf74` PJ11). Was unten mit
 > „Zweig 11.09." markiert ist, steckt nur dort und ist noch nicht ausgeliefert.
+>
+> **Zweiter Nachtrag 11.09.2026 (Paket 164):** `sofort/2026-09-11-pj05-und-2-weitere`
+> ist mit `0c18ea7` in `main` gemergt; `main` und `origin/main` stehen auf
+> `bc36dd6`. Was unten „Zweig 11.09." heisst, liegt damit auf `main` — ob
+> Railway es ausgeliefert hat, ist hier nicht geprüft. Der Ordner steht jetzt
+> auf **`sofort/2026-09-11-si09`**, ein Commit vor `main` (`28d1ca3` SI09);
+> was mit „Zweig SI09" markiert ist, steckt nur dort.
 
 ## Stack
 
@@ -40,7 +47,7 @@ Detailquelle bleibt [`../CLAUDE.md`](../CLAUDE.md) (Architektur, Fallstricke) un
 | Login-Schutz | django-axes: 10 Fehlversuche je Benutzername+IP, 1 h Sperre, eigenes Lockout-Template | `settings.py` (`AXES_*`) |
 | Zahlung | PayPal (JS-SDK in `payment.html`, Capture in `views/checkout.py`) und Vorab-Überweisung (`BANK_IBAN`, `BANK_INHABER`) | `DOCUMENTATION.md` §3 |
 | CSS | Tailwind-CLI aus `tailwind_input.css` nach `shop1/static/shop1/tailwind.css`; **kein `package.json`, kein npm-Build im Repo**; dazu `shop1/static/shop1/style.css` | `CLAUDE.md`, `tailwind.config.js` |
-| JS | Alpine.js 3.14.8 + `@alpinejs/intersect` (base.html), GSAP 3.12.5 (Startseite), Three.js 0.158.0 (nur Desktop, ohne `prefers-reduced-motion`, nachgeladen) — alle von `cdn.jsdelivr.net`, ohne `integrity` | `templates/base.html`, `index.html` |
+| JS | Alpine.js 3.14.8 + `@alpinejs/intersect` (base.html), GSAP 3.12.5 (Startseite), Three.js 0.158.0 (nur Desktop, ohne `prefers-reduced-motion`, nachgeladen) — alle von `cdn.jsdelivr.net`, ohne `integrity`. Alpine (Standardfassung) braucht `'unsafe-eval'` in der CSP. **Zweig SI09:** eigene Inline-Skripte nur mit `nonce="{{ csp_nonce }}"`, keine `on…`-Attribute mehr — deren Aufgaben übernimmt ein Skript im `<head>` von `base.html` über `data-bestaetigen`, `data-bei-fehler-ausblenden`, `data-auto-absenden`, `data-schrift-nachladen` | `templates/base.html`, `index.html` |
 | Cache | `LocMemCache` (Zweig ausdrücklich: `LOCATION luviq`, `MAX_ENTRIES 300`); Werbeliste 60 s; Zweig: `sitemap.xml`/`llms.txt` 15 min | `settings.py`, `LOGBUCH.md` Schritt 33 |
 | Zeitzone / Sprache | `Europe/Berlin`, `USE_TZ=True`, `de-de` | `settings.py` |
 
@@ -66,7 +73,7 @@ Detailquelle bleibt [`../CLAUDE.md`](../CLAUDE.md) (Architektur, Fallstricke) un
 
 Auf main fehlen Schritt 6 und die Gunicorn-Parameter; `DOCUMENTATION.md` §5 nennt nur drei Schritte und ist veraltet.
 
-**In Railway zu setzen:** `CANONICAL_HOST=www.luviq-alsfeld.com` (sonst bleibt die 301 für den Apex wirkungslos — der Zweig vom 11.09. ändert daran nichts, die Vorgabe ist dort weiter leer). Optional: `CSP_MODUS` (Vorgabe auf main `report-only`, **im Zweig 11.09. `scharf`**; `report-only` ist dann der Rückweg, falls die Bezahlseite im Browser etwas blockiert), `VISITOR_TRACKING` (Vorgabe an), `GUNICORN_*`.
+**In Railway zu setzen:** `CANONICAL_HOST=www.luviq-alsfeld.com` (sonst bleibt die 301 für den Apex wirkungslos — der Zweig vom 11.09. ändert daran nichts, die Vorgabe ist dort weiter leer). Optional: `CSP_MODUS` (Vorgabe `scharf`, seit `0c18ea7` auf main; `report-only` ist der Rückweg, falls die Bezahlseite oder — mit dem Zweig SI09 — ein Ersatzskript im Browser etwas blockiert), `VISITOR_TRACKING` (Vorgabe an), `GUNICORN_*`.
 
 ## Umgebungsvariablen
 
@@ -115,14 +122,14 @@ Postfach.
 
 | Befehl | Was | Stand |
 |---|---|---|
-| `python manage.py test shop1` | Testsuite; Zweig: **215 Tests in 14 Modulen**, Laufzeit rund 2,5 Minuten; main: `shop1/tests.py` mit 3 Zeilen, praktisch keine Tests | Zweig grün (`511ffe5`) |
+| `python manage.py test shop1` | Testsuite in 14 Modulen, Laufzeit rund 2,5 Minuten; main: **215 Tests**, Zweig SI09: **218 Tests** (drei neue in `test_einstellungen`) | Zweig SI09 218/218 grün laut `28d1ca3` |
 | `python manage.py test shop1.tests.<modul>` | einzelnes Modul | Zweig |
 | `python manage.py pruefe_seite [--streng]` | Prüfbefehl: Einstellungen, beide Datenbanken, aktive Produkte (Pflichtwerte, doppelte Slugs), jede Sitemap-Adresse 200 mit Titel, Beschreibung 110–175, canonical, robots, JSON-LD, Schutzkopfzeilen samt CSP; hinterlässt keine Spuren (`VISITOR_TRACKING` aus, zurückgerollte Transaktion) | Zweig |
 | `python manage.py check --deploy` | Django-Prüfung | beide |
 | `python manage.py fix_pystore_schema` | `seite`-Spalte in `pystore` | beide |
 | `python manage.py makemigrations shop1` | einzige App; 18 Migrationen (Zweig, `0018` legt die pystore-Tabellen auch ohne PostgreSQL an) | |
 
-**Testmodule (Zweig):** `test_seiten` (14), `test_seo` (31), `test_geo` (20), `test_inhalt` (15), `test_formulare` (10), `test_daten` (22), `test_einstellungen` (42), `test_barrierefreiheit` (11), `test_ladezeit` (9), `test_aufbau` (2, Designwache), `test_warenkorb` (8), `test_zahlung` (11), `test_konto` (10), `test_zugriffsschutz` (10); dazu `_basis.py` (Basisklasse `LuviqTestCase`) und `_aufbau.py` (Fingerabdruck) mit `aufbau_referenz.json` (5.148 Zeilen). Zahlen: `def test_` je Datei, 02.09.2026.
+**Testmodule (Zweig):** `test_seiten` (14), `test_seo` (31), `test_geo` (20), `test_inhalt` (15), `test_formulare` (10), `test_daten` (22), `test_einstellungen` (42; Zweig SI09: 45, gezählt 11.09.2026), `test_barrierefreiheit` (11), `test_ladezeit` (9), `test_aufbau` (2, Designwache), `test_warenkorb` (8), `test_zahlung` (11), `test_konto` (10), `test_zugriffsschutz` (10); dazu `_basis.py` (Basisklasse `LuviqTestCase`) und `_aufbau.py` (Fingerabdruck) mit `aufbau_referenz.json` (5.148 Zeilen). Zahlen: `def test_` je Datei, 02.09.2026.
 
 **Drei Regeln für neue Tests** (`CLAUDE.md`): `secure=True` ist Pflicht (sonst prüft man nur die 301 der SSL-Weiterleitung) → `self.hole()` / `self.sende()`; `databases = {'default', 'pystore'}` (die Besuchs-Middleware schreibt bei jeder Antwort); der Cache wird vor jedem Test geleert (`sitemap.xml`/`llms.txt` liegen 15 min im LocMemCache).
 
@@ -140,7 +147,7 @@ WebseiteMAIN/
 │   ├── middleware.py   CanonicalHost (Zweig), ContentSecurityPolicy (Zweig), PageVisit
 │   ├── routers.py      WerbungRouter → pystore
 │   ├── seiten_stand.py Register lastmod/dateModified (Zweig)
-│   ├── context_processors.py, signals.py, forms.py, utils.py (send_brevo_email)
+│   ├── context_processors.py (Zweig SI09: csp_nonce), signals.py, forms.py, utils.py (send_brevo_email)
 │   ├── management/commands/  fix_pystore_schema.py, pruefe_seite.py (Zweig)
 │   ├── tests/          14 Module (Zweig)
 │   ├── templates/shop1/  Seiten, legal/, wissen/ (Zweig), admin/
@@ -167,7 +174,7 @@ Code-Audit (Messung 02.09.2026, lokaler Ordner = Zweig): 114 Dateien, 23.859 Zei
 9. **Designwache** (`test_aufbau`, `aufbau_referenz.json`): jede Änderung an Tag-Reihenfolge, `id`/`class`, Überschriften oder Elementzahlen einer öffentlichen Seite macht die Suite rot. Referenz für neue Seiten **gezielt ergänzen**, nie neu erzeugen. Siehe [20-DESIGN.md](20-DESIGN.md).
 10. **Template-Blöcke:** eine Bedingung **um** einen `{% block %}` in einer erbenden Datei wirkt nicht — die Bedingung gehört **in** den Block (`produkt_detail.html`, `meta_robots` der Wissensseiten).
 11. **Zeitzone in Tests:** `.date()` eines UTC-Zeitstempels ist zwischen 22:00 und 24:00 UTC falsch → `timezone.localtime()` (Auflage 4, `270c5f9`).
-12. **CSP blockiert im Zweig 11.09. standardmässig.** `CSP_MODUS` hat dort die Vorgabe `scharf`; die geplante Konsolenprüfung aller Seiten vor dem Umschalten ersetzt die Testsuite: `test_einstellungen` hält jedes `<script src>`, jedes Stylesheet, jedes Iframe und nachgeladene Skripte jeder öffentlichen Seite und jeder Panel-Seite gegen `CSP_QUELLEN`, dazu die PayPal-Einträge gegen PayPals Angabe für das JS-SDK (`*.paypal.com`, `*.paypalobjects.com`, `*.venmo.com` in `script-`, `style-`, `connect-`, `frame-src`). **Jede neue Fremdquelle in einem Template gehört in `CSP_QUELLEN`**, sonst blockiert der Browser sie. Ein Browser hat die Bezahlseite nicht gesehen: nach dem Deploy `/payment/<id>/` mit offener Konsole ansehen; fällt etwas aus, `CSP_MODUS=report-only` (wirkt je Antwort, ohne neuen Stand). `script-src`/`style-src` bleiben wegen Inline-Code offen (`'unsafe-inline'`, `'unsafe-eval'`); `form-action` erlaubt neben `'self'` vorsorglich `*.paypal.com`. Nicht angefasst: `SECURE_CROSS_ORIGIN_OPENER_POLICY` ist nicht gesetzt, Django sendet damit `same-origin`, PayPal empfiehlt `same-origin-allow-popups` (`LOGBUCH.md`, Paket 155).
+12. **CSP blockiert standardmässig** (seit `0c18ea7` auf main). `CSP_MODUS` hat die Vorgabe `scharf`; die geplante Konsolenprüfung aller Seiten vor dem Umschalten ersetzt die Testsuite: `test_einstellungen` hält jedes `<script src>`, jedes Stylesheet, jedes Iframe und nachgeladene Skripte jeder öffentlichen Seite und jeder Panel-Seite gegen `CSP_QUELLEN`, dazu die PayPal-Einträge gegen PayPals Angabe für das JS-SDK (`*.paypal.com`, `*.paypalobjects.com`, `*.venmo.com` in `script-`, `style-`, `connect-`, `frame-src`). **Jede neue Fremdquelle in einem Template gehört in `CSP_QUELLEN`**, sonst blockiert der Browser sie. Ein Browser hat die Bezahlseite nicht gesehen: nach dem Deploy `/payment/<id>/` mit offener Konsole ansehen; fällt etwas aus, `CSP_MODUS=report-only` (wirkt je Antwort, ohne neuen Stand). Auf main bleiben `script-src`/`style-src` wegen Inline-Code offen (`'unsafe-inline'`, `'unsafe-eval'`); `form-action` erlaubt neben `'self'` vorsorglich `*.paypal.com`. **Zweig SI09 (`28d1ca3`):** `script-src` ohne `'unsafe-inline'` — die Middleware erzeugt je Anfrage eine Nonce (`request.csp_nonce`, Kontextprozessor `csp_nonce`) und hängt sie an. **Jedes neue Inline-`<script>` braucht `nonce="{{ csp_nonce }}"`**, sonst blockiert der Browser es; **Handler-Attribute (`onclick`, `onsubmit`, `onerror` …) deckt keine Nonce** — dafür die `data-`-Attribute aus dem `<head>`-Skript von `base.html`. `test_einstellungen` hält beides gegen jede Vorlage und jede gerenderte Seite. Eine Nonce verträgt kein Zwischenspeichern der Seite: `cache_page` nur auf Antworten ohne Skript (`sitemap.xml`, `llms.txt`). Weiter offen: `'unsafe-eval'` (Alpine.js-Standardfassung) und `'unsafe-inline'` im `style-src`. Nicht angefasst: `SECURE_CROSS_ORIGIN_OPENER_POLICY` ist nicht gesetzt, Django sendet damit `same-origin`, PayPal empfiehlt `same-origin-allow-popups` (`LOGBUCH.md`, Paket 155).
 13. **`ALLOWED_HOSTS = ['*']`** bei `DEBUG=True`; im Betrieb `['localhost', '127.0.0.1', '.up.railway.app'] + ALLOWED_HOSTS_EXTRA` (+ `CANONICAL_HOST`, falls gesetzt). Der Code-Audit meldete die Zeile als kritisch (K02); im Zweig 11.09. trägt sie einen begründeten Vermerk `# audit-ok K02:`, gehalten von `test_die_hostliste_ist_nicht_offen`. `DEBUG` darf in Railway nie auf `True` stehen.
 14. **`db.sqlite3`, `staticfiles/`, `media/`, `.env`, `*.log`** liegen im Ordner, sind aber in `.gitignore`. `runserver.err.log` vom 03.07.2026 ebenfalls.
 15. **Der Superuser wird bei jedem Containerstart mit `ADMIN_PASSWORD` überschrieben** — ein im Panel geändertes Passwort dieses Kontos hält nur bis zum nächsten Deploy.
@@ -177,9 +184,11 @@ Code-Audit (Messung 02.09.2026, lokaler Ordner = Zweig): 114 Dateien, 23.859 Zei
 
 | Punkt | Beleg | Regel |
 |---|---|---|
-| Zweig `sofort/2026-09-11-pj05-und-2-weitere` nach `main` mergen und pushen; `CANONICAL_HOST` in Railway setzen | live 02.09.2026: Apex antwortet 200 ohne 301; die Vorgabe von `CANONICAL_HOST` ist auch im Zweig 11.09. leer (`mainweb/settings.py:45`) | TS11 |
+| Zweig `sofort/2026-09-11-si09` nach `main` mergen und pushen (der Zweig `sofort/2026-09-11-pj05-und-2-weitere` ist mit `0c18ea7` gemergt) | `28d1ca3`, ein Commit vor `main` | SI09 |
+| `CANONICAL_HOST` in Railway setzen | live 02.09.2026: Apex antwortet 200 ohne 301; die Vorgabe von `CANONICAL_HOST` ist auch im Zweig SI09 leer (`mainweb/settings.py:45`) | TS11 |
 | Nach dem Push: ersten CI-Lauf mit Django 5.2.17 abwarten; lokal `pip install -r requirements.txt` | die Suite lief beim Bau mit Django 6.0.5 (`pip install`/`docker build` gesperrt, `LOGBUCH.md` Paket 155) | PJ11 |
-| Nach dem Deploy: `/payment/<id>/` mit offener Browserkonsole ansehen | CSP im Zweig 11.09. scharf, Deckung nur durch Tests belegt | SI08 |
+| Nach dem Deploy mit offener Browserkonsole ansehen: `/payment/<id>/`, dazu mit dem Zweig SI09 Löschrückfrage im Profil, „Reset" in der Panel-Statistik, Bestellfilter, Kampagnenknöpfe, Nachladen der Schriften | CSP scharf, Deckung nur durch Tests belegt; das Verhalten der Ersatzskripte ist ungeprüft (`28d1ca3`) | SI08, SI09 |
+| `'unsafe-eval'` aus `script-src` (CSP-Fassung von Alpine, jeder Ausdruck als registrierte Komponente), `'unsafe-inline'` aus `style-src` | laut `LOGBUCH.md` Paket 164 224 Treffer auf Alpine-Attribute in 19 Vorlagen; nur mit Browser prüfbar | SI09 |
 | `runtime.txt`/`railway.json` | fehlen; `==` und Lockfile im Zweig 11.09. erledigt (`51cbf74`) | VL02 |
 | Permissions-Policy-Kopfzeile | live: 4 von 7 Schutzköpfen; die CSP ist im Zweig 11.09. als echte Kopfzeile erledigt (`9a3226f`) | SI07, VL04 |
 | `integrity`/`crossorigin` an den drei jsdelivr-Skripten | 3 von 3 ohne | SI17 |
