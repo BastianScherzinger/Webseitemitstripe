@@ -78,6 +78,13 @@ Zusatz zu 1-of-1, Zahlung, Versand), `Product`/`Offer`/`Brand` + `BreadcrumbList
 `h1` mit Kicker in Versalien, Formulare mit `.form-input`. Impressum/Datenschutz/AGB als
 Textseiten mit Emoji-Ikonen (📍 📧 ⚖️ 🌍).
 
+**Danke-Seite (`/kontakt/danke/`, Zweig `sofort/2026-09-11-kv07-und-2-weitere`, `2d78a55`,
+nicht gemergt):** neue Seite nach dem Aufbau von `payment_success.html` — Nebel, Glaskarte,
+Symbolkreis mit einem Häkchen als Inline-SVG statt Emoji, Versalien-Überschrift „Danke für deine
+Nachricht", zwei Knöpfe (Zur Startseite, Unikate ansehen). Laut `LOGBUCH.md` (Paket 171) nur
+Klassen, die in der gebauten `tailwind.css` schon stehen. Keine bestehende Seite verändert;
+`aufbau_referenz.json` gezielt um die neue Seite ergänzt (nur Zeilen hinzu, keine entfernt).
+
 **Bilder:** Logo `logo-luviq` (Zweig: WebP 96/192 + `flavicon.ico`), Hero `hero-dragon`
 (Zweig: WebP 640/1024/1536 mit `srcset`/`sizes`/Preload), Porträt `ich` (Zweig: WebP 450/900);
 Produktbilder von Cloudinary (JPEG/PNG, ohne `srcset` — PF15/PF16). Bildsumme Startseite im Zweig
