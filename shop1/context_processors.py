@@ -8,6 +8,17 @@ from .seiten_stand import seite_fuer
 _log = logging.getLogger('shop1')
 
 
+def csp_nonce(request):
+    """Nonce der Content-Security-Policy für diese Anfrage (SI09).
+
+    Gesetzt von ``ContentSecurityPolicyMiddleware``. Jedes Inline-``<script>``
+    trägt ``nonce="{{ csp_nonce }}"`` – ohne passende Nonce blockiert der
+    Browser es. Ohne die Middleware (Tests, die sie abschalten) bleibt der
+    Wert leer; dann gibt es auch keine Richtlinie, die etwas blockiert.
+    """
+    return {'csp_nonce': getattr(request, 'csp_nonce', '')}
+
+
 def shop_owner_check(request):
     is_shop_owner = False
     if request.user.is_authenticated:

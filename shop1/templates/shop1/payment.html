@@ -99,14 +99,16 @@
     </div>
 </div>
 
-<!-- PayPal JavaScript SDK -->
+<!-- PayPal JavaScript SDK. nonce und data-csp-nonce nach PayPals Angabe
+     (developer.paypal.com/sdk/js/csp/): das SDK versieht damit, was es selbst
+     in die Seite schreibt. -->
 {% if paypal_client_id and paypal_client_id != 'sb' %}
-    <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR&disable-funding=credit,card"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR&disable-funding=credit,card" nonce="{{ csp_nonce }}" data-csp-nonce="{{ csp_nonce }}"></script>
 {% else %}
-    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR" nonce="{{ csp_nonce }}" data-csp-nonce="{{ csp_nonce }}"></script>
 {% endif %}
 
-<script>
+<script nonce="{{ csp_nonce }}">
     if (!window.paypal) {
         document.getElementById('payment-errors').textContent = '⚠️ PayPal SDK konnte nicht geladen werden. Prüfe deine Client-ID oder Internetverbindung.';
         document.getElementById('payment-errors').style.display = 'block';

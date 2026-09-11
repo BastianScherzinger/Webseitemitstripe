@@ -205,6 +205,25 @@ def _quelle_erlaubt(url, quellen):
     return False
 
 
+#: Die Nonce-Quelle im ``script-src``, ``'nonce-<Wert>'`` (SI09).
+_NONCE_QUELLE = re.compile(r"'nonce-([A-Za-z0-9_-]+)'")
+
+
+def _direktive(richtlinie, name):
+    """Die Quellen einer Direktive als Liste, leer wenn sie fehlt."""
+    for teil in richtlinie.split(';'):
+        stuecke = teil.split()
+        if stuecke and stuecke[0] == name:
+            return stuecke[1:]
+    return []
+
+
+def _nonce(richtlinie):
+    """Der Wert der Nonce aus dem ``script-src`` einer Kopfzeile."""
+    treffer = _NONCE_QUELLE.search(' '.join(_direktive(richtlinie, 'script-src')))
+    return treffer.group(1) if treffer else None
+
+
 #: Was eine Seite von fremden Hosts einbindet, je Direktive: das Muster
 #: findet die Adresse, die Direktive muss sie erlauben. ``.src = '…'`` ist
 #: das Nachladen von Three.js in ``index.html``.
@@ -245,9 +264,14 @@ class ContentSecurityPolicyTest(LuviqTestCase):
             with self.subTest(direktive=direktive):
                 self.assertIn(direktive, richtlinie)
 
+        def ohne_nonce(wert):
+            """Die Nonce wechselt je Antwort (SI09); verglichen wird der Rest."""
+            return _NONCE_QUELLE.sub("'nonce-…'", wert or '')
+
         with self.settings(CSP_MODUS='report-only'):
             melden = self.hole('/')
-        self.assertEqual(melden.get('Content-Security-Policy-Report-Only'), richtlinie)
+        self.assertEqual(ohne_nonce(melden.get('Content-Security-Policy-Report-Only')),
+                         ohne_nonce(richtlinie))
         self.assertFalse(melden.has_header('Content-Security-Policy'))
 
         with self.settings(CSP_MODUS='aus'):
@@ -257,8 +281,79 @@ class ContentSecurityPolicyTest(LuviqTestCase):
 
         with self.settings(CSP_MODUS='tippfehler'):
             tippfehler = self.hole('/')
-        self.assertEqual(tippfehler.get('Content-Security-Policy-Report-Only'), richtlinie,
+        self.assertEqual(ohne_nonce(tippfehler.get('Content-Security-Policy-Report-Only')),
+                         ohne_nonce(richtlinie),
                          'Ein unbekannter Modus muss auf Report-Only zurückfallen')
+
+    def test_script_src_erlaubt_inline_code_nur_mit_der_nonce_der_antwort(self):
+        """Messpunkt SI09: ``'unsafe-inline'`` im ``script-src`` liess jedes
+        eingeschleuste Inline-Skript laufen und machte die Richtlinie für
+        genau den Angriff wirkungslos, gegen den man sie setzt. Verhindert,
+        dass das Schlüsselwort zurückkommt, dass die Nonce fehlt oder sich
+        wiederholt – eine feste Nonce könnte ein Angreifer einfach mitschicken."""
+        erste = self.hole('/').get('Content-Security-Policy', '')
+        zweite = self.hole('/').get('Content-Security-Policy', '')
+        for richtlinie in (erste, zweite):
+            script_src = _direktive(richtlinie, 'script-src')
+            self.assertNotIn("'unsafe-inline'", script_src)
+            self.assertEqual(len(_NONCE_QUELLE.findall(' '.join(script_src))), 1,
+                             f'script-src ohne genau eine Nonce: {script_src}')
+        self.assertNotEqual(_nonce(erste), _nonce(zweite), 'Die Nonce wiederholt sich')
+        self.assertGreaterEqual(len(_nonce(erste)), 22, 'Nonce zu kurz')
+
+    def test_jedes_inline_skript_traegt_die_nonce_seiner_antwort(self):
+        """Die Kehrseite der Nonce: ein Inline-Skript ohne sie blockiert der
+        Browser, und die Seite verliert still ihre Funktion – den Hero, den
+        Newsletter-Knopf, die Diagramme im Panel. Geprüft wird jede
+        öffentliche Seite und jede Seite des Admin-Panels gegen die Nonce aus
+        der Kopfzeile derselben Antwort. JSON-LD ist ein Datenblock und läuft
+        nicht, er braucht keine."""
+        from django.contrib.auth.models import User
+
+        admin = User.objects.create_superuser('inhaberin', 'i@example.invalid', 'x' * 20)
+        self.client.force_login(admin)
+
+        gefunden = 0
+        for pfad in OEFFENTLICHE_SEITEN + ADMIN_SEITEN:
+            antwort = self.hole(pfad)
+            nonce = _nonce(antwort.get('Content-Security-Policy', ''))
+            for attribute in re.findall(r'<script\b([^>]*)>', antwort.content.decode()):
+                if 'src=' in attribute or 'application/ld+json' in attribute:
+                    continue
+                gefunden += 1
+                with self.subTest(pfad=pfad, skript=attribute.strip()[:60]):
+                    self.assertIn(f'nonce="{nonce}"', attribute)
+        self.assertGreaterEqual(gefunden, len(OEFFENTLICHE_SEITEN) + len(ADMIN_SEITEN),
+                                'Kaum Inline-Skripte gefunden – Suchmuster prüfen')
+
+    def test_keine_vorlage_setzt_handler_attribute_oder_skripte_ohne_nonce(self):
+        """``onclick``, ``onsubmit``, ``onchange``, ``onerror`` und ``onload``
+        deckt keine Nonce – der Browser verwirft sie, und ein Löschknopf löschte
+        ohne Rückfrage. Liest die Vorlagen selbst, nicht die gerenderten
+        Seiten: die Bezahlseite, das Profil und die Kampagnenkarten sind im
+        Test nicht ohne Weiteres abrufbar. Dazu muss jedes ``data-``-Attribut,
+        das die Handler ersetzt, im Skript von ``base.html`` ausgewertet werden."""
+        vorlagen = sorted((Path(settings.BASE_DIR) / 'templates').rglob('*.html')) + \
+            sorted((Path(settings.BASE_DIR) / 'shop1' / 'templates').rglob('*.html'))
+        self.assertGreater(len(vorlagen), 30, 'Vorlagen nicht gefunden')
+        genutzt = set()
+        for vorlage in vorlagen:
+            text = vorlage.read_text(encoding='utf-8')
+            name = str(vorlage.relative_to(settings.BASE_DIR))
+            with self.subTest(vorlage=name):
+                self.assertEqual(re.findall(r'<[a-zA-Z][^>]*?\s(on[a-z]+)\s*=', text), [])
+                self.assertNotIn('javascript:', text)
+                for attribute in re.findall(r'<script\b([^>]*)>', text):
+                    if 'src=' in attribute or 'application/ld+json' in attribute:
+                        continue
+                    self.assertIn('nonce="{{ csp_nonce }}"', attribute)
+            genutzt.update(re.findall(
+                r'\s(data-(?:bestaetigen|bei-fehler-ausblenden|auto-absenden|schrift-nachladen))\b', text))
+        basis = (Path(settings.BASE_DIR) / 'templates' / 'base.html').read_text(encoding='utf-8')
+        self.assertEqual(len(genutzt), 4, f'Ersatzattribute nicht gefunden: {genutzt}')
+        for attribut in genutzt:
+            with self.subTest(attribut=attribut):
+                self.assertIn(f"'{attribut}'", basis)
 
     def test_die_csp_kommt_aus_der_eigenen_middleware(self):
         """Gegenbeweis zum Test darüber: ohne ``ContentSecurityPolicyMiddleware``
