@@ -1612,3 +1612,50 @@ Die Gegenprüfung urteilte „abgelehnt": zwei neue Sätze trugen nicht
 Kein Element, keine Klasse, keine Überschrift verändert. Die Satzart des
 langen Versalien-Absatzes auf `/produkte/` bleibt eine offene Entscheidung
 für einen Menschen (`doku/20-DESIGN.md`, „Offen").
+
+## Paket 171 (11.09.2026) – KV07
+
+**`KV07` – eigene Danke-Seite.** Gemessen: keine der drei direkt
+abgefragten Adressen `/danke/`, `/anfrage/danke/`, `/kontakt/danke/`
+antwortete mit 200. Das Kontaktformular zeigte seine Bestätigung als
+Meldung auf `/kontakt/` selbst – ein abgeschicktes Formular war damit von
+einem blossen Aufruf der Kontaktseite nicht zu unterscheiden, und Neuladen
+schickte die Anfrage ein zweites Mal ab.
+
+**Was gebaut ist.** `views/shop.py::kontakt` leitet nach dem Start des
+Versands mit 302 auf `/kontakt/danke/` (Route `kontakt_danke`, in
+`views/__init__.py` re-exportiert); die Erfolgsmeldung entfällt, die
+Fehlermeldungen (leere Felder, Versand scheitert beim Start) bleiben
+unverändert auf `/kontakt/`. Die neue Vorlage `kontakt_danke.html` setzt
+`noindex, follow`, steht weder in der Sitemap noch in `llms.txt` und wird
+mit `never_cache` ausgeliefert, damit jeder Aufruf den Server erreicht und
+im Besuchsprotokoll (`PageVisitMiddleware`, `VisitorLog` je Pfad) steht.
+Die Seite zeigt nichts aus der Anfrage und ist deshalb auch direkt
+abrufbar – so kann das Werkzeug sie messen.
+
+**Belege für den Text.** Antwort per E-Mail an die Adresse aus dem
+Formular, keine Telefonnummer, Luisa Brehler als Ansprechpartnerin und
+`brehlerluisa@gmail.com` stehen wörtlich auf `kontakt.html:81,147-150`; die
+drei verlinkten Wissensbeiträge sind die freigegebenen aus
+`views/wissen.py`. Keine Antwortzeit – im Projekt steht keine.
+
+**Aussehen.** Keine bestehende Seite verändert: `test_aufbau` vergleicht
+alle bisherigen Seiten unverändert. Die neue Seite folgt dem Aufbau von
+`payment_success.html` (Nebel, Glaskarte, Symbolkreis, Versalien-Überschrift,
+zwei Knöpfe) und benutzt nur Klassen, die in der gebauten `tailwind.css`
+bereits stehen; statt des Emojis ein Häkchen als Inline-SVG. Die Referenz
+`aufbau_referenz.json` ist **gezielt ergänzt** (217 Zeilen `+`, 0 `−`), die
+Seite steht in `OEFFENTLICHE_SEITEN`, nicht in `INHALTSSEITEN`.
+
+**Tests.** `test_formulare`: gültige Anfrage leitet auf `/kontakt/danke/`
+und verschickt genau einmal; Bestätigung auf eigener Adresse; scheitert
+der Versand beim Start, bleibt die Anfrage auf `/kontakt/`; neue Klasse
+`KontaktDankeTest` (direkt abrufbar ohne Daten einer Anfrage, `noindex`
+und nicht in Sitemap und `llms.txt`, `no-store`, nur die Adresse der
+Kontaktseite und kein `tel:`).
+
+**Nebenbefund, nicht angefasst.** Der Versand läuft weiter in einem Thread
+(`utils.py::send_brevo_email`); ein späterer Zustellfehler landet nur im
+Protokoll, die Bestätigung erscheint trotzdem (Eigener Punkt `EIG10`). Die
+Seite sagt deshalb „abgeschickt", nicht „zugestellt", und nennt die
+E-Mail-Adresse als zweiten Weg.

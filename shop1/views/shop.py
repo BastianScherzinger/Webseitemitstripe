@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.db.models import F
 from django.utils import timezone
+from django.views.decorators.cache import never_cache
 
 from ..models import Produkt, Werbung, WerbungStat, Comment
 from ..utils import send_brevo_email
@@ -89,13 +90,31 @@ def kontakt(request):
             recipient = os.getenv('ADMIN_EMAIL', settings.DEFAULT_FROM_EMAIL)
             try:
                 send_brevo_email(subject, message, recipient, recipient_name="Shop Admin", text_content=message)
-                messages.success(request, 'Deine Nachricht wurde erfolgreich gesendet! Wir melden uns in Kürze.')
             except Exception:
                 messages.error(request, 'Entschuldigung, es gab ein Problem beim Senden deiner Nachricht.')
+            else:
+                # Weiterleitung auf eine eigene Adresse statt einer Meldung auf
+                # derselben Seite (KV07): nur so ist ein abgeschicktes Formular
+                # als Seitenaufruf zählbar, und ein Neuladen schickt es nicht
+                # ein zweites Mal ab.
+                return redirect('kontakt_danke')
         else:
             messages.error(request, 'Bitte fülle alle Felder aus.')
 
     return render(request, 'shop1/kontakt.html')
+
+
+@never_cache
+def kontakt_danke(request):
+    """Bestätigung nach dem Absenden des Kontaktformulars (``/kontakt/danke/``).
+
+    Die Seite zeigt nichts aus der Anfrage und ist deshalb auch direkt
+    abrufbar. ``noindex`` und weder in Sitemap noch in llms.txt – sie ist ein
+    Ziel nach dem Absenden, keine Seite, die jemand sucht. ``never_cache``,
+    damit jede Bestätigung den Server erreicht und im Besuchsprotokoll
+    (``PageVisitMiddleware``) als Aufruf dieser Adresse steht.
+    """
+    return render(request, 'shop1/kontakt_danke.html')
 
 
 def ueber_uns(request):

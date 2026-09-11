@@ -4,7 +4,7 @@ titel: Inhalte und Seitenbestand
 stand: 2026-09-11
 status: teilweise
 fortschritt: 40
-zusammenfassung: Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); main füllt neun Seiten mit Auskunft, bringt sechs Wissensbeiträge (drei belegt und indexiert, drei warten auf die Freigabe) und hält jede indexierbare Seite über 200 Wörtern. Seit IS18 (11.09.2026, Zweig sofort/2026-09-11-is18, nicht gemergt) erreichen Startseite, Produktübersicht und Wissensübersicht laut Commit mit belegtem Fliesstext die Zielgrösse ihrer Seitenart — nur die Produktseiten brauchen weiter eine eigene Beschreibung je Einzelstück.
+zusammenfassung: Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); main füllt neun Seiten mit Auskunft, bringt sechs Wissensbeiträge (drei belegt und indexiert, drei warten auf die Freigabe) und hält jede indexierbare Seite über 200 Wörtern. Seit IS18 (Merge 1a5f36b auf main) erreichen Startseite, Produktübersicht und Wissensübersicht laut Commit mit belegtem Fliesstext die Zielgrösse ihrer Seitenart — nur die Produktseiten brauchen weiter eine eigene Beschreibung je Einzelstück. Der Zweig sofort/2026-09-11-kv07-und-2-weitere (nicht gemergt) bringt die Danke-Seite /kontakt/danke/ (KV07): noindex, Text nur mit Angaben, die schon auf kontakt.html stehen.
 offen: 8
 quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/legal.py, shop1/tests/test_inhalt.py
 ---
@@ -39,6 +39,8 @@ Summe: **1.557 Eigenwörter** über 13 abgerufene Seiten (von 2.434 Wörtern Ges
 **Nicht in der Sitemap, aber erreichbar:** `/login/`, `/register/`, `/profil/`, `/warenkorb/`, `/checkout/`, `/payment/…`, `/verify/…`, `/password-reset/…`, `/delete-account/`, `/newsletter/subscribe/`, `/shop-admin/…` — alle per `robots.txt` gesperrt. `/produkt/<id>/` leitet auf die Slug-URL um (Altlink-Kompatibilität); `/produkt/` → 301 auf `/produkte/` (Zweig; live 404).
 
 **Zweig zusätzlich:** `/wissen/` (Übersicht) und sechs Beiträge. Die drei ersten stehen auf `freigegeben: False`, also `noindex, follow` und nicht in Sitemap und llms.txt, sind aber erreichbar und getestet; die drei aus SU04 (07.09.2026) sind `freigegeben: True` und damit indexiert — sie geben ausschliesslich wieder, was an anderer Stelle dieser Seite belegt ist, und brauchen keine Zuarbeit. Die Übersicht ist damit indexierbar.
+
+**Zweig `sofort/2026-09-11-kv07-und-2-weitere` zusätzlich (KV07, `2d78a55`, nicht gemergt):** `/kontakt/danke/` — Ziel nach dem Absenden des Kontaktformulars, auch direkt abrufbar, `noindex, follow`, weder in Sitemap noch in `llms.txt`. Titel „Nachricht abgeschickt – Luviq Universe", `h1` „Danke für deine Nachricht". Der Text nennt nur, was schon auf `kontakt.html` steht: die Nachricht geht an Luisa Brehler, geantwortet wird per E-Mail an die Adresse aus dem Formular, eine Telefonnummer gibt es nicht, `brehlerluisa@gmail.com` als zweiter Weg; dazu Verweise auf die drei freigegebenen Wissensbeiträge (Bestellen und Bezahlen, Widerruf und Rücksendung, Konto und Daten). **Keine Antwortzeit** — im Projekt steht keine. Die Seite sagt „abgeschickt", nicht „zugestellt", weil der Versand erst im Thread scheitern kann (`EIG10`). Sie steht nicht in `seiten_stand.py`, trägt deshalb kein `dateModified`, und zählt nicht zu `INHALTSSEITEN` (keine Wortzahl-Vorgabe).
 
 | URL (Zweig) | Titel (= h1) | Wörter | Index | Offene Sachangabe |
 |---|---|---:|---|---|
@@ -115,7 +117,7 @@ nicht löst:** auf den Produktseiten ist dieser Zuwachs auf allen fünf Stücken
 derselbe Text. Er hebt die Wortzahl, sagt aber nichts über das einzelne Teil und
 senkt deshalb die Textgleichheit zwischen den Produktseiten (IS21) nicht.
 
-**Paket 165 (11.09.2026, `2591fde`, Zweig `sofort/2026-09-11-is18`, nicht gemergt) —
+**Paket 165 (11.09.2026, `2591fde`, Zweig `sofort/2026-09-11-is18`, seit dem Merge `1a5f36b` auf `main`) —
 IS18, anders eingebaut.** Der Umfang je Seitenart (Startseite 700, Kategorieseite 600,
 Wissensübersicht 900 Wörter) ist für die drei Seiten aufgeholt, die die Beschreibung je
 Stück gar nicht ausgeben. Wie bei IS19 steht der ganze Zuwachs in Absätzen, die es schon
@@ -162,7 +164,7 @@ von `/produkte/`: [20-DESIGN.md](20-DESIGN.md).
 | Muster-Widerrufsformular als eigene, aus dem Fuss verlinkte Seite | Widerrufsbelehrung nur in `/agb/` | RE09 |
 | Erklärung zur Barrierefreiheit (BFSG) — sofern nicht als Kleinstunternehmen ausgenommen; **nicht dokumentiert**, ob die Ausnahme greift | | RE12 |
 | Öffnungs-/Erreichbarkeitszeiten auf Startseite und Kontakt — es gibt keine belegten | | KV11 |
-| Eigene Danke-Seite nach dem Kontaktformular | | KV07 |
+| Eigene Danke-Seite nach dem Kontaktformular — **im Zweig erledigt** (11.09.2026, `2d78a55` auf `sofort/2026-09-11-kv07-und-2-weitere`, nicht gemergt): `/kontakt/danke/`, siehe „Seitenbestand" | | KV07 (Zweig erfüllt) |
 | Datenschutzhinweis unter dem Kontaktformular; Honigtopf | 0 von 1 | KV05, KV06 |
 
 ## Offen

@@ -4,7 +4,7 @@ titel: Technik, Hosting und Aufbau
 stand: 2026-09-11
 status: teilweise
 fortschritt: 74
-zusammenfassung: Stack läuft stabil. Seit dem Merge 0c18ea7 liegen auf main auch die scharf gestellte CSP, die festgenagelten Paketfassungen samt requirements.lock (Django 5.2.17) und die abgearbeiteten Audit-Funde. Im Zweig sofort/2026-09-11-si09 (ein Commit, nicht gemergt) erlaubt script-src Inline-Code nur noch mit der Nonce der Anfrage, Handler-Attribute sind durch data-Attribute ersetzt, 218 Tests. Offen bleiben der Merge, Bezahlseite und Ersatzskripte mit Browserkonsole, 'unsafe-eval' für Alpine.js, der erste CI-Lauf mit 5.2.17, CANONICAL_HOST in Railway, runtime.txt/railway.json und die Permissions-Policy.
+zusammenfassung: Stack läuft stabil. Seit den Merges 0c18ea7, 4ec540b und 1a5f36b liegen auf main auch die scharf gestellte CSP, die Nonce im script-src statt 'unsafe-inline' (Handler-Attribute durch data-Attribute ersetzt), die festgenagelten Paketfassungen samt requirements.lock (Django 5.2.17) und die abgearbeiteten Audit-Funde, 218 Tests. Im Zweig sofort/2026-09-11-kv07-und-2-weitere (nicht gemergt) leitet das Kontaktformular per 302 auf die neue Route kontakt_danke (/kontakt/danke/, never_cache), 224 Tests laut Commit. Offen bleiben der Merge, Bezahlseite und Ersatzskripte mit Browserkonsole, 'unsafe-eval' für Alpine.js, der erste CI-Lauf mit 5.2.17, CANONICAL_HOST in Railway, runtime.txt/railway.json und die Permissions-Policy.
 offen: 12
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, paypal_sandbox_tutorial.md, start.sh, Dockerfile, requirements.txt
 ---
@@ -32,6 +32,14 @@ Detailquelle bleibt [`../CLAUDE.md`](../CLAUDE.md) (Architektur, Fallstricke) un
 > Railway es ausgeliefert hat, ist hier nicht geprüft. Der Ordner steht jetzt
 > auf **`sofort/2026-09-11-si09`**, ein Commit vor `main` (`28d1ca3` SI09);
 > was mit „Zweig SI09" markiert ist, steckt nur dort.
+>
+> **Dritter Nachtrag 11.09.2026 (Paket 171):** `sofort/2026-09-11-si09` ist mit
+> `4ec540b`, `sofort/2026-09-11-is18` mit `1a5f36b` in `main` gemergt; `main` und
+> `origin/main` stehen auf `5722d70` (lokale Referenz). Was unten „Zweig SI09"
+> heisst, liegt damit auf `main` — ob Railway es ausgeliefert hat, ist nicht
+> geprüft. Der Ordner steht jetzt auf **`sofort/2026-09-11-kv07-und-2-weitere`**,
+> zwei Commits vor `main` (`2d78a55` KV07, `7919341` VL01 — nur Doku); was mit
+> „Zweig KV07" markiert ist, steckt nur dort.
 
 ## Stack
 
@@ -118,18 +126,29 @@ Inhaltsprüfung. Dagegen tragen nur Rate-Limit, Duplikatsperre und
 Mail-Obergrenze — und die verhindern nicht die Anfrage, sondern das volle
 Postfach.
 
+**Nach dem Absenden (Zweig KV07, `2d78a55`):** `views/shop.py::kontakt` leitet
+nach dem Start des Versands mit 302 auf `/kontakt/danke/` (View `kontakt_danke`,
+in `views/__init__.py` re-exportiert, `never_cache`; Vorlage
+`kontakt_danke.html` mit `noindex, follow`, nicht in Sitemap und `llms.txt`).
+Ein Neuladen schickt die Anfrage damit nicht mehr ein zweites Mal ab. Leere
+Felder und ein Fehler beim **Start** des Versands bleiben als Meldung auf
+`/kontakt/`. Ein späterer Zustellfehler im Thread von `send_brevo_email`
+erreicht die Besucherin weiter nicht — die Danke-Seite erscheint trotzdem
+(`EIG10` in [80-AUFGABEN.md](80-AUFGABEN.md)). An den Bausteinen der Tabelle
+ändert das nichts.
+
 ## Prüfbefehle und Tests
 
 | Befehl | Was | Stand |
 |---|---|---|
-| `python manage.py test shop1` | Testsuite in 14 Modulen, Laufzeit rund 2,5 Minuten; main: **215 Tests**, Zweig SI09: **218 Tests** (drei neue in `test_einstellungen`) | Zweig SI09 218/218 grün laut `28d1ca3` |
+| `python manage.py test shop1` | Testsuite in 14 Modulen, Laufzeit rund 2,5 Minuten; main: **218 Tests** (seit `4ec540b` mit den drei SI09-Tests in `test_einstellungen`), Zweig KV07: **224 Tests** (sechs neue in `test_formulare`) | Zweig KV07 224/224 grün laut `2d78a55` |
 | `python manage.py test shop1.tests.<modul>` | einzelnes Modul | Zweig |
 | `python manage.py pruefe_seite [--streng]` | Prüfbefehl: Einstellungen, beide Datenbanken, aktive Produkte (Pflichtwerte, doppelte Slugs), jede Sitemap-Adresse 200 mit Titel, Beschreibung 110–175, canonical, robots, JSON-LD, Schutzkopfzeilen samt CSP; hinterlässt keine Spuren (`VISITOR_TRACKING` aus, zurückgerollte Transaktion) | Zweig |
 | `python manage.py check --deploy` | Django-Prüfung | beide |
 | `python manage.py fix_pystore_schema` | `seite`-Spalte in `pystore` | beide |
 | `python manage.py makemigrations shop1` | einzige App; 18 Migrationen (Zweig, `0018` legt die pystore-Tabellen auch ohne PostgreSQL an) | |
 
-**Testmodule (Zweig):** `test_seiten` (14), `test_seo` (31), `test_geo` (20), `test_inhalt` (15), `test_formulare` (10), `test_daten` (22), `test_einstellungen` (42; Zweig SI09: 45, gezählt 11.09.2026), `test_barrierefreiheit` (11), `test_ladezeit` (9), `test_aufbau` (2, Designwache), `test_warenkorb` (8), `test_zahlung` (11), `test_konto` (10), `test_zugriffsschutz` (10); dazu `_basis.py` (Basisklasse `LuviqTestCase`) und `_aufbau.py` (Fingerabdruck) mit `aufbau_referenz.json` (5.148 Zeilen). Zahlen: `def test_` je Datei, 02.09.2026.
+**Testmodule (Zweig):** `test_seiten` (14), `test_seo` (31), `test_geo` (20), `test_inhalt` (15), `test_formulare` (10; Zweig KV07: 16, gezählt 11.09.2026), `test_daten` (22), `test_einstellungen` (42; Zweig SI09: 45, gezählt 11.09.2026), `test_barrierefreiheit` (11), `test_ladezeit` (9), `test_aufbau` (2, Designwache), `test_warenkorb` (8), `test_zahlung` (11), `test_konto` (10), `test_zugriffsschutz` (10); dazu `_basis.py` (Basisklasse `LuviqTestCase`) und `_aufbau.py` (Fingerabdruck) mit `aufbau_referenz.json` (5.148 Zeilen). Zahlen: `def test_` je Datei, 02.09.2026.
 
 **Drei Regeln für neue Tests** (`CLAUDE.md`): `secure=True` ist Pflicht (sonst prüft man nur die 301 der SSL-Weiterleitung) → `self.hole()` / `self.sende()`; `databases = {'default', 'pystore'}` (die Besuchs-Middleware schreibt bei jeder Antwort); der Cache wird vor jedem Test geleert (`sitemap.xml`/`llms.txt` liegen 15 min im LocMemCache).
 
@@ -184,7 +203,7 @@ Code-Audit (Messung 02.09.2026, lokaler Ordner = Zweig): 114 Dateien, 23.859 Zei
 
 | Punkt | Beleg | Regel |
 |---|---|---|
-| Zweig `sofort/2026-09-11-si09` nach `main` mergen und pushen (der Zweig `sofort/2026-09-11-pj05-und-2-weitere` ist mit `0c18ea7` gemergt) | `28d1ca3`, ein Commit vor `main` | SI09 |
+| Zweig `sofort/2026-09-11-kv07-und-2-weitere` nach `main` mergen und pushen (`sofort/2026-09-11-si09` ist mit `4ec540b`, `sofort/2026-09-11-is18` mit `1a5f36b` gemergt); danach einmal das Kontaktformular live abschicken | `2d78a55`, `7919341`, zwei Commits vor `main` | KV07 |
 | `CANONICAL_HOST` in Railway setzen | live 02.09.2026: Apex antwortet 200 ohne 301; die Vorgabe von `CANONICAL_HOST` ist auch im Zweig SI09 leer (`mainweb/settings.py:45`) | TS11 |
 | Nach dem Push: ersten CI-Lauf mit Django 5.2.17 abwarten; lokal `pip install -r requirements.txt` | die Suite lief beim Bau mit Django 6.0.5 (`pip install`/`docker build` gesperrt, `LOGBUCH.md` Paket 155) | PJ11 |
 | Nach dem Deploy mit offener Browserkonsole ansehen: `/payment/<id>/`, dazu mit dem Zweig SI09 Löschrückfrage im Profil, „Reset" in der Panel-Statistik, Bestellfilter, Kampagnenknöpfe, Nachladen der Schriften | CSP scharf, Deckung nur durch Tests belegt; das Verhalten der Ersatzskripte ist ungeprüft (`28d1ca3`) | SI08, SI09 |

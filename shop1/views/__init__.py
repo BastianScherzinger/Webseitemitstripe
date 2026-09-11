@@ -1,6 +1,6 @@
 """Views-Package – re-exportiert alle View-Funktionen fuer urls.py Kompatibilitaet."""
 
-from .shop import startseite, werbung_klick, kontakt, kontakte, ueber_uns, liefergebiet, produkte, produkt_detail_slug, produkt_detail_redirect
+from .shop import startseite, werbung_klick, kontakt, kontakt_danke, kontakte, ueber_uns, liefergebiet, produkte, produkt_detail_slug, produkt_detail_redirect
 from .auth import login, logout, register, verify_email, resend_verification, delete_account, profil, change_password
 from .cart import warenkorb, add_to_cart, remove_from_cart, update_cart
 from .checkout import checkout, payment, paypal_capture, payment_success, payment_cancel
@@ -10,7 +10,7 @@ from .wissen import wissen, wissen_beitrag, WISSEN_BEITRAEGE, freigegebene_beitr
 
 __all__ = [
     # shop
-    'startseite', 'werbung_klick', 'kontakt', 'kontakte', 'ueber_uns', 'liefergebiet', 'produkte', 'produkt_detail_slug', 'produkt_detail_redirect',
+    'startseite', 'werbung_klick', 'kontakt', 'kontakt_danke', 'kontakte', 'ueber_uns', 'liefergebiet', 'produkte', 'produkt_detail_slug', 'produkt_detail_redirect',
     # auth
     'login', 'logout', 'register', 'verify_email', 'resend_verification', 'delete_account', 'profil', 'change_password',
     # cart
