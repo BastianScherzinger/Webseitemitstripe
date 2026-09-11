@@ -1505,3 +1505,84 @@ zurückgenommen. `python manage.py check` grün, 218/218 Tests grün.
 keinen. Nach dem Deploy ansehen: Bestellfilter im Panel, eine
 Löschrückfrage, die Kampagnenknöpfe und `/payment/<id>/` mit offener
 Konsole. Rückweg ohne neuen Stand: `CSP_MODUS=report-only`.
+
+## Paket 165 (11.09.2026) – IS18
+
+**`IS18` – Umfang passt zur Aufgabe der Seite.** Gemessen: 8 von 11 Seiten
+unter dem Umfang ihrer Seitenart – `/` 533/700, `/produkte/` 291/600,
+`/wissen/` 435/900 und die fünf Produktseiten mit je rund 222/600 Wörtern.
+
+**Herkunft.** Paket 162 hatte den ganzen Punkt als „beim Kunden" geführt.
+Die Gegenprüfung lehnte das ab: die Begründung trug nur für die fünf
+Produktseiten, deren Text sich allein durch Name, Preis und
+`Produkt.beschreibung` unterscheidet. `/`, `/produkte/` und `/wissen/` geben
+die Beschreibung je Stück gar nicht aus und lassen sich mit belegter
+Auskunft in bestehenden Absätzen aufholen – so, wie es IS19 am 08.09. getan
+hat.
+
+**Was gebaut ist.** Nur Fliesstext in Absätzen, die es schon gab; kein
+Element, keine Klasse, keine Kennung, keine Überschrift verändert, die
+Designwache (`test_aufbau`) ist unverändert grün. Nachgemessen mit dem
+Zählverfahren des Werkzeugs (Text in `<main>` ohne `nav`, `header`,
+`footer`, `aside`, Skript und Stil), zuerst gegen den Ausgangsstand: ohne
+Produkt `/` 427, `/produkte/` 245, `/wissen/` 435; mit fünf Produkten und
+drei Kommentaren `/` 551 und `/produkte/` 293 – live gemessen 533, 291 und
+435, das Verfahren trifft die Messung also. Endstand **ohne ein einziges
+Produkt**, damit der Umfang nicht mit jedem verkauften Stück wieder unter
+die Grenze fällt: `/` 732, `/produkte/` 616, `/wissen/` 928.
+
+* `/` – die drei Absätze unter „Hand-Painted", „Eco-Conscious" und
+  „Curated Style", der Absatz von Luisa Brehler, der Newsletter-Absatz und
+  der Hinweis zur Anmeldung im Kommentarbereich (`_reviews_map.html`,
+  Kompaktfassung, nur auf der Startseite): Unregelmäßigkeiten nach § 3 AGB,
+  eine Größe je Basisteil, Kauf eines vorhandenen Stücks statt Auftrag,
+  Bestellablauf, PayPal-Prüfung und Überweisungsdaten, Versanddauer,
+  Widerruf ab Ankunft der Ware, Bestellstand im Profil.
+* `/produkte/` – der Einleitungsabsatz: Reihenfolge der Karten, kein
+  Warenkorb-Knopf auf der Übersicht, Menge begrenzt auf den Bestand, keine
+  Reservierung durch den Warenkorb, wann ein Stück abgeschaltet wird (PayPal
+  und Vorab-Überweisung getrennt), keine weitere Zahlungsart,
+  Eigentumsvorbehalt, kein Umtausch, Widerruf ohne Formvorgabe mit
+  Rücksendeanschrift, Rückporto ungeregelt, echter Mangel gegen § 3,
+  Registrierungsfelder, Bestellbestätigung.
+* `/wissen/` – Einleitungsabsatz mit den Kernantworten der drei
+  freigegebenen Beiträge, dazu die zwei Absätze unter „Woher die Angaben
+  stammen" mit der Zuordnung jeder Angabe zu ihrer Quelle.
+
+**Belege.** Anmeldepflicht `views/cart.py`, `views/checkout.py:72`;
+Pflichtfelder `checkout.py:101`; Zahlungsarten `checkout.html:90,99`;
+PayPal-Abfrage mit Status und Betrag `checkout.py:26-66`, Abschalten nach
+PayPal `checkout.py:231`, nach Eintrag „bezahlt" `admin_views.py:746-751`;
+Überweisungsmail mit Inhaberin, IBAN, Verwendungszweck und Betrag
+`checkout.py:326-329`; Bestätigungsmail `checkout.py:267-289`; Menge bis
+zum Bestand, keine Reservierung `views/cart.py:16-35`; Reihenfolge
+`views/shop.py:22,117`, bis zu acht Stücke `shop.py:22`, vier Kommentare
+`shop.py:40`; Kontaktfelder `shop.py:78-83`; Registrierungsfelder
+`forms.py:87`; kein Feld für Maße oder Material `models.py:85-99`;
+Sperre nach zehn Fehlversuchen für eine Stunde je Benutzername und IP
+`mainweb/settings.py:138-143`; §§ 2–5 `legal/agb.html`; Versanddauer
+`liefergebiet.html`; Anschrift und E-Mail Impressum; Brevo, Cloudinary,
+ip-api.com und die Kreditkartenangabe `legal/datenschutz.html`. Keine neue
+Zahl ohne Quelle, keine Versandkosten, kein Rückporto, keine Frist, die
+nirgends steht.
+
+**Die Produktseiten bleiben bewusst ungefüllt.** Ihr statischer Teil steht
+auf allen fünf Stücken wortgleich; weitere rund 380 Wörter gleichen Textes
+höben die Wortzahl und zugleich die Textgleichheit zwischen den
+Produktseiten (`IS21`, `doku/80-AUFGABEN.md` Bewertungsblock). Den Umfang
+einer Produktseite kann nur eine eigene Beschreibung je Stück liefern
+(`Produkt.beschreibung`, `produkt_detail.html:130`) – das bleibt bei der
+Betreiberin. Nach Auslieferung und Nachmessung sollten damit 3 der 8
+gemeldeten Seiten ihr Ziel erreichen, 5 bleiben offen; live gemessen ist
+dieser Stand nicht.
+
+**Tests.** `MINDESTWOERTER` hält den neuen Stand fest (`/` 690,
+`/produkte/` 595, `/wissen/` 895 bei gemessen 701, 605 und 907 nach der
+Zählung der Suite). `seiten_stand.py` führt `home`, `produkte` und `wissen`
+jetzt auf dem 11.09.2026. `python manage.py check` grün, 218/218 Tests grün.
+
+**Nebenbefund, nicht angefasst.** Der Einleitungsabsatz von `/produkte/`
+steht in Versalien mit weiter Laufweite (`uppercase tracking-[0.4em]`) –
+bei rund 600 Wörtern ist er lang zu lesen und schiebt das Raster nach
+unten. Eine andere Satzart wäre eine Änderung am Aussehen und gehört in ein
+eigenes Paket mit Freigabe.

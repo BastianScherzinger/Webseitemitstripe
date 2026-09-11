@@ -98,9 +98,17 @@ UMFANG_PRODUKT_SEITE = '/produkt/bemalte-bomberjacke/'
 #: durch GE23 und GE25 dazu ``/ueber_uns/`` 392, ``/liefergebiet/`` 312,
 #: ``/datenschutz/`` 441, ``/wissen/`` 425. ``/impressum/`` bleibt bei 75 –
 #: es trägt ``noindex`` und steht weder in der Sitemap noch in llms.txt.
+#:
+#: IS18 (2026-09-11): die drei Seiten, deren Umfang nicht an der Beschreibung
+#: je Stück hängt, erreichen die Zielgrösse ihrer Seitenart – ``/`` 701
+#: (vorher 399), ``/produkte/`` 605 (238), ``/wissen/`` 907 (425), gemessen
+#: mit einem Produkt und ohne Kommentare. Das Werkzeug zählt jedes durch
+#: Leerraum getrennte Stück (auch „·" und „★") und kommt ohne Produkt auf
+#: 732, 616 und 928 gegen die Ziele 700, 600 und 900. Die Produktseiten
+#: bleiben bei 211: ihr Zuwachs bräuchte eine eigene Beschreibung je Stück.
 MINDESTWOERTER = {
-    '/': 390,
-    '/produkte/': 230,
+    '/': 690,
+    '/produkte/': 595,
     '/kontakt/': 235,
     '/ueber_uns/': 380,
     '/liefergebiet/': 300,
@@ -109,7 +117,7 @@ MINDESTWOERTER = {
     '/datenschutz/': 430,
     '/agb/': 230,
     UMFANG_PRODUKT_SEITE: 200,
-    '/wissen/': 415,
+    '/wissen/': 895,
     '/wissen/pflege-handbemalte-kleidung/': 800,
     '/wissen/upcycling-mode-second-hand-vintage/': 920,
     '/wissen/groesse-bei-einzelstuecken/': 870,

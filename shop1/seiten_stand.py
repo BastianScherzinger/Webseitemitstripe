@@ -18,8 +18,8 @@ Modul wird bei jedem Request aus dem Kontextprozessor gelesen.
 
 #: Routenname → Datum der letzten inhaltlichen Änderung (ISO 8601).
 SEITEN_STAND = {
-    'home':         '2026-09-01',
-    'produkte':     '2026-09-01',
+    'home':         '2026-09-11',
+    'produkte':     '2026-09-11',
     'gaestebuch':   '2026-09-01',
     'ueber_uns':    '2026-09-01',
     'liefergebiet': '2026-09-01',
@@ -28,7 +28,7 @@ SEITEN_STAND = {
     'datenschutz':  '2026-09-01',
     'agb':          '2026-09-01',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
-    'wissen':           '2026-09-01',
+    'wissen':           '2026-09-11',
     'wissen_pflege':    '2026-09-01',
     'wissen_upcycling': '2026-09-01',
     'wissen_groesse':   '2026-09-01',
