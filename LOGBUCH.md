@@ -1586,3 +1586,29 @@ steht in Versalien mit weiter Laufweite (`uppercase tracking-[0.4em]`) –
 bei rund 600 Wörtern ist er lang zu lesen und schiebt das Raster nach
 unten. Eine andere Satzart wäre eine Änderung am Aussehen und gehört in ein
 eigenes Paket mit Freigabe.
+
+### Nachbesserung zu Paket 165 (11.09.2026)
+
+Die Gegenprüfung urteilte „abgelehnt": zwei neue Sätze trugen nicht
+(Grenze 5, nichts erfinden).
+
+* `produkte.html:65` – „Erst dort stehen Foto, Beschreibung und die
+  Schaltflächen für den Warenkorb." Jede Karte derselben Übersicht zeigt das
+  Produktfoto (`produkte.html:80-85`). Jetzt: „Erst dort stehen die
+  Beschreibung und die Schaltflächen …" – die Karte zeigt Bild, Name,
+  Untertitel und Endpreis, aber nicht `Produkt.beschreibung`. Wortzahl
+  unverändert.
+* `wissen/uebersicht.html:73` – „Verbindlich für ein einzelnes Teil ist, was
+  auf seiner Detailseite steht … und was Luisa Brehler auf eine Nachfrage
+  antwortet." Die Zusage steht nirgends im Projekt und steht quer zu § 2 AGB
+  (`agb.html:42`: die Darstellung im Shop ist kein bindendes Angebot). Jetzt:
+  „Was der Shop über ein einzelnes Teil angibt, steht auf seiner Detailseite
+  – Name, Preis, Foto und Beschreibung." (Bild `produkt_detail.html:89`,
+  Beschreibung `:130`). Sieben Wörter weniger: `/wissen/` ohne Produkt 921
+  statt 928 nach dem Verfahren des Werkzeugs, 900 statt 907 in der Zählung
+  der Suite – beides über Ziel (900) und `MINDESTWOERTER` (895), deshalb
+  kein Ersatztext.
+
+Kein Element, keine Klasse, keine Überschrift verändert. Die Satzart des
+langen Versalien-Absatzes auf `/produkte/` bleibt eine offene Entscheidung
+für einen Menschen (`doku/20-DESIGN.md`, „Offen").

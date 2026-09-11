@@ -133,6 +133,11 @@ Commit und in `LOGBUCH.md`, live gezählt ist der Stand nicht.
 
 Jede Angabe hat eine Fundstelle im Projekt (Belegliste in `LOGBUCH.md`, Paket 165);
 **nicht** genannt sind weiter Versandkosten, Rückporto und eine Rückzahlungsfrist.
+Die Nachbesserung zu Paket 165 hat zwei Sätze berichtigt, die die Gegenprüfung nicht
+trug: `/produkte/` behauptete, das Foto stehe erst auf der Detailseite (die Karten zeigen
+es), und `/wissen/` erklärte Antworten der Betreiberin auf eine Nachfrage für verbindlich
+(nirgends belegt, quer zu § 2 AGB). Gezählt ohne Produkt bleiben danach `/` 732,
+`/produkte/` 616 und `/wissen/` 921 Wörter.
 `MINDESTWOERTER` hält den Stand in der Zählung der Suite fest (`/` 690, `/produkte/` 595,
 `/wissen/` 895), `seiten_stand.py` führt `home`, `produkte` und `wissen` auf dem
 11.09.2026. **Bewusst ungefüllt bleiben die fünf Produktseiten:** noch mehr gleicher Text
