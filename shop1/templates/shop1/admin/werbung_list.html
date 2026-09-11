@@ -25,7 +25,7 @@
                 <p class="text-white/30 text-xs uppercase tracking-widest">Budget · Klicks · Reichweite auf anderen Plattformen</p>
             </div>
             {% if is_admin %}
-            <button onclick="document.getElementById('create-form').classList.toggle('hidden')"
+            <button data-werbung="formular-umschalten"
                 class="px-6 py-3 rounded-xl bg-glow-orange/15 border border-glow-orange/30 text-glow-orange text-[11px] font-black uppercase tracking-widest hover:bg-glow-orange/25 transition-all cursor-pointer flex-shrink-0">
                 + Neue Kampagne
             </button>
@@ -80,7 +80,7 @@
                         class="px-8 py-3 rounded-xl bg-glow-orange/20 border border-glow-orange/40 text-glow-orange text-[11px] font-black uppercase tracking-widest hover:bg-glow-orange/30 transition-all cursor-pointer">
                         Kampagne starten →
                     </button>
-                    <button type="button" onclick="document.getElementById('create-form').classList.add('hidden')"
+                    <button type="button" data-werbung="formular-schliessen"
                         class="px-8 py-3 rounded-xl bg-white/5 border border-white/10 text-white/40 text-[11px] font-black uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer">
                         Abbrechen
                     </button>
@@ -143,11 +143,11 @@
                     <p class="text-white/20 text-[10px] mt-1">Tägliche Views und Klicks deiner Luviq-Kampagne</p>
                 </div>
                 <div class="flex gap-2">
-                    <button id="btn-views" onclick="switchTimeline('views')"
+                    <button id="btn-views" data-werbung="verlauf" data-werbung-wert="views"
                         class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer bg-glow-orange/15 border-glow-orange/40 text-glow-orange">
                         Views
                     </button>
-                    <button id="btn-klicks" onclick="switchTimeline('klicks')"
+                    <button id="btn-klicks" data-werbung="verlauf" data-werbung-wert="klicks"
                         class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer bg-white/5 border-white/10 text-white/40">
                         Klicks
                     </button>
@@ -175,7 +175,7 @@
                     <div class="w-full md:w-28 md:flex-shrink-0 bg-black/30 flex items-center justify-center overflow-hidden" id="imgwrap-{{ w.id }}" style="min-height:112px;max-height:160px;">
                         <img src="{{ w.bild_src }}" alt="Werbebild der Kampagne „{{ w.titel }}“"
                              class="w-full h-full object-cover"
-                             onerror="document.getElementById('imgwrap-{{ w.id }}').style.display='none'">
+                             data-bei-fehler-ausblenden="imgwrap-{{ w.id }}">
                     </div>
                     {% endif %}
 
@@ -233,7 +233,7 @@
 
                     <!-- Actions -->
                     <div class="p-6 flex flex-col gap-3 justify-center border-t md:border-t-0 md:border-l border-white/5 md:min-w-[140px]">
-                        <button onclick="toggleEdit({{ w.id }})"
+                        <button data-werbung="bearbeiten" data-werbung-wert="{{ w.id }}"
                             class="px-4 py-2 rounded-xl bg-violet-500/15 border border-violet-500/30 text-violet-300 text-[11px] font-black uppercase tracking-widest hover:bg-violet-500/25 transition-all cursor-pointer">
                             ✏ Bearbeiten
                         </button>
@@ -247,7 +247,7 @@
                         </form>
                         {% if is_admin %}
                         <form method="post" action="{% url 'admin_werbung_delete' werbung_id=w.id %}"
-                              onsubmit="return confirm('Kampagne &quot;{{ w.titel|escapejs }}&quot; wirklich löschen?')">
+                              data-bestaetigen="Kampagne &quot;{{ w.titel }}&quot; wirklich löschen?">
                             {% csrf_token %}
                             <button type="submit" class="w-full px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-[11px] font-black uppercase tracking-widest hover:bg-red-500/20 transition-all cursor-pointer">
                                 🗑 Löschen
@@ -283,7 +283,7 @@
                                 <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Neues Bild hochladen</label>
                                 {% if w.bild_src %}
                                 <img src="{{ w.bild_src }}" alt="Bisheriges Werbebild der Kampagne „{{ w.titel }}“ (Vorschau)" style="width:40px;height:40px;object-fit:cover;border-radius:8px;margin-bottom:6px;"
-                                     onerror="this.style.display='none'">
+                                     data-bei-fehler-ausblenden>
                                 {% endif %}
                                 <input type="file" name="bild_file" accept="image/*" aria-label="Neues Bild für die Kampagne „{{ w.titel }}“ hochladen"
                                     class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-white/60 text-xs focus:outline-none focus:border-glow-orange/50 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-glow-orange/20 file:text-glow-orange cursor-pointer">
@@ -316,7 +316,7 @@
                                 class="px-6 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[11px] font-black uppercase tracking-widest hover:bg-emerald-500/25 transition-all cursor-pointer">
                                 💾 Speichern
                             </button>
-                            <button type="button" onclick="toggleEdit({{ w.id }})"
+                            <button type="button" data-werbung="bearbeiten" data-werbung-wert="{{ w.id }}"
                                 class="px-6 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 text-[11px] font-black uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer">
                                 Abbrechen
                             </button>
@@ -336,7 +336,7 @@
             <p class="text-white/30 text-sm mb-2">Es läuft derzeit keine Werbekampagne für Luviq.</p>
             <p class="text-white/20 text-xs uppercase tracking-widest mb-8">Erstelle eine neue Kampagne, um auf anderen Plattformen sichtbar zu sein.</p>
             {% if is_admin %}
-            <button onclick="document.getElementById('create-form').classList.remove('hidden');this.closest('.glass-card').style.display='none'"
+            <button data-werbung="formular-oeffnen"
                 class="px-10 py-4 rounded-2xl bg-glow-orange/20 border border-glow-orange/40 text-glow-orange text-sm font-black uppercase tracking-widest hover:bg-glow-orange/30 transition-all cursor-pointer">
                 + Erste Kampagne starten
             </button>
@@ -349,7 +349,7 @@
         <div class="mt-16 pt-8 border-t border-white/5">
             <h4 class="text-[10px] font-black uppercase tracking-widest text-white/20 mb-4">Gefahrenzone</h4>
             <form method="post" action="{% url 'admin_reset_werbung_stats' %}"
-                  onsubmit="return confirm('Alle Views, Klicks und WerbungStat-Einträge unwiderruflich auf 0 zurücksetzen?')">
+                  data-bestaetigen="Alle Views, Klicks und WerbungStat-Einträge unwiderruflich auf 0 zurücksetzen?">
                 {% csrf_token %}
                 <button type="submit"
                     class="px-6 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest hover:bg-red-500/20 transition-all cursor-pointer">
@@ -363,10 +363,33 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script>
+<script nonce="{{ csp_nonce }}">
 function toggleEdit(id) {
     document.getElementById('edit-' + id).classList.toggle('hidden');
 }
+
+// Knöpfe dieser Seite über data-werbung statt onclick – die CSP mit Nonce
+// blockiert Handler-Attribute (SI09). Steht vor dem ersten Chart-Aufruf,
+// damit die Knöpfe auch dann wirken, wenn Chart.js nicht lädt.
+document.addEventListener('click', function (e) {
+    var el = e.target.closest ? e.target.closest('[data-werbung]') : null;
+    if (!el) return;
+    var aktion = el.getAttribute('data-werbung');
+    var wert = el.getAttribute('data-werbung-wert');
+    var formular = document.getElementById('create-form');
+    if (aktion === 'formular-umschalten' && formular) {
+        formular.classList.toggle('hidden');
+    } else if (aktion === 'formular-schliessen' && formular) {
+        formular.classList.add('hidden');
+    } else if (aktion === 'formular-oeffnen' && formular) {
+        formular.classList.remove('hidden');
+        el.closest('.glass-card').style.display = 'none';
+    } else if (aktion === 'bearbeiten') {
+        toggleEdit(wert);
+    } else if (aktion === 'verlauf' && window.switchTimeline) {
+        window.switchTimeline(wert);
+    }
+});
 
 Chart.defaults.color = 'rgba(255,255,255,0.4)';
 Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';

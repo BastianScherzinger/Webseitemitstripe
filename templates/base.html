@@ -165,13 +165,53 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Luviq">
 
+    <!-- Ersatz für Inline-Handler (SI09): die Content-Security-Policy lässt nur
+         Skripte mit der Nonce dieser Antwort laufen, und onclick/onsubmit/
+         onchange/onerror/onload-Attribute deckt keine Nonce. Die Vorlagen tragen
+         stattdessen data-Attribute, die dieses Skript am document auswertet.
+         Es steht vor den Stildateien, damit es sofort läuft und die Lade- und
+         Fehlerereignisse der ersten Bilder und der Schriften nicht verpasst. -->
+    <script nonce="{{ csp_nonce }}">
+    (function () {
+        function attr(el, name) {
+            return el && el.getAttribute ? el.getAttribute(name) : null;
+        }
+        // <link data-schrift-nachladen media="print">: nach dem Laden für alle Medien.
+        document.addEventListener('load', function (e) {
+            if (attr(e.target, 'data-schrift-nachladen') !== null) { e.target.media = 'all'; }
+        }, true);
+        // <img data-bei-fehler-ausblenden="kennung">: blendet bei einem Ladefehler
+        // das Element mit dieser Kennung aus, ohne Wert das Bild selbst.
+        document.addEventListener('error', function (e) {
+            var ziel = attr(e.target, 'data-bei-fehler-ausblenden');
+            if (ziel === null) { return; }
+            var el = ziel ? document.getElementById(ziel) : e.target;
+            if (el) { el.style.display = 'none'; }
+        }, true);
+        // <form data-bestaetigen="Frage">: sendet nur nach Bestätigung.
+        document.addEventListener('submit', function (e) {
+            var frage = attr(e.target, 'data-bestaetigen');
+            if (frage !== null && !window.confirm(frage)) { e.preventDefault(); }
+        }, true);
+        // <button data-bestaetigen="Frage">: löst nur nach Bestätigung aus.
+        document.addEventListener('click', function (e) {
+            var el = e.target.closest ? e.target.closest('a[data-bestaetigen], button[data-bestaetigen]') : null;
+            if (el && !window.confirm(attr(el, 'data-bestaetigen'))) { e.preventDefault(); }
+        }, true);
+        // <select data-auto-absenden>: schickt sein Formular bei jeder Auswahl ab.
+        document.addEventListener('change', function (e) {
+            if (attr(e.target, 'data-auto-absenden') !== null && e.target.form) { e.target.form.submit(); }
+        });
+    })();
+    </script>
+
     <!-- Tailwind CSS (self-hosted, purged) -->
     <link rel="stylesheet" href="{% static 'shop1/tailwind.css' %}?v=1">
 
     <!-- Google Fonts (async — non-render-blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;900&display=swap">
+    <link rel="stylesheet" media="print" data-schrift-nachladen href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;900&display=swap">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;900&display=swap"></noscript>
 
     <!-- Alpine.js (pinned versions, defer = non-blocking) -->
@@ -431,7 +471,7 @@
         </a>
     </nav>
 
-    <script>
+    <script nonce="{{ csp_nonce }}">
     (function () {
         // Scroll progress bar
         var bar = document.getElementById('scroll-progress');

@@ -1,5 +1,6 @@
 import logging
 import os
+import secrets
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlsplit
@@ -77,13 +78,25 @@ CSP_KOPF = {
 }
 
 
-def csp_wert(quellen=None):
-    """Die Richtlinie als Kopfzeilenwert, ``direktive quelle quelle; …``."""
+def csp_wert(quellen=None, nonce=None):
+    """Die Richtlinie als Kopfzeilenwert, ``direktive quelle quelle; …``.
+
+    Mit ``nonce`` bekommt ``script-src`` die Quelle ``'nonce-…'`` angehängt:
+    nur Inline-Skripte mit genau diesem ``nonce``-Attribut laufen (SI09).
+    """
     if quellen is None:
         quellen = settings.CSP_QUELLEN
-    return '; '.join(
-        f'{direktive} {" ".join(werte)}' for direktive, werte in quellen.items()
-    )
+    teile = []
+    for direktive, werte in quellen.items():
+        if nonce and direktive == 'script-src':
+            werte = [*werte, f"'nonce-{nonce}'"]
+        teile.append(f'{direktive} {" ".join(werte)}')
+    return '; '.join(teile)
+
+
+def neue_nonce():
+    """Zufallswert für eine einzelne Antwort – 18 Byte, URL-sicher kodiert."""
+    return secrets.token_urlsafe(18)
 
 
 def csp_kopfname():
@@ -106,16 +119,24 @@ class ContentSecurityPolicyMiddleware:
     Die Betriebsart wird je Antwort gelesen, damit ein Umschalten von
     ``CSP_MODUS`` ohne Neustart wirkt und Tests beide Kopfzeilen prüfen
     können.
+
+    Jede Anfrage bekommt vor der View eine eigene Nonce
+    (``request.csp_nonce``); der Kontextprozessor ``csp_nonce`` reicht sie
+    als ``{{ csp_nonce }}`` an die Vorlagen weiter, und dieselbe Nonce steht
+    danach im ``script-src`` der Antwort. Eine Nonce gilt nur, solange die
+    Seite nicht zwischengespeichert wird – ``cache_page`` liegt deshalb nur
+    auf ``sitemap.xml`` und ``llms.txt``, die kein Skript enthalten.
     """
 
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
+        request.csp_nonce = neue_nonce()
         response = self.get_response(request)
         kopf = csp_kopfname()
         if kopf and not any(response.has_header(k) for k in CSP_KOPF.values()):
-            response[kopf] = csp_wert()
+            response[kopf] = csp_wert(nonce=request.csp_nonce)
         return response
 
 

@@ -1445,3 +1445,63 @@ in `ENDUNGEN` des Code-Audits) und meldet deshalb weiter „kein Lockfile".
 **Gegenbeweis.** pip (`parse_requirements`) liest aus `requirements.txt`
 11 Anforderungen und 20 Constraints aus `requirements.lock`; das Code-Audit
 meldet keinen `K03` mehr. `python manage.py check` grün, 215/215 Tests grün.
+
+## Paket 164 (11.09.2026) – SI09
+
+**`SI09` – `script-src` ohne `'unsafe-inline'`.** Gemessen: die seit SI08
+durchgesetzte Richtlinie erlaubte im `script-src` weiter `'unsafe-inline'`
+– auf 18 Seiten (/, /produkte/, /kontakt/ und 15 weitere). Damit lief jedes
+eingeschleuste Inline-Skript und jeder eingeschleuste `onclick` trotz CSP.
+
+**Herkunft.** Paket 162 hat genau diesen Punkt am selben Tag auf dem Zweig
+`sofort/2026-09-11-si09-und-2-weitere` gebaut (`4f3ac5f`); die Gegenprüfung
+nannte SI09 dort zweimal „erfüllt". Ausgeliefert wurde der Zweig nicht, weil
+die Ausnahme zu einem anderen Punkt (`IS18`) nicht trug. Der Code-Stand ist
+seither unverändert (`git diff 4f3ac5f~1 HEAD` berührt nur `doku/`). Deshalb
+ist die Lösung hier **wortgleich** nachgebaut – `git diff 4f3ac5f` über
+`mainweb/`, `shop1/`, `templates/` und `CLAUDE.md` ist leer –, damit ein
+späteres Zusammenführen beider Zweige keinen Konflikt erzeugt. Vorher neu
+nachgezählt: 17 Handler-Attribute und 6 ausführbare Inline-Skripte.
+
+**Was gebaut ist.** `ContentSecurityPolicyMiddleware` erzeugt je Anfrage
+eine Nonce (`secrets.token_urlsafe(18)`), legt sie auf `request.csp_nonce`
+und hängt sie als `'nonce-…'` an `script-src`; `'unsafe-inline'` ist aus
+`CSP_QUELLEN['script-src']` gestrichen. Der Kontextprozessor `csp_nonce`
+reicht sie an die Vorlagen; jedes Inline-Skript trägt
+`nonce="{{ csp_nonce }}"` (`base.html` zweimal, `index.html` zweimal,
+`payment.html`, `admin/stats.html`, `admin/werbung_list.html`), das
+PayPal-SDK zusätzlich `data-csp-nonce` nach PayPals Angabe
+(developer.paypal.com/sdk/js/csp/). Die 17 Handler-Attribute sind durch
+`data-bestaetigen`, `data-bei-fehler-ausblenden`, `data-auto-absenden`,
+`data-schrift-nachladen` (Skript im `<head>` von `base.html`, Capture-Phase,
+vor den Stildateien) und `data-werbung` (Seitenskript der Kampagnenliste)
+ersetzt. Die Middleware steht vor Session, Axes und View – jede gerenderte
+Vorlage sieht die Nonce. Eigene `404.html`/`500.html` gibt es nicht, Djangos
+Vorgaben enthalten kein Skript. Kein Element, keine Klasse, keine Kennung
+verändert.
+
+**Der Rat des Katalogs** (Nonce je Anfrage, `object-src 'none'`,
+`base-uri 'self'`) ist damit vollständig umgesetzt; die beiden Direktiven
+standen seit SI08 schon in `CSP_QUELLEN`.
+
+**Bewusst offen: `'unsafe-eval'`.** Alpine.js 3.14.8 (Standardfassung) wertet
+jeden Ausdruck mit `new Function` aus; eine Suche nach Alpine-Attributen
+(`x-…=`, `@…=`, `:…=`) findet 224 Treffer in 127 Zeilen und 19 Vorlagen.
+Ohne das Schlüsselwort stünde jeder dieser Bausteine still. Die CSP-Fassung von Alpine
+wäre ein anderes Paket und verlangte jeden dieser Ausdrücke umgeschrieben –
+ohne Browser im Lauf nicht verantwortbar. Der Messpunkt bewertet
+`'unsafe-eval'` mit 0,4; nach dem Merge ist SI09 also bei 40 %, nicht 100 %.
+
+**Tests.** Drei neue in `test_einstellungen` (wortgleich aus `4f3ac5f`):
+Nonce vorhanden, einmalig und je Antwort neu, kein `'unsafe-inline'`; jedes
+Inline-Skript jeder öffentlichen und jeder Panel-Seite trägt die Nonce
+derselben Antwort; keine Vorlage mit `on…=`, `javascript:` oder Skript ohne
+Nonce. Eigener Gegenbeweis in diesem Lauf: `'unsafe-inline'` zurück in
+`settings.py`, Nonce aus `stats.html` entfernt, `onchange` zurück in
+`orders_list.html` → vier Fehlschläge in allen drei Tests, per Edit
+zurückgenommen. `python manage.py check` grün, 218/218 Tests grün.
+
+**Nicht belegt:** das Verhalten der Ersatzskripte im Browser – der Lauf hat
+keinen. Nach dem Deploy ansehen: Bestellfilter im Panel, eine
+Löschrückfrage, die Kampagnenknöpfe und `/payment/<id>/` mit offener
+Konsole. Rückweg ohne neuen Stand: `CSP_MODUS=report-only`.

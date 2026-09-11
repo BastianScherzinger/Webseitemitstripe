@@ -157,6 +157,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'shop1.context_processors.shop_owner_check',
+                'shop1.context_processors.csp_nonce',
             ],
         },
     },
@@ -310,14 +311,27 @@ APPEND_SLASH = True
 # ═══ CONTENT-SECURITY-POLICY ═══
 # Gesetzt von shop1.middleware.ContentSecurityPolicyMiddleware, ohne Paket.
 #
-# Eine strenge Richtlinie (Nonces, kein Inline-Code) ist mit dieser Seite
-# nicht möglich: sie ist mit Inline-<script>/<style>, style="…"-Attributen,
-# on*-Handlern und Alpine.js (braucht 'unsafe-eval') gebaut, und der sicht-
-# bare Aufbau darf nicht verändert werden. Deshalb bleiben script-src und
-# style-src offen für Inline-Code – scharf sind dafür die Direktiven, die
-# Inline-Code nicht brauchen: frame-ancestors (niemand darf die Seite
-# einbetten), base-uri, form-action (Formulare gehen nur an die eigene
-# Seite) und object-src.
+# script-src ohne 'unsafe-inline' (Messpunkt SI09, 11.09.2026): die Middleware
+# erzeugt je Anfrage eine Nonce und hängt sie als 'nonce-…' an script-src an;
+# jedes Inline-<script> der Vorlagen trägt nonce="{{ csp_nonce }}"
+# (Kontextprozessor csp_nonce). Ein eingeschleustes Skript kennt die Nonce
+# nicht und läuft nicht. Die früheren on*-Handler (onclick, onsubmit,
+# onchange, onerror, onload) sind durch data-Attribute ersetzt, die ein
+# einziges Skript im <head> von base.html auswertet – eine Nonce deckt
+# Handler-Attribute nicht, sie blieben sonst wirkungslos.
+#
+# Weiter offen, bewusst:
+#   'unsafe-eval' in script-src   Alpine.js (Standardfassung) wertet jeden
+#                      x-data-/@click-/x-intersect-Ausdruck mit new Function
+#                      aus; ohne das Schlüsselwort stünde jeder dieser
+#                      Bausteine in den Vorlagen still. Die CSP-Fassung von
+#                      Alpine wäre ein anderes Paket und verlangte jeden
+#                      Ausdruck als registrierte Komponente neu geschrieben.
+#   'unsafe-inline' in style-src  style="…"-Attribute und <style>-Blöcke in
+#                      den Vorlagen; das PayPal-SDK setzt eigene Stile.
+# Scharf sind dazu frame-ancestors (niemand darf die Seite einbetten),
+# base-uri, form-action (Formulare gehen nur an die eigene Seite) und
+# object-src.
 #
 # Positivliste der Fremdquellen, belegt durch die Templates:
 #   cdn.jsdelivr.net   Alpine.js, GSAP, Three.js (base.html, index.html),
@@ -361,8 +375,8 @@ _PAYPAL = ['https://*.paypal.com', 'https://*.paypalobjects.com', 'https://*.ven
 
 CSP_QUELLEN = {
     'default-src': ["'self'"],
-    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'",
-                   'https://cdn.jsdelivr.net'] + _PAYPAL,
+    # Kein 'unsafe-inline': die Nonce der Anfrage hängt die Middleware an.
+    'script-src': ["'self'", "'unsafe-eval'", 'https://cdn.jsdelivr.net'] + _PAYPAL,
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'] + _PAYPAL,
     'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
     'img-src': ["'self'", 'data:', 'blob:', 'https:'],

@@ -184,7 +184,7 @@
                                 <p class="text-[9px] text-white/20 mt-2 text-center uppercase tracking-widest">Shopbesitzer-Account kann nicht gelöscht werden.</p>
                             {% else %}
                                 <button type="submit" class="w-full py-4 glass border-red-500/10 text-red-400 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest hover:bg-red-500/10 transition-all" 
-                                        onclick="return confirm('DANGER: Permanent deletion. Confirm?');">
+                                        data-bestaetigen="DANGER: Permanent deletion. Confirm?">
                                     🗑️ Purge Account
                                 </button>
                             {% endif %}

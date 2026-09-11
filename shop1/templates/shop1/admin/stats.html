@@ -114,7 +114,7 @@
                 <div class="glass-card rounded-[3rem] overflow-hidden h-full">
                     <div class="px-10 py-8 border-b border-white/5 flex justify-between items-center">
                         <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Recent Orders</h3>
-                        <form method="POST" action="{% url 'admin_reset_orders' %}" onsubmit="return confirm('WARNING: Permanent deletion of all order data. Continue?');">
+                        <form method="POST" action="{% url 'admin_reset_orders' %}" data-bestaetigen="WARNING: Permanent deletion of all order data. Continue?">
                             {% csrf_token %}
                             <button type="submit" class="text-[10px] font-black uppercase text-red-400/50 hover:text-red-400 transition-colors">Reset All</button>
                         </form>
@@ -156,7 +156,7 @@
                 <div class="glass-card p-10 rounded-[3rem] h-full">
                     <div class="flex justify-between items-center mb-10">
                         <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Visit Activity</h3>
-                        <form method="POST" action="{% url 'admin_reset_visits' %}" onsubmit="return confirm('Reset visit data?');">
+                        <form method="POST" action="{% url 'admin_reset_visits' %}" data-bestaetigen="Reset visit data?">
                             {% csrf_token %}
                             <button type="submit" class="text-[10px] font-black uppercase text-red-400/50 hover:text-red-400 transition-colors">Reset</button>
                         </form>
@@ -244,7 +244,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
+<script nonce="{{ csp_nonce }}">
     document.addEventListener("DOMContentLoaded", function() {
         const rawData = '{{ chart_data_json|escapejs }}';
         const parsedData = JSON.parse(rawData);
