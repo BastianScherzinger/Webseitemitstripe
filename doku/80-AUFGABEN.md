@@ -257,4 +257,5 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | EIG59 | Das „Unternehmen“-Menü der Kopfnavigation ist mit der Tastatur nicht erreichbar | design | offen | bei einer anderen betreuten Seite aufgefallen am 10.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-10 |
 | EIG60 | security.txt rechnet sein Ablaufdatum bei jedem Abruf neu und kann deshalb nie ablaufen | technik | offen | bei einer anderen betreuten Seite aufgefallen am 10.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-10 |
 | EIG61 | Die Doku führt GE32 und MW15 als „nicht auf main, nicht ausgeliefert“, beides ist gemergt und live | status | offen | bei einer anderen betreuten Seite aufgefallen am 11.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-11 |
+| EIG62 | Der CI-Lauf behauptet, nichts auszulassen, fährt die Testsuite aber nicht und nutzt eine andere Python-Fassung als die lokalen Läufe | technik | offen | bei einer anderen betreuten Seite aufgefallen am 11.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-11 |
 <!-- eigenepunkte:ende -->
