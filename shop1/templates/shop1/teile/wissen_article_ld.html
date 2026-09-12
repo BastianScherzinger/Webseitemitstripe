@@ -1,0 +1,39 @@
+{% comment %}Article-Knoten eines Wissensbeitrags (GE15).
+
+Einmal für alle sechs Beiträge, weil jeder dieselben Angaben aus demselben
+Register zieht – sechs Kopien liefen früher oder später auseinander. Jede
+Angabe ist belegt und keine ist neu erfunden:
+
+* ``headline`` ist ``beitrag.titel`` aus ``views/wissen.py`` – derselbe Text,
+  den die Seite als ``h1`` zeigt und den ``seiten_stand.SEITEN_NAME`` führt.
+* ``description`` ist ``beitrag.kurz``, der Satz, mit dem die Übersicht
+  ``/wissen/`` den Beitrag sichtbar ankündigt.
+* ``datePublished`` ist ``beitrag.veroeffentlicht``: der Tag, an dem die
+  Vorlage angelegt wurde (``git log --diff-filter=A``).
+* ``dateModified`` kommt aus ``seiten_stand.py`` über den Kontextprozessor –
+  dasselbe Datum, das der ``WebPage``-Knoten und das ``lastmod`` der Sitemap
+  nennen. Fehlt der Registereintrag, entfällt die Angabe, statt erfunden zu
+  werden (gleiche Regel wie in ``base.html``).
+* ``author`` und ``publisher`` verweisen auf die Kennungen, die ``base.html``
+  ohnehin auf jeder Seite ausliefert (``#luisa``, ``#organization``) – ohne
+  Autor fehlt das E-E-A-T-Signal, auf das Antwortmaschinen achten.
+
+Kein ``image``: die Beiträge tragen kein eigenes Bild, und das Shoplogo wäre
+keines. Der Knoten steht im ``<head>``, ändert also nichts am sichtbaren
+Aufbau.{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "@id": "{{ request.build_absolute_uri }}#article",
+  "headline": "{{ beitrag.titel|escapejs }}",
+  "description": "{{ beitrag.kurz|escapejs }}",
+  "datePublished": "{{ beitrag.veroeffentlicht }}",{% if seite %}
+  "dateModified": "{{ seite.stand }}",{% endif %}
+  "inLanguage": "de-DE",
+  "author": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
+  "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
+  "isPartOf": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#website"},
+  "mainEntityOfPage": {"@id": "{{ request.build_absolute_uri }}#webpage"}
+}
+</script>

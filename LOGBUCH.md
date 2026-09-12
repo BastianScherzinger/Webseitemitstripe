@@ -1900,3 +1900,50 @@ der Befehl überhaupt etwas beanstandet. **Kein Template, kein Aufbau berührt.*
 
 **Nicht in `start.sh` angeschlossen**, aus demselben Grund wie `pruefe_links`:
 der Befehl fasst fremde Server an, das gehört nicht in den Containerstart.
+
+### GE15 – `Article` auf den Wissensbeiträgen, `ItemList` auf der Übersicht
+
+**Befund.** Die sechs Beiträge unter `/wissen/` tragen ein `FAQPage`-Schema,
+aber keinen `Article`-Knoten: kein Autor, kein Erscheinungsdatum. Für eine
+Antwortmaschine ist ein Ratgebertext ohne Herkunft eine Aussage ohne Quelle –
+genau das E-E-A-T-Signal, auf das sie achtet, fehlte.
+
+**Gebaut.** Ein einziges Teil-Template
+`shop1/templates/shop1/teile/wissen_article_ld.html`, eingebunden im Block
+`schema_ld` aller sechs Beitragsvorlagen. Sechs Kopien desselben Knotens
+liefen früher oder später auseinander. Jede Angabe stammt aus einem
+vorhandenen Register, keine ist neu:
+
+* `headline` = `beitrag.titel` (`views/wissen.py`) – derselbe Text, den die
+  Seite als `h1` zeigt; `description` = `beitrag.kurz`, der Satz, mit dem die
+  Übersicht den Beitrag sichtbar ankündigt.
+* `dateModified` = `seiten_stand.SEITEN_STAND`, dasselbe Datum wie im
+  `WebPage`-Knoten und im `lastmod` der Sitemap.
+* `datePublished` = neues Feld `veroeffentlicht` im Register
+  `WISSEN_BEITRAEGE`. **Belegt**, nicht geschätzt: `git log --diff-filter=A
+  --date=short -- <Template>` nennt den Commit, der die Vorlage angelegt hat –
+  2026-09-01 für Pflege, Upcycling und Grösse, 2026-09-07 für Bestellen,
+  Widerruf und Konto. Von Hand geführt wie das Standregister: ein Datei- oder
+  Build-Datum spränge bei jedem Deploy hoch.
+* `author` → `#luisa`, `publisher` → `#organization`: die Kennungen, die
+  `base.html` ohnehin auf jeder Seite ausliefert. Kein `image` – die Beiträge
+  haben kein eigenes Bild, und das Shoplogo wäre keines.
+
+**Die Übersicht `/wissen/` bekommt bewusst keinen `Article`.** Sie ist das
+Verzeichnis des Bereichs: kein Autor eines Textes, kein eigenes
+Erscheinungsdatum, keine zitierfähige Aussage. Ein `Article` dort behauptete
+einen Beitrag, den es nicht gibt – dieselbe Regel, die schon die
+Öffnungszeiten und die `SearchAction` aus dem Schema geworfen hat. Stattdessen
+eine `ItemList` mit genau den Titeln, der Reihenfolge und den Adressen, die
+weiter unten sichtbar verlinkt sind, und `mainEntityOfPage` auf den
+bestehenden `WebPage`-Knoten. Kein zweiter Seitentyp unter derselben Adresse.
+
+**Fünf neue Tests** in `test_geo` (`RatgeberSchemaTest`): genau ein
+`Article` je Beitrag, `headline` gleich der `h1`, Autorin und beide Daten aus
+den Registern, Erscheinen nicht nach der letzten Änderung, keine
+Beitragsbehauptung auf der Übersicht und eine `ItemList`, deren Einträge
+sichtbar auf der Seite stehen und mit 200 antworten. **243 Tests, OK.**
+
+**Aussehen.** Alles liegt im `<head>` (Blöcke `schema_ld`); kein Element,
+keine Klasse, keine Kennung, keine Überschrift geändert – `test_aufbau`
+bleibt grün.

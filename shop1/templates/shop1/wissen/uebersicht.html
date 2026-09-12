@@ -23,6 +23,32 @@
 </script>
 {% endblock %}
 
+{% block schema_ld %}
+{% comment %}GE15 verlangt Article auf den Ratgeberseiten. Diese Seite bekommt
+bewusst keinen: sie ist das Verzeichnis des Bereichs, kein Beitrag. Sie hat
+keinen Autor eines Textes, kein eigenes Erscheinungsdatum und keine Aussage,
+die zitiert werden koennte - ein Article-Knoten wuerde einen Beitrag
+behaupten, den es nicht gibt, und das ist schlimmer als kein Schema (dieselbe
+Regel wie bei den Oeffnungszeiten und der SearchAction, siehe test_geo). Was
+sie wirklich ist, sagt die ItemList: die Liste der Beitraege in genau der
+Reihenfolge und mit genau den Titeln und Adressen, die weiter unten sichtbar
+verlinkt sind. Kein zweiter Seitentyp neben dem WebPage-Knoten aus base.html -
+zwei Page-Typen unter derselben Adresse widersprechen sich.{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "@id": "{{ request.build_absolute_uri }}#beitraege",
+  "name": "Wissen rund um handbemalte Einzelstücke",
+  "numberOfItems": {{ beitraege|length }},
+  "mainEntityOfPage": {"@id": "{{ request.build_absolute_uri }}#webpage"},
+  "itemListElement": [{% for b in beitraege %}
+    {"@type": "ListItem", "position": {{ forloop.counter }}, "name": "{{ b.titel|escapejs }}", "url": "{{ request.scheme }}://{{ request.get_host }}{% url b.url_name %}"}{% if not forloop.last %},{% endif %}{% endfor %}
+  ]
+}
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="relative min-h-screen pt-20 pb-32">
     <!-- Nebula Background Layer -->

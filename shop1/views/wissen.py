@@ -51,6 +51,15 @@ from django.shortcuts import render
 #: ``titel`` die sichtbare Überschrift (zugleich ``h1`` der Seite), ``kurz``
 #: der Satz, mit dem die Übersicht den Beitrag ankündigt, ``freigegeben`` die
 #: Bestätigung der Betreiberin (siehe Modul-Docstring).
+#:
+#: ``veroeffentlicht`` ist der Tag, an dem der Beitrag entstanden ist – das
+#: ``datePublished`` seines ``Article``-Knotens (GE15). Belegt durch
+#: ``git log --diff-filter=A --date=short -- <Template>``, also den Commit,
+#: der die Vorlage angelegt hat; nicht zu verwechseln mit dem Stand der
+#: letzten inhaltlichen Änderung, den ``seiten_stand.py`` führt und der als
+#: ``dateModified`` erscheint. Zwei Angaben, zwei Register, beide von Hand –
+#: ein Datei- oder Build-Datum würde bei jedem Deploy hochspringen und eine
+#: Änderung vorgaukeln, die es nicht gab.
 WISSEN_BEITRAEGE = {
     'pflege-handbemalte-kleidung': {
         'url_name': 'wissen_pflege',
@@ -61,6 +70,7 @@ WISSEN_BEITRAEGE = {
                 'von Luviq Universe gilt.',
         # Offen: 30 °C, kein Trockner, kein Weichspüler, Bügeln nur von links.
         'freigegeben': False,
+        'veroeffentlicht': '2026-09-01',
     },
     'upcycling-mode-second-hand-vintage': {
         'url_name': 'wissen_upcycling',
@@ -70,6 +80,7 @@ WISSEN_BEITRAEGE = {
                 'nicht nachbestellbar ist und woran man Handbemalung von Druck unterscheidet.',
         # Offen: keine strittige Zahl, aber die Auflage nennt alle drei Beiträge.
         'freigegeben': False,
+        'veroeffentlicht': '2026-09-01',
     },
     'groesse-bei-einzelstuecken': {
         'url_name': 'wissen_groesse',
@@ -79,6 +90,7 @@ WISSEN_BEITRAEGE = {
                 'warum Vintage-Schnitte abweichen und wie man vor dem Kauf nachfragt.',
         # Offen: „fünf Zentimeter Unterschied in der Brustweite sind eine ganze Grösse".
         'freigegeben': False,
+        'veroeffentlicht': '2026-09-01',
     },
     # Ab hier: Beiträge, die ausschliesslich aus dem Projekt belegte Angaben
     # wiedergeben (AGB, Datenschutzerklärung, Impressum, Liefergebiet und der
@@ -94,6 +106,7 @@ WISSEN_BEITRAEGE = {
         'kurz': 'Konto, Warenkorb, Pflichtangaben im Bestellvorgang, PayPal oder '
                 'Vorab-Überweisung, Prüfung der Zahlung, Bestätigung und Versand.',
         'freigegeben': True,
+        'veroeffentlicht': '2026-09-07',
     },
     'widerruf-und-ruecksendung': {
         'url_name': 'wissen_widerruf',
@@ -102,6 +115,7 @@ WISSEN_BEITRAEGE = {
         'kurz': 'Vierzehn Tage Widerrufsrecht nach § 5 der AGB, Anschrift für die '
                 'Rücksendung, Unregelmäßigkeiten der Bemalung und echte Mängel.',
         'freigegeben': True,
+        'veroeffentlicht': '2026-09-07',
     },
     'konto-und-daten': {
         'url_name': 'wissen_konto',
@@ -110,6 +124,7 @@ WISSEN_BEITRAEGE = {
         'kurz': 'Anmeldepflicht im Warenkorb, Angaben bei der Registrierung, '
                 'Besuchsprotokoll, eingebundene Dienste und wie ein Konto gelöscht wird.',
         'freigegeben': True,
+        'veroeffentlicht': '2026-09-07',
     },
 }
 
