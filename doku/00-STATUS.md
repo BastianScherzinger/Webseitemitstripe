@@ -52,42 +52,37 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–12.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 04.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-05a) — **Gesamtstand 76,5 von 100**, Reifegrad „Solide“. 230 von 244 Regeln an 14 URLs und 126 Dateien (25.340 Zeilen) geprüft.
+**Messung vom 12.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-07d) — **Gesamtstand 83,3 von 100**, Reifegrad „Solide“. 261 von 279 Regeln an 18 URLs und 133 Dateien (28.521 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Substanz & Reichweite | **44** | Lückenhaft |
-| Konversion | **58** | Lückenhaft |
-| Vorlagen-Konformität | **64** | Brauchbar |
-| SEO — Inhalt | **73** | Brauchbar |
-| Code-Qualität & Projektreife | **73** | Brauchbar |
-| GEO — KI-Sichtbarkeit | **76** | Solide |
+| Konversion | **67** | Brauchbar |
+| Erreichbarkeit & Postfach | **69** | Brauchbar |
+| GEO — KI-Sichtbarkeit | **77** | Solide |
+| Vorlagen-Konformität | **78** | Solide |
 | Recht & Vertrauen | **79** | Solide |
-| Sicherheit | **87** | Solide |
-| Barrierefreiheit | **90** | Solide |
-| SEO — Technik | **92** | Referenz |
-| Performance & Core Web Vitals | **93** | Referenz |
-| Betrieb & Auslieferung | **93** | Referenz |
+| SEO — Inhalt | **79** | Solide |
+| Substanz & Reichweite | **82** | Solide |
+| Code-Qualität & Projektreife | **83** | Solide |
+| Betrieb & Auslieferung | **86** | Solide |
+| Barrierefreiheit | **91** | Referenz |
+| SEO — Technik | **91** | Referenz |
+| Sicherheit | **93** | Referenz |
+| Performance & Core Web Vitals | **94** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 126 Dateien, **115 Befunde**, davon 2 kritisch und 36 wichtig.
+Quelltext: 133 Dateien, **122 Befunde**, davon 0 kritisch und 39 wichtig.
 
 Kritische Befunde:
 
 - **Alle Domainvarianten landen auf einer Adresse** (`TS11`) — 0 von 1 Nebenadressen landen dauerhaft auf der Hauptadresse — offen: https://luviq-alsfeld.com: 200 → https://luviq-alsfeld.com/
-- **Umfang passt zur Aufgabe der Seite** (`IS18`) — Unter dem Umfang, den ihre Aufgabe verlangt: 7 von 7 Seiten — / (533/700 W), /produkte/ (160/600 W), /produkt/custom-hoodie-mit-print/ (111/600 W), /produkt/custom-print-hoodie-1/ (110/600 W), /produkt/custom-pants-sold/ (110/600 W) … (+2)
-- **Kein nennenswerter Anteil dünner Seiten** (`IS19`) — 69% der Seiten sind dünn (9 von 13): /produkte/ (160 W), /kontakt/ (142 W), /agb/ (179 W), /gaestebuch/ (78 W), /produkt/custom-hoodie-mit-print/ (111 W) … (+4)
-- **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (98%), /produkt/custom-print-ho
-- **Wissensinhalte vorhanden** (`SU04`) — 0 Wissensseiten, Zielgröße 3 — es gibt keinen einzigen Ratgeberbereich
-- **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 13 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /kontakt/, /datenschutz/, /agb/ … (+8)
-- **Keine Google-Schriften von fremden Servern nachgeladen** (`RE07`) — 13 von 13 Seiten laden Google-Schriften von fremden Servern: fonts.googleapis.com, https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700 · betroffen: /, /produkte/, /kontakt/ … (+10)
-- **Das Projektgerüst liegt an der vereinbarten Stelle** (`VL01`) — Projektgerüst: 1 von 6 Gerüst-Merkmalen erfüllt — es fehlt: config/settings.py, config/urls.py, config/wsgi.py, apps/-Paket statt Wurzelmodule, reine Datenmodule (data/)
-- **Genug eigener Inhalt insgesamt** (`SU02`) — 2.650 Eigenwörter über 13 Seiten, Zielgröße 12.000 (von 3.586 Wörtern Gesamttext); die umfangreichsten Seiten: / (533 W), /ueber_uns/ (376 W), /datenschutz/ (371 W)
-- **Es gibt keinen kritischen Datei-Befund** (`PJ05`) — 2 kritische Befunde: mainweb/settings.py:59 ALLOWED_HOSTS steht auf '*', shop1/middleware.py:218 Ausnahme wird verschluckt
-- **Keine Kannibalisierung durch gleiche Hauptbegriffe** (`IS23`) — Von mehreren Seiten besetzte Hauptbegriffe: 1; betroffen sind 3 von 5 Seiten — custom print auf 3 Seiten (/produkt/custom-print-hoodie-1/, /produkt/custom-print-jacke/ … (+1))
-- **Die Qualitätssicherung der Vorlage ist verdrahtet** (`VL19`) — Prüfbefehle: pruefe_seite; 215 Testfunktionen in 14 Dateien: 3 von 7 QS-Bausteinen erfüllt — es fehlt: zweiter Prüfbefehl (Links, Konsistenz), eigene Management-Befehle, CI-Lauf bei jedem Push, Fehler-Monitoring (Sentry o. ä.)
-- … und 1 weitere
+- **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
+- **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 17 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /kontakt/, /datenschutz/, /agb/ … (+12)
+- **Keine Google-Schriften von fremden Servern nachgeladen** (`RE07`) — 17 von 17 Seiten laden Google-Schriften von fremden Servern: fonts.googleapis.com, https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700 · betroffen: /, /produkte/, /kontakt/ … (+14)
+- **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
+- **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
+- **Kein nennenswerter Anteil dünner Seiten** (`IS19`) — 6% der Seiten sind dünn (1 von 17): /gaestebuch/ (130 W)
 <!-- messung:ende -->
 
 Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen

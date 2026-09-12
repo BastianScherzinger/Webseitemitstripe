@@ -6,9 +6,9 @@ status: teilweise
 fortschritt: 70
 zusammenfassung: Der LCP der Produktseite ist der teuerste Posten der Seite (Cloudinary-Bilder ohne WebP und ohne srcset); der Zweig bringt WebP, GZip, Cache und gthread, live ist davon nichts. Die gemessenen Werte stehen im erzeugten Block unter „Messwerte".
 offen: 7
-pagespeed_mobil: 87
-pagespeed_desktop: 92
-antwortzeit_ms: 2
+pagespeed_mobil: 89
+pagespeed_desktop: 91
+antwortzeit_ms: 5
 quellen: DOCUMENTATION.md, LOGBUCH.md, start.sh
 antwortzeit_quelle: PageSpeed server-response-time
 ---
@@ -24,36 +24,36 @@ und live noch nicht wirksam.
 ## Messwerte
 
 <!-- tempo:anfang -->
-**Messung vom 04.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-05a). Bereich „Performance & Core Web Vitals“: **92,9 von 100**, Reifegrad „Referenz“.
+**Messung vom 12.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-07d). Bereich „Performance & Core Web Vitals“: **94,3 von 100**, Reifegrad „Referenz“.
 
 ### Lighthouse je Seite
 
 | Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
 |---|---|---:|---:|---:|---:|---:|
-| `/` | mobile | **83** | 3,91 s | 0,000 | 32 ms | 6 ms |
-| `/` | desktop | **95** | 1,01 s | 0,000 | 128 ms | 4 ms |
-| `/datenschutz/` | mobile | **92** | 2,71 s | 0,000 | 0 ms | 1 ms |
-| `/datenschutz/` | desktop | **99** | 0,69 s | 0,000 | 0 ms | 2 ms |
-| `/impressum/` | mobile | **88** | 2,75 s | 0,000 | 0 ms | 2 ms |
+| `/` | mobile | **83** | 3,77 s | 0,000 | 0 ms | 20 ms |
+| `/` | desktop | **60** | 1,33 s | 0,000 | 1.430 ms | 9 ms |
+| `/datenschutz/` | mobile | **92** | 2,71 s | 0,000 | 0 ms | 2 ms |
+| `/datenschutz/` | desktop | **99** | 0,72 s | 0,000 | 0 ms | 3 ms |
+| `/impressum/` | mobile | **92** | 2,71 s | 0,000 | 0 ms | 2 ms |
 | `/impressum/` | desktop | **99** | 0,72 s | 0,000 | 0 ms | 2 ms |
-| `/kontakt/` | mobile | **92** | 2,74 s | 0,014 | 0 ms | 1 ms |
-| `/kontakt/` | desktop | **92** | 0,69 s | 0,000 | 217 ms | 2 ms |
-| `/produkte/` | mobile | **82** | 3,31 s | 0,000 | 133 ms | 3 ms |
-| `/produkte/` | desktop | **74** | 0,73 s | 0,000 | 526 ms | 2 ms |
+| `/kontakt/` | mobile | **91** | 2,75 s | 0,000 | 0 ms | 5 ms |
+| `/kontakt/` | desktop | **99** | 0,69 s | 0,000 | 20 ms | 2 ms |
+| `/produkte/` | mobile | **85** | 3,34 s | 0,000 | 14 ms | 3 ms |
+| `/produkte/` | desktop | **99** | 0,69 s | 0,000 | 0 ms | 3 ms |
 
-10 Abrufe, davon 4 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
+10 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 
-**Serverzeit (`server-response-time` aus PageSpeed): 2,5 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
+**Serverzeit (`server-response-time` aus PageSpeed): 5,1 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
 
 ### Tempo-Regeln, die offen sind
 
 | Regel | Titel | Ergebnis | Beleg |
 |---|---|---|---|
-| `PF01` | Lighthouse Leistung mobil erreicht 90 von 100 | teilweise | Lighthouse Leistung mobil: 87 von 100 über 5 Messungen; unter 90: / (83), /produkte/ (82), /impressum/ (88) |
-| `PF02` | Lighthouse Leistung Desktop erreicht 95 von 100 | teilweise | Lighthouse Leistung Desktop: 92 von 100 über 5 Messungen; unter 95: /produkte/ (74), /kontakt/ (92) |
-| `PF15` | Bilder liegen in einem modernen Format vor | teilweise | 19 von 44 Bildern in WebP oder AVIF, 25 im alten Format: / → IMG_4376_fupstq, / → Photoroom_20260504_222908_zundp7, / → Photoroom_20260504_222730_jjwtm5, / → Photoroom_20260504_222549_kmlpwf, / → Photoroom_20260504_22182 |
-| `PF17` | Lazy-Loading unterhalb des Falzes, nicht auf dem LCP-Bild | teilweise | 23 von 31 Bildern unterhalb des ersten sind lazy; 3 von 13 Seiten laden ihr erstes Bild lazy: /kontakt/ → ich-900.5b4b9566ab5b.webp, /gaestebuch/ → logo-luviq-96.72290a22b8e2.webp, /ueber_uns/ → ich-900.5b4b9566ab5b.webp |
-| `PF16` | Bilder werden in mehreren Grössen angeboten | teilweise | 29 von 44 Bildern mit srcset; ohne: / → IMG_4376_fupstq, / → Photoroom_20260504_222908_zundp7, / → Photoroom_20260504_222730_jjwtm5, / → Photoroom_20260504_222549_kmlpwf, / → Photoroom_20260504_221823_rh0ykx |
+| `PF01` | Lighthouse Leistung mobil erreicht 90 von 100 | teilweise | Lighthouse Leistung mobil: 89 von 100 über 5 Messungen; unter 90: / (83), /produkte/ (85) |
+| `PF02` | Lighthouse Leistung Desktop erreicht 95 von 100 | teilweise | Lighthouse Leistung Desktop: 91 von 100 über 5 Messungen; unter 95: / (60) |
+| `PF15` | Bilder liegen in einem modernen Format vor | teilweise | 23 von 48 Bildern in WebP oder AVIF, 25 im alten Format: / → IMG_4376_fupstq, / → Photoroom_20260504_222908_zundp7, / → Photoroom_20260504_222730_jjwtm5, / → Photoroom_20260504_222549_kmlpwf, / → Photoroom_20260504_22182 |
+| `PF17` | Lazy-Loading unterhalb des Falzes, nicht auf dem LCP-Bild | teilweise | 23 von 31 Bildern unterhalb des ersten sind lazy; 3 von 17 Seiten laden ihr erstes Bild lazy: /kontakt/ → ich-900.5b4b9566ab5b.webp, /gaestebuch/ → logo-luviq-96.72290a22b8e2.webp, /ueber_uns/ → ich-900.5b4b9566ab5b.webp |
+| `PF16` | Bilder werden in mehreren Grössen angeboten | teilweise | 33 von 48 Bildern mit srcset; ohne: / → IMG_4376_fupstq, / → Photoroom_20260504_222908_zundp7, / → Photoroom_20260504_222730_jjwtm5, / → Photoroom_20260504_222549_kmlpwf, / → Photoroom_20260504_221823_rh0ykx |
 | `PF18` | Das Hero-Bild trägt fetchpriority=high | teilweise | 3 von 10 Seiten ohne fetchpriority=high am ersten Bild: /kontakt/ → ich-900.5b4b9566ab5b.webp, /gaestebuch/ → logo-luviq-96.72290a22b8e2.webp, /ueber_uns/ → ich-900.5b4b9566ab5b.webp |
 | `PF19` | Das LCP-Bild wird vorgeladen, und nur dort, wo es eins gibt | teilweise | 2 von 3 Schlüsselseiten mit Bild laden es nicht vor: /produkte/, /kontakt/ |
 
