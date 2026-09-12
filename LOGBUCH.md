@@ -1787,3 +1787,72 @@ Punkt gehört. Bleibt als offener Rest notiert.
 keine Klasse, keine Kennung, kein Element, keine Reihenfolge geändert. Die
 Designwache erfasst weder Attribute noch den `<head>`; `test_aufbau` und
 `test_einstellungen` bleiben grün (47 Tests).
+
+### PJ01 – zweiter Prüfbefehl: `pruefe_links`
+
+**Befund.** Ein einziger eigener Prüfbefehl (`pruefe_seite`) neben zwei
+Management-Befehlen insgesamt. Der Katalog verlangt einen Befehl, der die
+ausgelieferte Seite prüft – Links, Preise, Schema, Kopfdaten – und mit
+Exitcode 1 beanstandet. Kopfdaten, Schema und Preise deckt `pruefe_seite`
+seit Welle 8 ab; **die Links nicht**.
+
+**Die Lücke, genau benannt.** `pruefe_seite` ruft die Adressen der Sitemap
+ab. Ein Verweis *innerhalb* einer dieser Seiten steht in keiner Liste: ein
+Tippfehler im `href`, eine umbenannte Route, ein deaktiviertes Produkt, auf
+das die Startseite noch zeigt – die Seite antwortet mit 404, und weder ein
+Test noch der Startlauf sagt etwas. Der neue Befehl
+`shop1/management/commands/pruefe_links.py` schliesst genau das:
+
+* Startpunkte sind `/`, jede Sitemap-Adresse **und jede Adresse der
+  llms.txt** – letztere prüft bisher niemand, obwohl sie von Hand
+  geschrieben ist und deshalb auseinanderlaufen kann.
+* Von dort aus jeder `<a href>`: eigene Adressen werden abgerufen (ab 400
+  Fehler, Weiterleitung Warnung), fremde nur auf `https` geprüft und
+  **nicht** abgerufen – der Befehl soll auch beim Containerstart keine
+  fremden Server anfassen.
+* Die Weiterleitung auf `LOGIN_URL` ist **keine** Beanstandung. `/warenkorb/`
+  steht in jeder Fusszeile und schickt anonyme Besucher auf `/login/`; würde
+  der Befehl das melden, stünde dieselbe Warnung in jedem Lauf, und über eine
+  Meldung, die immer dasteht, liest man hinweg.
+* Verändernde Pfade (Warenkorb, Abmeldung, Werbeklick, Kommentar,
+  Bestätigungsschlüssel, PayPal-Buchung) stehen mit Grund in
+  `KEINE_PRUEFUNG` und werden nur gezählt. Rahmen wie bei `pruefe_seite`:
+  Testclient, `secure=True`, Besuchsprotokoll aus, zurückgerollte Transaktion
+  in beiden Datenbanken.
+
+**Eine Stelle in `pruefe_seite` geändert:** `_pruefhost` ist jetzt die
+Modulfunktion `pruefhost()`, weil beide Befehle denselben Host wählen müssen.
+Zwei Fassungen derselben Entscheidung laufen auseinander, und dann prüft ein
+Befehl gegen einen Host, den `ALLOWED_HOSTS` ablehnt.
+
+**Lauf im Testkontext:** 14 Seiten gelesen, 6 eigene Adressen abgerufen,
+davon 1 hinter der Anmeldung, 2 fremde Ziele geprüft – 0 Fehler,
+0 Warnungen. Sechs neue Tests in `test_einstellungen`
+(`VerweisPruefbefehlTest`), darunter der wichtigste: eine erfundene Route
+muss als Fehler herauskommen, sonst liefe der Befehl auch auf einer kaputten
+Seite grün. **230 Tests, OK** – kein Template, kein Aufbau berührt.
+
+**Nicht in `start.sh` angeschlossen.** Der Startlauf ruft heute `migrate`,
+`collectstatic` und `pruefe_seite` auf; ein zweiter Durchlauf durch alle
+Seiten kostet dort Startzeit, ohne dass ein Deploy davon abhinge. Der Befehl
+gehört vor den Commit und in die Prüfstrecke, nicht in den Containerstart.
+
+### SU08 – nicht möglich an diesem Rechner
+
+Die Messung zählt sechs Themenbereiche und vier davon mit nur einer Seite:
+`/produkte/`, `/gaestebuch/`, `/ueber_uns/`, `/liefergebiet/`. Der Befund
+trifft zu, geschlossen werden kann er hier nicht:
+
+* **`/produkte/`** ist die Übersicht des Produktbereichs; seine Detailseiten
+  liegen unter `/produkt/<slug>/` (`shop1/urls.py:11` und `:15`) und zählen
+  deshalb als eigener Bereich. Die beiden zusammenzulegen hiesse, jede
+  indexierte Produktadresse umzuziehen – ein Eingriff in die kanonischen
+  Adressen der laufenden Seite, der weit über einen Strukturpunkt hinausgeht.
+* **`/gaestebuch/`, `/ueber_uns/`, `/liefergebiet/`** haben je eine Seite. Eine
+  zweite bräuchte Inhalt, den es im Projekt nicht gibt: Das Produktmodell hat
+  kein Kategoriefeld (`shop1/models.py:87-99`), aus dem sich Unterseiten
+  ableiten liessen, und das Seitenregister `shop1/seiten_stand.py` führt
+  genau 16 Seiten. Orte, Lieferzeiten oder eine zweite Werkstattseite kann
+  nur die Betreiberin liefern; sie zu erfinden verbietet Regel 2 jeder Stufe.
+
+Keine Zeile Code geändert.

@@ -48,6 +48,30 @@ _JSONLD = re.compile(
 )
 
 
+def pruefhost():
+    """Ein Host, den ``ALLOWED_HOSTS`` annimmt: der kanonische, sonst der aus
+    ``SITE_URL``, sonst ``localhost`` (steht im Betrieb immer drin).
+
+    Modulfunktion, weil ``pruefe_links`` dieselbe Wahl treffen muss: zwei
+    Fassungen derselben Entscheidung laufen früher oder später auseinander,
+    und dann prüft ein Befehl gegen einen Host, den die Seite ablehnt.
+    """
+    kandidaten = [
+        getattr(settings, 'CANONICAL_HOST', ''),
+        urlsplit(settings.SITE_URL).hostname or '',
+        'localhost',
+    ]
+    erlaubt = settings.ALLOWED_HOSTS
+    for host in kandidaten:
+        if not host:
+            continue
+        if '*' in erlaubt or any(
+            host == h or (h.startswith('.') and host.endswith(h)) for h in erlaubt
+        ):
+            return host
+    return 'localhost'
+
+
 class Command(BaseCommand):
     help = ('Prüft die laufende Umgebung (Variablen, Datenbanken, statische '
             'Dateien) und die ausgelieferte Seite (Sitemap, Kopfangaben, '
@@ -256,24 +280,6 @@ class Command(BaseCommand):
 
     # ── Ausgelieferte Seite ────────────────────────────────────────────
 
-    def _pruefhost(self):
-        """Ein Host, den ALLOWED_HOSTS annimmt: der kanonische, sonst der
-        aus SITE_URL, sonst localhost (steht im Betrieb immer drin)."""
-        kandidaten = [
-            getattr(settings, 'CANONICAL_HOST', ''),
-            urlsplit(settings.SITE_URL).hostname or '',
-            'localhost',
-        ]
-        erlaubt = settings.ALLOWED_HOSTS
-        for host in kandidaten:
-            if not host:
-                continue
-            if '*' in erlaubt or any(
-                host == h or (h.startswith('.') and host.endswith(h)) for h in erlaubt
-            ):
-                return host
-        return 'localhost'
-
     def _pruefe_ausgelieferte_seite(self):
         """Ruft jede Sitemap-Adresse über den Testclient ab und prüft die
         Antwort. Läuft in einer Transaktion je Datenbank, die am Ende
@@ -282,7 +288,7 @@ class Command(BaseCommand):
 
         from ...middleware import TRACKING_ENV
 
-        client = Client(HTTP_HOST=self._pruefhost(), raise_request_exception=False)
+        client = Client(HTTP_HOST=pruefhost(), raise_request_exception=False)
         umgebung = {TRACKING_ENV: 'False'}
         try:
             with mock.patch.dict(os.environ, umgebung), \

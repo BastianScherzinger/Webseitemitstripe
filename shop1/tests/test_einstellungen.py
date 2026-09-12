@@ -776,3 +776,124 @@ class BesucherprotokollTest(LuviqTestCase):
             finally:
                 for _ in belegt:
                     middleware._geo_frei.release()
+
+
+class VerweisPruefbefehlTest(LuviqTestCase):
+    """``python manage.py pruefe_links`` – der zweite eigene Prüfbefehl.
+
+    Er sieht das an, was ``pruefe_seite`` bauartbedingt übergeht: die
+    Verweise **innerhalb** der Seiten. Ein ``href`` auf eine umbenannte
+    Route steht in keiner Liste und fällt deshalb weder der Sitemapprüfung
+    noch einem Seitentest auf – die Seite antwortet dort einfach mit 404.
+    """
+
+    def _laufe(self, **optionen):
+        from io import StringIO
+
+        from django.core.management import call_command
+
+        ausgabe = StringIO()
+        try:
+            call_command('pruefe_links', stdout=ausgabe, stderr=ausgabe, **optionen)
+            code = 0
+        except SystemExit as ende:
+            code = ende.code
+        return code, ausgabe.getvalue()
+
+    def test_kein_verweis_der_seite_laeuft_ins_leere(self):
+        """Der eigentliche Zweck: mit einem aktiven Produkt im Bestand führt
+        kein Verweis einer öffentlichen Seite auf eine Adresse, die nicht
+        antwortet."""
+        erzeuge_produkt(name='Verweisjacke')
+        code, text = self._laufe()
+        fehler = [z for z in text.splitlines() if z.startswith('FEHLER')]
+        self.assertEqual(fehler, [], text)
+        self.assertEqual(code, 0, text)
+
+    def test_exitcode_und_bericht_stimmen_ueberein(self):
+        """Derselbe Vertrag wie bei ``pruefe_seite``: die Summenzeile zählt
+        genau die ausgegebenen Zeilen, und Exitcode 1 gibt es genau dann,
+        wenn mindestens ein FEHLER gemeldet wurde. Ein Prüfbefehl, der rot
+        endet, ohne den Grund zu nennen, ist so unbrauchbar wie einer, der
+        einen Fehler nennt und trotzdem mit 0 endet."""
+        code, text = self._laufe()
+        fehler = [z for z in text.splitlines() if z.startswith('FEHLER')]
+        warnungen = [z for z in text.splitlines() if z.startswith('WARNUNG')]
+
+        summe = re.search(r'(\d+) Fehler, (\d+) Warnungen\.', text)
+        if summe:
+            self.assertEqual(int(summe.group(1)), len(fehler), text)
+            self.assertEqual(int(summe.group(2)), len(warnungen), text)
+        else:
+            self.assertIn('Jeder Verweis kommt an.', text)
+            self.assertFalse(fehler or warnungen, text)
+
+        self.assertEqual(code, 1 if fehler else 0, text)
+
+    def test_toter_interner_verweis_wird_zum_fehler(self):
+        """Ohne diesen Test wäre nicht belegt, dass der Befehl überhaupt
+        etwas beanstandet – er liefe auf einer heilen Seite grün und bliebe
+        es auch auf einer kaputten."""
+        from django.test import Client
+
+        from ..management.commands.pruefe_links import Command, pruefhost
+
+        befehl = Command()
+        befehl.fehler, befehl.warnungen = [], []
+        befehl.gezaehlt = {'seiten': 0, 'ziele': 0, 'extern': 0, 'ausgelassen': 0}
+        befehl._pruefe_ziel(
+            Client(HTTP_HOST=pruefhost(), raise_request_exception=False),
+            '/diese-route-gibt-es-nicht/', ['/'],
+        )
+        self.assertEqual(len(befehl.fehler), 1, befehl.fehler)
+        self.assertIn('404', befehl.fehler[0])
+
+    def test_veraendernde_adressen_werden_nicht_abgerufen(self):
+        """Der Warenkorb-, Abmelde- und Werbeklickpfad darf nicht abgerufen
+        werden: ein Prüflauf, der Zustand ändert, misst sich selbst – und
+        ``/werbung/klick/`` würde den Abruf auf einen fremden Server
+        weiterleiten."""
+        from ..management.commands.pruefe_links import Command
+
+        for pfad in ('/warenkorb/add/1/', '/logout/', '/werbung/klick/1/',
+                     '/comment/1/delete/'):
+            self.assertIsNotNone(Command._ausgelassen(pfad), pfad)
+        self.assertIsNone(Command._ausgelassen('/produkte/'))
+
+    def test_weiterleitung_zur_anmeldung_ist_keine_beanstandung(self):
+        """``/warenkorb/`` steht in der Fusszeile jeder Seite und schickt
+        anonyme Besucher auf ``/login/``. Würde der Befehl das als Umweg
+        melden, stünde in jedem Lauf dieselbe Warnung – und über eine
+        Meldung, die immer dasteht, liest man hinweg."""
+        from django.test import Client
+
+        from ..management.commands.pruefe_links import Command, pruefhost
+
+        befehl = Command()
+        befehl.fehler, befehl.warnungen = [], []
+        befehl.gezaehlt = {'seiten': 0, 'ziele': 0, 'extern': 0,
+                           'ausgelassen': 0, 'geschuetzt': 0}
+        befehl._pruefe_ziel(
+            Client(HTTP_HOST=pruefhost(), raise_request_exception=False),
+            '/warenkorb/', ['/'],
+        )
+        self.assertEqual(befehl.fehler, [])
+        self.assertEqual(befehl.warnungen, [])
+        self.assertEqual(befehl.gezaehlt['geschuetzt'], 1)
+
+    def test_fremde_und_eigene_verweise_werden_getrennt(self):
+        """Ein fremdes Ziel gehört nicht in den Abrufplan (der Befehl läuft
+        ohne Netzzugriff), ein ``mailto:`` in keinen von beiden."""
+        from ..management.commands.pruefe_links import Command
+
+        html = (
+            '<a href="/produkte/">Produkte</a>'
+            '<a href="wissen/">relativ</a>'
+            '<a href="https://www.instagram.com/luviq.universe/">Instagram</a>'
+            '<a href="mailto:brehlerluisa@gmail.com">Mail</a>'
+            '<a href="#inhalt">Sprungmarke</a>'
+        )
+        ziele, extern = {}, {}
+        Command()._sammle('/', html, ziele, extern)
+        self.assertEqual(sorted(ziele), ['/produkte/', '/wissen/'])
+        self.assertEqual(sorted(extern), ['https://www.instagram.com/luviq.universe/'])

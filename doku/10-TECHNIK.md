@@ -4,7 +4,7 @@ titel: Technik, Hosting und Aufbau
 stand: 2026-09-12
 status: teilweise
 fortschritt: 74
-zusammenfassung: Stack läuft stabil. Seit den Merges 0c18ea7, 4ec540b, 1a5f36b und c522ff9 liegen auf main auch die scharf gestellte CSP, die Nonce im script-src statt 'unsafe-inline' (Handler-Attribute durch data-Attribute ersetzt), die festgenagelten Paketfassungen samt requirements.lock (Django 5.2.17), die abgearbeiteten Audit-Funde und die Danke-Seite /kontakt/danke/ (never_cache); main = origin/main = 4f91ac9. Im Zweig sofort/2026-09-12-vl21-und-2-weitere (ein Commit, nicht gemergt) liegt die Produktkarte als zwei Bausteine unter shop1/templates/shop1/teile/ und wird per include eingebunden — gerendertes HTML unverändert, 224 Tests laut Commit; neue Falle: load wird an ein include nicht vererbt. Im Zweig sofort/2026-09-12-si17-und-2-weitere tragen die vier Fremdskripte (Alpine, intersect, GSAP, Three.js) integrity und crossorigin. Offen bleiben der Merge, Bezahlseite und Ersatzskripte mit Browserkonsole, 'unsafe-eval' für Alpine.js, der erste CI-Lauf mit 5.2.17, CANONICAL_HOST in Railway, runtime.txt/railway.json und die Permissions-Policy.
+zusammenfassung: Stack läuft stabil. Seit den Merges 0c18ea7, 4ec540b, 1a5f36b und c522ff9 liegen auf main auch die scharf gestellte CSP, die Nonce im script-src statt 'unsafe-inline' (Handler-Attribute durch data-Attribute ersetzt), die festgenagelten Paketfassungen samt requirements.lock (Django 5.2.17), die abgearbeiteten Audit-Funde und die Danke-Seite /kontakt/danke/ (never_cache); main = origin/main = 4f91ac9. Im Zweig sofort/2026-09-12-vl21-und-2-weitere (ein Commit, nicht gemergt) liegt die Produktkarte als zwei Bausteine unter shop1/templates/shop1/teile/ und wird per include eingebunden — gerendertes HTML unverändert, 224 Tests laut Commit; neue Falle: load wird an ein include nicht vererbt. Im Zweig sofort/2026-09-12-si17-und-2-weitere tragen die vier Fremdskripte (Alpine, intersect, GSAP, Three.js) integrity und crossorigin, und neben pruefe_seite steht ein zweiter Prüfbefehl pruefe_links (jeder Verweis jeder öffentlichen Seite, 230 Tests grün). Offen bleiben der Merge, Bezahlseite und Ersatzskripte mit Browserkonsole, 'unsafe-eval' für Alpine.js, der erste CI-Lauf mit 5.2.17, CANONICAL_HOST in Railway, runtime.txt/railway.json und die Permissions-Policy.
 offen: 12
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, paypal_sandbox_tutorial.md, start.sh, Dockerfile, requirements.txt
 ---
@@ -141,9 +141,10 @@ erreicht die Besucherin weiter nicht — die Danke-Seite erscheint trotzdem
 
 | Befehl | Was | Stand |
 |---|---|---|
-| `python manage.py test shop1` | Testsuite in 14 Modulen, Laufzeit rund 2,5 Minuten; main: **218 Tests** (seit `4ec540b` mit den drei SI09-Tests in `test_einstellungen`), Zweig KV07: **224 Tests** (sechs neue in `test_formulare`) | Zweig KV07 224/224 grün laut `2d78a55` |
+| `python manage.py test shop1` | Testsuite in 14 Modulen, Laufzeit rund 2,5 Minuten; main: **218 Tests** (seit `4ec540b` mit den drei SI09-Tests in `test_einstellungen`), Zweig KV07: **224 Tests** (sechs neue in `test_formulare`), Zweig 12.09. PJ01: **230 Tests** (sechs neue in `test_einstellungen` zu `pruefe_links`) | Zweig PJ01 230/230 grün |
 | `python manage.py test shop1.tests.<modul>` | einzelnes Modul | Zweig |
 | `python manage.py pruefe_seite [--streng]` | Prüfbefehl: Einstellungen, beide Datenbanken, aktive Produkte (Pflichtwerte, doppelte Slugs), jede Sitemap-Adresse 200 mit Titel, Beschreibung 110–175, canonical, robots, JSON-LD, Schutzkopfzeilen samt CSP; hinterlässt keine Spuren (`VISITOR_TRACKING` aus, zurückgerollte Transaktion) | Zweig |
+| `python manage.py pruefe_links [--streng]` | Prüfbefehl (Zweig 12.09., PJ01): liest `/`, jede Sitemap- und jede llms.txt-Adresse und ruft **jeden `<a href>` darin** ab — tote eigene Adressen sind Fehler, Weiterleitungen Warnungen (ausser auf `LOGIN_URL`), fremde Ziele werden nur auf `https` geprüft, nicht abgerufen; verändernde Pfade (Warenkorb, Abmeldung, Werbeklick, Kommentar) stehen in `KEINE_PRUEFUNG`. Gleiche Vorsorge wie oben: kein Besuchsprotokoll, zurückgerollte Transaktion | Zweig |
 | `python manage.py check --deploy` | Django-Prüfung | beide |
 | `python manage.py fix_pystore_schema` | `seite`-Spalte in `pystore` | beide |
 | `python manage.py makemigrations shop1` | einzige App; 18 Migrationen (Zweig, `0018` legt die pystore-Tabellen auch ohne PostgreSQL an) | |
@@ -167,7 +168,7 @@ WebseiteMAIN/
 │   ├── routers.py      WerbungRouter → pystore
 │   ├── seiten_stand.py Register lastmod/dateModified (Zweig)
 │   ├── context_processors.py (Zweig SI09: csp_nonce), signals.py, forms.py, utils.py (send_brevo_email)
-│   ├── management/commands/  fix_pystore_schema.py, pruefe_seite.py (Zweig)
+│   ├── management/commands/  fix_pystore_schema.py, pruefe_seite.py, pruefe_links.py (Zweig)
 │   ├── tests/          14 Module (Zweig)
 │   ├── templates/shop1/  Seiten, legal/, wissen/ (Zweig), admin/, teile/ (Zweig 12.09.: angebot.html, angebot_galerie.html)
 │   └── static/shop1/   style.css, tailwind.css, images/ (Zweig: WebP in mehreren Breiten, flavicon.ico)
