@@ -307,4 +307,5 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | EIG101 | Der `speakable`-Selektor markiert auf elf Seiten jeden Absatz im Inhalt | seo | offen | bei einer anderen betreuten Seite aufgefallen am 12.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-12 |
 | EIG102 | „Langjährige Erfahrung" steht live neben dem Gründungsjahr 2025 | inhalte | offen | bei einer anderen betreuten Seite aufgefallen am 12.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-12 |
 | EIG103 | Zwei Galeriefotos tragen dieselbe Beschriftung und damit denselben Sitemap-Bildtitel | seo | offen | bei einer anderen betreuten Seite aufgefallen am 12.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-12 |
+| EIG104 | Datenschutzerklärung bestreitet eine Messung, die der Code durchführt | inhalte | offen | bei einer anderen betreuten Seite aufgefallen am 12.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-12 |
 <!-- eigenepunkte:ende -->
