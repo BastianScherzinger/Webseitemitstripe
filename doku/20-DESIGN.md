@@ -1,10 +1,10 @@
 ---
 bereich: design
 titel: Design und Gestaltungslinie
-stand: 2026-09-11
+stand: 2026-09-12
 status: teilweise
 fortschritt: 77
-zusammenfassung: Dunkelbraun-Gold-Linie mit Glas-Karten steht und ist durch die Designwache eingefroren; offen sind Google-Schriften von fremdem Server, englische Restbeschriftungen und seit IS18 die Satzart des langen Versalien-Absatzes auf /produkte/ (braucht Freigabe).
+zusammenfassung: Dunkelbraun-Gold-Linie mit Glas-Karten steht und ist durch die Designwache eingefroren; die Produktkarte liegt seit dem 12.09.2026 als Baustein unter shop1/templates/shop1/teile/, ohne eine Änderung am gerenderten HTML. Offen sind Google-Schriften von fremdem Server (RE07, am 12.09.2026 erneut als nicht möglich beendet: keine WOFF2 im Projekt, kein Netzzugang im Lauf), englische Restbeschriftungen und seit IS18 die Satzart des langen Versalien-Absatzes auf /produkte/ (braucht Freigabe).
 offen: 6
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, shop1/static/shop1/style.css, tailwind.config.js, templates/base.html
 ---
@@ -46,9 +46,12 @@ Bauteile: `.glass` (Blur 20 px), `.glass-card` (Verlauf + mehrschichtiger Schatt
 (mit Alpine `x-intersect`). Kontrastwerte sind **nicht dokumentiert** — nirgends gerechnet.
 
 **Schriften:** `Inter` 400–700 für Fliesstext, `Outfit` 700/900 für Überschriften (`.heading-font`),
-beide von **`fonts.googleapis.com`** (Preconnect + `media="print" onload` + `noscript`,
-`base.html` Zeilen 172–175). Das ist der Rechtsbefund RE07 (13 von 13 Seiten, Messung
-02.09.2026) und im Zweig **nicht** behoben. Fallback `sans-serif`.
+beide von **`fonts.googleapis.com`** (Preconnect + `media="print"` mit `data-schrift-nachladen`
+seit SI09 + `noscript`, `base.html` Zeilen 212–215). Das ist der Rechtsbefund RE07 (13 von 13
+Seiten, Messung 02.09.2026) und weiter **nicht** behoben: am 12.09.2026 (Paket 183) erneut
+angefasst und als nicht möglich beendet — im Projekt ist keine einzige `*.woff2`-Datei
+versioniert, und der Lauf hatte keinen Netzzugang, um die Schnitte zu holen. Die Umstellung
+bleibt damit offen ([80-AUFGABEN.md](80-AUFGABEN.md) → Offen Nr. 3). Fallback `sans-serif`.
 
 ## Seitenaufbau
 
@@ -71,6 +74,15 @@ Zweig `sofort/2026-09-11-is18`, nicht gemergt) auf den Umfang einer Kategoriesei
 nur Text, Klassen und Aufbau unverändert. Bei diesem Umfang ist der Absatz in dieser Satzart lang
 zu lesen und schiebt das Produktraster nach unten (Nebenbefund in `LOGBUCH.md`, Paket 165; siehe „Offen").
 
+**Die Produktkarte liegt seit dem 12.09.2026 als eigener Baustein** (`VL21`, `5f517de`, Zweig
+`sofort/2026-09-12-vl21-und-2-weitere`, nicht gemergt): `shop1/templates/shop1/teile/angebot.html`
+für `/produkte/`, `teile/angebot_galerie.html` für den Startseiten-Abschnitt — zwei Dateien, weil
+die beiden Karten sich in Ecken, Bildhöhe, `srcset`, Abzeichen und Aufbau des Textteils
+unterscheiden. **Am Aussehen ändert das nichts:** das gerenderte HTML ist wörtlich dasselbe wie
+vorher, `test_aufbau` bleibt ohne Änderung der Referenz grün, keine neue Klasse, kein
+Tailwind-Neubau. Wer künftig am Aussehen einer Produktkarte etwas ändern will, ändert diese
+Bausteine — und damit bewusst die Designwache-Referenz.
+
 **Produktdetail:** Galerie, Preis, Warenkorb-Knopf, „Spezifikationen"-Absatz (Zweig: statischer
 Zusatz zu 1-of-1, Zahlung, Versand), `Product`/`Offer`/`Brand` + `BreadcrumbList` im JSON-LD.
 
@@ -78,8 +90,7 @@ Zusatz zu 1-of-1, Zahlung, Versand), `Product`/`Offer`/`Brand` + `BreadcrumbList
 `h1` mit Kicker in Versalien, Formulare mit `.form-input`. Impressum/Datenschutz/AGB als
 Textseiten mit Emoji-Ikonen (📍 📧 ⚖️ 🌍).
 
-**Danke-Seite (`/kontakt/danke/`, Zweig `sofort/2026-09-11-kv07-und-2-weitere`, `2d78a55`,
-nicht gemergt):** neue Seite nach dem Aufbau von `payment_success.html` — Nebel, Glaskarte,
+**Danke-Seite (`/kontakt/danke/`, `2d78a55`, seit dem Merge `c522ff9` auf `main`):** neue Seite nach dem Aufbau von `payment_success.html` — Nebel, Glaskarte,
 Symbolkreis mit einem Häkchen als Inline-SVG statt Emoji, Versalien-Überschrift „Danke für deine
 Nachricht", zwei Knöpfe (Zur Startseite, Unikate ansehen). Laut `LOGBUCH.md` (Paket 171) nur
 Klassen, die in der gebauten `tailwind.css` schon stehen. Keine bestehende Seite verändert;

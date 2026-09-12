@@ -1,10 +1,10 @@
 ---
 bereich: local-seo
 titel: Local SEO
-stand: 2026-09-11
+stand: 2026-09-12
 status: teilweise
 fortschritt: 25
-zusammenfassung: Search Console seit 03.09.2026 verbunden (Property sc-domain:luviq-alsfeld.com im Konto …05@gmail.com); Unternehmensprofil und Bewertungen bleiben nicht dokumentiert. Die Platzhalterdaten auf /kontakt/ und „www.luviq.de“ im Impressum sind auf main ersetzt, ob Railway das ausgeliefert hat, ist nicht geprüft. GE11 (sameAs) ist am 11.09.2026 nicht möglich: ausser Instagram ist keine Profiladresse dokumentiert.
+zusammenfassung: Search Console seit 03.09.2026 verbunden (Property sc-domain:luviq-alsfeld.com im Konto …05@gmail.com); Unternehmensprofil und Bewertungen bleiben nicht dokumentiert — der Standardwert von GOOGLE_REVIEW_URL ist ein Maps-Suchlink, kein Profil (settings.py:409, geprüft 12.09.2026). Die Platzhalterdaten auf /kontakt/ und „www.luviq.de“ im Impressum sind auf main ersetzt, ob Railway das ausgeliefert hat, ist nicht geprüft. GE11 (sameAs) ist am 11.09. und am 12.09.2026 nicht möglich und steht seit dem 12.09.2026 als beim Kunden im Bewertungsblock: ausser Instagram ist keine Profiladresse dokumentiert.
 offen: 5
 unternehmensprofil: unbekannt
 search_console: ja
@@ -31,9 +31,9 @@ ein kostenloses Profil anzulegen und die Seite dort zu verlinken; ob das gescheh
 
 Hinweise im Code:
 
-- `_reviews_map.html` bettet eine **Google-Maps-Karte** auf die Anschrift „Grünberger Str. 16, 36304 Alsfeld" ein (`maps.google.com/maps?q=…&output=embed`) und zeigt einen Knopf **„Bei Google bewerten"** mit dem Ziel aus der Umgebungsvariablen `GOOGLE_REVIEW_URL` (Kontextprozessor). Ob die Variable in Railway gesetzt ist und wohin sie zeigt, ist **nicht dokumentiert**. Ein Bewertungslink setzt normalerweise ein Unternehmensprofil voraus.
+- `_reviews_map.html` bettet eine **Google-Maps-Karte** auf die Anschrift „Grünberger Str. 16, 36304 Alsfeld" ein (`maps.google.com/maps?q=…&output=embed`) und zeigt einen Knopf **„Bei Google bewerten"** mit dem Ziel aus der Umgebungsvariablen `GOOGLE_REVIEW_URL` (Kontextprozessor). Ob die Variable in Railway gesetzt ist, ist **nicht dokumentiert**; ihr **Standardwert im Code ist kein Profil, sondern ein Maps-Suchlink** (`mainweb/settings.py:409`, `https://www.google.com/maps/search/Luviq+Universe+Alsfeld`, geprüft 12.09.2026). Ein Bewertungslink setzt normalerweise ein Unternehmensprofil voraus.
 - Das Schema (`base.html`) ist `ClothingStore` mit `GeoCoordinates` (50.7517, 9.2685) und `areaServed` über 18 hessische Städte — für ein Unternehmen ohne Ladengeschäft wäre `OnlineStore`/`Organization` mit `areaServed` ehrlicher; nicht entschieden.
-- `sameAs` nennt nur Instagram (`https://www.instagram.com/luviq.universe/`); ein Profil-Link fehlt (GE11). Am 11.09.2026 (Paket 171) als **nicht möglich** beendet: im Projekt steht keine weitere Profiladresse — TikTok nennt `GOOGLE_SEO_GUIDE.md` nur als Bio-Verlinkung, ohne Adresse. Eine Adresse zu raten hiesse, das Schema mit einem fremden Profil zu verknüpfen; keine Zeile Code geändert. Die Adressen liefert die Betreiberin ([80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 15).
+- `sameAs` nennt nur Instagram (`https://www.instagram.com/luviq.universe/`, `base.html:118`); ein Profil-Link fehlt (GE11). Am 11.09.2026 (Paket 171) und am **12.09.2026 (Paket 183)** je als **nicht möglich** beendet, mit demselben Befund: im Projekt steht genau diese eine Profiladresse, dieselbe auch in `llms.txt` (`views/legal.py:166`); der Bewertungsknopf zeigt im Standard auf einen Maps-Suchlink, nicht auf ein Profil, und TikTok nennt `GOOGLE_SEO_GUIDE.md` nur als Bio-Verlinkung, ohne Adresse. Eine Adresse zu raten hiesse, das Schema mit einem fremden Profil zu verknüpfen; in beiden Paketen keine Zeile Code geändert. Seit dem 12.09.2026 steht GE11 als **beim Kunden** im Bewertungsblock; die Adressen liefert die Betreiberin ([80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 6 und 15).
 
 ## Search Console
 
