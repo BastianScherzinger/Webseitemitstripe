@@ -1,0 +1,66 @@
+{% load custom_tags %}
+{% comment %}
+Angebotsbaustein der Produktübersicht (VL21).
+
+`{% load %}` gilt je Vorlagendatei und wird nicht vererbt — ohne die Zeile
+oben kennt dieser Baustein den Filter `cloud` nicht, obwohl die einbindende
+Vorlage ihn geladen hat.
+
+Das Angebot dieses Shops ist das einzelne Kleidungsstück; seine Karte auf
+/produkte/ steht hier statt mitten in der Vorlage. Eingebunden aus
+`produkte.html` innerhalb der Schleife über `produkte_liste` — der Baustein
+erbt darum `produkt` und `forloop` aus dem umgebenden Kontext (kein `only`).
+
+Die Startseite zeigt dasselbe Angebot in einer anderen, bewusst eigenen
+Ausprägung; sie hat mit `angebot_galerie.html` ihren eigenen Baustein im
+selben Ordner. Beide zusammenzulegen hiesse, die geschützten Klassen und
+Höhen der beiden Ansichten in Verzweigungen zu pressen — siehe die
+Begründung im Logbuch.
+
+Am gerenderten HTML ändert dieser Baustein nichts: Reihenfolge, Klassen und
+Attribute sind die der bisherigen Zeilen 72-115 von `produkte.html`.
+{% endcomment %}
+<div class="scroll-reveal glass-card rounded-[3rem] product-card flex flex-col group"
+     x-data="{ shown: false }"
+     x-intersect.once="shown = true"
+     :class="{ 'visible': shown }"
+     style="transition-delay: 0.{{ forloop.counter0 }}s">
+
+    <!-- Image Container -->
+    <div class="relative h-[20rem] sm:h-[28rem] overflow-hidden group">
+        {% if produkt.bild %}
+            <img src="{{ produkt.bild.url|cloud:'w_800,h_1000,c_fill' }}"
+                 srcset="{{ produkt.bild.url|cloud:'w_400,h_500,c_fill' }} 400w, {{ produkt.bild.url|cloud:'w_800,h_1000,c_fill' }} 800w, {{ produkt.bild.url|cloud:'w_1200,h_1500,c_fill' }} 1200w"
+                 sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw"
+                 alt="{{ produkt.name }} – handbemaltes Upcycling-Unikat von Luviq Universe" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[10%] group-hover:grayscale-0" width="800" height="1000" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" {% if forloop.first %}fetchpriority="high"{% endif %} decoding="async">
+        {% endif %}
+        <div class="shimmer-mask absolute inset-0 opacity-20"></div>
+
+        <!-- Overlay Badges -->
+        <div class="absolute inset-0 bg-gradient-to-t from-space-black via-transparent to-transparent opacity-60"></div>
+        <div class="absolute top-6 left-6 flex flex-col gap-2">
+            <span class="glass px-4 py-1.5 rounded-full text-[10px] font-black uppercase text-white/80 tracking-widest border-white/5">Unique</span>
+            {% if produkt.lagerbestand < 3 %}
+                <span class="glass px-4 py-1.5 rounded-full text-[10px] font-black uppercase text-glow-orange tracking-widest border-white/5">Limited</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Info Container -->
+    <div class="p-6 sm:p-10 flex flex-col flex-grow">
+        <div class="mb-6">
+            <h3 class="text-2xl font-bold heading-font text-white mb-2">{{ produkt.name }}</h3>
+            <p class="text-white/30 text-xs font-light tracking-widest uppercase">Handbemaltes 1-of-1 Unikat</p>
+        </div>
+
+        <div class="mt-auto flex items-center justify-between">
+            <div class="flex flex-col">
+                <span class="text-[10px] text-white/30 uppercase tracking-widest mb-1">Endpreis</span>
+                <span class="text-2xl font-black text-glow">{{ produkt.preis }} €</span>
+            </div>
+            <a href="{{ produkt.get_absolute_url }}" aria-label="{{ produkt.name }} ansehen" class="w-14 h-14 btn-glow rounded-2xl flex items-center justify-center text-white transition-all transform hover:rotate-12 group shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+            </a>
+        </div>
+    </div>
+</div>

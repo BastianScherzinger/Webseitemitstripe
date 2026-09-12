@@ -1,10 +1,10 @@
 ---
 bereich: seo
 titel: SEO und GEO
-stand: 2026-09-11
+stand: 2026-09-12
 status: teilweise
 fortschritt: 74
-zusammenfassung: SEO-Technik live solide (92), Inhalt 73, GEO 76; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten, 301 auf www, drei indexierte Wissensseiten und seit dem 08.09.2026 GE23/GE25/IS19 (Antwortabsatz, belegte Zahlen, keine dünne Seite mehr) liegen fertig im Code, nicht nachgemessen. IS18 (seit dem Merge 1a5f36b auf main) bringt Startseite, Produktübersicht und Wissensübersicht laut Commit auf den Umfang ihrer Seitenart und zieht deren lastmod auf den 11.09.2026; die Produktseiten bleiben darunter. Die Danke-Seite /kontakt/danke/ (KV07, Zweig sofort/2026-09-11-kv07-und-2-weitere, nicht gemergt) ist noindex und steht weder in Sitemap noch in llms.txt. GE11 (sameAs) ist am 11.09.2026 nicht möglich, weil ausser Instagram keine Profiladresse dokumentiert ist.
+zusammenfassung: SEO-Technik live solide (92), Inhalt 73, GEO 76; llms.txt, KI-Crawler-Regeln, WebPage/Person/Breadcrumb-Knoten, 301 auf www, drei indexierte Wissensseiten und seit dem 08.09.2026 GE23/GE25/IS19 (Antwortabsatz, belegte Zahlen, keine dünne Seite mehr) liegen fertig im Code, nicht nachgemessen. IS18 (seit dem Merge 1a5f36b auf main) bringt Startseite, Produktübersicht und Wissensübersicht laut Commit auf den Umfang ihrer Seitenart und zieht deren lastmod auf den 11.09.2026; die Produktseiten bleiben darunter. Die Danke-Seite /kontakt/danke/ (KV07) ist seit dem Merge c522ff9 auf main, noindex und weder in Sitemap noch in llms.txt. GE11 (sameAs) ist am 11.09. und am 12.09.2026 nicht möglich und steht seit dem 12.09.2026 als beim Kunden im Bewertungsblock, weil ausser Instagram keine Profiladresse dokumentiert ist. Das Paket vom 12.09.2026 (VL21) ändert an Inhalt, Meta und Schema nichts.
 offen: 9
 quellen: GOOGLE_SEO_GUIDE.md, LOGBUCH.md, DOCUMENTATION.md, shop1/views/legal.py, shop1/seiten_stand.py, templates/base.html
 ---
@@ -54,7 +54,7 @@ luviq" war falsch und ist gestrichen.
 
 | Knoten | Wo | Stand |
 |---|---|---|
-| `Organization`/`ClothingStore` mit `PostalAddress`, `GeoCoordinates`, `areaServed` (Hessen, DE, 18 Städte), `OfferCatalog` mit drei `Product`/`Offer`, `sameAs` Instagram | `base.html` | live; `sameAs` nur 1 Verweis (GE11, am 11.09.2026 nicht möglich — keine weitere Profiladresse im Projekt); **Telefon fehlt** — es gibt keine (GE09, VL10) |
+| `Organization`/`ClothingStore` mit `PostalAddress`, `GeoCoordinates`, `areaServed` (Hessen, DE, 18 Städte), `OfferCatalog` mit drei `Product`/`Offer`, `sameAs` Instagram | `base.html` | live; `sameAs` nur 1 Verweis (GE11, am 11.09. und 12.09.2026 nicht möglich — keine weitere Profiladresse im Projekt); **Telefon fehlt** — es gibt keine (GE09, VL10) |
 | `WebSite` | `base.html` | live |
 | `ImageObject` (Logo) | `base.html` | live |
 | `ItemList` (aktuelle Produkte) | `index.html` | live |
@@ -89,7 +89,7 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 | GE24 Frage-Überschriften | 2 von 13 | Wissensseiten (6–7 Fragen je Seite), FAQ auf `/kontakt/` |
 | GE16 Autor | 0 | `Person #luisa` als `author` |
 | GE18 `dateModified` | 0 | Register, von Hand gepflegt (bewusst kein Build-Datum) |
-| GE11 `sameAs` | 1 (Instagram) | unverändert — Unternehmensprofil, TikTok, Wikidata nicht dokumentiert. Paket 171 (11.09.2026) **nicht möglich**: keine weitere Profiladresse im Projekt, TikTok nennt `GOOGLE_SEO_GUIDE.md` nur als Bio-Verlinkung ohne Adresse; keine Zeile Code geändert ([80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 15) |
+| GE11 `sameAs` | 1 (Instagram) | unverändert — Unternehmensprofil, TikTok, Wikidata nicht dokumentiert. Paket 171 (11.09.2026) und Paket 183 (12.09.2026) je **nicht möglich**: im Projekt steht genau eine Profiladresse (`base.html:118`, dieselbe in `llms.txt`, `views/legal.py:166`), `GOOGLE_REVIEW_URL` ist im Standard ein Maps-Suchlink (`settings.py:409`) und TikTok nennt `GOOGLE_SEO_GUIDE.md` nur als Bio-Verlinkung ohne Adresse; keine Zeile Code geändert. Seit dem 12.09.2026 als **beim Kunden** im Bewertungsblock ([80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 15) |
 | GE30 `llms.txt` | 404 | 200 |
 | GE02 Trainings-Crawler | nicht geregelt | 13 Crawler ausdrücklich erlaubt (Entscheidung: zulassen) |
 | GE19 `speakable` | 0 | 0 |
@@ -121,6 +121,6 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 | Überschriftensprünge `h1 → h3` auf 10 Bestandsseiten — nur mit bewusster Änderung der Designwache-Referenz | IS14, BF15 | Templates + `aufbau_referenz.json` |
 | Sitemap in drei Klassen segmentieren, Sitemap-Index, Bild-Erweiterung für alle Einträge | VL07, TS19 | `legal.py` |
 | `speakable`, Antwort-Baustein, IndexNow, `llms-full.txt` | VL09, PJ13, GE19, GE31 | |
-| `sameAs` erweitern (Unternehmensprofil, TikTok, weitere Profile) — Adressen nicht dokumentiert; am 11.09.2026 als nicht möglich beendet, wartet auf die Adressen ([80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 15) | GE11 | Betreiberin, dann `base.html` und `llms.txt` |
+| `sameAs` erweitern (Unternehmensprofil, TikTok, weitere Profile) — Adressen nicht dokumentiert; am 11.09. und am 12.09.2026 als nicht möglich beendet, wartet auf die Adressen ([80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 15) | GE11 | Betreiberin, dann `base.html` und `llms.txt` |
 | Produktnamen/-titel eindeutig, „custom print"-Kannibalisierung | IS03, IS10, IS23, BF21 | Shop-Admin |
 | Search Console anbinden, Sitemap einreichen (Guide Schritt 1) — Konto nicht dokumentiert | — | Betreiberin + Werkzeug |
