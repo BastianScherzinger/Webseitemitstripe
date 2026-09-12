@@ -1731,3 +1731,59 @@ weder `curl` noch `urllib` sind freigegeben. Eine halbe Umstellung (nur
 Inter, Outfit weiter von Google) bringt rechtlich nichts: die Adresse des
 Besuchers geht trotzdem vor jeder Einwilligung zu Google. Keine Zeile Code
 geändert.
+
+## Paket 196 (12.09.2026) – SI17, SU08, PJ01
+
+### SI17 – `integrity` und `crossorigin` an allen vier Fremdskripten
+
+**Befund.** Drei fremde Skripte im ausgelieferten HTML ohne `integrity`:
+`@alpinejs/intersect@3.14.8`, `alpinejs@3.14.8` (`templates/base.html:218-219`)
+und `gsap@3.12.5` (`shop1/templates/shop1/index.html:517`). Dazu ein viertes,
+das die Messung nicht sieht, weil es erst im Browser entsteht:
+`three@0.158.0`, per `document.createElement('script')` nachgeladen
+(`index.html:661`). Alle vier liegen auf `cdn.jsdelivr.net`. Ohne `integrity`
+führt der Browser aus, was dieser Server heute ausliefert – Alpine.js hängt
+über `base.html` in jeder Seite und hat Zugriff auf Sitzung, Warenkorb und
+jedes Formular.
+
+**Änderung.** Je Skript `integrity="sha256-…"` und `crossorigin="anonymous"`;
+beim nachgeladenen Three.js `s.integrity` und `s.crossOrigin` vor `s.src`,
+gesetzt bevor `appendChild` den Abruf auslöst.
+
+| Datei | Hash (SHA-256, base64) |
+|---|---|
+| `@alpinejs/intersect@3.14.8/dist/cdn.min.js` | `sav73qRAT3EB3ibvbi5l9O+uc757MwIUHuzyfe9oVg4=` |
+| `alpinejs@3.14.8/dist/cdn.min.js` | `tgDjY9mdlURNtUrL+y3v/smueSqpmgkim82geOW1VkM=` |
+| `gsap@3.12.5/dist/gsap.min.js` | `KAM+RJox68w5blvosTtjFSvwMJQoj7WGcDQyGSe84Ic=` |
+| `three@0.158.0/build/three.min.js` | `Ozocl9485l7Fsowo2fKAWnOOllFiJpG6dxqpXHnUHVE=` |
+
+**Woher die Hashes stammen – und warum keiner geraten ist.** Dieser Lauf darf
+weder `curl` noch `urllib` benutzen, die Dateien selbst waren nicht zu holen.
+Die Werte kommen aus der Dateiauskunft von jsDelivr, deren `hash`-Feld den
+SHA-256 des Dateiinhalts base64-codiert trägt. Ein falscher Hash wäre
+schlimmer als gar keiner – der Browser lädt Alpine dann nicht mehr, und kein
+lokaler Test bemerkt es. Deshalb zwei Vorkehrungen:
+
+1. **Jeder Hash zweimal über verschiedene Endpunkte abgefragt**
+   (`/v1/packages/npm/<paket>@<fassung>?structure=flat` und
+   `/v1/package/npm/<paket>@<fassung>/flat`) – alle vier stimmen zeichengenau
+   überein.
+2. **Gegenprobe an einem Wert, den ein Dritter veröffentlicht:** für
+   `jquery@3.7.1/dist/jquery.min.js` meldet dieselbe Auskunft
+   `/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=` – genau die Zeichenfolge,
+   die jQuery selbst als `integrity="sha256-…"` angibt. Damit ist belegt, dass
+   dieses Feld ein SRI-tauglicher SHA-256 ist und kein interner Prüfwert.
+
+**Nicht angefasst: die zwei Chart.js-Einbindungen des Admin-Panels.**
+`admin/werbung_list.html:365` lädt `chart.js@4.4.0/dist/chart.umd.min.js` –
+eine Datei, die es im Paket nicht gibt; jsDelivr erzeugt sie beim Abruf
+selbst, und für erzeugte Dateien gibt es keinen veröffentlichten Hash.
+`admin/stats.html:246` lädt `chart.js` ganz ohne Fassung, also eine Datei,
+die sich jederzeit ändern darf. Beide abzusichern hiesse, die Einbindung auf
+eine andere Datei umzustellen – eine Fassungsänderung, die nicht zu diesem
+Punkt gehört. Bleibt als offener Rest notiert.
+
+**Aussehen.** Nur zwei zusätzliche Attribute an bestehenden `<script>`-Tags:
+keine Klasse, keine Kennung, kein Element, keine Reihenfolge geändert. Die
+Designwache erfasst weder Attribute noch den `<head>`; `test_aufbau` und
+`test_einstellungen` bleiben grün (47 Tests).
