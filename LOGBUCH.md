@@ -1856,3 +1856,47 @@ trifft zu, geschlossen werden kann er hier nicht:
   nur die Betreiberin liefern; sie zu erfinden verbietet Regel 2 jeder Stufe.
 
 Keine Zeile Code geändert.
+
+### MW15 – dritter Prüfbefehl: `pruefe_mail`
+
+**Befund.** Kein Management-Befehl prüft den Mailweg. Das trifft hier
+besonders hart, weil dieses Projekt **zwei** Wege benutzt und ein Ausfall auf
+beiden still ist: `shop1/utils.py::send_brevo_email` verschickt Bestell-,
+Kontakt-, Bestätigungs- und Newslettermails über die Brevo-HTTP-API in einem
+eigenen Thread und protokolliert einen Fehlschlag nur ins Log (`utils.py:41`
+und `:59`); die Bestellung gilt trotzdem als aufgegeben. Djangos `send_mail`
+über das Brevo-SMTP-Relay ist der Rückfall derselben Funktion und der einzige
+Weg der Passwort-vergessen-Mail. Ein falscher Schlüssel oder ein geblockter
+Port fällt so niemandem auf.
+
+**Gebaut:** `shop1/management/commands/pruefe_mail.py` nach dem Vertrag der
+beiden anderen Prüfbefehle (Zeilen `WARNUNG`/`FEHLER`, Summenzeile, Exitcode 1
+bei jedem Fehler, `--streng` zieht Warnungen nach).
+
+* **Einstellungen beider Wege** in einer Liste: Backend, `DEFAULT_FROM_EMAIL`,
+  `ADMIN_EMAIL`, `SITE_URL`, Host/Port/Verschlüsselung, Benutzer. Von
+  Schlüsseln und Passwörtern nur „gesetzt (n Zeichen)“ – die Ausgabe darf in
+  ein Container-Log.
+* **Anmeldung, nicht nur Konfiguration:** der API-Schlüssel gegen die
+  Kontoauskunft `/v3/account` (Lesezugriff, verschickt nichts, verbraucht kein
+  Kontingent) – 401 ist ein Fehler; SMTP über `get_connection().open()`, also
+  genau die Verbindung, die Django für die Passwort-Mail aufbauen würde.
+  `--ohne-verbindung` lässt beides aus.
+* **Beanstandungen mit Folge, nicht mit Etikett:** Console-Backend ist im
+  Entwicklungsmodus eine Warnung und im Betrieb ein Fehler; leerer
+  `EMAIL_HOST_USER`/`EMAIL_HOST_PASSWORD` ein Fehler; fehlender
+  `BREVO_API_KEY` eine Warnung samt Grund (Railway blockt SMTP-Ports); der
+  Vorgabeabsender `noreply@luviq-shop.de` eine Warnung, weil Brevo nur von
+  einer verifizierten Adresse verschickt.
+* **`--an ADRESSE`** schickt eine Testmail über den Weg, den der Shop selbst
+  nimmt – aber **synchron und ohne `fail_silently`**, sonst prüfte der Befehl
+  nichts.
+
+**Acht neue Tests** in `test_einstellungen` (`MailPruefbefehlTest`), alle mit
+`--ohne-verbindung`: ein Testlauf fasst weder die Brevo-API noch ein Relay an.
+Die beiden Anmeldeprüfungen laufen einzeln gegen ein vorgetäuschtes Gegenüber
+(401 der API, Zeitüberschreitung des Ports) – ohne sie wäre nicht belegt, dass
+der Befehl überhaupt etwas beanstandet. **Kein Template, kein Aufbau berührt.**
+
+**Nicht in `start.sh` angeschlossen**, aus demselben Grund wie `pruefe_links`:
+der Befehl fasst fremde Server an, das gehört nicht in den Containerstart.

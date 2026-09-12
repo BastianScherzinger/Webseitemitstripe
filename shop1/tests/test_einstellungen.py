@@ -897,3 +897,146 @@ class VerweisPruefbefehlTest(LuviqTestCase):
         Command()._sammle('/', html, ziele, extern)
         self.assertEqual(sorted(ziele), ['/produkte/', '/wissen/'])
         self.assertEqual(sorted(extern), ['https://www.instagram.com/luviq.universe/'])
+
+
+class MailPruefbefehlTest(LuviqTestCase):
+    """``python manage.py pruefe_mail`` – der dritte eigene Prüfbefehl (MW15).
+
+    Er prüft, ob eine Mail diesen Rechner überhaupt verlassen würde. Das ist
+    die eine Frage, die kein Test der Suite beantworten kann: im Testlauf
+    verschickt Django in den ``locmem``-Speicher, und der Versandthread aus
+    ``shop1/utils.py`` verschluckt jeden Fehlschlag ohnehin.
+
+    Die Tests hier rufen den Befehl grundsätzlich mit ``--ohne-verbindung``
+    auf: ein Testlauf darf weder die Brevo-API noch ein SMTP-Relay
+    anfassen. Die beiden Anmeldeprüfungen werden einzeln mit einem
+    vorgetäuschten Gegenüber angesehen.
+    """
+
+    def _laufe(self, **optionen):
+        from io import StringIO
+
+        from django.core.management import call_command
+
+        optionen.setdefault('ohne_verbindung', True)
+        ausgabe = StringIO()
+        try:
+            call_command('pruefe_mail', stdout=ausgabe, stderr=ausgabe, **optionen)
+            code = 0
+        except SystemExit as ende:
+            code = ende.code
+        return code, ausgabe.getvalue()
+
+    def test_exitcode_und_bericht_stimmen_ueberein(self):
+        """Derselbe Vertrag wie bei den beiden anderen Prüfbefehlen: die
+        Summenzeile zählt genau die ausgegebenen Zeilen, und Exitcode 1 gibt
+        es genau dann, wenn mindestens ein FEHLER gemeldet wurde."""
+        code, text = self._laufe()
+        fehler = [z for z in text.splitlines() if z.startswith('FEHLER')]
+        warnungen = [z for z in text.splitlines() if z.startswith('WARNUNG')]
+
+        summe = re.search(r'(\d+) Fehler, (\d+) Warnungen\.', text)
+        if summe:
+            self.assertEqual(int(summe.group(1)), len(fehler), text)
+            self.assertEqual(int(summe.group(2)), len(warnungen), text)
+        else:
+            self.assertIn('Alles in Ordnung.', text)
+            self.assertFalse(fehler or warnungen, text)
+
+        self.assertEqual(code, 1 if fehler else 0, text)
+
+    def test_der_bericht_nennt_die_einstellungen_ohne_das_geheimnis(self):
+        """Die Ausgabe soll in ein Container-Log dürfen. Sie nennt deshalb
+        nur, **ob** ein Schlüssel gesetzt ist – nie seinen Wert."""
+        with mock.patch.dict(os.environ, {'BREVO_API_KEY': 'xkeysib-geheim-123'}):
+            _, text = self._laufe()
+        self.assertIn('BREVO_API_KEY', text)
+        self.assertIn('gesetzt (18 Zeichen)', text)
+        self.assertNotIn('xkeysib-geheim-123', text)
+
+    def test_fehlender_api_schluessel_wird_gemeldet(self):
+        """Ohne ``BREVO_API_KEY`` fallen Bestell- und Kontaktmails auf SMTP
+        zurück – und dessen Ports blockt Railway. Genau dafür gibt es den
+        API-Weg, also muss der Befehl das sagen."""
+        with mock.patch.dict(os.environ, {}, clear=True):
+            _, text = self._laufe()
+        self.assertIn('BREVO_API_KEY ist nicht gesetzt', text)
+
+    def test_smtp_ohne_zugangsdaten_ist_ein_fehler(self):
+        """Ein leerer Benutzer oder ein leeres Passwort heisst: die
+        Passwort-vergessen-Mail geht nicht hinaus – und das merkt niemand,
+        weil Django den Fehlschlag nicht anzeigt."""
+        with self.settings(
+            EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend',
+            EMAIL_HOST='smtp-relay.brevo.com', EMAIL_PORT=587,
+            EMAIL_USE_TLS=True, EMAIL_USE_SSL=False,
+            EMAIL_HOST_USER='', EMAIL_HOST_PASSWORD='',
+        ):
+            code, text = self._laufe()
+        self.assertEqual(code, 1, text)
+        self.assertIn('EMAIL_HOST_USER', text)
+        self.assertIn('EMAIL_HOST_PASSWORD', text)
+
+    def test_console_backend_ist_im_betrieb_ein_fehler(self):
+        """Im Entwicklungsmodus ist das Console-Backend gewollt (settings.py),
+        im Betrieb wäre es ein stiller Totalausfall."""
+        console = 'django.core.mail.backends.console.EmailBackend'
+        with self.settings(EMAIL_BACKEND=console, DEBUG=True):
+            code_dev, text_dev = self._laufe()
+        with self.settings(EMAIL_BACKEND=console, DEBUG=False):
+            code_betrieb, text_betrieb = self._laufe()
+        self.assertEqual(code_dev, 0, text_dev)
+        self.assertIn('WARNUNG', text_dev)
+        self.assertEqual(code_betrieb, 1, text_betrieb)
+        self.assertIn('verlässt keine Mail', text_betrieb)
+
+    def test_streng_macht_warnungen_zu_fehlern(self):
+        """Für einen Einsatz in einer Prüfstrecke – dieselbe Schaltung wie
+        bei ``pruefe_seite``. Die Einstellungen sind hier so gesetzt, dass
+        nur Warnungen übrig bleiben (kein API-Schlüssel, keine ADMIN_EMAIL);
+        ohne ``--streng`` ist das Exitcode 0, mit ``--streng`` Exitcode 1."""
+        with mock.patch.dict(os.environ, {}, clear=True), self.settings(
+            EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend',
+            EMAIL_HOST='smtp-relay.brevo.com', EMAIL_PORT=587,
+            EMAIL_USE_TLS=True, EMAIL_USE_SSL=False,
+            EMAIL_HOST_USER='luviq', EMAIL_HOST_PASSWORD='x' * 20,
+        ):
+            ohne, text = self._laufe()
+            mit, _ = self._laufe(streng=True)
+        self.assertEqual(ohne, 0, text)
+        self.assertEqual(mit, 1)
+        self.assertIn('WARNUNG', text)
+
+    def test_abgelehnter_api_schluessel_wird_zum_fehler(self):
+        """Der eigentliche Zweck des Befehls: ein Schlüssel, den Brevo mit
+        401 abweist, lässt jede Bestell-, Kontakt- und Bestätigungsmail
+        still scheitern – der Versand läuft in einem Thread und meldet den
+        Fehlschlag nur ins Log."""
+        from ..management.commands.pruefe_mail import Command
+
+        befehl = Command()
+        befehl.fehler, befehl.warnungen = [], []
+        antwort = mock.Mock(status_code=401, text='{"message":"Key not found"}')
+        with mock.patch.dict(os.environ, {'BREVO_API_KEY': 'falsch'}), \
+                mock.patch('shop1.management.commands.pruefe_mail.requests.get',
+                           return_value=antwort) as holen:
+            befehl._pruefe_brevo_anmeldung()
+        holen.assert_called_once()
+        self.assertEqual(len(befehl.fehler), 1, befehl.fehler)
+        self.assertIn('401', befehl.fehler[0])
+
+    def test_gescheiterte_smtp_anmeldung_wird_zum_fehler(self):
+        """Auf Railway sind ausgehende SMTP-Ports gesperrt. Der Befehl muss
+        das als Fehler nennen und nicht mit einer Ausnahme abstürzen."""
+        from ..management.commands.pruefe_mail import Command
+
+        befehl = Command()
+        befehl.fehler, befehl.warnungen = [], []
+        verbindung = mock.Mock()
+        verbindung.open.side_effect = OSError('Connection timed out')
+        with self.settings(EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'), \
+                mock.patch('shop1.management.commands.pruefe_mail.get_connection',
+                           return_value=verbindung):
+            befehl._pruefe_smtp_anmeldung()
+        self.assertEqual(len(befehl.fehler), 1, befehl.fehler)
+        self.assertIn('Connection timed out', befehl.fehler[0])
