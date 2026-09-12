@@ -300,4 +300,5 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | EIG97 | Zwei Mails zu derselben Bestellung unterschreiben mit zwei verschiedenen Absendern | inhalte | offen | Tiefenanalyse 12.09.2026 (Schwere: hinweis): checkout.py:285` (Bestellbestätigung): „Mit freundlichen Grüßen,<br>Dein Shop-Team“; `checkout.py:340` (Bankdaten bei Vorab-Überweisung): „Herzliche Grüße,<br><strong>Luisa Brehler</strong>“. Der Betrieb ist nach Impressum und `llms.txt` eine Person | 2026-09-12 |
 | EIG98 | „Lädt in unter zwei Sekunden, gemessen statt behauptet" nennt keine Messung | inhalte | offen | bei einer anderen betreuten Seite aufgefallen am 12.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-12 |
 | EIG99 | Impressum und Datenschutz stützen sich auf vier aufgehobene Gesetze | recht | offen | bei einer anderen betreuten Seite aufgefallen am 12.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-12 |
+| EIG100 | Die Doku führt als „nicht ausgeliefert", was live steht | status | offen | bei einer anderen betreuten Seite aufgefallen am 12.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-12 |
 <!-- eigenepunkte:ende -->
