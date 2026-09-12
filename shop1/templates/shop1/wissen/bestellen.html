@@ -25,6 +25,7 @@
 {% endblock %}
 
 {% block schema_ld %}
+{% include 'shop1/teile/wissen_article_ld.html' %}
 {% comment %}Jede Frage steht wortgleich als h2 auf der Seite, jede Antwort wortgleich als erster Absatz unter dieser h2 - test_geo prueft beides. Jede Sachangabe ist im Projekt belegt: Anmeldepflicht views/cart.py und views/checkout.py, Registrierungsfelder forms.py, Pflichtfelder und Profil-Vorbelegung views/checkout.py, Vertragsschluss und Preise legal/agb.html, PayPal-Pruefung und Folgen der Zahlung views/checkout.py, Lieferzeiten liefergebiet.html. Keine Versandkosten, keine Bearbeitungsdauer, keine Zahl, die nirgends steht.{% endcomment %}
 <script type="application/ld+json">
 {

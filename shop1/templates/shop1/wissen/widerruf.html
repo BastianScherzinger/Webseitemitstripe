@@ -25,6 +25,7 @@
 {% endblock %}
 
 {% block schema_ld %}
+{% include 'shop1/teile/wissen_article_ld.html' %}
 {% comment %}Jede Frage steht wortgleich als h2 auf der Seite, jede Antwort wortgleich als erster Absatz unter dieser h2 - test_geo prueft beides. Belegt aus AGB § 2, § 3, § 4 und § 5 (legal/agb.html), Anschrift und E-Mail aus Impressum und Datenschutzerklaerung, Ablauf der Vorab-Ueberweisung aus views/checkout.py. Was die Seite nicht regelt - Kosten der Ruecksendung, Ruecksendeverfahren, Frist der Rueckzahlung - steht hier als offene Frage und wird nicht erfunden.{% endcomment %}
 <script type="application/ld+json">
 {

@@ -450,3 +450,94 @@ class AntwortCrawlerTest(LuviqTestCase):
         agb = sichtbarer_text(self.hole('/agb/').content.decode())
         self.assertIn('PayPal oder Vorab-Ueberweisung', text)
         self.assertIn('PayPal oder Vorab-Überweisung', agb)
+
+
+class RatgeberSchemaTest(LuviqTestCase):
+    """``Article`` auf den Wissensbeiträgen (GE15).
+
+    Ein Ratgebertext ohne Autor und ohne Datum ist für eine Antwortmaschine
+    eine Aussage ohne Herkunft. Der ``Article``-Knoten liefert beides – und
+    fällt damit unter denselben Grundsatz wie alles andere hier: Er darf nur
+    behaupten, was auf der Seite selbst steht.
+    """
+
+    def _beitraege(self):
+        from django.urls import reverse
+
+        from ..views.wissen import WISSEN_BEITRAEGE
+
+        return [(reverse(b['url_name']), slug, b)
+                for slug, b in WISSEN_BEITRAEGE.items()]
+
+    @staticmethod
+    def _artikel(knoten):
+        return [k for k in knoten
+                if 'Article' in (k.get('@type') if isinstance(k.get('@type'), list)
+                                 else [k.get('@type')])]
+
+    def test_jeder_wissensbeitrag_traegt_genau_einen_article(self):
+        """Ohne diesen Test bliebe der Knoten auf den Beiträgen aus, die
+        später dazukommen – der Einbau hängt an einem ``include``, das man
+        beim Anlegen einer Vorlage leicht vergisst."""
+        for pfad, slug, _ in self._beitraege():
+            with self.subTest(pfad=pfad):
+                artikel = self._artikel(schema_knoten(self.hole(pfad).content.decode()))
+                self.assertEqual(len(artikel), 1, f'{slug}: {len(artikel)} Article-Knoten')
+
+    def test_die_ueberschrift_des_article_steht_als_h1_auf_der_seite(self):
+        """Der Grundsatz dieses Moduls, angewandt auf die ``headline``: ein
+        Beitrag, der im Schema anders heisst als in seiner Überschrift, führt
+        eine Antwortmaschine in die Irre."""
+        for pfad, slug, beitrag in self._beitraege():
+            with self.subTest(pfad=pfad):
+                inhalt = self.hole(pfad).content.decode()
+                artikel = self._artikel(schema_knoten(inhalt))[0]
+                self.assertEqual(artikel['headline'], beitrag['titel'])
+                self.assertIn(beitrag['titel'], ueberschriften(inhalt))
+
+    def test_der_article_nennt_autorin_und_beide_daten(self):
+        """``author`` verweist auf dieselbe Person wie der Rest der Seite
+        (``#luisa``) – ohne Autor fehlt das E-E-A-T-Signal. Und das
+        Erscheinungsdatum darf nicht nach dem Änderungsdatum liegen: das wäre
+        ein Beitrag, der geändert wurde, bevor es ihn gab."""
+        from ..seiten_stand import SEITEN_STAND
+
+        for pfad, slug, beitrag in self._beitraege():
+            with self.subTest(pfad=pfad):
+                artikel = self._artikel(schema_knoten(self.hole(pfad).content.decode()))[0]
+                self.assertEqual(kennung(artikel['author']), '#luisa')
+                self.assertEqual(kennung(artikel['publisher']), '#organization')
+                self.assertEqual(artikel['datePublished'], beitrag['veroeffentlicht'])
+                self.assertEqual(artikel['dateModified'], SEITEN_STAND[beitrag['url_name']])
+                self.assertLessEqual(
+                    date.fromisoformat(artikel['datePublished']),
+                    date.fromisoformat(artikel['dateModified']),
+                    f'{slug}: veröffentlicht nach der letzten Änderung',
+                )
+
+    def test_die_uebersicht_gibt_sich_nicht_als_beitrag_aus(self):
+        """``/wissen/`` ist das Verzeichnis des Bereichs, kein Ratgebertext.
+        Ein ``Article`` dort behauptete einen Beitrag, den es nicht gibt –
+        dieselbe Regel wie bei den Öffnungszeiten und der SearchAction."""
+        knoten = schema_knoten(self.hole('/wissen/').content.decode())
+        self.assertEqual(self._artikel(knoten), [])
+        for k in knoten:
+            self.assertNotIn(k.get('@type'), ('BlogPosting', 'CollectionPage'))
+
+    def test_die_liste_der_uebersicht_nennt_die_sichtbaren_beitraege(self):
+        """Die ``ItemList`` ist der ehrliche Ersatz: sie darf genau die
+        Beiträge nennen, die weiter unten auf derselben Seite verlinkt sind –
+        in derselben Reihenfolge und mit denselben Titeln."""
+        inhalt = self.hole('/wissen/').content.decode()
+        listen = [k for k in schema_knoten(inhalt) if k.get('@type') == 'ItemList']
+        self.assertEqual(len(listen), 1)
+        eintraege = listen[0]['itemListElement']
+        erwartet = [b['titel'] for _, _, b in self._beitraege()]
+        self.assertEqual([e['name'] for e in eintraege], erwartet)
+        self.assertEqual(listen[0]['numberOfItems'], len(erwartet))
+        for eintrag in eintraege:
+            with self.subTest(name=eintrag['name']):
+                self.assertIn(eintrag['name'], sichtbarer_text(inhalt))
+                pfad = urlsplit(eintrag['url']).path
+                self.assertIn(f'href="{pfad}"', inhalt)
+                self.assertEqual(self.hole(pfad).status_code, 200)

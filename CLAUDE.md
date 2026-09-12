@@ -50,6 +50,7 @@ python manage.py collectstatic --noinput
 python manage.py fix_pystore_schema      # Custom Command, siehe start.sh
 python manage.py pruefe_seite            # Prüfbefehl: Umgebung, Datenbanken, jede Sitemap-Adresse (--streng)
 python manage.py pruefe_links            # Prüfbefehl: jeder Verweis jeder öffentlichen Seite (--streng)
+python manage.py pruefe_mail             # Prüfbefehl: beide Mailwege — Einstellungen, Anmeldung (--ohne-verbindung, --streng, --an ADRESSE)
 ```
 
 Es gibt kein `package.json`/npm-Build. Tailwind wird eigenständig aus `tailwind_input.css` nach `shop1/static/shop1/tailwind.css` gebaut (Tailwind-CLI, `tailwind.config.js` scannt `templates/**/*.html` und `shop1/templates/**/*.html`).

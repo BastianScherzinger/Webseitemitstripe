@@ -25,6 +25,7 @@
 {% endblock %}
 
 {% block schema_ld %}
+{% include 'shop1/teile/wissen_article_ld.html' %}
 {% comment %}Jede Frage steht wortgleich als h2 auf der Seite, jede Antwort wortgleich als erster Absatz unter dieser h2 - test_geo prueft beides. Belegt aus der Datenschutzerklaerung (legal/datenschutz.html: Besuchsprotokoll, Hosting und Drittanbieter, Registrierung, Cookies, Zahlungsdaten, Gaestebuch, Rechte), forms.py (Felder der Registrierung und des Profils), views/cart.py und views/checkout.py (Anmeldepflicht, Vorbelegung), views/auth.py (Kontoloeschung) und settings.py (Sperre nach zehn Fehlversuchen). Keine Speicherfrist, keine Zahl, die nirgends steht.{% endcomment %}
 <script type="application/ld+json">
 {
