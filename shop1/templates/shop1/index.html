@@ -514,7 +514,11 @@
 {% block extra_js %}
 <!-- GSAP for Hero-Animation (defer = non-blocking). Three.js wird nur bei Bedarf
      dynamisch nachgeladen (Desktop, keine Reduced-Motion) → spart ~450 KiB auf Mobil. -->
-<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<!-- integrity + crossorigin (SI17), Hash aus der jsDelivr-Dateiauskunft zur
+     festgenagelten Fassung 3.12.5: faellt der Vergleich durch, laedt GSAP
+     nicht – der Hero bleibt sichtbar, dafuer sorgt revealHeroFallback(). -->
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"
+        integrity="sha256-KAM+RJox68w5blvosTtjFSvwMJQoj7WGcDQyGSe84Ic=" crossorigin="anonymous"></script>
 <script nonce="{{ csp_nonce }}">
 (function () {
     'use strict';
@@ -658,6 +662,12 @@
     if (!isMobile && !prefersReduced && canvas) {
         var loadThree = function () {
             var s = document.createElement('script');
+            // integrity + crossorigin (SI17) gelten auch fuer nachgeladene
+            // Skripte. Der Abruf startet erst beim appendChild, beide stehen
+            // also rechtzeitig. Passt der Hash nicht, bleibt onload aus und
+            // der Partikel-Hero entfaellt – die Seite laeuft weiter.
+            s.integrity = 'sha256-Ozocl9485l7Fsowo2fKAWnOOllFiJpG6dxqpXHnUHVE=';
+            s.crossOrigin = 'anonymous';
             s.src = 'https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js';
             s.async = true;
             s.onload = initParticles;

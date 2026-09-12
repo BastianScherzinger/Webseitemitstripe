@@ -1731,3 +1731,128 @@ weder `curl` noch `urllib` sind freigegeben. Eine halbe Umstellung (nur
 Inter, Outfit weiter von Google) bringt rechtlich nichts: die Adresse des
 Besuchers geht trotzdem vor jeder Einwilligung zu Google. Keine Zeile Code
 geändert.
+
+## Paket 196 (12.09.2026) – SI17, SU08, PJ01
+
+### SI17 – `integrity` und `crossorigin` an allen vier Fremdskripten
+
+**Befund.** Drei fremde Skripte im ausgelieferten HTML ohne `integrity`:
+`@alpinejs/intersect@3.14.8`, `alpinejs@3.14.8` (`templates/base.html:218-219`)
+und `gsap@3.12.5` (`shop1/templates/shop1/index.html:517`). Dazu ein viertes,
+das die Messung nicht sieht, weil es erst im Browser entsteht:
+`three@0.158.0`, per `document.createElement('script')` nachgeladen
+(`index.html:661`). Alle vier liegen auf `cdn.jsdelivr.net`. Ohne `integrity`
+führt der Browser aus, was dieser Server heute ausliefert – Alpine.js hängt
+über `base.html` in jeder Seite und hat Zugriff auf Sitzung, Warenkorb und
+jedes Formular.
+
+**Änderung.** Je Skript `integrity="sha256-…"` und `crossorigin="anonymous"`;
+beim nachgeladenen Three.js `s.integrity` und `s.crossOrigin` vor `s.src`,
+gesetzt bevor `appendChild` den Abruf auslöst.
+
+| Datei | Hash (SHA-256, base64) |
+|---|---|
+| `@alpinejs/intersect@3.14.8/dist/cdn.min.js` | `sav73qRAT3EB3ibvbi5l9O+uc757MwIUHuzyfe9oVg4=` |
+| `alpinejs@3.14.8/dist/cdn.min.js` | `tgDjY9mdlURNtUrL+y3v/smueSqpmgkim82geOW1VkM=` |
+| `gsap@3.12.5/dist/gsap.min.js` | `KAM+RJox68w5blvosTtjFSvwMJQoj7WGcDQyGSe84Ic=` |
+| `three@0.158.0/build/three.min.js` | `Ozocl9485l7Fsowo2fKAWnOOllFiJpG6dxqpXHnUHVE=` |
+
+**Woher die Hashes stammen – und warum keiner geraten ist.** Dieser Lauf darf
+weder `curl` noch `urllib` benutzen, die Dateien selbst waren nicht zu holen.
+Die Werte kommen aus der Dateiauskunft von jsDelivr, deren `hash`-Feld den
+SHA-256 des Dateiinhalts base64-codiert trägt. Ein falscher Hash wäre
+schlimmer als gar keiner – der Browser lädt Alpine dann nicht mehr, und kein
+lokaler Test bemerkt es. Deshalb zwei Vorkehrungen:
+
+1. **Jeder Hash zweimal über verschiedene Endpunkte abgefragt**
+   (`/v1/packages/npm/<paket>@<fassung>?structure=flat` und
+   `/v1/package/npm/<paket>@<fassung>/flat`) – alle vier stimmen zeichengenau
+   überein.
+2. **Gegenprobe an einem Wert, den ein Dritter veröffentlicht:** für
+   `jquery@3.7.1/dist/jquery.min.js` meldet dieselbe Auskunft
+   `/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=` – genau die Zeichenfolge,
+   die jQuery selbst als `integrity="sha256-…"` angibt. Damit ist belegt, dass
+   dieses Feld ein SRI-tauglicher SHA-256 ist und kein interner Prüfwert.
+
+**Nicht angefasst: die zwei Chart.js-Einbindungen des Admin-Panels.**
+`admin/werbung_list.html:365` lädt `chart.js@4.4.0/dist/chart.umd.min.js` –
+eine Datei, die es im Paket nicht gibt; jsDelivr erzeugt sie beim Abruf
+selbst, und für erzeugte Dateien gibt es keinen veröffentlichten Hash.
+`admin/stats.html:246` lädt `chart.js` ganz ohne Fassung, also eine Datei,
+die sich jederzeit ändern darf. Beide abzusichern hiesse, die Einbindung auf
+eine andere Datei umzustellen – eine Fassungsänderung, die nicht zu diesem
+Punkt gehört. Bleibt als offener Rest notiert.
+
+**Aussehen.** Nur zwei zusätzliche Attribute an bestehenden `<script>`-Tags:
+keine Klasse, keine Kennung, kein Element, keine Reihenfolge geändert. Die
+Designwache erfasst weder Attribute noch den `<head>`; `test_aufbau` und
+`test_einstellungen` bleiben grün (47 Tests).
+
+### PJ01 – zweiter Prüfbefehl: `pruefe_links`
+
+**Befund.** Ein einziger eigener Prüfbefehl (`pruefe_seite`) neben zwei
+Management-Befehlen insgesamt. Der Katalog verlangt einen Befehl, der die
+ausgelieferte Seite prüft – Links, Preise, Schema, Kopfdaten – und mit
+Exitcode 1 beanstandet. Kopfdaten, Schema und Preise deckt `pruefe_seite`
+seit Welle 8 ab; **die Links nicht**.
+
+**Die Lücke, genau benannt.** `pruefe_seite` ruft die Adressen der Sitemap
+ab. Ein Verweis *innerhalb* einer dieser Seiten steht in keiner Liste: ein
+Tippfehler im `href`, eine umbenannte Route, ein deaktiviertes Produkt, auf
+das die Startseite noch zeigt – die Seite antwortet mit 404, und weder ein
+Test noch der Startlauf sagt etwas. Der neue Befehl
+`shop1/management/commands/pruefe_links.py` schliesst genau das:
+
+* Startpunkte sind `/`, jede Sitemap-Adresse **und jede Adresse der
+  llms.txt** – letztere prüft bisher niemand, obwohl sie von Hand
+  geschrieben ist und deshalb auseinanderlaufen kann.
+* Von dort aus jeder `<a href>`: eigene Adressen werden abgerufen (ab 400
+  Fehler, Weiterleitung Warnung), fremde nur auf `https` geprüft und
+  **nicht** abgerufen – der Befehl soll auch beim Containerstart keine
+  fremden Server anfassen.
+* Die Weiterleitung auf `LOGIN_URL` ist **keine** Beanstandung. `/warenkorb/`
+  steht in jeder Fusszeile und schickt anonyme Besucher auf `/login/`; würde
+  der Befehl das melden, stünde dieselbe Warnung in jedem Lauf, und über eine
+  Meldung, die immer dasteht, liest man hinweg.
+* Verändernde Pfade (Warenkorb, Abmeldung, Werbeklick, Kommentar,
+  Bestätigungsschlüssel, PayPal-Buchung) stehen mit Grund in
+  `KEINE_PRUEFUNG` und werden nur gezählt. Rahmen wie bei `pruefe_seite`:
+  Testclient, `secure=True`, Besuchsprotokoll aus, zurückgerollte Transaktion
+  in beiden Datenbanken.
+
+**Eine Stelle in `pruefe_seite` geändert:** `_pruefhost` ist jetzt die
+Modulfunktion `pruefhost()`, weil beide Befehle denselben Host wählen müssen.
+Zwei Fassungen derselben Entscheidung laufen auseinander, und dann prüft ein
+Befehl gegen einen Host, den `ALLOWED_HOSTS` ablehnt.
+
+**Lauf im Testkontext:** 14 Seiten gelesen, 6 eigene Adressen abgerufen,
+davon 1 hinter der Anmeldung, 2 fremde Ziele geprüft – 0 Fehler,
+0 Warnungen. Sechs neue Tests in `test_einstellungen`
+(`VerweisPruefbefehlTest`), darunter der wichtigste: eine erfundene Route
+muss als Fehler herauskommen, sonst liefe der Befehl auch auf einer kaputten
+Seite grün. **230 Tests, OK** – kein Template, kein Aufbau berührt.
+
+**Nicht in `start.sh` angeschlossen.** Der Startlauf ruft heute `migrate`,
+`collectstatic` und `pruefe_seite` auf; ein zweiter Durchlauf durch alle
+Seiten kostet dort Startzeit, ohne dass ein Deploy davon abhinge. Der Befehl
+gehört vor den Commit und in die Prüfstrecke, nicht in den Containerstart.
+
+### SU08 – nicht möglich an diesem Rechner
+
+Die Messung zählt sechs Themenbereiche und vier davon mit nur einer Seite:
+`/produkte/`, `/gaestebuch/`, `/ueber_uns/`, `/liefergebiet/`. Der Befund
+trifft zu, geschlossen werden kann er hier nicht:
+
+* **`/produkte/`** ist die Übersicht des Produktbereichs; seine Detailseiten
+  liegen unter `/produkt/<slug>/` (`shop1/urls.py:11` und `:15`) und zählen
+  deshalb als eigener Bereich. Die beiden zusammenzulegen hiesse, jede
+  indexierte Produktadresse umzuziehen – ein Eingriff in die kanonischen
+  Adressen der laufenden Seite, der weit über einen Strukturpunkt hinausgeht.
+* **`/gaestebuch/`, `/ueber_uns/`, `/liefergebiet/`** haben je eine Seite. Eine
+  zweite bräuchte Inhalt, den es im Projekt nicht gibt: Das Produktmodell hat
+  kein Kategoriefeld (`shop1/models.py:87-99`), aus dem sich Unterseiten
+  ableiten liessen, und das Seitenregister `shop1/seiten_stand.py` führt
+  genau 16 Seiten. Orte, Lieferzeiten oder eine zweite Werkstattseite kann
+  nur die Betreiberin liefern; sie zu erfinden verbietet Regel 2 jeder Stufe.
+
+Keine Zeile Code geändert.

@@ -4,7 +4,7 @@ titel: Technik, Hosting und Aufbau
 stand: 2026-09-12
 status: teilweise
 fortschritt: 74
-zusammenfassung: Stack läuft stabil. Seit den Merges 0c18ea7, 4ec540b, 1a5f36b und c522ff9 liegen auf main auch die scharf gestellte CSP, die Nonce im script-src statt 'unsafe-inline' (Handler-Attribute durch data-Attribute ersetzt), die festgenagelten Paketfassungen samt requirements.lock (Django 5.2.17), die abgearbeiteten Audit-Funde und die Danke-Seite /kontakt/danke/ (never_cache); main = origin/main = 4f91ac9. Im Zweig sofort/2026-09-12-vl21-und-2-weitere (ein Commit, nicht gemergt) liegt die Produktkarte als zwei Bausteine unter shop1/templates/shop1/teile/ und wird per include eingebunden — gerendertes HTML unverändert, 224 Tests laut Commit; neue Falle: load wird an ein include nicht vererbt. Offen bleiben der Merge, Bezahlseite und Ersatzskripte mit Browserkonsole, 'unsafe-eval' für Alpine.js, der erste CI-Lauf mit 5.2.17, CANONICAL_HOST in Railway, runtime.txt/railway.json und die Permissions-Policy.
+zusammenfassung: Stack läuft stabil. Seit den Merges 0c18ea7, 4ec540b, 1a5f36b und c522ff9 liegen auf main auch die scharf gestellte CSP, die Nonce im script-src statt 'unsafe-inline' (Handler-Attribute durch data-Attribute ersetzt), die festgenagelten Paketfassungen samt requirements.lock (Django 5.2.17), die abgearbeiteten Audit-Funde und die Danke-Seite /kontakt/danke/ (never_cache); main = origin/main = 4f91ac9. Im Zweig sofort/2026-09-12-vl21-und-2-weitere (ein Commit, nicht gemergt) liegt die Produktkarte als zwei Bausteine unter shop1/templates/shop1/teile/ und wird per include eingebunden — gerendertes HTML unverändert, 224 Tests laut Commit; neue Falle: load wird an ein include nicht vererbt. Im Zweig sofort/2026-09-12-si17-und-2-weitere tragen die vier Fremdskripte (Alpine, intersect, GSAP, Three.js) integrity und crossorigin, und neben pruefe_seite steht ein zweiter Prüfbefehl pruefe_links (jeder Verweis jeder öffentlichen Seite, 230 Tests grün; nicht an start.sh angeschlossen). Offen bleiben der Merge, Bezahlseite und Ersatzskripte mit Browserkonsole, die zwei Chart.js-Einbindungen des Admin-Panels ohne integrity, 'unsafe-eval' für Alpine.js, der erste CI-Lauf mit 5.2.17, CANONICAL_HOST in Railway, runtime.txt/railway.json und die Permissions-Policy.
 offen: 12
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, paypal_sandbox_tutorial.md, start.sh, Dockerfile, requirements.txt
 ---
@@ -55,7 +55,7 @@ Detailquelle bleibt [`../CLAUDE.md`](../CLAUDE.md) (Architektur, Fallstricke) un
 | Login-Schutz | django-axes: 10 Fehlversuche je Benutzername+IP, 1 h Sperre, eigenes Lockout-Template | `settings.py` (`AXES_*`) |
 | Zahlung | PayPal (JS-SDK in `payment.html`, Capture in `views/checkout.py`) und Vorab-Überweisung (`BANK_IBAN`, `BANK_INHABER`) | `DOCUMENTATION.md` §3 |
 | CSS | Tailwind-CLI aus `tailwind_input.css` nach `shop1/static/shop1/tailwind.css`; **kein `package.json`, kein npm-Build im Repo**; dazu `shop1/static/shop1/style.css` | `CLAUDE.md`, `tailwind.config.js` |
-| JS | Alpine.js 3.14.8 + `@alpinejs/intersect` (base.html), GSAP 3.12.5 (Startseite), Three.js 0.158.0 (nur Desktop, ohne `prefers-reduced-motion`, nachgeladen) — alle von `cdn.jsdelivr.net`, ohne `integrity`. Alpine (Standardfassung) braucht `'unsafe-eval'` in der CSP. **Zweig SI09:** eigene Inline-Skripte nur mit `nonce="{{ csp_nonce }}"`, keine `on…`-Attribute mehr — deren Aufgaben übernimmt ein Skript im `<head>` von `base.html` über `data-bestaetigen`, `data-bei-fehler-ausblenden`, `data-auto-absenden`, `data-schrift-nachladen` | `templates/base.html`, `index.html` |
+| JS | Alpine.js 3.14.8 + `@alpinejs/intersect` (base.html), GSAP 3.12.5 (Startseite), Three.js 0.158.0 (nur Desktop, ohne `prefers-reduced-motion`, nachgeladen) — alle von `cdn.jsdelivr.net`, **Zweig SI17: alle vier mit `integrity` (SHA-256 aus der jsDelivr-Dateiauskunft) und `crossorigin="anonymous"`; wer eine Fassung hochzieht, muss den Hash mitziehen, sonst lädt das Skript nicht mehr**. Alpine (Standardfassung) braucht `'unsafe-eval'` in der CSP. **Zweig SI09:** eigene Inline-Skripte nur mit `nonce="{{ csp_nonce }}"`, keine `on…`-Attribute mehr — deren Aufgaben übernimmt ein Skript im `<head>` von `base.html` über `data-bestaetigen`, `data-bei-fehler-ausblenden`, `data-auto-absenden`, `data-schrift-nachladen` | `templates/base.html`, `index.html` |
 | Cache | `LocMemCache` (Zweig ausdrücklich: `LOCATION luviq`, `MAX_ENTRIES 300`); Werbeliste 60 s; Zweig: `sitemap.xml`/`llms.txt` 15 min | `settings.py`, `LOGBUCH.md` Schritt 33 |
 | Zeitzone / Sprache | `Europe/Berlin`, `USE_TZ=True`, `de-de` | `settings.py` |
 
@@ -141,9 +141,10 @@ erreicht die Besucherin weiter nicht — die Danke-Seite erscheint trotzdem
 
 | Befehl | Was | Stand |
 |---|---|---|
-| `python manage.py test shop1` | Testsuite in 14 Modulen, Laufzeit rund 2,5 Minuten; main: **218 Tests** (seit `4ec540b` mit den drei SI09-Tests in `test_einstellungen`), Zweig KV07: **224 Tests** (sechs neue in `test_formulare`) | Zweig KV07 224/224 grün laut `2d78a55` |
+| `python manage.py test shop1` | Testsuite in 14 Modulen, Laufzeit rund 2,5 Minuten; main: **218 Tests** (seit `4ec540b` mit den drei SI09-Tests in `test_einstellungen`), Zweig KV07: **224 Tests** (sechs neue in `test_formulare`), Zweig 12.09. PJ01: **230 Tests** (sechs neue in `test_einstellungen` zu `pruefe_links`) | Zweig PJ01 230/230 grün |
 | `python manage.py test shop1.tests.<modul>` | einzelnes Modul | Zweig |
 | `python manage.py pruefe_seite [--streng]` | Prüfbefehl: Einstellungen, beide Datenbanken, aktive Produkte (Pflichtwerte, doppelte Slugs), jede Sitemap-Adresse 200 mit Titel, Beschreibung 110–175, canonical, robots, JSON-LD, Schutzkopfzeilen samt CSP; hinterlässt keine Spuren (`VISITOR_TRACKING` aus, zurückgerollte Transaktion) | Zweig |
+| `python manage.py pruefe_links [--streng]` | Prüfbefehl (Zweig 12.09., PJ01): liest `/`, jede Sitemap- und jede llms.txt-Adresse und ruft **jeden `<a href>` darin** ab — tote eigene Adressen sind Fehler, Weiterleitungen Warnungen (ausser auf `LOGIN_URL`), fremde Ziele werden nur auf `https` geprüft, nicht abgerufen; verändernde Pfade (Warenkorb, Abmeldung, Werbeklick, Kommentar) stehen in `KEINE_PRUEFUNG`. Gleiche Vorsorge wie oben: kein Besuchsprotokoll, zurückgerollte Transaktion | Zweig |
 | `python manage.py check --deploy` | Django-Prüfung | beide |
 | `python manage.py fix_pystore_schema` | `seite`-Spalte in `pystore` | beide |
 | `python manage.py makemigrations shop1` | einzige App; 18 Migrationen (Zweig, `0018` legt die pystore-Tabellen auch ohne PostgreSQL an) | |
@@ -152,7 +153,7 @@ erreicht die Besucherin weiter nicht — die Danke-Seite erscheint trotzdem
 
 **Drei Regeln für neue Tests** (`CLAUDE.md`): `secure=True` ist Pflicht (sonst prüft man nur die 301 der SSL-Weiterleitung) → `self.hole()` / `self.sende()`; `databases = {'default', 'pystore'}` (die Besuchs-Middleware schreibt bei jeder Antwort); der Cache wird vor jedem Test geleert (`sitemap.xml`/`llms.txt` liegen 15 min im LocMemCache).
 
-**Was fehlt (Messung 02.09.2026, VL19, PJ01):** ein zweiter Prüfbefehl (Links, Konsistenz), ein CI-Lauf bei jedem Push, Fehler-Monitoring (Sentry o. ä.). Kein Test kann ein vergessenes Nachziehen des Registers `seiten_stand.py` erzwingen.
+**Was fehlt (Messung 02.09.2026, VL19, PJ01):** Fehler-Monitoring (Sentry o. ä.). Der zweite Prüfbefehl steht seit dem 12.09.2026 im Zweig (`pruefe_links`, `11acccc`, **nicht** an `start.sh` angeschlossen — er gehört vor den Commit, nicht in den Containerstart), ein CI-Lauf bei jedem Push in `.github/workflows/pruefungen.yml`. Kein Test kann ein vergessenes Nachziehen des Registers `seiten_stand.py` erzwingen.
 
 ## Aufbau des Projekts
 
@@ -167,7 +168,7 @@ WebseiteMAIN/
 │   ├── routers.py      WerbungRouter → pystore
 │   ├── seiten_stand.py Register lastmod/dateModified (Zweig)
 │   ├── context_processors.py (Zweig SI09: csp_nonce), signals.py, forms.py, utils.py (send_brevo_email)
-│   ├── management/commands/  fix_pystore_schema.py, pruefe_seite.py (Zweig)
+│   ├── management/commands/  fix_pystore_schema.py, pruefe_seite.py, pruefe_links.py (Zweig)
 │   ├── tests/          14 Module (Zweig)
 │   ├── templates/shop1/  Seiten, legal/, wissen/ (Zweig), admin/, teile/ (Zweig 12.09.: angebot.html, angebot_galerie.html)
 │   └── static/shop1/   style.css, tailwind.css, images/ (Zweig: WebP in mehreren Breiten, flavicon.ico)
@@ -198,7 +199,8 @@ Code-Audit (Messung 02.09.2026, lokaler Ordner = Zweig): 114 Dateien, 23.859 Zei
 14. **`ALLOWED_HOSTS = ['*']`** bei `DEBUG=True`; im Betrieb `['localhost', '127.0.0.1', '.up.railway.app'] + ALLOWED_HOSTS_EXTRA` (+ `CANONICAL_HOST`, falls gesetzt). Der Code-Audit meldete die Zeile als kritisch (K02); im Zweig 11.09. trägt sie einen begründeten Vermerk `# audit-ok K02:`, gehalten von `test_die_hostliste_ist_nicht_offen`. `DEBUG` darf in Railway nie auf `True` stehen.
 15. **`db.sqlite3`, `staticfiles/`, `media/`, `.env`, `*.log`** liegen im Ordner, sind aber in `.gitignore`. `runserver.err.log` vom 03.07.2026 ebenfalls.
 16. **Der Superuser wird bei jedem Containerstart mit `ADMIN_PASSWORD` überschrieben** — ein im Panel geändertes Passwort dieses Kontos hält nur bis zum nächsten Deploy.
-17. **Paketfassungen ändern (Zweig 11.09.):** `requirements.txt` und `requirements.lock` gehören zusammen. Wer eine Fassung ändert, schreibt die Lockdatei neu — frische Umgebung, `pip install -r requirements.txt`, Testsuite grün, dann die Fassungen aus `pip freeze` eintragen (Kopf von `requirements.lock`). Das Code-Audit des Werkzeugs liest `.lock`-Dateien nicht und meldet deshalb weiter „kein Lockfile".
+17. **Fassung eines Fremdskripts hochziehen (Zweig 12.09., `680a641`):** Alpine, `@alpinejs/intersect`, GSAP und das nachgeladene Three.js tragen `integrity="sha256-…"`. Wer die Fassung in der URL ändert und den Hash stehen lässt, sorgt dafür, dass der Browser das Skript **gar nicht mehr ausführt** — Alpine hängt über `base.html` in jeder Seite, und **kein lokaler Test bemerkt es**: die Suite ruft keine fremden Server ab. Beim nachgeladenen Three.js stehen `s.integrity` und `s.crossOrigin` vor `s.src`, weil erst `appendChild` den Abruf auslöst (`index.html`). Hashes und ihre Herkunft: `LOGBUCH.md`, Paket 196.
+18. **Paketfassungen ändern (Zweig 11.09.):** `requirements.txt` und `requirements.lock` gehören zusammen. Wer eine Fassung ändert, schreibt die Lockdatei neu — frische Umgebung, `pip install -r requirements.txt`, Testsuite grün, dann die Fassungen aus `pip freeze` eintragen (Kopf von `requirements.lock`). Das Code-Audit des Werkzeugs liest `.lock`-Dateien nicht und meldet deshalb weiter „kein Lockfile".
 
 ## Offen
 
@@ -211,8 +213,8 @@ Code-Audit (Messung 02.09.2026, lokaler Ordner = Zweig): 114 Dateien, 23.859 Zei
 | `'unsafe-eval'` aus `script-src` (CSP-Fassung von Alpine, jeder Ausdruck als registrierte Komponente), `'unsafe-inline'` aus `style-src` | laut `LOGBUCH.md` Paket 164 224 Treffer auf Alpine-Attribute in 19 Vorlagen; nur mit Browser prüfbar | SI09 |
 | `runtime.txt`/`railway.json` | fehlen; `==` und Lockfile im Zweig 11.09. erledigt (`51cbf74`) | VL02 |
 | Permissions-Policy-Kopfzeile | live: 4 von 7 Schutzköpfen; die CSP ist im Zweig 11.09. als echte Kopfzeile erledigt (`9a3226f`) | SI07, VL04 |
-| `integrity`/`crossorigin` an den drei jsdelivr-Skripten | 3 von 3 ohne | SI17 |
+| **Rest von `SI17`:** die zwei Chart.js-Einbindungen des Admin-Panels ohne `integrity` | `admin/werbung_list.html:365` lädt `chart.js@4.4.0/dist/chart.umd.min.js` — eine Datei, die jsDelivr beim Abruf selbst erzeugt und für die es keinen veröffentlichten Hash gibt; `admin/stats.html:246` lädt `chart.js` ganz ohne Fassung. Beide abzusichern hiesse, die Einbindung auf eine andere Datei umzustellen. Die vier Fremdskripte der öffentlichen Seiten sind seit `680a641` abgesichert | SI17 |
 | Gestaltete 404-Seite (kein `404.html` im Projekt) | live: 13 Wörter, ohne Navigation | BT05, TS20 |
-| Fehler-Monitoring, zweiter Prüfbefehl (ein CI-Lauf bei jedem Push steht inzwischen in `.github/workflows/pruefungen.yml`) | 3 von 7 QS-Bausteinen (Messung 02.09.2026) | VL19, PJ01 |
+| Fehler-Monitoring (Sentry o. ä.) — **der zweite Prüfbefehl ist seit dem 12.09.2026 gebaut** (`pruefe_links`, `11acccc`), ein CI-Lauf bei jedem Push steht in `.github/workflows/pruefungen.yml` | 3 von 7 QS-Bausteinen (Messung 02.09.2026) | VL19, PJ01 |
 | `STRIPE_*`-Variablen in Railway entfernen | nicht dokumentiert, welche Namen genau | — |
 | Zehn Module ohne eigenen Test (`forms.py`, `signals.py`, `views/_helpers.py`, `views/auth.py`, `views/cart.py`, `views/checkout.py`, `views/gaestebuch.py`, `views/shop.py`, `pruefe_seite.py`, `tiktok stream/streamtest.py`) — die View-Module sind über Seiten-, Konto- und Zahlungstests indirekt abgedeckt, das Audit zählt nur direkte Importe | PJ03 | PJ03 |

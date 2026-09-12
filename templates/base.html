@@ -214,9 +214,17 @@
     <link rel="stylesheet" media="print" data-schrift-nachladen href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;900&display=swap">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;900&display=swap"></noscript>
 
-    <!-- Alpine.js (pinned versions, defer = non-blocking) -->
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.14.8/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    <!-- Alpine.js (pinned versions, defer = non-blocking).
+         integrity + crossorigin (SI17): der Browser fuehrt die Datei nur aus,
+         wenn ihr SHA-256 zum Wert passt – ein veraendertes Skript auf dem
+         fremden Server laeuft hier nicht. Die Hashes stammen aus der
+         jsDelivr-Dateiauskunft (data.jsdelivr.com, "hash" = SHA-256, base64)
+         und gehoeren zur festgenagelten Fassung; wer die Version aendert,
+         muss den Hash mitziehen, sonst laedt Alpine gar nicht mehr. -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.14.8/dist/cdn.min.js"
+            integrity="sha256-sav73qRAT3EB3ibvbi5l9O+uc757MwIUHuzyfe9oVg4=" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"
+            integrity="sha256-tgDjY9mdlURNtUrL+y3v/smueSqpmgkim82geOW1VkM=" crossorigin="anonymous"></script>
 
     <noscript>
         <style>

@@ -1,10 +1,10 @@
 ---
 bereich: inhalte
 titel: Inhalte und Seitenbestand
-stand: 2026-09-11
+stand: 2026-09-12
 status: teilweise
 fortschritt: 40
-zusammenfassung: Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); main füllt neun Seiten mit Auskunft, bringt sechs Wissensbeiträge (drei belegt und indexiert, drei warten auf die Freigabe) und hält jede indexierbare Seite über 200 Wörtern. Seit IS18 (Merge 1a5f36b auf main) erreichen Startseite, Produktübersicht und Wissensübersicht laut Commit mit belegtem Fliesstext die Zielgrösse ihrer Seitenart — nur die Produktseiten brauchen weiter eine eigene Beschreibung je Einzelstück. Der Zweig sofort/2026-09-11-kv07-und-2-weitere (nicht gemergt) bringt die Danke-Seite /kontakt/danke/ (KV07): noindex, Text nur mit Angaben, die schon auf kontakt.html stehen.
+zusammenfassung: Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); main füllt neun Seiten mit Auskunft, bringt sechs Wissensbeiträge (drei belegt und indexiert, drei warten auf die Freigabe) und hält jede indexierbare Seite über 200 Wörtern. Seit IS18 (Merge 1a5f36b auf main) erreichen Startseite, Produktübersicht und Wissensübersicht laut Commit mit belegtem Fliesstext die Zielgrösse ihrer Seitenart — nur die Produktseiten brauchen weiter eine eigene Beschreibung je Einzelstück. Der Zweig sofort/2026-09-11-kv07-und-2-weitere (nicht gemergt) bringt die Danke-Seite /kontakt/danke/ (KV07): noindex, Text nur mit Angaben, die schon auf kontakt.html stehen. SU08 (jeder Themenbereich mit mehr als einer Seite) ist am 12.09.2026 geprüft und als nicht möglich beendet: /produkte/ ist die Übersicht zu /produkt/<slug>/, und /gaestebuch/, /ueber_uns/ und /liefergebiet/ bräuchten Inhalte, die es im Projekt nicht gibt (kein Kategoriefeld am Produktmodell, 16 Seiten im Register) — keine Zeile Code geändert.
 offen: 8
 quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/legal.py, shop1/tests/test_inhalt.py
 ---
@@ -62,6 +62,21 @@ Jeder Beitrag: Antwort zuerst, sechs bis zehn Fragen als `h2`, `FAQPage` deckung
 | `/wissen/` | 0 live / 6 + Übersicht im Zweig | Ratgeber; Zielgrösse 3 (SU04) im Zweig **erreicht**: drei belegte Beiträge indexiert, drei warten auf Freigabe |
 | Betrieb | `/ueber_uns/`, `/liefergebiet/`, `/kontakt/`, `/gaestebuch/` | je eine Seite (SU08) |
 | Recht | `/impressum/`, `/datenschutz/`, `/agb/` | |
+
+**`SU08` („jeder Themenbereich hat mehr als eine Seite") am 12.09.2026 geprüft und als
+nicht möglich beendet** (Paket 196, keine Zeile Code geändert). Der Befund trifft zu —
+`/produkte/`, `/gaestebuch/`, `/ueber_uns/` und `/liefergebiet/` haben je eine Seite —,
+schliessen lässt er sich hier nicht:
+
+* **`/produkte/`** ist die Übersicht des Produktbereichs, seine Detailseiten liegen unter
+  `/produkt/<slug>/` (`shop1/urls.py`). Die beiden zusammenzulegen hiesse, jede indexierte
+  Produktadresse umzuziehen — ein Eingriff in die kanonischen Adressen der laufenden Seite.
+* **`/gaestebuch/`, `/ueber_uns/`, `/liefergebiet/`** bräuchten je eine zweite Seite, und
+  deren Inhalt gibt es im Projekt nicht: `Produkt` hat **kein Kategoriefeld**
+  (`shop1/models.py`), aus dem sich Unterseiten ableiten liessen, und das Register
+  `shop1/seiten_stand.py` führt genau 16 Seiten. Orte, Lieferzeiten oder eine zweite
+  Werkstattseite kann nur die Betreiberin liefern — siehe „Beim Kunden" Nr. 16 in
+  [80-AUFGABEN.md](80-AUFGABEN.md).
 
 Hauptbegriff „custom print" liegt auf drei Produktseiten (IS23) — Folge der Produktnamen im Shop-Admin, nicht der Templates. Zwei Produkte tragen denselben Namen („Custom print hoodie") und damit denselben Titel (IS03, BF21); die Titel werden aus dem Produktnamen erzeugt (`Produkt.save()` vergibt Slug mit Suffix `-1`). Abhilfe: unterschiedliche Namen oder `seo_titel` im Standard-Admin (Test in `test_daten`, Schritt 45).
 
