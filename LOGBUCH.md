@@ -1659,3 +1659,75 @@ Kontaktseite und kein `tel:`).
 Protokoll, die Bestätigung erscheint trotzdem (Eigener Punkt `EIG10`). Die
 Seite sagt deshalb „abgeschickt", nicht „zugestellt", und nennt die
 E-Mail-Adresse als zweiten Weg.
+
+## Paket 183 (12.09.2026) – VL21, GE11, RE07
+
+### VL21 – der Angebotsblock liegt als eigener Baustein vor
+
+**Warum.** Die Messung fand keinen eigenen Angebots-Baustein: die Karte, mit
+der dieser Shop sein Angebot zeigt, stand zweimal mitten in einer Vorlage –
+in `produkte.html` (Zeilen 72-115) und in `index.html` (Zeilen 486-507).
+Beides sind die längsten Vorlagen des Projekts (127 und 728 Zeilen); wer die
+Karte ändern wollte, musste sie erst suchen.
+
+**Was gebaut ist.** Neuer Ordner `shop1/templates/shop1/teile/` mit zwei
+Bausteinen, eingebunden mit `{% include %}` innerhalb der bestehenden
+Schleifen:
+
+| Baustein | Eingebunden aus | Was er zeigt |
+|---|---|---|
+| `teile/angebot.html` | `produkte.html` (`produkte_liste`) | Karte der Produktübersicht (800×1000 mit `srcset`, Abzeichen „Unique"/„Limited", Label „Endpreis") |
+| `teile/angebot_galerie.html` | `index.html` (`produkte_galerie`) | Karte des Startseiten-Abschnitts „Aktuelle Unikate" (600×750 ohne `srcset`, Abzeichen „1 of 1") |
+
+**Anders als der Katalog es vorschlägt: zwei Bausteine, nicht einer.** Der
+Rat lautet, *einen* Angebotsblock auszulagern und ihn aus Start-, Leistungs-
+und Ortsvorlage einzubinden. Er unterstellt einen Block, der in jeder Vorlage
+noch einmal wörtlich dasteht. Hier ist er das nicht: die beiden Karten
+unterscheiden sich in Ecken (`rounded-[3rem]` gegen `rounded-[3.5rem]`),
+Bildhöhe (`h-[20rem] sm:h-[28rem]` gegen `h-[18rem] sm:h-[24rem]`),
+Bildgrösse, `srcset`, Abzeichen und Aufbau des Textteils (`flex flex-col
+flex-grow` mit Preislabel gegen `relative` ohne). Sie in einen Baustein mit
+Verzweigungen zu pressen hätte entweder das Aussehen einer der beiden
+Ansichten geändert – was die Designwache verbietet – oder eine Datei mit
+sechs Verzweigungen ergeben, die schwerer zu lesen ist als die zwei Kopien.
+Zwei benannte Bausteine im selben Teil-Ordner erfüllen den Zweck der Regel:
+das Angebot hat einen Ort, und beim Ändern findet man ihn.
+
+**Aussehen.** Das gerenderte HTML ist unverändert – Reihenfolge, Klassen,
+Kennungen und Attribute sind wörtlich die der bisherigen Zeilen; die
+Designwache (`test_aufbau`) vergleicht beide Seiten unverändert und bleibt
+grün. Kein Tailwind-Neubau nötig: es kommt keine Klasse hinzu, und
+`tailwind.config.js` scannt `shop1/templates/**/*.html` samt Unterordner.
+
+**Falle, in die der erste Versuch lief.** `{% load %}` gilt je
+Vorlagendatei und wird an einen Baustein **nicht** vererbt: ohne
+`{% load custom_tags %}` in beiden neuen Dateien kennt der Baustein den
+Filter `cloud` nicht, und Startseite wie Produktübersicht antworten mit 500
+(`Invalid filter: 'cloud'`, von `pruefe_seite` und 64 Tests gemeldet). Steht
+als Kommentar in beiden Dateien.
+
+**Tests.** `python manage.py test shop1`: 224 Tests, OK. Kein Test ergänzt –
+die Designwache prüft das Ergebnis dieser Änderung genau richtig, und ein
+Test, der „die Datei existiert" behauptet, sagt nichts über die Seite.
+
+### GE11 – nicht möglich (unverändert gegenüber Paket 171)
+
+Im Projekt steht genau eine Profiladresse:
+`https://www.instagram.com/luviq.universe/` (`base.html:118`,
+`views/legal.py:166`). `GOOGLE_REVIEW_URL` ist ein Maps-**Suchlink**
+(`settings.py:409`, Standardwert `.../maps/search/Luviq+Universe+Alsfeld`),
+keine Profiladresse – als `sameAs` wäre er eine Behauptung über eine
+Entität, die die Seite nicht belegen kann. Keine Zeile Code geändert; die
+Lage ist die des 11.09.2026, siehe
+[doku/50-LOCAL-SEO.md](doku/50-LOCAL-SEO.md) Zeile 36.
+
+### RE07 – nicht möglich in diesem Lauf
+
+Selbst hosten heisst: Inter (400-700) und Outfit (700/900) als WOFF2 in
+`shop1/static/shop1/`, `@font-face` statt der vier Zeilen
+`base.html:212-215`. Die Schriftdateien liegen nicht im Projekt (kein
+`*.woff2` unter `shop1/static/`), und dieser Lauf hat keinen Netzzugang –
+weder `curl` noch `urllib` sind freigegeben. Eine halbe Umstellung (nur
+Inter, Outfit weiter von Google) bringt rechtlich nichts: die Adresse des
+Besuchers geht trotzdem vor jeder Einwilligung zu Google. Keine Zeile Code
+geändert.
