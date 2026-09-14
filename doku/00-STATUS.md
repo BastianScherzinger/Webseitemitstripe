@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-09-12
+stand: 2026-09-14
 status: teilweise
 fortschritt: 70
 zusammenfassung: Gesamtstand 76,5 „Solide“ (04.09.2026). Verbesserungslauf 4, SU04 und GE23/GE25/IS19 liegen auf origin/main; drei belegte Wissensbeiträge, Antwortabsätze mit belegten Zahlen, keine dünne Seite mehr. PJ05 (kritische Audit-Funde abgearbeitet oder begründet), SI08 (CSP blockiert) und PJ11 (Paketfassungen samt Lockfile) sind seit dem Merge 0c18ea7, SI09 (Nonce statt 'unsafe-inline' im script-src, im Browser ungeprüft) seit 4ec540b, IS18 seit 1a5f36b, KV07 samt der VL01-Ausnahme seit c522ff9, VL21 (Produktkarte als zwei Bausteine, gerendertes HTML unverändert) seit 0d5500b und SI17/PJ01 (integrity an den vier Fremdskripten, Prüfbefehl pruefe_links) seit 43f25c3 auf main; main = 69c1f78 und ist origin/main (43f25c3) um einen Doku-Commit voraus, der Push steht aus. Auf dem Zweig sofort/2026-09-12-mw15-und-2-weitere (drei Commits, nicht gemergt) steht als dritter Prüfbefehl pruefe_mail (MW15: Einstellungen und Anmeldung beider Mailwege), und die sechs Wissensbeiträge tragen einen Article-Knoten mit Autorin und belegten Daten, die Übersicht eine ItemList (GE15); 243 Testfunktionen, laut Commit grün, kein Aufbau berührt. GE20 (Öffnungszeiten) ist nicht anwendbar: es gibt kein Ladengeschäft. SU08 ist nicht möglich — die vier einseitigen Bereiche brauchen Inhalte der Betreiberin. GE11 wartet auf Profiladressen der Betreiberin, RE07 auf Schriftdateien und einen Lauf mit Netzzugang. TS11 wartet weiter auf CANONICAL_HOST. Die drei ersten Beiträge und die Produktbeschreibungen warten auf die Betreiberin.
@@ -52,27 +52,27 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–12.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 12.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-07d) — **Gesamtstand 83,3 von 100**, Reifegrad „Solide“. 261 von 279 Regeln an 18 URLs und 133 Dateien (28.521 Zeilen) geprüft.
+**Messung vom 14.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-07d) — **Gesamtstand 85,4 von 100**, Reifegrad „Solide“. 261 von 279 Regeln an 18 URLs und 136 Dateien (29.880 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
 | Konversion | **67** | Brauchbar |
-| Erreichbarkeit & Postfach | **69** | Brauchbar |
-| GEO — KI-Sichtbarkeit | **77** | Solide |
-| Vorlagen-Konformität | **78** | Solide |
+| Erreichbarkeit & Postfach | **74** | Brauchbar |
 | Recht & Vertrauen | **79** | Solide |
 | SEO — Inhalt | **79** | Solide |
+| Vorlagen-Konformität | **79** | Solide |
 | Substanz & Reichweite | **82** | Solide |
-| Code-Qualität & Projektreife | **83** | Solide |
+| GEO — KI-Sichtbarkeit | **82** | Solide |
 | Betrieb & Auslieferung | **86** | Solide |
-| Barrierefreiheit | **91** | Referenz |
+| Code-Qualität & Projektreife | **90** | Solide |
 | SEO — Technik | **91** | Referenz |
-| Sicherheit | **93** | Referenz |
-| Performance & Core Web Vitals | **94** | Referenz |
+| Performance & Core Web Vitals | **95** | Referenz |
+| Barrierefreiheit | **95** | Referenz |
+| Sicherheit | **95** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 133 Dateien, **122 Befunde**, davon 0 kritisch und 39 wichtig.
+Quelltext: 136 Dateien, **124 Befunde**, davon 0 kritisch und 42 wichtig.
 
 Kritische Befunde:
 
