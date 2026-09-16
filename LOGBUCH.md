@@ -1947,3 +1947,94 @@ sichtbar auf der Seite stehen und mit 200 antworten. **243 Tests, OK.**
 **Aussehen.** Alles liegt im `<head>` (Blöcke `schema_ld`); kein Element,
 keine Klasse, keine Kennung, keine Überschrift geändert – `test_aufbau`
 bleibt grün.
+
+## Paket 208 (16.09.2026) – FO06, FO08, FO09
+
+### FO06 – Kontakt und Newsletter prüfen ihre Eingaben auf dem Server
+
+**Befund.** Beide öffentlichen Anfragewege (`kontakt` in `views/shop.py`,
+`newsletter_subscribe` in `views/legal.py`) prüften nur, ob ein Feld leer ist.
+Das E-Mail-Format und jede Länge prüfte allein der Browser (`type="email"`,
+`required`) – ein einziger Abruf ohne Browser umgeht beides. Folge: Anfragen
+ohne beantwortbare Absenderadresse, beliebig lange Mails an die Betreiberin
+und beim Newsletter eine Adresse über 254 Zeichen, die das Modellfeld
+(`EmailField`) auf PostgreSQL mit einem Serverfehler abgelehnt hätte.
+
+**Gebaut.** Djangos `validate_email` in beiden Views, keine neue
+Abhängigkeit. Das Kontaktformular prüft über die neue Funktion
+`kontakt_fehler` zusätzlich Obergrenzen je Feld (`KONTAKT_LAENGEN`: Name 100,
+E-Mail 254, Betreff 150, Nachricht 5000) und nennt den Grund als Meldung; der
+Newsletter begrenzt die Adresse auf die 254 Zeichen des Modellfelds
+(`validate_email` selbst lässt 320 zu). Keine Django-Form: sie hätte die
+bestehenden Meldungen und das JSON des Newsletter-Skripts umgebaut, ohne mehr
+zu prüfen. Die `maxlength`-Angaben im HTML sind ein anderer Punkt (FO07) und
+bleiben unberührt.
+
+**Drei neue Tests** in `test_formulare`: ungültige Absenderadressen und
+überlange Felder verschicken nichts, ungültige Newsletter-Adressen (auch als
+JSON) legen keinen Eintrag an. Kein Template geändert.
+
+### FO08 – die Newsletter-Anmeldung endet mit einem Ereignis (anders als vorgeschlagen)
+
+**Befund.** Die Anmeldung auf der Startseite läuft per `fetch` und zeigt ihre
+Bestätigung im Formular (`#newsletter-message`); sie erreicht weder eine
+Danke-Seite noch meldet sie ein Ereignis. Kein Werkzeug kann sie als Abschluss
+zählen. Das Besuchsprotokoll hilft nicht: `PageVisitMiddleware` schreibt auch
+abgewiesene Abrufe von `/newsletter/subscribe/` mit.
+
+**Anders gebaut als vom Katalog vorgeschlagen.** Der Rat nennt eine
+Danke-Seite oder `gtag('event', 'generate_lead')`.
+* Eine Danke-Seite hiesse, die Startseite nach der Anmeldung zu verlassen –
+  eine Änderung des Ablaufs an der Bühne der Seite, die die Gestaltungslinie
+  nicht vorsieht.
+* `gtag()` gibt es auf dieser Seite nicht: kein Template lädt ein Messskript
+  (Suche nach `gtag`, `dataLayer`, `googletagmanager` ohne Treffer). Der
+  Aufruf wäre undefiniert, würfe im `try` und zeigte die Meldung „Fehler bei
+  der Verbindung zum Orbit“ – nach einer erfolgreichen Anmeldung.
+
+Deshalb `window.dataLayer.push({event: 'generate_lead', lead_quelle:
+'newsletter'})`: die Form, die Google Tag Manager und `gtag.js` beide lesen,
+sobald eines davon eingebunden wird. Ausgelöst nur, wenn der Server `neu: true`
+zurückgibt – eine wiederholte Anmeldung derselben Adresse zählt nicht. Das
+Ereignis trägt keine Adresse. **Solange kein Messskript eingebunden ist,
+verlässt das Ereignis den Browser nicht** – gezählt wird es erst mit einem
+Tag (siehe `doku/60-ADS.md`).
+
+**Zwei neue Tests** in `test_formulare`: nur eine neue Anmeldung meldet `neu`,
+und die Startseite enthält das Ereignis ohne Personendaten. Nur Skripttext
+geändert, kein Element, keine Klasse – `test_aufbau` grün.
+
+### FO09 – beide Anfragewege sind je IP-Adresse gedrosselt
+
+**Befund.** Weder `kontakt` noch `newsletter_subscribe` hatten eine
+Obergrenze. `django-axes` schützt nur die Anmeldung. Ein Skript konnte in
+einer Schleife das Postfach der Betreiberin (eine Brevo-Mail je Anfrage)
+und die Abonnentenliste füllen.
+
+**Gebaut** – ein Cache-Zähler, wie der Katalog rät, ohne `django-ratelimit`
+(keine neue Abhängigkeit). `zu_viele_anfragen(request, bereich)` in
+`views/_helpers.py`: höchstens `ANFRAGE_GRENZE` = 5 Anfragen je Adresse und
+Bereich in `ANFRAGE_FENSTER` = 15 Minuten. Das Fenster beginnt mit der ersten
+Anfrage (`cache.add`) und verlängert sich nicht. Gezählt wird jede POST-Anfrage
+vor der Prüfung, auch eine ungültige. Über der Grenze: die Kontaktseite mit
+Meldung und Status 429, der Newsletter ein JSON-Fehler mit 429, den das
+bestehende Skript als rote Meldung zeigt.
+
+**Welche Adresse.** Der *letzte* Eintrag in `X-Forwarded-For`, nicht der
+erste wie in `PageVisitMiddleware._get_ip`. Vor Gunicorn steht nur der
+Railway-Proxy (`DOCUMENTATION.md` §1), und dessen Eintrag steht am Ende. Den
+ersten kann der Absender selbst setzen und so jede Drosselung umgehen. Die
+Middleware bleibt unberührt, sie gehört nicht zu diesem Punkt.
+
+**Grenze des Baus.** Der Zähler liegt im `LocMemCache`, also je
+Gunicorn-Prozess. Bei zwei Workern (`start.sh`) kommt eine Adresse im
+ungünstigsten Fall auf zehn Anfragen je Viertelstunde. Gegen eine Schleife
+genügt das. Ein gemeinsamer Zähler bräuchte Redis oder den Datenbank-Cache,
+also einen neuen Dienst oder eine Tabelle.
+
+**Vier neue Tests** in `DrosselungTest`: die sechste Anfrage einer Adresse
+wird abgewiesen und verschickt nichts, eine andere Adresse ist nicht
+betroffen, ein selbst gesetzter erster `X-Forwarded-For`-Eintrag umgeht die
+Grenze nicht, und der Newsletter nimmt über der Grenze keine Adresse mehr
+an. **252 Tests, OK.** Kein Template geändert. `pruefe_seite` war in dieser
+Umgebung nicht ausführbar, weil die Ausführung nicht freigegeben ist.

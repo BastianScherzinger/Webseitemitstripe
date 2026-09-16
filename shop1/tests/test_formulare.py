@@ -7,11 +7,13 @@ Verhalten benutzt, wäre langsam, netzabhängig und würde tatsächlich Post
 verschicken.
 """
 
+import json
 from unittest import mock
 
 from django.test import Client
 
 from ..models import Subscriber
+from ..views._helpers import ANFRAGE_GRENZE
 from ._basis import LuviqTestCase
 
 _MAIL = 'shop1.views.shop.send_brevo_email'
@@ -88,6 +90,31 @@ class KontaktformularTest(LuviqTestCase):
             antwort = self.sende('/kontakt/', daten)
         versand.assert_not_called()
         self.assertContains(antwort, 'Bitte fülle alle Felder aus')
+
+    def test_ungueltige_absenderadresse_verschickt_nichts(self):
+        """Verhindert Anfragen, auf die niemand antworten kann (FO06): das
+        ``type="email"`` im Formular umgeht jeder Abruf ohne Browser."""
+        for adresse in ('keine-adresse', 'a@b', 'erika@@example.invalid'):
+            daten = dict(GUELTIGE_ANFRAGE, email=adresse)
+            with self.subTest(adresse=adresse), mock.patch(_MAIL) as versand:
+                antwort = self.sende('/kontakt/', daten)
+                self.assertEqual(antwort.status_code, 200)
+                versand.assert_not_called()
+                self.assertContains(antwort, 'gültige E-Mail-Adresse')
+
+    def test_ueberlange_eingaben_verschicken_nichts(self):
+        """Verhindert, dass ein Skript ein Megabyte Text in die Mail an die
+        Betreiberin schreibt (FO06) – jedes Feld hat eine Obergrenze."""
+        from ..views.shop import KONTAKT_LAENGEN
+        for feld, grenze in KONTAKT_LAENGEN.items():
+            wert = 'x' * (grenze + 1)
+            if feld == 'email':
+                wert = 'x' * (grenze - len('@example.invalid') + 1) + '@example.invalid'
+            daten = dict(GUELTIGE_ANFRAGE, **{feld: wert})
+            with self.subTest(feld=feld), mock.patch(_MAIL) as versand:
+                antwort = self.sende('/kontakt/', daten)
+                versand.assert_not_called()
+                self.assertContains(antwort, 'zu lang')
 
     def test_zeilenumbrueche_gelangen_nicht_in_die_betreffzeile(self):
         """Verhindert das Einschleusen von Kopfzeilen (Header Injection): ein
@@ -171,6 +198,17 @@ class NewsletterTest(LuviqTestCase):
         self.assertEqual(antwort.status_code, 400)
         self.assertEqual(Subscriber.objects.count(), 0)
 
+    def test_anmeldung_mit_ungueltiger_adresse_wird_abgewiesen(self):
+        """Verhindert Datensätze, an die kein Newsletter zugestellt werden
+        kann (FO06) – auch als JSON, wie das Skript der Startseite schickt."""
+        for adresse in ('keine-adresse', 'a@b', 'x' * 250 + '@example.invalid'):
+            with self.subTest(adresse=adresse):
+                antwort = self.client.post(
+                    '/newsletter/subscribe/', json.dumps({'email': adresse}),
+                    content_type='application/json', secure=True)
+                self.assertEqual(antwort.status_code, 400)
+        self.assertEqual(Subscriber.objects.count(), 0)
+
     def test_zweite_anmeldung_erzeugt_keinen_zweiten_eintrag(self):
         """Verhindert doppelte Zustellung an dieselbe Adresse und – weil das
         Feld ``unique`` ist – einen Serverfehler beim zweiten Absenden."""
@@ -179,9 +217,75 @@ class NewsletterTest(LuviqTestCase):
         self.assertEqual(antwort.status_code, 200)
         self.assertEqual(Subscriber.objects.count(), 1)
 
+    def test_nur_eine_neue_anmeldung_meldet_einen_abschluss(self):
+        """Verhindert doppelt gezählte Anmeldungen (FO08): das Skript der
+        Startseite löst sein Ereignis nur bei ``neu`` aus, eine Wiederholung
+        derselben Adresse darf das nicht melden."""
+        erste = self.sende('/newsletter/subscribe/', {'email': 'neu@example.invalid'})
+        zweite = self.sende('/newsletter/subscribe/', {'email': 'neu@example.invalid'})
+        self.assertIs(erste.json().get('neu'), True)
+        self.assertNotIn('neu', zweite.json())
+
+    def test_die_startseite_zaehlt_die_anmeldung_ohne_personendaten(self):
+        """Verhindert, dass die Anmeldung wieder unzählbar auf der Seite
+        endet (FO08) – und dass das Ereignis die Adresse mitschickt."""
+        inhalt = self.hole('/').content.decode()
+        self.assertIn("window.dataLayer.push({ event: 'generate_lead', lead_quelle: 'newsletter' })",
+                      inhalt)
+        self.assertIn('response.ok && data.neu', inhalt)
+        push = inhalt.split('window.dataLayer.push(', 1)[1].split(')', 1)[0]
+        self.assertNotIn('email', push)
+
     def test_anmeldung_per_get_ist_nicht_moeglich(self):
         """Verhindert, dass ein vorab geladener Link oder ein Bild in einer Mail
         fremde Adressen in die Abonnentenliste schreibt."""
         antwort = self.hole('/newsletter/subscribe/')
         self.assertEqual(antwort.status_code, 405)
         self.assertEqual(Subscriber.objects.count(), 0)
+
+
+class DrosselungTest(LuviqTestCase):
+    """Obergrenze je IP-Adresse für beide Anfragewege (FO09)."""
+
+    def _kontakt(self, **meta):
+        return self.sende('/kontakt/', GUELTIGE_ANFRAGE, **meta)
+
+    def test_ueber_der_grenze_wird_keine_nachricht_mehr_verschickt(self):
+        """Verhindert, dass eine Schleife das Postfach der Betreiberin füllt:
+        nach fünf Anfragen einer Adresse antwortet das Formular mit 429."""
+        with mock.patch(_MAIL) as versand:
+            for _ in range(ANFRAGE_GRENZE):
+                self.assertEqual(self._kontakt().status_code, 302)
+            antwort = self._kontakt()
+        self.assertContains(antwort, 'mehrere Nachrichten', status_code=429)
+        self.assertEqual(versand.call_count, ANFRAGE_GRENZE)
+
+    def test_eine_andere_adresse_ist_nicht_betroffen(self):
+        """Gegenprobe: die Grenze gilt je Absender, nicht für alle Besucher."""
+        with mock.patch(_MAIL) as versand:
+            for _ in range(ANFRAGE_GRENZE + 1):
+                self._kontakt(REMOTE_ADDR='198.51.100.1')
+            antwort = self._kontakt(REMOTE_ADDR='198.51.100.2')
+        self.assertEqual(antwort.status_code, 302)
+        self.assertEqual(versand.call_count, ANFRAGE_GRENZE + 1)
+
+    def test_ein_selbst_gesetzter_weiterleitungskopf_umgeht_die_grenze_nicht(self):
+        """Verhindert den einfachsten Umweg: der Absender setzt den ersten
+        Eintrag von ``X-Forwarded-For`` bei jeder Anfrage neu. Gezählt wird
+        der Eintrag, den der Proxy anhängt."""
+        with mock.patch(_MAIL):
+            for nummer in range(ANFRAGE_GRENZE):
+                self._kontakt(HTTP_X_FORWARDED_FOR=f'10.0.0.{nummer}, 203.0.113.7')
+            antwort = self._kontakt(HTTP_X_FORWARDED_FOR='10.0.0.99, 203.0.113.7')
+        self.assertEqual(antwort.status_code, 429)
+
+    def test_der_newsletter_nimmt_ueber_der_grenze_keine_adresse_mehr_an(self):
+        """Verhindert, dass ein Skript die Abonnentenliste mit fremden
+        Adressen füllt."""
+        for nummer in range(ANFRAGE_GRENZE):
+            antwort = self.sende('/newsletter/subscribe/', {'email': f'n{nummer}@example.invalid'})
+            self.assertEqual(antwort.status_code, 200)
+        antwort = self.sende('/newsletter/subscribe/', {'email': 'zuviel@example.invalid'})
+        self.assertEqual(antwort.status_code, 429)
+        self.assertIn('error', antwort.json())
+        self.assertEqual(Subscriber.objects.count(), ANFRAGE_GRENZE)

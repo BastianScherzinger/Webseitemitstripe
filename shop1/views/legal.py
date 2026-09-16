@@ -2,6 +2,8 @@
 
 import json
 
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponsePermanentRedirect, JsonResponse
 from django.urls import reverse
@@ -15,6 +17,7 @@ from ..seiten_stand import SEITEN_STAND  # noqa: F401 – Re-Export
 # Freigabe der Wissensbeiträge (Auflage 3 des vierten Laufs): Sitemap und
 # llms.txt nennen nur bestätigte Beiträge, siehe Docstring in views/wissen.py.
 from .wissen import freigegebene_beitraege, uebersicht_indexierbar
+from ._helpers import zu_viele_anfragen
 
 
 def impressum(request):
@@ -339,19 +342,35 @@ def produkt_uebersicht_redirect(request):
 def newsletter_subscribe(request):
     """Abonniert den Newsletter."""
     if request.method == 'POST':
+        # Drosselung je IP-Adresse (FO09): ohne sie füllt eine Schleife die
+        # Abonnentenliste mit fremden Adressen.
+        if zu_viele_anfragen(request, 'newsletter'):
+            return JsonResponse({'error': 'Zu viele Anmeldungen in kurzer Zeit. '
+                                          'Bitte versuche es später noch einmal.'}, status=429)
+
         try:
             data = json.loads(request.body)
             email = data.get('email', '').strip()
         except Exception:
             email = request.POST.get('email', '').strip()
 
-        if not email:
+        # Serverseitige Prüfung (FO06): ``type="email"`` im Formular umgeht
+        # jeder Abruf ohne Browser. 254 Zeichen ist die Länge des Modellfelds
+        # (``EmailField``); ``validate_email`` selbst lässt bis zu 320 zu.
+        try:
+            if len(email) > 254:
+                raise ValidationError('zu lang')
+            validate_email(email)
+        except ValidationError:
             return JsonResponse({'error': 'Bitte gib eine gültige Email an.'}, status=400)
 
         if Subscriber.objects.filter(email=email).exists():
             return JsonResponse({'message': 'Du bist bereits im Orbit angemeldet!'}, status=200)
 
         Subscriber.objects.create(email=email)
-        return JsonResponse({'message': 'Erfolgreich zum Newsletter angemeldet!'}, status=200)
+        # ``neu`` sagt dem Skript der Startseite, dass diese Anmeldung als
+        # Abschluss zählt (FO08); eine Wiederholung oben zählt nicht.
+        return JsonResponse({'message': 'Erfolgreich zum Newsletter angemeldet!', 'neu': True},
+                            status=200)
 
     return JsonResponse({'error': 'Invalid request'}, status=405)
