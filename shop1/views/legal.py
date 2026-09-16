@@ -17,6 +17,7 @@ from ..seiten_stand import SEITEN_STAND  # noqa: F401 – Re-Export
 # Freigabe der Wissensbeiträge (Auflage 3 des vierten Laufs): Sitemap und
 # llms.txt nennen nur bestätigte Beiträge, siehe Docstring in views/wissen.py.
 from .wissen import freigegebene_beitraege, uebersicht_indexierbar
+from ._helpers import zu_viele_anfragen
 
 
 def impressum(request):
@@ -341,6 +342,12 @@ def produkt_uebersicht_redirect(request):
 def newsletter_subscribe(request):
     """Abonniert den Newsletter."""
     if request.method == 'POST':
+        # Drosselung je IP-Adresse (FO09): ohne sie füllt eine Schleife die
+        # Abonnentenliste mit fremden Adressen.
+        if zu_viele_anfragen(request, 'newsletter'):
+            return JsonResponse({'error': 'Zu viele Anmeldungen in kurzer Zeit. '
+                                          'Bitte versuche es später noch einmal.'}, status=429)
+
         try:
             data = json.loads(request.body)
             email = data.get('email', '').strip()

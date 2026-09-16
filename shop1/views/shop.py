@@ -14,6 +14,7 @@ from django.views.decorators.cache import never_cache
 
 from ..models import Produkt, Werbung, WerbungStat, Comment
 from ..utils import send_brevo_email
+from ._helpers import zu_viele_anfragen
 
 _log = logging.getLogger('shop1')
 
@@ -104,6 +105,13 @@ def kontakt(request):
         email = request.POST.get('email', '').strip()
         betreff = request.POST.get('betreff', '').strip()
         nachricht = request.POST.get('nachricht', '').strip()
+
+        # Drosselung je IP-Adresse (FO09) vor jeder Prüfung: auch eine
+        # Schleife ungültiger Anfragen kostet Rechenzeit.
+        if zu_viele_anfragen(request, 'kontakt'):
+            messages.error(request, 'Du hast gerade mehrere Nachrichten geschickt. '
+                                    'Bitte versuche es in einer Viertelstunde noch einmal.')
+            return render(request, 'shop1/kontakt.html', status=429)
 
         fehler = kontakt_fehler(name, email, betreff, nachricht)
         if fehler is None:

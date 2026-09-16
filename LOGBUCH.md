@@ -2003,3 +2003,38 @@ Tag (siehe `doku/60-ADS.md`).
 **Zwei neue Tests** in `test_formulare`: nur eine neue Anmeldung meldet `neu`,
 und die Startseite enthält das Ereignis ohne Personendaten. Nur Skripttext
 geändert, kein Element, keine Klasse – `test_aufbau` grün.
+
+### FO09 – beide Anfragewege sind je IP-Adresse gedrosselt
+
+**Befund.** Weder `kontakt` noch `newsletter_subscribe` hatten eine
+Obergrenze. `django-axes` schützt nur die Anmeldung. Ein Skript konnte in
+einer Schleife das Postfach der Betreiberin (eine Brevo-Mail je Anfrage)
+und die Abonnentenliste füllen.
+
+**Gebaut** – ein Cache-Zähler, wie der Katalog rät, ohne `django-ratelimit`
+(keine neue Abhängigkeit). `zu_viele_anfragen(request, bereich)` in
+`views/_helpers.py`: höchstens `ANFRAGE_GRENZE` = 5 Anfragen je Adresse und
+Bereich in `ANFRAGE_FENSTER` = 15 Minuten. Das Fenster beginnt mit der ersten
+Anfrage (`cache.add`) und verlängert sich nicht. Gezählt wird jede POST-Anfrage
+vor der Prüfung, auch eine ungültige. Über der Grenze: die Kontaktseite mit
+Meldung und Status 429, der Newsletter ein JSON-Fehler mit 429, den das
+bestehende Skript als rote Meldung zeigt.
+
+**Welche Adresse.** Der *letzte* Eintrag in `X-Forwarded-For`, nicht der
+erste wie in `PageVisitMiddleware._get_ip`. Vor Gunicorn steht nur der
+Railway-Proxy (`DOCUMENTATION.md` §1), und dessen Eintrag steht am Ende. Den
+ersten kann der Absender selbst setzen und so jede Drosselung umgehen. Die
+Middleware bleibt unberührt, sie gehört nicht zu diesem Punkt.
+
+**Grenze des Baus.** Der Zähler liegt im `LocMemCache`, also je
+Gunicorn-Prozess. Bei zwei Workern (`start.sh`) kommt eine Adresse im
+ungünstigsten Fall auf zehn Anfragen je Viertelstunde. Gegen eine Schleife
+genügt das. Ein gemeinsamer Zähler bräuchte Redis oder den Datenbank-Cache,
+also einen neuen Dienst oder eine Tabelle.
+
+**Vier neue Tests** in `DrosselungTest`: die sechste Anfrage einer Adresse
+wird abgewiesen und verschickt nichts, eine andere Adresse ist nicht
+betroffen, ein selbst gesetzter erster `X-Forwarded-For`-Eintrag umgeht die
+Grenze nicht, und der Newsletter nimmt über der Grenze keine Adresse mehr
+an. **252 Tests, OK.** Kein Template geändert. `pruefe_seite` war in dieser
+Umgebung nicht ausführbar, weil die Ausführung nicht freigegeben ist.

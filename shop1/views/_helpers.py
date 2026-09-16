@@ -2,7 +2,48 @@
 
 import os
 
+from django.core.cache import cache
+
 from ..models import Cart, CartItem
+
+#: Anfragen je IP-Adresse und Bereich im Zeitfenster (FO09). Grosszügig für
+#: Menschen – das Kontaktformular schickt nach Erfolg auf ``/kontakt/danke/``,
+#: ein zweiter Versuch ist die Ausnahme –, eng für eine Schleife.
+ANFRAGE_GRENZE = 5
+ANFRAGE_FENSTER = 15 * 60
+
+
+def _client_ip(request):
+    """Die Adresse des Absenders hinter dem Railway-Proxy.
+
+    Der letzte Eintrag in ``X-Forwarded-For`` ist der, den der einzige Proxy
+    vor Gunicorn (``DOCUMENTATION.md`` §1) selbst gesehen hat. Den ersten
+    kann der Absender frei setzen und so jede Drosselung umgehen."""
+    xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
+    if xff.strip():
+        return xff.split(',')[-1].strip()
+    return request.META.get('REMOTE_ADDR', '')
+
+
+def zu_viele_anfragen(request, bereich, grenze=ANFRAGE_GRENZE, fenster=ANFRAGE_FENSTER):
+    """Zählt eine Anfrage je IP-Adresse und meldet ``True`` über der Grenze.
+
+    Der Zähler liegt im ``LocMemCache`` und damit je Gunicorn-Prozess; bei
+    zwei Workern (``start.sh``) kommt eine Adresse im ungünstigsten Fall auf
+    die doppelte Zahl. Das genügt gegen eine Schleife und braucht keinen
+    zusätzlichen Dienst."""
+    schluessel = f'drossel:{bereich}:{_client_ip(request)}'
+    # add() legt den Zähler nur an, wenn es ihn noch nicht gibt – das
+    # Zeitfenster beginnt mit der ersten Anfrage und verlängert sich nicht.
+    if cache.add(schluessel, 1, fenster):
+        return False
+    try:
+        anzahl = cache.incr(schluessel)
+    except ValueError:
+        # Zwischen add() und incr() abgelaufen oder verdrängt.
+        cache.add(schluessel, 1, fenster)
+        return False
+    return anzahl > grenze
 
 
 def _is_admin(user):

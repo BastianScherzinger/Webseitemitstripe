@@ -13,6 +13,7 @@ from unittest import mock
 from django.test import Client
 
 from ..models import Subscriber
+from ..views._helpers import ANFRAGE_GRENZE
 from ._basis import LuviqTestCase
 
 _MAIL = 'shop1.views.shop.send_brevo_email'
@@ -241,3 +242,50 @@ class NewsletterTest(LuviqTestCase):
         antwort = self.hole('/newsletter/subscribe/')
         self.assertEqual(antwort.status_code, 405)
         self.assertEqual(Subscriber.objects.count(), 0)
+
+
+class DrosselungTest(LuviqTestCase):
+    """Obergrenze je IP-Adresse für beide Anfragewege (FO09)."""
+
+    def _kontakt(self, **meta):
+        return self.sende('/kontakt/', GUELTIGE_ANFRAGE, **meta)
+
+    def test_ueber_der_grenze_wird_keine_nachricht_mehr_verschickt(self):
+        """Verhindert, dass eine Schleife das Postfach der Betreiberin füllt:
+        nach fünf Anfragen einer Adresse antwortet das Formular mit 429."""
+        with mock.patch(_MAIL) as versand:
+            for _ in range(ANFRAGE_GRENZE):
+                self.assertEqual(self._kontakt().status_code, 302)
+            antwort = self._kontakt()
+        self.assertContains(antwort, 'mehrere Nachrichten', status_code=429)
+        self.assertEqual(versand.call_count, ANFRAGE_GRENZE)
+
+    def test_eine_andere_adresse_ist_nicht_betroffen(self):
+        """Gegenprobe: die Grenze gilt je Absender, nicht für alle Besucher."""
+        with mock.patch(_MAIL) as versand:
+            for _ in range(ANFRAGE_GRENZE + 1):
+                self._kontakt(REMOTE_ADDR='198.51.100.1')
+            antwort = self._kontakt(REMOTE_ADDR='198.51.100.2')
+        self.assertEqual(antwort.status_code, 302)
+        self.assertEqual(versand.call_count, ANFRAGE_GRENZE + 1)
+
+    def test_ein_selbst_gesetzter_weiterleitungskopf_umgeht_die_grenze_nicht(self):
+        """Verhindert den einfachsten Umweg: der Absender setzt den ersten
+        Eintrag von ``X-Forwarded-For`` bei jeder Anfrage neu. Gezählt wird
+        der Eintrag, den der Proxy anhängt."""
+        with mock.patch(_MAIL):
+            for nummer in range(ANFRAGE_GRENZE):
+                self._kontakt(HTTP_X_FORWARDED_FOR=f'10.0.0.{nummer}, 203.0.113.7')
+            antwort = self._kontakt(HTTP_X_FORWARDED_FOR='10.0.0.99, 203.0.113.7')
+        self.assertEqual(antwort.status_code, 429)
+
+    def test_der_newsletter_nimmt_ueber_der_grenze_keine_adresse_mehr_an(self):
+        """Verhindert, dass ein Skript die Abonnentenliste mit fremden
+        Adressen füllt."""
+        for nummer in range(ANFRAGE_GRENZE):
+            antwort = self.sende('/newsletter/subscribe/', {'email': f'n{nummer}@example.invalid'})
+            self.assertEqual(antwort.status_code, 200)
+        antwort = self.sende('/newsletter/subscribe/', {'email': 'zuviel@example.invalid'})
+        self.assertEqual(antwort.status_code, 429)
+        self.assertIn('error', antwort.json())
+        self.assertEqual(Subscriber.objects.count(), ANFRAGE_GRENZE)
