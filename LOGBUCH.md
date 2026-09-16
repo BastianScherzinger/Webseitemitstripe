@@ -1947,3 +1947,29 @@ sichtbar auf der Seite stehen und mit 200 antworten. **243 Tests, OK.**
 **Aussehen.** Alles liegt im `<head>` (Blöcke `schema_ld`); kein Element,
 keine Klasse, keine Kennung, keine Überschrift geändert – `test_aufbau`
 bleibt grün.
+
+## Paket 208 (16.09.2026) – FO06, FO08, FO09
+
+### FO06 – Kontakt und Newsletter prüfen ihre Eingaben auf dem Server
+
+**Befund.** Beide öffentlichen Anfragewege (`kontakt` in `views/shop.py`,
+`newsletter_subscribe` in `views/legal.py`) prüften nur, ob ein Feld leer ist.
+Das E-Mail-Format und jede Länge prüfte allein der Browser (`type="email"`,
+`required`) – ein einziger Abruf ohne Browser umgeht beides. Folge: Anfragen
+ohne beantwortbare Absenderadresse, beliebig lange Mails an die Betreiberin
+und beim Newsletter eine Adresse über 254 Zeichen, die das Modellfeld
+(`EmailField`) auf PostgreSQL mit einem Serverfehler abgelehnt hätte.
+
+**Gebaut.** Djangos `validate_email` in beiden Views, keine neue
+Abhängigkeit. Das Kontaktformular prüft über die neue Funktion
+`kontakt_fehler` zusätzlich Obergrenzen je Feld (`KONTAKT_LAENGEN`: Name 100,
+E-Mail 254, Betreff 150, Nachricht 5000) und nennt den Grund als Meldung; der
+Newsletter begrenzt die Adresse auf die 254 Zeichen des Modellfelds
+(`validate_email` selbst lässt 320 zu). Keine Django-Form: sie hätte die
+bestehenden Meldungen und das JSON des Newsletter-Skripts umgebaut, ohne mehr
+zu prüfen. Die `maxlength`-Angaben im HTML sind ein anderer Punkt (FO07) und
+bleiben unberührt.
+
+**Drei neue Tests** in `test_formulare`: ungültige Absenderadressen und
+überlange Felder verschicken nichts, ungültige Newsletter-Adressen (auch als
+JSON) legen keinen Eintrag an. Kein Template geändert.

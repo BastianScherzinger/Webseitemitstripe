@@ -2,6 +2,8 @@
 
 import json
 
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponsePermanentRedirect, JsonResponse
 from django.urls import reverse
@@ -345,7 +347,14 @@ def newsletter_subscribe(request):
         except Exception:
             email = request.POST.get('email', '').strip()
 
-        if not email:
+        # Serverseitige Prüfung (FO06): ``type="email"`` im Formular umgeht
+        # jeder Abruf ohne Browser. 254 Zeichen ist die Länge des Modellfelds
+        # (``EmailField``); ``validate_email`` selbst lässt bis zu 320 zu.
+        try:
+            if len(email) > 254:
+                raise ValidationError('zu lang')
+            validate_email(email)
+        except ValidationError:
             return JsonResponse({'error': 'Bitte gib eine gültige Email an.'}, status=400)
 
         if Subscriber.objects.filter(email=email).exists():

@@ -6,6 +6,8 @@ import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db.models import F
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
@@ -71,6 +73,28 @@ def kontakte(request, produkt_id):
     return redirect('kontakt')
 
 
+#: Obergrenzen der Kontaktfelder (FO06). Die E-Mail-Grenze folgt RFC 5321
+#: wie Djangos ``EmailField``; die übrigen lassen jeder echten Anfrage Platz.
+KONTAKT_LAENGEN = {'name': 100, 'email': 254, 'betreff': 150, 'nachricht': 5000}
+
+
+def kontakt_fehler(name, email, betreff, nachricht):
+    """Prüft die Kontaktfelder serverseitig; gibt die Fehlermeldung oder ``None`` zurück.
+
+    Die ``required``-Angaben im Formular sind nur Komfort – ein einziger
+    Abruf ohne Browser umgeht sie (FO06)."""
+    werte = {'name': name, 'email': email, 'betreff': betreff, 'nachricht': nachricht}
+    if not all(werte.values()):
+        return 'Bitte fülle alle Felder aus.'
+    if any(len(werte[feld]) > grenze for feld, grenze in KONTAKT_LAENGEN.items()):
+        return 'Eine Eingabe ist zu lang. Bitte kürze sie.'
+    try:
+        validate_email(email)
+    except ValidationError:
+        return 'Bitte gib eine gültige E-Mail-Adresse an.'
+    return None
+
+
 def kontakt(request):
     if request.method == 'POST':
         # .strip(): ohne das zaehlt ein Feld, in dem nur ein Leerzeichen steht,
@@ -81,7 +105,8 @@ def kontakt(request):
         betreff = request.POST.get('betreff', '').strip()
         nachricht = request.POST.get('nachricht', '').strip()
 
-        if name and email and betreff and nachricht:
+        fehler = kontakt_fehler(name, email, betreff, nachricht)
+        if fehler is None:
             safe_betreff = betreff.replace('\r', '').replace('\n', ' ')
             safe_name = name.replace('\r', '').replace('\n', ' ')
             safe_email = email.replace('\r', '').replace('\n', ' ')
@@ -99,7 +124,7 @@ def kontakt(request):
                 # ein zweites Mal ab.
                 return redirect('kontakt_danke')
         else:
-            messages.error(request, 'Bitte fülle alle Felder aus.')
+            messages.error(request, fehler)
 
     return render(request, 'shop1/kontakt.html')
 

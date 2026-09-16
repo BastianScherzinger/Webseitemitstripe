@@ -7,6 +7,7 @@ Verhalten benutzt, wäre langsam, netzabhängig und würde tatsächlich Post
 verschicken.
 """
 
+import json
 from unittest import mock
 
 from django.test import Client
@@ -89,6 +90,31 @@ class KontaktformularTest(LuviqTestCase):
         versand.assert_not_called()
         self.assertContains(antwort, 'Bitte fülle alle Felder aus')
 
+    def test_ungueltige_absenderadresse_verschickt_nichts(self):
+        """Verhindert Anfragen, auf die niemand antworten kann (FO06): das
+        ``type="email"`` im Formular umgeht jeder Abruf ohne Browser."""
+        for adresse in ('keine-adresse', 'a@b', 'erika@@example.invalid'):
+            daten = dict(GUELTIGE_ANFRAGE, email=adresse)
+            with self.subTest(adresse=adresse), mock.patch(_MAIL) as versand:
+                antwort = self.sende('/kontakt/', daten)
+                self.assertEqual(antwort.status_code, 200)
+                versand.assert_not_called()
+                self.assertContains(antwort, 'gültige E-Mail-Adresse')
+
+    def test_ueberlange_eingaben_verschicken_nichts(self):
+        """Verhindert, dass ein Skript ein Megabyte Text in die Mail an die
+        Betreiberin schreibt (FO06) – jedes Feld hat eine Obergrenze."""
+        from ..views.shop import KONTAKT_LAENGEN
+        for feld, grenze in KONTAKT_LAENGEN.items():
+            wert = 'x' * (grenze + 1)
+            if feld == 'email':
+                wert = 'x' * (grenze - len('@example.invalid') + 1) + '@example.invalid'
+            daten = dict(GUELTIGE_ANFRAGE, **{feld: wert})
+            with self.subTest(feld=feld), mock.patch(_MAIL) as versand:
+                antwort = self.sende('/kontakt/', daten)
+                versand.assert_not_called()
+                self.assertContains(antwort, 'zu lang')
+
     def test_zeilenumbrueche_gelangen_nicht_in_die_betreffzeile(self):
         """Verhindert das Einschleusen von Kopfzeilen (Header Injection): ein
         Zeilenumbruch im Betreff könnte sonst zusätzliche Empfänger oder einen
@@ -169,6 +195,17 @@ class NewsletterTest(LuviqTestCase):
         kein Newsletter zugestellt werden kann."""
         antwort = self.sende('/newsletter/subscribe/', {'email': '   '})
         self.assertEqual(antwort.status_code, 400)
+        self.assertEqual(Subscriber.objects.count(), 0)
+
+    def test_anmeldung_mit_ungueltiger_adresse_wird_abgewiesen(self):
+        """Verhindert Datensätze, an die kein Newsletter zugestellt werden
+        kann (FO06) – auch als JSON, wie das Skript der Startseite schickt."""
+        for adresse in ('keine-adresse', 'a@b', 'x' * 250 + '@example.invalid'):
+            with self.subTest(adresse=adresse):
+                antwort = self.client.post(
+                    '/newsletter/subscribe/', json.dumps({'email': adresse}),
+                    content_type='application/json', secure=True)
+                self.assertEqual(antwort.status_code, 400)
         self.assertEqual(Subscriber.objects.count(), 0)
 
     def test_zweite_anmeldung_erzeugt_keinen_zweiten_eintrag(self):
