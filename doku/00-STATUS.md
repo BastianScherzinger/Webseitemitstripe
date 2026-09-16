@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-09-15
+stand: 2026-09-16
 status: teilweise
 fortschritt: 70
 zusammenfassung: Gesamtstand 76,5 „Solide“ (04.09.2026). Verbesserungslauf 4, SU04 und GE23/GE25/IS19 liegen auf origin/main; drei belegte Wissensbeiträge, Antwortabsätze mit belegten Zahlen, keine dünne Seite mehr. PJ05 (kritische Audit-Funde abgearbeitet oder begründet), SI08 (CSP blockiert) und PJ11 (Paketfassungen samt Lockfile) sind seit dem Merge 0c18ea7, SI09 (Nonce statt 'unsafe-inline' im script-src, im Browser ungeprüft) seit 4ec540b, IS18 seit 1a5f36b, KV07 samt der VL01-Ausnahme seit c522ff9, VL21 (Produktkarte als zwei Bausteine, gerendertes HTML unverändert) seit 0d5500b und SI17/PJ01 (integrity an den vier Fremdskripten, Prüfbefehl pruefe_links) seit 43f25c3 auf main; main = 69c1f78 und ist origin/main (43f25c3) um einen Doku-Commit voraus, der Push steht aus. Auf dem Zweig sofort/2026-09-12-mw15-und-2-weitere (drei Commits, nicht gemergt) steht als dritter Prüfbefehl pruefe_mail (MW15: Einstellungen und Anmeldung beider Mailwege), und die sechs Wissensbeiträge tragen einen Article-Knoten mit Autorin und belegten Daten, die Übersicht eine ItemList (GE15); 243 Testfunktionen, laut Commit grün, kein Aufbau berührt. GE20 (Öffnungszeiten) ist nicht anwendbar: es gibt kein Ladengeschäft. SU08 ist nicht möglich — die vier einseitigen Bereiche brauchen Inhalte der Betreiberin. GE11 wartet auf Profiladressen der Betreiberin, RE07 auf Schriftdateien und einen Lauf mit Netzzugang. TS11 wartet weiter auf CANONICAL_HOST. Die drei ersten Beiträge und die Produktbeschreibungen warten auf die Betreiberin.
@@ -52,22 +52,22 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–12.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 15.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-07d) — **Gesamtstand 85,2 von 100**, Reifegrad „Solide“. 261 von 279 Regeln an 18 URLs und 136 Dateien (29.880 Zeilen) geprüft.
+**Messung vom 16.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-07d) — **Gesamtstand 84,0 von 100**, Reifegrad „Solide“. 297 von 320 Regeln an 18 URLs und 136 Dateien (29.879 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Konversion | **67** | Brauchbar |
-| Erreichbarkeit & Postfach | **74** | Brauchbar |
+| Konversion | **64** | Brauchbar |
+| Erreichbarkeit & Postfach | **65** | Brauchbar |
 | Recht & Vertrauen | **79** | Solide |
-| SEO — Inhalt | **79** | Solide |
 | Vorlagen-Konformität | **79** | Solide |
-| Betrieb & Auslieferung | **82** | Solide |
-| Substanz & Reichweite | **82** | Solide |
+| SEO — Inhalt | **81** | Solide |
 | GEO — KI-Sichtbarkeit | **82** | Solide |
-| Code-Qualität & Projektreife | **88** | Solide |
-| SEO — Technik | **91** | Referenz |
-| Performance & Core Web Vitals | **95** | Referenz |
-| Barrierefreiheit | **95** | Referenz |
+| Substanz & Reichweite | **82** | Solide |
+| Barrierefreiheit | **85** | Solide |
+| Betrieb & Auslieferung | **86** | Solide |
+| Code-Qualität & Projektreife | **87** | Solide |
+| SEO — Technik | **93** | Referenz |
+| Performance & Core Web Vitals | **93** | Referenz |
 | Sicherheit | **95** | Referenz |
 
 Keine Sperre greift.
@@ -78,10 +78,12 @@ Kritische Befunde:
 
 - **Alle Domainvarianten landen auf einer Adresse** (`TS11`) — 0 von 1 Nebenadressen landen dauerhaft auf der Hauptadresse — offen: https://luviq-alsfeld.com: 200 → https://luviq-alsfeld.com/
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
+- **axe-core findet keine schweren Verstösse** (`BF29`) — 4 von 4 Seiten mit schweren Verstössen: color-contrast (4×)
 - **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 17 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /kontakt/, /datenschutz/, /agb/ … (+12)
 - **Keine Google-Schriften von fremden Servern nachgeladen** (`RE07`) — 17 von 17 Seiten laden Google-Schriften von fremden Servern: fonts.googleapis.com, https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700 · betroffen: /, /produkte/, /kontakt/ … (+14)
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
+- **Eine Anfrage überlebt einen kaputten Mailweg** (`MW18`) — Kein Modell, das eine Anfrage aufbewahrt. Scheitert der Versand, ist die Nachricht des Kunden endgültig weg.
 - **Kein nennenswerter Anteil dünner Seiten** (`IS19`) — 6% der Seiten sind dünn (1 von 17): /gaestebuch/ (130 W)
 <!-- messung:ende -->
 
