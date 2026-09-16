@@ -1,9 +1,9 @@
 ---
 bereich: ads
 titel: Google Ads
-stand: 2026-09-02
+stand: 2026-09-16
 status: nicht zutreffend
-zusammenfassung: Es gibt keine Google-Ads-Kampagne und kein Konto; Voraussetzungen für Shopping-/Suchanzeigen sind benannt.
+zusammenfassung: Es gibt keine Google-Ads-Kampagne und kein Konto; Voraussetzungen für Shopping-/Suchanzeigen sind benannt. Seit Paket 208 (Zweig, nicht gemergt) schiebt eine neue Newsletter-Anmeldung generate_lead in den dataLayer — gezählt wird es erst, wenn ein Messskript samt Einwilligung eingebunden ist, und das gibt es nicht.
 offen: 0
 quellen: GOOGLE_SEO_GUIDE.md, templates/base.html
 ---
@@ -36,6 +36,7 @@ Keine. Was fehlt, damit überhaupt gemessen werden könnte:
 | Voraussetzung | Stand | Regel |
 |---|---|---|
 | Eigene Danke-/Bestätigungs-URL nach Kontaktformular | fehlt — Meldung auf derselben Seite | KV07 |
+| Newsletter-Anmeldung als Ereignis | **im Zweig 16.09.2026** (`FO08`, `9b3fc07`, nicht gemergt): das Skript der Startseite schiebt nach einer *neuen* Anmeldung `{event: 'generate_lead', lead_quelle: 'newsletter'}` in `window.dataLayer` — die Form, die Google Tag Manager und `gtag.js` lesen. Ohne Adresse, eine wiederholte Anmeldung zählt nicht. **Solange kein Tag eingebunden ist, verlässt das Ereignis den Browser nicht** | FO08 |
 | Bestellabschluss als eigene URL | vorhanden: `/payment/success/<order_id>/` (per `robots.txt` gesperrt, was richtig ist) | — |
 | Conversion-Tag oder serverseitige Conversion | fehlt; jedes Tag braucht eine Einwilligung (Consent) — es gibt heute **kein Consent-Banner**, weil nichts Einwilligungspflichtiges geladen wird | — |
 | Einträge in der Datenschutzerklärung | Ads/Conversion nicht genannt (müsste bei Einführung ergänzt werden) | RE06 |
