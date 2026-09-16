@@ -1973,3 +1973,33 @@ bleiben unberührt.
 **Drei neue Tests** in `test_formulare`: ungültige Absenderadressen und
 überlange Felder verschicken nichts, ungültige Newsletter-Adressen (auch als
 JSON) legen keinen Eintrag an. Kein Template geändert.
+
+### FO08 – die Newsletter-Anmeldung endet mit einem Ereignis (anders als vorgeschlagen)
+
+**Befund.** Die Anmeldung auf der Startseite läuft per `fetch` und zeigt ihre
+Bestätigung im Formular (`#newsletter-message`); sie erreicht weder eine
+Danke-Seite noch meldet sie ein Ereignis. Kein Werkzeug kann sie als Abschluss
+zählen. Das Besuchsprotokoll hilft nicht: `PageVisitMiddleware` schreibt auch
+abgewiesene Abrufe von `/newsletter/subscribe/` mit.
+
+**Anders gebaut als vom Katalog vorgeschlagen.** Der Rat nennt eine
+Danke-Seite oder `gtag('event', 'generate_lead')`.
+* Eine Danke-Seite hiesse, die Startseite nach der Anmeldung zu verlassen –
+  eine Änderung des Ablaufs an der Bühne der Seite, die die Gestaltungslinie
+  nicht vorsieht.
+* `gtag()` gibt es auf dieser Seite nicht: kein Template lädt ein Messskript
+  (Suche nach `gtag`, `dataLayer`, `googletagmanager` ohne Treffer). Der
+  Aufruf wäre undefiniert, würfe im `try` und zeigte die Meldung „Fehler bei
+  der Verbindung zum Orbit“ – nach einer erfolgreichen Anmeldung.
+
+Deshalb `window.dataLayer.push({event: 'generate_lead', lead_quelle:
+'newsletter'})`: die Form, die Google Tag Manager und `gtag.js` beide lesen,
+sobald eines davon eingebunden wird. Ausgelöst nur, wenn der Server `neu: true`
+zurückgibt – eine wiederholte Anmeldung derselben Adresse zählt nicht. Das
+Ereignis trägt keine Adresse. **Solange kein Messskript eingebunden ist,
+verlässt das Ereignis den Browser nicht** – gezählt wird es erst mit einem
+Tag (siehe `doku/60-ADS.md`).
+
+**Zwei neue Tests** in `test_formulare`: nur eine neue Anmeldung meldet `neu`,
+und die Startseite enthält das Ereignis ohne Personendaten. Nur Skripttext
+geändert, kein Element, keine Klasse – `test_aufbau` grün.

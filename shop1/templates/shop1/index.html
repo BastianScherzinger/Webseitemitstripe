@@ -708,6 +708,14 @@
             message.classList.add(response.ok ? 'text-emerald-400' : 'text-red-400');
             
             if(response.ok) document.getElementById('newsletter-form').reset();
+            // Zählbarer Abschluss (FO08): die Anmeldung bleibt auf der Seite,
+            // deshalb ein Ereignis statt einer Danke-Seite. dataLayer statt
+            // gtag(), weil die Seite heute kein Messskript lädt – gtag wäre
+            // undefiniert. Ohne Adresse oder andere Personendaten.
+            if (response.ok && data.neu) {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({ event: 'generate_lead', lead_quelle: 'newsletter' });
+            }
         } catch (err) {
             message.textContent = "Fehler bei der Verbindung zum Orbit.";
             message.classList.remove('hidden');

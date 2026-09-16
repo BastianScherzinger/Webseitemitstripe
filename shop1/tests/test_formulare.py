@@ -216,6 +216,25 @@ class NewsletterTest(LuviqTestCase):
         self.assertEqual(antwort.status_code, 200)
         self.assertEqual(Subscriber.objects.count(), 1)
 
+    def test_nur_eine_neue_anmeldung_meldet_einen_abschluss(self):
+        """Verhindert doppelt gezählte Anmeldungen (FO08): das Skript der
+        Startseite löst sein Ereignis nur bei ``neu`` aus, eine Wiederholung
+        derselben Adresse darf das nicht melden."""
+        erste = self.sende('/newsletter/subscribe/', {'email': 'neu@example.invalid'})
+        zweite = self.sende('/newsletter/subscribe/', {'email': 'neu@example.invalid'})
+        self.assertIs(erste.json().get('neu'), True)
+        self.assertNotIn('neu', zweite.json())
+
+    def test_die_startseite_zaehlt_die_anmeldung_ohne_personendaten(self):
+        """Verhindert, dass die Anmeldung wieder unzählbar auf der Seite
+        endet (FO08) – und dass das Ereignis die Adresse mitschickt."""
+        inhalt = self.hole('/').content.decode()
+        self.assertIn("window.dataLayer.push({ event: 'generate_lead', lead_quelle: 'newsletter' })",
+                      inhalt)
+        self.assertIn('response.ok && data.neu', inhalt)
+        push = inhalt.split('window.dataLayer.push(', 1)[1].split(')', 1)[0]
+        self.assertNotIn('email', push)
+
     def test_anmeldung_per_get_ist_nicht_moeglich(self):
         """Verhindert, dass ein vorab geladener Link oder ein Bild in einer Mail
         fremde Adressen in die Abonnentenliste schreibt."""

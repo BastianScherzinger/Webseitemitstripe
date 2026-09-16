@@ -361,6 +361,9 @@ def newsletter_subscribe(request):
             return JsonResponse({'message': 'Du bist bereits im Orbit angemeldet!'}, status=200)
 
         Subscriber.objects.create(email=email)
-        return JsonResponse({'message': 'Erfolgreich zum Newsletter angemeldet!'}, status=200)
+        # ``neu`` sagt dem Skript der Startseite, dass diese Anmeldung als
+        # Abschluss zählt (FO08); eine Wiederholung oben zählt nicht.
+        return JsonResponse({'message': 'Erfolgreich zum Newsletter angemeldet!', 'neu': True},
+                            status=200)
 
     return JsonResponse({'error': 'Invalid request'}, status=405)
