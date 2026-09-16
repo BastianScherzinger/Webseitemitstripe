@@ -81,3 +81,11 @@ Die Messung meldet KV01 „1 von 13 Seiten mit tel:-Link" — dieser eine Link w
 | Search Console: die Property `sc-domain:luviq-alsfeld.com` liegt seit dem 03.09.2026 nachweislich im Agenturkonto `…05@gmail.com` und ist im Werkzeug eingetragen — offen bleibt die Entscheidung, ob sie auf ein Konto der Betreiberin übergeht (Bastian dann als Nutzer) | Betreiberin |
 | Telefonnummer und Erreichbarkeitszeiten — nur wenn es sie gibt (KV01, KV11, GE09) | Betreiberin |
 | Schema-Typ (`ClothingStore` vs. `OnlineStore`) und `sameAs`-Erweiterung (Profil, TikTok) — `GE11` wartet seit dem 11.09.2026 auf die Profiladressen (Beim Kunden Nr. 15 in [80-AUFGABEN.md](80-AUFGABEN.md)) | Bastian nach Angaben der Betreiberin |
+
+## Backlink-Plan (16.09.2026)
+
+Gemeinsamer Plan für alle sechs Seiten: `C:\Users\basti\Desktop\pystore-overview\docs\BACKLINK-PLAN.md` — Spielregeln, Grundpaket G1–G12, Methoden, Ablauf und Fortschrittstabelle. Kurzfassung für diese Seite:
+
+- Geschäftsadresse vorhanden (Grünberger Str. 16, Alsfeld) — Einträge nur mit Zustimmung von Luisa Brehler.
+- Stand: Bing Places ✔ Import, Bing Webmaster Tools ✔ (Sitemap `www` eingereicht); Duplikat-Host am 16.09.2026 behoben (`CANONICAL_HOST`).
+- Als Nächstes: **„WIR sind Alsfeld“** / Wirtschaftsförderung Alsfeld, alsaktiv, **Pinterest**-Unternehmenskonto, Fair-Fashion-Labellisten (Fashion Changers, Utopia, endlich fair), Pressebeitrag Oberhessische Zeitung, Ausstellerlisten von Kunsthandwerker-Märkten.
