@@ -10,6 +10,17 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 17.09.2026 — Newsletter mit Double-Opt-in, keine Namen in fremden Postfächern
+
+**Was:** `a437803` — Newsletter-Anmeldung mit Bestätigungslink (`Subscriber.bestaetigt`,
+Migration `0020`, höchstens ein Link je Adresse am Tag), Newsletter nur an bestätigte
+Adressen, Registrierungsmail ohne Benutzer- und Vornamen, Registrierung und
+`resend-verification` je IP gedrosselt. **Warum:** Auf der Agenturseite haben Bots vom 14. bis 17.09.2026 fremde Adressen mit Betrugstexten eingetragen, und die Seite hat sie angeschrieben. Hier landete jede
+eingetippte Adresse ohne Rückfrage in der Newsletter-Liste, und der eingetippte Name stand
+unmaskiert im HTML der Registrierungsmail. Altabonnenten sind seitdem unbestätigt.
+
+---
+
 ## 17.09.2026 — Spamschutz am Kontaktformular
 
 **Was:** `shop1/spamschutz.py` bewertet jede Kontaktanfrage (unsichtbares Fallenfeld
