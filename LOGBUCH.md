@@ -10,6 +10,44 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 17.09.2026 — Paket 243: Datenschutzhinweis und Falle am Kontaktformular (`KV05`, `KV06`, `KV09`)
+
+**Was:** Zwei Commits auf `sofort/2026-09-17-kv05-und-2-weitere`.
+
+`KV05` — der Datenschutzhinweis steht jetzt **im** Kontaktformular, zwischen
+Nachrichtenfeld und Absendeknopf: was gespeichert wird, dass die Antwort über Brevo
+hinausgeht, wo es Auskunft und Löschung gibt und unter welcher Adresse die
+Datenschutzerklärung steht. **Warum:** Art. 13 DSGVO will den Hinweis dort, wo die
+Daten eingegeben werden; im Formular stand bisher nichts dazu, nur die Fusszeile
+verlinkte die Erklärung. Jede Angabe deckt sich mit `legal/datenschutz.html`
+(Zeile 63 Brevo, Zeile 73 Auskunft und Löschung) und mit `KontaktAnfrage` (MW18) —
+nichts dazuerfunden. **Bewusst als reiner Fliesstext ohne eigenes Element:** ein
+Absatz mit Verweis wäre ein Absatz- und ein Verweiselement mehr im sichtbaren
+Aufbau, und der darf sich nicht ändern (Designwache). Die Adresse steht deshalb
+ausgeschrieben statt verlinkt. Falle dabei: ein mehrzeiliger `{# … #}`-Kommentar
+bleibt im ausgelieferten HTML stehen — die `<p>` und `<a>` darin zählte
+`test_aufbau` als zwei echte Elemente. Mehrzeilig nur mit `{% comment %}`.
+
+`KV06` — das Fallenfeld trägt `aria-hidden`, seine eigene Verschiebung aus dem Bild,
+`tabindex="-1"` und `autocomplete="off"` jetzt selbst statt nur am umgebenden Kasten.
+**Warum:** Der Honigtopf wirkt seit `d90067a` (eine Eingabe sind 10 Punkte, Schwelle 5,
+`spamschutz.py:20,51`), aber fällt der Kasten weg oder macht ein späterer Stil ihn
+sichtbar, sähe ein Mensch ein Textfeld „Webseite" und füllte es aus — und seine
+Anfrage verschwände still.
+
+`KV09` — **nicht möglich**, keine Zeile Code geändert. Für die vier fehlenden
+Vertrauenssignale gibt es im Projekt keine Quelle: kein Gründungsjahr (kein Treffer
+für „seit 20…", „gegründet" oder `foundingDate` in `index.html`, `ueber_uns.html`
+und `impressum.html`), kein Zertifikat und keine Mitgliedschaft der Betreiberin, und
+keine echte Bewertungszahl — die sichtbaren „5.0 ★★★★★" in `_reviews_map.html:116`
+sind laut [`doku/50-LOCAL-SEO.md`](doku/50-LOCAL-SEO.md) Zeile 57 unbelegt, ein
+`AggregateRating` daraus wäre erfunden.
+
+Zwei neue Testfunktionen in `test_formulare` (287 statt 285), ganze Suite grün
+(343 s), `test_aufbau` unverändert.
+
+---
+
 ## 17.09.2026 — Newsletter mit Double-Opt-in, keine Namen in fremden Postfächern
 
 **Was:** `a437803` — Newsletter-Anmeldung mit Bestätigungslink (`Subscriber.bestaetigt`,

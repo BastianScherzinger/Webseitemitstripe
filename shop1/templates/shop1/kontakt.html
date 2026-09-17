@@ -99,9 +99,18 @@
                         {% csrf_token %}
                         {# Spamschutz (shop1/spamschutz.py): Zeitstempel und ein Feld, das nur Bots ausfüllen #}
                         <input type="hidden" name="formzeit" value="{{ formzeit }}">
+                        {% comment %}Honigtopf (KV06). Das Feld traegt seine Kennzeichen seit dem
+                        17.09.2026 selbst und nicht nur am umgebenden Kasten: aria-hidden, damit ein
+                        Vorleseprogramm es auch dann ueberliest, wenn der Kasten einmal wegfaellt;
+                        die eigene Verschiebung aus dem Bild, damit ein spaeterer Stil am Kasten es
+                        nicht sichtbar macht; tabindex=-1 gegen die Tabulatortaste; autocomplete=off,
+                        damit kein Browser es von sich aus ausfuellt. Ein Mensch kann es also weder
+                        sehen noch erreichen noch versehentlich befuellen - jede Eingabe darin sind
+                        10 Punkte und damit ueber der Schwelle (spamschutz.py:20,51).
+                        {% endcomment %}
                         <div aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden">
                             <label for="kontakt-webseite">Webseite (bitte leer lassen)</label>
-                            <input type="text" id="kontakt-webseite" name="{{ feld_falle|default:'webseite' }}" tabindex="-1" autocomplete="off">
+                            <input type="text" id="kontakt-webseite" name="{{ feld_falle|default:'webseite' }}" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px">
                         </div>
                         {# maxlength (FO07) = KONTAKT_LAENGEN in views/shop.py; test_formulare hält beides gleich #}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -123,6 +132,22 @@
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Nachricht *</label>
                             <textarea name="nachricht" rows="6" aria-label="Deine Nachricht (Pflichtfeld)" aria-describedby="kontakt-fehler" maxlength="5000" placeholder="Schreib uns..." class="w-full form-input rounded-2xl px-6 py-4 resize-none" required></textarea>
+                            {% comment %}Datenschutzhinweis am Formular (KV05, Art. 13 DSGVO).
+                            Bewusst reiner Text ohne eigenes Element: ein Absatz mit Verweis waere
+                            ein Absatzelement und ein Verweiselement mehr im sichtbaren Aufbau, und
+                            der darf sich nicht aendern (Designwache, test_aufbau). Die Adresse der
+                            Erklaerung steht deshalb ausgeschrieben; verlinkt ist sie in der
+                            Fusszeile jeder Seite. Jede Angabe hier deckt sich mit
+                            legal/datenschutz.html (Brevo, Auskunft und Loeschung per E-Mail) und
+                            mit KontaktAnfrage (MW18). Mehrzeilig nur mit comment-Block - die kurze
+                            Klammerform bleibt ueber mehrere Zeilen im ausgelieferten HTML stehen.
+                            {% endcomment %}
+                            Datenschutz: Name, E-Mail-Adresse, Betreff und Nachricht werden gespeichert
+                            und zur Beantwortung deiner Anfrage über den Dienstleister Brevo per E-Mail
+                            weitergeleitet. Auskunft und Löschung jederzeit formlos per E-Mail an
+                            brehlerluisa@gmail.com. Was mit den Daten geschieht, steht vollständig in
+                            der Datenschutzerklärung unter {% url 'datenschutz' %} – in der Fußzeile
+                            jeder Seite verlinkt.
                         </div>
                         
                         <button type="submit" class="w-full btn-glow py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm shadow-2xl">

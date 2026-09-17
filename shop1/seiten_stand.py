@@ -23,7 +23,7 @@ SEITEN_STAND = {
     'gaestebuch':   '2026-09-01',
     'ueber_uns':    '2026-09-01',
     'liefergebiet': '2026-09-01',
-    'kontakt':      '2026-09-01',
+    'kontakt':      '2026-09-17',
     'impressum':    '2026-09-01',
     'datenschutz':  '2026-09-01',
     'agb':          '2026-09-01',
