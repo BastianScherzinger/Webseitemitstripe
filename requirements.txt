@@ -15,10 +15,15 @@
 #
 # Alle uebrigen Fassungen sind die, mit denen die Testsuite am 11.09.2026
 # lokal gruen lief; keine verlangt mehr als Python 3.10.
+#
+# pillow 12.3.0 statt 11.3.0 (Messpunkt SI40, 17.09.2026): 11.3.0 hatte acht
+# bekannte Luecken, darunter GHSA-45hq-cxwh-f6vc und GHSA-4x4j-2g7c-83w6 -
+# laut GitHub-Advisory betroffen < 12.3.0, behoben in 12.3.0. 12.3.0 verlangt
+# laut PyPI Python >= 3.10. Der Code nutzt Pillow nur ueber Djangos ImageField.
 --constraint requirements.lock
 Django==5.2.17
 python-dotenv==1.2.2
-pillow==11.3.0
+pillow==12.3.0
 django-axes==8.3.1
 gunicorn==26.0.0
 whitenoise==6.12.0

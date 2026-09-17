@@ -10,7 +10,7 @@
 # requirements.txt
 Django==5.2.17
 python-dotenv==1.2.2
-pillow==11.3.0
+pillow==12.3.0
 django-axes==8.3.1
 gunicorn==26.0.0
 whitenoise==6.12.0
