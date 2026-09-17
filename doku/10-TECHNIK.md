@@ -112,7 +112,7 @@ Spam-Score 0 durchkam und eine Mail auslöste.*
 | Baustein | Was er verhindert | Stand |
 |---|---|---|
 | CSRF-Token | fremde Seiten schicken in fremdem Namen ab | ja |
-| Honeypot | einfache Formular-Bots | **ja, seit `d90067a`** (Feld `webseite`, `shop1/spamschutz.py`, nur Kontaktformular) |
+| Honeypot | einfache Formular-Bots | **ja, seit `d90067a`** (Feld `webseite`, `shop1/spamschutz.py`, nur Kontaktformular). Seit `06503a7` (`KV06`, im Zweig) trägt das Feld seine Kennzeichen **selbst** statt nur am umgebenden Kasten: `aria-hidden="true"`, eigene Verschiebung aus dem Bild (`left:-10000px`), `tabindex="-1"`, `autocomplete="off"` — fällt der Kasten weg oder macht ein späterer Stil ihn sichtbar, füllt sonst ein Mensch das Feld aus, und seine Anfrage verschwindet still (eine Eingabe sind 10 Punkte bei `SCHWELLE` = 5). `test_das_fallenfeld_ist_an_sich_selbst_versteckt` hält alle vier Kennzeichen am Feld fest und verbietet „honey" im Markup |
 | Zeitfalle (signierter Zeitstempel) | der POST ohne gerendertes Formular | **ja, seit `d90067a`** (`signing.dumps`, Feld `formzeit`, mindestens 3 s, höchstens 24 h) |
 | Inhalts-Score mit Schwelle | Werbetexte, fremde Schriften, Linklisten | **ja, seit `d90067a`** (Punkte ab `SCHWELLE` = 5 → still auf die Danke-Seite, keine Mail) |
 | Adresse ohne `http://` erkannt | die Masche vom 04.09.2026 | **teilweise** — `www.`, `telegra.ph`, `t.me/`, `bit.ly`; eine beliebige nackte Domain nicht |
