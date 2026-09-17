@@ -536,3 +536,21 @@ class KontaktSpamschutzTest(LuviqTestCase):
         self.assertIn('name="formzeit"', inhalt)
         self.assertIn('name="webseite"', inhalt)
         self.assertIn('tabindex="-1"', inhalt)
+
+    def test_das_fallenfeld_ist_an_sich_selbst_versteckt(self):
+        """Verhindert, dass die Falle einen Menschen trifft (KV06): sie darf
+        auch dann weder sichtbar noch erreichbar noch automatisch ausfuellbar
+        sein, wenn der umgebende Kasten einmal wegfaellt oder ein spaeterer
+        Stil ihn sichtbar macht. Das Feld traegt seine Kennzeichen deshalb
+        selbst."""
+        import re
+        from .. import spamschutz
+        inhalt = self.hole('/kontakt/').content.decode()
+        feld = re.search(rf'<input[^>]*name="{spamschutz.FELD_FALLE}"[^>]*>', inhalt).group(0)
+        self.assertIn('aria-hidden="true"', feld)
+        self.assertIn('tabindex="-1"', feld)
+        self.assertIn('autocomplete="off"', feld)
+        self.assertRegex(feld, r'style="[^"]*left:-10000px')
+        # Sichtbar ist nur, was ein Bot fuer ein echtes Feld halten soll:
+        # ein unverfaenglicher Name, kein „honeypot“ oder „hp“ im Markup.
+        self.assertNotIn('honey', inhalt.lower())

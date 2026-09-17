@@ -99,9 +99,18 @@
                         {% csrf_token %}
                         {# Spamschutz (shop1/spamschutz.py): Zeitstempel und ein Feld, das nur Bots ausfüllen #}
                         <input type="hidden" name="formzeit" value="{{ formzeit }}">
+                        {% comment %}Honigtopf (KV06). Das Feld traegt seine Kennzeichen seit dem
+                        17.09.2026 selbst und nicht nur am umgebenden Kasten: aria-hidden, damit ein
+                        Vorleseprogramm es auch dann ueberliest, wenn der Kasten einmal wegfaellt;
+                        die eigene Verschiebung aus dem Bild, damit ein spaeterer Stil am Kasten es
+                        nicht sichtbar macht; tabindex=-1 gegen die Tabulatortaste; autocomplete=off,
+                        damit kein Browser es von sich aus ausfuellt. Ein Mensch kann es also weder
+                        sehen noch erreichen noch versehentlich befuellen - jede Eingabe darin sind
+                        10 Punkte und damit ueber der Schwelle (spamschutz.py:20,51).
+                        {% endcomment %}
                         <div aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden">
                             <label for="kontakt-webseite">Webseite (bitte leer lassen)</label>
-                            <input type="text" id="kontakt-webseite" name="{{ feld_falle|default:'webseite' }}" tabindex="-1" autocomplete="off">
+                            <input type="text" id="kontakt-webseite" name="{{ feld_falle|default:'webseite' }}" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px">
                         </div>
                         {# maxlength (FO07) = KONTAKT_LAENGEN in views/shop.py; test_formulare hält beides gleich #}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
