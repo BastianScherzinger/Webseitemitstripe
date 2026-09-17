@@ -131,6 +131,22 @@ class KontaktformularTest(LuviqTestCase):
         self.assertNotIn('\n', betreff)
         self.assertNotIn('\r', betreff)
 
+    def test_jedes_pflichtfeld_ist_sichtbar_gekennzeichnet(self):
+        """Verhindert, dass ein Pflichtfeld erst nach dem Absenden auffällt
+        (FO04): jedes ``required``-Feld trägt den Stern in der Beschriftung,
+        „Pflichtfeld“ im zugänglichen Namen, und die Seite erklärt den Stern."""
+        import re
+        inhalt = self.hole('/kontakt/').content.decode()
+        form = inhalt.split('name="formzeit"', 1)[1].split('</form>', 1)[0]
+        felder = re.findall(r'<label[^>]*>([^<]*)</label>\s*<(?:input|textarea)([^>]*)>', form)
+        pflicht = [(label, attrs) for label, attrs in felder if ' required' in attrs]
+        self.assertEqual(len(pflicht), 4)
+        for label, attrs in pflicht:
+            with self.subTest(label=label):
+                self.assertTrue(label.strip().endswith('*'))
+                self.assertRegex(attrs, r'aria-label="[^"]*\(Pflichtfeld\)"')
+        self.assertIn('mit einem Stern (*) gekennzeichnet', inhalt)
+
     def test_anfrage_ohne_csrf_token_wird_abgewiesen(self):
         """Verhindert, dass eine fremde Seite im Namen einer Besucherin
         Anfragen abschickt – der CSRF-Schutz muss an diesem Formular greifen."""

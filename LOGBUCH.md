@@ -2086,3 +2086,21 @@ dem Neuladen, nicht vor dem zweiten Klick.
 schickt jetzt je Aufruf einen anderen Text. Die Tests prüfen die Drosselung
 und würden sonst an der Zusammenführung hängen. Nur Attribute und Skripttext
 geändert – `test_aufbau` grün.
+
+### FO04 – Pflichtfelder sind sichtbar gekennzeichnet
+
+**Befund.** Alle vier Felder von `/kontakt/` tragen `required`, aber weder
+die Beschriftung noch der zugängliche Name sagte das. Die `<label>`-Elemente
+haben kein `for`. Den Namen des Feldes stellt deshalb `aria-label`, und so
+liest ihn auch die Messung.
+
+**Gebaut.** Ein Stern hinter jeder sichtbaren Beschriftung („Dein Name *“),
+„(Pflichtfeld)“ am Ende jedes `aria-label`, und ein Satz im Einleitungstext
+erklärt den Stern. Der zugängliche Name beginnt weiter mit dem sichtbaren
+Text (WCAG 2.5.3). `for`/`id` wären der sauberere Weg gewesen, aber eine neue
+Kennung ändert den Fingerabdruck der Designwache. Nur Text und `aria-label`
+geändert – kein Element, keine Klasse.
+
+**Test.** `test_jedes_pflichtfeld_ist_sichtbar_gekennzeichnet`: vier
+Pflichtfelder, jedes mit Stern und „(Pflichtfeld)“, und die Erklärung steht
+auf der Seite.
