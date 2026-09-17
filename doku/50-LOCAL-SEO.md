@@ -1,10 +1,10 @@
 ---
 bereich: local-seo
 titel: Local SEO
-stand: 2026-09-12
+stand: 2026-09-17
 status: teilweise
 fortschritt: 25
-zusammenfassung: Search Console seit 03.09.2026 verbunden (Property sc-domain:luviq-alsfeld.com im Konto …05@gmail.com); Unternehmensprofil und Bewertungen bleiben nicht dokumentiert — der Standardwert von GOOGLE_REVIEW_URL ist ein Maps-Suchlink, kein Profil (settings.py:409, geprüft 12.09.2026). Die Platzhalterdaten auf /kontakt/ und „www.luviq.de“ im Impressum sind auf main ersetzt, ob Railway das ausgeliefert hat, ist nicht geprüft. GE11 (sameAs) ist am 11.09. und am 12.09.2026 nicht möglich und steht seit dem 12.09.2026 als beim Kunden im Bewertungsblock: ausser Instagram ist keine Profiladresse dokumentiert.
+zusammenfassung: KV09 (Vertrauenssignale) ist am 17.09.2026 (Paket 243) als nicht möglich beendet und steht seitdem als beim Kunden im Bewertungsblock: weder Gründungsjahr noch Zertifikat noch eine belegte Bewertungszahl stehen im Projekt, ein AggregateRating wäre erfunden. Search Console seit 03.09.2026 verbunden (Property sc-domain:luviq-alsfeld.com im Konto …05@gmail.com); Unternehmensprofil und Bewertungen bleiben nicht dokumentiert — der Standardwert von GOOGLE_REVIEW_URL ist ein Maps-Suchlink, kein Profil (settings.py:409, geprüft 12.09.2026). Die Platzhalterdaten auf /kontakt/ und „www.luviq.de“ im Impressum sind auf main ersetzt, ob Railway das ausgeliefert hat, ist nicht geprüft. GE11 (sameAs) ist am 11.09. und am 12.09.2026 nicht möglich und steht seit dem 12.09.2026 als beim Kunden im Bewertungsblock: ausser Instagram ist keine Profiladresse dokumentiert.
 offen: 5
 unternehmensprofil: unbekannt
 search_console: ja
@@ -54,7 +54,7 @@ nicht vor**.
 
 ## Bewertungen
 
-**Nicht dokumentiert.** Der Kasten `_reviews_map.html` zeigt „★★★★★" neben dem Firmennamen und je Gästebuch-Kommentar fünf Sterne — die Zahl „5.0" ist im Projekt **nicht belegt** und wurde deshalb im Lauf 4 bewusst nicht aufgegriffen (Logbuch Schritt 23). Es gibt kein `AggregateRating` im Schema (KV09), und es sollte auch keines geben, solange keine echte Quelle existiert.
+**Nicht dokumentiert.** Der Kasten `_reviews_map.html` zeigt „★★★★★" neben dem Firmennamen und je Gästebuch-Kommentar fünf Sterne — die Zahl „5.0" ist im Projekt **nicht belegt** und wurde deshalb im Lauf 4 bewusst nicht aufgegriffen (Logbuch Schritt 23). Es gibt kein `AggregateRating` im Schema (KV09), und es sollte auch keines geben, solange keine echte Quelle existiert. **Am 17.09.2026 (Paket 243) ist `KV09` deshalb als nicht möglich beendet worden**, keine Zeile Code geändert: von den vier fehlenden Vertrauenssignalen hat keines eine Quelle im Projekt — kein Gründungsjahr (kein Treffer für „seit 20…", „gegründet" oder `foundingDate` in `index.html`, `ueber_uns.html`, `legal/impressum.html`), kein Zertifikat und keine Mitgliedschaft ausser dem TLS-Zertifikat der Domain, und eben keine Bewertungszahl. Seit dem 17.09.2026 steht `KV09` als **beim Kunden** im Bewertungsblock; die Angaben liefert die Betreiberin ([80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 9 und 19).
 
 Das **Gästebuch** (`/gaestebuch/`, Modell `Comment`, Likes, nur angemeldete Nutzer) ist die einzige eigene Stimme-der-Kunden-Funktion; Anzahl der Einträge nicht dokumentiert.
 
