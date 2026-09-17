@@ -2131,3 +2131,46 @@ wurde nichts beanstandet.
 **Gemacht.** Die Suite lief vollständig (`python manage.py test`: 264 Tests,
 OK, rund 215 s), und die drei Punkte wurden am Diff `d90067a..641153b`
 nachgeprüft. Am Code ändert sich nichts.
+
+## 17.09.2026 – Paket 219: BF29, SI40, MW18
+
+### SI40 – Pillow ohne bekannte Lücke
+
+**Befund.** `pillow==11.3.0` hatte laut Messung acht bekannte Lücken, darunter
+GHSA-45hq-cxwh-f6vc und GHSA-4x4j-2g7c-83w6. Beide Advisories nennen
+„betroffen < 12.3.0, behoben in 12.3.0“.
+
+**Gebaut.** `pillow==12.3.0` in `requirements.txt` und `requirements.lock`
+(Commit `2cfa8ee`). Pillow hat keine Unterabhängigkeiten, die Lockdatei ändert
+sich nur in dieser Zeile. 12.3.0 verlangt laut PyPI Python >= 3.10 (Container
+3.11, CI 3.12). Der Code benutzt Pillow nur über Djangos `ImageField`.
+
+**Nicht nachgewiesen.** `pip install` ist in der Sandbox dieses Laufs gesperrt;
+auf dem Entwicklungsrechner ist weiter 11.3.0 installiert, die Suite lief also
+mit 11.3.0. Erster Nachweis mit 12.3.0 ist der nächste CI-Lauf oder Deploy.
+
+### MW18 – Eine Anfrage überlebt einen kaputten Mailweg
+
+**Befund.** `kontakt` (`views/shop.py`) verschickte die Anfrage nur per Mail.
+`send_brevo_email` läuft in einem Thread und schreibt einen Fehlschlag nur ins
+Log – die Nachricht war dann weg.
+
+**Gebaut.** Modell `KontaktAnfrage` (Migration `0019`), im Django-Admin
+registriert (nur lesen und löschen). Die View speichert die Anfrage **vor**
+dem Versand in einem eigenen Sicherungspunkt und vermerkt danach
+`mail_gestartet`. Scheitert nur der Versand, führt die Anfrage jetzt auf
+`/kontakt/danke/` – sie liegt ja vor. Scheitert nur das Speichern, trägt der
+Mailweg sie allein. Erst wenn beides scheitert, bleibt die Fehlermeldung und
+der Doppelklick-Merker wird gelöscht. Spam und Doppelklicks werden wie bisher
+vorher verworfen und nicht gespeichert.
+
+**Offen bei der Betreiberin.** Die Datenschutzerklärung nennt für das
+Kontaktformular nur die Übermittlung an Brevo, nicht die Speicherung im Shop;
+eine Aufbewahrungsfrist ist nicht festgelegt. Beides ist eine Entscheidung
+der Betreiberin, der Rechtstext ist nicht geändert.
+
+**Tests.** `test_formulare`: sechs neue Tests (Speichern vor dem Versand,
+Anfrage überlebt den Mailausfall, Datenbankausfall, beides fällt aus,
+Admin-Registrierung, abgewiesene Eingaben und Doppelklick speichern nichts);
+zwei bestehende auf das neue Verhalten umgestellt. Gegenprobe: ohne das
+Speichern werden zwei davon rot.

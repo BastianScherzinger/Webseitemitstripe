@@ -414,6 +414,31 @@ class PageVisit(models.Model):
         return f"{self.date}: {self.visits} Besuche"
 
 
+class KontaktAnfrage(models.Model):
+    """Eine Anfrage aus dem Kontaktformular – gespeichert, **bevor** die Mail
+    hinausgeht (MW18).
+
+    Der Versand über ``send_brevo_email`` läuft in einem Thread; scheitert er,
+    steht der Fehler nur im Log. Ohne diesen Eintrag wäre die Nachricht dann
+    endgültig weg. ``mail_gestartet`` sagt nur, dass der Versand angestoßen
+    wurde – ob Brevo sie zugestellt hat, weiss die Anfrage nicht.
+    """
+    name = models.CharField(max_length=100, verbose_name="Name")
+    email = models.EmailField(max_length=254, verbose_name="E-Mail")
+    betreff = models.CharField(max_length=150, verbose_name="Betreff")
+    nachricht = models.TextField(verbose_name="Nachricht")
+    mail_gestartet = models.BooleanField(default=False, verbose_name="Mailversand angestoßen")
+    erstellt_am = models.DateTimeField(auto_now_add=True, verbose_name="Eingegangen am")
+
+    class Meta:
+        verbose_name = "Kontaktanfrage"
+        verbose_name_plural = "Kontaktanfragen"
+        ordering = ['-erstellt_am']
+
+    def __str__(self):
+        return f"{self.betreff} – {self.email}"
+
+
 class Comment(models.Model):
     """Bewertungs- und Kommentar-Modell"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')

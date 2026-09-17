@@ -10,11 +10,12 @@ from django.contrib import messages
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.db import DatabaseError, transaction
 from django.db.models import F
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 
-from ..models import Produkt, Werbung, WerbungStat, Comment
+from ..models import Produkt, Werbung, WerbungStat, Comment, KontaktAnfrage
 from .. import spamschutz
 from ..utils import send_brevo_email
 from ._helpers import zu_viele_anfragen
@@ -157,18 +158,37 @@ def kontakt(request):
             subject = f"Kontaktformular: {safe_betreff}"
             message = f"Neue Nachricht von {safe_name} ({safe_email}):\n\n{nachricht}"
             recipient = os.getenv('ADMIN_EMAIL', settings.DEFAULT_FROM_EMAIL)
+            # Erst speichern, dann mailen (MW18): scheitert der Versand, steht
+            # die Anfrage trotzdem in der Verwaltung (Kontaktanfragen).
+            try:
+                with transaction.atomic():
+                    anfrage = KontaktAnfrage.objects.create(
+                        name=name, email=email, betreff=betreff, nachricht=nachricht)
+            except DatabaseError:
+                _log.exception('Kontaktformular: Anfrage nicht gespeichert')
+                anfrage = None
             try:
                 send_brevo_email(subject, message, recipient, recipient_name="Shop Admin", text_content=message)
             except Exception:
-                # Nicht angenommen: ein erneuter Versuch darf nicht als Doppel gelten.
-                cache.delete(_doppelt_schluessel(email, betreff, nachricht))
-                messages.error(request, 'Entschuldigung, es gab ein Problem beim Senden deiner Nachricht.')
+                _log.exception('Kontaktformular: Mailversand nicht gestartet')
+                gestartet = False
             else:
+                gestartet = True
+                if anfrage is not None:
+                    try:
+                        KontaktAnfrage.objects.filter(pk=anfrage.pk).update(mail_gestartet=True)
+                    except DatabaseError:
+                        _log.exception('Kontaktformular: Versandvermerk nicht gespeichert')
+            if gestartet or anfrage is not None:
                 # Weiterleitung auf eine eigene Adresse statt einer Meldung auf
                 # derselben Seite (KV07): nur so ist ein abgeschicktes Formular
                 # als Seitenaufruf zählbar, und ein Neuladen schickt es nicht
                 # ein zweites Mal ab.
                 return redirect('kontakt_danke')
+            # Weder gespeichert noch versandt: nicht angenommen, ein erneuter
+            # Versuch darf nicht als Doppel gelten.
+            cache.delete(_doppelt_schluessel(email, betreff, nachricht))
+            messages.error(request, 'Entschuldigung, es gab ein Problem beim Senden deiner Nachricht.')
         else:
             messages.error(request, fehler)
 
