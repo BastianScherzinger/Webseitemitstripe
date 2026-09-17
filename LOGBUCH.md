@@ -2121,3 +2121,13 @@ geändert.
 
 **Tests.** `test_jedes_feld_begrenzt_die_eingabe_wie_der_server` und
 `test_eine_nachricht_an_der_grenze_mit_zeilenumbruechen_geht_durch`.
+
+### Nachbesserung – Gegenprüfung ohne Urteil
+
+**Befund.** Die Gegenprüfung ist beendet worden, bevor die Testsuite fertig
+war. Sie hat deshalb zu FO03, FO04 und FO07 kein Urteil abgegeben. Am Code
+wurde nichts beanstandet.
+
+**Gemacht.** Die Suite lief vollständig (`python manage.py test`: 264 Tests,
+OK, rund 215 s), und die drei Punkte wurden am Diff `d90067a..641153b`
+nachgeprüft. Am Code ändert sich nichts.
