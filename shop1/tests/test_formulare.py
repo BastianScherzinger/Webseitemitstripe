@@ -400,6 +400,43 @@ class NewsletterTest(LuviqTestCase):
         self.assertEqual(Subscriber.objects.count(), 0)
 
 
+class NewsletterOptInTest(LuviqTestCase):
+    """Double-Opt-in (17.09.2026): Bots haben auf der Agenturseite fremde
+    Adressen eingetragen, und die Seite hat sie angeschrieben. Hier landete
+    jede eingetippte Adresse ohne Rückfrage in der Newsletter-Liste."""
+
+    _VERSAND = 'shop1.utils.send_brevo_email'
+
+    def test_anmeldung_schickt_nur_einen_bestaetigungslink(self):
+        with mock.patch(self._VERSAND) as versand:
+            self.sende('/newsletter/subscribe/', {'email': 'neu@example.invalid'})
+        self.assertFalse(Subscriber.objects.get().bestaetigt)
+        self.assertEqual(versand.call_count, 1)
+        _betreff, html, empfaenger = versand.call_args.args[:3]
+        self.assertEqual(empfaenger, 'neu@example.invalid')
+        self.assertIn('/newsletter/bestaetigen/?t=', html)
+
+    def test_hoechstens_ein_link_je_adresse_am_tag(self):
+        with mock.patch(self._VERSAND) as versand:
+            for nummer in range(3):
+                self.sende('/newsletter/subscribe/', {'email': 'opfer@example.invalid'},
+                           REMOTE_ADDR=f'198.51.100.{nummer}')
+        self.assertEqual(versand.call_count, 1)
+
+    def test_der_link_bestaetigt_die_adresse(self):
+        from django.core import signing
+        from ..views.legal import _NEWSLETTER_SALT
+        Subscriber.objects.create(email='neu@example.invalid')
+        token = signing.dumps({'e': 'neu@example.invalid'}, salt=_NEWSLETTER_SALT)
+        self.hole(f'/newsletter/bestaetigen/?t={token}')
+        self.assertTrue(Subscriber.objects.get().bestaetigt)
+
+    def test_ein_gefaelschter_link_bestaetigt_nichts(self):
+        Subscriber.objects.create(email='neu@example.invalid')
+        self.hole('/newsletter/bestaetigen/?t=gefaelscht')
+        self.assertFalse(Subscriber.objects.get().bestaetigt)
+
+
 class DrosselungTest(LuviqTestCase):
     """Obergrenze je IP-Adresse für beide Anfragewege (FO09)."""
 

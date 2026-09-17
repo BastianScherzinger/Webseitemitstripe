@@ -1,12 +1,18 @@
 """Rechtliche Seiten, SEO-Endpunkte und Newsletter."""
 
+import hashlib
 import json
 
+from django.conf import settings
+from django.contrib import messages
+from django.core import signing
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse, HttpResponsePermanentRedirect, JsonResponse
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.cache import cache_page
 
 from ..models import Produkt, Subscriber
@@ -336,6 +342,58 @@ def produkt_uebersicht_redirect(request):
     return HttpResponsePermanentRedirect(reverse('produkte'))
 
 
+_NEWSLETTER_SALT = 'luviq-newsletter-optin'
+_NEWSLETTER_GUELTIG = 7 * 24 * 3600
+
+
+def _bestaetigung_senden(request, abo):
+    """Bestaetigungslink an eine noch offene Adresse - hoechstens einmal am Tag.
+
+    Die Mail enthaelt **keinen Text aus dem Formular**: Die Adresse hat niemand
+    bestaetigt, und ein Bot soll hierueber nichts in fremde Postfaecher tragen.
+    """
+    schluessel = 'luviq-nl-' + hashlib.sha256(abo.email.lower().encode()).hexdigest()
+    try:
+        if not cache.add(schluessel, 1, 24 * 3600):
+            return
+    except Exception:
+        pass
+    from ..utils import send_brevo_email
+    token = signing.dumps({'e': abo.email}, salt=_NEWSLETTER_SALT)
+    link = settings.SITE_URL.rstrip('/') + reverse('newsletter_bestaetigen') + '?t=' + token
+    send_brevo_email(
+        'Luviq – Bitte bestätige deine Newsletter-Anmeldung',
+        f"""<html><body>
+            <p>Hallo,</p>
+            <p>für diese Adresse wurde der Luviq-Newsletter bestellt. Bitte bestätige das
+            mit einem Klick:</p>
+            <p><a href="{link}">Anmeldung bestätigen</a></p>
+            <p>Warst du das nicht, ignoriere diese E-Mail einfach – ohne Bestätigung
+            schicken wir dir nichts.</p>
+        </body></html>""",
+        abo.email,
+        text_content=f'Bitte bestätige deine Newsletter-Anmeldung: {link}\n\n'
+                     'Warst du das nicht, ignoriere diese E-Mail einfach.',
+    )
+
+
+def newsletter_bestaetigen(request):
+    """Schritt 2 des Double-Opt-in: der signierte Link aus der Mail."""
+    try:
+        daten = signing.loads(request.GET.get('t', ''), salt=_NEWSLETTER_SALT,
+                              max_age=_NEWSLETTER_GUELTIG)
+        abo = Subscriber.objects.get(email=daten['e'])
+    except (signing.BadSignature, KeyError, TypeError, Subscriber.DoesNotExist):
+        messages.error(request, 'Der Bestätigungslink ist ungültig oder abgelaufen.')
+        return redirect('/')
+    if not abo.bestaetigt:
+        abo.bestaetigt = True
+        abo.bestaetigt_am = timezone.now()
+        abo.save(update_fields=['bestaetigt', 'bestaetigt_am'])
+    messages.success(request, 'Danke! Deine Newsletter-Anmeldung ist bestätigt.')
+    return redirect('/')
+
+
 # offen-ok: die Newsletter-Anmeldung steht auf der Startseite und richtet sich
 # an Besucher ohne Konto. Geschrieben wird eine einzelne E-Mail-Adresse, und
 # das unique-Feld verhindert Mehrfacheinträge derselben Adresse.
@@ -364,13 +422,17 @@ def newsletter_subscribe(request):
         except ValidationError:
             return JsonResponse({'error': 'Bitte gib eine gültige Email an.'}, status=400)
 
-        if Subscriber.objects.filter(email=email).exists():
-            return JsonResponse({'message': 'Du bist bereits im Orbit angemeldet!'}, status=200)
-
-        Subscriber.objects.create(email=email)
-        # ``neu`` sagt dem Skript der Startseite, dass diese Anmeldung als
-        # Abschluss zählt (FO08); eine Wiederholung oben zählt nicht.
-        return JsonResponse({'message': 'Erfolgreich zum Newsletter angemeldet!', 'neu': True},
-                            status=200)
+        # Double-Opt-in (17.09.2026). Die Antwort ist fuer neue, offene und
+        # bestaetigte Adressen dieselbe - sonst verraet sie, wer schon Abonnent ist.
+        abo, neu = Subscriber.objects.get_or_create(email=email)
+        if not abo.bestaetigt:
+            _bestaetigung_senden(request, abo)
+        antwort = {'message': 'Fast geschafft! Bitte bestätige deine Anmeldung '
+                              'über den Link in der E-Mail, die wir dir geschickt haben.'}
+        if neu:
+            # ``neu`` sagt dem Skript der Startseite, dass diese Anmeldung als
+            # Abschluss zählt (FO08); eine Wiederholung zählt nicht.
+            antwort['neu'] = True
+        return JsonResponse(antwort, status=200)
 
     return JsonResponse({'error': 'Invalid request'}, status=405)

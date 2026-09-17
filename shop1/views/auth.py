@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 
 from ..forms import CustomUserCreationForm, UserProfileForm
 from ..models import UserProfile, Order
-from ._helpers import _is_admin, _get_or_create_cart, _sync_session_to_db
+from ._helpers import _is_admin, _get_or_create_cart, _sync_session_to_db, zu_viele_anfragen
 
 
 def login(request):
@@ -49,6 +49,13 @@ def logout(request):
 # durchlässt (CustomUserCreationForm), und django-axes begrenzt die Versuche.
 def register(request):
     if request.method == 'POST':
+        # Drosselung je IP (17.09.2026): Jede Registrierung schickt eine Mail an
+        # die eingetippte Adresse. django-axes zaehlt nur Anmeldeversuche.
+        if zu_viele_anfragen(request, 'registrierung'):
+            messages.error(request, 'Zu viele Registrierungen in kurzer Zeit. '
+                                    'Bitte versuche es später noch einmal.')
+            return render(request, 'shop1/register.html',
+                          {'form': CustomUserCreationForm()}, status=429)
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
@@ -94,6 +101,8 @@ def resend_verification(request):
         profile = request.user.profile
         if profile.email_verified:
             messages.info(request, 'Deine E-Mail-Adresse ist bereits bestätigt.')
+        elif zu_viele_anfragen(request, 'verifikation'):
+            messages.error(request, 'Bitte warte etwas, bevor du die E-Mail erneut anforderst.')
         else:
             profile.regenerate_token()
             from ..signals import send_verification_email

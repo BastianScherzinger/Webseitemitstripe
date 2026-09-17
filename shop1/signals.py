@@ -40,6 +40,11 @@ from .utils import send_brevo_email
 def send_verification_email(user, profile):
     """
     Sendet eine Verifikations-Email an den neuen User via Brevo API.
+
+    Ohne Benutzername oder Vorname (17.09.2026): Beides tippt der Anmeldende
+    selbst, und die Mail geht an eine Adresse, die noch niemand bestaetigt hat.
+    Ein Bot koennte sonst Betrugstext in fremde Postfaecher tragen - der Name
+    stand hier zudem unmaskiert im HTML.
     """
     if not user.email:
         return
@@ -53,7 +58,7 @@ def send_verification_email(user, profile):
     html_content = f"""
     <html>
         <body>
-            <h2>Hallo {user.first_name or user.username},</h2>
+            <h2>Hallo,</h2>
             <p>vielen Dank für deine Registrierung bei Luviq Universe!</p>
             <p>Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Button klickst:</p>
             <a href="{verification_url}" style="background-color: #ff6a00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">E-Mail bestätigen</a>
@@ -63,4 +68,4 @@ def send_verification_email(user, profile):
     </html>
     """
     
-    send_brevo_email(subject, html_content, user.email, recipient_name=user.username, text_content=f"Bestätige deine E-Mail: {verification_url}")
+    send_brevo_email(subject, html_content, user.email, recipient_name="", text_content=f"Bestätige deine E-Mail: {verification_url}")

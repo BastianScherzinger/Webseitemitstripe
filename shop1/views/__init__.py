@@ -4,7 +4,7 @@ from .shop import startseite, werbung_klick, kontakt, kontakt_danke, kontakte, u
 from .auth import login, logout, register, verify_email, resend_verification, delete_account, profil, change_password
 from .cart import warenkorb, add_to_cart, remove_from_cart, update_cart
 from .checkout import checkout, payment, paypal_capture, payment_success, payment_cancel
-from .legal import impressum, datenschutz, agb, robots_txt, sitemap_xml, llms_txt, newsletter_subscribe, produkt_uebersicht_redirect
+from .legal import impressum, datenschutz, agb, robots_txt, sitemap_xml, llms_txt, newsletter_subscribe, newsletter_bestaetigen, produkt_uebersicht_redirect
 from .gaestebuch import gaestebuch, comment_add, comment_like, comment_delete
 from .wissen import wissen, wissen_beitrag, WISSEN_BEITRAEGE, freigegebene_beitraege, uebersicht_indexierbar
 
@@ -18,7 +18,7 @@ __all__ = [
     # checkout
     'checkout', 'payment', 'paypal_capture', 'payment_success', 'payment_cancel',
     # legal
-    'impressum', 'datenschutz', 'agb', 'robots_txt', 'sitemap_xml', 'llms_txt', 'newsletter_subscribe', 'produkt_uebersicht_redirect',
+    'impressum', 'datenschutz', 'agb', 'robots_txt', 'sitemap_xml', 'llms_txt', 'newsletter_subscribe', 'newsletter_bestaetigen', 'produkt_uebersicht_redirect',
     # gaestebuch
     'gaestebuch', 'comment_add', 'comment_like', 'comment_delete',
     # wissen (WISSEN_BEITRAEGE: Register, aus dem urls.py die Beitragsrouten baut)

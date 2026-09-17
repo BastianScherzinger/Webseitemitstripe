@@ -263,7 +263,9 @@ class GetLueckeHeutigerStandTest(LuviqTestCase):
         """Heutiger Stand (siehe Klassendokumentation): der Aufruf der
         Resend-Adresse per GET verschickt den Newsletter an alle Abonnenten –
         beliebig oft."""
-        Subscriber.objects.create(email='abo@example.invalid')
+        Subscriber.objects.create(email='abo@example.invalid', bestaetigt=True)
+        # Unbestaetigte Adressen bekommen nichts (Double-Opt-in, 17.09.2026).
+        Subscriber.objects.create(email='offen@example.invalid')
         self.client.force_login(self.besitzerin)
 
         with mock.patch(_NEWSLETTER) as newsletter:
@@ -271,5 +273,7 @@ class GetLueckeHeutigerStandTest(LuviqTestCase):
             self.hole(f'/shop-admin/produkte/{self.produkt.id}/resend-newsletter/')
 
         self.assertEqual(newsletter.call_count, 2)
+        empfaenger = [s.email for s in newsletter.call_args.args[1]]
+        self.assertEqual(empfaenger, ['abo@example.invalid'])
         self.produkt.refresh_from_db()
         self.assertTrue(self.produkt.newsletter_gesendet)

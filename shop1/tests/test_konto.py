@@ -58,6 +58,27 @@ class RegistrierungTest(LuviqTestCase):
         self.assertIn('bestätige', betreff.lower())
         self.assertIn(f'/verify/{konto.profile.verification_token}/', inhalt)
 
+    def test_die_bestaetigungsmail_enthaelt_keinen_eingetippten_namen(self):
+        """Verhindert, dass ein Bot über den Namen Text in fremde Postfächer
+        trägt (17.09.2026) – die Adresse hat zu diesem Zeitpunkt niemand bestätigt."""
+        daten = dict(REGISTRIERUNG, username='betrug', first_name='Ueberweisung')
+        with mock.patch(_MAIL) as versand:
+            self.sende('/register/', daten)
+        _betreff, inhalt = versand.call_args.args[:2]
+        self.assertNotIn('Ueberweisung', inhalt)
+        self.assertNotIn('betrug', inhalt)
+        self.assertEqual(versand.call_args.kwargs.get('recipient_name'), '')
+
+    def test_registrierungen_sind_je_adresse_gedrosselt(self):
+        """Jede Registrierung ist eine Mail an eine eingetippte Adresse."""
+        with mock.patch(_MAIL) as versand:
+            for nummer in range(8):
+                daten = dict(REGISTRIERUNG, username=f'neu{nummer}',
+                             email=f'neu{nummer}@example.invalid')
+                antwort = self.sende('/register/', daten)
+        self.assertEqual(antwort.status_code, 429)
+        self.assertLess(versand.call_count, 8)
+
     def test_ein_gueltiger_verifizierungslink_bestaetigt_und_ein_zweiter_aufruf_schadet_nicht(self):
         """Verhindert, dass der Link aus der Mail ins Leere führt – oder dass
         ein zweiter Klick (Mailprogramme rufen Links vorab auf) die

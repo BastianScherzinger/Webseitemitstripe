@@ -550,7 +550,7 @@ def admin_resend_newsletter(request, produkt_id):
     from .models import Subscriber
     from .utils import send_newsletter_email
     
-    subscribers = Subscriber.objects.all()
+    subscribers = Subscriber.objects.filter(bestaetigt=True)
     if subscribers.exists():
         send_newsletter_email(produkt, subscribers)
         produkt.newsletter_gesendet = True
@@ -630,7 +630,7 @@ def admin_produkt_upload(request):
             if form.cleaned_data.get('send_newsletter'):
                 from .models import Subscriber
                 from .utils import send_newsletter_email
-                subscribers = Subscriber.objects.all()
+                subscribers = Subscriber.objects.filter(bestaetigt=True)
                 if subscribers.exists():
                     send_newsletter_email(produkt, subscribers)
                     produkt.newsletter_gesendet = True
@@ -666,7 +666,7 @@ def admin_produkt_edit(request, produkt_id):
             if form.cleaned_data.get('send_newsletter'):
                 from .models import Subscriber
                 from .utils import send_newsletter_email
-                subscribers = Subscriber.objects.all()
+                subscribers = Subscriber.objects.filter(bestaetigt=True)
                 if subscribers.exists():
                     send_newsletter_email(produkt, subscribers)
                     produkt.newsletter_gesendet = True

@@ -57,6 +57,7 @@ urlpatterns = [
     path('datenschutz/', views.datenschutz, name='datenschutz'),
     path('agb/', views.agb, name='agb'),
     path('newsletter/subscribe/', views.newsletter_subscribe, name='newsletter_subscribe'),
+    path('newsletter/bestaetigen/', views.newsletter_bestaetigen, name='newsletter_bestaetigen'),
     
     # ═══ SEO ═══
     path('robots.txt', views.robots_txt, name='robots_txt'),

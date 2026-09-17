@@ -77,6 +77,11 @@ class Subscriber(models.Model):
     """Newsletter Abonnenten"""
     email = models.EmailField(unique=True)
     erstellt_am = models.DateTimeField(auto_now_add=True)
+    # Double-Opt-in (17.09.2026): Newsletter gehen nur an bestaetigte Adressen.
+    # Vorher landete jede eingetippte Adresse ohne Rueckfrage in der Liste und
+    # bekam bei jedem neuen Produkt Post - auch die, die ein Bot eingetragen hat.
+    bestaetigt = models.BooleanField(default=False)
+    bestaetigt_am = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.email
