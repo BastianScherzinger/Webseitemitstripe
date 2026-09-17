@@ -2052,3 +2052,37 @@ betroffen, ein selbst gesetzter erster `X-Forwarded-For`-Eintrag umgeht die
 Grenze nicht, und der Newsletter nimmt über der Grenze keine Adresse mehr
 an. **252 Tests, OK.** Kein Template geändert. `pruefe_seite` war in dieser
 Umgebung nicht ausführbar, weil die Ausführung nicht freigegeben ist.
+
+## 17.09.2026 – Paket 216: FO03, FO04, FO07 (Kontaktformular)
+
+### FO03 – doppeltes Absenden wird verhindert
+
+**Befund.** Weder das Kontaktformular noch die Newsletter-Anmeldung sperrten
+ihren Knopf, und im Code gab es keine Duplikatprüfung. Ein Doppelklick auf
+„Nachricht absenden“ schickte zwei POST-Anfragen und damit zwei Mails an die
+Betreiberin. Die Weiterleitung auf `/kontakt/danke/` (KV07) schützt nur vor
+dem Neuladen, nicht vor dem zweiten Klick.
+
+**Gebaut, beide Wege aus dem Katalog:**
+
+- **Im Browser.** Das `<head>`-Skript in `base.html` wertet ein neues
+  Merkmal `data-einmal-absenden` aus: nach dem ersten `submit` bekommen die
+  Absendeknöpfe `disabled` und das Formular `aria-busy="true"`. Das Skript
+  hört in der Blasenphase und prüft `defaultPrevented`. So sperrt eine
+  abgelehnte `data-bestaetigen`-Frage nichts. Nach der Zurück-Taste
+  (`pageshow` aus dem Verlaufsspeicher) werden die Knöpfe wieder frei. Die
+  Newsletter-Anmeldung auf der Startseite sendet per `fetch` und sperrt
+  ihren Knopf deshalb im eigenen Skript, bis die Antwort da ist (`finally`).
+- **Auf dem Server** – für Absender ohne Skript. `doppelt_abgeschickt()` in
+  `views/shop.py` merkt sich Absender, Betreff und Text (SHA-256) zwei
+  Minuten lang im Cache. Eine wortgleiche zweite Anfrage führt auf dieselbe
+  Bestätigung, verschickt aber keine zweite Mail. Eine Anfrage mit anderem
+  Text oder Betreff geht normal hinaus, also wird keine echte zweite
+  Anfrage verworfen. Scheitert der Versand, wird der Merker gelöscht, damit
+  der neue Versuch zählt. Der Newsletter brauchte das nicht: das
+  `unique`-Feld führt eine doppelte Adresse bereits zusammen.
+
+**Tests.** Fünf neue in `DoppeltesAbsendenTest`. `DrosselungTest._kontakt`
+schickt jetzt je Aufruf einen anderen Text. Die Tests prüfen die Drosselung
+und würden sonst an der Zusammenführung hängen. Nur Attribute und Skripttext
+geändert – `test_aufbau` grün.

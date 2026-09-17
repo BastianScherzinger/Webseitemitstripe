@@ -86,7 +86,7 @@
             <!-- Contact Form -->
             <div class="lg:col-span-2 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
                 <div class="glass-card rounded-[3.5rem] p-10 md:p-16">
-                    <form method="post" class="space-y-8">
+                    <form method="post" class="space-y-8" data-einmal-absenden>
                         {% csrf_token %}
                         {# Spamschutz (shop1/spamschutz.py): Zeitstempel und ein Feld, das nur Bots ausfüllen #}
                         <input type="hidden" name="formzeit" value="{{ formzeit }}">
