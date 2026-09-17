@@ -63,6 +63,10 @@ urlpatterns = [
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
     path('llms.txt', views.llms_txt, name='llms_txt'),
+    # RSS-Feed der freigegebenen Wissensbeitraege (GE32). Im Kopfbereich jeder
+    # Seite als rel="alternate" verlinkt, damit Aggregatoren und
+    # Antwortmaschinen ihn finden, ohne die Seite abzulaufen.
+    path('feed/', views.WissenFeed(), name='wissen_feed'),
 
     # ═══ GÄSTEBUCH & KOMMENTARE ═══
     path('gaestebuch/', views.gaestebuch, name='gaestebuch'),
