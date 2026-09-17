@@ -2052,3 +2052,82 @@ betroffen, ein selbst gesetzter erster `X-Forwarded-For`-Eintrag umgeht die
 Grenze nicht, und der Newsletter nimmt über der Grenze keine Adresse mehr
 an. **252 Tests, OK.** Kein Template geändert. `pruefe_seite` war in dieser
 Umgebung nicht ausführbar, weil die Ausführung nicht freigegeben ist.
+
+## 17.09.2026 – Paket 216: FO03, FO04, FO07 (Kontaktformular)
+
+### FO03 – doppeltes Absenden wird verhindert
+
+**Befund.** Weder das Kontaktformular noch die Newsletter-Anmeldung sperrten
+ihren Knopf, und im Code gab es keine Duplikatprüfung. Ein Doppelklick auf
+„Nachricht absenden“ schickte zwei POST-Anfragen und damit zwei Mails an die
+Betreiberin. Die Weiterleitung auf `/kontakt/danke/` (KV07) schützt nur vor
+dem Neuladen, nicht vor dem zweiten Klick.
+
+**Gebaut, beide Wege aus dem Katalog:**
+
+- **Im Browser.** Das `<head>`-Skript in `base.html` wertet ein neues
+  Merkmal `data-einmal-absenden` aus: nach dem ersten `submit` bekommen die
+  Absendeknöpfe `disabled` und das Formular `aria-busy="true"`. Das Skript
+  hört in der Blasenphase und prüft `defaultPrevented`. So sperrt eine
+  abgelehnte `data-bestaetigen`-Frage nichts. Nach der Zurück-Taste
+  (`pageshow` aus dem Verlaufsspeicher) werden die Knöpfe wieder frei. Die
+  Newsletter-Anmeldung auf der Startseite sendet per `fetch` und sperrt
+  ihren Knopf deshalb im eigenen Skript, bis die Antwort da ist (`finally`).
+- **Auf dem Server** – für Absender ohne Skript. `doppelt_abgeschickt()` in
+  `views/shop.py` merkt sich Absender, Betreff und Text (SHA-256) zwei
+  Minuten lang im Cache. Eine wortgleiche zweite Anfrage führt auf dieselbe
+  Bestätigung, verschickt aber keine zweite Mail. Eine Anfrage mit anderem
+  Text oder Betreff geht normal hinaus, also wird keine echte zweite
+  Anfrage verworfen. Scheitert der Versand, wird der Merker gelöscht, damit
+  der neue Versuch zählt. Der Newsletter brauchte das nicht: das
+  `unique`-Feld führt eine doppelte Adresse bereits zusammen.
+
+**Tests.** Fünf neue in `DoppeltesAbsendenTest`. `DrosselungTest._kontakt`
+schickt jetzt je Aufruf einen anderen Text. Die Tests prüfen die Drosselung
+und würden sonst an der Zusammenführung hängen. Nur Attribute und Skripttext
+geändert – `test_aufbau` grün.
+
+### FO04 – Pflichtfelder sind sichtbar gekennzeichnet
+
+**Befund.** Alle vier Felder von `/kontakt/` tragen `required`, aber weder
+die Beschriftung noch der zugängliche Name sagte das. Die `<label>`-Elemente
+haben kein `for`. Den Namen des Feldes stellt deshalb `aria-label`, und so
+liest ihn auch die Messung.
+
+**Gebaut.** Ein Stern hinter jeder sichtbaren Beschriftung („Dein Name *“),
+„(Pflichtfeld)“ am Ende jedes `aria-label`, und ein Satz im Einleitungstext
+erklärt den Stern. Der zugängliche Name beginnt weiter mit dem sichtbaren
+Text (WCAG 2.5.3). `for`/`id` wären der sauberere Weg gewesen, aber eine neue
+Kennung ändert den Fingerabdruck der Designwache. Nur Text und `aria-label`
+geändert – kein Element, keine Klasse.
+
+**Test.** `test_jedes_pflichtfeld_ist_sichtbar_gekennzeichnet`: vier
+Pflichtfelder, jedes mit Stern und „(Pflichtfeld)“, und die Erklärung steht
+auf der Seite.
+
+### FO07 – Eingabelängen sind begrenzt
+
+**Befund.** Der Server begrenzt die vier Kontaktfelder seit FO06
+(`KONTAKT_LAENGEN`: Name 100, E-Mail 254, Betreff 150, Nachricht 5000), das
+Formular sagte davon nichts. Wer mehr schrieb, las erst nach dem Absenden
+„zu lang“.
+
+**Gebaut.** `maxlength` an allen vier Feldern mit genau diesen Werten. Ein
+Test hält Formular und `KONTAKT_LAENGEN` gleich. Dazu eine Zeile in
+`kontakt_fehler`: der Browser zählt im Textfeld einen Zeilenumbruch als ein
+Zeichen, schickt ihn aber als `\r\n`. Ohne die Angleichung lehnte der Server
+eine Nachricht ab, die `maxlength` gerade noch erlaubt hat. Nur Attribute
+geändert.
+
+**Tests.** `test_jedes_feld_begrenzt_die_eingabe_wie_der_server` und
+`test_eine_nachricht_an_der_grenze_mit_zeilenumbruechen_geht_durch`.
+
+### Nachbesserung – Gegenprüfung ohne Urteil
+
+**Befund.** Die Gegenprüfung ist beendet worden, bevor die Testsuite fertig
+war. Sie hat deshalb zu FO03, FO04 und FO07 kein Urteil abgegeben. Am Code
+wurde nichts beanstandet.
+
+**Gemacht.** Die Suite lief vollständig (`python manage.py test`: 264 Tests,
+OK, rund 215 s), und die drei Punkte wurden am Diff `d90067a..641153b`
+nachgeprüft. Am Code ändert sich nichts.

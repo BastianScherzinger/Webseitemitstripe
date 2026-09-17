@@ -198,6 +198,33 @@
             var el = e.target.closest ? e.target.closest('a[data-bestaetigen], button[data-bestaetigen]') : null;
             if (el && !window.confirm(attr(el, 'data-bestaetigen'))) { e.preventDefault(); }
         }, true);
+        // <form data-einmal-absenden>: sperrt die Absendeknöpfe nach dem ersten
+        // Absenden (FO03), ein Doppelklick schickt keine zweite Anfrage. Blasenphase,
+        // damit eine abgelehnte data-bestaetigen-Frage (Fangphase) nichts sperrt.
+        document.addEventListener('submit', function (e) {
+            var form = e.target;
+            if (e.defaultPrevented || attr(form, 'data-einmal-absenden') === null) { return; }
+            form.setAttribute('aria-busy', 'true');
+            var knoepfe = form.querySelectorAll('button:not([type]), button[type="submit"], input[type="submit"]');
+            for (var i = 0; i < knoepfe.length; i++) {
+                if (knoepfe[i].disabled) { continue; }
+                knoepfe[i].setAttribute('disabled', '');
+                knoepfe[i].setAttribute('data-gesperrt', '');
+            }
+        });
+        // Zurück-Taste: eine Seite aus dem Verlaufsspeicher käme gesperrt wieder.
+        window.addEventListener('pageshow', function (e) {
+            if (!e.persisted) { return; }
+            var formulare = document.querySelectorAll('form[data-einmal-absenden][aria-busy]');
+            for (var i = 0; i < formulare.length; i++) {
+                formulare[i].removeAttribute('aria-busy');
+                var knoepfe = formulare[i].querySelectorAll('[data-gesperrt]');
+                for (var j = 0; j < knoepfe.length; j++) {
+                    knoepfe[j].removeAttribute('disabled');
+                    knoepfe[j].removeAttribute('data-gesperrt');
+                }
+            }
+        });
         // <select data-auto-absenden>: schickt sein Formular bei jeder Auswahl ab.
         document.addEventListener('change', function (e) {
             if (attr(e.target, 'data-auto-absenden') !== null && e.target.form) { e.target.form.submit(); }

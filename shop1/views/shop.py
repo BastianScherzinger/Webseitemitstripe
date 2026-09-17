@@ -1,11 +1,13 @@
 """Shop-Hauptseiten: Startseite, Produkte, Kontakt, Über uns."""
 
+import hashlib
 import logging
 import os
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib import messages
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db.models import F
@@ -88,13 +90,35 @@ def kontakt_fehler(name, email, betreff, nachricht):
     werte = {'name': name, 'email': email, 'betreff': betreff, 'nachricht': nachricht}
     if not all(werte.values()):
         return 'Bitte fülle alle Felder aus.'
-    if any(len(werte[feld]) > grenze for feld, grenze in KONTAKT_LAENGEN.items()):
+    # Zeilenumbrüche zählen wie im Browser (``maxlength``, FO07) als ein
+    # Zeichen – abgeschickt wird jeder als ``\r\n``.
+    if any(len(werte[feld].replace('\r\n', '\n')) > grenze
+           for feld, grenze in KONTAKT_LAENGEN.items()):
         return 'Eine Eingabe ist zu lang. Bitte kürze sie.'
     try:
         validate_email(email)
     except ValidationError:
         return 'Bitte gib eine gültige E-Mail-Adresse an.'
     return None
+
+
+#: Zeitfenster, in dem eine wortgleiche Anfrage als Doppelklick gilt (FO03).
+DOPPELT_FENSTER = 2 * 60
+
+
+def _doppelt_schluessel(email, betreff, nachricht):
+    inhalt = '\x00'.join((email.lower(), betreff, nachricht))
+    return 'kontakt-doppelt:' + hashlib.sha256(inhalt.encode()).hexdigest()
+
+
+def doppelt_abgeschickt(email, betreff, nachricht):
+    """``True``, wenn dieselbe Anfrage gerade schon angenommen wurde (FO03).
+
+    Zusammengeführt wird nur, was in Absender, Betreff und Text wortgleich ist
+    – ein Doppelklick oder ein wiederholtes Absenden ohne Skript. Eine zweite
+    Anfrage mit anderem Text geht normal hinaus. Wie die Drosselung liegt der
+    Merker im ``LocMemCache`` und damit je Gunicorn-Prozess."""
+    return not cache.add(_doppelt_schluessel(email, betreff, nachricht), 1, DOPPELT_FENSTER)
 
 
 def kontakt(request):
@@ -123,6 +147,10 @@ def kontakt(request):
                 _log.warning('Kontaktformular: Spam verworfen (%s: %s)',
                              punkte, ','.join(gruende))
                 return redirect('kontakt_danke')
+            # Doppeltes Absenden (FO03): dieselbe Bestätigung, aber nur eine Mail.
+            if doppelt_abgeschickt(email, betreff, nachricht):
+                _log.info('Kontaktformular: doppelt abgeschickte Anfrage zusammengeführt')
+                return redirect('kontakt_danke')
             safe_betreff = betreff.replace('\r', '').replace('\n', ' ')
             safe_name = name.replace('\r', '').replace('\n', ' ')
             safe_email = email.replace('\r', '').replace('\n', ' ')
@@ -132,6 +160,8 @@ def kontakt(request):
             try:
                 send_brevo_email(subject, message, recipient, recipient_name="Shop Admin", text_content=message)
             except Exception:
+                # Nicht angenommen: ein erneuter Versuch darf nicht als Doppel gelten.
+                cache.delete(_doppelt_schluessel(email, betreff, nachricht))
                 messages.error(request, 'Entschuldigung, es gab ein Problem beim Senden deiner Nachricht.')
             else:
                 # Weiterleitung auf eine eigene Adresse statt einer Meldung auf

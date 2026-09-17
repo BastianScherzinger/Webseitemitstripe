@@ -116,6 +116,31 @@ class KontaktformularTest(LuviqTestCase):
                 versand.assert_not_called()
                 self.assertContains(antwort, 'zu lang')
 
+    def test_jedes_feld_begrenzt_die_eingabe_wie_der_server(self):
+        """Verhindert, dass jemand einen langen Text schreibt und erst nach dem
+        Absenden „zu lang“ liest (FO07): ``maxlength`` im Formular entspricht
+        genau der Grenze, die ``kontakt_fehler`` prüft."""
+        import re
+        from ..views.shop import KONTAKT_LAENGEN
+        inhalt = self.hole('/kontakt/').content.decode()
+        form = inhalt.split('name="formzeit"', 1)[1].split('</form>', 1)[0]
+        for feld, grenze in KONTAKT_LAENGEN.items():
+            with self.subTest(feld=feld):
+                tag = re.search(rf'<(?:input|textarea)[^>]*name="{feld}"[^>]*>', form).group(0)
+                self.assertIn(f'maxlength="{grenze}"', tag)
+
+    def test_eine_nachricht_an_der_grenze_mit_zeilenumbruechen_geht_durch(self):
+        """Verhindert, dass der Server ablehnt, was ``maxlength`` erlaubt hat:
+        der Browser zählt einen Umbruch als ein Zeichen, schickt aber ``\\r\\n``."""
+        from ..views.shop import KONTAKT_LAENGEN
+        grenze = KONTAKT_LAENGEN['nachricht']
+        nachricht = ('x' * 9 + '\r\n') * (grenze // 10)
+        self.assertGreater(len(nachricht), grenze)
+        with mock.patch(_MAIL) as versand:
+            antwort = self.sende('/kontakt/', dict(GUELTIGE_ANFRAGE, nachricht=nachricht))
+        self.assertEqual(antwort.status_code, 302)
+        self.assertEqual(versand.call_count, 1)
+
     def test_zeilenumbrueche_gelangen_nicht_in_die_betreffzeile(self):
         """Verhindert das Einschleusen von Kopfzeilen (Header Injection): ein
         Zeilenumbruch im Betreff könnte sonst zusätzliche Empfänger oder einen
@@ -131,6 +156,22 @@ class KontaktformularTest(LuviqTestCase):
         self.assertNotIn('\n', betreff)
         self.assertNotIn('\r', betreff)
 
+    def test_jedes_pflichtfeld_ist_sichtbar_gekennzeichnet(self):
+        """Verhindert, dass ein Pflichtfeld erst nach dem Absenden auffällt
+        (FO04): jedes ``required``-Feld trägt den Stern in der Beschriftung,
+        „Pflichtfeld“ im zugänglichen Namen, und die Seite erklärt den Stern."""
+        import re
+        inhalt = self.hole('/kontakt/').content.decode()
+        form = inhalt.split('name="formzeit"', 1)[1].split('</form>', 1)[0]
+        felder = re.findall(r'<label[^>]*>([^<]*)</label>\s*<(?:input|textarea)([^>]*)>', form)
+        pflicht = [(label, attrs) for label, attrs in felder if ' required' in attrs]
+        self.assertEqual(len(pflicht), 4)
+        for label, attrs in pflicht:
+            with self.subTest(label=label):
+                self.assertTrue(label.strip().endswith('*'))
+                self.assertRegex(attrs, r'aria-label="[^"]*\(Pflichtfeld\)"')
+        self.assertIn('mit einem Stern (*) gekennzeichnet', inhalt)
+
     def test_anfrage_ohne_csrf_token_wird_abgewiesen(self):
         """Verhindert, dass eine fremde Seite im Namen einer Besucherin
         Anfragen abschickt – der CSRF-Schutz muss an diesem Formular greifen."""
@@ -139,6 +180,63 @@ class KontaktformularTest(LuviqTestCase):
             antwort = streng.post('/kontakt/', GUELTIGE_ANFRAGE, secure=True)
         self.assertEqual(antwort.status_code, 403)
         versand.assert_not_called()
+
+
+class DoppeltesAbsendenTest(LuviqTestCase):
+    """Ein Doppelklick erzeugt keine zweite Mail (FO03)."""
+
+    def test_eine_wortgleiche_zweite_anfrage_verschickt_nichts_und_bestaetigt(self):
+        """Verhindert zwei Mails aus einem Doppelklick – der Absender sieht
+        trotzdem die Bestätigung, nicht eine Fehlermeldung."""
+        with mock.patch(_MAIL) as versand:
+            erste = self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+            zweite = self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+        self.assertRedirects(erste, '/kontakt/danke/', fetch_redirect_response=False)
+        self.assertRedirects(zweite, '/kontakt/danke/', fetch_redirect_response=False)
+        self.assertEqual(versand.call_count, 1)
+
+    def test_eine_echte_zweite_anfrage_geht_hinaus(self):
+        """Gegenprobe: eine zweite Frage mit anderem Text oder Betreff ist
+        kein Doppel und darf nicht stumm verschwinden."""
+        with mock.patch(_MAIL) as versand:
+            self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+            self.sende('/kontakt/', dict(GUELTIGE_ANFRAGE, nachricht='Und in Größe L?'))
+            self.sende('/kontakt/', dict(GUELTIGE_ANFRAGE, betreff='Frage zum Versand'))
+        self.assertEqual(versand.call_count, 3)
+
+    def test_nach_dem_zeitfenster_geht_dieselbe_anfrage_wieder_hinaus(self):
+        """Verhindert, dass eine bewusst wiederholte Anfrage für immer
+        verschluckt wird: der Merker gilt nur kurz."""
+        from django.core.cache import cache
+        from ..views.shop import _doppelt_schluessel
+        with mock.patch(_MAIL) as versand:
+            self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+            cache.delete(_doppelt_schluessel(GUELTIGE_ANFRAGE['email'],
+                                             GUELTIGE_ANFRAGE['betreff'],
+                                             GUELTIGE_ANFRAGE['nachricht']))
+            self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+        self.assertEqual(versand.call_count, 2)
+
+    def test_nach_einem_fehlgeschlagenen_versand_zaehlt_der_neue_versuch(self):
+        """Verhindert, dass eine Anfrage, deren Versand scheiterte, beim
+        zweiten Versuch als Doppel verworfen wird."""
+        with mock.patch(_MAIL, side_effect=RuntimeError('kein Versand')):
+            self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+        with mock.patch(_MAIL) as versand:
+            antwort = self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+        self.assertRedirects(antwort, '/kontakt/danke/', fetch_redirect_response=False)
+        self.assertEqual(versand.call_count, 1)
+
+    def test_die_formulare_sperren_ihren_knopf_beim_absenden(self):
+        """Verhindert, dass die Absendesperre im Browser still entfällt: das
+        Kontaktformular trägt das Merkmal, das Skript in base.html wertet es
+        aus, und die Newsletter-Anmeldung sperrt ihren Knopf selbst."""
+        kontakt = self.hole('/kontakt/').content.decode()
+        self.assertIn('data-einmal-absenden', kontakt.split('name="formzeit"')[0].rsplit('<form', 1)[1])
+        self.assertIn("attr(form, 'data-einmal-absenden')", kontakt)
+        startseite = self.hole('/').content.decode()
+        self.assertIn('knopf.disabled = true;', startseite)
+        self.assertIn("form.setAttribute('aria-busy', 'true');", startseite)
 
 
 class KontaktDankeTest(LuviqTestCase):
@@ -248,7 +346,10 @@ class DrosselungTest(LuviqTestCase):
     """Obergrenze je IP-Adresse für beide Anfragewege (FO09)."""
 
     def _kontakt(self, **meta):
-        return self.sende('/kontakt/', GUELTIGE_ANFRAGE, **meta)
+        # Je Aufruf ein anderer Text: wortgleiche Anfragen führt FO03 zusammen.
+        self._nummer = getattr(self, '_nummer', 0) + 1
+        daten = dict(GUELTIGE_ANFRAGE, nachricht=f"{GUELTIGE_ANFRAGE['nachricht']} ({self._nummer})")
+        return self.sende('/kontakt/', daten, **meta)
 
     def test_ueber_der_grenze_wird_keine_nachricht_mehr_verschickt(self):
         """Verhindert, dass eine Schleife das Postfach der Betreiberin füllt:
