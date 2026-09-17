@@ -420,7 +420,8 @@
     {% if messages %}
     <div class="max-w-7xl mx-auto px-4 mt-6">
         {% for message in messages %}
-        <div x-data="{ show: true }" x-show="show" x-transition class="rounded-2xl p-4 mb-4 glass flex items-center justify-between border-l-4 {% if message.tags == 'success' %}border-emerald-500{% elif message.tags == 'error' %}border-red-500{% else %}border-glow-orange{% endif %}">
+        {# role (BF24): Bildschirmleser sagen Fehler sofort an, alles andere höflich #}
+        <div role="{% if message.level_tag == 'error' %}alert{% else %}status{% endif %}" x-data="{ show: true }" x-show="show" x-transition class="rounded-2xl p-4 mb-4 glass flex items-center justify-between border-l-4 {% if message.tags == 'success' %}border-emerald-500{% elif message.tags == 'error' %}border-red-500{% else %}border-glow-orange{% endif %}">
             <span class="text-white/90 text-sm font-medium">{{ message }}</span>
             <button type="button" @click="show = false" aria-label="Meldung ausblenden" class="text-white/50 hover:text-white">&times;</button>
         </div>

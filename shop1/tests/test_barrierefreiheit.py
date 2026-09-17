@@ -297,6 +297,22 @@ class BedienelementeTest(LuviqTestCase):
                     )
 
 
+class FehleransageTest(LuviqTestCase):
+    """Formularfehler erreichen auch, wer sie nicht sieht (BF24, WCAG 3.3.1)."""
+
+    def test_ein_fehler_im_kontaktformular_wird_angesagt(self):
+        """Die Fehlermeldung des Servers steht in einem Bereich mit
+        ``role="alert"`` – ein Bildschirmleser liest sie sofort vor."""
+        antwort = self.sende('/kontakt/', {'name': '', 'email': '', 'betreff': '',
+                                           'nachricht': ''})
+        html = antwort.content.decode()
+        self.assertRegex(html, r'<div role="alert"[^>]*>\s*<span[^>]*>Bitte fülle alle Felder aus\.')
+
+    def test_das_kontaktformular_ist_ein_ansagebereich(self):
+        html = self.hole('/kontakt/').content.decode()
+        self.assertRegex(html, r'<form method="post"[^>]*aria-live="polite"')
+
+
 class AngemeldeteBedienungTest(LuviqTestCase):
     """Was erst nach der Anmeldung erscheint, muss genauso bedienbar sein.
 
