@@ -122,6 +122,9 @@ def doppelt_abgeschickt(email, betreff, nachricht):
     return not cache.add(_doppelt_schluessel(email, betreff, nachricht), 1, DOPPELT_FENSTER)
 
 
+# offen-ok: das Kontaktformular richtet sich an Besucher ohne Konto. Geschrieben
+# wird nur eine KontaktAnfrage (MW18), und erst nach Drosselung je IP,
+# Feldprüfung (kontakt_fehler), Spamschutz und Doppelsperre.
 def kontakt(request):
     if request.method == 'POST':
         # .strip(): ohne das zaehlt ein Feld, in dem nur ein Leerzeichen steht,
