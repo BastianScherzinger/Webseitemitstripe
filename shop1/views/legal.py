@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import logging
 
 from django.conf import settings
 from django.contrib import messages
@@ -24,6 +25,8 @@ from ..seiten_stand import SEITEN_STAND  # noqa: F401 – Re-Export
 # llms.txt nennen nur bestätigte Beiträge, siehe Docstring in views/wissen.py.
 from .wissen import freigegebene_beitraege, uebersicht_indexierbar
 from ._helpers import zu_viele_anfragen
+
+_log = logging.getLogger('shop1')
 
 
 def impressum(request):
@@ -357,7 +360,9 @@ def _bestaetigung_senden(request, abo):
         if not cache.add(schluessel, 1, 24 * 3600):
             return
     except Exception:
-        pass
+        # Ohne Cache keine Tagessperre: der Link geht trotzdem raus, der
+        # Ausfall steht aber im Log statt still zu verschwinden.
+        _log.exception('Newsletter: Tagessperre im Cache nicht pruefbar')
     from ..utils import send_brevo_email
     token = signing.dumps({'e': abo.email}, salt=_NEWSLETTER_SALT)
     link = settings.SITE_URL.rstrip('/') + reverse('newsletter_bestaetigen') + '?t=' + token
