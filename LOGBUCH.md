@@ -10,6 +10,20 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 17.09.2026 — Spamschutz am Kontaktformular
+
+**Was:** `shop1/spamschutz.py` bewertet jede Kontaktanfrage (unsichtbares Fallenfeld
+`webseite`, signierter Zeitstempel `formzeit`, Links im Namen oder Betreff,
+Gewinnspiel-/Krypto-Vokabular, zusammengeschriebene Namen, fremde Schrift mit Link).
+Ab 5 Punkten wird still verworfen: dieselbe Bestätigungsseite, keine Mail, eine
+Warnzeile im Log. **Warum:** Am 16.09.2026 kam „THE LAMBORGHINI AVENTADOR SWEEPSTAKES
+CLOSES SOON“ von „RobertBoobe“ mit telegra.ph-Link als Kontaktanfrage an — das
+Formular mailte bis dahin jede formal gültige Einsendung. Ein fehlender Zeitstempel
+allein (Besucher ohne JavaScript/alter Tab) blockt nicht. Designwache: nur `/kontakt/`
+in `aufbau_referenz.json` nachgezogen (zwei Eingabefelder mehr).
+
+---
+
 ## Verbesserungslauf 3 (Zweig `cockpit/2026-09-01-verbesserung-3`)
 
 Der Lauf war in sieben Wellen mit 33 Schritten geplant. In diesem

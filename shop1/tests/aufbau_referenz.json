@@ -1594,7 +1594,7 @@
    "form": 1,
    "iframe": 0,
    "img": 2,
-   "input": 4,
+   "input": 6,
    "picture": 0,
    "select": 0,
    "source": 0,
@@ -1603,7 +1603,8 @@
   },
   "kennungen": [
    "scroll-progress",
-   "hamburger-wrap"
+   "hamburger-wrap",
+   "kontakt-webseite"
   ],
   "klassen": [
    "ambient-glow",
@@ -1781,6 +1782,10 @@
    "div",
    "div",
    "form",
+   "input",
+   "input",
+   "div",
+   "label",
    "input",
    "div",
    "div",

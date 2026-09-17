@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 
 from ..models import Produkt, Werbung, WerbungStat, Comment
+from .. import spamschutz
 from ..utils import send_brevo_email
 from ._helpers import zu_viele_anfragen
 
@@ -115,6 +116,13 @@ def kontakt(request):
 
         fehler = kontakt_fehler(name, email, betreff, nachricht)
         if fehler is None:
+            # Bot-Spam still verwerfen: dieselbe Bestätigung, keine Mail
+            # (shop1/spamschutz.py, Anlass 16.09.2026).
+            punkte, gruende = spamschutz.bewerte(request.POST)
+            if punkte >= spamschutz.SCHWELLE:
+                _log.warning('Kontaktformular: Spam verworfen (%s: %s)',
+                             punkte, ','.join(gruende))
+                return redirect('kontakt_danke')
             safe_betreff = betreff.replace('\r', '').replace('\n', ' ')
             safe_name = name.replace('\r', '').replace('\n', ' ')
             safe_email = email.replace('\r', '').replace('\n', ' ')
@@ -134,7 +142,10 @@ def kontakt(request):
         else:
             messages.error(request, fehler)
 
-    return render(request, 'shop1/kontakt.html')
+    return render(request, 'shop1/kontakt.html', {
+        'formzeit': spamschutz.zeitstempel(),
+        'feld_falle': spamschutz.FELD_FALLE,
+    })
 
 
 @never_cache

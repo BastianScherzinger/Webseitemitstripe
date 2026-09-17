@@ -289,3 +289,42 @@ class DrosselungTest(LuviqTestCase):
         self.assertEqual(antwort.status_code, 429)
         self.assertIn('error', antwort.json())
         self.assertEqual(Subscriber.objects.count(), ANFRAGE_GRENZE)
+
+
+class KontaktSpamschutzTest(LuviqTestCase):
+    """Bot-Spam wird still verworfen (Anlass: Lamborghini-„Gewinnspiel“, 16.09.2026)."""
+
+    LAMBORGHINI = {
+        'name': 'RobertBoobe',
+        'email': 'cosmas133@live.com',
+        'betreff': 'THE LAMBORGHINI AVENTADOR SWEEPSTAKES CLOSES SOON',
+        'nachricht': 'You are a snap away from an Lamborghini Aventador '
+                     'https://telegra.ph/Win-a-new-Lamborghini-Aventador-today-Message-ID-24459-09-14',
+    }
+
+    def test_die_lamborghini_mail_wird_nicht_verschickt(self):
+        with mock.patch(_MAIL) as versand, self.assertLogs('shop1', level='WARNING'):
+            antwort = self.sende('/kontakt/', self.LAMBORGHINI)
+        self.assertRedirects(antwort, '/kontakt/danke/', fetch_redirect_response=False)
+        versand.assert_not_called()
+
+    def test_die_falle_verwirft_auch_eine_harmlose_nachricht(self):
+        with mock.patch(_MAIL) as versand:
+            self.sende('/kontakt/', dict(GUELTIGE_ANFRAGE, webseite='https://x.example'))
+        versand.assert_not_called()
+
+    def test_ein_mensch_mit_einem_link_kommt_durch(self):
+        """Eine Kundin darf auf ein Bild verweisen — ein Link allein blockt nicht."""
+        from .. import spamschutz
+        daten = dict(GUELTIGE_ANFRAGE,
+                     nachricht='So eine Jacke wie hier: https://instagram.com/p/abc',
+                     formzeit=spamschutz.zeitstempel())
+        import time
+        punkte, gruende = spamschutz.bewerte(daten, jetzt=time.time() + 60)
+        self.assertLess(punkte, spamschutz.SCHWELLE, gruende)
+
+    def test_das_formular_traegt_zeitstempel_und_falle(self):
+        inhalt = self.hole('/kontakt/').content.decode()
+        self.assertIn('name="formzeit"', inhalt)
+        self.assertIn('name="webseite"', inhalt)
+        self.assertIn('tabindex="-1"', inhalt)

@@ -88,6 +88,12 @@
                 <div class="glass-card rounded-[3.5rem] p-10 md:p-16">
                     <form method="post" class="space-y-8">
                         {% csrf_token %}
+                        {# Spamschutz (shop1/spamschutz.py): Zeitstempel und ein Feld, das nur Bots ausfüllen #}
+                        <input type="hidden" name="formzeit" value="{{ formzeit }}">
+                        <div aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden">
+                            <label for="kontakt-webseite">Webseite (bitte leer lassen)</label>
+                            <input type="text" id="kontakt-webseite" name="{{ feld_falle|default:'webseite' }}" tabindex="-1" autocomplete="off">
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Dein Name</label>
