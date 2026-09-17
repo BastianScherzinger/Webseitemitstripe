@@ -1,11 +1,11 @@
 ---
 bereich: performance
 titel: Performance und Core Web Vitals
-stand: 2026-09-03
+stand: 2026-09-17
 status: teilweise
 fortschritt: 70
-zusammenfassung: Der LCP der Produktseite ist der teuerste Posten der Seite (Cloudinary-Bilder ohne WebP und ohne srcset); der Zweig bringt WebP, GZip, Cache und gthread, live ist davon nichts. Die gemessenen Werte stehen im erzeugten Block unter „Messwerte".
-offen: 7
+zusammenfassung: Der LCP der Produktseite ist der teuerste Posten der Seite (Cloudinary-Bilder ohne WebP und ohne srcset); der Zweig bringt WebP, GZip, Cache und gthread, live ist davon nichts. PF31 (Skripte nicht von fremdem CDN) ist am 17.09.2026 in Paket 227 als nicht möglich beendet — Alpine, @alpinejs/intersect, GSAP und Three.js kommen weiter von cdn.jsdelivr.net, weil die Dateien nicht im Projekt liegen und der Lauf sie nicht holen konnte. Die gemessenen Werte stehen im erzeugten Block unter „Messwerte".
+offen: 8
 pagespeed_mobil: 89
 pagespeed_desktop: 91
 antwortzeit_ms: 8
@@ -142,5 +142,6 @@ erzeugten Block unter „Messwerte" — hier steht keine Messzahl.
 | LCP-Bild je Schlüsselseite vorladen und mit `fetchpriority="high"` auszeichnen; das Logo ist heute überall das erste Bild | PF18, PF19 |
 | `PageVisit`/`VisitorLog`-Schreibvorgänge aus dem Request nehmen — sie laufen synchron gegen zwei Datenbanken. **Nicht wegen `PF10`** (das misst seit `2026-09-04a` die Serverzeit aus PageSpeed und ist bestanden), sondern weil eine Schreiboperation im Request unter Last der erste Engpass ist | — |
 | Critical CSS je Seitentyp inline, Hauptstilblatt asynchron; Schriften lokal (heute von `fonts.googleapis.com`) | VL16, RE07 |
+| Alpine.js und `@alpinejs/intersect` (`base.html`), GSAP und das nachgeladene Three.js (`index.html`) selbst ausliefern statt von `cdn.jsdelivr.net` — spart die Verbindung zu einem zweiten Host. Am 17.09.2026 (Paket 227) **nicht möglich:** keine der vier Dateien liegt im Projekt, der Lauf konnte sie nicht herunterladen; steht als „beim Kunden" im Bewertungsblock von [80-AUFGABEN.md](80-AUFGABEN.md). Mit den Dateien: nach `shop1/static/shop1/`, `src` auf `{% static %}`, `integrity` und `CSP_QUELLEN` nachziehen | PF31 |
 | `width`/`height` an den Bildern ohne Masse (Admin-Vorlagen, `index.html:38`, `produkt_detail.html:89`) | VL15 |
 | Lighthouse mobil auf 90 und Desktop auf 95 heben — die grössten Posten sind unbenutztes JavaScript und die Bildformate | PF01, PF02 |
