@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserProfile, Produkt, Cart, CartItem, Order, OrderItem, Subscriber
+from .models import UserProfile, Produkt, Cart, CartItem, Order, OrderItem, Subscriber, KontaktAnfrage
 
 # Register your models here.
 
@@ -44,6 +44,21 @@ class SubscriberAdmin(admin.ModelAdmin):
     list_filter = ('erstellt_am',)
     readonly_fields = ('erstellt_am',)
     ordering = ('-erstellt_am',)
+
+
+@admin.register(KontaktAnfrage)
+class KontaktAnfrageAdmin(admin.ModelAdmin):
+    """Anfragen aus dem Kontaktformular (MW18): hier steht jede angenommene
+    Nachricht, auch wenn ihre Mail nie angekommen ist. Personenbezogene
+    Daten – löschen lässt sich jede Anfrage einzeln."""
+    list_display = ('erstellt_am', 'name', 'email', 'betreff', 'mail_gestartet')
+    search_fields = ('name', 'email', 'betreff', 'nachricht')
+    list_filter = ('mail_gestartet', 'erstellt_am')
+    readonly_fields = ('name', 'email', 'betreff', 'nachricht', 'mail_gestartet', 'erstellt_am')
+    ordering = ('-erstellt_am',)
+
+    def has_add_permission(self, request):
+        return False
 
 
 @admin.register(Produkt)

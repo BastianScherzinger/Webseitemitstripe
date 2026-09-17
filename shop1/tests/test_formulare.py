@@ -12,7 +12,7 @@ from unittest import mock
 
 from django.test import Client
 
-from ..models import Subscriber
+from ..models import KontaktAnfrage, Subscriber
 from ..views._helpers import ANFRAGE_GRENZE
 from ._basis import LuviqTestCase
 
@@ -53,14 +53,63 @@ class KontaktformularTest(LuviqTestCase):
         self.assertNotContains(antwort, 'erfolgreich gesendet')
         self.assertEqual(versand.call_count, 1)
 
-    def test_scheitert_der_versand_bleibt_die_anfrage_auf_der_kontaktseite(self):
-        """Gegenprobe: eine Anfrage, deren Versand schon beim Start scheitert,
-        darf nicht auf die Bestätigung führen."""
+    def test_scheitert_der_versand_bleibt_die_anfrage_gespeichert(self):
+        """Verhindert, dass ein kaputter Mailweg eine Anfrage verschluckt
+        (MW18): sie steht vor dem Versand in ``KontaktAnfrage``, und die
+        Besucherin sieht die Bestätigung statt einer Aufforderung, es noch
+        einmal zu versuchen."""
         with mock.patch(_MAIL, side_effect=RuntimeError('kein Versand')):
+            antwort = self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+        self.assertRedirects(antwort, '/kontakt/danke/', fetch_redirect_response=False)
+        anfrage = KontaktAnfrage.objects.get()
+        self.assertEqual(anfrage.email, GUELTIGE_ANFRAGE['email'])
+        self.assertEqual(anfrage.nachricht, GUELTIGE_ANFRAGE['nachricht'])
+        self.assertFalse(anfrage.mail_gestartet)
+
+    def test_die_anfrage_steht_in_der_datenbank_bevor_die_mail_startet(self):
+        """Verhindert, dass die Reihenfolge still kippt: im Augenblick des
+        Versands ist die Anfrage schon gespeichert, danach als versandt
+        vermerkt."""
+        gezaehlt = []
+        with mock.patch(_MAIL, side_effect=lambda *a, **k: gezaehlt.append(
+                KontaktAnfrage.objects.filter(betreff=GUELTIGE_ANFRAGE['betreff']).count())):
+            self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+        self.assertEqual(gezaehlt, [1])
+        self.assertTrue(KontaktAnfrage.objects.get().mail_gestartet)
+
+    def test_ohne_speicher_geht_die_anfrage_trotzdem_als_mail_hinaus(self):
+        """Gegenprobe: fällt die Datenbank aus, trägt der Mailweg die Anfrage
+        allein – die Besucherin sieht die Bestätigung."""
+        from django.db import DatabaseError
+        with mock.patch.object(KontaktAnfrage.objects, 'create', side_effect=DatabaseError('weg')), \
+                mock.patch(_MAIL) as versand:
+            antwort = self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+        self.assertRedirects(antwort, '/kontakt/danke/', fetch_redirect_response=False)
+        self.assertEqual(versand.call_count, 1)
+
+    def test_scheitern_speicher_und_versand_bleibt_die_anfrage_auf_der_kontaktseite(self):
+        """Gegenprobe: ist die Anfrage weder gespeichert noch verschickt, darf
+        sie nicht auf die Bestätigung führen."""
+        from django.db import DatabaseError
+        with mock.patch.object(KontaktAnfrage.objects, 'create', side_effect=DatabaseError('weg')), \
+                mock.patch(_MAIL, side_effect=RuntimeError('kein Versand')):
             antwort = self.sende('/kontakt/', GUELTIGE_ANFRAGE)
         self.assertEqual(antwort.status_code, 200)
         self.assertTemplateUsed(antwort, 'shop1/kontakt.html')
         self.assertContains(antwort, 'Problem beim Senden')
+
+    def test_die_anfragen_stehen_in_der_verwaltung(self):
+        """Verhindert, dass gespeicherte Anfragen nur per Datenbankzugriff
+        lesbar sind: das Modell ist im Django-Admin registriert."""
+        from django.contrib import admin
+        self.assertIn(KontaktAnfrage, admin.site._registry)
+
+    def test_abgewiesene_anfragen_werden_nicht_gespeichert(self):
+        """Verhindert, dass ungültige Eingaben die Tabelle füllen."""
+        with mock.patch(_MAIL):
+            self.sende('/kontakt/', dict(GUELTIGE_ANFRAGE, email='keine-adresse'))
+            self.sende('/kontakt/', {})
+        self.assertFalse(KontaktAnfrage.objects.exists())
 
     def test_leeres_formular_verschickt_nichts_und_meldet_das(self):
         """Verhindert, dass ein leeres Formular als gültige Anfrage durchgeht –
@@ -218,14 +267,23 @@ class DoppeltesAbsendenTest(LuviqTestCase):
         self.assertEqual(versand.call_count, 2)
 
     def test_nach_einem_fehlgeschlagenen_versand_zaehlt_der_neue_versuch(self):
-        """Verhindert, dass eine Anfrage, deren Versand scheiterte, beim
-        zweiten Versuch als Doppel verworfen wird."""
-        with mock.patch(_MAIL, side_effect=RuntimeError('kein Versand')):
+        """Verhindert, dass eine Anfrage, die weder gespeichert noch versandt
+        wurde, beim zweiten Versuch als Doppel verworfen wird."""
+        from django.db import DatabaseError
+        with mock.patch.object(KontaktAnfrage.objects, 'create', side_effect=DatabaseError('weg')), \
+                mock.patch(_MAIL, side_effect=RuntimeError('kein Versand')):
             self.sende('/kontakt/', GUELTIGE_ANFRAGE)
         with mock.patch(_MAIL) as versand:
             antwort = self.sende('/kontakt/', GUELTIGE_ANFRAGE)
         self.assertRedirects(antwort, '/kontakt/danke/', fetch_redirect_response=False)
         self.assertEqual(versand.call_count, 1)
+
+    def test_ein_doppelklick_speichert_die_anfrage_nur_einmal(self):
+        """Verhindert zwei gleiche Einträge in der Verwaltung (FO03, MW18)."""
+        with mock.patch(_MAIL):
+            self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+            self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+        self.assertEqual(KontaktAnfrage.objects.count(), 1)
 
     def test_die_formulare_sperren_ihren_knopf_beim_absenden(self):
         """Verhindert, dass die Absendesperre im Browser still entfällt: das

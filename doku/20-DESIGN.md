@@ -1,11 +1,11 @@
 ---
 bereich: design
 titel: Design und Gestaltungslinie
-stand: 2026-09-12
+stand: 2026-09-17
 status: teilweise
 fortschritt: 77
-zusammenfassung: Dunkelbraun-Gold-Linie mit Glas-Karten steht und ist durch die Designwache eingefroren; die Produktkarte liegt seit dem 12.09.2026 als Baustein unter shop1/templates/shop1/teile/, ohne eine Änderung am gerenderten HTML. Offen sind Google-Schriften von fremdem Server (RE07, am 12.09.2026 erneut als nicht möglich beendet: keine WOFF2 im Projekt, kein Netzzugang im Lauf), englische Restbeschriftungen und seit IS18 die Satzart des langen Versalien-Absatzes auf /produkte/ (braucht Freigabe).
-offen: 6
+zusammenfassung: Dunkelbraun-Gold-Linie mit Glas-Karten steht und ist durch die Designwache eingefroren; die Produktkarte liegt seit dem 12.09.2026 als Baustein unter shop1/templates/shop1/teile/, ohne eine Änderung am gerenderten HTML. Neu benannt (BF29, Paket 219, 17.09.2026): zu schwacher Kontrast im Seitenrahmen — Fusslinks, Copyright-Zeile und „Registrieren" weiss auf Gold; nicht behoben, weil jede Lösung eine Farbe der Linie ändert und eine Entscheidung der Betreiberin braucht. Offen sind ausserdem Google-Schriften von fremdem Server (RE07, am 12.09.2026 erneut als nicht möglich beendet: keine WOFF2 im Projekt, kein Netzzugang im Lauf), englische Restbeschriftungen und seit IS18 die Satzart des langen Versalien-Absatzes auf /produkte/ (braucht Freigabe).
+offen: 7
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, shop1/static/shop1/style.css, tailwind.config.js, templates/base.html
 ---
 
@@ -43,7 +43,12 @@ Tokens aus `style.css` (`:root`) und `tailwind.config.js` (`theme.extend.colors`
 
 Bauteile: `.glass` (Blur 20 px), `.glass-card` (Verlauf + mehrschichtiger Schatten),
 `.energy-nebula` (fixer Hintergrund, 30-s-Animation), `.btn-glow`, `.text-glow`, `.scroll-reveal`
-(mit Alpine `x-intersect`). Kontrastwerte sind **nicht dokumentiert** — nirgends gerechnet.
+(mit Alpine `x-intersect`). Kontrastwerte sind **nicht vollständig dokumentiert**. Bekannt seit
+`BF29` (Messung 16.09.2026, axe-core: `color-contrast` auf allen vier geprüften Seiten, am
+17.09.2026 in Paket 219 benannt): zu schwach sind im Rahmen `templates/base.html` die Fusslinks
+(`text-white/40`, Zeilen 449–460), die Copyright-Zeile (`text-white/30`, Zeile 465) und der Knopf
+„Registrieren" — Weiss auf `glow-orange` `#c8965c` (Zeile 374), rechnerisch rund 2,6:1. Nicht
+behoben: jede Lösung ändert eine Farbe dieser Linie und wartet auf die Betreiberin.
 
 **Schriften:** `Inter` 400–700 für Fliesstext, `Outfit` 700/900 für Überschriften (`.heading-font`),
 beide von **`fonts.googleapis.com`** (Preconnect + `media="print"` mit `data-schrift-nachladen`
@@ -126,6 +131,7 @@ zusätzlich nur mit Sandbox-Test ([10-TECHNIK.md](10-TECHNIK.md) → Fallen).
 |---|---|---|
 | Inter und Outfit als WOFF2 selbst hosten, `@font-face` mit `font-display: swap` | 13 von 13 Seiten laden von `fonts.googleapis.com` | RE07, VL16 |
 | Sprungmarke „Zum Inhalt" als erstes Element im `body` | 13 von 13 ohne | BF08, VL17 |
+| Kontrast im Seitenrahmen: Fusslinks (`text-white/40`), Copyright-Zeile (`text-white/30`), „Registrieren" weiss auf Gold. Am 17.09.2026 (Paket 219) als nicht möglich beendet, keine Zeile geändert — braucht eine Farbentscheidung der Betreiberin ([80-AUFGABEN.md](80-AUFGABEN.md), „Beim Kunden" Nr. 18), danach Tailwind neu bauen | Messung 16.09.2026: 4 von 4 Seiten mit `color-contrast` | BF29 |
 | `prefers-reduced-motion` auch für die CSS-Animationen (`nebula-evolve`, `rotate`, Ticker) — im ausgelieferten Stilblatt nicht gefunden; nur der Three.js-Pfad prüft es | BF19 | BF19 |
 | Englische Restbeschriftungen ohne Aussage („Get in Touch", „Zentrale/Channels", „Legal Notice", „Art is not a luxury…", „JOIN THE") — Geschmacksfrage der Betreiberin, nicht der Messung | — | — |
 | Menüknopf und Icon-Knöpfe ohne Namen (13 Seiten × 1); 5 namenlose Links auf `/produkte/` | BF12, BF11 | BF12, VL18 |
