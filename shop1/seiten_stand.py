@@ -28,14 +28,15 @@ SEITEN_STAND = {
     'datenschutz':  '2026-09-01',
     'agb':          '2026-09-01',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
-    'wissen':           '2026-09-11',
+    'wissen':           '2026-09-17',
     'wissen_pflege':    '2026-09-01',
     'wissen_upcycling': '2026-09-01',
     'wissen_groesse':   '2026-09-01',
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
-    'wissen_bestellen': '2026-09-07',
-    'wissen_widerruf':  '2026-09-07',
-    'wissen_konto':     '2026-09-07',
+    # Quellenverweise im Fliesstext (GE43, 2026-09-17).
+    'wissen_bestellen': '2026-09-17',
+    'wissen_widerruf':  '2026-09-17',
+    'wissen_konto':     '2026-09-17',
 }
 
 #: Routenname → Bezeichnung der Seite, wörtlich so, wie sie in der Navigation
