@@ -11,6 +11,7 @@ import json
 from unittest import mock
 
 from django.test import Client
+from django.urls import reverse
 
 from ..models import KontaktAnfrage, Subscriber
 from ..views._helpers import ANFRAGE_GRENZE
@@ -220,6 +221,17 @@ class KontaktformularTest(LuviqTestCase):
                 self.assertTrue(label.strip().endswith('*'))
                 self.assertRegex(attrs, r'aria-label="[^"]*\(Pflichtfeld\)"')
         self.assertIn('mit einem Stern (*) gekennzeichnet', inhalt)
+
+    def test_das_formular_nennt_den_datenschutz(self):
+        """Verhindert, dass jemand Namen und Adresse abschickt, ohne zu lesen,
+        was damit geschieht (KV05, Art. 13 DSGVO): der Hinweis steht **im**
+        Formular, nennt die Datenschutzerklärung mit ihrer Adresse und die
+        Stelle für Auskunft und Löschung."""
+        inhalt = self.hole('/kontakt/').content.decode()
+        form = inhalt.split('name="formzeit"', 1)[1].split('</form>', 1)[0]
+        self.assertIn('Datenschutz', form)
+        self.assertIn(reverse('datenschutz'), form)
+        self.assertIn('Löschung', form)
 
     def test_anfrage_ohne_csrf_token_wird_abgewiesen(self):
         """Verhindert, dass eine fremde Seite im Namen einer Besucherin

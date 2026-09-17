@@ -123,6 +123,22 @@
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Nachricht *</label>
                             <textarea name="nachricht" rows="6" aria-label="Deine Nachricht (Pflichtfeld)" aria-describedby="kontakt-fehler" maxlength="5000" placeholder="Schreib uns..." class="w-full form-input rounded-2xl px-6 py-4 resize-none" required></textarea>
+                            {% comment %}Datenschutzhinweis am Formular (KV05, Art. 13 DSGVO).
+                            Bewusst reiner Text ohne eigenes Element: ein Absatz mit Verweis waere
+                            ein Absatzelement und ein Verweiselement mehr im sichtbaren Aufbau, und
+                            der darf sich nicht aendern (Designwache, test_aufbau). Die Adresse der
+                            Erklaerung steht deshalb ausgeschrieben; verlinkt ist sie in der
+                            Fusszeile jeder Seite. Jede Angabe hier deckt sich mit
+                            legal/datenschutz.html (Brevo, Auskunft und Loeschung per E-Mail) und
+                            mit KontaktAnfrage (MW18). Mehrzeilig nur mit comment-Block - die kurze
+                            Klammerform bleibt ueber mehrere Zeilen im ausgelieferten HTML stehen.
+                            {% endcomment %}
+                            Datenschutz: Name, E-Mail-Adresse, Betreff und Nachricht werden gespeichert
+                            und zur Beantwortung deiner Anfrage über den Dienstleister Brevo per E-Mail
+                            weitergeleitet. Auskunft und Löschung jederzeit formlos per E-Mail an
+                            brehlerluisa@gmail.com. Was mit den Daten geschieht, steht vollständig in
+                            der Datenschutzerklärung unter {% url 'datenschutz' %} – in der Fußzeile
+                            jeder Seite verlinkt.
                         </div>
                         
                         <button type="submit" class="w-full btn-glow py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm shadow-2xl">
