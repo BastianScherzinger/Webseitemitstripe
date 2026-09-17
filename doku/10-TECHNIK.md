@@ -1,10 +1,10 @@
 ---
 bereich: technik
 titel: Technik, Hosting und Aufbau
-stand: 2026-09-16
+stand: 2026-09-17
 status: teilweise
 fortschritt: 74
-zusammenfassung: Stack läuft stabil. Im Zweig sofort/2026-09-16-fo06-und-2-weitere (Paket 208, drei Commits vor main = 76dd59e, nicht gemergt) prüfen Kontakt und Newsletter ihre Eingaben serverseitig (validate_email, Längengrenzen) und sind je IP-Adresse auf 5 Anfragen in 15 Minuten gedrosselt (zu_viele_anfragen in views/_helpers.py, LocMemCache je Gunicorn-Prozess, letzter X-Forwarded-For-Eintrag); 252 Testfunktionen, laut LOGBUCH grün. Seit den Merges 0c18ea7, 4ec540b, 1a5f36b, c522ff9, 0d5500b und 43f25c3 liegen auf main die scharf gestellte CSP, die Nonce im script-src statt 'unsafe-inline' (Handler-Attribute durch data-Attribute ersetzt), die festgenagelten Paketfassungen samt requirements.lock (Django 5.2.17), die abgearbeiteten Audit-Funde, die Danke-Seite /kontakt/danke/ (never_cache), die Produktkarte als zwei Bausteine unter shop1/templates/shop1/teile/ (Falle: load wird an ein include nicht vererbt), integrity/crossorigin an den vier Fremdskripten und der zweite Prüfbefehl pruefe_links; main = 69c1f78, ein Doku-Commit vor origin/main (43f25c3). Im Zweig sofort/2026-09-12-mw15-und-2-weitere (drei Commits, nicht gemergt) steht als dritter Prüfbefehl pruefe_mail — Einstellungen beider Mailwege, Anmeldung an Brevo-API (/v3/account) und SMTP-Relay, Testmail mit --an, Geheimnisse nur als „gesetzt (n Zeichen)"; wie pruefe_links bewusst nicht an start.sh angeschlossen und gegen die echten Zugangsdaten noch nie gelaufen. 243 Testfunktionen im Zweig. Offen bleiben der Merge, Bezahlseite und Ersatzskripte mit Browserkonsole, ein echter pruefe_mail-Lauf, die zwei Chart.js-Einbindungen des Admin-Panels ohne integrity, 'unsafe-eval' für Alpine.js, der erste CI-Lauf mit 5.2.17, CANONICAL_HOST in Railway, runtime.txt/railway.json und die Permissions-Policy.
+zusammenfassung: Stack läuft stabil. Im Zweig sofort/2026-09-17-fo03-und-2-weitere (Paket 216, drei Commits vor main = origin/main = d90067a, nicht gemergt) sperrt das Kontaktformular beim Absenden seinen Knopf (neues Merkmal data-einmal-absenden, ausgewertet im head-Skript von base.html), die Newsletter-Anmeldung sperrt ihren Knopf im eigenen Skript, und doppelt_abgeschickt() in views/shop.py führt eine wortgleiche zweite Anfrage binnen zwei Minuten ohne zweite Mail zusammen (LocMemCache je Prozess); dazu Pflichtfeld-Stern und maxlength = KONTAKT_LAENGEN an den vier Kontaktfeldern; 264 Testfunktionen, laut Bausitzung grün, im Browser ungeprüft. Auf main liegen seit d978a89 die serverseitige Prüfung und die Drosselung je IP (FO06, FO09; zu_viele_anfragen, 5 Anfragen in 15 Minuten, letzter X-Forwarded-For-Eintrag), seit d90067a der Spamschutz (Fallenfeld, signierter Zeitstempel, Punkteschwelle in shop1/spamschutz.py), und der Zweig mit pruefe_mail/GE15 ist gemergt. Seit den Merges 0c18ea7, 4ec540b, 1a5f36b, c522ff9, 0d5500b und 43f25c3 liegen auf main die scharf gestellte CSP, die Nonce im script-src statt 'unsafe-inline' (Handler-Attribute durch data-Attribute ersetzt), die festgenagelten Paketfassungen samt requirements.lock (Django 5.2.17), die abgearbeiteten Audit-Funde, die Danke-Seite /kontakt/danke/ (never_cache), die Produktkarte als zwei Bausteine unter shop1/templates/shop1/teile/ (Falle: load wird an ein include nicht vererbt), integrity/crossorigin an den vier Fremdskripten und der zweite Prüfbefehl pruefe_links. Dritter Prüfbefehl ist pruefe_mail — Einstellungen beider Mailwege, Anmeldung an Brevo-API (/v3/account) und SMTP-Relay, Testmail mit --an, Geheimnisse nur als „gesetzt (n Zeichen)"; wie pruefe_links bewusst nicht an start.sh angeschlossen und gegen die echten Zugangsdaten noch nie gelaufen. Offen bleiben der Merge von Paket 216, ein gemeinsamer Zähler über alle Worker, Bezahlseite und Ersatzskripte mit Browserkonsole, ein echter pruefe_mail-Lauf, die zwei Chart.js-Einbindungen des Admin-Panels ohne integrity, 'unsafe-eval' für Alpine.js, der erste CI-Lauf mit 5.2.17, CANONICAL_HOST in Railway, runtime.txt/railway.json und die Permissions-Policy.
 offen: 13
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, paypal_sandbox_tutorial.md, start.sh, Dockerfile, requirements.txt
 ---
@@ -103,19 +103,21 @@ Nur Namen. Werte stehen in Railway bzw. in der lokalen `.env` (nicht in Git).
 ## Formular und Missbrauchsschutz
 
 *Pflichtabschnitt nach [DOKU-STANDARD §3a](file:///C:/Users/basti/Desktop/pystore-overview/docs/DOKU-STANDARD.md).
-Erhoben am 04.09.2026 aus dem Quelltext dieses Projekts — „ja" heisst gefunden,
+Erhoben am 04.09.2026 aus dem Quelltext dieses Projekts, am 17.09.2026 am Code
+von `main` (`d90067a`) und dem Zweig von Paket 216 nachgezogen — „ja" heisst gefunden,
 nicht bewiesen. Anlass war eine Spam-Einsendung, die auf der Hauptseite mit
 Spam-Score 0 durchkam und eine Mail auslöste.*
 
 | Baustein | Was er verhindert | Stand |
 |---|---|---|
 | CSRF-Token | fremde Seiten schicken in fremdem Namen ab | ja |
-| Honeypot | einfache Formular-Bots | **nein** |
-| Zeitfalle (signierter Zeitstempel) | der POST ohne gerendertes Formular | **nein** |
-| Inhalts-Score mit Schwelle | Werbetexte, fremde Schriften, Linklisten | **nein** |
-| Adresse ohne `http://` erkannt | die Masche vom 04.09.2026 | **nein** |
+| Honeypot | einfache Formular-Bots | **ja, seit `d90067a`** (Feld `webseite`, `shop1/spamschutz.py`, nur Kontaktformular) |
+| Zeitfalle (signierter Zeitstempel) | der POST ohne gerendertes Formular | **ja, seit `d90067a`** (`signing.dumps`, Feld `formzeit`, mindestens 3 s, höchstens 24 h) |
+| Inhalts-Score mit Schwelle | Werbetexte, fremde Schriften, Linklisten | **ja, seit `d90067a`** (Punkte ab `SCHWELLE` = 5 → still auf die Danke-Seite, keine Mail) |
+| Adresse ohne `http://` erkannt | die Masche vom 04.09.2026 | **teilweise** — `www.`, `telegra.ph`, `t.me/`, `bit.ly`; eine beliebige nackte Domain nicht |
 | Fremde Domain mit eigenem Markennamen | Vertrauen erschleichen | **nein** |
-| Rate-Limit je IP | Serien aus einer Quelle | **erst im Zweig 16.09.** (`FO09`) — das „ja" der Erhebung vom 04.09. traf auf Kontakt und Newsletter nicht zu, `django-axes` schützt nur die Anmeldung |
+| Rate-Limit je IP | Serien aus einer Quelle | **ja, seit `d978a89`** (`FO09`) — das „ja" der Erhebung vom 04.09. traf auf Kontakt und Newsletter nicht zu, `django-axes` schützt nur die Anmeldung |
+| Duplikatsperre | Doppelklick, wiederholtes Absenden | **erst im Zweig 17.09.** (`FO03`) — nur wortgleiche Kontaktanfragen, zwei Minuten, je Prozess |
 | Erst speichern, dann mailen | verlorene Anfrage bei Mailausfall | ja |
 | Mail-Obergrenze je Tag | ein volles Postfach | **nein** |
 | Prüfbefehl für die Abwehr | dass niemand es nachrechnet | **nein** |
@@ -138,7 +140,7 @@ erreicht die Besucherin weiter nicht — die Danke-Seite erscheint trotzdem
 ändert das nichts.
 
 **Serverseitige Prüfung und Drosselung (Paket 208, 16.09.2026, Zweig
-`sofort/2026-09-16-fo06-und-2-weitere`, nicht gemergt):**
+`sofort/2026-09-16-fo06-und-2-weitere`, seit dem Merge `d978a89` auf `main`):**
 
 - **Prüfung (`FO06`, `278e715`).** `views/shop.py::kontakt_fehler` prüft alle
   vier Kontaktfelder auf leer, auf Obergrenzen (`KONTAKT_LAENGEN`: Name 100,
@@ -170,11 +172,47 @@ erreicht die Besucherin weiter nicht — die Danke-Seite erscheint trotzdem
   Ohne eingebundenes Messskript bleibt das Ereignis im Browser — siehe
   [60-ADS.md](60-ADS.md).
 
+**Doppeltes Absenden, Pflichtfelder, Längen (Paket 216, 17.09.2026, Zweig
+`sofort/2026-09-17-fo03-und-2-weitere`, nicht gemergt):**
+
+- **Absendesperre im Browser (`FO03`, `3e0a59f`).** Neues Merkmal
+  `<form data-einmal-absenden>`, ausgewertet im `<head>`-Skript von
+  `templates/base.html` neben `data-bestaetigen`: beim ersten `submit`
+  bekommen die Absendeknöpfe `disabled` plus `data-gesperrt`, das Formular
+  `aria-busy="true"`. Der Zuhörer liegt in der **Blasenphase** und übergeht
+  `defaultPrevented` — die `data-bestaetigen`-Rückfrage hört in der
+  Fangphase, eine abgelehnte Rückfrage sperrt also nichts. Ein
+  `pageshow`-Zuhörer gibt die Knöpfe wieder frei, wenn die Seite per
+  Zurück-Taste aus dem Verlaufsspeicher kommt. Gesetzt ist das Merkmal heute
+  nur am Kontaktformular. Die Newsletter-Anmeldung in `index.html` sendet
+  per `fetch` und sperrt ihren Knopf deshalb im eigenen Skript, bis die
+  Antwort da ist (`finally`). Kein Handler-Attribut, keine neue Nonce nötig.
+- **Duplikatsperre auf dem Server (`FO03`).** `views/shop.py::doppelt_abgeschickt(email, betreff, nachricht)`
+  legt per `cache.add` einen Schlüssel `kontakt-doppelt:<SHA-256>` aus
+  Adresse (klein geschrieben), Betreff und Text für `DOPPELT_FENSTER` =
+  2 Minuten an. Schlägt `add` fehl, war dieselbe Anfrage gerade da: Weiterleitung
+  auf `/kontakt/danke/`, keine Mail, ein `INFO`-Eintrag im Log. Reihenfolge
+  in `kontakt`: Drosselung → Prüfung → Spamschutz → Duplikatsperre →
+  Versand. Scheitert der Versandstart, löscht der `except`-Zweig den
+  Schlüssel wieder. **Grenze:** `LocMemCache`, also je Gunicorn-Prozess —
+  zwei gleiche Anfragen auf zwei Workern gehen beide hinaus. Wer Tests für
+  das Kontaktformular schreibt, braucht je Anfrage einen anderen Text, sonst
+  greift die Zusammenführung (`DrosselungTest._kontakt`).
+- **Pflichtfelder (`FO04`, `370fce7`).** Beschriftung mit „ *",
+  `aria-label` mit „(Pflichtfeld)" am Ende, ein erklärender Satz im
+  Einleitungsabsatz von `kontakt.html`. Die `<label>` haben weiter kein
+  `for` — eine neue `id` änderte den Fingerabdruck der Designwache.
+- **Längen (`FO07`, `641153b`).** `maxlength` an den vier Kontaktfeldern =
+  `KONTAKT_LAENGEN` (ein Kommentar in `kontakt.html` und ein Test halten
+  beides gleich). `kontakt_fehler` zählt `\r\n` als ein Zeichen, weil der
+  Browser einen Umbruch für `maxlength` einfach zählt, aber als `\r\n`
+  schickt.
+
 ## Prüfbefehle und Tests
 
 | Befehl | Was | Stand |
 |---|---|---|
-| `python manage.py test shop1` | Testsuite in 14 Modulen, Laufzeit rund 2,5 Minuten; main: **218 Tests** (seit `4ec540b` mit den drei SI09-Tests in `test_einstellungen`), Zweig KV07: **224 Tests** (sechs neue in `test_formulare`), main seit `43f25c3` (PJ01): **230 Tests** (sechs neue in `test_einstellungen` zu `pruefe_links`), Zweig 12.09. MW15/GE15: **243 Testfunktionen** (acht neue in `test_einstellungen` zu `pruefe_mail`, fünf in `test_geo` zum `Article`-Knoten; `def test_` über `shop1/tests/` gezählt am 12.09.2026), Zweig 16.09. FO06/FO08/FO09: **252 Testfunktionen** (neun neue in `test_formulare`, das damit 25 zählt; gezählt am 16.09.2026) | Zweig MW15/GE15 laut Commit grün; Zweig 16.09. laut `LOGBUCH.md` grün |
+| `python manage.py test shop1` | Testsuite in 14 Modulen, Laufzeit rund 2,5 Minuten; main: **218 Tests** (seit `4ec540b` mit den drei SI09-Tests in `test_einstellungen`), Zweig KV07: **224 Tests** (sechs neue in `test_formulare`), main seit `43f25c3` (PJ01): **230 Tests** (sechs neue in `test_einstellungen` zu `pruefe_links`), Zweig 12.09. MW15/GE15: **243 Testfunktionen** (acht neue in `test_einstellungen` zu `pruefe_mail`, fünf in `test_geo` zum `Article`-Knoten; `def test_` über `shop1/tests/` gezählt am 12.09.2026), Zweig 16.09. FO06/FO08/FO09: **252 Testfunktionen** (neun neue in `test_formulare`, das damit 25 zählt; gezählt am 16.09.2026), Zweig 17.09. FO03/FO04/FO07: **264 Testfunktionen** (`test_formulare` 37, davon 8 aus Paket 216; gezählt am 17.09.2026) | Zweig MW15/GE15 laut Commit grün; Zweig 16.09. laut `LOGBUCH.md` grün; Zweig 17.09. laut Bausitzung grün |
 | `python manage.py test shop1.tests.<modul>` | einzelnes Modul | Zweig |
 | `python manage.py pruefe_seite [--streng]` | Prüfbefehl: Einstellungen, beide Datenbanken, aktive Produkte (Pflichtwerte, doppelte Slugs), jede Sitemap-Adresse 200 mit Titel, Beschreibung 110–175, canonical, robots, JSON-LD, Schutzkopfzeilen samt CSP; hinterlässt keine Spuren (`VISITOR_TRACKING` aus, zurückgerollte Transaktion) | Zweig |
 | `python manage.py pruefe_links [--streng]` | Prüfbefehl (Zweig 12.09., PJ01): liest `/`, jede Sitemap- und jede llms.txt-Adresse und ruft **jeden `<a href>` darin** ab — tote eigene Adressen sind Fehler, Weiterleitungen Warnungen (ausser auf `LOGIN_URL`), fremde Ziele werden nur auf `https` geprüft, nicht abgerufen; verändernde Pfade (Warenkorb, Abmeldung, Werbeklick, Kommentar) stehen in `KEINE_PRUEFUNG`. Gleiche Vorsorge wie oben: kein Besuchsprotokoll, zurückgerollte Transaktion | seit `43f25c3` auf `main` |
@@ -240,9 +278,10 @@ Code-Audit (Messung 02.09.2026, lokaler Ordner = Zweig): 114 Dateien, 23.859 Zei
 
 | Punkt | Beleg | Regel |
 |---|---|---|
-| Zweig `sofort/2026-09-16-fo06-und-2-weitere` nach `main` mergen; danach `pruefe_seite` fahren und live eine ungültige Kontaktadresse sowie eine neue Newsletter-Anmeldung ausprobieren | `278e715`, `9b3fc07`, `6aa3087` — `pruefe_seite` lief beim Bau nicht (`LOGBUCH.md`, Paket 208) | FO06, FO08, FO09 |
-| Gemeinsamer Drosselzähler über alle Gunicorn-Worker (Redis oder Datenbank-Cache) und eine Mail-Obergrenze je Tag | der Zähler liegt im `LocMemCache` je Prozess; beides braucht einen neuen Dienst oder eine Tabelle | FO09 |
-| Zweig `sofort/2026-09-12-mw15-und-2-weitere` nach `main` mergen und pushen (`sofort/2026-09-12-si17-und-2-weitere` ist mit `43f25c3` gemergt und in `origin/main`; `main` = `69c1f78`, ein Doku-Commit vor `origin/main`); danach einmal das Kontaktformular live abschicken | `4fd7776`, `be550e3`, `bb6fee1` — drei Commits vor `main`; `MW15` legt nur eine neue Datei unter `management/commands/` an, `GE15` schreibt allein in den `<head>` | MW15, GE15, KV07 |
+| Zweig `sofort/2026-09-17-fo03-und-2-weitere` nach `main` mergen und pushen; danach im Browser doppelt absenden (Kontakt und Newsletter), Zurück-Taste, eine `data-bestaetigen`-Rückfrage ablehnen | `3e0a59f`, `370fce7`, `641153b` — die Absendesperre ist nur als Attribut und Skripttext im gerenderten HTML getestet | FO03, FO04, FO07 |
+| `pruefe_seite` fahren und live eine ungültige Kontaktadresse sowie eine neue Newsletter-Anmeldung ausprobieren (Paket 208 ist mit `d978a89` gemergt) | `278e715`, `9b3fc07`, `6aa3087` — `pruefe_seite` lief beim Bau nicht (`LOGBUCH.md`, Paket 208) | FO06, FO08, FO09 |
+| Gemeinsamer Drosselzähler und Doppel-Merker über alle Gunicorn-Worker (Redis oder Datenbank-Cache) und eine Mail-Obergrenze je Tag | Zähler und Merker liegen im `LocMemCache` je Prozess; beides braucht einen neuen Dienst oder eine Tabelle | FO09, FO03 |
+| Einmal das Kontaktformular live abschicken (der Zweig mit `MW15`/`GE15` ist inzwischen in `main`) | `4fd7776`, `be550e3`, `bb6fee1` | MW15, GE15, KV07 |
 | `python manage.py pruefe_mail` einmal mit den echten Zugangsdaten fahren (Railway-Konsole oder lokal mit gesetztem `BREVO_API_KEY`/`EMAIL_HOST_*`) | die acht Tests laufen alle mit `--ohne-verbindung`, die beiden Anmeldeprüfungen gegen ein vorgetäuschtes Gegenüber — ob Brevo und das Relay diese Zugangsdaten annehmen, ist damit nicht belegt | MW15 |
 | `CANONICAL_HOST` in Railway setzen | live 02.09.2026: Apex antwortet 200 ohne 301; die Vorgabe von `CANONICAL_HOST` ist auch im Zweig SI09 leer (`mainweb/settings.py:45`) | TS11 |
 | Nach dem Push: ersten CI-Lauf mit Django 5.2.17 abwarten; lokal `pip install -r requirements.txt` | die Suite lief beim Bau mit Django 6.0.5 (`pip install`/`docker build` gesperrt, `LOGBUCH.md` Paket 155) | PJ11 |

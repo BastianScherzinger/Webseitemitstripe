@@ -1,11 +1,11 @@
 ---
 bereich: inhalte
 titel: Inhalte und Seitenbestand
-stand: 2026-09-12
+stand: 2026-09-17
 status: teilweise
 fortschritt: 40
-zusammenfassung: Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); main füllt neun Seiten mit Auskunft, bringt sechs Wissensbeiträge (drei belegt und indexiert, drei warten auf die Freigabe) und hält jede indexierbare Seite über 200 Wörtern. Seit IS18 (Merge 1a5f36b auf main) erreichen Startseite, Produktübersicht und Wissensübersicht laut Commit mit belegtem Fliesstext die Zielgrösse ihrer Seitenart — nur die Produktseiten brauchen weiter eine eigene Beschreibung je Einzelstück. Der Zweig sofort/2026-09-11-kv07-und-2-weitere (nicht gemergt) bringt die Danke-Seite /kontakt/danke/ (KV07): noindex, Text nur mit Angaben, die schon auf kontakt.html stehen. SU08 (jeder Themenbereich mit mehr als einer Seite) ist am 12.09.2026 geprüft und als nicht möglich beendet: /produkte/ ist die Übersicht zu /produkt/<slug>/, und /gaestebuch/, /ueber_uns/ und /liefergebiet/ bräuchten Inhalte, die es im Projekt nicht gibt (kein Kategoriefeld am Produktmodell, 16 Seiten im Register) — keine Zeile Code geändert. GE15 (12.09.2026, Zweig sofort/2026-09-12-mw15-und-2-weitere, nicht gemergt) gibt den sechs Beiträgen einen Article-Knoten samt Autorin und Erscheinungsdatum aus dem neuen Registerfeld veroeffentlicht und der Übersicht eine ItemList; sichtbarer Text und Wortzahlen bleiben unverändert.
-offen: 8
+zusammenfassung: Paket 216 (17.09.2026, Zweig sofort/2026-09-17-fo03-und-2-weitere, nicht gemergt) ändert auf /kontakt/ nur Beschriftungen und einen Satz — die vier Feldbeschriftungen tragen einen Stern, der Einleitungsabsatz erklärt ihn („Im Formular sind alle vier Felder Pflichtfelder und mit einem Stern (*) gekennzeichnet."); seiten_stand.py führt kontakt dabei weiter mit 2026-09-01. Live 14 URLs mit 1.557 Eigenwörtern (85 % dünne Seiten); main füllt neun Seiten mit Auskunft, bringt sechs Wissensbeiträge (drei belegt und indexiert, drei warten auf die Freigabe) und hält jede indexierbare Seite über 200 Wörtern. Seit IS18 (Merge 1a5f36b auf main) erreichen Startseite, Produktübersicht und Wissensübersicht laut Commit mit belegtem Fliesstext die Zielgrösse ihrer Seitenart — nur die Produktseiten brauchen weiter eine eigene Beschreibung je Einzelstück. Der Zweig sofort/2026-09-11-kv07-und-2-weitere (nicht gemergt) bringt die Danke-Seite /kontakt/danke/ (KV07): noindex, Text nur mit Angaben, die schon auf kontakt.html stehen. SU08 (jeder Themenbereich mit mehr als einer Seite) ist am 12.09.2026 geprüft und als nicht möglich beendet: /produkte/ ist die Übersicht zu /produkt/<slug>/, und /gaestebuch/, /ueber_uns/ und /liefergebiet/ bräuchten Inhalte, die es im Projekt nicht gibt (kein Kategoriefeld am Produktmodell, 16 Seiten im Register) — keine Zeile Code geändert. GE15 (12.09.2026, Zweig sofort/2026-09-12-mw15-und-2-weitere, nicht gemergt) gibt den sechs Beiträgen einen Article-Knoten samt Autorin und Erscheinungsdatum aus dem neuen Registerfeld veroeffentlicht und der Übersicht eine ItemList; sichtbarer Text und Wortzahlen bleiben unverändert.
+offen: 9
 quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/legal.py, shop1/tests/test_inhalt.py
 ---
 
@@ -182,7 +182,7 @@ von `/produkte/`: [20-DESIGN.md](20-DESIGN.md).
 | Erklärung zur Barrierefreiheit (BFSG) — sofern nicht als Kleinstunternehmen ausgenommen; **nicht dokumentiert**, ob die Ausnahme greift | | RE12 |
 | Öffnungs-/Erreichbarkeitszeiten auf Startseite und Kontakt — es gibt keine belegten | | KV11 |
 | Eigene Danke-Seite nach dem Kontaktformular — **im Zweig erledigt** (11.09.2026, `2d78a55` auf `sofort/2026-09-11-kv07-und-2-weitere`, nicht gemergt): `/kontakt/danke/`, siehe „Seitenbestand" | | KV07 (Zweig erfüllt) |
-| Datenschutzhinweis unter dem Kontaktformular; Honigtopf | 0 von 1 | KV05, KV06 |
+| Datenschutzhinweis unter dem Kontaktformular; Honigtopf (seit `d90067a` auf `main`, nicht nachgemessen) | 0 von 1 | KV05, KV06 |
 
 ## Offen
 
@@ -194,3 +194,4 @@ von `/produkte/`: [20-DESIGN.md](20-DESIGN.md).
 6. Muster-Widerrufsformular als eigene Seite.
 7. Entscheidung Öffnungs-/Antwortzeiten und Telefonnummer — nur die Betreiberin kann sie nennen.
 8. **Eine eigene Beschreibung je Einzelstück** (`Produkt.beschreibung` im Shop-Admin). Der Zuwachs aus IS19 (08.09.2026) beschreibt den Kauf, nicht das Stück, und steht wortgleich auf allen fünf Produktseiten — siehe [80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 14. Seit IS18 (11.09.2026) ist das der einzige offene Teil des Umfangs je Seitenart.
+9. **`seiten_stand.py` für `kontakt` nachziehen**, sobald Paket 216 (`370fce7`, `FO04`) gemergt ist: der Einleitungsabsatz von `/kontakt/` hat einen Satz dazubekommen, das Register nennt weiter `2026-09-01` — `lastmod` und `dateModified` bleiben sonst alt. Kein Test erzwingt das.
