@@ -2104,3 +2104,20 @@ geändert – kein Element, keine Klasse.
 **Test.** `test_jedes_pflichtfeld_ist_sichtbar_gekennzeichnet`: vier
 Pflichtfelder, jedes mit Stern und „(Pflichtfeld)“, und die Erklärung steht
 auf der Seite.
+
+### FO07 – Eingabelängen sind begrenzt
+
+**Befund.** Der Server begrenzt die vier Kontaktfelder seit FO06
+(`KONTAKT_LAENGEN`: Name 100, E-Mail 254, Betreff 150, Nachricht 5000), das
+Formular sagte davon nichts. Wer mehr schrieb, las erst nach dem Absenden
+„zu lang“.
+
+**Gebaut.** `maxlength` an allen vier Feldern mit genau diesen Werten. Ein
+Test hält Formular und `KONTAKT_LAENGEN` gleich. Dazu eine Zeile in
+`kontakt_fehler`: der Browser zählt im Textfeld einen Zeilenumbruch als ein
+Zeichen, schickt ihn aber als `\r\n`. Ohne die Angleichung lehnte der Server
+eine Nachricht ab, die `maxlength` gerade noch erlaubt hat. Nur Attribute
+geändert.
+
+**Tests.** `test_jedes_feld_begrenzt_die_eingabe_wie_der_server` und
+`test_eine_nachricht_an_der_grenze_mit_zeilenumbruechen_geht_durch`.

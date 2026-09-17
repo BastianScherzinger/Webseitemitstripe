@@ -90,7 +90,10 @@ def kontakt_fehler(name, email, betreff, nachricht):
     werte = {'name': name, 'email': email, 'betreff': betreff, 'nachricht': nachricht}
     if not all(werte.values()):
         return 'Bitte fülle alle Felder aus.'
-    if any(len(werte[feld]) > grenze for feld, grenze in KONTAKT_LAENGEN.items()):
+    # Zeilenumbrüche zählen wie im Browser (``maxlength``, FO07) als ein
+    # Zeichen – abgeschickt wird jeder als ``\r\n``.
+    if any(len(werte[feld].replace('\r\n', '\n')) > grenze
+           for feld, grenze in KONTAKT_LAENGEN.items()):
         return 'Eine Eingabe ist zu lang. Bitte kürze sie.'
     try:
         validate_email(email)

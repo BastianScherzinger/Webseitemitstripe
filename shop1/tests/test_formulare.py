@@ -116,6 +116,31 @@ class KontaktformularTest(LuviqTestCase):
                 versand.assert_not_called()
                 self.assertContains(antwort, 'zu lang')
 
+    def test_jedes_feld_begrenzt_die_eingabe_wie_der_server(self):
+        """Verhindert, dass jemand einen langen Text schreibt und erst nach dem
+        Absenden „zu lang“ liest (FO07): ``maxlength`` im Formular entspricht
+        genau der Grenze, die ``kontakt_fehler`` prüft."""
+        import re
+        from ..views.shop import KONTAKT_LAENGEN
+        inhalt = self.hole('/kontakt/').content.decode()
+        form = inhalt.split('name="formzeit"', 1)[1].split('</form>', 1)[0]
+        for feld, grenze in KONTAKT_LAENGEN.items():
+            with self.subTest(feld=feld):
+                tag = re.search(rf'<(?:input|textarea)[^>]*name="{feld}"[^>]*>', form).group(0)
+                self.assertIn(f'maxlength="{grenze}"', tag)
+
+    def test_eine_nachricht_an_der_grenze_mit_zeilenumbruechen_geht_durch(self):
+        """Verhindert, dass der Server ablehnt, was ``maxlength`` erlaubt hat:
+        der Browser zählt einen Umbruch als ein Zeichen, schickt aber ``\\r\\n``."""
+        from ..views.shop import KONTAKT_LAENGEN
+        grenze = KONTAKT_LAENGEN['nachricht']
+        nachricht = ('x' * 9 + '\r\n') * (grenze // 10)
+        self.assertGreater(len(nachricht), grenze)
+        with mock.patch(_MAIL) as versand:
+            antwort = self.sende('/kontakt/', dict(GUELTIGE_ANFRAGE, nachricht=nachricht))
+        self.assertEqual(antwort.status_code, 302)
+        self.assertEqual(versand.call_count, 1)
+
     def test_zeilenumbrueche_gelangen_nicht_in_die_betreffzeile(self):
         """Verhindert das Einschleusen von Kopfzeilen (Header Injection): ein
         Zeilenumbruch im Betreff könnte sonst zusätzliche Empfänger oder einen
