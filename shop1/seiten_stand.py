@@ -25,7 +25,7 @@ SEITEN_STAND = {
     'liefergebiet': '2026-09-01',
     'kontakt':      '2026-09-17',
     'impressum':    '2026-09-01',
-    'datenschutz':  '2026-09-01',
+    'datenschutz':  '2026-09-18',
     'agb':          '2026-09-01',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
     'wissen':           '2026-09-17',

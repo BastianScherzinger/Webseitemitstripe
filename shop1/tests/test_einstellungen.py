@@ -348,9 +348,10 @@ class ContentSecurityPolicyTest(LuviqTestCase):
                         continue
                     self.assertIn('nonce="{{ csp_nonce }}"', attribute)
             genutzt.update(re.findall(
-                r'\s(data-(?:bestaetigen|bei-fehler-ausblenden|auto-absenden|schrift-nachladen))\b', text))
+                r'\s(data-(?:bestaetigen|bei-fehler-ausblenden|auto-absenden|schrift-nachladen'
+                r'|karte-laden))\b', text))
         basis = (Path(settings.BASE_DIR) / 'templates' / 'base.html').read_text(encoding='utf-8')
-        self.assertEqual(len(genutzt), 4, f'Ersatzattribute nicht gefunden: {genutzt}')
+        self.assertEqual(len(genutzt), 5, f'Ersatzattribute nicht gefunden: {genutzt}')
         for attribut in genutzt:
             with self.subTest(attribut=attribut):
                 self.assertIn(f"'{attribut}'", basis)
@@ -428,6 +429,40 @@ class ContentSecurityPolicyTest(LuviqTestCase):
             for direktive in ('script-src', 'style-src', 'connect-src', 'frame-src', 'img-src'):
                 with self.subTest(host=host, direktive=direktive):
                     self.assertTrue(_quelle_erlaubt(host, quellen[direktive]))
+
+
+class EinbettungErstNachKlickTest(LuviqTestCase):
+    """RE17: eine eingebettete Karte darf den Browser nicht schon beim Aufruf
+    zu Google schicken. Keine öffentliche Seite liefert deshalb einen
+    ``<iframe>`` mit fremdem ``src`` aus; die Adresse steht in
+    ``data-karte-laden`` und wird erst nach einem Klick gesetzt."""
+
+    #: ``<iframe … src="https://…">`` – die Einbettung, die sofort lädt.
+    SOFORT = re.compile(r'<iframe[^>]+\ssrc="(https?://[^"]+)"')
+
+    def test_keine_oeffentliche_seite_bettet_eine_fremde_adresse_sofort_ein(self):
+        """Der eigentliche Nachweis: fällt das ``data-`` je wieder auf ``src``
+        zurück, schlägt hier genau die Seite an, die es tut."""
+        for pfad in OEFFENTLICHE_SEITEN:
+            with self.subTest(pfad=pfad):
+                gefunden = self.SOFORT.findall(self.hole(pfad).content.decode())
+                self.assertEqual(gefunden, [], f'{pfad} lädt eine Einbettung ohne Klick')
+
+    def test_startseite_und_gaestebuch_tragen_die_karte_als_data_adresse(self):
+        """Gegenbeweis zum Test darüber: die Karte ist nicht verschwunden,
+        sondern wartet auf den Klick. Ohne diesen Test bliebe der obere auch
+        dann grün, wenn jemand die Einbettung einfach löschte."""
+        for pfad in ('/', '/gaestebuch/'):
+            with self.subTest(pfad=pfad):
+                html = self.hole(pfad).content.decode()
+                self.assertIn('data-karte-laden="https://maps.google.com', html)
+
+    def test_die_karte_bleibt_in_der_richtlinie_erlaubt(self):
+        """Nach dem Klick lädt der Rahmen wirklich – dafür muss ``frame-src``
+        die Karte weiter zulassen. Eine aufgeräumte Richtlinie bräche sie
+        still, weil keine Vorlage die Adresse mehr als ``src`` trägt."""
+        self.assertTrue(_quelle_erlaubt('https://maps.google.com/maps?q=x',
+                                        settings.CSP_QUELLEN['frame-src']))
 
 
 @override_settings(
