@@ -44,8 +44,13 @@ sagt der Beitrag das ausdrücklich, statt eine Zahl zu nennen, die nirgends
 steht.
 """
 
+from datetime import date, datetime, time
+
+from django.contrib.syndication.views import Feed
 from django.http import Http404
 from django.shortcuts import render
+from django.urls import reverse
+from django.utils import timezone
 
 #: Slug → Beitrag. ``url_name`` ist der Routenname, ``template`` die Vorlage,
 #: ``titel`` die sichtbare Überschrift (zugleich ``h1`` der Seite), ``kurz``
@@ -162,3 +167,55 @@ def wissen_beitrag(request, slug):
     if beitrag is None:
         raise Http404(f'Kein Wissensbeitrag mit der Kennung "{slug}"')
     return render(request, beitrag['template'], {'beitrag': beitrag, 'slug': slug})
+
+
+class WissenFeed(Feed):
+    """RSS-Feed des Wissensbereichs unter ``/feed/`` (GE32).
+
+    **Wozu.** Ein Feed ist die einzige Adresse, an der ein Aggregator oder eine
+    Antwortmaschine fragen kann, *was neu ist*, ohne die ganze Seite abzulaufen.
+    Der Shop hat mit dem Wissensbereich Redaktionsinhalte, die dazu passen –
+    die Produktseiten nicht: ein Einzelstück ist nach dem Verkauf weg, und ein
+    Feed, aus dem Einträge wieder verschwinden, ist für einen Leser kaputt.
+
+    **Was drinsteht.** Dieselbe Menge wie in Sitemap und llms.txt: nur die von
+    der Betreiberin freigegebenen Beiträge (``freigegebene_beitraege()``). Ein
+    Beitrag mit ``noindex`` gehört in keine der drei Aufstellungen – sonst
+    meldet die Seite eine Adresse an, deren Aufnahme sie selbst verbietet.
+
+    **Die Angaben stammen aus dem Register oben**, nicht aus einer Datei- oder
+    Bauzeit: ``titel`` als Überschrift, ``kurz`` als Beschreibung,
+    ``veroeffentlicht`` als ``pubDate``. Ein Datum aus dem Dateisystem spränge
+    bei jedem Deploy hoch und meldete eine Änderung, die es nicht gab.
+    """
+
+    title = 'Luviq Universe – Wissen'
+    description = ('Beiträge zu Bestellablauf, Widerruf, Konto und zur Pflege '
+                   'handbemalter Einzelstücke aus dem Wissensbereich von Luviq Universe.')
+    language = 'de'
+
+    def link(self):
+        return reverse('wissen')
+
+    def items(self):
+        """Die freigegebenen Beiträge, der neueste zuerst."""
+        beitraege = [{'slug': slug, **b} for slug, b in freigegebene_beitraege().items()]
+        return sorted(beitraege, key=lambda b: b['veroeffentlicht'], reverse=True)
+
+    def item_title(self, item):
+        return item['titel']
+
+    def item_description(self, item):
+        return item['kurz']
+
+    def item_link(self, item):
+        return reverse(item['url_name'])
+
+    def item_pubdate(self, item):
+        """``veroeffentlicht`` als Zeitstempel in der Zeitzone der Seite.
+
+        ``USE_TZ=True``: ein naives ``datetime`` ergäbe hier eine Warnung und
+        einen ``pubDate`` ohne Zonenangabe, den jeder Leser anders auslegt.
+        """
+        tag = date.fromisoformat(item['veroeffentlicht'])
+        return timezone.make_aware(datetime.combine(tag, time.min))

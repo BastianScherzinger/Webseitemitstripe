@@ -298,7 +298,17 @@ class BedienelementeTest(LuviqTestCase):
 
 
 class FehleransageTest(LuviqTestCase):
-    """Formularfehler erreichen auch, wer sie nicht sieht (BF24, WCAG 3.3.1)."""
+    """Formularfehler erreichen auch, wer sie nicht sieht (BF24, WCAG 3.3.1).
+
+    Entscheidend ist nicht nur, **dass** eine Meldung erscheint, sondern **wo**:
+    im Meldungsbereich ganz oben (``messages``) steht sie ausserhalb des
+    Formulars und ist von den Feldern nicht erreichbar. Seit dem 17.09.2026
+    gibt die View den Text als ``fehler`` an die Vorlage; er steht im Formular
+    und hängt über ``aria-describedby`` an jedem Pflichtfeld.
+    """
+
+    #: Die Pflichtfelder des Kontaktformulars – jedes muss auf die Meldung zeigen.
+    PFLICHTFELDER = ('name', 'email', 'betreff', 'nachricht')
 
     def test_ein_fehler_im_kontaktformular_wird_angesagt(self):
         """Die Fehlermeldung des Servers steht in einem Bereich mit
@@ -306,7 +316,27 @@ class FehleransageTest(LuviqTestCase):
         antwort = self.sende('/kontakt/', {'name': '', 'email': '', 'betreff': '',
                                            'nachricht': ''})
         html = antwort.content.decode()
-        self.assertRegex(html, r'<div role="alert"[^>]*>\s*<span[^>]*>Bitte fülle alle Felder aus\.')
+        self.assertRegex(
+            html,
+            r'<div id="kontakt-fehler" role="alert"[^>]*>Bitte fülle alle Felder aus\.</div>')
+
+    def test_die_fehlermeldung_steht_innerhalb_des_formulars(self):
+        """Verhindert den Rückfall auf den Meldungsbereich der Seite: eine
+        Meldung über dem Seitenkopf gehört zu keinem Feld."""
+        html = self.sende('/kontakt/', {}).content.decode()
+        beginn = html.index('<form method="post"')
+        ende = html.index('</form>', beginn)
+        self.assertIn('id="kontakt-fehler"', html[beginn:ende])
+
+    def test_jedes_pflichtfeld_verweist_auf_die_fehlermeldung(self):
+        """``aria-describedby`` bindet die Meldung an das Feld – ohne diese
+        Bindung muss man sie suchen, statt sie vorgelesen zu bekommen."""
+        html = self.hole('/kontakt/').content.decode()
+        for feld in self.PFLICHTFELDER:
+            with self.subTest(feld=feld):
+                treffer = re.search(rf'<(?:input|textarea)[^>]*\bname="{feld}"[^>]*>', html)
+                self.assertIsNotNone(treffer, f'Feld {feld} nicht gefunden')
+                self.assertIn('aria-describedby="kontakt-fehler"', treffer.group(0))
 
     def test_das_kontaktformular_ist_ein_ansagebereich(self):
         html = self.hole('/kontakt/').content.decode()

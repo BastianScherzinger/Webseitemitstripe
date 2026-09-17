@@ -282,6 +282,64 @@ class WissensfreigabeTest(LuviqTestCase):
                 self.assertNotIn(anderer, llms)
 
 
+class FeedTest(LuviqTestCase):
+    """``/feed/`` – der Weg, auf dem ein Aggregator fragt, was neu ist (GE32).
+
+    Der Feed führt dieselbe Menge wie Sitemap und llms.txt: nur freigegebene
+    Wissensbeiträge. Fällt diese Bedingung weg, meldet die Seite Adressen an,
+    deren Aufnahme sie selbst mit ``noindex`` verbietet.
+    """
+
+    def setUp(self):
+        self.antwort = self.hole('/feed/')
+
+    def test_der_feed_antwortet_als_rss(self):
+        self.assertEqual(self.antwort.status_code, 200)
+        self.assertIn('xml', self.antwort['Content-Type'])
+        wurzel = ElementTree.fromstring(self.antwort.content)
+        self.assertEqual(wurzel.tag, 'rss')
+
+    def test_der_feed_nennt_genau_die_freigegebenen_beitraege(self):
+        """Verhindert beides: einen leeren Feed und einen, der ``noindex``-Seiten
+        anmeldet."""
+        from ..views.wissen import freigegebene_beitraege
+
+        wurzel = ElementTree.fromstring(self.antwort.content)
+        pfade = {(e.findtext('link') or '').split('testserver', 1)[-1]
+                 for e in wurzel.iter('item')}
+        erwartet = {f'/wissen/{slug}/' for slug in freigegebene_beitraege()}
+        self.assertEqual(pfade, erwartet)
+        gesperrt = {f'/wissen/{slug}/' for slug, b in WISSEN_BEITRAEGE.items()
+                    if not b.get('freigegeben')}
+        self.assertFalse(pfade & gesperrt)
+
+    def test_jeder_eintrag_traegt_titel_beschreibung_und_datum(self):
+        """Ein Eintrag ohne Datum landet bei jedem Leser an anderer Stelle."""
+        wurzel = ElementTree.fromstring(self.antwort.content)
+        eintraege = list(wurzel.iter('item'))
+        self.assertTrue(eintraege, 'Feed ohne Eintraege')
+        for eintrag in eintraege:
+            with self.subTest(titel=eintrag.findtext('title')):
+                self.assertTrue((eintrag.findtext('title') or '').strip())
+                self.assertTrue((eintrag.findtext('description') or '').strip())
+                self.assertTrue((eintrag.findtext('pubDate') or '').strip())
+
+    def test_llms_txt_nennt_den_feed(self):
+        """llms.txt ist die Datei, die eine Antwortmaschine zuerst liest – dort
+        gehört der Weg hin, auf dem sie erfährt, was neu ist."""
+        self.assertIn('/feed/', self.hole('/llms.txt').content.decode())
+
+    def test_jede_seite_verlinkt_den_feed_im_kopfbereich(self):
+        """Ohne den Verweis im ``<head>`` findet ihn niemand, der ihn nicht
+        schon kennt."""
+        for pfad in INHALTSSEITEN:
+            with self.subTest(pfad=pfad):
+                html = self.hole(pfad).content.decode()
+                self.assertRegex(
+                    html,
+                    r'<link rel="alternate" type="application/rss\+xml"[^>]*href="/feed/"')
+
+
 class RobotsTest(LuviqTestCase):
     """robots.txt – die Datei, mit der man sich am schnellsten selbst aussperrt."""
 

@@ -252,6 +252,10 @@ def llms_txt(request):
         f"- [AGB und Widerrufsrecht]({basis}{reverse('agb')})",
         "",
         f"Sitemap: {basis}/sitemap.xml",
+        # Der Feed (GE32) steht hier, weil llms.txt die Datei ist, die eine
+        # Antwortmaschine zuerst liest: ueber ihn erfaehrt sie, was neu ist,
+        # ohne die ganze Seite noch einmal abzulaufen.
+        f"Feed: {basis}{reverse('wissen_feed')}",
     ]
 
     return HttpResponse("\n".join(zeilen) + "\n",

@@ -6,7 +6,6 @@ import os
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
-from django.contrib import messages
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -126,6 +125,11 @@ def doppelt_abgeschickt(email, betreff, nachricht):
 # wird nur eine KontaktAnfrage (MW18), und erst nach Drosselung je IP,
 # Feldprüfung (kontakt_fehler), Spamschutz und Doppelsperre.
 def kontakt(request):
+    # ``fehler``: der Text, den das Formular selbst ansagt (BF24). Er geht seit
+    # dem 17.09.2026 nicht mehr über ``messages`` an den Meldungsbereich der
+    # Seite, sondern in den Block ``role="alert"`` innerhalb des Formulars –
+    # dort, wo die Pflichtfelder ihn über ``aria-describedby`` erwarten.
+    fehler = None
     if request.method == 'POST':
         # .strip(): ohne das zaehlt ein Feld, in dem nur ein Leerzeichen steht,
         # als ausgefuellt – der billigste Weg, das Formular mit Leermeldungen
@@ -138,9 +142,10 @@ def kontakt(request):
         # Drosselung je IP-Adresse (FO09) vor jeder Prüfung: auch eine
         # Schleife ungültiger Anfragen kostet Rechenzeit.
         if zu_viele_anfragen(request, 'kontakt'):
-            messages.error(request, 'Du hast gerade mehrere Nachrichten geschickt. '
-                                    'Bitte versuche es in einer Viertelstunde noch einmal.')
-            return render(request, 'shop1/kontakt.html', status=429)
+            return render(request, 'shop1/kontakt.html', {
+                'fehler': 'Du hast gerade mehrere Nachrichten geschickt. '
+                          'Bitte versuche es in einer Viertelstunde noch einmal.',
+            }, status=429)
 
         fehler = kontakt_fehler(name, email, betreff, nachricht)
         if fehler is None:
@@ -191,13 +196,12 @@ def kontakt(request):
             # Weder gespeichert noch versandt: nicht angenommen, ein erneuter
             # Versuch darf nicht als Doppel gelten.
             cache.delete(_doppelt_schluessel(email, betreff, nachricht))
-            messages.error(request, 'Entschuldigung, es gab ein Problem beim Senden deiner Nachricht.')
-        else:
-            messages.error(request, fehler)
+            fehler = 'Entschuldigung, es gab ein Problem beim Senden deiner Nachricht.'
 
     return render(request, 'shop1/kontakt.html', {
         'formzeit': spamschutz.zeitstempel(),
         'feld_falle': spamschutz.FELD_FALLE,
+        'fehler': fehler,
     })
 
 
