@@ -16,7 +16,7 @@ from xml.etree import ElementTree
 from django.test import override_settings
 from django.utils import timezone
 
-from ._basis import INDEXIERBARE_SEITEN, INHALTSSEITEN, LuviqTestCase, erzeuge_produkt
+from ._basis import INDEXIERBARE_SEITEN, INHALTSSEITEN, LuviqTestCase, erzeuge_produkt, ohne_kaufweg
 
 _JSONLD = re.compile(
     r'<script[^>]+type="application/ld\+json"[^>]*>(.*?)</script>', re.DOTALL
@@ -38,6 +38,8 @@ FAQ_SEITEN = (
     '/wissen/widerruf-und-ruecksendung/',
     '/wissen/konto-und-daten/',
 )
+# Ohne Verkauf leiten die Kaufweg-Beiträge um (siehe _basis.KAUFWEG_WISSENSSEITEN).
+FAQ_SEITEN = tuple(ohne_kaufweg(FAQ_SEITEN))
 
 
 class _Textleser(HTMLParser):
@@ -482,10 +484,13 @@ class RatgeberSchemaTest(LuviqTestCase):
     def _beitraege(self):
         from django.urls import reverse
 
-        from ..views.wissen import WISSEN_BEITRAEGE
+        from ..views.wissen import WISSEN_BEITRAEGE, nur_mit_verkauf_ausgeblendet
 
+        # Ohne Verkauf leiten die Kaufweg-Beiträge auf /wissen/ um und stehen
+        # nicht in der Übersicht; ihr Schema prüft test_verkauf mit Verkauf.
         return [(reverse(b['url_name']), slug, b)
-                for slug, b in WISSEN_BEITRAEGE.items()]
+                for slug, b in WISSEN_BEITRAEGE.items()
+                if not nur_mit_verkauf_ausgeblendet(b)]
 
     @staticmethod
     def _artikel(knoten):

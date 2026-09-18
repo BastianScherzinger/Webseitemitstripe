@@ -646,6 +646,7 @@ class SeitenkopfTest(LuviqTestCase):
                 self.assertEqual(anzahl, 1, f'{pfad} hat {anzahl} h1-Überschriften')
 
 
+@override_settings(VERKAUF_AKTIV=True)  # Zusätze mit „kaufen"; ohne Verkauf: test_verkauf.ArchivMetaangabenTest
 class ProduktMetaangabenTest(LuviqTestCase):
     """Die abgeleiteten Kopfangaben der Produktseiten (``Produkt.meta_title``,
     ``Produkt.meta_description``), wenn ``seo_titel``/``seo_beschreibung``

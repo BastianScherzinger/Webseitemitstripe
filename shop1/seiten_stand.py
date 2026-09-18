@@ -28,10 +28,10 @@ SEITEN_STAND = {
     'datenschutz':  '2026-09-18',
     'agb':          '2026-09-18',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
-    'wissen':           '2026-09-17',
-    'wissen_pflege':    '2026-09-01',
-    'wissen_upcycling': '2026-09-01',
-    'wissen_groesse':   '2026-09-01',
+    'wissen':           '2026-09-18',
+    'wissen_pflege':    '2026-09-18',
+    'wissen_upcycling': '2026-09-18',
+    'wissen_groesse':   '2026-09-18',
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
     'wissen_bestellen': '2026-09-17',

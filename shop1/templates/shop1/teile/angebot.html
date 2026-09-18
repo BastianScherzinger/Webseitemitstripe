@@ -41,7 +41,7 @@ Attribute sind die der bisherigen Zeilen 72-115 von `produkte.html`.
         <div class="absolute top-6 left-6 flex flex-col gap-2">
             <span class="glass px-4 py-1.5 rounded-full text-[10px] font-black uppercase text-white/80 tracking-widest border-white/5">Unique</span>
             {% if produkt.lagerbestand < 3 %}
-                <span class="glass px-4 py-1.5 rounded-full text-[10px] font-black uppercase text-glow-orange tracking-widest border-white/5">Limited</span>
+                <span class="glass px-4 py-1.5 rounded-full text-[10px] font-black uppercase text-glow-orange tracking-widest border-white/5">{% if verkauf_aktiv %}Limited{% else %}Vergeben{% endif %}</span>
             {% endif %}
         </div>
     </div>
@@ -56,7 +56,7 @@ Attribute sind die der bisherigen Zeilen 72-115 von `produkte.html`.
         <div class="mt-auto flex items-center justify-between">
             <div class="flex flex-col">
                 <span class="text-[10px] text-white/30 uppercase tracking-widest mb-1">{% if verkauf_aktiv %}Endpreis{% else %}Status{% endif %}</span>
-                <span class="text-2xl font-black text-glow">{% if verkauf_aktiv %}{{ produkt.preis }} €{% else %}Kommender Drop{% endif %}</span>
+                <span class="text-2xl font-black text-glow">{% if verkauf_aktiv %}{{ produkt.preis }} €{% else %}Nº {{ produkt.archiv_nummer }} · Archiv{% endif %}</span>
             </div>
             <a href="{{ produkt.get_absolute_url }}" aria-label="{{ produkt.name }} ansehen" class="w-14 h-14 btn-glow rounded-2xl flex items-center justify-center text-white transition-all transform hover:rotate-12 group shadow-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>

@@ -10,6 +10,71 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 18.09.2026 abends — Archiv statt „kommender Drop" (Zweig `recht/2026-09-18-archiv-statt-verkauf`, `c64285f`)
+
+**Was:** Ohne Verkauf (`VERKAUF_AKTIV` aus) erscheinen die Stücke als **Archiv
+bisheriger, bereits vergebener Stücke**: Karten, Karussell und Produktseite
+zeigen „Nº 00x · Archiv" (`Produkt.archiv_nummer`, Primärschlüssel dreistellig)
+statt „Kommender Drop", die Produktseite „Dieses Stück ist bereits vergeben.
+Neue Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein" und
+„Bereits vergeben · Neue Stücke mit dem ersten Drop"; der Antwortsatz sagt
+„aus dem Archiv der bisherigen Stücke … bereits vergeben". `/produkte/` heisst
+„The Archive", Titel „Archiv: …", die Startseite „Bisherige Unikate", die
+untere Leiste „Archiv". `meta_title` ohne „kaufen", `meta_description` mit
+Archiv-Zusatz. **Migration `0022`** nimmt einen angehängten Verkaufsvermerk
+(„(Sold)", „Sold", „Sold out", „Verkauft", „Ausverkauft") aus `name`,
+`seo_titel`, `beschreibung`, `seo_beschreibung` und bildet einen Slug auf
+`-sold`/`-verkauft`/`-ausverkauft` neu; `/produkt/custom-pants-sold/` leitet
+per 301 auf `/produkt/custom-pants/` (`alter_verkaufsslug` in
+`views/shop.py`, Regel statt Register – einen Mechanismus für alte Slugs gab
+es nicht). Die Wissensbeiträge Bestellen, Widerruf und Konto **leiten ohne
+Verkauf mit 302 auf `/wissen/`** und stehen nicht mehr in der Übersicht; die
+Übersicht, Pflege, Upcycling und Grösse sagen über Luviq nichts mehr zu
+Kauf, Versand, Zahlung oder Widerruf („Wie kaufe ich …" → „Gibt es die
+Stücke von Luviq Universe zu kaufen?" – „Noch nicht …"). Gästebuch:
+Meta- und OG-Beschreibung ohne „Kundinnen und Kunden"/„unsere Kunden",
+Kennzeichnung „Betreiberin" statt „Shopbesitzer". llms.txt: Abschnitt
+„Archiv: bisherige Einzelstuecke (bereits vergeben)". Feed-Beschreibung ohne
+Bestellablauf. `/liefergebiet/` OG-Text ohne unbelegtes „beliebt in der
+ganzen Region". Mit `VERKAUF_AKTIV=1` bleibt jeder Text wie vorher.
+**Warum:** Laut Betreiber wurden die gezeigten Stücke nie verkauft (keine
+Rechnungen), sie sind weg und kommen in keinem Drop. „(Sold)" und
+„-ausverkauft" behaupteten einen Verkauf, „gehört zum kommenden Drop" eine
+künftige Verkaufsabsicht für Stücke, die es nicht mehr gibt. „Vergeben" ist
+neutral und wahr; ein Hinweis auf Verschenken oder eine Erklärung „nicht
+gewerblich" steht bewusst nirgends. **302 statt `noindex`** für die
+Kaufweg-Beiträge: Die Übersicht listete „Wie bestelle und bezahle ich …"
+sichtbar; eine Umleitung zeigt niemandem einen Kaufweg, den es nicht gibt,
+und 302 (nicht 301) lässt die Adressen mit dem Schalter zurückkommen.
+
+**Tests:** `test_verkauf` +19 (Archiv in beiden Zuständen, verbotene Sätze
+auf allen öffentlichen Seiten samt llms.txt und Feed, Metaangaben, alte Slugs,
+Migration an der Datenbank). `_basis.ohne_kaufweg()` nimmt die drei
+Kaufweg-Beiträge ohne Verkauf aus `OEFFENTLICHE_SEITEN`, `INHALTSSEITEN`,
+`FAQ_SEITEN`, `MINDESTWOERTER` und `RatgeberSchemaTest`; mit Verkauf prüft
+`MitVerkaufTest.test_kaufbeitraege_antworten_und_stehen_in_der_uebersicht`.
+`ProduktMetaangabenTest` und der Titel-Dublettentest laufen mit
+`VERKAUF_AKTIV=True`, die Fassung ohne Verkauf prüft `ArchivMetaangabenTest`.
+`MINDESTWOERTER` gemessen nachgezogen: `/` 655, `/produkte/` 380, `/wissen/`
+550 (ohne Verkauf `noindex`), Grösse 855. **Designwache** gezielt: `/`
+(„Bisherige Unikate"), `/produkte/` („The Archive"), `/wissen/` (drei Karten
+weniger), Upcycling (eine Überschrift); die drei Kaufweg-Beiträge erfasst die
+Wache jetzt mit `VERKAUF_AKTIV=True` (Bestellbeitrag: Rabattfrage wieder in
+der Fassung mit Verkauf). Farben, Schriften, Klassen unverändert.
+`manage.py check` grün, Suite 357/357 grün (lokal Python 3.14, Django 6.0.8),
+`pruefe_seite` ohne Befund zur Seite (nur fehlende lokale Variablen),
+`pruefe_links` „Jeder Verweis kommt an".
+
+**Offen, nicht gelöst:** Vor `VERKAUF_AKTIV=1` müssen die bisherigen Stücke
+im Admin inaktiv gesetzt werden, sonst bekommen sie Preis und Warenkorb
+(Checkliste `doku/80-AUFGABEN.md`); ein neues Stück, das vor dem Einschalten
+hochgeladen wird, steht ebenfalls als „vergeben" da. Der Newsletter zu einem
+neuen Stück („NEW DROP: … is online!") passt dazu nicht und bleibt
+unverändert. Bestellungen und Warenkörbe tragen den alten Namen als eigene
+Kopie (`produkt_name`) weiter – nur im Admin sichtbar.
+
+---
+
 ## 18.09.2026 — Besucherzählung ohne Cookie, IP-Adresse und Fremddienst (Zweig `recht/2026-09-18-marke-im-aufbau`)
 
 **Was:** `PageVisitMiddleware` zählt Besucher jetzt über eine **Tageskennung**

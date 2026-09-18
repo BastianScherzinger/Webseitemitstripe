@@ -15,7 +15,7 @@ import re
 from html.parser import HTMLParser
 
 from django.test import override_settings
-from ._basis import INHALTSSEITEN, OEFFENTLICHE_SEITEN, LuviqTestCase, erzeuge_produkt
+from ._basis import INHALTSSEITEN, OEFFENTLICHE_SEITEN, LuviqTestCase, erzeuge_produkt, ohne_kaufweg
 from .test_geo import sichtbarer_text
 
 
@@ -126,9 +126,16 @@ UMFANG_PRODUKT_SEITE = '/produkt/bemalte-bomberjacke/'
 #: ``/ueber_uns/`` 371, ``/liefergebiet/`` 273, ``/gaestebuch/`` 493 – die
 #: Schwellen folgen, abgerundet. Die Produktseite bleibt über 200. Mit
 #: ``VERKAUF_AKTIV=1`` kommen die alten Texte zurück und liegen darüber.
+#: Archiv statt „kommender Drop" (2026-09-18 abends): ohne Verkauf stehen die
+#: Stücke als Archiv bereits vergebener Stücke da, und die Übersicht
+#: ``/wissen/`` nennt die drei Kaufweg-Beiträge nicht mehr und beschreibt
+#: nicht mehr Bestellung, Zahlung und Widerruf. Gemessen im Zustand „Verkauf
+#: aus": ``/`` 658 (vorher 660), ``/produkte/`` 381 (385), ``/wissen/`` 554
+#: (895; die Seite ist ohne Verkauf ``noindex``, weil keiner ihrer
+#: Beiträge freigegeben ist), Grösse 859 (870, ebenfalls ``noindex``).
 MINDESTWOERTER = {
-    '/': 660,
-    '/produkte/': 385,
+    '/': 655,
+    '/produkte/': 380,
     '/kontakt/': 235,
     '/ueber_uns/': 370,
     '/liefergebiet/': 270,
@@ -137,14 +144,17 @@ MINDESTWOERTER = {
     '/datenschutz/': 430,
     '/agb/': 230,
     UMFANG_PRODUKT_SEITE: 200,
-    '/wissen/': 895,
+    '/wissen/': 550,
     '/wissen/pflege-handbemalte-kleidung/': 800,
     '/wissen/upcycling-mode-second-hand-vintage/': 920,
-    '/wissen/groesse-bei-einzelstuecken/': 870,
+    '/wissen/groesse-bei-einzelstuecken/': 855,
     '/wissen/bestellen-und-bezahlen/': 1110,
     '/wissen/widerruf-und-ruecksendung/': 1015,
     '/wissen/konto-und-daten/': 980,
 }
+# Ohne Verkauf leiten die drei Kaufweg-Beiträge auf /wissen/ um
+# (_basis.KAUFWEG_WISSENSSEITEN); ihre Schwellen gelten mit VERKAUF_AKTIV=1.
+MINDESTWOERTER = {p: n for p, n in MINDESTWOERTER.items() if ohne_kaufweg([p])}
 
 #: Seiten, deren erstes Drittel noch keine Zahl nennt. Die Menge ist seit
 #: GE23 (2026-09-08) leer: ``/liefergebiet/`` war die letzte Ausnahme und

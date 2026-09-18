@@ -93,6 +93,27 @@ OEFFENTLICHE_SEITEN = [
     '/reset/done/',
 ]
 
+#: Wissensbeiträge zum Kaufweg (``nur_mit_verkauf`` in views/wissen.py). Ohne
+#: Verkauf (``VERKAUF_AKTIV`` aus, die Vorgabe) leiten sie mit 302 auf
+#: ``/wissen/`` und fallen deshalb aus OEFFENTLICHE_SEITEN und INHALTSSEITEN
+#: heraus; geprüft werden sie dann in ``test_verkauf`` (beide Zustände) und in
+#: der Designwache mit eingeschaltetem Verkauf (``test_aufbau``).
+KAUFWEG_WISSENSSEITEN = [
+    '/wissen/bestellen-und-bezahlen/',
+    '/wissen/widerruf-und-ruecksendung/',
+    '/wissen/konto-und-daten/',
+]
+
+
+def ohne_kaufweg(seiten):
+    """``seiten`` ohne die Kaufweg-Beiträge, solange der Verkauf aus ist."""
+    if settings.VERKAUF_AKTIV:
+        return list(seiten)
+    return [p for p in seiten if p not in KAUFWEG_WISSENSSEITEN]
+
+
+OEFFENTLICHE_SEITEN = ohne_kaufweg(OEFFENTLICHE_SEITEN)
+
 #: Inhaltsseiten: die Teilmenge von OEFFENTLICHE_SEITEN, die in den Suchindex
 #: gehört. Die Anmelde- und Passwortseiten stehen bewusst nicht darin – sie
 #: sind in robots.txt gesperrt und tragen bauartbedingt keine Überschrift.
@@ -121,6 +142,7 @@ INHALTSSEITEN = [
     '/wissen/widerruf-und-ruecksendung/',
     '/wissen/konto-und-daten/',
 ]
+INHALTSSEITEN = ohne_kaufweg(INHALTSSEITEN)
 
 
 def _nicht_indexierbare_wissensseiten():

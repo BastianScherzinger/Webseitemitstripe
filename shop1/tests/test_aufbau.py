@@ -22,8 +22,10 @@ Commit.
 import json
 from pathlib import Path
 
+from django.test import override_settings
+
 from ._aufbau import fingerabdruck, unterschiede
-from ._basis import OEFFENTLICHE_SEITEN, LuviqTestCase, erzeuge_produkt
+from ._basis import KAUFWEG_WISSENSSEITEN, OEFFENTLICHE_SEITEN, LuviqTestCase, erzeuge_produkt
 
 REFERENZ_DATEI = Path(__file__).with_name('aufbau_referenz.json')
 
@@ -34,8 +36,14 @@ REFERENZPRODUKT = 'Referenzstueck fuer die Designwache'
 #: Adresse der Produktdetailseite, abgeleitet aus REFERENZPRODUKT.
 PRODUKTSEITE = '/produkt/referenzstueck-fuer-die-designwache/'
 
+#: Seiten, die es nur mit eingeschaltetem Verkauf gibt: ohne Verkauf leiten
+#: die Kaufweg-Beiträge auf /wissen/ um (views/wissen.py). Ihr Aufbau wird
+#: deshalb im Zustand ``VERKAUF_AKTIV=True`` erfasst – so, wie sie nach der
+#: Eröffnung des Shops aussehen.
+BEWACHTE_SEITEN_MIT_VERKAUF = [p for p in KAUFWEG_WISSENSSEITEN if p not in OEFFENTLICHE_SEITEN]
+
 #: Alle Seiten, deren Aufbau bewacht wird.
-BEWACHTE_SEITEN = OEFFENTLICHE_SEITEN + [PRODUKTSEITE]
+BEWACHTE_SEITEN = OEFFENTLICHE_SEITEN + [PRODUKTSEITE] + BEWACHTE_SEITEN_MIT_VERKAUF
 
 
 class DesignwacheTest(LuviqTestCase):
@@ -47,7 +55,11 @@ class DesignwacheTest(LuviqTestCase):
     def _erfasse(self):
         abdruecke = {}
         for pfad in BEWACHTE_SEITEN:
-            antwort = self.hole(pfad)
+            if pfad in BEWACHTE_SEITEN_MIT_VERKAUF:
+                with override_settings(VERKAUF_AKTIV=True):
+                    antwort = self.hole(pfad)
+            else:
+                antwort = self.hole(pfad)
             self.assertEqual(
                 antwort.status_code, 200,
                 f'{pfad} antwortet mit {antwort.status_code}; der Aufbau '

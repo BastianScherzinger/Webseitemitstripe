@@ -9,6 +9,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
+from django.test import override_settings
 
 from ..models import (
     META_BESCHREIBUNG_MAX,
@@ -281,6 +282,7 @@ class ProduktInvariantenTest(LuviqTestCase):
             Produkt.objects.filter(name='Bemalte Jacke').update(lagerbestand=-1)
         self.assertFalse(Produkt.objects.filter(lagerbestand__lt=0).exists())
 
+    @override_settings(VERKAUF_AKTIV=True)  # erwartet den Titel-Zusatz mit „kaufen"
     def test_keine_zwei_aktiven_produkte_haben_denselben_meta_titel(self):
         """Macht ``IS23`` prüfbar: zwei aktive Produkte mit demselben
         ``<title>`` konkurrieren in der Suche gegeneinander. Der Titel
