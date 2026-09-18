@@ -11,12 +11,13 @@ from django.core.exceptions import ValidationError
 
 from ..forms import CustomUserCreationForm, UserProfileForm
 from ..models import UserProfile, Order
-from ._helpers import _is_admin, _get_or_create_cart, _sync_session_to_db, zu_viele_anfragen
+from ._helpers import _is_admin, _sync_session_to_db, zu_viele_anfragen
 
 _log = logging.getLogger('shop1')
 
 
 def login(request):
+    """Anmeldung; übernimmt den Sitzungs-Warenkorb ins Konto (``_sync_session_to_db``)."""
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -52,6 +53,7 @@ def logout(request):
 # noch nicht angemeldet. Geschrieben wird nur, was das geprüfte Formular
 # durchlässt (CustomUserCreationForm), und django-axes begrenzt die Versuche.
 def register(request):
+    """Registrierung; die Bestätigungsmail verschickt das Signal in ``signals.py``."""
     if request.method == 'POST':
         # Drosselung je IP (17.09.2026): Jede Registrierung schickt eine Mail an
         # die eingetippte Adresse. django-axes zaehlt nur Anmeldeversuche.
