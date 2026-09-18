@@ -289,10 +289,10 @@ class DatenschutzTest(LuviqTestCase):
     def test_jeder_eingebundene_drittanbieter_ist_genannt(self):
         """Verhindert eine Datenschutzerklärung, die vier Abschnitte lang ist
         und keinen der Dienste nennt, an die beim Aufruf Daten fliessen.
-        Besonders ip-api.com: dorthin geht die Besucher-IP im Klartext."""
+        Seit der cookielosen Zählung geht keine Besucher-IP mehr an ip-api.com."""
         text = sichtbarer_text(self.hole('/datenschutz/').content.decode())
         for dienst in ('Cloudinary', 'jsDelivr', 'Google Fonts',
-                       'Google Maps', 'ip-api.com', 'Brevo', 'PayPal', 'Railway'):
+                       'Google Maps', 'Brevo', 'PayPal', 'Railway'):
             with self.subTest(dienst=dienst):
                 self.assertIn(dienst, text)
 
@@ -301,6 +301,7 @@ class DatenschutzTest(LuviqTestCase):
         Supabase kommt im gesamten Projekt nicht vor."""
         text = sichtbarer_text(self.hole('/datenschutz/').content.decode())
         self.assertNotIn('Supabase', text)
+        self.assertNotIn('ip-api.com', text)
 
     def test_das_besuchsprotokoll_ist_beschrieben(self):
         """Verhindert, dass die Seite bei jedem Aufruf IP-Adresse, Pfad und

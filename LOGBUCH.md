@@ -10,6 +10,28 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 18.09.2026 — Besucherzählung ohne Cookie, IP-Adresse und Fremddienst (Zweig `recht/2026-09-18-marke-im-aufbau`)
+
+**Was:** `PageVisitMiddleware` zählt Besucher jetzt über eine **Tageskennung**
+(HMAC aus Datum, IP-Adresse und Browserkennung, 16 Zeichen, neues Modell
+`TagesBesucher`, Migration `0021`), nicht mehr über die Sitzung. Neue Kennung am
+Tag → `PageVisit` +1, neuer Pfad dieser Kennung am Tag → ein `VisitorLog` mit
+`ip_address=None` und nur der Geräteklasse („Handy · Safari“). Gezählt werden nur
+GET-Abrufe mit 200 und HTML von Browsern: Bots, Werkzeuge, leere Kennungen und
+Vorladen zählen nicht. Kennungen der Vortage löscht die Middleware beim ersten
+Abruf des neuen Tages. Der Geo-Lookup bei ip-api.com ist entfernt (Middleware-Pool
+und `_geo_enrich_visitors` im Admin). `besucher_anonymisieren` (in `start.sh`)
+leert IP-Adresse und Stadt der Altbestände der eigenen Seite in der pystore-DB.
+Datenschutzerklärung und Wissensbeiträge `konto`/`uebersicht` beschreiben das.
+**Warum:** Die volle IP jedes Besuchers ging unverschlüsselt an einen
+Drittdienst und stand dauerhaft in der Datenbank, und die Zählung setzte für
+jeden Besucher ein Sitzungscookie (EIG95, Befund des Rechtsumbaus). Bastian will
+weiter sehen, wie viele Leute am Tag kommen, ohne dass das rechtlich Probleme
+macht; der Schutz vor Bots (`django-axes`, Drosselung, Spamschutz) sieht die IP
+unverändert im Arbeitsspeicher. Tests: `BesucherprotokollTest` (10).
+
+---
+
 ## 18.09.2026 — Marke im Aufbau: Verkaufsschalter `VERKAUF_AKTIV` (Zweig `recht/2026-09-18-marke-im-aufbau`, `9b12276`)
 
 **Was:** Ein zentraler Schalter `VERKAUF_AKTIV` (Umgebungsvariable, gelesen in

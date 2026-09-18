@@ -187,7 +187,8 @@ class OhneVerkaufTest(_Grundlage):
         html = self.hole('/datenschutz/').content.decode()
         self.assertIn('keine Bestellungen an und verarbeitet keine Zahlungsdaten', html)
         self.assertIn('Double-Opt-in', html)
-        self.assertIn('ip-api.com', html)
+        self.assertNotIn('ip-api.com', html)
+        self.assertIn('kein Cookie', html)
 
 
 class BewertungenTest(_Grundlage):

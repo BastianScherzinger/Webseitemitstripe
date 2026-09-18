@@ -428,6 +428,29 @@ class PageVisit(models.Model):
         return f"{self.date}: {self.visits} Besuche"
 
 
+class TagesBesucher(models.Model):
+    """Wer heute schon gezählt ist – für die cookielose Besucherzählung.
+
+    ``kennung`` ist ein HMAC aus Datum, IP-Adresse und Browserkennung
+    (``middleware.tageskennung``), keine IP-Adresse. Zeilen der Vortage
+    löscht die Middleware beim ersten Abruf des neuen Tages; länger als
+    einen Tag bleibt hier nichts stehen.
+    """
+    datum = models.DateField(db_index=True)
+    kennung = models.CharField(max_length=16)
+    pfad = models.CharField(max_length=255)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['datum', 'kennung', 'pfad'], name='tagesbesucher_einmal_je_pfad'),
+        ]
+        verbose_name = 'Tagesbesucher'
+        verbose_name_plural = 'Tagesbesucher'
+
+    def __str__(self):
+        return f'{self.datum} {self.kennung} {self.pfad}'
+
+
 class KontaktAnfrage(models.Model):
     """Eine Anfrage aus dem Kontaktformular – gespeichert, **bevor** die Mail
     hinausgeht (MW18).
