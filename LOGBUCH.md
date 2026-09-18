@@ -10,6 +10,49 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 18.09.2026 — Paket 306: Code-Audit und SEO-Bausteine im Quelltext (`PJ06`, `PJ07`, `PJ13`)
+
+**Was:** Drei Commits auf `sofort/2026-09-18-pj06-und-2-weitere`.
+
+`PJ06` (`156176e`) — die „wichtig"-Befunde des Code-Audits in Views, Formularen und
+Signalen: acht `except Exception` ohne Spur schreiben jetzt ins Log (`checkout.py`
+zweimal, `auth.py`, `admin_views.py` fünfmal); der Rückfall der Newsletter-Anmeldung
+von JSON auf Formularfelder fängt nur noch `ValueError`/`AttributeError`
+(`legal.py`). Sieben Module, die bisher nur über Adressen getestet waren, werden jetzt
+direkt eingeführt und geprüft: `RoutenzuordnungTest` (`test_seiten`), `KontoBausteineTest`
+(`test_konto`), `test_pruefhost_nimmt_nur_einen_erlaubten_host` (`test_einstellungen`).
+**Warum:** Ein Fehler beim Anlegen einer Bestellung oder beim PayPal-Abschluss zeigte
+der Kundin eine Meldung und hinterliess sonst nichts. Die Kasse ist dabei nur um
+Protokollzeilen ergänzt; `K10` war ein Fehlalarm (`timeout=10` stand schon da, nur
+ausserhalb des Drei-Zeilen-Fensters der Prüfung) und ist nur umgestellt. **Offen, nicht
+angefasst:** `CustomUserCreationForm` speichert `land` leer statt „Deutschland", wenn das
+Feld leer bleibt (`forms.py`, `.get('land', 'Deutschland')` greift bei `''` nicht) — beim
+Schreiben des Tests aufgefallen. Die abgefangenen Fehler der drei Prüfbefehle bleiben:
+sie stehen als FEHLER-Zeile im Bericht.
+
+`PJ07` (`dd339b1`) — `signals.py`, `views/auth.py` und `forms.py` ohne Befund:
+Modulbeschreibungen, zwei nie benutzte Einfuhren (`send_mail`, `_get_or_create_cart`),
+überlange Zeilen umbrochen. Mit `cart.py` und `gaestebuch.py` (Tests aus `PJ06`) sind es
+108 statt 103 von 139 Dateien ohne Befund. Die beiden dichtesten Dateien liegen weiter in
+`tiktok stream/`, das nicht zu dieser App gehört.
+
+`PJ13` — drei SEO-Bausteine, die im Quelltext fehlten:
+`speakable` im `WebPage`-Knoten von `base.html` (XPath auf `<title>` und die
+Meta-Beschreibung, wie in Googles Beispiel — ein CSS-Selektor hätte eine neue Klasse
+an einem sichtbaren Element gebraucht); der Antwortsatz der Produktseiten als eigener
+Vorlagenteil `antwort_produkt.html` (Ausgabe wortgleich); IndexNow (`shop1/indexnow.py`,
+Route `/indexnow-schluessel.txt`, Signal `produkt_an_indexnow`): neue, geänderte,
+verkaufte und gelöschte Stücke gehen nach dem Abschluss der Transaktion an
+`api.indexnow.org`, in einem Pool mit einem Platz, mit Zeitgrenze. **Aus, bis
+`INDEXNOW_KEY` in Railway gesetzt ist** (8–128 Zeichen, Buchstaben/Ziffern/Bindestrich).
+**Warum IndexNow hier passt:** jedes Stück ist ein Einzelstück und nach dem Kauf
+inaktiv; Bing (Webmaster Tools seit 16.09.2026) erfährt das sofort statt beim nächsten
+Crawl. Google nimmt nicht teil, dort bleibt es bei der Sitemap. **Anders als der Rat**
+beim Antwort-Baustein: die Inhaltsseiten behalten ihren eigenen Antwortabsatz — er ist
+je Seite ein anderer Text, und `test_inhalt`/`test_geo` halten ihn schon fest; ein
+gemeinsames Element mit Klasse hätte die Designwache verletzt. Tests: `IndexNowTest`
+(`test_seo`), `test_speakable_zeigt_auf_titel_und_beschreibung_die_es_gibt` (`test_geo`).
+
 ## 18.09.2026 — Paket 267: Bildformat in der Adresse, gepackte Stildateien (`PF15`, `PF26`)
 
 `PF15` — der Filter `cloud` (`templatetags/custom_tags.py`) setzt die Endung jeder

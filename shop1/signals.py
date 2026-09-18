@@ -1,4 +1,5 @@
-"""Signale am Benutzerkonto: Profil anlegen und die Bestätigungsmail verschicken.
+"""Signale: am Benutzerkonto Profil anlegen und die Bestätigungsmail verschicken,
+am Produkt die geänderte Adresse per IndexNow melden.
 
 Eingebunden in ``apps.py`` (``ready``); die Mail geht über die Brevo-API
 (``utils.send_brevo_email``), nicht über SMTP.
@@ -6,13 +7,27 @@ Eingebunden in ``apps.py`` (``ready``); die Mail geht über die Brevo-API
 
 import logging
 
-from django.db.models.signals import post_save
+from django.db import transaction
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.conf import settings
-from .models import UserProfile
+from django.urls import reverse
+from . import indexnow
+from .models import Produkt, UserProfile
 
 _log = logging.getLogger('shop1')
+
+
+@receiver(post_save, sender=Produkt)
+@receiver(post_delete, sender=Produkt)
+def produkt_an_indexnow(sender, instance, raw=False, **kwargs):
+    """Neues, geändertes, verkauftes oder gelöschtes Stück melden – erst nach
+    dem Abschluss der Transaktion, und nicht beim ``loaddata`` in ``start.sh``."""
+    if raw or not instance.slug:
+        return
+    pfade = [instance.get_absolute_url(), reverse('produkte')]
+    transaction.on_commit(lambda: indexnow.melden(pfade))
 
 
 @receiver(post_save, sender=User)

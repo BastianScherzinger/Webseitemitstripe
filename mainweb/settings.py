@@ -279,6 +279,8 @@ else:
 
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@luviq-shop.de')
 SITE_URL = os.getenv('SITE_URL', 'https://luviq-luisa-production.up.railway.app')
+# IndexNow (shop1/indexnow.py): leer = aus. Gemeldet wird unter dem Host von SITE_URL.
+INDEXNOW_KEY = os.getenv('INDEXNOW_KEY', '').strip()
 
 # ═══ SICHERHEITSEINSTELLUNGEN ═══
 
