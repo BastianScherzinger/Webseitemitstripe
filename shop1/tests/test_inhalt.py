@@ -28,8 +28,14 @@ class _Inhaltsleser(HTMLParser):
 
     _STUMM = ('script', 'style', 'noscript', 'template')
 
-    def __init__(self):
+    #: Was das Messwerkzeug zusätzlich aus ``<main>`` streicht (``crawl.py``,
+    #: ``_RAHMEN``) – auch einen ``<header>`` **innerhalb** des Inhalts.
+    _RAHMEN = ('nav', 'header', 'footer', 'aside')
+
+    def __init__(self, ohne_rahmen=False):
         super().__init__(convert_charrefs=True)
+        if ohne_rahmen:
+            self._STUMM = self._STUMM + self._RAHMEN
         self._im_main = False
         self._stumm = 0
         self.stuecke = []
@@ -51,9 +57,11 @@ class _Inhaltsleser(HTMLParser):
             self.stuecke.append(daten)
 
 
-def inhaltstext(html):
-    """Sichtbarer Text des Inhaltsbereichs, Leerraum auf ein Zeichen gekürzt."""
-    leser = _Inhaltsleser()
+def inhaltstext(html, ohne_rahmen=False):
+    """Sichtbarer Text des Inhaltsbereichs, Leerraum auf ein Zeichen gekürzt.
+    ``ohne_rahmen`` zählt wie das Messwerkzeug: ohne ``<header>``, ``<nav>``,
+    ``<footer>`` und ``<aside>``, auch wenn sie in ``<main>`` stehen."""
+    leser = _Inhaltsleser(ohne_rahmen)
     leser.feed(html)
     return ' '.join(' '.join(leser.stuecke).split())
 
@@ -106,13 +114,17 @@ UMFANG_PRODUKT_SEITE = '/produkt/bemalte-bomberjacke/'
 #: Leerraum getrennte Stück (auch „·" und „★") und kommt ohne Produkt auf
 #: 732, 616 und 928 gegen die Ziele 700, 600 und 900. Die Produktseiten
 #: bleiben bei 211: ihr Zuwachs bräuchte eine eigene Beschreibung je Stück.
+#:
+#: IS17 (2026-09-18): ``/gaestebuch/`` 524 (vorher 300) – der Zuwachs steht
+#: ausserhalb des ``<header>``, den das Werkzeug nicht mitzählt; nach dessen
+#: Zählweise 319 statt 94, ohne Beiträge.
 MINDESTWOERTER = {
     '/': 690,
     '/produkte/': 595,
     '/kontakt/': 235,
     '/ueber_uns/': 380,
     '/liefergebiet/': 300,
-    '/gaestebuch/': 290,
+    '/gaestebuch/': 510,
     '/impressum/': 70,
     '/datenschutz/': 430,
     '/agb/': 230,
@@ -365,6 +377,16 @@ class UmfangTest(LuviqTestCase):
                     f'{pfad} hat im Inhaltsbereich nur noch {woerter} Wörter '
                     f'(Stand nach Welle 5: mindestens {mindestens})',
                 )
+
+    def test_das_gaestebuch_hat_300_eigenwoerter_ausserhalb_seines_kopfes(self):
+        """IS17 (2026-09-18): Das Messwerkzeug streicht jeden ``<header>``,
+        auch den im Inhalt – und genau dort stand der Text, mit dem IS19 das
+        Gästebuch auf 300 Wörter gebracht hatte. Gemessen wurden live 130,
+        ohne Beiträge 94. Verhindert, dass die Seite ohne einen einzigen
+        Beitrag wieder unter 300 Eigenwörter fällt; gezählt wird wie im
+        Werkzeug jedes durch Leerraum getrennte Stück."""
+        text = inhaltstext(self.hole('/gaestebuch/').content.decode(), ohne_rahmen=True)
+        self.assertGreaterEqual(len(text.split()), 300, text[:300])
 
     def test_jede_inhaltsseite_ist_in_der_schwellenliste(self):
         """Verhindert, dass eine neue Inhaltsseite ungemessen bleibt: wer
