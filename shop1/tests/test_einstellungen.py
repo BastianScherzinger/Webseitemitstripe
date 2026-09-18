@@ -1075,3 +1075,43 @@ class MailPruefbefehlTest(LuviqTestCase):
             befehl._pruefe_smtp_anmeldung()
         self.assertEqual(len(befehl.fehler), 1, befehl.fehler)
         self.assertIn('Connection timed out', befehl.fehler[0])
+
+
+class DeployDateienTest(LuviqTestCase):
+    """VL02 (2026-09-18): ``railway.json`` und ``runtime.txt`` sagen dasselbe
+    wie der ``Dockerfile``, nach dem Railway baut. Eine zweite Angabe, die
+    still abweicht, wäre schlimmer als keine: ``railway.json`` gewinnt auf
+    Railway gegen das ``CMD`` des Images."""
+
+    WURZEL = Path(settings.BASE_DIR)
+
+    def _dockerfile(self):
+        return (self.WURZEL / 'Dockerfile').read_text(encoding='utf-8')
+
+    def test_railway_baut_nach_dem_dockerfile_und_startet_start_sh(self):
+        """Verhindert, dass Railway auf einen anderen Bauweg oder einen
+        anderen Startbefehl springt als der Container."""
+        import json
+
+        railway = json.loads((self.WURZEL / 'railway.json').read_text(encoding='utf-8'))
+        self.assertEqual(railway['build']['builder'], 'DOCKERFILE')
+        self.assertEqual(railway['build']['dockerfilePath'], 'Dockerfile')
+        cmd = re.search(r'^CMD \["([^"]+)"\]', self._dockerfile(), re.M).group(1)
+        self.assertEqual(railway['deploy']['startCommand'], cmd)
+        self.assertEqual(cmd, '/app/start.sh')
+        # Ein healthcheckPath hinge an CanonicalHostMiddleware (doku, Offen 0a).
+        self.assertNotIn('healthcheckPath', railway['deploy'])
+
+    def test_runtime_txt_nennt_die_python_fassung_des_containers(self):
+        """Verhindert, dass ``runtime.txt`` eine andere Python-Fassung nennt
+        als das Basisabbild ``python:3.11-slim``."""
+        basis = re.search(r'^FROM python:(\d+\.\d+)', self._dockerfile(), re.M).group(1)
+        runtime = (self.WURZEL / 'runtime.txt').read_text(encoding='utf-8').strip()
+        self.assertEqual(runtime, f'python-{basis}')
+
+    def test_requirements_zieht_das_lockfile_mit(self):
+        """Verhindert, dass ``requirements.lock`` unbemerkt aus dem Bau fällt:
+        ohne die Constraint-Zeile installierte pip Unterabhängigkeiten frei."""
+        zeilen = (self.WURZEL / 'requirements.txt').read_text(encoding='utf-8').splitlines()
+        self.assertIn('--constraint requirements.lock', [z.strip() for z in zeilen])
+        self.assertIn('requirements.lock', self._dockerfile())
