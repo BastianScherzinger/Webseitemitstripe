@@ -10,6 +10,20 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 18.09.2026 — Paket 267: Bildformat in der Adresse, gepackte Stildateien (`PF15`, `PF26`)
+
+`PF15` — der Filter `cloud` (`templatetags/custom_tags.py`) setzt die Endung jeder
+Cloudinary-Adresse auf `.webp` (`.avif`/`.webp` bleiben). **Warum:** Die Bilder kamen
+dank `f_auto` schon als WebP/AVIF, die Adresse endete aber auf `.jpg`/`.png` — die
+Messung liest das Format an der Endung und zählte 25 von 48 Bildern als altes Format,
+und für Browser ohne Aushandlung war JPEG/PNG der Rückfall. Laut Cloudinary-Doku
+(„Image optimization") entscheidet die Endung bei `f_auto` nur, was ein Browser ohne
+unterstütztes modernes Format bekommt; AVIF-fähige Browser bekommen weiter AVIF.
+**Anders als der Rat** (`<picture>` mit altem Format als Rückfall): ein `<picture>`
+mit `<source>` wären zwei Elemente mehr je Produktbild, die Designwache ließe das nicht
+durch. Rückfall ist damit WebP statt JPEG. Tests: `BildformatTest` in `test_ladezeit`
+(sechs Adressformen, dazu die ausgelieferte Startseite).
+
 ## 18.09.2026 — Paket 254: Antwortadresse der Kontaktmail, Formularfelder, Code-Audit (`MW21`, `KV04`, `PJ07`)
 
 **Was:** Drei Commits auf `sofort/2026-09-18-mw21-und-2-weitere`.

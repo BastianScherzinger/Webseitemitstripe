@@ -1,7 +1,14 @@
 """Eigene Vorlagenfilter: ``mul``, ``is_admin`` und ``cloud`` (Cloudinary-Transformationen)."""
+import re
+from urllib.parse import urlsplit, urlunsplit
+
 from django import template
 
 register = template.Library()
+
+#: Endungen, die ``cloud`` durch ``.webp`` ersetzt; bereits moderne bleiben.
+_ALTFORMAT = re.compile(r'\.(jpe?g|png|gif|bmp|tiff?|heic|heif)$', re.IGNORECASE)
+_MODERN = re.compile(r'\.(webp|avif)$', re.IGNORECASE)
 
 
 @register.filter
@@ -35,6 +42,9 @@ def cloud(url, spec=''):
 
     Nicht-Cloudinary-URLs (z.B. lokales /media/ im Dev-Modus) werden
     unverändert zurückgegeben.
+
+    Endung ``.webp`` (PF15): mit ``f_auto`` ist sie nur der Rückfall für
+    Browser ohne AVIF/WebP-Aushandlung – WebP statt JPEG/PNG, ohne <picture>.
     """
     url = str(url or '')
     marker = '/image/upload/'
@@ -43,4 +53,8 @@ def cloud(url, spec=''):
     transform = 'f_auto,q_auto'
     if spec:
         transform += ',' + spec
-    return url.replace(marker, marker + transform + '/', 1)
+    teile = urlsplit(url.replace(marker, marker + transform + '/', 1))
+    if not _MODERN.search(teile.path):
+        pfad = _ALTFORMAT.sub('', teile.path) + '.webp'
+        teile = teile._replace(path=pfad)
+    return urlunsplit(teile)

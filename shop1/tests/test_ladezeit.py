@@ -135,9 +135,45 @@ class BildformatTest(LuviqTestCase):
         url = 'https://res.cloudinary.com/demo/image/upload/v1/produkte/jacke.jpg'
         self.assertEqual(
             cloud(url),
-            'https://res.cloudinary.com/demo/image/upload/f_auto,q_auto/v1/produkte/jacke.jpg',
+            'https://res.cloudinary.com/demo/image/upload/f_auto,q_auto/v1/produkte/jacke.webp',
         )
         self.assertIn('f_auto,q_auto,w_800,h_1000,c_fill/', cloud(url, 'w_800,h_1000,c_fill'))
+
+    def test_die_adresse_nennt_ein_modernes_format(self):
+        """Verhindert, dass die Adresse wieder auf .jpg oder .png endet (PF15).
+        Mit ``f_auto`` ist die Endung nur der Rückfall für Browser ohne
+        modernes Format – steht dort JPEG, bekommen diese das alte Format,
+        und die Messung zählt jedes Produktbild als altes Format."""
+        basis = 'https://res.cloudinary.com/demo/image/upload/'
+        faelle = {
+            'v1/a/foto.JPG': 'f_auto,q_auto,w_200/v1/a/foto.webp',
+            'v1/a/Photoroom_1.png': 'f_auto,q_auto,w_200/v1/a/Photoroom_1.webp',
+            'v1/a/ohne_endung': 'f_auto,q_auto,w_200/v1/a/ohne_endung.webp',
+            'v1/a/schon.avif': 'f_auto,q_auto,w_200/v1/a/schon.avif',
+            'v1/a/schon.webp': 'f_auto,q_auto,w_200/v1/a/schon.webp',
+            'v1/a/bild.png?_a=x': 'f_auto,q_auto,w_200/v1/a/bild.webp?_a=x',
+        }
+        for quelle, ziel in faelle.items():
+            with self.subTest(quelle=quelle):
+                self.assertEqual(cloud(basis + quelle, 'w_200'), basis + ziel)
+
+    def test_produktbilder_der_startseite_enden_auf_webp(self):
+        """Verhindert, dass eine Einbindung den Filter umgeht und die Seite
+        wieder Bilder im alten Format nennt – an der ausgelieferten Seite
+        geprüft, so wie die Messung sie liest."""
+        from unittest import mock
+
+        from ..models import Produkt
+
+        erzeuge_produkt('Bemalte Bomberjacke')
+        adresse = 'https://res.cloudinary.com/demo/image/upload/v1/media/produkte/IMG_1.jpg'
+        with mock.patch.object(Produkt.bild.field.storage, 'url', return_value=adresse):
+            Produkt.objects.update(bild='produkte/IMG_1.jpg')
+            bilder = _sammle(self.hole('/').content.decode()).bilder
+        cloudinary = [b['src'] for b in bilder if '/image/upload/' in b.get('src', '')]
+        self.assertTrue(cloudinary, 'Die Startseite zeigt kein Produktbild')
+        for quelle in cloudinary:
+            self.assertTrue(quelle.endswith('.webp'), quelle)
 
     def test_der_filter_laesst_fremde_adressen_unveraendert(self):
         """Verhindert, dass lokale ``/media/``-Adressen im Entwicklungsmodus
