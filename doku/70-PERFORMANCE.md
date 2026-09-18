@@ -1,11 +1,11 @@
 ---
 bereich: performance
 titel: Performance und Core Web Vitals
-stand: 2026-09-17
+stand: 2026-09-18
 status: teilweise
 fortschritt: 70
-zusammenfassung: Der LCP der Produktseite ist der teuerste Posten der Seite (Cloudinary-Bilder ohne WebP und ohne srcset); der Zweig bringt WebP, GZip, Cache und gthread, live ist davon nichts. PF31 (Skripte nicht von fremdem CDN) ist am 17.09.2026 in Paket 227 als nicht möglich beendet — Alpine, @alpinejs/intersect, GSAP und Three.js kommen weiter von cdn.jsdelivr.net, weil die Dateien nicht im Projekt liegen und der Lauf sie nicht holen konnte. Die gemessenen Werte stehen im erzeugten Block unter „Messwerte".
-offen: 8
+zusammenfassung: Der LCP der Produktseite ist der teuerste Posten der Seite (Cloudinary-Bilder ohne srcset). Paket 267 (18.09.2026, Zweig sofort/2026-09-18-kv11-und-2-weitere, 1737e74 und 5515bf3, nicht gemergt) bringt zwei Tempomassnahmen, beide anders eingebaut als geraten — PF15: der Filter cloud lässt jede Cloudinary-Adresse auf .webp enden, der Rückfall von f_auto ist damit WebP statt JPEG/PNG (kein picture-Element wegen der Designwache); PF26: start.sh packt die statischen Dateien nach collectstatic mit whitenoise.compress, sodass tailwind.css und style.css gzip-gepackt ausgehen (kein eingebettetes kritisches CSS). Ob der erste Inhalt mobil damit unter 1,8 s fällt, zeigt erst die Messung nach dem Deploy. PF31 (Skripte nicht von fremdem CDN) ist am 17.09.2026 in Paket 227 als nicht möglich beendet — Alpine, @alpinejs/intersect, GSAP und Three.js kommen weiter von cdn.jsdelivr.net, weil die Dateien nicht im Projekt liegen und der Lauf sie nicht holen konnte. Die gemessenen Werte stehen im erzeugten Block unter „Messwerte".
+offen: 9
 pagespeed_mobil: 91
 pagespeed_desktop: 93
 antwortzeit_ms: 8
@@ -98,7 +98,7 @@ sind — die Zahlen dazu stehen im Block oben:
 
 | Regel | Was offen ist |
 |---|---|
-| PF15 modernes Format | kein einziges Bild in WebP/AVIF |
+| PF15 modernes Format | Die Produktbilder kamen dank `f_auto` schon als WebP/AVIF, ihre Adresse endete aber auf `.jpg`/`.png` — die Messung liest das Format an der Endung. **Zweig Paket 267 (`1737e74`):** der Filter `cloud` setzt die Endung auf `.webp`; live wirkt das erst nach Merge und Deploy, nachgemessen ist es nicht |
 | PF16 mehrere Grössen | kein einziges Bild mit `srcset` |
 | PF18 `fetchpriority=high` | fehlt am ersten Bild im `<main>` |
 | PF19 LCP-Preload | fehlt auf `/produkte/` und `/kontakt/` |
@@ -130,6 +130,13 @@ sind — die Zahlen dazu stehen im Block oben:
 | 35 | Gunicorn `gthread`, 2 × 4 Threads, Timeout 30 s statt 120 s, Worker-Erneuerung nach 1.000 Anfragen (+ Jitter), kein `--preload` | `b0fba20` |
 | — | Testmodul `test_ladezeit` (9 Tests) hält die Bildattribute und Kopfangaben fest | Zweig |
 
+**Im Zweig `sofort/2026-09-18-kv11-und-2-weitere` (Paket 267, 18.09.2026), noch nicht gemergt, nicht live:**
+
+| Regel | Massnahme | Beleg |
+|---|---|---|
+| `PF15` (anders eingebaut) | Der Filter `cloud` (`shop1/templatetags/custom_tags.py`) setzt die Endung jeder Cloudinary-Adresse auf `.webp`; `.webp`/`.avif` bleiben, fremde und lokale Adressen bleiben unverändert. Mit `f_auto` entscheidet die Endung laut Cloudinary-Doku nur, was ein Browser ohne modernes Format bekommt — AVIF-fähige Browser bekommen weiter AVIF, der Rückfall ist WebP statt JPEG/PNG. **Anders als der Rat** (`<picture>` mit altem Format als Rückfall): das wären zwei Elemente mehr je Produktbild, die Designwache liesse es nicht durch. Tests: `BildformatTest` in `test_ladezeit` (sechs Adressformen und die ausgelieferte Startseite) | `1737e74` |
+| `PF26` (anders eingebaut) | `start.sh` packt die statischen Dateien nach `collectstatic` mit `python -m whitenoise.compress` (gzip). Vorher gingen `tailwind.css` und `style.css`, auf die der erste Inhalt wartet, ungepackt raus, weil `ManifestStaticFilesStorage` keine `.gz` anlegt und WhiteNoise nicht selbst packt. Gepackt sind beide laut Test kleiner als ein Drittel. **Anders als der Rat** (kritisches CSS einbetten): das hiesse Regeln aus den Stildateien in jede Seite zu verschieben, und die Stildateien stehen unter der Designwache des Tors. Tests: `StildateienGepacktTest` in `test_ladezeit`. **Nicht belegt:** ob der erste Inhalt mobil damit unter 1,8 s fällt — das zeigt erst die Messung nach dem Deploy | `5515bf3` |
+
 ## Offen
 
 Was zu tun ist. Wie weit die genannten Regeln gerade sind und mit welchem Beleg, steht im
@@ -138,10 +145,11 @@ erzeugten Block unter „Messwerte" — hier steht keine Messzahl.
 | Punkt | Regel |
 |---|---|
 | Zweig nach `main` — WebP, GZip, Cache, gthread und die kleinere Startseite wirken erst dann | PF15, PF16 |
-| Produktbilder aus Cloudinary in WebP/AVIF und mit `srcset` ausliefern (Cloudinary kann das über Transformationsparameter) — der Zweig fasst nur die statischen Bilder an. **`/produkte/` ist der teuerste LCP der Seite** | PF15, PF16, VL15 |
+| Produktbilder aus Cloudinary mit `srcset` ausliefern (Cloudinary kann das über Transformationsparameter). Das Format ist mit Paket 267 im Zweig angegangen (Endung `.webp`, siehe „Umgesetzt"); nach Merge und Deploy nachmessen, ob `PF15` die Bilder als modern zählt. **`/produkte/` ist der teuerste LCP der Seite** | PF15, PF16, VL15 |
+| Paket 267 mergen und nach dem Deploy nachmessen: den ersten Inhalt mobil (`PF26`) und die Bildformate (`PF15`); dazu im Browser prüfen, dass `tailwind.css` und `style.css` mit `Content-Encoding: gzip` ankommen | PF15, PF26 |
 | LCP-Bild je Schlüsselseite vorladen und mit `fetchpriority="high"` auszeichnen; das Logo ist heute überall das erste Bild | PF18, PF19 |
 | `PageVisit`/`VisitorLog`-Schreibvorgänge aus dem Request nehmen — sie laufen synchron gegen zwei Datenbanken. **Nicht wegen `PF10`** (das misst seit `2026-09-04a` die Serverzeit aus PageSpeed und ist bestanden), sondern weil eine Schreiboperation im Request unter Last der erste Engpass ist | — |
-| Critical CSS je Seitentyp inline, Hauptstilblatt asynchron; Schriften lokal (heute von `fonts.googleapis.com`) | VL16, RE07 |
+| Critical CSS je Seitentyp inline, Hauptstilblatt asynchron (in Paket 267 bewusst nicht gebaut — die Stildateien stehen unter der Designwache des Tors; stattdessen gepackt ausgeliefert); Schriften lokal (heute von `fonts.googleapis.com`) | VL16, RE07 |
 | Alpine.js und `@alpinejs/intersect` (`base.html`), GSAP und das nachgeladene Three.js (`index.html`) selbst ausliefern statt von `cdn.jsdelivr.net` — spart die Verbindung zu einem zweiten Host. Am 17.09.2026 (Paket 227) **nicht möglich:** keine der vier Dateien liegt im Projekt, der Lauf konnte sie nicht herunterladen; steht als „beim Kunden" im Bewertungsblock von [80-AUFGABEN.md](80-AUFGABEN.md). Mit den Dateien: nach `shop1/static/shop1/`, `src` auf `{% static %}`, `integrity` und `CSP_QUELLEN` nachziehen | PF31 |
 | `width`/`height` an den Bildern ohne Masse (Admin-Vorlagen, `index.html:38`, `produkt_detail.html:89`) | VL15 |
 | Lighthouse mobil auf 90 und Desktop auf 95 heben — die grössten Posten sind unbenutztes JavaScript und die Bildformate | PF01, PF02 |
