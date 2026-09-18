@@ -52,39 +52,43 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–17.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 18.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-17b) — **Gesamtstand 87,0 von 100**, Reifegrad „Solide“. 331 von 372 Regeln an 18 URLs und 137 Dateien (31.698 Zeilen) geprüft.
+**Messung vom 18.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-17b) — **Gesamtstand 83,8 von 100**, Reifegrad „Solide“. 329 von 372 Regeln an 14 URLs und 144 Dateien (33.071 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Konversion | **72** | Brauchbar |
-| Erreichbarkeit & Postfach | **75** | Solide |
-| Recht & Vertrauen | **76** | Solide |
-| Vorlagen-Konformität | **79** | Solide |
+| Substanz & Reichweite | **48** | Lückenhaft |
+| Konversion | **61** | Brauchbar |
+| GEO — KI-Sichtbarkeit | **78** | Solide |
+| Recht & Vertrauen | **79** | Solide |
+| Erreichbarkeit & Postfach | **79** | Solide |
 | Betrieb & Auslieferung | **80** | Solide |
 | SEO — Inhalt | **81** | Solide |
-| Substanz & Reichweite | **82** | Solide |
-| GEO — KI-Sichtbarkeit | **87** | Solide |
+| Vorlagen-Konformität | **82** | Solide |
 | Barrierefreiheit | **88** | Solide |
-| Code-Qualität & Projektreife | **90** | Referenz |
 | Performance & Core Web Vitals | **91** | Referenz |
-| SEO — Technik | **95** | Referenz |
-| Sicherheit | **96** | Referenz |
+| Sicherheit | **93** | Referenz |
+| Code-Qualität & Projektreife | **94** | Referenz |
+| SEO — Technik | **96** | Referenz |
 | Formulare & Preisrechner | **100** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 137 Dateien, **105 Befunde**, davon 0 kritisch und 39 wichtig.
+Quelltext: 144 Dateien, **83 Befunde**, davon 0 kritisch und 22 wichtig.
 
 Kritische Befunde:
 
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
-- **axe-core findet keine schweren Verstösse** (`BF29`) — 4 von 4 Seiten mit schweren Verstössen: color-contrast (4×)
-- **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 17 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /kontakt/, /datenschutz/, /agb/ … (+12)
-- **Keine Google-Schriften von fremden Servern nachgeladen** (`RE07`) — 17 von 17 Seiten laden Google-Schriften von fremden Servern: fonts.googleapis.com, https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700 · betroffen: /, /produkte/, /kontakt/ … (+14)
+- **Wissensinhalte vorhanden** (`SU04`) — 0 Wissensseiten, Zielgröße 3 — es gibt keinen einzigen Ratgeberbereich
+- **axe-core findet keine schweren Verstösse** (`BF29`) — 3 von 3 Seiten mit schweren Verstössen: color-contrast (3×)
+- **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 12 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /kontakt/, /datenschutz/, /gaestebuch/ … (+7)
+- **Keine Google-Schriften von fremden Servern nachgeladen** (`RE07`) — 12 von 12 Seiten laden Google-Schriften von fremden Servern: fonts.googleapis.com, https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700 · betroffen: /, /produkte/, /kontakt/ … (+9)
 - **Eine eigene Sicherung außerhalb des Hosters ist frisch und geprüft** (`BT15`) — keine einzige eigene Sicherung; der letzte Versuch scheiterte: Docker läuft nicht — ohne pg_dump keine externe Sicherung
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
-- **Kein nennenswerter Anteil dünner Seiten** (`IS19`) — 6% der Seiten sind dünn (1 von 17): /gaestebuch/ (130 W)
+- **Umfang passt zur Aufgabe der Seite** (`IS18`) — Unter dem Umfang, den ihre Aufgabe verlangt: 6 von 7 Seiten — /produkte/ (437/600 W), /produkt/custom-hoodie-mit-print/ (221/600 W), /produkt/custom-print-hoodie-1/ (219/600 W), /produkt/custom-pants-sold/ (219/600 W), /produkt/custom-print
+- **Genug eigener Inhalt insgesamt** (`SU02`) — 4.272 Eigenwörter über 12 Seiten, Zielgröße 12.000 (von 5.313 Wörtern Gesamttext); die umfangreichsten Seiten: / (777 W), /datenschutz/ (556 W), /produkte/ (437 W)
+- **Keine Kannibalisierung durch gleiche Hauptbegriffe** (`IS23`) — Von mehreren Seiten besetzte Hauptbegriffe: 1; betroffen sind 3 von 5 Seiten — custom print auf 3 Seiten (/produkt/custom-print-hoodie-1/, /produkt/custom-print-jacke/ … (+1))
+- **Genug rankfähige Seiten für das Geschäft** (`SU01`) — 12 rankfähige Seiten, Zielgröße für diese Geschäftsart 30 (Beispiele: /, /produkte/, /kontakt/)
 <!-- messung:ende -->
 
 Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen
