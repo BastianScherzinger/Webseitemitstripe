@@ -24,6 +24,20 @@ mit `<source>` wären zwei Elemente mehr je Produktbild, die Designwache ließe 
 durch. Rückfall ist damit WebP statt JPEG. Tests: `BildformatTest` in `test_ladezeit`
 (sechs Adressformen, dazu die ausgelieferte Startseite).
 
+`PF26` — `start.sh` packt die gesammelten statischen Dateien nach `collectstatic` mit
+`python -m whitenoise.compress` (in `whitenoise==6.12.0` enthalten, keine neue
+Abhängigkeit; ohne `brotli` nur gzip). **Warum:** `ManifestStaticFilesStorage` legt
+keine `.gz` an, und WhiteNoise packt nicht selbst, es liefert nur eine vorhandene
+`datei.gz` aus (`whitenoise/base.py:221`). Die beiden Stildateien, auf die jeder erste
+Inhalt wartet, gingen deshalb ungepackt raus: `tailwind.css` 42.944 → 7.809 Byte,
+`style.css` 14.627 → 4.362 Byte (gzip, im Test gemessen). **Anders als der Rat**
+(kritisches CSS einbetten): das hieße Regeln aus den Stildateien in jede Seite zu
+verschieben — die Stildateien stehen unter der Designwache des Tors, die Schriften
+laden schon nicht blockierend (`media="print"`, `display=swap`). **Nicht belegt:** ob
+der FCP damit unter 1,8 s fällt; 45 KB weniger vor dem ersten Inhalt sind bei
+gedrosseltem Mobilfunk grob 0,2–0,3 s, gemessen wird erst nach dem Deploy. Tests:
+`StildateienGepacktTest` in `test_ladezeit`.
+
 ## 18.09.2026 — Paket 254: Antwortadresse der Kontaktmail, Formularfelder, Code-Audit (`MW21`, `KV04`, `PJ07`)
 
 **Was:** Drei Commits auf `sofort/2026-09-18-mw21-und-2-weitere`.

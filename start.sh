@@ -35,6 +35,17 @@ python manage.py fix_pystore_schema
 echo "Collecting static files..."
 python manage.py collectstatic --noinput --clear || echo "WARNING: collectstatic failed"
 
+# ═══ STATISCHE DATEIEN PACKEN (PF26) ═══
+# ManifestStaticFilesStorage legt keine .gz-Fassungen an, und WhiteNoise
+# packt nicht selbst, sondern liefert nur eine vorhandene "datei.gz" aus
+# (whitenoise/base.py). Ohne diesen Schritt gingen die beiden Stildateien,
+# die vor dem ersten Inhalt geladen sein muessen, ungepackt raus: 57 KB
+# statt 12 KB. Eigener Aufruf nach collectstatic statt
+# CompressedManifestStaticFilesStorage (siehe settings.py, STORAGES).
+# Nicht blockierend: ohne .gz liefert WhiteNoise wie bisher ungepackt.
+echo "Compressing static files..."
+python -m whitenoise.compress --quiet staticfiles || echo "WARNING: compressing static files failed, serving uncompressed"
+
 # ═══ UMGEBUNG UND AUSGELIEFERTE SEITE PRUEFEN ═══
 # Nach collectstatic (die Seiten brauchen das Manifest), vor Gunicorn.
 # Bewusst NICHT blockierend: ein Fehler steht im Log, die Seite geht

@@ -209,3 +209,45 @@ class SchriftenTest(LuviqTestCase):
         for stelle in re.findall(r'fonts\.googleapis\.com/css2[^"\']+', seite):
             with self.subTest(stelle=stelle[:60]):
                 self.assertIn('display=swap', stelle)
+
+
+class StildateienGepacktTest(LuviqTestCase):
+    """Die Stildateien vor dem ersten Inhalt gehen gepackt raus (PF26)."""
+
+    def test_start_packt_die_statischen_dateien_nach_dem_sammeln(self):
+        """Verhindert, dass der Packschritt aus ``start.sh`` verschwindet oder
+        vor ``collectstatic`` rutscht – ``--clear`` löschte die .gz-Dateien
+        dann wieder. WhiteNoise packt nicht selbst, es liefert nur eine
+        vorhandene ``datei.gz`` aus; ohne sie gehen beide Stildateien, auf die
+        der erste Inhalt wartet, ungepackt raus."""
+        start = (Path(settings.BASE_DIR) / 'start.sh').read_text(encoding='utf-8')
+        befehle = [z.strip() for z in start.splitlines() if z.strip().startswith(('python', 'exec'))]
+        packen = [z for z in befehle if 'whitenoise.compress' in z]
+        self.assertEqual(len(packen), 1, befehle)
+        self.assertIn(f' {Path(settings.STATIC_ROOT).name} ', packen[0] + ' ')
+        self.assertIn('||', packen[0], 'Der Packschritt darf den Start nicht abbrechen')
+        stelle = befehle.index(packen[0])
+        sammeln = next(i for i, z in enumerate(befehle) if 'collectstatic' in z)
+        server = next(i for i, z in enumerate(befehle) if 'gunicorn' in z)
+        self.assertLess(sammeln, stelle)
+        self.assertLess(stelle, server)
+
+    def test_gepackt_sind_die_stildateien_weniger_als_ein_drittel(self):
+        """Hält fest, was der Schritt bringt: dieselbe Packung wie beim Start,
+        an den echten Stildateien gemessen."""
+        import shutil
+        import tempfile
+
+        from whitenoise.compress import Compressor
+
+        packer = Compressor(use_brotli=False, quiet=True)
+        with tempfile.TemporaryDirectory() as ordner:
+            for name in ('tailwind.css', 'style.css'):
+                quelle = Path(settings.BASE_DIR) / 'shop1' / 'static' / 'shop1' / name
+                ziel = Path(ordner) / name
+                shutil.copyfile(quelle, ziel)
+                with self.subTest(datei=name):
+                    self.assertTrue(packer.should_compress(name))
+                    gepackt = packer.compress(str(ziel))
+                    self.assertEqual(gepackt, [str(ziel) + '.gz'])
+                    self.assertLess(Path(gepackt[0]).stat().st_size * 3, quelle.stat().st_size)
