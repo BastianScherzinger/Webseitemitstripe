@@ -10,6 +10,16 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 18.09.2026 spät — Design-Upgrade beschlossen, nicht gebaut (nur Doku)
+
+**Was:** Bastian hat nach drei Entwurfsrunden B3 „Nachtausgabe“ mit Hero H4 „Panorama“ gewählt, vielleicht mit
+einem anderen Hero-Foto. `doku/20-DESIGN.md` verweist jetzt auf Vorgabe und Bauplan in
+`C:\Users\basti\Desktop\Webagentur Scherzinger\Design\luviq\ENTSCHEIDUNG-UND-BAUPLAN.md`.
+**Warum:** Dort stand „Keine Neugestaltung geplant“. Das stimmt nicht mehr, und wer als Nächstes am
+Aussehen arbeitet, muss die Entscheidung finden. Am Code ist nichts geändert.
+
+---
+
 ## 18.09.2026 abends — Archiv statt „kommender Drop" (Zweig `recht/2026-09-18-archiv-statt-verkauf`, `c64285f`)
 
 **Was:** Ohne Verkauf (`VERKAUF_AKTIV` aus) erscheinen die Stücke als **Archiv
