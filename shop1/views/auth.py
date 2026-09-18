@@ -1,5 +1,7 @@
 """Authentifizierung und Benutzerprofil: Login, Registrierung, Profil, E-Mail-Verifikation."""
 
+import logging
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -9,10 +11,13 @@ from django.core.exceptions import ValidationError
 
 from ..forms import CustomUserCreationForm, UserProfileForm
 from ..models import UserProfile, Order
-from ._helpers import _is_admin, _get_or_create_cart, _sync_session_to_db, zu_viele_anfragen
+from ._helpers import _is_admin, _sync_session_to_db, zu_viele_anfragen
+
+_log = logging.getLogger('shop1')
 
 
 def login(request):
+    """Anmeldung; übernimmt den Sitzungs-Warenkorb ins Konto (``_sync_session_to_db``)."""
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -48,6 +53,7 @@ def logout(request):
 # noch nicht angemeldet. Geschrieben wird nur, was das geprüfte Formular
 # durchlässt (CustomUserCreationForm), und django-axes begrenzt die Versuche.
 def register(request):
+    """Registrierung; die Bestätigungsmail verschickt das Signal in ``signals.py``."""
     if request.method == 'POST':
         # Drosselung je IP (17.09.2026): Jede Registrierung schickt eine Mail an
         # die eingetippte Adresse. django-axes zaehlt nur Anmeldeversuche.
@@ -67,6 +73,7 @@ def register(request):
                     f'Prüfe dein Postfach (auch Spam-Ordner).',
                 )
             except Exception:
+                _log.exception('Erfolgsmeldung der Registrierung nicht setzbar (Benutzer %s)', user.pk)
                 messages.success(request, 'Account erfolgreich erstellt! Bitte melden Sie sich an.')
             return redirect('login')
         else:

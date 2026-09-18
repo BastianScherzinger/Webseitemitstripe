@@ -11,11 +11,12 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.shortcuts import redirect, render
-from django.http import HttpResponse, HttpResponsePermanentRedirect, JsonResponse
+from django.http import Http404, HttpResponse, HttpResponsePermanentRedirect, JsonResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
 
+from .. import indexnow
 from ..models import Produkt, Subscriber
 # Das Register SEITEN_STAND (Routenname → Datum) liegt seit Schritt 16 in
 # ``shop1/seiten_stand.py``, weil auch der Kontextprozessor es liest. Hier
@@ -93,6 +94,14 @@ def robots_txt(request):
         f"# Kurzfassung fuer Antwortmaschinen: {request.build_absolute_uri('/llms.txt')}",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
+def indexnow_schluessel(request):
+    """Schlüsseldatei für IndexNow (``shop1/indexnow.py``); ohne Schlüssel 404."""
+    wert = indexnow.schluessel()
+    if not wert:
+        raise Http404('IndexNow ist nicht eingerichtet.')
+    return HttpResponse(wert, content_type='text/plain; charset=utf-8')
 
 
 #: Wissensseiten für den Abschnitt „Wissen" der llms.txt: Tripel aus
@@ -418,7 +427,10 @@ def newsletter_subscribe(request):
         try:
             data = json.loads(request.body)
             email = data.get('email', '').strip()
-        except Exception:
+        except (ValueError, AttributeError):
+            # Kein JSON (ValueError, auch UnicodeDecodeError) oder JSON ohne
+            # Objekt bzw. ohne Text unter "email" (AttributeError): dann kam
+            # das Formular klassisch als POST-Felder.
             email = request.POST.get('email', '').strip()
 
         # Serverseitige Prüfung (FO06): ``type="email"`` im Formular umgeht

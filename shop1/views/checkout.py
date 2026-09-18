@@ -39,17 +39,17 @@ def _verify_paypal_order(paypal_order_id, expected_amount):
     try:
         token_resp = requests.post(
             f'{_paypal_api_base()}/v1/oauth2/token',
+            timeout=10,
             auth=(client_id, secret),
             data={'grant_type': 'client_credentials'},
-            timeout=10,
         )
         token_resp.raise_for_status()
         access_token = token_resp.json()['access_token']
 
         order_resp = requests.get(
             f'{_paypal_api_base()}/v2/checkout/orders/{paypal_order_id}',
-            headers={'Authorization': f'Bearer {access_token}'},
             timeout=10,
+            headers={'Authorization': f'Bearer {access_token}'},
         )
         if order_resp.status_code != 200:
             return False
@@ -140,6 +140,7 @@ def checkout(request):
             return redirect('payment', order_id=order.id)
 
         except Exception:
+            _log.exception('Bestellung konnte nicht angelegt werden (Benutzer %s)', request.user.pk)
             messages.error(request, 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.')
             return redirect('checkout')
 
@@ -239,6 +240,7 @@ def paypal_capture(request, order_id):
         return JsonResponse({'status': 'success', 'redirect': f'/payment/success/{order.id}/'})
 
     except Exception:
+        _log.exception('PayPal-Abschluss für Bestellung %s fehlgeschlagen', order.id)
         return JsonResponse({'error': 'Zahlung konnte nicht verarbeitet werden.'}, status=500)
 
 

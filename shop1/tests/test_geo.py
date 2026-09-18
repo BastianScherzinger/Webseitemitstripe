@@ -281,6 +281,22 @@ class StrukturierteDatenTest(LuviqTestCase):
                         f'{pfad}: Schema sagt {stand}, Sitemap sagt {lastmod_je_pfad[pfad]}',
                     )
 
+    def test_speakable_zeigt_auf_titel_und_beschreibung_die_es_gibt(self):
+        """Verhindert ein ``speakable``, das ins Leere zeigt (PJ13): die beiden
+        XPath-Ziele müssen auf jeder Inhaltsseite genau einmal und nicht leer
+        vorhanden sein – sonst hat ein Sprachassistent nichts vorzulesen."""
+        for pfad in INHALTSSEITEN:
+            with self.subTest(pfad=pfad):
+                inhalt = self.hole(pfad).content.decode()
+                seite = [k for k in schema_knoten(inhalt) if k.get('@type') == 'WebPage'][0]
+                sprechbar = seite.get('speakable', {})
+                self.assertEqual(sprechbar.get('@type'), 'SpeakableSpecification')
+                self.assertEqual(sprechbar.get('xpath'), [
+                    '/html/head/title', "/html/head/meta[@name='description']/@content",
+                ])
+                self.assertEqual(len(re.findall(r'<title>\s*\S', inhalt)), 1, pfad)
+                self.assertEqual(len(re.findall(r'<meta name="description" content="[^"]+"', inhalt)), 1, pfad)
+
     def test_die_person_hinter_der_seite_steht_genau_einmal_im_graphen(self):
         """Verhindert zwei Personen, wo es eine gibt: vor diesem Lauf war die
         Gründerin als namenloser Knoten in ``founder`` eingebettet und auf

@@ -20,6 +20,12 @@ from django.urls.converters import (
 )
 
 from ..models import Cart, CartItem, Comment, Order, Werbung
+# Direkt aus den Modulen, nicht über ``views``: dort überdeckt der Re-Export
+# gleichnamige Module (``views.checkout`` ist die Funktion, nicht das Modul).
+from ..views.auth import login, profil, register, verify_email
+from ..views.cart import add_to_cart, update_cart, warenkorb
+from ..views.checkout import checkout, payment, paypal_capture
+from ..views.gaestebuch import comment_add, gaestebuch
 from ._basis import (
     ADMIN_SEITEN,
     GESCHUETZTE_SEITEN,
@@ -227,6 +233,35 @@ class ZugriffsschutzTest(LuviqTestCase):
         for pfad in ADMIN_SEITEN:
             with self.subTest(pfad=pfad):
                 self.assertEqual(self.hole(pfad).status_code, 200)
+
+
+class RoutenzuordnungTest(LuviqTestCase):
+    """``urls.py`` sieht nur ``views`` – ob eine Route bei der Funktion ihres
+    Moduls ankommt, hängt am Re-Export in ``views/__init__.py``."""
+
+    ZUORDNUNG = (
+        ('login', (), login),
+        ('register', (), register),
+        ('profil', (), profil),
+        ('verify_email', ('abc',), verify_email),
+        ('warenkorb', (), warenkorb),
+        ('add_to_cart', (1,), add_to_cart),
+        ('update_cart', ('stueck',), update_cart),
+        ('checkout', (), checkout),
+        ('payment', (1,), payment),
+        ('paypal_capture', (1,), paypal_capture),
+        ('gaestebuch', (), gaestebuch),
+        ('comment_add', (), comment_add),
+    )
+
+    def test_jede_route_landet_bei_der_funktion_ihres_moduls(self):
+        """Verhindert, dass ein gleichnamiger Helfer oder eine liegengebliebene
+        Altfassung im Package die eigentliche View verdeckt – die Seite
+        antwortet dann weiter, aber mit fremdem Verhalten (etwa ein Checkout
+        ohne serverseitige PayPal-Prüfung)."""
+        for name, argumente, funktion in self.ZUORDNUNG:
+            with self.subTest(route=name):
+                self.assertIs(resolve(reverse(name, args=argumente)).func, funktion)
 
 
 #: Ein Attributwert in Anführungszeichen, auf den ohne Leerzeichen direkt das
