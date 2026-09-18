@@ -20,7 +20,7 @@ Modul wird bei jedem Request aus dem Kontextprozessor gelesen.
 SEITEN_STAND = {
     'home':         '2026-09-11',
     'produkte':     '2026-09-11',
-    'gaestebuch':   '2026-09-01',
+    'gaestebuch':   '2026-09-18',
     'ueber_uns':    '2026-09-01',
     'liefergebiet': '2026-09-01',
     'kontakt':      '2026-09-17',
