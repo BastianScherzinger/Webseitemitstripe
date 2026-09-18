@@ -12,6 +12,9 @@ from xml.etree import ElementTree
 
 from django.conf import settings
 from django.test import override_settings
+from django.urls import reverse
+
+from .. import indexnow
 from ..models import META_BESCHREIBUNG_MAX, META_BESCHREIBUNG_ZUSATZ, META_TITEL_MAX, META_TITEL_ZUSAETZE
 from ..seiten_stand import SEITEN_STAND
 from ..views.wissen import WISSEN_BEITRAEGE
@@ -52,6 +55,61 @@ ORT_ODER_NUTZEN = (
     'alsfeld', 'hessen', 'fulda', 'gießen',
     'handbemalt', 'vintage', 'unikat', 'upcycling', 'second hand', 'second-hand',
 )
+
+
+_SCHLUESSEL = 'luviq-test-schluessel'
+_POOL = 'shop1.indexnow._POOL'
+
+
+class IndexNowTest(LuviqTestCase):
+    """IndexNow (``shop1/indexnow.py``): aus ohne Schlüssel, und mit Schlüssel
+    passen Schlüsseldatei, Meldung und Auslöser zusammen."""
+
+    def test_ohne_schluessel_gibt_es_weder_datei_noch_meldung(self):
+        """Verhindert, dass der Shop ohne eingerichteten Schlüssel Meldungen
+        verschickt, die jede Suchmaschine mit 403 ablehnt."""
+        self.assertEqual(self.hole('/indexnow-schluessel.txt').status_code, 404)
+        with mock.patch(_POOL) as pool:
+            self.assertFalse(indexnow.melden(['/produkte/']))
+            erzeuge_produkt('Stille Jacke')
+        pool.submit.assert_not_called()
+
+    @override_settings(INDEXNOW_KEY='kurz')
+    def test_ein_ungueltiger_schluessel_zaehlt_als_keiner(self):
+        """IndexNow verlangt 8–128 Zeichen; ein zu kurzer Wert würde
+        ausgeliefert und trotzdem abgelehnt."""
+        self.assertEqual(indexnow.schluessel(), '')
+        self.assertEqual(self.hole('/indexnow-schluessel.txt').status_code, 404)
+
+    @override_settings(INDEXNOW_KEY=_SCHLUESSEL, SITE_URL='https://www.beispiel.invalid/')
+    def test_datei_und_meldung_nennen_denselben_schluessel_und_ort(self):
+        """Verhindert eine Meldung, deren ``keyLocation`` auf eine Adresse
+        zeigt, unter der die Seite den Schlüssel nicht ausliefert."""
+        antwort = self.hole('/indexnow-schluessel.txt')
+        self.assertEqual(antwort.status_code, 200)
+        self.assertEqual(antwort.content.decode(), _SCHLUESSEL)
+        self.assertEqual(reverse('indexnow_schluessel'), indexnow.SCHLUESSEL_PFAD)
+        self.assertEqual(indexnow.nutzlast(['/produkte/', '/produkte/']), {
+            'host': 'www.beispiel.invalid',
+            'key': _SCHLUESSEL,
+            'keyLocation': 'https://www.beispiel.invalid/indexnow-schluessel.txt',
+            'urlList': ['https://www.beispiel.invalid/produkte/'],
+        })
+
+    @override_settings(INDEXNOW_KEY=_SCHLUESSEL)
+    def test_ein_verkauftes_stueck_wird_nach_dem_speichern_gemeldet(self):
+        """Das Einzelstück ist nach dem Kauf inaktiv; seine Adresse und die
+        Übersicht gehen erst nach dem Abschluss der Transaktion hinaus."""
+        produkt = erzeuge_produkt('Gemeldete Jacke')
+        with mock.patch(_POOL) as pool:
+            with self.captureOnCommitCallbacks(execute=True):
+                produkt.aktiv = False
+                produkt.save()
+                pool.submit.assert_not_called()
+        pool.submit.assert_called_once()
+        adressen = pool.submit.call_args.args[1]['urlList']
+        self.assertTrue(adressen[0].endswith(produkt.get_absolute_url()), adressen)
+        self.assertTrue(adressen[1].endswith('/produkte/'), adressen)
 
 
 class SitemapTest(LuviqTestCase):

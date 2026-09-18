@@ -597,6 +597,19 @@ class PruefbefehlTest(LuviqTestCase):
 
         self.assertEqual(code, 1 if fehler else 0, text)
 
+    def test_pruefhost_nimmt_nur_einen_erlaubten_host(self):
+        """Verhindert, dass der Befehl seine Seitenabrufe gegen einen Host
+        schickt, den ``ALLOWED_HOSTS`` ablehnt – dann meldete er jede
+        Sitemap-Adresse mit 400, obwohl die Seite heil ist."""
+        from ..management.commands.pruefe_seite import pruefhost
+
+        with self.settings(CANONICAL_HOST='www.beispiel.invalid',
+                           ALLOWED_HOSTS=['www.beispiel.invalid']):
+            self.assertEqual(pruefhost(), 'www.beispiel.invalid')
+        with self.settings(CANONICAL_HOST='', SITE_URL='https://fremd.invalid',
+                           ALLOWED_HOSTS=['.up.railway.app']):
+            self.assertEqual(pruefhost(), 'localhost')
+
     def test_debug_wird_als_fehler_gemeldet(self):
         """Verhindert ein unbemerktes DEBUG=True in der Betriebsumgebung –
         der teuerste Ein-Schalter-Fehler im ganzen Projekt."""
@@ -1119,6 +1132,21 @@ class MailPruefbefehlTest(LuviqTestCase):
             befehl._pruefe_smtp_anmeldung()
         self.assertEqual(len(befehl.fehler), 1, befehl.fehler)
         self.assertIn('Connection timed out', befehl.fehler[0])
+
+    def test_vorgabeabsender_liegt_auf_der_eigenen_domain(self):
+        """MW22: Ohne gesetzte Umgebungsvariable verschickte der Shop als
+        ``noreply@luviq-shop.de`` – eine Domain, die es nicht gibt und für
+        die sich kein SPF/DKIM setzen lässt. Die Vorgabe muss auf
+        ``luviq-alsfeld.com`` liegen, und ``pruefe_mail`` muss denselben Wert
+        als Vorgabe kennen, sonst warnt er am falschen Wert."""
+        from ..management.commands.pruefe_mail import STANDARD_ABSENDER
+
+        with mock.patch.dict(os.environ, {}):
+            os.environ.pop('DEFAULT_FROM_EMAIL', None)
+            betrieb = lade_einstellungen(BETRIEBSUMGEBUNG)
+        self.assertTrue(betrieb.DEFAULT_FROM_EMAIL.endswith('@luviq-alsfeld.com'),
+                        betrieb.DEFAULT_FROM_EMAIL)
+        self.assertEqual(betrieb.DEFAULT_FROM_EMAIL, STANDARD_ABSENDER)
 
 
 class DeployDateienTest(LuviqTestCase):

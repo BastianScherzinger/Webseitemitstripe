@@ -1,3 +1,5 @@
+"""Formulare für Konto (Registrierung, Profil) und das eigene Admin-Panel (Produkte, Benutzer)."""
+
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -168,7 +170,9 @@ class UserProfileForm(forms.ModelForm):
             'postleitzahl': forms.TextInput(attrs={'class': 'form-control'}),
             'stadt': forms.TextInput(attrs={'class': 'form-control'}),
             'land': forms.TextInput(attrs={'class': 'form-control'}),
-            'aktiv': forms.CheckboxInput(attrs={'class': 'w-6 h-6 rounded-lg bg-white/5 border-white/10 text-glow-orange focus:ring-glow-orange'}),
+            'aktiv': forms.CheckboxInput(attrs={
+                'class': 'w-6 h-6 rounded-lg bg-white/5 border-white/10 text-glow-orange focus:ring-glow-orange'
+            }),
             'lagerbestand': forms.NumberInput(attrs={'class': 'form-input w-full p-4 rounded-xl', 'min': '0'}),
             'geburtsdatum': forms.DateInput(attrs={
                 'class': 'form-control',
@@ -259,8 +263,10 @@ class AdminUserEditForm(forms.ModelForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
     first_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     last_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    is_staff = forms.BooleanField(required=False, label="Mitarbeiter-Status (Produkte)", widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
-    is_superuser = forms.BooleanField(required=False, label="Admin-Status (System)", widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    is_staff = forms.BooleanField(required=False, label="Mitarbeiter-Status (Produkte)",
+                                  widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    is_superuser = forms.BooleanField(required=False, label="Admin-Status (System)",
+                                      widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
     # Profile-Felder
     telefon = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -268,7 +274,8 @@ class AdminUserEditForm(forms.ModelForm):
     postleitzahl = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     stadt = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     land = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email_verified = forms.BooleanField(required=False, label="Email verifiziert", widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    email_verified = forms.BooleanField(required=False, label="Email verifiziert",
+                                        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
     class Meta:
         model = User
@@ -305,9 +312,12 @@ class AdminUserEditForm(forms.ModelForm):
 
 class AdminUserCreationForm(CustomUserCreationForm):
     """Erweiterte Creation Form für Admins, um direkt Status zu setzen"""
-    is_staff = forms.BooleanField(required=False, label="Mitarbeiter-Status (Produkte)", widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
-    is_superuser = forms.BooleanField(required=False, label="Admin-Status (System)", widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
-    email_verified = forms.BooleanField(required=False, initial=True, label="Email direkt verifizieren", widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    is_staff = forms.BooleanField(required=False, label="Mitarbeiter-Status (Produkte)",
+                                  widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    is_superuser = forms.BooleanField(required=False, label="Admin-Status (System)",
+                                      widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    email_verified = forms.BooleanField(required=False, initial=True, label="Email direkt verifizieren",
+                                        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
     def save(self, commit=True):
         user = super().save(commit=False)

@@ -1,13 +1,33 @@
+"""Signale: am Benutzerkonto Profil anlegen und die Bestätigungsmail verschicken,
+am Produkt die geänderte Adresse per IndexNow melden.
+
+Eingebunden in ``apps.py`` (``ready``); die Mail geht über die Brevo-API
+(``utils.send_brevo_email``), nicht über SMTP.
+"""
+
 import logging
 
-from django.db.models.signals import post_save
+from django.db import transaction
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from django.core.mail import send_mail
 from django.conf import settings
-from .models import UserProfile
+from django.urls import reverse
+from . import indexnow
+from .models import Produkt, UserProfile
 
 _log = logging.getLogger('shop1')
+
+
+@receiver(post_save, sender=Produkt)
+@receiver(post_delete, sender=Produkt)
+def produkt_an_indexnow(sender, instance, raw=False, **kwargs):
+    """Neues, geändertes, verkauftes oder gelöschtes Stück melden – erst nach
+    dem Abschluss der Transaktion, und nicht beim ``loaddata`` in ``start.sh``."""
+    if raw or not instance.slug:
+        return
+    pfade = [instance.get_absolute_url(), reverse('produkte')]
+    transaction.on_commit(lambda: indexnow.melden(pfade))
 
 
 @receiver(post_save, sender=User)
@@ -61,7 +81,10 @@ def send_verification_email(user, profile):
             <h2>Hallo,</h2>
             <p>vielen Dank für deine Registrierung bei Luviq Universe!</p>
             <p>Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Button klickst:</p>
-            <a href="{verification_url}" style="background-color: #ff6a00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">E-Mail bestätigen</a>
+            <a href="{verification_url}"
+               style="background-color: #ff6a00; color: white; padding: 10px 20px;
+                      text-decoration: none; border-radius: 5px; display: inline-block;"
+               >E-Mail bestätigen</a>
             <p>Oder kopiere diesen Link in deinen Browser:<br>{verification_url}</p>
             <p>Viele Grüße,<br>Dein Luviq Universe Team</p>
         </body>

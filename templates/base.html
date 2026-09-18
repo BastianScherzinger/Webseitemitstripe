@@ -150,6 +150,11 @@
           "url": "{{ request.build_absolute_uri }}",{% if seite %}
           "name": "{{ seite.name|escapejs }}",
           "dateModified": "{{ seite.stand }}",{% endif %}
+          {% comment %}speakable (PJ13): Titel und Meta-Beschreibung als die Teile, die ein Sprachassistent vorlesen soll - beide stehen auf jeder Seite genau einmal (pruefe_seite, test_seo), und beide sind knapp und in ganzen Saetzen. XPath statt CSS-Selektor, weil kein sichtbares Element eine Klasse dafuer bekommen darf (Designwache).{% endcomment %}
+          "speakable": {
+            "@type": "SpeakableSpecification",
+            "xpath": ["/html/head/title", "/html/head/meta[@name='description']/@content"]
+          },
           "isPartOf": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#website"},
           "author": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
           "inLanguage": "de-DE"
