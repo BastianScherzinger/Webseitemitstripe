@@ -52,9 +52,9 @@ BREVO_KONTO = 'https://api.brevo.com/v3/account'
 BREVO_VERSAND = 'https://api.brevo.com/v3/smtp/email'
 
 #: Absender, den ``settings.py`` ohne gesetzte Umgebungsvariable einsetzt.
-#: Brevo verschickt nur von einer verifizierten Domain – dieser Wert ist
-#: keine.
-STANDARD_ABSENDER = 'noreply@luviq-shop.de'
+#: Er liegt auf der eigenen Domain (MW22); Brevo verschickt davon aber erst,
+#: wenn luviq-alsfeld.com im Brevo-Konto als Absenderdomain bestätigt ist.
+STANDARD_ABSENDER = 'noreply@luviq-alsfeld.com'
 
 #: Sekunden, die eine Anmeldung höchstens dauern darf. Kurz genug, dass der
 #: Befehl auch mit geblocktem Port zügig zurückkommt.

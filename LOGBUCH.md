@@ -2322,3 +2322,25 @@ Anfrage überlebt den Mailausfall, Datenbankausfall, beides fällt aus,
 Admin-Registrierung, abgewiesene Eingaben und Doppelklick speichern nichts);
 zwei bestehende auf das neue Verhalten umgestellt. Gegenprobe: ohne das
 Speichern werden zwei davon rot.
+
+## 18.09.2026 – Paket 313: MW22
+
+### MW22 – Vorgabeabsender auf der eigenen Domain
+
+**Befund.** `DEFAULT_FROM_EMAIL` fiel ohne Umgebungsvariable auf
+`noreply@luviq-shop.de` zurück (`mainweb/settings.py`). Diese Domain gibt es
+nicht (DNS-Abfrage 10.09.2026: NXDOMAIN, `EIG44`), also lässt sich für sie
+weder SPF noch DKIM setzen, und Brevo kann von ihr nicht verschicken.
+
+**Geändert.** Die Vorgabe ist jetzt `noreply@luviq-alsfeld.com`; derselbe
+Wert steht als `STANDARD_ABSENDER` in `pruefe_mail` (dessen Warnung bleibt:
+Brevo verschickt erst, wenn die Domain im Konto bestätigt ist) und im Hinweis
+von `pruefe_seite`, dazu das Beispiel in `DOCUMENTATION.md`. Ein neuer Test in
+`test_einstellungen` (`MailPruefbefehlTest`) lädt die Einstellungen ohne
+Variable und hält beides fest. Suite: 314 Tests, OK. **Kein Template, kein
+Aufbau berührt.**
+
+**Offen, ausserhalb des Codes:** `luviq-alsfeld.com` im Brevo-Konto als
+Absenderdomain bestätigen (DKIM-/SPF-Einträge beim Domainanbieter), sonst lehnt
+Brevo auch diese Adresse ab. Ist in Railway `DEFAULT_FROM_EMAIL` gesetzt, gilt
+weiter dieser Wert — dann dort auf eine Adresse von `luviq-alsfeld.com` stellen.
