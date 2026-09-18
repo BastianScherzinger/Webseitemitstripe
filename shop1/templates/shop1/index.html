@@ -22,8 +22,8 @@
 {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  "name": "Aktuelle Unikate – Luviq Universe Alsfeld",
-  "description": "Handbemalte 1-of-1 Upcycling-Mode aus Alsfeld, Hessen – exklusive Einzelstücke.",
+  "name": "{% if verkauf_aktiv %}Aktuelle Unikate – Luviq Universe Alsfeld{% else %}Bisherige Unikate – Archiv von Luviq Universe Alsfeld{% endif %}",
+  "description": "{% if verkauf_aktiv %}Handbemalte 1-of-1 Upcycling-Mode aus Alsfeld, Hessen – exklusive Einzelstücke.{% else %}Handbemalte 1-of-1 Upcycling-Mode aus Alsfeld, Hessen – bisherige Einzelstücke, bereits vergeben.{% endif %}",
   "url": "{{ request.scheme }}://{{ request.get_host }}/",
   "itemListElement": [{% for produkt in produkte_galerie %}
     {"@type": "ListItem", "position": {{ forloop.counter }}, "name": "{{ produkt.name|escapejs }}", "url": "{{ request.scheme }}://{{ request.get_host }}{{ produkt.get_absolute_url }}"}{% if not forloop.last %},{% endif %}{% endfor %}
@@ -154,7 +154,7 @@
                 </div>
 
                 <p id="hero-sub" class="text-base sm:text-lg text-white/85 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed font-light tracking-wide glass px-8 py-5 rounded-2xl border-white/10" style="opacity:0;transform:translateY(28px)">
-                    {% if verkauf_aktiv %}Luviq Universe ist der Online-Shop von Luisa Brehler aus <strong class="text-white font-semibold">Alsfeld, Hessen</strong>, für handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück wird einzeln von Hand bemalt und existiert genau einmal – ein 1-of-1 Unikat, das nach dem Verkauf nicht nachproduziert wird. Bestellungen werden deutschlandweit versendet, in der Regel innerhalb von 1-2&nbsp;Werktagen.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus <strong class="text-white font-semibold">Alsfeld, Hessen</strong>, für handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück wird einzeln von Hand bemalt und existiert genau einmal – ein 1-of-1 Unikat, das es kein zweites Mal gibt. Die Marke ist im Aufbau, ein Verkauf findet noch nicht statt: Die Stücke hier gehören zum ersten Drop, und wer auf der Warteliste steht, erfährt als Erstes, wann es losgeht.{% endif %}
+                    {% if verkauf_aktiv %}Luviq Universe ist der Online-Shop von Luisa Brehler aus <strong class="text-white font-semibold">Alsfeld, Hessen</strong>, für handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück wird einzeln von Hand bemalt und existiert genau einmal – ein 1-of-1 Unikat, das nach dem Verkauf nicht nachproduziert wird. Bestellungen werden deutschlandweit versendet, in der Regel innerhalb von 1-2&nbsp;Werktagen.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus <strong class="text-white font-semibold">Alsfeld, Hessen</strong>, für handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück wird einzeln von Hand bemalt und existiert genau einmal – ein 1-of-1 Unikat, das es kein zweites Mal gibt. Die Marke ist im Aufbau: Die Stücke hier sind bisherige Arbeiten und bereits vergeben. Neue Stücke gibt es mit dem ersten Drop, und wer auf der Warteliste steht, erfährt als Erstes, wann es losgeht.{% endif %}
                 </p>
 
                 <div id="hero-cta" class="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-6 sm:gap-8 mb-12" style="opacity:0;transform:translateY(28px)">
@@ -163,7 +163,7 @@
                         {% if verkauf_aktiv %}Drop Entdecken{% else %}Auf die Warteliste{% endif %}
                     </a>
                     <a href="{% if verkauf_aktiv %}{% url 'ueber_uns' %}{% else %}{% url 'produkte' %}{% endif %}" class="px-12 sm:px-14 py-5 sm:py-6 rounded-2xl glass border-white/10 text-white font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all">
-                        {% if verkauf_aktiv %}Unsere Story{% else %}Drop ansehen{% endif %}
+                        {% if verkauf_aktiv %}Unsere Story{% else %}Archiv ansehen{% endif %}
                     </a>
                 </div>
 
@@ -198,7 +198,7 @@
             <div id="hero-showcase" class="relative" style="opacity:0;transform:translateY(40px) scale(0.96)">
                 {% with showcase=produkte_galerie|slice:":5" %}
                 <div class="relative rounded-[3rem] sm:rounded-[4rem] overflow-hidden glass border-white/5 p-3 shadow-2xl"
-                     role="region" aria-roledescription="carousel" aria-label="Aktuelle Unikate"
+                     role="region" aria-roledescription="carousel" aria-label="{% if verkauf_aktiv %}Aktuelle Unikate{% else %}Bisherige Unikate{% endif %}"
                      {% if showcase %}x-data="{ active: 0, count: {{ showcase|length }}, paused: false, touchX: 0 }"
                      x-init="setInterval(() => { if (!paused) active = (active + 1) % count }, 4500)"
                      @mouseenter="paused = true" @mouseleave="paused = false"{% endif %}>
@@ -226,7 +226,7 @@
                             <div class="absolute bottom-7 left-7 right-7">
                                 <p class="text-white font-black text-lg sm:text-xl heading-font uppercase tracking-tight mb-2">{{ produkt.name }}</p>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-glow font-black text-2xl tracking-tighter">{% if verkauf_aktiv %}{{ produkt.preis }} €{% else %}Kommender Drop{% endif %}</span>
+                                    <span class="text-glow font-black text-2xl tracking-tighter">{% if verkauf_aktiv %}{{ produkt.preis }} €{% else %}Nº {{ produkt.archiv_nummer }} · Archiv{% endif %}</span>
                                     <span class="glass w-11 h-11 rounded-2xl flex items-center justify-center">
                                         <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                     </span>
@@ -324,7 +324,7 @@
                     </svg>
                     <div>
                         <h2 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Eco-Conscious</h2>
-                        <p class="text-white/30 text-sm leading-relaxed font-light">Grundlage jedes Stücks ist getragene Second-Hand- und Vintage-Kleidung, die weiter genutzt statt entsorgt wird. Es wird kein neues Kleidungsstück produziert: Ein vorhandenes Teil bekommt durch die Bemalung ein zweites Leben und einen neuen Wert. Daraus folgt auch, dass es jedes Stück nur in der einen Größe gibt, in der das Basisteil gefunden wurde – ein zweites Exemplar in einer anderen Größe gibt es nicht. {% if verkauf_aktiv %}Maße, Material oder Zustand eines Stücks lassen sich deshalb vor dem Kauf über das Kontaktformular erfragen.{% else %}Maße, Material oder Zustand eines Stücks lassen sich über das Kontaktformular erfragen.{% endif %}</p>
+                        <p class="text-white/30 text-sm leading-relaxed font-light">Grundlage jedes Stücks ist getragene Second-Hand- und Vintage-Kleidung, die weiter genutzt statt entsorgt wird. Es wird kein neues Kleidungsstück produziert: Ein vorhandenes Teil bekommt durch die Bemalung ein zweites Leben und einen neuen Wert. Daraus folgt auch, dass es jedes Stück nur in der einen Größe gibt, in der das Basisteil gefunden wurde – ein zweites Exemplar in einer anderen Größe gibt es nicht. {% if verkauf_aktiv %}Maße, Material oder Zustand eines Stücks lassen sich deshalb vor dem Kauf über das Kontaktformular erfragen.{% else %}Fragen zu Material und Arbeitsweise lassen sich über das Kontaktformular stellen.{% endif %}</p>
                     </div>
                 </div>
 
@@ -335,7 +335,7 @@
                     </svg>
                     <div>
                         <h2 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Curated Style</h2>
-                        <p class="text-white/30 text-sm leading-relaxed font-light">Die Basisteile sucht Luisa Brehler selbst aus und bemalt nur Kleidung, deren Stoff und Schnitt sich als Leinwand eignen. {% if verkauf_aktiv %}Was hier im Shop steht, ist fertig bemalt und wird ausschließlich online verkauft – ein Ladengeschäft gibt es nicht. Gekauft wird also ein vorhandenes Stück und kein Auftrag, der erst nach der Bestellung angefertigt wird. Diese Startseite zeigt weiter unten die bis zu acht zuletzt eingestellten Stücke; alle, die gerade zu haben sind, stehen in der Produktübersicht. Ist ein Stück bezahlt, wird es abgeschaltet und erscheint in keiner der beiden Ansichten mehr.{% else %}Was hier zu sehen ist, ist fertig bemalt – ein vorhandenes Stück und kein Auftrag, der erst angefertigt wird. Ein Ladengeschäft gibt es nicht. Diese Startseite zeigt weiter unten die bis zu acht zuletzt eingestellten Stücke; alle Stücke des kommenden Drops stehen in der Übersicht. Verkauft wird noch nichts: Luviq Universe ist eine Marke im Aufbau, und der Shop öffnet erst mit dem ersten Drop.{% endif %}</p>
+                        <p class="text-white/30 text-sm leading-relaxed font-light">Die Basisteile sucht Luisa Brehler selbst aus und bemalt nur Kleidung, deren Stoff und Schnitt sich als Leinwand eignen. {% if verkauf_aktiv %}Was hier im Shop steht, ist fertig bemalt und wird ausschließlich online verkauft – ein Ladengeschäft gibt es nicht. Gekauft wird also ein vorhandenes Stück und kein Auftrag, der erst nach der Bestellung angefertigt wird. Diese Startseite zeigt weiter unten die bis zu acht zuletzt eingestellten Stücke; alle, die gerade zu haben sind, stehen in der Produktübersicht. Ist ein Stück bezahlt, wird es abgeschaltet und erscheint in keiner der beiden Ansichten mehr.{% else %}Was hier zu sehen ist, ist fertig bemalt – ein vorhandenes Stück und kein Auftrag, der erst angefertigt wird. Ein Ladengeschäft gibt es nicht. Diese Startseite zeigt weiter unten die bis zu acht zuletzt eingestellten bisherigen Stücke; alle stehen im Archiv. Sie sind bereits vergeben – neue Stücke gibt es mit dem ersten Drop.{% endif %}</p>
                     </div>
                 </div>
             </div>
@@ -393,7 +393,7 @@
                     <p class="text-white/40 text-lg leading-relaxed font-light mb-12 tracking-wide">
                         Hi, ich bin Luisa Brehler. Ich arbeite in Alsfeld in Hessen und nutze Kleidung als Leinwand: Jedes Teil, das du hier siehst, habe ich selbst ausgesucht und mit Pinsel und Textilfarbe von Hand bemalt.
                         <br><br>
-                        In einer Welt der Massenware setze ich auf Individualität. Jedes Stück ist ein Unikat – ein 1-of-1, das es so nie wieder geben wird. {% if verkauf_aktiv %}Ist ein Stück verkauft, gibt es kein zweites Exemplar; eine Nachbestellung ist nicht möglich. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet. Bestellen kannst du nach der Anmeldung: Stück auf seiner Detailseite auswählen, in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und die Zahlungsart wählen. Bei PayPal fragt der Shop die Zahlung selbst bei PayPal ab, bevor die Bestellung als bezahlt gilt; bei Vorab-Überweisung bekommst du Kontoinhaberin, IBAN, Betrag und Verwendungszweck per E-Mail, und versendet wird nach Zahlungseingang. Das Paket geht in der Regel innerhalb von 1-2 Werktagen raus, innerhalb von Hessen ist es meist nach 1-3 Werktagen bei dir. Und wenn ein Stück doch nicht passt: Für jede Bestellung gilt das Widerrufsrecht von 14 Tagen, gerechnet ab dem Tag, an dem die Ware bei dir angekommen ist (§ 5 der AGB). Nummer, Datum und Stand jeder Bestellung findest du danach in deinem Profil.{% else %}Ist ein Motiv gemalt, gibt es kein zweites Exemplar davon; eine Nachbestellung ist nicht möglich. Luviq Universe ist gerade im Aufbau – verkauft wird noch nichts. Die Stücke, die du hier siehst, gehören zum ersten Drop. Wann er startet, erfährst du zuerst über die Warteliste weiter unten: Eine E-Mail-Adresse genügt, du bestätigst sie über einen Link, und erst dann schicke ich dir etwas. Bis dahin kannst du dir jedes Stück auf seiner Detailseite ansehen und mir über das Kontaktformular Fragen zu Maßen, Material oder Zustand stellen.{% endif %}
+                        In einer Welt der Massenware setze ich auf Individualität. Jedes Stück ist ein Unikat – ein 1-of-1, das es so nie wieder geben wird. {% if verkauf_aktiv %}Ist ein Stück verkauft, gibt es kein zweites Exemplar; eine Nachbestellung ist nicht möglich. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet. Bestellen kannst du nach der Anmeldung: Stück auf seiner Detailseite auswählen, in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und die Zahlungsart wählen. Bei PayPal fragt der Shop die Zahlung selbst bei PayPal ab, bevor die Bestellung als bezahlt gilt; bei Vorab-Überweisung bekommst du Kontoinhaberin, IBAN, Betrag und Verwendungszweck per E-Mail, und versendet wird nach Zahlungseingang. Das Paket geht in der Regel innerhalb von 1-2 Werktagen raus, innerhalb von Hessen ist es meist nach 1-3 Werktagen bei dir. Und wenn ein Stück doch nicht passt: Für jede Bestellung gilt das Widerrufsrecht von 14 Tagen, gerechnet ab dem Tag, an dem die Ware bei dir angekommen ist (§ 5 der AGB). Nummer, Datum und Stand jeder Bestellung findest du danach in deinem Profil.{% else %}Ist ein Motiv gemalt, gibt es kein zweites Exemplar davon; eine Nachbestellung ist nicht möglich. Luviq Universe ist gerade im Aufbau. Die Stücke, die du hier siehst, sind bisherige Arbeiten und bereits vergeben; neue gibt es mit dem ersten Drop. Wann er startet, erfährst du zuerst über die Warteliste weiter unten: Eine E-Mail-Adresse genügt, du bestätigst sie über einen Link, und erst dann schicke ich dir etwas. Bis dahin kannst du dir jedes bisherige Stück auf seiner Detailseite ansehen und mir über das Kontaktformular Fragen zur Arbeitsweise stellen.{% endif %}
                     </p>
                     <div class="grid grid-cols-2 gap-12">
                         <div>
@@ -475,7 +475,7 @@
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
                 <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                    <h2 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">Aktuelle <span class="text-glow">Unikate</span></h2>
+                    <h2 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">{% if verkauf_aktiv %}Aktuelle{% else %}Bisherige{% endif %} <span class="text-glow">Unikate</span></h2>
                     <p class="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Hand-Selected Masterpieces</p>
                 </div>
                 <a href="{% url 'produkte' %}" class="btn-glow px-10 py-4 rounded-xl text-white font-black uppercase tracking-widest text-[9px] shadow-xl">

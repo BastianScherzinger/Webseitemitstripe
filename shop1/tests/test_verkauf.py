@@ -19,7 +19,8 @@ from django.contrib.auth.models import User
 from django.test import override_settings
 
 from ..models import Comment, Order
-from ._basis import OEFFENTLICHE_SEITEN, LuviqTestCase, erzeuge_benutzer, erzeuge_produkt
+from ._basis import (KAUFWEG_WISSENSSEITEN, OEFFENTLICHE_SEITEN, LuviqTestCase,
+                     erzeuge_benutzer, erzeuge_produkt)
 
 PREIS = Decimal('87.50')
 
@@ -148,17 +149,24 @@ class OhneVerkaufTest(_Grundlage):
         self.assertNotIn('/agb/', self.hole('/sitemap.xml').content.decode())
         self.assertNotIn('/agb/', self.hole('/llms.txt').content.decode())
 
-    def test_kaufbeitraege_im_wissen_sind_noindex_und_aus_sitemap_und_llms(self):
+    def test_kaufbeitraege_im_wissen_leiten_um_und_fehlen_ueberall(self):
+        """Seit 18.09.2026 abends: Bestellen, Widerruf und Konto leiten ohne
+        Verkauf mit 302 (nicht 301 – sie kommen zurück) auf /wissen/ und
+        stehen weder in der Übersicht noch in Sitemap, llms.txt und Feed."""
         sitemap = self.hole('/sitemap.xml').content.decode()
         llms = self.hole('/llms.txt').content.decode()
-        for pfad in ('/wissen/bestellen-und-bezahlen/', '/wissen/widerruf-und-ruecksendung/',
-                     '/wissen/konto-und-daten/'):
+        feed = self.hole('/feed/').content.decode()
+        uebersicht = self.hole('/wissen/').content.decode()
+        for pfad in KAUFWEG_WISSENSSEITEN:
             with self.subTest(pfad=pfad):
                 antwort = self.hole(pfad)
-                self.assertContains(antwort, 'noindex, follow')
-                self.assertContains(antwort, 'ab Eröffnung des Shops')
-                self.assertNotIn(pfad, sitemap)
-                self.assertNotIn(pfad, llms)
+                self.assertEqual(antwort.status_code, 302)
+                self.assertEqual(antwort['Location'], '/wissen/')
+                for text in (sitemap, llms, feed, uebersicht):
+                    self.assertNotIn(pfad, text)
+        for titel in ('Wie bestelle und bezahle ich', 'Widerruf und Rücksendung',
+                      'warum braucht der Kauf ein Konto'):
+            self.assertNotIn(titel, uebersicht)
 
     def test_llms_txt_ohne_kaufangaben(self):
         llms = self.hole('/llms.txt').content.decode()
@@ -269,7 +277,215 @@ class MitVerkaufTest(_Grundlage):
         self.assertNotIn('noindex', self.hole('/wissen/bestellen-und-bezahlen/').content.decode()
                          .split('name="robots" content="')[1][:8])
 
+    def test_kaufbeitraege_antworten_und_stehen_in_der_uebersicht(self):
+        """Gegenprobe zur 302-Umleitung: mit Verkauf sind die drei Beiträge
+        wie bisher da – mit ``h1``, FAQ- und Article-Schema."""
+        uebersicht = self.hole('/wissen/').content.decode()
+        for pfad in KAUFWEG_WISSENSSEITEN:
+            with self.subTest(pfad=pfad):
+                antwort = self.hole(pfad)
+                self.assertEqual(antwort.status_code, 200)
+                html = antwort.content.decode()
+                self.assertIn('<h1', html)
+                ld = _json_ld(html)
+                self.assertIn('FAQPage', ld)
+                self.assertIn('Article', ld)
+                self.assertIn(f'href="{pfad}"', uebersicht)
+
     def test_llms_txt_mit_preisen(self):
         llms = self.hole('/llms.txt').content.decode()
         self.assertRegex(llms, r'87[.,]50 EUR')
         self.assertIn('19 UStG', llms)
+
+
+# ---------------------------------------------------------------------------
+# Archiv statt „kommender Drop" (18.09.2026 abends)
+# ---------------------------------------------------------------------------
+
+#: Aussagen, die ohne Verkauf nirgends öffentlich stehen dürfen: die Stücke
+#: gehören nicht zum kommenden Drop (sie sind vergeben), und nichts behauptet
+#: einen stattgefundenen Verkauf, Kundschaft oder Versand.
+VERBOTEN_IM_ARCHIV = [
+    'Kommender Drop', 'kommenden Drop', 'gehört zum', 'gehören zum ersten Drop',
+    'Noch kein Verkauf · Start', 'Verkauft wird dieses Stück', 'Vorschau',
+    '(Sold)', 'ausverkauft', 'sold out', 'Sold out',
+    'Kundinnen und Kunden', 'unsere Kunden', 'Shopbesitzer',
+    'verkauft ausschließlich', 'versendet deutschlandweit', 'versendet wird',
+    'Versendet wird', 'Wie kaufe ich',
+]
+
+
+class ArchivOhneVerkaufTest(_Grundlage):
+    """Ohne Verkauf erscheinen die Stücke neutral als Archiv bisheriger Stücke."""
+
+    def test_karten_karussell_und_produktseite_zeigen_das_archiv(self):
+        nummer = f'Nº {self.produkt.pk:03d} · Archiv'
+        for pfad in ('/', '/produkte/', self.produktseite):
+            with self.subTest(pfad=pfad):
+                self.assertContains(self.hole(pfad), nummer)
+        produktseite = self.hole(self.produktseite).content.decode()
+        self.assertIn('Dieses Stück ist bereits vergeben. Neue Stücke gibt es mit dem ersten '
+                      'Drop – trag dich in die Warteliste ein', produktseite)
+        self.assertIn('aus dem Archiv der bisherigen Stücke', produktseite)
+        self.assertIn('Bereits vergeben · Neue Stücke mit dem ersten Drop', produktseite)
+
+    def test_keine_seite_behauptet_kommenden_drop_oder_verkauf(self):
+        for pfad in self.seiten() + ['/llms.txt', '/feed/']:
+            html = self.hole(pfad).content.decode()
+            for satz in VERBOTEN_IM_ARCHIV:
+                with self.subTest(pfad=pfad, satz=satz):
+                    self.assertNotIn(satz, html)
+
+    def test_titel_und_beschreibung_ohne_kaufen(self):
+        html = self.hole(self.produktseite).content.decode()
+        titel = re.search(r'<title>(.*?)</title>', html, re.S).group(1)
+        self.assertNotIn('kaufen', titel)
+        self.assertIn('Archiv', self.produkt.meta_description)
+        self.assertIn('Archiv', re.search(r'<title>(.*?)</title>',
+                                          self.hole('/produkte/').content.decode(), re.S).group(1))
+
+    def test_ueberschriften_heissen_archiv(self):
+        self.assertContains(self.hole('/produkte/'), '<span class="text-glow">Archive</span>')
+        self.assertContains(self.hole('/'), 'Bisherige <span class="text-glow">Unikate</span>')
+
+    def test_llms_txt_nennt_das_archiv(self):
+        llms = self.hole('/llms.txt').content.decode()
+        self.assertIn('## Archiv: bisherige Einzelstuecke (bereits vergeben)', llms)
+        self.assertNotIn('ersten Drops', llms)
+        self.assertIn(self.produktseite, llms)
+
+    def test_gaestebuch_kennzeichnet_die_betreiberin(self):
+        chefin = User.objects.create_superuser('chefin', 'c@example.org', 'ein-langes-passwort')
+        beitrag = Comment.objects.create(user=self.kundin, text='Schoen bemalt')
+        Comment.objects.create(user=chefin, text='Danke', parent=beitrag, is_admin_reply=True)
+        html = self.hole('/gaestebuch/').content.decode()
+        self.assertIn('Betreiberin', html)
+        self.assertNotIn('Shopbesitzer', html)
+
+
+@override_settings(VERKAUF_AKTIV=True)
+class ArchivMitVerkaufTest(_Grundlage):
+    """Mit Verkauf ist alles wie vor dem Archiv-Umbau."""
+
+    def test_preis_statt_archivnummer(self):
+        for pfad in ('/', '/produkte/', self.produktseite):
+            with self.subTest(pfad=pfad):
+                html = self.hole(pfad).content.decode()
+                self.assertNotIn('· Archiv', html)
+                self.assertRegex(html, r'87[.,]50 €')
+        self.assertContains(self.hole('/produkte/'), '<span class="text-glow">Drop</span>')
+        self.assertContains(self.hole('/'), 'Aktuelle <span class="text-glow">Unikate</span>')
+
+    def test_titel_mit_kaufen_und_antwortsatz_mit_preis(self):
+        html = self.hole(self.produktseite).content.decode()
+        self.assertIn('Schalterstueck kaufen – Luviq Universe, Alsfeld', html)
+        self.assertIn('Schalterstueck ist ein handbemaltes 1-of-1 Unikat von Luisa Brehler aus '
+                      '36304 Alsfeld in Hessen und kostet 87,50 €', html)
+        self.assertNotIn('Archiv', self.produkt.meta_description)
+
+    def test_gaestebuch_wie_bisher(self):
+        chefin = User.objects.create_superuser('chefin', 'c@example.org', 'ein-langes-passwort')
+        beitrag = Comment.objects.create(user=self.kundin, text='Schoen bemalt')
+        Comment.objects.create(user=chefin, text='Danke', parent=beitrag, is_admin_reply=True)
+        html = self.hole('/gaestebuch/').content.decode()
+        self.assertIn('Shopbesitzer', html)
+        self.assertIn('Kundinnen und Kunden', html)
+
+
+class AlterVerkaufsslugTest(LuviqTestCase):
+    """Die alte Adresse mit Verkaufsvermerk leitet per 301 auf die neue."""
+
+    def test_alter_slug_leitet_dauerhaft_um(self):
+        stueck = erzeuge_produkt('Custom Pants')
+        self.assertEqual(stueck.slug, 'custom-pants')
+        for alt in ('/produkt/custom-pants-sold/', '/produkt/custom-pants-verkauft/',
+                    '/produkt/custom-pants-sold-1/'):
+            with self.subTest(alt=alt):
+                antwort = self.hole(alt)
+                self.assertEqual(antwort.status_code, 301)
+                self.assertEqual(antwort['Location'], '/produkt/custom-pants/')
+
+    def test_mit_kollisionszaehler(self):
+        erzeuge_produkt('Custom Pants', aktiv=False)
+        zweites = erzeuge_produkt('Custom Pants')
+        self.assertEqual(zweites.slug, 'custom-pants-1')
+        self.assertEqual(self.hole('/produkt/custom-pants-sold/')['Location'],
+                         '/produkt/custom-pants-1/')
+
+    def test_unbekannt_bleibt_404(self):
+        self.assertEqual(self.hole('/produkt/gibt-es-nicht-sold/').status_code, 404)
+        self.assertEqual(self.hole('/produkt/gibt-es-nicht/').status_code, 404)
+
+    def test_ein_echter_slug_mit_sold_wird_nicht_umgeleitet(self):
+        """Hat ein Stück heute (noch) einen solchen Slug, zeigt es sich selbst."""
+        stueck = erzeuge_produkt('Irgendwas', slug='irgendwas-sold')
+        self.assertEqual(self.hole('/produkt/irgendwas-sold/').status_code, 200)
+        self.assertEqual(stueck.get_absolute_url(), '/produkt/irgendwas-sold/')
+
+
+class VerkaufsvermerkMigrationTest(LuviqTestCase):
+    """Migration 0022: Verkaufsvermerke fallen aus Namen, Beschreibungen und Slugs."""
+
+    def _migration(self):
+        import importlib
+        return importlib.import_module('shop1.migrations.0022_produktnamen_ohne_verkaufsvermerk')
+
+    def test_regeln_fuer_den_anhang(self):
+        m = self._migration()
+        faelle = {
+            'Custom Pants (Sold)': 'Custom Pants',
+            'Custom Pants (sold)': 'Custom Pants',
+            'Custom Pants Sold': 'Custom Pants',
+            'Jacke - Verkauft': 'Jacke',
+            'Hoodie mit backprint -ausverkauft': 'Hoodie mit backprint',
+            'Hoodie [SOLD OUT]': 'Hoodie',
+            'Sold': 'Sold',
+            'Sold Jacke': 'Sold Jacke',
+            'Das Stück ist unverkauft': 'Das Stück ist unverkauft',
+            'Gold': 'Gold',
+            '': '',
+        }
+        for alt, neu in faelle.items():
+            with self.subTest(alt=alt):
+                self.assertEqual(m.ohne_vermerk(alt), neu)
+
+    def test_bereinigen_an_der_datenbank(self):
+        from django.apps import apps
+
+        m = self._migration()
+        hose = erzeuge_produkt('Custom Pants (Sold)', beschreibung='Pants with custom print')
+        hoodie = erzeuge_produkt('Custom print hoodie',
+                                 beschreibung='Custom hoodie mit print -ausverkauft')
+        self.assertEqual(hose.slug, 'custom-pants-sold')
+        m.bereinigen(apps, None)
+        hose.refresh_from_db()
+        hoodie.refresh_from_db()
+        self.assertEqual(hose.name, 'Custom Pants')
+        self.assertEqual(hose.slug, 'custom-pants')
+        self.assertEqual(hose.beschreibung, 'Pants with custom print')
+        self.assertEqual(hoodie.name, 'Custom print hoodie')
+        self.assertEqual(hoodie.slug, 'custom-print-hoodie')
+        self.assertEqual(hoodie.beschreibung, 'Custom hoodie mit print')
+        # Die alte Adresse führt per 301 zur neuen.
+        antwort = self.hole('/produkt/custom-pants-sold/')
+        self.assertEqual(antwort.status_code, 301)
+        self.assertEqual(antwort['Location'], '/produkt/custom-pants/')
+
+
+class ArchivMetaangabenTest(LuviqTestCase):
+    """Ohne Verkauf: Titel ohne „kaufen", Beschreibung mit Archiv-Zusatz –
+    in denselben Grenzen wie mit Verkauf (``test_seo.ProduktMetaangabenTest``)."""
+
+    def test_titel_und_beschreibung_in_den_grenzen(self):
+        from ..models import (META_BESCHREIBUNG_MAX, META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF,
+                              META_TITEL_MAX, META_TITEL_ZUSAETZE_OHNE_VERKAUF)
+
+        kurz = erzeuge_produkt('Bemalte Jacke', beschreibung='Handbemalt.')
+        self.assertEqual(kurz.meta_title, 'Bemalte Jacke' + META_TITEL_ZUSAETZE_OHNE_VERKAUF[0])
+        self.assertEqual(kurz.meta_description, 'Handbemalt.' + META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF)
+        lang = erzeuge_produkt('Handbemalte Vintage Jeansjacke mit dem Sonnenblumenmotiv und Ranken',
+                               beschreibung='Wort ' * 100)
+        self.assertLessEqual(len(lang.meta_title), META_TITEL_MAX)
+        self.assertNotIn('kaufen', lang.meta_title)
+        self.assertLessEqual(len(lang.meta_description), META_BESCHREIBUNG_MAX)
+        self.assertTrue(lang.meta_description.endswith(META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF))

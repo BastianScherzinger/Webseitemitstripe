@@ -61,7 +61,7 @@
       "name": "Warum ist ein Einzelstück nicht nachbestellbar?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Weil beides nur einmal existiert: das Basisteil und das Motiv. Das Basisteil ist ein bestimmtes getragenes Kleidungsstück in einer bestimmten Größe mit eigenem Stoff und eigenen Spuren; das Motiv wird von Hand für genau dieses Teil gemalt und nicht wiederholt. Ist ein Stück verkauft, gibt es kein zweites Exemplar, keine andere Größe und keine zweite Auflage."
+        "text": "Weil beides nur einmal existiert: das Basisteil und das Motiv. Das Basisteil ist ein bestimmtes getragenes Kleidungsstück in einer bestimmten Größe mit eigenem Stoff und eigenen Spuren; das Motiv wird von Hand für genau dieses Teil gemalt und nicht wiederholt. {% if verkauf_aktiv %}Ist ein Stück verkauft, gibt es kein zweites Exemplar{% else %}Ist ein Stück vergeben, gibt es kein zweites Exemplar{% endif %}, keine andere Größe und keine zweite Auflage."
       }
     },
     {
@@ -82,10 +82,10 @@
     },
     {
       "@type": "Question",
-      "name": "Wie kaufe ich ein Upcycling-Einzelstück bei Luviq Universe?",
+      "name": "{% if verkauf_aktiv %}Wie kaufe ich ein Upcycling-Einzelstück bei Luviq Universe?{% else %}Gibt es die Stücke von Luviq Universe zu kaufen?{% endif %}",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Über diese Seite: Das Stück unter Alle Unikate aussuchen, nach der Anmeldung in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder Vorab-Überweisung; {% if verkauf_aktiv %}alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen. Ein Ladengeschäft gibt es nicht."
+        "text": "{% if verkauf_aktiv %}Über diese Seite: Das Stück unter Alle Unikate aussuchen, nach der Anmeldung in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder Vorab-Überweisung; {% if verkauf_aktiv %}alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen. Ein Ladengeschäft gibt es nicht.{% else %}Noch nicht. Die bisherigen Stücke sind bereits vergeben und stehen im Archiv; neue Stücke gibt es mit dem ersten Drop. Wer davon erfahren will, trägt sich auf der Startseite in die Warteliste ein. Ein Ladengeschäft gibt es nicht.{% endif %}"
       }
     }
   ]
@@ -132,7 +132,7 @@
 
             <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                 <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Warum ist ein Einzelstück nicht nachbestellbar?</h2>
-                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Weil beides nur einmal existiert: das Basisteil und das Motiv. Das Basisteil ist ein bestimmtes getragenes Kleidungsstück in einer bestimmten Größe mit eigenem Stoff und eigenen Spuren; das Motiv wird von Hand für genau dieses Teil gemalt und nicht wiederholt. Ist ein Stück verkauft, gibt es kein zweites Exemplar, keine andere Größe und keine zweite Auflage.</p>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Weil beides nur einmal existiert: das Basisteil und das Motiv. Das Basisteil ist ein bestimmtes getragenes Kleidungsstück in einer bestimmten Größe mit eigenem Stoff und eigenen Spuren; das Motiv wird von Hand für genau dieses Teil gemalt und nicht wiederholt. {% if verkauf_aktiv %}Ist ein Stück verkauft, gibt es kein zweites Exemplar{% else %}Ist ein Stück vergeben, gibt es kein zweites Exemplar{% endif %}, keine andere Größe und keine zweite Auflage.</p>
                 <p class="text-white/50 leading-relaxed font-light">Das unterscheidet ein 1-of-1 von Kleidung aus der Serie, bei der dasselbe Modell in mehreren Größen und Farben nachproduziert wird. Wer ein bestimmtes Stück möchte, kauft genau dieses Stück – und prüft vorher, ob die Größe passt. Wie das ohne Anprobe geht, erklärt der Beitrag zur Größenwahl in diesem Wissensbereich. Das gesetzliche Widerrufsrecht von vierzehn Tagen gilt auch für Einzelstücke; die Einzelheiten stehen in den <a href="{% url 'agb' %}" class="text-glow-orange hover:underline">AGB</a>.</p>
             </section>
 
@@ -149,9 +149,9 @@
             </section>
 
             <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie kaufe ich ein Upcycling-Einzelstück bei Luviq Universe?</h2>
-                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Über diese Seite: Das Stück unter Alle Unikate aussuchen, nach der Anmeldung in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder Vorab-Überweisung; {% if verkauf_aktiv %}alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen. Ein Ladengeschäft gibt es nicht.</p>
-                <p class="text-white/50 leading-relaxed font-light">Die verfügbaren Stücke stehen unter <a href="{% url 'produkte' %}" class="text-glow-orange hover:underline">Alle Unikate</a>. Innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt; Einzelheiten zum Versandgebiet stehen unter <a href="{% url 'liefergebiet' %}" class="text-glow-orange hover:underline">Liefergebiet</a>. Luviq Universe sitzt in 36304 Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen.</p>
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">{% if verkauf_aktiv %}Wie kaufe ich ein Upcycling-Einzelstück bei Luviq Universe?{% else %}Gibt es die Stücke von Luviq Universe zu kaufen?{% endif %}</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">{% if verkauf_aktiv %}Über diese Seite: Das Stück unter Alle Unikate aussuchen, nach der Anmeldung in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder Vorab-Überweisung; {% if verkauf_aktiv %}alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen. Ein Ladengeschäft gibt es nicht.{% else %}Noch nicht. Die bisherigen Stücke sind bereits vergeben und stehen im Archiv; neue Stücke gibt es mit dem ersten Drop. Wer davon erfahren will, trägt sich auf der Startseite in die Warteliste ein. Ein Ladengeschäft gibt es nicht.{% endif %}</p>
+                <p class="text-white/50 leading-relaxed font-light">{% if verkauf_aktiv %}Die verfügbaren Stücke stehen unter <a href="{% url 'produkte' %}" class="text-glow-orange hover:underline">Alle Unikate</a>. Innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt; Einzelheiten zum Versandgebiet stehen unter <a href="{% url 'liefergebiet' %}" class="text-glow-orange hover:underline">Liefergebiet</a>.{% else %}Die bisherigen Stücke stehen im <a href="{% url 'produkte' %}" class="text-glow-orange hover:underline">Archiv</a>, jeweils mit Foto und Beschreibung. Woher die Stücke kommen, steht unter <a href="{% url 'liefergebiet' %}" class="text-glow-orange hover:underline">Herkunft</a>.{% endif %} Luviq Universe sitzt in 36304 Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen.</p>
             </section>
         </div>
 

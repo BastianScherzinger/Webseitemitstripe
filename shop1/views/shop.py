@@ -3,6 +3,7 @@
 import hashlib
 import logging
 import os
+import re
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
@@ -263,9 +264,42 @@ def produkte(request):
     return render(request, 'shop1/produkte.html', {'produkte_liste': produkte_liste})
 
 
+#: Slug-Endung eines früheren Verkaufsvermerks („custom-pants-sold"), auch mit
+#: Kollisionszähler. Migration 0022 hat solche Slugs neu gebildet; dieselbe
+#: Regel steht dort.
+SLUG_VERMERK = re.compile(r'-(?:sold(?:-out)?|ausverkauft|verkauft)(?:-\d+)?$')
+
+
+def alter_verkaufsslug(slug):
+    """Das aktive Produkt, das früher unter ``slug`` mit Verkaufsvermerk stand,
+    oder ``None``.
+
+    Migration 0022 hat „(Sold)" aus dem Namen und ``-sold`` aus dem Slug
+    genommen (die Stücke wurden nie verkauft). Die alte Adresse ist verlinkt
+    und indexiert; statt eines Registers alter Slugs genügt die Regel: ohne
+    Vermerk, mit oder ohne Kollisionszähler, das älteste passende Stück.
+    """
+    if not SLUG_VERMERK.search(slug or ''):
+        return None
+    basis = SLUG_VERMERK.sub('', slug)
+    if not basis:
+        return None
+    return (Produkt.objects
+            .filter(aktiv=True, slug__regex=rf'^{re.escape(basis)}(-[0-9]+)?$')
+            .order_by('pk').first())
+
+
 def produkt_detail_slug(request, slug):
-    """Zeigt die Detailseite eines Produkts über seinen SEO-Slug."""
-    produkt = get_object_or_404(Produkt, slug=slug, aktiv=True)
+    """Zeigt die Detailseite eines Produkts über seinen SEO-Slug.
+
+    Eine alte Adresse mit Verkaufsvermerk (``/produkt/custom-pants-sold/``)
+    leitet per 301 auf die heutige um (``alter_verkaufsslug``)."""
+    produkt = Produkt.objects.filter(slug=slug, aktiv=True).first()
+    if produkt is None:
+        neu = alter_verkaufsslug(slug)
+        if neu is not None and neu.slug != slug:
+            return redirect(neu.get_absolute_url(), permanent=True)
+        produkt = get_object_or_404(Produkt, slug=slug, aktiv=True)
     return render(request, 'shop1/produkt_detail.html', {'produkt': produkt})
 
 

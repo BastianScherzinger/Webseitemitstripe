@@ -48,7 +48,7 @@ from datetime import date, datetime, time
 
 from django.contrib.syndication.views import Feed
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
 
@@ -149,9 +149,10 @@ def _sichtbar(beitrag):
     """Freigegeben – und, wenn der Beitrag den Kaufweg beschreibt
     (``nur_mit_verkauf``), nur bei eingeschaltetem Verkauf.
 
-    Solange kein Gewerbe angemeldet ist, bleiben Bestell-, Widerrufs- und
-    Kontobeitrag erreichbar (mit Hinweis „gilt ab Eröffnung des Shops"),
-    aber ``noindex`` und aus Sitemap, llms.txt und Feed heraus.
+    Solange kein Gewerbe angemeldet ist, stehen Bestell-, Widerrufs- und
+    Kontobeitrag nicht in Sitemap, llms.txt, Feed und Übersicht, und ihre
+    Adresse leitet mit 302 auf ``/wissen/`` (``nur_mit_verkauf_ausgeblendet``,
+    seit 18.09.2026 abends; vorher erreichbar mit Hinweis und ``noindex``).
     """
     return bool(beitrag.get('freigegeben')) and (
         verkauf_aktiv() or not beitrag.get('nur_mit_verkauf'))
@@ -172,10 +173,23 @@ def uebersicht_indexierbar():
     return bool(freigegebene_beitraege())
 
 
+def nur_mit_verkauf_ausgeblendet(beitrag):
+    """True, wenn der Beitrag den Kaufweg beschreibt und der Verkauf aus ist.
+
+    Solche Beiträge (Bestellen, Widerruf, Konto) stehen dann nicht in der
+    Übersicht, und ihre Adresse leitet mit 302 auf ``/wissen/`` – ein Text
+    über Warenkorb, PayPal und Versand passt nicht zu einer Seite, die nichts
+    verkauft. 302 statt 301: die Adresse kommt mit ``VERKAUF_AKTIV=1`` zurück.
+    """
+    return bool(beitrag.get('nur_mit_verkauf')) and not verkauf_aktiv()
+
+
 def wissen(request):
-    """Übersicht des Wissensbereichs mit allen angemeldeten Beiträgen."""
+    """Übersicht des Wissensbereichs mit allen angemeldeten Beiträgen –
+    ohne Verkauf ohne die Beiträge zum Kaufweg (``nur_mit_verkauf``)."""
     beitraege = [{'slug': slug, **beitrag, 'freigegeben': _sichtbar(beitrag)}
-                 for slug, beitrag in WISSEN_BEITRAEGE.items()]
+                 for slug, beitrag in WISSEN_BEITRAEGE.items()
+                 if not nur_mit_verkauf_ausgeblendet(beitrag)]
     return render(request, 'shop1/wissen/uebersicht.html', {
         'beitraege': beitraege,
         'indexierbar': uebersicht_indexierbar(),
@@ -191,6 +205,8 @@ def wissen_beitrag(request, slug):
     beitrag = WISSEN_BEITRAEGE.get(slug)
     if beitrag is None:
         raise Http404(f'Kein Wissensbeitrag mit der Kennung "{slug}"')
+    if nur_mit_verkauf_ausgeblendet(beitrag):
+        return redirect('wissen')
     # ``freigegeben`` im Kontext ist die wirksame Freigabe (samt
     # Verkaufsschalter); die Vorlagen setzen danach ``noindex``.
     beitrag = {**beitrag, 'freigegeben': _sichtbar(beitrag)}
@@ -218,9 +234,16 @@ class WissenFeed(Feed):
     """
 
     title = 'Luviq Universe – Wissen'
-    description = ('Beiträge zu Bestellablauf, Widerruf, Konto und zur Pflege '
-                   'handbemalter Einzelstücke aus dem Wissensbereich von Luviq Universe.')
     language = 'de'
+
+    def description(self):
+        """Ohne Verkauf ohne Bestellablauf, Widerruf und Konto – diese
+        Beiträge stehen dann nicht im Feed (``freigegebene_beitraege``)."""
+        if verkauf_aktiv():
+            return ('Beiträge zu Bestellablauf, Widerruf, Konto und zur Pflege '
+                    'handbemalter Einzelstücke aus dem Wissensbereich von Luviq Universe.')
+        return ('Beiträge zu Pflege, Upcycling und Größen handbemalter Einzelstücke '
+                'aus dem Wissensbereich von Luviq Universe.')
 
     def link(self):
         return reverse('wissen')

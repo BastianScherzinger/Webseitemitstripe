@@ -26,6 +26,11 @@ META_BESCHREIBUNG_MAX = 160
 META_TITEL_ZUSAETZE = (' kaufen – Luviq Universe, Alsfeld', ' – Luviq Universe')
 META_BESCHREIBUNG_ZUSATZ = ' – Einzigartiges 1-of-1 Upcycling-Unikat bei Luviq Universe.'
 
+#: Dieselben Zusätze ohne Verkauf (``VERKAUF_AKTIV`` aus): kein „kaufen",
+#: das Stück steht im Archiv der bisherigen Stücke (siehe ``shop1/verkauf.py``).
+META_TITEL_ZUSAETZE_OHNE_VERKAUF = (' – Luviq Universe, Alsfeld', ' – Luviq Universe')
+META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF = ' – Handbemaltes 1-of-1 Unikat aus dem Archiv von Luviq Universe.'
+
 
 def _kuerze_an_wortgrenze(text, maximum):
     """Fasst ``text`` auf eine Zeile zusammen und kürzt ihn auf höchstens
@@ -139,8 +144,10 @@ class Produkt(models.Model):
         gekürzt. So wird der Zusatz nie mitten im Wort abgeschnitten."""
         if self.seo_titel:
             return self.seo_titel
+        from .verkauf import verkauf_aktiv
         name = ' '.join(self.name.split())
-        for zusatz in META_TITEL_ZUSAETZE:
+        zusaetze = META_TITEL_ZUSAETZE if verkauf_aktiv() else META_TITEL_ZUSAETZE_OHNE_VERKAUF
+        for zusatz in zusaetze:
             if len(name) + len(zusatz) <= META_TITEL_MAX:
                 return f"{name}{zusatz}"
         return _kuerze_an_wortgrenze(name, META_TITEL_MAX)
@@ -157,9 +164,19 @@ class Produkt(models.Model):
         der Name vor dem Nachsatz, damit kein Text mit „–" beginnt."""
         if self.seo_beschreibung:
             return self.seo_beschreibung
-        platz = META_BESCHREIBUNG_MAX - len(META_BESCHREIBUNG_ZUSATZ)
+        from .verkauf import verkauf_aktiv
+        zusatz = META_BESCHREIBUNG_ZUSATZ if verkauf_aktiv() else META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF
+        platz = META_BESCHREIBUNG_MAX - len(zusatz)
         kern = _kuerze_an_wortgrenze(self.beschreibung or self.name, platz)
-        return f"{kern}{META_BESCHREIBUNG_ZUSATZ}"
+        return f"{kern}{zusatz}"
+
+    @property
+    def archiv_nummer(self):
+        """Laufende Nummer für die Archivansicht ohne Verkauf: „007".
+
+        Aus dem Primärschlüssel, dreistellig – stabil über Karte, Karussell
+        und Detailseite, und unabhängig von der Sortierung der Ansicht."""
+        return f'{self.pk or 0:03d}'
 
     def __str__(self):
         return f"{self.name} ({self.preis} €)"
