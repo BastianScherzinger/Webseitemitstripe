@@ -1,5 +1,5 @@
+"""Eigene Vorlagenfilter: ``mul``, ``is_admin`` und ``cloud`` (Cloudinary-Transformationen)."""
 from django import template
-import os
 
 register = template.Library()
 

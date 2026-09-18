@@ -128,7 +128,6 @@ class AdminRoutenTest(LuviqTestCase):
         die Sammlung muss die Admin-Routen tatsächlich finden, und jede
         View aus ``admin_views`` muss unter ``shop-admin/`` liegen – eine
         Admin-View an einer anderen Adresse entginge allen Tests hier."""
-        print(f'\n{len(self.routen)} Admin-Routen unter shop-admin/ geprüft')
         self.assertGreater(len(self.routen), 20, 'Sammlung hat nicht gegriffen')
 
         namen = {name for name, *_ in self.routen}

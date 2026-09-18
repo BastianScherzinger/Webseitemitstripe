@@ -52,38 +52,38 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–17.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 16.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-07d) — **Gesamtstand 84,0 von 100**, Reifegrad „Solide“. 297 von 320 Regeln an 18 URLs und 136 Dateien (29.879 Zeilen) geprüft.
+**Messung vom 18.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-17b) — **Gesamtstand 87,0 von 100**, Reifegrad „Solide“. 331 von 372 Regeln an 18 URLs und 137 Dateien (31.698 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Konversion | **64** | Brauchbar |
-| Erreichbarkeit & Postfach | **65** | Brauchbar |
-| Recht & Vertrauen | **79** | Solide |
+| Konversion | **72** | Brauchbar |
+| Erreichbarkeit & Postfach | **75** | Solide |
+| Recht & Vertrauen | **76** | Solide |
 | Vorlagen-Konformität | **79** | Solide |
+| Betrieb & Auslieferung | **80** | Solide |
 | SEO — Inhalt | **81** | Solide |
-| GEO — KI-Sichtbarkeit | **82** | Solide |
 | Substanz & Reichweite | **82** | Solide |
-| Barrierefreiheit | **85** | Solide |
-| Betrieb & Auslieferung | **86** | Solide |
-| Code-Qualität & Projektreife | **87** | Solide |
-| SEO — Technik | **93** | Referenz |
-| Performance & Core Web Vitals | **93** | Referenz |
-| Sicherheit | **95** | Referenz |
+| GEO — KI-Sichtbarkeit | **87** | Solide |
+| Barrierefreiheit | **88** | Solide |
+| Code-Qualität & Projektreife | **90** | Referenz |
+| Performance & Core Web Vitals | **91** | Referenz |
+| SEO — Technik | **95** | Referenz |
+| Sicherheit | **96** | Referenz |
+| Formulare & Preisrechner | **100** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 136 Dateien, **124 Befunde**, davon 0 kritisch und 42 wichtig.
+Quelltext: 137 Dateien, **105 Befunde**, davon 0 kritisch und 39 wichtig.
 
 Kritische Befunde:
 
-- **Alle Domainvarianten landen auf einer Adresse** (`TS11`) — 0 von 1 Nebenadressen landen dauerhaft auf der Hauptadresse — offen: https://luviq-alsfeld.com: 200 → https://luviq-alsfeld.com/
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
 - **axe-core findet keine schweren Verstösse** (`BF29`) — 4 von 4 Seiten mit schweren Verstössen: color-contrast (4×)
 - **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 17 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /kontakt/, /datenschutz/, /agb/ … (+12)
 - **Keine Google-Schriften von fremden Servern nachgeladen** (`RE07`) — 17 von 17 Seiten laden Google-Schriften von fremden Servern: fonts.googleapis.com, https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700 · betroffen: /, /produkte/, /kontakt/ … (+14)
+- **Eine eigene Sicherung außerhalb des Hosters ist frisch und geprüft** (`BT15`) — keine einzige eigene Sicherung; der letzte Versuch scheiterte: Docker läuft nicht — ohne pg_dump keine externe Sicherung
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
-- **Eine Anfrage überlebt einen kaputten Mailweg** (`MW18`) — Kein Modell, das eine Anfrage aufbewahrt. Scheitert der Versand, ist die Nachricht des Kunden endgültig weg.
 - **Kein nennenswerter Anteil dünner Seiten** (`IS19`) — 6% der Seiten sind dünn (1 von 17): /gaestebuch/ (130 W)
 <!-- messung:ende -->
 

@@ -19,7 +19,6 @@ import os
 from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
-from django.conf.urls.static import static
 
 # Admin-URL aus Env-Variable – verbirgt den Standard-Pfad vor Scanner-Bots.
 # Setze ADMIN_URL in Railway auf z.B. "luisa-admin-x7k2/"

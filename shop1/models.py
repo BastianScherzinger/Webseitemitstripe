@@ -1,3 +1,10 @@
+"""Datenmodelle des Shops: Profile, Produkte, Warenkorb, Bestellungen, Anfragen, Werbung.
+
+``Werbung``, ``WerbungStat`` und ``VisitorLog`` liegen in der Datenbank
+``pystore`` (``routers.py``); Warenkorb- und Bestellposten speichern Name und
+Preis des Produkts bewusst als eigene Felder, damit spätere Änderungen am
+Produkt bestehende Bestellungen nicht verändern.
+"""
 import logging
 import uuid
 from django.db import models
@@ -93,7 +100,9 @@ class Produkt(models.Model):
     slug = models.SlugField(max_length=220, unique=True, blank=True, null=True)
     beschreibung = models.TextField(blank=True)
     seo_titel = models.CharField(max_length=60, blank=True, help_text='SEO-Titel (max. 60 Zeichen). Leer = automatisch.')
-    seo_beschreibung = models.CharField(max_length=160, blank=True, help_text='Meta-Description (max. 160 Zeichen). Leer = aus Beschreibung.')
+    seo_beschreibung = models.CharField(
+        max_length=160, blank=True,
+        help_text='Meta-Description (max. 160 Zeichen). Leer = aus Beschreibung.')
     preis = models.DecimalField(max_digits=10, decimal_places=2)
     bild = models.ImageField(upload_to='produkte/', blank=True, null=True)
     aktiv = models.BooleanField(default=True)

@@ -176,7 +176,10 @@ def kontakt(request):
                 _log.exception('Kontaktformular: Anfrage nicht gespeichert')
                 anfrage = None
             try:
-                send_brevo_email(subject, message, recipient, recipient_name="Shop Admin", text_content=message)
+                # reply_to (MW21): „Antworten“ im Postfach der Betreiberin geht
+                # an den Anfragenden, nicht an die eigene Versandadresse.
+                send_brevo_email(subject, message, recipient, recipient_name="Shop Admin", text_content=message,
+                                 reply_to=safe_email)
             except Exception:
                 _log.exception('Kontaktformular: Mailversand nicht gestartet')
                 gestartet = False
