@@ -1,3 +1,9 @@
+"""Eigene Middleware: kanonischer Host, Content-Security-Policy, Besuchsprotokoll.
+
+Reihenfolge in ``settings.MIDDLEWARE``: ``CanonicalHostMiddleware`` ganz vorn,
+``ContentSecurityPolicyMiddleware`` nach WhiteNoise, ``PageVisitMiddleware``
+zuletzt.
+"""
 import logging
 import os
 import secrets
@@ -319,12 +325,7 @@ class PageVisitMiddleware:
 
         if should_log:
             try:
-                log_obj = VisitorLog.objects.create(
-                    ip_address=ip,
-                    path=path,
-                    user_agent=ua,
-                    seite=site_name,
-                )
+                log_obj = VisitorLog.objects.create(ip_address=ip, path=path, user_agent=ua, seite=site_name)
                 visited[path] = now_iso
                 if len(visited) > 40:
                     visited = dict(sorted(visited.items(), key=lambda x: x[1], reverse=True)[:40])

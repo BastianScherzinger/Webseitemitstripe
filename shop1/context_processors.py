@@ -1,3 +1,8 @@
+"""Kontextprozessoren: Werte, die jede Vorlage ohne eigene View-Angabe kennt.
+
+Eingetragen in ``settings.TEMPLATES``; sie laufen bei jedem gerenderten
+Template und bleiben deshalb bei einer Abfrage je Wert.
+"""
 import logging
 import os
 from django.conf import settings
@@ -20,6 +25,11 @@ def csp_nonce(request):
 
 
 def shop_owner_check(request):
+    """Inhaberkennung, Warenkorbzähler, aktive Werbung und Seitenstand.
+
+    Werbe-Impressionen werden hier bewusst nicht gezählt, sondern nur in
+    der View ``startseite``.
+    """
     is_shop_owner = False
     if request.user.is_authenticated:
         admin_username = os.getenv('ADMIN_USERNAME', 'shopbesitzer')

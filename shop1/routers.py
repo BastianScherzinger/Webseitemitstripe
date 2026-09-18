@@ -1,3 +1,8 @@
+"""Datenbank-Router: Werbe- und Besucherdaten liegen in der Datenbank ``pystore``.
+
+Eingetragen in ``settings.DATABASE_ROUTERS``. Die Tabellen gehören dem
+separaten pystore-Projekt; siehe ``WerbungRouter.allow_migrate``.
+"""
 from django.conf import settings
 
 _PYSTORE_MODELS = frozenset({'werbung', 'werbungstat', 'visitorlog'})

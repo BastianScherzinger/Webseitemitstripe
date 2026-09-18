@@ -1,3 +1,8 @@
+"""Routen der App ``shop1``: öffentliche Seiten, Konto, Warenkorb, Kasse und ``/shop-admin/``.
+
+Jede View kommt über ``views/__init__.py`` hierher; eine neue View muss
+dort re-exportiert werden.
+"""
 from . import views
 from . import admin_views
 from django.urls import path

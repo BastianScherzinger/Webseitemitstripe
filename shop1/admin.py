@@ -1,10 +1,15 @@
+"""Anmeldung der Shop-Modelle im regulären Django-Admin (``ADMIN_URL``).
+
+Das eigene Verwaltungspanel unter ``/shop-admin/`` steht in
+``admin_views.py``; hier geht es nur um die Standardoberfläche von Django.
+"""
 from django.contrib import admin
 from .models import UserProfile, Produkt, Cart, CartItem, Order, OrderItem, Subscriber, KontaktAnfrage
 
-# Register your models here.
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
+    """Kundenprofile mit Anschrift und Stand der E-Mail-Bestätigung."""
     list_display = ('user', 'stadt', 'land', 'email_verified', 'erstellt_am')
     search_fields = ('user__username', 'stadt', 'adresse')
     list_filter = ('land', 'email_verified', 'erstellt_am')
@@ -92,6 +97,7 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    """Bestellungen mit Lieferdaten und ihren Posten als Inline."""
     list_display = ('id', 'user', 'status', 'gesamt_betrag', 'erstellt_am')
     search_fields = ('user__username', 'email', 'paypal_order_id')
     list_filter = ('status', 'erstellt_am', 'land')

@@ -1,3 +1,8 @@
+"""Schema-Nachbesserung der externen pystore-Datenbank beim Containerstart (``start.sh``).
+
+Ergänzt die Spalte ``site`` in ``shop1_visitorlog`` und übernimmt Altwerte aus
+``seite``. Ohne ``PYSTORE_DATABASE_URL`` gibt es nichts zu tun.
+"""
 import logging
 import os
 from django.core.management.base import BaseCommand
@@ -7,6 +12,7 @@ _log = logging.getLogger('shop1')
 
 
 class Command(BaseCommand):
+    """``python manage.py fix_pystore_schema``; bricht den Start bei einem Fehler nicht ab."""
     help = 'Fuegt fehlende Spalten in pystore-DB hinzu (site in shop1_visitorlog)'
 
     def handle(self, *args, **kwargs):
@@ -29,4 +35,5 @@ class Command(BaseCommand):
                     _log.exception('pystore: Backfill seite -> site in shop1_visitorlog fehlgeschlagen')
             self.stdout.write(self.style.SUCCESS('pystore: site-Spalte in shop1_visitorlog OK'))
         except Exception as e:
+            _log.exception('pystore: Schema-Fix fehlgeschlagen')
             self.stderr.write(f'pystore Schema-Fix fehlgeschlagen: {e}')

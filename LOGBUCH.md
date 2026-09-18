@@ -10,6 +10,34 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 18.09.2026 — Paket 254: Antwortadresse der Kontaktmail, Formularfelder, Code-Audit (`MW21`, `KV04`, `PJ07`)
+
+**Was:** Drei Commits auf `sofort/2026-09-18-mw21-und-2-weitere`.
+
+`MW21` (`290f422`) — die Mail aus dem Kontaktformular trägt die Adresse des
+Anfragenden als Antwortadresse. `send_brevo_email` nimmt dafür `reply_to` an und
+setzt es auf beiden Wegen: `replyTo` in der Brevo-API, `reply_to` beim SMTP-Rückfall
+(dafür `EmailMultiAlternatives` statt `send_mail`, das keine Antwortadresse kennt).
+**Warum:** Ohne sie ging „Antworten" im Postfach der Betreiberin an die eigene
+Versandadresse, und der Anfragende bekam nichts. Tests: `AntwortadresseTest` und
+`test_antworten_auf_die_anfragemail_erreicht_den_anfragenden` in `test_formulare`.
+
+`KV04` (`845d759`) — keine Codeänderung, Ausnahme in `doku/80-AUFGABEN.md`: drei der
+sieben gezählten Felder sind CSRF-Token, Zeitstempel und Fallenfeld; sichtbar sind vier.
+
+`PJ07` — elf Dateien ohne Befund des Code-Audits gemacht, ohne Verhalten zu ändern:
+Modulbeschreibungen (`admin.py`, `context_processors.py`, `routers.py`, `urls.py`,
+`models.py`, `middleware.py`, `templatetags/custom_tags.py`,
+`fix_pystore_schema.py`), unbenutzte Einfuhren (`mainweb/urls.py`: `static`,
+`custom_tags.py`: `os`), umbrochene Zeilen (`views/__init__.py`, `models.py`), ein
+`print` im Test (`test_zugriffsschutz.py`), ein verschluckter Fehler im Schema-Fix, der
+jetzt auch ins Log geht, und `_track` in der Middleware unter 60 Zeilen. **Warum so und
+nicht nach dem Rat „die dichtesten zuerst":** die zwei dichtesten Dateien liegen in
+`tiktok stream/`, das nicht zu dieser App gehört (`CLAUDE.md`); die nächsten
+(`admin_views.py`, `views/checkout.py`) sind Verwaltung und Kasse, an denen ein
+Aufräumlauf ohne Sandbox-Test nichts ändert. Freibriefe (`audit-ok`) helfen hier nicht:
+das Audit zählt befreite Befunde in der Dateizählung mit.
+
 ## 17.09.2026 — Paket 243: Datenschutzhinweis und Falle am Kontaktformular (`KV05`, `KV06`, `KV09`)
 
 **Was:** Zwei Commits auf `sofort/2026-09-17-kv05-und-2-weitere`.
