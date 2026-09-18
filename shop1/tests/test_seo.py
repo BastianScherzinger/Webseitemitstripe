@@ -10,6 +10,8 @@ from datetime import date
 from unittest import mock
 from xml.etree import ElementTree
 
+from django.conf import settings
+from django.test import override_settings
 from ..models import META_BESCHREIBUNG_MAX, META_BESCHREIBUNG_ZUSATZ, META_TITEL_MAX, META_TITEL_ZUSAETZE
 from ..seiten_stand import SEITEN_STAND
 from ..views.wissen import WISSEN_BEITRAEGE
@@ -119,8 +121,11 @@ class SitemapTest(LuviqTestCase):
         pfade = {a.split('testserver', 1)[-1] or '/' for a in adressen}
         pflicht = {
             '/', '/produkte/', '/gaestebuch/', '/ueber_uns/',
-            '/liefergebiet/', '/kontakt/', '/datenschutz/', '/agb/',
+            '/liefergebiet/', '/kontakt/', '/datenschutz/',
         }
+        # Die AGB nur mit Verkauf – ohne gelten sie noch nicht (noindex).
+        if settings.VERKAUF_AKTIV:
+            pflicht.add('/agb/')
         self.assertTrue(
             pflicht.issubset(pfade),
             f'In der Sitemap fehlen: {sorted(pflicht - pfade)}',
@@ -163,7 +168,7 @@ class SitemapTest(LuviqTestCase):
         mit ``KeyError`` gar nicht mehr ausgeliefert)."""
         wurzel = ElementTree.fromstring(self.hole('/sitemap.xml').content)
         eintraege = wurzel.findall('sm:url', _SITEMAP_NS)
-        self.assertGreaterEqual(len(eintraege), 9, 'Sitemap wirkt unvollständig')
+        self.assertGreaterEqual(len(eintraege), 8, 'Sitemap wirkt unvollständig')
         for eintrag in eintraege:
             loc = eintrag.find('sm:loc', _SITEMAP_NS).text
             with self.subTest(loc=loc):
@@ -282,6 +287,7 @@ class WissensfreigabeTest(LuviqTestCase):
                 self.assertNotIn(anderer, llms)
 
 
+@override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
 class FeedTest(LuviqTestCase):
     """``/feed/`` – der Weg, auf dem ein Aggregator fragt, was neu ist (GE32).
 

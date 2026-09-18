@@ -18,15 +18,15 @@ Modul wird bei jedem Request aus dem Kontextprozessor gelesen.
 
 #: Routenname → Datum der letzten inhaltlichen Änderung (ISO 8601).
 SEITEN_STAND = {
-    'home':         '2026-09-11',
-    'produkte':     '2026-09-11',
+    'home':         '2026-09-18',
+    'produkte':     '2026-09-18',
     'gaestebuch':   '2026-09-18',
-    'ueber_uns':    '2026-09-01',
-    'liefergebiet': '2026-09-01',
-    'kontakt':      '2026-09-17',
-    'impressum':    '2026-09-01',
+    'ueber_uns':    '2026-09-18',
+    'liefergebiet': '2026-09-18',
+    'kontakt':      '2026-09-18',
+    'impressum':    '2026-09-18',
     'datenschutz':  '2026-09-18',
-    'agb':          '2026-09-01',
+    'agb':          '2026-09-18',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
     'wissen':           '2026-09-17',
     'wissen_pflege':    '2026-09-01',
@@ -65,6 +65,12 @@ SEITEN_NAME = {
 }
 
 
+#: Abweichende Namen, solange ``VERKAUF_AKTIV`` aus ist (shop1/verkauf.py).
+SEITEN_NAME_OHNE_VERKAUF = {
+    'liefergebiet': 'Herkunft',
+}
+
+
 def seite_fuer(url_name):
     """Registereintrag der Route als ``{'name': …, 'stand': …}`` oder ``None``.
 
@@ -74,4 +80,10 @@ def seite_fuer(url_name):
     """
     if url_name not in SEITEN_STAND:
         return None
-    return {'name': SEITEN_NAME[url_name], 'stand': SEITEN_STAND[url_name]}
+    name = SEITEN_NAME[url_name]
+    # Verkaufsschalter: ohne Verkauf heisst die Liefergebietsseite sichtbar
+    # „Herkunft" (Fuss, Brotkrume); der WebPage-Name folgt.
+    from django.conf import settings
+    if not getattr(settings, 'VERKAUF_AKTIV', False):
+        name = SEITEN_NAME_OHNE_VERKAUF.get(url_name, name)
+    return {'name': name, 'stand': SEITEN_STAND[url_name]}

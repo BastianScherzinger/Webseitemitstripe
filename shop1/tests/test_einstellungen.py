@@ -657,11 +657,12 @@ class PruefbefehlTest(LuviqTestCase):
         treffer = re.search(r'(\d+) von (\d+) Sitemap-Adressen', text)
         self.assertIsNotNone(treffer, text)
         self.assertEqual(treffer.group(1), treffer.group(2), text)
-        # Soll: jeder <loc> der ausgelieferten Sitemap – acht statische Seiten,
-        # die freigegebenen Wissensseiten und die Produktseite.
+        # Soll: jeder <loc> der ausgelieferten Sitemap – sieben statische Seiten
+        # (ohne Verkauf fehlen die AGB), die freigegebenen Wissensseiten und
+        # die Produktseite.
         sitemap = self.hole('/sitemap.xml').content.decode()
         self.assertEqual(int(treffer.group(1)), sitemap.count('<loc>'), text)
-        self.assertGreaterEqual(int(treffer.group(1)), 9, text)
+        self.assertGreaterEqual(int(treffer.group(1)), 8, text)
 
     def test_ein_aktives_produkt_ohne_beschreibung_wird_als_fehler_gemeldet(self):
         """Verhindert, dass ein Produkt mit leerem Pflichtwert unbemerkt in
@@ -895,6 +896,7 @@ class VerweisPruefbefehlTest(LuviqTestCase):
             self.assertIsNotNone(Command._ausgelassen(pfad), pfad)
         self.assertIsNone(Command._ausgelassen('/produkte/'))
 
+    @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
     def test_weiterleitung_zur_anmeldung_ist_keine_beanstandung(self):
         """``/warenkorb/`` steht in der Fusszeile jeder Seite und schickt
         anonyme Besucher auf ``/login/``. Würde der Befehl das als Umweg

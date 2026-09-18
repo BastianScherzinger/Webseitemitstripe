@@ -62,6 +62,7 @@ def bezahlt(betrag, waehrung='EUR', status='COMPLETED', http_status=200):
 
 @override_settings(PAYPAL_CLIENT_ID='test-client-id')
 @mock.patch.dict(os.environ, {'PAYPAL_SECRET': 'test-secret', 'PAYPAL_MODE': 'sandbox'})
+@override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
 class ZahlungspfadTest(LuviqTestCase):
     """Eine Kundin, ein Einzelstück für 80 €, kein Willkommensrabatt.
 

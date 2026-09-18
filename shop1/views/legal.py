@@ -25,6 +25,7 @@ from ..seiten_stand import SEITEN_STAND  # noqa: F401 – Re-Export
 # llms.txt nennen nur bestätigte Beiträge, siehe Docstring in views/wissen.py.
 from .wissen import freigegebene_beitraege, uebersicht_indexierbar
 from ._helpers import zu_viele_anfragen
+from ..verkauf import verkauf_aktiv
 
 _log = logging.getLogger('shop1')
 
@@ -159,6 +160,10 @@ def llms_txt(request):
     ``/liefergebiet/`` oder im Impressum steht.
     """
     basis = request.build_absolute_uri('/')[:-1]
+    # Verkaufsschalter: ohne Verkauf keine Kauf-, Zahlungs-, Versand- oder
+    # Steuerangaben, keine Preise und kein Verweis auf die AGB.
+    if not verkauf_aktiv():
+        return _llms_txt_ohne_verkauf(basis)
 
     zeilen = [
         "# Luviq Universe",
@@ -262,6 +267,93 @@ def llms_txt(request):
                         content_type="text/plain; charset=utf-8")
 
 
+def _llms_txt_ohne_verkauf(basis):
+    """llms.txt, solange ``VERKAUF_AKTIV`` aus ist: Marke im Aufbau.
+
+    Nur Angaben, die bei ausgeschaltetem Verkauf auch auf der Seite stehen –
+    keine Preise, keine Zahlungsarten, kein Versand, kein Paragraph 19 UStG,
+    kein Verweis auf die AGB (sie gelten erst ab Eröffnung des Shops).
+    """
+    zeilen = [
+        "# Luviq Universe",
+        "",
+        "> Luviq Universe ist eine Modemarke im Aufbau aus Alsfeld (36304) in Hessen,",
+        "> zwischen Fulda und Giessen. Luisa Brehler bemalt handverlesene Second-Hand-",
+        "> und Vintage-Kleidung von Hand; jedes Stueck ist ein Einzelstueck (1-of-1).",
+        "> Derzeit findet kein Verkauf statt. Der Shop oeffnet mit dem ersten Drop;",
+        "> wer davon erfahren will, traegt sich auf der Startseite in die Warteliste ein.",
+        "",
+        "## Eckdaten",
+        "",
+        "- Verantwortlich: Luisa Brehler, Gruenberger Str. 16, 36304 Alsfeld, Deutschland",
+        "- E-Mail: brehlerluisa@gmail.com",
+        "- Instagram: https://www.instagram.com/luviq.universe/",
+        "- Status: Marke im Aufbau, noch kein Verkauf",
+        "",
+        "## Seiten",
+        "",
+        f"- [Startseite]({basis}{reverse('home')}): Ueberblick, Stuecke des ersten Drops, Warteliste",
+        f"- [Der erste Drop]({basis}{reverse('produkte')}): Vorschau auf die Einzelstuecke, ohne Preise",
+        f"- [Ueber uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
+        f"- [Herkunft]({basis}{reverse('liefergebiet')}): Alsfeld zwischen Fulda und Giessen",
+        f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
+        f"- [Gaestebuch]({basis}{reverse('gaestebuch')}): Beitraege aus der Community",
+        "",
+        "## Einzelstuecke des ersten Drops",
+        "",
+    ]
+    produkte = Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am')[:50]
+    if produkte:
+        for produkt in produkte:
+            beschreibung = ' '.join(produkt.beschreibung.split())[:160]
+            zeilen.append(
+                f"- [{produkt.name}]({basis}{produkt.get_absolute_url()})"
+                + (f": {beschreibung}" if beschreibung else "")
+            )
+    else:
+        zeilen.append("- Zurzeit ist kein Einzelstueck eingestellt.")
+
+    erlaubt = wissen_routen_fuer_llms()
+    wissen_zeilen = [eintrag for eintrag in WISSEN_SEITEN if eintrag[0] in erlaubt]
+    if wissen_zeilen:
+        zeilen += ["", "## Wissen", ""]
+        for routenname, ankertext, beschreibung in wissen_zeilen:
+            zeilen.append(f"- [{ankertext}]({basis}{reverse(routenname)}): {beschreibung}")
+
+    zeilen += [
+        "",
+        "## Haeufige Fragen",
+        "",
+        "### Was ist Luviq Universe?",
+        "Eine Modemarke im Aufbau aus Alsfeld in Hessen. Gruenderin Luisa Brehler",
+        "verwandelt handverlesene Vintage-Kleidung durch Handmalerei in 1-of-1",
+        "Kunstwerke. Jedes Stueck ist ein Unikat.",
+        "",
+        "### Wo sitzt Luviq Universe?",
+        "In Alsfeld (36304) im Vogelsbergkreis, Hessen - zwischen Fulda und",
+        "Giessen. Einen Laden zum Reinschauen gibt es nicht.",
+        "",
+        "### Kann man bei Luviq Universe schon kaufen?",
+        "Nein. Derzeit findet kein Verkauf statt; der Shop oeffnet mit dem ersten",
+        f"Drop. Die Warteliste steht auf der Startseite {basis}{reverse('home')} -",
+        "eine E-Mail-Adresse genuegt, die Anmeldung wird per Link bestaetigt.",
+        "",
+        "### Warum gilt Luviq als nachhaltig?",
+        "Statt neue Kleidung zu produzieren, wird vorhandene Vintage-Kleidung",
+        "weiterverwendet und von Hand bemalt.",
+        "",
+        "## Rechtliches",
+        "",
+        f"- [Impressum]({basis}{reverse('impressum')})",
+        f"- [Datenschutzerklaerung]({basis}{reverse('datenschutz')})",
+        "",
+        f"Sitemap: {basis}/sitemap.xml",
+        f"Feed: {basis}{reverse('wissen_feed')}",
+    ]
+    return HttpResponse("\n".join(zeilen) + "\n",
+                        content_type="text/plain; charset=utf-8")
+
+
 @cache_page(AUSGABE_CACHE_SEKUNDEN)
 def sitemap_xml(request):
     """Erzeugt eine vollständige sitemap.xml mit lastmod und Bild-URLs."""
@@ -280,6 +372,10 @@ def sitemap_xml(request):
         {'name': 'datenschutz',  'loc': reverse('datenschutz'),  'priority': '0.2', 'changefreq': 'yearly'},
         {'name': 'agb',          'loc': reverse('agb'),          'priority': '0.2', 'changefreq': 'yearly'},
     ]
+    # Verkaufsschalter: ohne Verkauf gelten die AGB noch nicht, die Seite
+    # meldet noindex (agb.html) und gehört deshalb nicht in die Sitemap.
+    if not verkauf_aktiv():
+        static_pages = [p for p in static_pages if p['name'] != 'agb']
     # Wissensbereich: Redaktionsinhalt, lastmod aus demselben Register. Nur
     # freigegebene Beiträge (und die Übersicht, sobald einer freigegeben ist);
     # die übrigen liefern "noindex" und dürfen deshalb hier nicht stehen.

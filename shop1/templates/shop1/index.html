@@ -3,16 +3,16 @@
 {% load custom_tags %}
 
 {% block title %}Luviq Universe – Handbemalte Second Hand Mode aus Alsfeld | Hessen{% endblock %}
-{% block meta_description %}Luviq Universe aus Alsfeld (Hessen): handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler, deutschlandweit versandt – auch nach Gießen und Fulda. Einzelstücke entdecken.{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Alsfeld (Hessen): handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler, deutschlandweit versandt – auch nach Gießen und Fulda. Einzelstücke entdecken.{% else %}Luviq Universe aus Alsfeld (Hessen): handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler. Marke im Aufbau – jetzt in die Warteliste eintragen.{% endif %}{% endblock %}
 {% block og_title %}Luviq Universe – Handbemalte Second Hand Mode | Alsfeld, Hessen{% endblock %}
-{% block og_description %}Handbemalte 1-of-1 Vintage-Unikate aus Alsfeld. Nachhaltige Second-Hand-Mode von Luisa Brehler – deutschlandweit. Jetzt entdecken.{% endblock %}
+{% block og_description %}{% if verkauf_aktiv %}Handbemalte 1-of-1 Vintage-Unikate aus Alsfeld. Nachhaltige Second-Hand-Mode von Luisa Brehler – deutschlandweit. Jetzt entdecken.{% else %}Handbemalte 1-of-1 Vintage-Unikate aus Alsfeld. Nachhaltige Second-Hand-Mode von Luisa Brehler – der erste Drop kommt. Jetzt auf die Warteliste.{% endif %}{% endblock %}
 {% block og_image_tag %}
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/hero-dragon.jpg' %}">
 <meta property="og:image:width" content="1536">
 <meta property="og:image:height" content="1024">
 {% endblock %}
-{% block twitter_title %}Luviq Universe – Dein Second Hand Shop aus Hessen{% endblock %}
-{% block twitter_description %}Handbemalte Vintage-Unikate aus Alsfeld, Hessen. Nachhaltig. Einzigartig. Deutschlandweit.{% endblock %}
+{% block twitter_title %}Luviq Universe – {% if verkauf_aktiv %}Dein Second Hand Shop aus Hessen{% else %}Handbemalte Mode aus Hessen{% endif %}{% endblock %}
+{% block twitter_description %}{% if verkauf_aktiv %}Handbemalte Vintage-Unikate aus Alsfeld, Hessen. Nachhaltig. Einzigartig. Deutschlandweit.{% else %}Handbemalte Vintage-Unikate aus Alsfeld, Hessen. Nachhaltig. Einzigartig. Der erste Drop kommt.{% endif %}{% endblock %}
 {% block twitter_image_tag %}
 <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/hero-dragon.jpg' %}">
 {% endblock %}
@@ -154,15 +154,16 @@
                 </div>
 
                 <p id="hero-sub" class="text-base sm:text-lg text-white/85 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed font-light tracking-wide glass px-8 py-5 rounded-2xl border-white/10" style="opacity:0;transform:translateY(28px)">
-                    Luviq Universe ist der Online-Shop von Luisa Brehler aus <strong class="text-white font-semibold">Alsfeld, Hessen</strong>, für handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück wird einzeln von Hand bemalt und existiert genau einmal – ein 1-of-1 Unikat, das nach dem Verkauf nicht nachproduziert wird. Bestellungen werden deutschlandweit versendet, in der Regel innerhalb von 1-2&nbsp;Werktagen.
+                    {% if verkauf_aktiv %}Luviq Universe ist der Online-Shop von Luisa Brehler aus <strong class="text-white font-semibold">Alsfeld, Hessen</strong>, für handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück wird einzeln von Hand bemalt und existiert genau einmal – ein 1-of-1 Unikat, das nach dem Verkauf nicht nachproduziert wird. Bestellungen werden deutschlandweit versendet, in der Regel innerhalb von 1-2&nbsp;Werktagen.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus <strong class="text-white font-semibold">Alsfeld, Hessen</strong>, für handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück wird einzeln von Hand bemalt und existiert genau einmal – ein 1-of-1 Unikat, das es kein zweites Mal gibt. Die Marke ist im Aufbau, ein Verkauf findet noch nicht statt: Die Stücke hier gehören zum ersten Drop, und wer auf der Warteliste steht, erfährt als Erstes, wann es losgeht.{% endif %}
                 </p>
 
                 <div id="hero-cta" class="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-6 sm:gap-8 mb-12" style="opacity:0;transform:translateY(28px)">
-                    <a href="{% url 'produkte' %}" class="btn-glow px-12 sm:px-14 py-5 sm:py-6 rounded-2xl text-white font-black uppercase tracking-widest text-xs shadow-[0_20px_50px_rgba(255,106,0,0.3)] hover:scale-105 transition-transform">
-                        Drop Entdecken
+                    {% comment %}Verkaufsschalter: ohne Verkauf ist die Warteliste (Newsletter mit Double-Opt-in weiter unten) die Haupthandlung.{% endcomment %}
+                    <a href="{% if verkauf_aktiv %}{% url 'produkte' %}{% else %}#newsletter-form{% endif %}" class="btn-glow px-12 sm:px-14 py-5 sm:py-6 rounded-2xl text-white font-black uppercase tracking-widest text-xs shadow-[0_20px_50px_rgba(255,106,0,0.3)] hover:scale-105 transition-transform">
+                        {% if verkauf_aktiv %}Drop Entdecken{% else %}Auf die Warteliste{% endif %}
                     </a>
-                    <a href="{% url 'ueber_uns' %}" class="px-12 sm:px-14 py-5 sm:py-6 rounded-2xl glass border-white/10 text-white font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all">
-                        Unsere Story
+                    <a href="{% if verkauf_aktiv %}{% url 'ueber_uns' %}{% else %}{% url 'produkte' %}{% endif %}" class="px-12 sm:px-14 py-5 sm:py-6 rounded-2xl glass border-white/10 text-white font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all">
+                        {% if verkauf_aktiv %}Unsere Story{% else %}Drop ansehen{% endif %}
                     </a>
                 </div>
 
@@ -188,7 +189,7 @@
                             <circle cx="7" cy="17" r="1.5"/>
                             <circle cx="17" cy="17" r="1.5"/>
                         </svg>
-                        <span class="text-[10px] font-black uppercase tracking-widest text-white/60">Versand DE</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-white/60">{% if verkauf_aktiv %}Versand DE{% else %}Aus Alsfeld{% endif %}</span>
                     </div>
                 </div>
             </div>
@@ -225,7 +226,7 @@
                             <div class="absolute bottom-7 left-7 right-7">
                                 <p class="text-white font-black text-lg sm:text-xl heading-font uppercase tracking-tight mb-2">{{ produkt.name }}</p>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-glow font-black text-2xl tracking-tighter">{{ produkt.preis }} €</span>
+                                    <span class="text-glow font-black text-2xl tracking-tighter">{% if verkauf_aktiv %}{{ produkt.preis }} €{% else %}Kommender Drop{% endif %}</span>
                                     <span class="glass w-11 h-11 rounded-2xl flex items-center justify-center">
                                         <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                     </span>
@@ -312,7 +313,7 @@
                     </svg>
                     <div>
                         <h2 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Hand-Painted</h2>
-                        <p class="text-white/30 text-sm leading-relaxed font-light">Luisa Brehler bemalt jedes Kleidungsstück einzeln mit Pinsel und Textilfarbe. Es gibt keine Drucke und keine Serie: Jedes Motiv entsteht direkt auf dem Stoff und wird nicht wiederholt – darum trägt jedes Teil den Zusatz 1-of-1. Weil von Hand gemalt wird, gehören leichte Unregelmäßigkeiten in der Bemalung zum Stück; § 3 der AGB hält fest, dass sie keinen Mangel darstellen. Das Foto auf der Detailseite zeigt genau das Teil, das verschickt wird, und kein Beispiel aus einer Serie.</p>
+                        <p class="text-white/30 text-sm leading-relaxed font-light">Luisa Brehler bemalt jedes Kleidungsstück einzeln mit Pinsel und Textilfarbe. Es gibt keine Drucke und keine Serie: Jedes Motiv entsteht direkt auf dem Stoff und wird nicht wiederholt – darum trägt jedes Teil den Zusatz 1-of-1. {% if verkauf_aktiv %}Weil von Hand gemalt wird, gehören leichte Unregelmäßigkeiten in der Bemalung zum Stück; § 3 der AGB hält fest, dass sie keinen Mangel darstellen. Das Foto auf der Detailseite zeigt genau das Teil, das verschickt wird, und kein Beispiel aus einer Serie.{% else %}Weil von Hand gemalt wird, gehören leichte Unregelmäßigkeiten in der Bemalung zum Stück – sie sind Teil der Handschrift. Das Foto auf der Detailseite zeigt genau dieses eine Teil und kein Beispiel aus einer Serie.{% endif %}</p>
                     </div>
                 </div>
 
@@ -323,7 +324,7 @@
                     </svg>
                     <div>
                         <h2 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Eco-Conscious</h2>
-                        <p class="text-white/30 text-sm leading-relaxed font-light">Grundlage jedes Stücks ist getragene Second-Hand- und Vintage-Kleidung, die weiter genutzt statt entsorgt wird. Es wird kein neues Kleidungsstück produziert: Ein vorhandenes Teil bekommt durch die Bemalung ein zweites Leben und einen neuen Wert. Daraus folgt auch, dass es jedes Stück nur in der einen Größe gibt, in der das Basisteil gefunden wurde – ein zweites Exemplar in einer anderen Größe gibt es nicht. Maße, Material oder Zustand eines Stücks lassen sich deshalb vor dem Kauf über das Kontaktformular erfragen.</p>
+                        <p class="text-white/30 text-sm leading-relaxed font-light">Grundlage jedes Stücks ist getragene Second-Hand- und Vintage-Kleidung, die weiter genutzt statt entsorgt wird. Es wird kein neues Kleidungsstück produziert: Ein vorhandenes Teil bekommt durch die Bemalung ein zweites Leben und einen neuen Wert. Daraus folgt auch, dass es jedes Stück nur in der einen Größe gibt, in der das Basisteil gefunden wurde – ein zweites Exemplar in einer anderen Größe gibt es nicht. {% if verkauf_aktiv %}Maße, Material oder Zustand eines Stücks lassen sich deshalb vor dem Kauf über das Kontaktformular erfragen.{% else %}Maße, Material oder Zustand eines Stücks lassen sich über das Kontaktformular erfragen.{% endif %}</p>
                     </div>
                 </div>
 
@@ -334,7 +335,7 @@
                     </svg>
                     <div>
                         <h2 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Curated Style</h2>
-                        <p class="text-white/30 text-sm leading-relaxed font-light">Die Basisteile sucht Luisa Brehler selbst aus und bemalt nur Kleidung, deren Stoff und Schnitt sich als Leinwand eignen. Was hier im Shop steht, ist fertig bemalt und wird ausschließlich online verkauft – ein Ladengeschäft gibt es nicht. Gekauft wird also ein vorhandenes Stück und kein Auftrag, der erst nach der Bestellung angefertigt wird. Diese Startseite zeigt weiter unten die bis zu acht zuletzt eingestellten Stücke; alle, die gerade zu haben sind, stehen in der Produktübersicht. Ist ein Stück bezahlt, wird es abgeschaltet und erscheint in keiner der beiden Ansichten mehr.</p>
+                        <p class="text-white/30 text-sm leading-relaxed font-light">Die Basisteile sucht Luisa Brehler selbst aus und bemalt nur Kleidung, deren Stoff und Schnitt sich als Leinwand eignen. {% if verkauf_aktiv %}Was hier im Shop steht, ist fertig bemalt und wird ausschließlich online verkauft – ein Ladengeschäft gibt es nicht. Gekauft wird also ein vorhandenes Stück und kein Auftrag, der erst nach der Bestellung angefertigt wird. Diese Startseite zeigt weiter unten die bis zu acht zuletzt eingestellten Stücke; alle, die gerade zu haben sind, stehen in der Produktübersicht. Ist ein Stück bezahlt, wird es abgeschaltet und erscheint in keiner der beiden Ansichten mehr.{% else %}Was hier zu sehen ist, ist fertig bemalt – ein vorhandenes Stück und kein Auftrag, der erst angefertigt wird. Ein Ladengeschäft gibt es nicht. Diese Startseite zeigt weiter unten die bis zu acht zuletzt eingestellten Stücke; alle Stücke des kommenden Drops stehen in der Übersicht. Verkauft wird noch nichts: Luviq Universe ist eine Marke im Aufbau, und der Shop öffnet erst mit dem ersten Drop.{% endif %}</p>
                     </div>
                 </div>
             </div>
@@ -342,14 +343,15 @@
     </section>
 
     <!-- Local SEO: Herkunft & Versand -->
-    <section class="py-16 sm:py-20 relative z-10 border-t border-b border-[rgba(200,150,92,0.08)]" aria-label="Herkunft und Versandgebiet">
+    <section class="py-16 sm:py-20 relative z-10 border-t border-b border-[rgba(200,150,92,0.08)]" aria-label="Herkunft{% if verkauf_aktiv %} und Versandgebiet{% endif %}">
         <div class="max-w-5xl mx-auto px-4 text-center">
-            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-glow-orange mb-5">Made in Hessen · Versand Deutschland</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-glow-orange mb-5">Made in Hessen · {% if verkauf_aktiv %}Versand Deutschland{% else %}Alsfeld im Vogelsberg{% endif %}</p>
             <h2 class="text-white/80 text-lg sm:text-xl font-light leading-relaxed max-w-3xl mx-auto">
                 Luviq Universe kommt aus
                 <strong class="text-white font-semibold">Alsfeld</strong> im Vogelsberg —
-                unsere handbemalten Vintage-Unikate versenden wir in ganz Deutschland.
-                Von <strong class="text-white/90">Gießen</strong> über <strong class="text-white/90">Fulda</strong>
+                {% if verkauf_aktiv %}unsere handbemalten Vintage-Unikate versenden wir in ganz Deutschland.
+                Von{% else %}hier entstehen die handbemalten Vintage-Unikate. Folgen kann man
+                dem ersten Drop von{% endif %} <strong class="text-white/90">Gießen</strong> über <strong class="text-white/90">Fulda</strong>
                 und <strong class="text-white/90">Marburg</strong> bis
                 <strong class="text-white/90">Frankfurt</strong>, <strong class="text-white/90">Berlin</strong>
                 und überall dazwischen.
@@ -391,7 +393,7 @@
                     <p class="text-white/40 text-lg leading-relaxed font-light mb-12 tracking-wide">
                         Hi, ich bin Luisa Brehler. Ich arbeite in Alsfeld in Hessen und nutze Kleidung als Leinwand: Jedes Teil, das du hier siehst, habe ich selbst ausgesucht und mit Pinsel und Textilfarbe von Hand bemalt.
                         <br><br>
-                        In einer Welt der Massenware setze ich auf Individualität. Jedes Stück ist ein Unikat – ein 1-of-1, das es so nie wieder geben wird. Ist ein Stück verkauft, gibt es kein zweites Exemplar; eine Nachbestellung ist nicht möglich. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet. Bestellen kannst du nach der Anmeldung: Stück auf seiner Detailseite auswählen, in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und die Zahlungsart wählen. Bei PayPal fragt der Shop die Zahlung selbst bei PayPal ab, bevor die Bestellung als bezahlt gilt; bei Vorab-Überweisung bekommst du Kontoinhaberin, IBAN, Betrag und Verwendungszweck per E-Mail, und versendet wird nach Zahlungseingang. Das Paket geht in der Regel innerhalb von 1-2 Werktagen raus, innerhalb von Hessen ist es meist nach 1-3 Werktagen bei dir. Und wenn ein Stück doch nicht passt: Für jede Bestellung gilt das Widerrufsrecht von 14 Tagen, gerechnet ab dem Tag, an dem die Ware bei dir angekommen ist (§ 5 der AGB). Nummer, Datum und Stand jeder Bestellung findest du danach in deinem Profil.
+                        In einer Welt der Massenware setze ich auf Individualität. Jedes Stück ist ein Unikat – ein 1-of-1, das es so nie wieder geben wird. {% if verkauf_aktiv %}Ist ein Stück verkauft, gibt es kein zweites Exemplar; eine Nachbestellung ist nicht möglich. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet. Bestellen kannst du nach der Anmeldung: Stück auf seiner Detailseite auswählen, in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und die Zahlungsart wählen. Bei PayPal fragt der Shop die Zahlung selbst bei PayPal ab, bevor die Bestellung als bezahlt gilt; bei Vorab-Überweisung bekommst du Kontoinhaberin, IBAN, Betrag und Verwendungszweck per E-Mail, und versendet wird nach Zahlungseingang. Das Paket geht in der Regel innerhalb von 1-2 Werktagen raus, innerhalb von Hessen ist es meist nach 1-3 Werktagen bei dir. Und wenn ein Stück doch nicht passt: Für jede Bestellung gilt das Widerrufsrecht von 14 Tagen, gerechnet ab dem Tag, an dem die Ware bei dir angekommen ist (§ 5 der AGB). Nummer, Datum und Stand jeder Bestellung findest du danach in deinem Profil.{% else %}Ist ein Motiv gemalt, gibt es kein zweites Exemplar davon; eine Nachbestellung ist nicht möglich. Luviq Universe ist gerade im Aufbau – verkauft wird noch nichts. Die Stücke, die du hier siehst, gehören zum ersten Drop. Wann er startet, erfährst du zuerst über die Warteliste weiter unten: Eine E-Mail-Adresse genügt, du bestätigst sie über einen Link, und erst dann schicke ich dir etwas. Bis dahin kannst du dir jedes Stück auf seiner Detailseite ansehen und mir über das Kontaktformular Fragen zu Maßen, Material oder Zustand stellen.{% endif %}
                     </p>
                     <div class="grid grid-cols-2 gap-12">
                         <div>
@@ -400,7 +402,7 @@
                         </div>
                         <div>
                             <span class="block text-4xl font-black text-white mb-2">Unikat</span>
-                            <span class="text-[10px] text-white/20 uppercase tracking-[0.3em] font-black">Garantie</span>
+                            <span class="text-[10px] text-white/20 uppercase tracking-[0.3em] font-black">{% if verkauf_aktiv %}Garantie{% else %}Prinzip{% endif %}</span>
                         </div>
                     </div>
                 </div>
@@ -450,7 +452,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-end mb-14 gap-6 scroll-reveal"
                  x-data="{shown:false}" x-intersect.once="shown=true" :class="{'visible':shown}">
                 <div>
-                    <p class="text-[10px] font-black uppercase tracking-[0.5em] text-glow-orange mb-3">Community &amp; Bewertungen</p>
+                    <p class="text-[10px] font-black uppercase tracking-[0.5em] text-glow-orange mb-3">Community &amp; Gästebuch</p>
                     <h2 id="community-heading" class="text-4xl md:text-5xl font-black heading-font text-white uppercase tracking-tighter leading-none">
                         Was andere <span class="text-glow">sagen</span>
                     </h2>
@@ -499,11 +501,11 @@
             <div class="scroll-reveal glass-card p-8 sm:p-14 md:p-20 rounded-[2.5rem] sm:rounded-[4rem] shadow-[0_0_120px_rgba(200,150,92,0.10)] relative overflow-hidden" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                 <div class="absolute -top-24 -left-24 w-64 h-64 bg-glow-orange/5 blur-[100px] rounded-full"></div>
                 <h2 class="text-4xl md:text-6xl font-black heading-font text-white mb-10 uppercase tracking-tighter">JOIN THE <span class="text-glow">ORBIT</span></h2>
-                <p class="text-white/30 mb-14 max-w-lg mx-auto font-light leading-relaxed tracking-wide uppercase text-xs">Melde dich an und erfahre als Erster von neuen Drops und exklusiven handbemalten Unikaten. Für die Anmeldung genügt eine E-Mail-Adresse, ein Kundenkonto ist dafür nicht nötig; verschickt wird der Newsletter über den E-Mail-Dienst Brevo.</p>
+                <p class="text-white/30 mb-14 max-w-lg mx-auto font-light leading-relaxed tracking-wide uppercase text-xs">{% if verkauf_aktiv %}Melde dich an und erfahre als Erster von neuen Drops und exklusiven handbemalten Unikaten. Für die Anmeldung genügt eine E-Mail-Adresse, ein Kundenkonto ist dafür nicht nötig; verschickt wird der Newsletter über den E-Mail-Dienst Brevo.{% else %}Die Warteliste für den ersten Drop: Melde dich an und erfahre als Erste oder Erster, wann der Shop öffnet und welche handbemalten Unikate dabei sind. Für die Anmeldung genügt eine E-Mail-Adresse, ein Kundenkonto ist dafür nicht nötig; du bestätigst sie über einen Link in einer E-Mail, verschickt über den E-Mail-Dienst Brevo.{% endif %}</p>
                 
                 <form id="newsletter-form" class="flex flex-col sm:flex-row gap-5 relative z-10">
                     <input type="email" id="newsletter-email" name="email" aria-label="Deine E-Mail-Adresse für den Newsletter" autocomplete="email" placeholder="DEINE EMAIL ADRESSE" class="flex-grow bg-white/5 border border-white/10 rounded-2xl px-10 py-6 text-white focus:outline-none focus:border-glow-orange focus:shadow-[0_0_15px_rgba(200,150,92,0.2)] transition-all uppercase tracking-[0.3em] text-[10px] font-black">
-                    <button type="submit" class="btn-glow px-12 py-6 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] shadow-2xl">Subscribe</button>
+                    <button type="submit" class="btn-glow px-12 py-6 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] shadow-2xl">{% if verkauf_aktiv %}Subscribe{% else %}Auf die Warteliste{% endif %}</button>
                 </form>
                 <p id="newsletter-message" class="mt-8 text-[10px] font-black uppercase tracking-[0.3em] hidden"></p>
             </div>

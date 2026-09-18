@@ -2,9 +2,9 @@
 {% load static %}
 
 {% block title %}Kontakt – Luviq Universe | Handbemalte Vintage Mode{% endblock %}
-{% block meta_description %}Kontakt zu Luviq Universe aus Alsfeld, Hessen: Fragen zu handbemalten Vintage-Unikaten, Bestellung oder Versand über das Formular oder per E-Mail. Jetzt anfragen.{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Kontakt zu Luviq Universe aus Alsfeld, Hessen: Fragen zu handbemalten Vintage-Unikaten, Bestellung oder Versand über das Formular oder per E-Mail. Jetzt anfragen.{% else %}Kontakt zu Luviq Universe aus Alsfeld, Hessen: Fragen zu handbemalten Vintage-Unikaten und zum ersten Drop über das Formular oder per E-Mail. Jetzt anfragen.{% endif %}{% endblock %}
 {% block og_title %}Kontakt – Luviq Universe{% endblock %}
-{% block og_description %}Fragen zu deiner Bestellung oder unseren handbemalten Upcycling-Unikaten? Schreib uns – Luviq Universe antwortet schnell.{% endblock %}
+{% block og_description %}{% if verkauf_aktiv %}Fragen zu deiner Bestellung oder unseren handbemalten Upcycling-Unikaten? Schreib uns – Luviq Universe antwortet schnell.{% else %}Fragen zu unseren handbemalten Upcycling-Unikaten oder zum ersten Drop? Schreib uns.{% endif %}{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">
@@ -46,18 +46,18 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "Wie lange dauert die Lieferung?",
+          "name": "{% if verkauf_aktiv %}Wie lange dauert die Lieferung?{% else %}Kann ich schon bestellen?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Innerhalb von Hessen ist ein Unikat meist nach 1-3 Werktagen im Briefkasten, versendet wird deutschlandweit."
+            "text": "{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Innerhalb von Hessen ist ein Unikat meist nach 1-3 Werktagen im Briefkasten, versendet wird deutschlandweit.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Bis dahin sind die Stücke eine Vorschau, und Fragen dazu gehen über dieses Formular.{% endif %}"
           }
         },
         {
           "@type": "Question",
-          "name": "Zahlungsmethoden?",
+          "name": "{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Bezahlt wird per PayPal oder Vorab-Überweisung. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet."
+            "text": "{% if verkauf_aktiv %}Bezahlt wird per PayPal oder Vorab-Überweisung. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
           }
         }
       ]
@@ -78,7 +78,7 @@
             <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                 Get in <span class="text-glow">Touch</span>
             </h1>
-            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">Luviq Universe ist ein reiner Online-Shop aus 36304 Alsfeld in Hessen; erreichbar ist Luisa Brehler über das Formular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Ein Ladengeschäft gibt es nicht. Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Über das Formular gehen Fragen zu einem einzelnen Stück – Maße, Material, Zustand –, zu einer laufenden Bestellung, zum Widerruf innerhalb von 14 Tagen oder zur Löschung eines Kontos. Geantwortet wird per E-Mail an die Adresse, die im Formular steht; eine Telefonnummer gibt es nicht. Wer zuerst nachlesen möchte: Bestellablauf und Zahlung, Widerruf und Rücksendung sowie Konto und Daten stehen ausführlich im Wissensbereich, die Versandzeiten unter Liefergebiet und die Vertragsbedingungen in den AGB. Im Formular sind alle vier Felder Pflichtfelder und mit einem Stern (*) gekennzeichnet.</p>
+            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">{% if verkauf_aktiv %}Luviq Universe ist ein reiner Online-Shop aus 36304 Alsfeld in Hessen; erreichbar ist Luisa Brehler über das Formular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Ein Ladengeschäft gibt es nicht. Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Über das Formular gehen Fragen zu einem einzelnen Stück – Maße, Material, Zustand –, zu einer laufenden Bestellung, zum Widerruf innerhalb von 14 Tagen oder zur Löschung eines Kontos. Geantwortet wird per E-Mail an die Adresse, die im Formular steht; eine Telefonnummer gibt es nicht. Wer zuerst nachlesen möchte: Bestellablauf und Zahlung, Widerruf und Rücksendung sowie Konto und Daten stehen ausführlich im Wissensbereich, die Versandzeiten unter Liefergebiet und die Vertragsbedingungen in den AGB.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus 36304 Alsfeld in Hessen; erreichbar ist Luisa Brehler über das Formular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Ein Ladengeschäft gibt es nicht, und verkauft wird erst mit dem ersten Drop. Über das Formular gehen Fragen zu einem einzelnen Stück – Maße, Material, Zustand –, zum ersten Drop oder zur Löschung eines Kontos. Geantwortet wird per E-Mail an die Adresse, die im Formular steht; eine Telefonnummer gibt es nicht. Wer zuerst nachlesen möchte: Hintergrund zu Upcycling, Second Hand und Vintage steht im Wissensbereich.{% endif %} Im Formular sind alle vier Felder Pflichtfelder und mit einem Stern (*) gekennzeichnet.</p>
             <div class="h-1 w-32 bg-glow-orange mt-8 rounded-full"></div>
         </div>
 
@@ -208,12 +208,12 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="glass-card p-10 rounded-[2.5rem]">
-                    <h4 class="text-lg font-bold text-white mb-4">Wie lange dauert die Lieferung?</h4>
-                    <p class="text-white/40 leading-relaxed font-light">Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Innerhalb von Hessen ist ein Unikat meist nach 1-3 Werktagen im Briefkasten, versendet wird deutschlandweit.</p>
+                    <h4 class="text-lg font-bold text-white mb-4">{% if verkauf_aktiv %}Wie lange dauert die Lieferung?{% else %}Kann ich schon bestellen?{% endif %}</h4>
+                    <p class="text-white/40 leading-relaxed font-light">{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Innerhalb von Hessen ist ein Unikat meist nach 1-3 Werktagen im Briefkasten, versendet wird deutschlandweit.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Bis dahin sind die Stücke eine Vorschau, und Fragen dazu gehen über dieses Formular.{% endif %}</p>
                 </div>
                 <div class="glass-card p-10 rounded-[2.5rem]">
-                    <h4 class="text-lg font-bold text-white mb-4">Zahlungsmethoden?</h4>
-                    <p class="text-white/40 leading-relaxed font-light">Bezahlt wird per PayPal oder Vorab-Überweisung. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.</p>
+                    <h4 class="text-lg font-bold text-white mb-4">{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h4>
+                    <p class="text-white/40 leading-relaxed font-light">{% if verkauf_aktiv %}Bezahlt wird per PayPal oder Vorab-Überweisung. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
                 </div>
             </div>
         </div>
@@ -228,7 +228,7 @@
                     <div>
                         <h4 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-6">Öffentliches Feedback</h4>
                         <p class="text-white/40 leading-relaxed font-light mb-8">
-                            Möchtest du uns öffentlich bewerten oder einen Kommentar hinterlassen? Dein Feedback erscheint direkt in unserem <a href="{% url 'gaestebuch' %}" class="text-glow-orange hover:underline">Gästebuch</a>. Beiträge dort sind öffentlich sichtbar und stehen mit Benutzername und Zeitpunkt auf der Seite; schreiben kann sie, wer angemeldet ist.
+                            Möchtest du einen öffentlichen Kommentar hinterlassen? Dein Feedback erscheint direkt in unserem <a href="{% url 'gaestebuch' %}" class="text-glow-orange hover:underline">Gästebuch</a>. Beiträge dort sind öffentlich sichtbar und stehen mit Benutzername und Zeitpunkt auf der Seite; schreiben kann sie, wer angemeldet ist.
                         </p>
                         <a href="{% url 'gaestebuch' %}" class="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-white transition-all">
                             → Alle Kommentare ansehen

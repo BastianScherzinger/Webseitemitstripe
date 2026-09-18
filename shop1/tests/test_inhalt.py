@@ -14,6 +14,7 @@ Stand fest, damit er nicht still wieder abschmilzt.
 import re
 from html.parser import HTMLParser
 
+from django.test import override_settings
 from ._basis import INHALTSSEITEN, OEFFENTLICHE_SEITEN, LuviqTestCase, erzeuge_produkt
 from .test_geo import sichtbarer_text
 
@@ -118,13 +119,20 @@ UMFANG_PRODUKT_SEITE = '/produkt/bemalte-bomberjacke/'
 #: IS17 (2026-09-18): ``/gaestebuch/`` 524 (vorher 300) – der Zuwachs steht
 #: ausserhalb des ``<header>``, den das Werkzeug nicht mitzählt; nach dessen
 #: Zählweise 319 statt 94, ohne Beiträge.
+#: Verkaufsschalter (2026-09-18, ``shop1/verkauf.py``): ohne Verkauf fallen
+#: Kauf-, Zahlungs- und Versandsätze weg, die ein grosser Teil des Umfangs
+#: waren. Gemessen im Zustand „Verkauf aus" mit einem Produkt und ohne
+#: Kommentare: ``/`` 662 (vorher 701), ``/produkte/`` 388 (605),
+#: ``/ueber_uns/`` 371, ``/liefergebiet/`` 273, ``/gaestebuch/`` 493 – die
+#: Schwellen folgen, abgerundet. Die Produktseite bleibt über 200. Mit
+#: ``VERKAUF_AKTIV=1`` kommen die alten Texte zurück und liegen darüber.
 MINDESTWOERTER = {
-    '/': 690,
-    '/produkte/': 595,
+    '/': 660,
+    '/produkte/': 385,
     '/kontakt/': 235,
-    '/ueber_uns/': 380,
-    '/liefergebiet/': 300,
-    '/gaestebuch/': 510,
+    '/ueber_uns/': 370,
+    '/liefergebiet/': 270,
+    '/gaestebuch/': 490,
     '/impressum/': 70,
     '/datenschutz/': 430,
     '/agb/': 230,
@@ -251,6 +259,7 @@ class AngabenTest(LuviqTestCase):
             with self.subTest(pfad=pfad):
                 self.assertIn(EMAIL, self.hole(pfad).content.decode())
 
+    @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
     def test_die_zahlungsarten_stimmen_ueberall_ueberein(self):
         """Verhindert den Zustand, den dieser Lauf vorgefunden hat: die
         Kontaktseite versprach 'PayPal, Kreditkarte und Krypto-Transfers',
@@ -262,6 +271,7 @@ class AngabenTest(LuviqTestCase):
             with self.subTest(begriff=unbelegt):
                 self.assertNotIn(unbelegt, kontakt)
 
+    @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
     def test_die_lieferzeit_stimmt_auf_beiden_seiten_ueberein(self):
         """Verhindert zwei verschiedene Lieferversprechen. Vorher sagte die
         Kontaktseite '2-3 Werktage', die Liefergebietsseite '1-2 Werktage

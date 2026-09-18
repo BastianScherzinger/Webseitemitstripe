@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}AGB & Widerrufsrecht – Luviq Universe, Alsfeld{% endblock %}
 {% block meta_description %}Allgemeine Geschäftsbedingungen von Luviq Universe aus Alsfeld: Vertragsschluss, Preise, Zahlungsarten, Lieferung und Widerrufsrecht. Vor dem Kauf nachlesen.{% endblock %}
+{% comment %}Verkaufsschalter: ohne Verkauf gelten die AGB noch nicht - Seite bleibt erreichbar, aber noindex, nicht im Fuss verlinkt und nicht in Sitemap und llms.txt.{% endcomment %}
+{% block meta_robots %}{% if verkauf_aktiv %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
 {% block brotkrume_ld %}
 <script type="application/ld+json">
 {
@@ -28,13 +30,13 @@
                 <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                     Terms of <span class="text-glow">Service</span>
                 </h1>
-                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Allgemeine Geschäftsbedingungen – diese AGB von Luviq Universe, Luisa Brehler aus 36304 Alsfeld, regeln in fünf Paragraphen den Vertragsschluss, die Beschaffenheit der handbemalten Unikate, Preise und Zahlung sowie das Widerrufsrecht von 14 Tagen. Maßgeblich ist der Wortlaut der Paragraphen darunter.</p>
+                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Allgemeine Geschäftsbedingungen – diese AGB von Luviq Universe, Luisa Brehler aus 36304 Alsfeld, regeln in fünf Paragraphen den Vertragsschluss, die Beschaffenheit der handbemalten Unikate, Preise und Zahlung sowie das Widerrufsrecht von 14 Tagen. Maßgeblich ist der Wortlaut der Paragraphen darunter.{% if not verkauf_aktiv %} Diese AGB gelten erst ab Eröffnung des Shops.{% endif %}</p>
             </header>
 
             <div class="space-y-16 text-white/60 leading-relaxed font-light">
                 <section>
                     <h3 class="text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5">§ 1 Geltungsbereich</h3>
-                    <p>Für die Geschäftsbeziehung zwischen <strong>Luviq (Luisa Brehler)</strong> und dem Besteller gelten ausschließlich die nachfolgenden Allgemeinen Geschäftsbedingungen in ihrer zum Zeitpunkt der Bestellung gültigen Fassung.</p>
+                    <p>{% if not verkauf_aktiv %}Hinweis: Diese AGB gelten erst ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Für die Geschäftsbeziehung zwischen <strong>Luviq (Luisa Brehler)</strong> und dem Besteller gelten ausschließlich die nachfolgenden Allgemeinen Geschäftsbedingungen in ihrer zum Zeitpunkt der Bestellung gültigen Fassung.</p>
                 </section>
 
                 <section>
@@ -49,7 +51,7 @@
 
                 <section>
                     <h3 class="text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5">§ 4 Preise und Zahlung</h3>
-                    <p>Die angegebenen Preise sind Endpreise. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerstatus). Die Zahlung kann per PayPal oder Vorab-Überweisung erfolgen. Die Ware bleibt bis zur vollständigen Bezahlung Eigentum von Luviq. Nach Zahlungseingang wird in der Regel innerhalb von 1-2 Werktagen versendet; innerhalb von Hessen ist ein Stück meist nach 1-3 Werktagen zugestellt.</p>
+                    <p>{% if verkauf_aktiv %}Die angegebenen Preise sind Endpreise. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerstatus).{% else %}Preise und Angaben zur Umsatzsteuer folgen mit der Eröffnung des Shops.{% endif %} Die Zahlung kann per PayPal oder Vorab-Überweisung erfolgen. Die Ware bleibt bis zur vollständigen Bezahlung Eigentum von Luviq. Nach Zahlungseingang wird in der Regel innerhalb von 1-2 Werktagen versendet; innerhalb von Hessen ist ein Stück meist nach 1-3 Werktagen zugestellt.</p>
                 </section>
 
                 <section>

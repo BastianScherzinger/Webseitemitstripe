@@ -125,6 +125,10 @@ MIDDLEWARE = [
     'axes.middleware.AxesMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Verkaufsschalter (VERKAUF_AKTIV, unten): fängt bei ausgeschaltetem
+    # Verkauf Warenkorb, Kasse und Zahlung ab. Nach MessageMiddleware, weil
+    # er eine Meldung mitgibt.
+    'shop1.verkauf.VerkaufsschalterMiddleware',
     'shop1.middleware.PageVisitMiddleware',
 ]
 
@@ -158,6 +162,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'shop1.context_processors.shop_owner_check',
                 'shop1.context_processors.csp_nonce',
+                'shop1.verkauf.verkauf_kontext',
             ],
         },
     },
@@ -392,6 +397,15 @@ CSP_QUELLEN = {
     'form-action': ["'self'", 'https://*.paypal.com'],
     'object-src': ["'none'"],
 }
+
+# ═══ VERKAUF ═══
+# Verkaufsschalter (shop1/verkauf.py). Vorgabe AUS: Luviq Universe ist eine
+# Marke im Aufbau, ein Gewerbe ist noch nicht angemeldet. Aus heisst: keine
+# Preise, kein Warenkorb, keine Kasse, kein PayPal-Skript, keine Saetze zu
+# Paragraph 19 UStG, Zahlung oder Versand, Organization statt Offer im Schema.
+# Der Shop bleibt im Code. VERKAUF_AKTIV=1 (auch true/yes/on/ja/an) schaltet
+# ihn nach der Gewerbeanmeldung zurueck - Checkliste in doku/80-AUFGABEN.md.
+VERKAUF_AKTIV = os.getenv('VERKAUF_AKTIV', '').strip().lower() in ('1', 'true', 'yes', 'on', 'ja', 'an')
 
 # ═══ PAYPAL ═══
 

@@ -9,6 +9,7 @@ import re
 from decimal import Decimal
 from html.parser import HTMLParser
 
+from django.test import override_settings
 from django.contrib.auth.models import User
 from django.urls import NoReverseMatch, URLPattern, URLResolver, get_resolver, resolve, reverse
 from django.urls.converters import (
@@ -186,6 +187,7 @@ class ZugriffsschutzTest(LuviqTestCase):
             'shopbesitzer', 'shop@example.invalid', 'ein-langes-testpasswort'
         )
 
+    @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
     def test_geschuetzte_seite_leitet_nicht_angemeldete_zum_login(self):
         """Verhindert, dass ein vergessener ``@login_required`` fremde Warenkörbe,
         Profile oder Bestellvorgänge öffentlich macht."""
@@ -264,6 +266,7 @@ def _attribute_ohne_abstand(html):
     return [t for t in leser.tags if _ATTRIBUT_OHNE_ABSTAND.search(t)]
 
 
+@override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
 class AttributSyntaxTest(LuviqTestCase):
     """Zwischen zwei Attributen fehlt ein Leerzeichen – ungültiges HTML, das
     Browser verzeihen und kein anderer Test sieht.

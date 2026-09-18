@@ -69,7 +69,7 @@
       "name": "Welche Zahlungsarten gibt es?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Zwei, und beide stehen im Bestellvorgang zur Auswahl: PayPal und Vorab-Überweisung. Bei PayPal folgt unmittelbar die Zahlungsseite mit den PayPal-Schaltflächen. Bei der Vorab-Überweisung verschickt der Shop stattdessen eine E-Mail mit Kontoinhaberin, IBAN, Betrag und einem Verwendungszweck, der die Bestellnummer trägt. Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet."
+        "text": "Zwei, und beide stehen im Bestellvorgang zur Auswahl: PayPal und Vorab-Überweisung. Bei PayPal folgt unmittelbar die Zahlungsseite mit den PayPal-Schaltflächen. Bei der Vorab-Überweisung verschickt der Shop stattdessen eine E-Mail mit Kontoinhaberin, IBAN, Betrag und einem Verwendungszweck, der die Bestellnummer trägt. {% if verkauf_aktiv %}Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}."
       }
     },
     {
@@ -98,10 +98,10 @@
     },
     {
       "@type": "Question",
-      "name": "Gibt es einen Rabatt auf die erste Bestellung?",
+      "name": "{% if verkauf_aktiv %}Gibt es einen Rabatt auf die erste Bestellung?{% else %}Gibt es Rabatte?{% endif %}",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Ein neues Konto trägt einen Willkommensrabatt. Solange er auf dem Konto liegt, zieht der Bestellvorgang zehn Prozent vom Warenwert ab und weist den Abzug in der Zusammenfassung eigens aus; mit der ersten über PayPal bezahlten Bestellung ist er verbraucht. Einen Gutscheincode, den man eingeben müsste, gibt es nicht."
+        "text": "{% if verkauf_aktiv %}Ein neues Konto trägt einen Willkommensrabatt. Solange er auf dem Konto liegt, zieht der Bestellvorgang zehn Prozent vom Warenwert ab und weist den Abzug in der Zusammenfassung eigens aus; mit der ersten über PayPal bezahlten Bestellung ist er verbraucht. Einen Gutscheincode, den man eingeben müsste, gibt es nicht.{% else %}Solange der Shop nicht eröffnet ist, gibt es weder Preise noch Rabatte. Einen Gutscheincode, den man eingeben müsste, gibt es nicht.{% endif %}"
       }
     },
     {
@@ -130,7 +130,7 @@
                 Wie bestelle und bezahle ich <span class="text-glow">bei Luviq Universe?</span>
             </h1>
             <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
-                Eine Bestellung bei Luviq Universe aus Alsfeld läuft in fünf Schritten: ein Stück auf seiner Detailseite aussuchen, anmelden oder registrieren, es in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und zwischen PayPal und Vorab-Überweisung wählen. Ein Konto ist dafür nötig – ohne Anmeldung führt die Detailseite zuerst zur Anmeldung. Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet; versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.
+                {% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Eine Bestellung bei Luviq Universe aus Alsfeld läuft in fünf Schritten: ein Stück auf seiner Detailseite aussuchen, anmelden oder registrieren, es in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und zwischen PayPal und Vorab-Überweisung wählen. Ein Konto ist dafür nötig – ohne Anmeldung führt die Detailseite zuerst zur Anmeldung. {% if verkauf_aktiv %}Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}; versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.
             </p>
             <div class="h-px w-32 bg-glow-orange mt-16 rounded-full mx-auto"></div>
         </div>
@@ -162,7 +162,7 @@
 
             <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                 <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Welche Zahlungsarten gibt es?</h2>
-                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Zwei, und beide stehen im Bestellvorgang zur Auswahl: PayPal und Vorab-Überweisung. Bei PayPal folgt unmittelbar die Zahlungsseite mit den PayPal-Schaltflächen. Bei der Vorab-Überweisung verschickt der Shop stattdessen eine E-Mail mit Kontoinhaberin, IBAN, Betrag und einem Verwendungszweck, der die Bestellnummer trägt. Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet.</p>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Zwei, und beide stehen im Bestellvorgang zur Auswahl: PayPal und Vorab-Überweisung. Bei PayPal folgt unmittelbar die Zahlungsseite mit den PayPal-Schaltflächen. Bei der Vorab-Überweisung verschickt der Shop stattdessen eine E-Mail mit Kontoinhaberin, IBAN, Betrag und einem Verwendungszweck, der die Bestellnummer trägt. {% if verkauf_aktiv %}Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}.</p>
                 <p class="text-white/50 leading-relaxed font-light">Eine Zahlung auf Rechnung, per Lastschrift oder bei Abholung gibt es nicht. Kreditkartendaten speichert der Shop nicht auf seinen Servern; bei PayPal werden die Zahlungsdaten verschlüsselt an den Zahlungsdienstleister übertragen. Beide Wege stehen auch in der E-Mail zur Vorab-Überweisung nebeneinander, sodass sich eine begonnene Überweisung noch in eine PayPal-Zahlung ändern lässt.</p>
             </section>
 
@@ -181,13 +181,13 @@
             <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                 <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie lange dauert der Versand?</h2>
                 <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet; innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt. Versendet wird deutschlandweit. Einen Laden, in dem man ein Stück abholen oder anprobieren könnte, gibt es nicht: Luviq Universe ist ein reiner Online-Shop mit Sitz in Alsfeld.</p>
-                <p class="text-white/50 leading-relaxed font-light">Welche Orte besonders oft beliefert werden und wie der Weg von Alsfeld aus in die Region zwischen Fulda und Gießen läuft, steht unter <a href="{% url 'liefergebiet' %}" class="text-glow-orange hover:underline">Liefergebiet</a>. Der Bestellvorgang schlägt auf den Warenwert keinen Versandbetrag auf: Der Gesamtbetrag ist die Summe der Artikelpreise, abzüglich eines eventuellen Rabatts.</p>
+                <p class="text-white/50 leading-relaxed font-light">Welche Orte besonders oft beliefert werden und wie der Weg von Alsfeld aus in die Region zwischen Fulda und Gießen läuft, steht unter <a href="{% url 'liefergebiet' %}" class="text-glow-orange hover:underline">Liefergebiet</a>. Der Bestellvorgang schlägt auf den Warenwert keinen Versandbetrag auf: Der Gesamtbetrag ist die Summe der Artikelpreise, {% if verkauf_aktiv %}abzüglich eines eventuellen Rabatts.{% else %}ohne weitere Abzüge.{% endif %}</p>
             </section>
 
             <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Gibt es einen Rabatt auf die erste Bestellung?</h2>
-                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Ein neues Konto trägt einen Willkommensrabatt. Solange er auf dem Konto liegt, zieht der Bestellvorgang zehn Prozent vom Warenwert ab und weist den Abzug in der Zusammenfassung eigens aus; mit der ersten über PayPal bezahlten Bestellung ist er verbraucht. Einen Gutscheincode, den man eingeben müsste, gibt es nicht.</p>
-                <p class="text-white/50 leading-relaxed font-light">In der Zusammenfassung rechts im Bestellvorgang stehen deshalb drei Zeilen: der Warenwert, der Abzug und der Betrag, der tatsächlich zu zahlen ist. Wer den Abzug dort nicht sieht, hat ihn bereits eingelöst – er wird nicht erneut gewährt.</p>
+                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">{% if verkauf_aktiv %}Gibt es einen Rabatt auf die erste Bestellung?{% else %}Gibt es Rabatte?{% endif %}</h2>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">{% if verkauf_aktiv %}Ein neues Konto trägt einen Willkommensrabatt. Solange er auf dem Konto liegt, zieht der Bestellvorgang zehn Prozent vom Warenwert ab und weist den Abzug in der Zusammenfassung eigens aus; mit der ersten über PayPal bezahlten Bestellung ist er verbraucht. Einen Gutscheincode, den man eingeben müsste, gibt es nicht.{% else %}Solange der Shop nicht eröffnet ist, gibt es weder Preise noch Rabatte. Einen Gutscheincode, den man eingeben müsste, gibt es nicht.{% endif %}</p>
+                <p class="text-white/50 leading-relaxed font-light">{% if verkauf_aktiv %}In der Zusammenfassung rechts im Bestellvorgang stehen deshalb drei Zeilen: der Warenwert, der Abzug und der Betrag, der tatsächlich zu zahlen ist. Wer den Abzug dort nicht sieht, hat ihn bereits eingelöst – er wird nicht erneut gewährt.{% else %}Was mit der Eröffnung des Shops gilt, steht dann auf dieser Seite.{% endif %}</p>
             </section>
 
             <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">

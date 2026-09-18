@@ -60,13 +60,15 @@
                     <section class="group">
                         <div class="flex items-center gap-4 mb-6">
                             <div class="w-8 h-8 rounded-xl glass border-glow-orange/20 flex items-center justify-center text-xs group-hover:bg-glow-orange group-hover:text-white transition-all">📍</div>
-                            <h3 class="text-xs font-black uppercase tracking-widest text-white/80">Angaben gemäß § 5 TMG</h3>
+                            <h3 class="text-xs font-black uppercase tracking-widest text-white/80">Angaben gemäß § 5 DDG</h3>
                         </div>
                         <div class="text-white/40 leading-relaxed font-light pl-12">
                             <p class="text-white font-bold mb-2">Luisa Brehler</p>
                             <p>Grünberger Str. 16</p>
                             <p>36304 Alsfeld</p>
                             <p>Deutschland</p>
+                            {% comment %}Verkaufsschalter: solange kein Gewerbe angemeldet ist, sagt das Impressum ausdrücklich, dass nichts verkauft wird. Die Impressumspflicht (Name, ladungsfähige Anschrift, E-Mail) bleibt auch ohne Verkauf.{% endcomment %}
+                            {% if not verkauf_aktiv %}<p class="mt-4">Luviq Universe ist eine Marke im Aufbau. Derzeit findet kein Verkauf statt.</p>{% endif %}
                         </div>
                     </section>
 
@@ -102,9 +104,10 @@
                             <h3 class="text-xs font-black uppercase tracking-widest text-white/80">Streitschlichtung</h3>
                         </div>
                         <div class="text-white/40 leading-relaxed font-light pl-12 text-xs">
-                            <p class="mb-4">Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:</p>
-                            <a href="https://ec.europa.eu/consumers/odr/" target="_blank" class="glass px-4 py-2 rounded-lg text-glow-orange border-glow-orange/20 hover:bg-glow-orange hover:text-white transition-all inline-block">
-                                OS-Plattform öffnen
+                            {# Die EU-Plattform zur Online-Streitbeilegung ist seit dem 20.07.2025 abgeschaltet; der Link darauf ist entfernt. Derselbe Knopf führt jetzt zum Kontaktformular, damit der Seitenaufbau bleibt. #}
+                            <p class="mb-4">Die frühere Plattform der EU-Kommission zur Online-Streitbeilegung (OS) ist seit dem 20. Juli 2025 abgeschaltet. Fragen und Beschwerden gehen direkt an Luisa Brehler:</p>
+                            <a href="{% url 'kontakt' %}" class="glass px-4 py-2 rounded-lg text-glow-orange border-glow-orange/20 hover:bg-glow-orange hover:text-white transition-all inline-block">
+                                Kontakt aufnehmen
                             </a>
                         </div>
                     </section>

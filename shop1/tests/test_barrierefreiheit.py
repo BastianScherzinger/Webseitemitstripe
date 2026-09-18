@@ -9,6 +9,7 @@ from decimal import Decimal
 from html.parser import HTMLParser
 from pathlib import Path
 
+from django.test import override_settings
 from django.conf import settings
 from django.contrib.auth.models import User
 
@@ -343,6 +344,7 @@ class FehleransageTest(LuviqTestCase):
         self.assertRegex(html, r'<form method="post"[^>]*aria-live="polite"')
 
 
+@override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
 class AngemeldeteBedienungTest(LuviqTestCase):
     """Was erst nach der Anmeldung erscheint, muss genauso bedienbar sein.
 

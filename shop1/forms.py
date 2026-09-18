@@ -50,7 +50,7 @@ class CustomUserCreationForm(UserCreationForm):
         label="Straße & Hausnummer",
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'z.B. Musterstraße 123'
+            'placeholder': 'Straße und Hausnummer'
         })
     )
     postleitzahl = forms.CharField(
@@ -59,7 +59,7 @@ class CustomUserCreationForm(UserCreationForm):
         label="Postleitzahl",
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'z.B. 12345'
+            'placeholder': 'Postleitzahl'
         })
     )
     stadt = forms.CharField(

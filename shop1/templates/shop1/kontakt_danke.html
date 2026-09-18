@@ -30,7 +30,7 @@
                     Sie geht an Luisa Brehler. Geantwortet wird per E-Mail an die Adresse, die du im Formular angegeben hast; eine Telefonnummer gibt es nicht. Kommt keine Antwort an, erreichst du Luisa Brehler auch direkt unter <a href="mailto:brehlerluisa@gmail.com" class="text-glow-orange hover:underline">brehlerluisa@gmail.com</a>.
                 </p>
                 <p class="text-white/60 leading-relaxed font-light">
-                    Bis dahin lässt sich vieles nachlesen: <a href="{% url 'wissen_bestellen' %}" class="text-glow-orange hover:underline">Bestellen und Bezahlen</a>, <a href="{% url 'wissen_widerruf' %}" class="text-glow-orange hover:underline">Widerruf und Rücksendung</a> sowie <a href="{% url 'wissen_konto' %}" class="text-glow-orange hover:underline">Konto und Daten</a> im Wissensbereich.
+                    {% if verkauf_aktiv %}Bis dahin lässt sich vieles nachlesen: <a href="{% url 'wissen_bestellen' %}" class="text-glow-orange hover:underline">Bestellen und Bezahlen</a>, <a href="{% url 'wissen_widerruf' %}" class="text-glow-orange hover:underline">Widerruf und Rücksendung</a> sowie <a href="{% url 'wissen_konto' %}" class="text-glow-orange hover:underline">Konto und Daten</a> im Wissensbereich.{% else %}Bis dahin lässt sich vieles nachlesen: <a href="{% url 'ueber_uns' %}" class="text-glow-orange hover:underline">Über Luviq Universe</a>, <a href="{% url 'liefergebiet' %}" class="text-glow-orange hover:underline">Herkunft</a> sowie <a href="{% url 'wissen_upcycling' %}" class="text-glow-orange hover:underline">Upcycling, Second Hand und Vintage</a> im Wissensbereich.{% endif %}
                 </p>
             </div>
 

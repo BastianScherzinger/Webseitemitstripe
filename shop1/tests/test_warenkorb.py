@@ -10,6 +10,7 @@ das Template aufruft.
 from decimal import Decimal
 from urllib.parse import quote
 
+from django.test import override_settings
 from django.test import Client
 
 from ..models import Cart, CartItem, Produkt
@@ -18,6 +19,7 @@ from ._basis import LuviqTestCase, erzeuge_benutzer, erzeuge_produkt
 PASSWORT = 'ein-langes-testpasswort'
 
 
+@override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
 class WarenkorbTest(LuviqTestCase):
     """Eine angemeldete Kundin und ein Produkt mit drei Einheiten."""
 

@@ -30,7 +30,8 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2 mb-5">
-                        <div class="flex gap-0.5 text-glow-orange text-base">★★★★★</div>
+                        {# UWG Anh. Nr. 23b/23c: hier standen fest eingetippte fünf Sterne neben dem Google-Aufruf – sie sahen aus wie eine Bewertung, die niemand geprüft hat. Das Element bleibt leer stehen, damit der Seitenaufbau (Designwache) gleich bleibt. #}
+                        <div class="flex gap-0.5 text-glow-orange text-base"></div>
                         <span class="text-white/30 text-[10px] uppercase tracking-wider">Auf Google bewerten</span>
                     </div>
                     <a href="{{ GOOGLE_REVIEW_URL }}" target="_blank" rel="noopener"
@@ -54,7 +55,8 @@
                         <p class="text-white font-black text-xs uppercase tracking-tight">{{ comment.user.username }}</p>
                         <p class="text-white/20 text-[9px]">{{ comment.erstellt_am|date:"d.m.Y" }}</p>
                     </div>
-                    <div class="ml-auto flex gap-0.5 text-glow-orange text-sm">★★★★★</div>
+                    {# Gästebuch-Beiträge sind keine Bewertungen: keine Sterne (UWG Anh. Nr. 23b/23c). Element bleibt leer, Aufbau unverändert. #}
+                    <div class="ml-auto flex gap-0.5 text-glow-orange text-sm"></div>
                 </div>
                 <p class="text-white/55 text-xs leading-relaxed">{{ comment.text|truncatewords:30 }}</p>
             </div>
@@ -83,7 +85,7 @@
                     <a href="{% url 'login' %}" class="text-glow-orange hover:underline font-bold">Einloggen</a>
                     oder
                     <a href="{% url 'register' %}" class="text-glow-orange hover:underline font-bold">Registrieren</a>
-                    um einen Kommentar zu schreiben. Kommentare sind öffentlich und stehen mit Benutzername und Datum auf der Seite; hier erscheinen die vier neuesten, alle übrigen im Gästebuch.
+                    um einen Kommentar zu schreiben. Kommentare sind öffentlich und stehen mit Benutzername und Datum auf der Seite; hier erscheinen die vier neuesten aus der Community, alle übrigen im Gästebuch.
                 </p>
                 {% endif %}
             </div>
@@ -114,9 +116,10 @@
                         <p class="text-white/30 text-xs uppercase tracking-widest">Grünberger Str. 16 · 36304 Alsfeld</p>
                     </div>
                 </div>
+                {# Hier stand fest eingetippt „5.0 ★★★★★" – eine Durchschnittsbewertung, die aus keiner Quelle kommt (UWG Anh. Nr. 23b/23c). Die echten Google-Bewertungen sind über die Knöpfe darunter erreichbar. Beide Elemente bleiben leer stehen, damit der Seitenaufbau (Designwache) gleich bleibt. #}
                 <div class="flex items-baseline gap-3">
-                    <span class="text-4xl font-black text-white">5.0</span>
-                    <div class="flex gap-0.5 text-glow-orange text-xl">★★★★★</div>
+                    <span class="text-4xl font-black text-white"></span>
+                    <div class="flex gap-0.5 text-glow-orange text-xl"></div>
                 </div>
                 <div class="flex flex-col gap-3">
                     <a href="{{ GOOGLE_REVIEW_URL }}" target="_blank" rel="noopener"
