@@ -1,10 +1,10 @@
 ---
 bereich: notizen
 titel: Notizen, Fallen und Verweise
-stand: 2026-09-02
+stand: 2026-09-18
 status: vollständig
 fortschritt: 100
-zusammenfassung: Vier Namen für ein Projekt, PayPal statt Stripe, Zweig gegenüber main, zehn Widersprüche zwischen Quellen und Live-Seite.
+zusammenfassung: Vier Namen für ein Projekt, PayPal statt Stripe, Zweig gegenüber main, zehn Widersprüche zwischen Quellen und Live-Seite. Der Satz „kein Consent-Banner nötig" ist seit dem 18.09.2026 belegt statt behauptet: kein eigenes Cookie, kein Gerätespeicher, kein Analysedienst, und die Google-Karte lädt seit RE17 (Paket 248, Zweig sofort/2026-09-18-re15-und-2-weitere, nicht gemergt) erst nach einem Klick — vorher war die Aussage falsch (eigener Punkt EIG14, jetzt erledigt).
 quellen: CLAUDE.md, DOCUMENTATION.md, GOOGLE_SEO_GUIDE.md, LOGBUCH.md, paypal_sandbox_tutorial.md
 ---
 
@@ -193,8 +193,17 @@ Eigenes Panel `/shop-admin/…` (`shop1/admin_views.py`) mit dem dort **selbst**
   statt „verkauft ist weg".
 - **`db.sqlite3` liegt im Ordner** (356 KB, zuletzt 02.09.2026) und ist in `.gitignore` — die
   lokale Entwicklungsdatenbank, nicht der Betriebsbestand.
-- **Kein Consent-Banner** — heute richtig, weil nichts Einwilligungspflichtiges geladen wird.
-  Mit dem ersten Tracking-Tag (z. B. für Ads) ändert sich das.
+- **Kein Consent-Banner** — heute richtig, weil nichts Einwilligungspflichtiges geladen wird:
+  die Seite setzt kein eigenes Cookie und greift auf keinen Gerätespeicher zu (kein Treffer für
+  `set_cookie`, `localStorage`, `sessionStorage` in `shop1/`, `templates/`, `mainweb/`), die
+  Besuchszählung läuft serverseitig in `PageVisitMiddleware` ohne Analysedienst, und die einzige
+  fremde Einbettung — die Google-Karte auf `/` und `/gaestebuch/` — lädt **seit `RE17`
+  (18.09.2026, `d58a96c`) erst nach einem Klick** auf „Karte laden". Bis dahin stimmte der Satz
+  nicht: der Kartenrahmen holte sich seine Adresse ungefragt bei Google (eigener Punkt `EIG14`,
+  jetzt erledigt). Sitzungs- und CSRF-Cookie von Django bleiben — sie sind für Warenkorb und
+  Anmeldung nötig und nach § 25 Abs. 2 TDDDG einwilligungsfrei. Mit dem ersten Tracking-Tag
+  (z. B. für Ads) ändert sich das. Begründung als Ausnahme `RE15` im Bewertungsblock von
+  [80-AUFGABEN.md](80-AUFGABEN.md).
 
 ## Verweise
 
