@@ -233,6 +233,14 @@ class KontaktformularTest(LuviqTestCase):
         self.assertIn(reverse('datenschutz'), form)
         self.assertIn('Löschung', form)
 
+    def test_antworten_auf_die_anfragemail_erreicht_den_anfragenden(self):
+        """Verhindert, dass „Antworten“ im Postfach der Betreiberin an die
+        eigene Versandadresse geht (MW21): die Mail trägt die Adresse aus dem
+        Formular als Antwortadresse."""
+        with mock.patch(_MAIL) as versand:
+            self.sende('/kontakt/', GUELTIGE_ANFRAGE)
+        self.assertEqual(versand.call_args.kwargs.get('reply_to'), GUELTIGE_ANFRAGE['email'])
+
     def test_anfrage_ohne_csrf_token_wird_abgewiesen(self):
         """Verhindert, dass eine fremde Seite im Namen einer Besucherin
         Anfragen abschickt – der CSRF-Schutz muss an diesem Formular greifen."""
@@ -241,6 +249,45 @@ class KontaktformularTest(LuviqTestCase):
             antwort = streng.post('/kontakt/', GUELTIGE_ANFRAGE, secure=True)
         self.assertEqual(antwort.status_code, 403)
         versand.assert_not_called()
+
+
+class AntwortadresseTest(LuviqTestCase):
+    """Beide Versandwege von ``send_brevo_email`` setzen die Antwortadresse (MW21)."""
+
+    def _versende(self, **kwargs):
+        # Der Versand läuft sonst in einem Thread; hier synchron, damit der
+        # Test das Ergebnis sieht.
+        with mock.patch('shop1.utils.threading.Thread') as faden:
+            from ..utils import send_brevo_email
+            send_brevo_email('Betreff', '<p>Text</p>', 'luisa@example.invalid',
+                             text_content='Text', **kwargs)
+        faden.call_args.kwargs['target']()
+
+    def test_die_brevo_api_bekommt_reply_to(self):
+        with mock.patch.dict('os.environ', {'BREVO_API_KEY': 'test'}), \
+                mock.patch('shop1.utils.requests.post') as post:
+            post.return_value.status_code = 201
+            self._versende(reply_to='erika@example.invalid')
+        daten = json.loads(post.call_args.kwargs['data'])
+        self.assertEqual(daten['replyTo'], {'email': 'erika@example.invalid'})
+
+    def test_der_smtp_weg_setzt_reply_to(self):
+        from django.core import mail
+        with mock.patch.dict('os.environ', {'BREVO_API_KEY': ''}), \
+                self.settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend'):
+            self._versende(reply_to='erika@example.invalid')
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].reply_to, ['erika@example.invalid'])
+        self.assertEqual(mail.outbox[0].alternatives[0][1], 'text/html')
+
+    def test_ohne_angabe_bleibt_die_mail_ohne_reply_to(self):
+        """Gegenprobe: Bestell- und Bestätigungsmails gehen an den Kunden
+        selbst und brauchen keine abweichende Antwortadresse."""
+        with mock.patch.dict('os.environ', {'BREVO_API_KEY': 'test'}), \
+                mock.patch('shop1.utils.requests.post') as post:
+            post.return_value.status_code = 201
+            self._versende()
+        self.assertNotIn('replyTo', json.loads(post.call_args.kwargs['data']))
 
 
 class DoppeltesAbsendenTest(LuviqTestCase):

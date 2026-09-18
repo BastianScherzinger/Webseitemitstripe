@@ -4,15 +4,20 @@ import threading
 import requests
 import json
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 
 _log = logging.getLogger('shop1')
 
 
-def send_brevo_email(subject, html_content, recipient_email, recipient_name="", text_content=""):
+def send_brevo_email(subject, html_content, recipient_email, recipient_name="", text_content="",
+                     reply_to=""):
     """
     Zentrale Funktion zum Versenden von Emails via Brevo API (asynchron).
     Bypass für Railway SMTP-Port-Sperren.
+
+    ``reply_to`` (MW21): die Adresse, an die „Antworten“ im Postfach geht.
+    Ohne sie ginge die Antwort auf eine Kontaktanfrage an die eigene
+    Versandadresse statt an den Anfragenden. Beide Wege setzen sie.
     """
     def _send():
         api_key = os.getenv('BREVO_API_KEY')
@@ -35,6 +40,8 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
             }
             if text_content:
                 payload["textContent"] = text_content
+            if reply_to:
+                payload["replyTo"] = {"email": reply_to}
             try:
                 response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=10)
                 if response.status_code < 300:
@@ -45,14 +52,17 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
                 _log.error("Brevo API Verbindungsfehler: %s", e)
         else:
             try:
-                sent = send_mail(
+                # EmailMultiAlternatives statt send_mail: nur so lässt sich
+                # die Antwortadresse (reply_to) mitgeben.
+                mail = EmailMultiAlternatives(
                     subject,
                     text_content or "Bitte HTML-Ansicht aktivieren",
                     sender_email,
                     [recipient_email],
-                    fail_silently=False,
-                    html_message=html_content
+                    reply_to=[reply_to] if reply_to else None,
                 )
+                mail.attach_alternative(html_content, "text/html")
+                sent = mail.send(fail_silently=False)
                 if sent:
                     _log.info("E-Mail via SMTP gesendet an %s", recipient_email)
             except Exception as e:
