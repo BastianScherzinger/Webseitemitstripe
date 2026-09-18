@@ -181,7 +181,7 @@ EMAIL_HOST=smtp-relay.brevo.com
 EMAIL_PORT=587
 EMAIL_HOST_USER=<brevo-email>
 EMAIL_HOST_PASSWORD=<brevo-smtp-key>
-DEFAULT_FROM_EMAIL=noreply@luviq-shop.de
+DEFAULT_FROM_EMAIL=noreply@luviq-alsfeld.com
 SITE_URL=https://luviq-luisa-production.up.railway.app
 PAYPAL_CLIENT_ID=<paypal-client-id>
 ```

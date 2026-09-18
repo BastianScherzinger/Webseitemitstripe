@@ -277,7 +277,11 @@ if USE_SMTP_EMAIL or not DEBUG:
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@luviq-shop.de')
+# Vorgabeabsender auf der eigenen Domain (MW22). Bis zum 18.09.2026 stand hier
+# noreply@luviq-shop.de – eine Domain, die es nicht gibt (DNS: NXDOMAIN) und
+# für die sich deshalb kein SPF/DKIM setzen lässt. Brevo signiert erst, wenn
+# luviq-alsfeld.com im Brevo-Konto als Absenderdomain bestätigt ist.
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@luviq-alsfeld.com')
 SITE_URL = os.getenv('SITE_URL', 'https://luviq-luisa-production.up.railway.app')
 # IndexNow (shop1/indexnow.py): leer = aus. Gemeldet wird unter dem Host von SITE_URL.
 INDEXNOW_KEY = os.getenv('INDEXNOW_KEY', '').strip()

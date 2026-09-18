@@ -222,7 +222,7 @@ class Command(BaseCommand):
             'CLOUDINARY_URL': 'ohne ihn liegen hochgeladene Produktbilder im '
                               'Container und sind nach dem naechsten Deploy weg',
             'DEFAULT_FROM_EMAIL': 'ohne ihn verschickt der Shop als '
-                                  'noreply@luviq-shop.de',
+                                  'noreply@luviq-alsfeld.com',
             'ADMIN_EMAIL': 'ohne sie gehen Kontaktanfragen an '
                            'DEFAULT_FROM_EMAIL',
             'SITE_URL': 'ohne sie zeigen Mail-Links auf die Railway-Adresse',

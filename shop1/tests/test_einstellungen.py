@@ -1089,6 +1089,21 @@ class MailPruefbefehlTest(LuviqTestCase):
         self.assertEqual(len(befehl.fehler), 1, befehl.fehler)
         self.assertIn('Connection timed out', befehl.fehler[0])
 
+    def test_vorgabeabsender_liegt_auf_der_eigenen_domain(self):
+        """MW22: Ohne gesetzte Umgebungsvariable verschickte der Shop als
+        ``noreply@luviq-shop.de`` – eine Domain, die es nicht gibt und für
+        die sich kein SPF/DKIM setzen lässt. Die Vorgabe muss auf
+        ``luviq-alsfeld.com`` liegen, und ``pruefe_mail`` muss denselben Wert
+        als Vorgabe kennen, sonst warnt er am falschen Wert."""
+        from ..management.commands.pruefe_mail import STANDARD_ABSENDER
+
+        with mock.patch.dict(os.environ, {}):
+            os.environ.pop('DEFAULT_FROM_EMAIL', None)
+            betrieb = lade_einstellungen(BETRIEBSUMGEBUNG)
+        self.assertTrue(betrieb.DEFAULT_FROM_EMAIL.endswith('@luviq-alsfeld.com'),
+                        betrieb.DEFAULT_FROM_EMAIL)
+        self.assertEqual(betrieb.DEFAULT_FROM_EMAIL, STANDARD_ABSENDER)
+
 
 class DeployDateienTest(LuviqTestCase):
     """VL02 (2026-09-18): ``railway.json`` und ``runtime.txt`` sagen dasselbe
