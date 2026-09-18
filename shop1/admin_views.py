@@ -73,7 +73,8 @@ def admin_dashboard(request):
     try:
         werbung_count = Werbung.objects.count()
         werbung_aktiv_count = Werbung.objects.filter(aktiv=True).count()
-    except Exception:
+    except Exception as e:
+        _log.error('Dashboard werbung query error: %s', e)
         werbung_count = werbung_aktiv_count = 0
 
     context = {
@@ -260,6 +261,7 @@ def admin_werbung_create(request):
             )
             messages.success(request, f'Werbung "{titel}" wurde erstellt.')
         except Exception as e:
+            _log.exception('Werbung konnte nicht erstellt werden')
             messages.error(request, f'Fehler beim Erstellen: {e}')
     return redirect('admin_werbung_list')
 
@@ -274,6 +276,7 @@ def admin_werbung_delete(request, werbung_id):
             w.delete()
             messages.success(request, f'Werbung "{titel}" wurde gelöscht.')
         except Exception as e:
+            _log.exception('Werbung %s konnte nicht gelöscht werden', werbung_id)
             messages.error(request, f'Fehler beim Löschen: {e}')
     return redirect('admin_werbung_list')
 
@@ -290,6 +293,7 @@ def admin_reset_werbung_stats(request):
             WerbungStat.objects.filter(werbung_id__in=own_ids).delete()
             messages.success(request, 'Werbungs-Statistiken dieser Site wurden zurückgesetzt.')
         except Exception as e:
+            _log.exception('Werbungs-Statistiken konnten nicht zurückgesetzt werden')
             messages.error(request, f'Fehler beim Zurücksetzen: {e}')
     return redirect('admin_werbung_list')
 
@@ -730,6 +734,7 @@ def admin_order_detail(request, order_id):
     try:
         order = get_object_or_404(Order.objects.prefetch_related('items'), id=order_id)
     except Exception as e:
+        _log.warning('Bestellung %s nicht ladbar: %s', order_id, e)
         messages.error(request, f"Fehler beim Laden der Bestellung: {e}")
         return redirect('admin_orders_list')
     

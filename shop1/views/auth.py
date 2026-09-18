@@ -1,5 +1,7 @@
 """Authentifizierung und Benutzerprofil: Login, Registrierung, Profil, E-Mail-Verifikation."""
 
+import logging
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -10,6 +12,8 @@ from django.core.exceptions import ValidationError
 from ..forms import CustomUserCreationForm, UserProfileForm
 from ..models import UserProfile, Order
 from ._helpers import _is_admin, _get_or_create_cart, _sync_session_to_db, zu_viele_anfragen
+
+_log = logging.getLogger('shop1')
 
 
 def login(request):
@@ -67,6 +71,7 @@ def register(request):
                     f'Prüfe dein Postfach (auch Spam-Ordner).',
                 )
             except Exception:
+                _log.exception('Erfolgsmeldung der Registrierung nicht setzbar (Benutzer %s)', user.pk)
                 messages.success(request, 'Account erfolgreich erstellt! Bitte melden Sie sich an.')
             return redirect('login')
         else:

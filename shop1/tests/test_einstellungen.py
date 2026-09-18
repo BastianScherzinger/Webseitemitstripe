@@ -597,6 +597,19 @@ class PruefbefehlTest(LuviqTestCase):
 
         self.assertEqual(code, 1 if fehler else 0, text)
 
+    def test_pruefhost_nimmt_nur_einen_erlaubten_host(self):
+        """Verhindert, dass der Befehl seine Seitenabrufe gegen einen Host
+        schickt, den ``ALLOWED_HOSTS`` ablehnt – dann meldete er jede
+        Sitemap-Adresse mit 400, obwohl die Seite heil ist."""
+        from ..management.commands.pruefe_seite import pruefhost
+
+        with self.settings(CANONICAL_HOST='www.beispiel.invalid',
+                           ALLOWED_HOSTS=['www.beispiel.invalid']):
+            self.assertEqual(pruefhost(), 'www.beispiel.invalid')
+        with self.settings(CANONICAL_HOST='', SITE_URL='https://fremd.invalid',
+                           ALLOWED_HOSTS=['.up.railway.app']):
+            self.assertEqual(pruefhost(), 'localhost')
+
     def test_debug_wird_als_fehler_gemeldet(self):
         """Verhindert ein unbemerktes DEBUG=True in der Betriebsumgebung –
         der teuerste Ein-Schalter-Fehler im ganzen Projekt."""

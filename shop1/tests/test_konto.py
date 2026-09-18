@@ -14,6 +14,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import override_settings
 
+from .. import forms, signals
 from ..models import UserProfile
 from ._basis import LuviqTestCase, erzeuge_benutzer
 
@@ -144,6 +145,52 @@ class RegistrierungTest(LuviqTestCase):
         self.assertTrue(User.objects.filter(username='zweite').exists())
         self.assertEqual(User.objects.filter(email='neu@example.invalid').count(), 2)
         self.assertEqual(versand.call_count, 1)
+
+
+class KontoBausteineTest(LuviqTestCase):
+    """``signals.py`` und ``forms.py`` direkt – die Zweige, die über die
+    Registrierungsseite nicht erreichbar sind."""
+
+    def test_ohne_adresse_geht_keine_bestaetigungsmail_raus(self):
+        """Verhindert einen Versandversuch an eine leere Adresse, etwa bei
+        einem im Django-Admin ohne E-Mail angelegten Konto."""
+        with mock.patch(_MAIL) as versand:
+            konto = erzeuge_benutzer('ohneadresse')
+            signals.send_verification_email(konto, konto.profile)
+        versand.assert_not_called()
+
+    def test_ein_superuser_bekommt_keine_bestaetigungsmail(self):
+        """``start.sh`` legt bei jedem Start den Superuser an – er darf dabei
+        keine Mail an die Betreiberin auslösen, aber ein Profil bekommen."""
+        with mock.patch(_MAIL) as versand:
+            konto = User.objects.create_superuser('chefin', 'chefin@example.invalid', PASSWORT)
+        versand.assert_not_called()
+        self.assertTrue(UserProfile.objects.filter(user=konto).exists())
+
+    def test_das_registrierungsformular_schreibt_die_profilfelder(self):
+        """Verhindert, dass Telefon und Anschrift aus der Registrierung
+        verloren gehen – das Profil legt das Signal an, das Formular füllt es."""
+        daten = dict(REGISTRIERUNG, telefon='000 000', stadt='Alsfeld', postleitzahl='36304')
+        formular = forms.CustomUserCreationForm(daten)
+        self.assertTrue(formular.is_valid(), formular.errors)
+        with mock.patch(_MAIL):
+            konto = formular.save()
+        profil = UserProfile.objects.get(user=konto)
+        self.assertEqual((profil.telefon, profil.stadt, profil.postleitzahl),
+                         ('000 000', 'Alsfeld', '36304'))
+
+    def test_das_profilformular_schreibt_name_und_adresse_ins_benutzerkonto(self):
+        """Name und E-Mail stehen im ``User``, nicht im Profil – ohne das
+        eigene ``save()`` bliebe eine Änderung auf der Profilseite folgenlos."""
+        konto = erzeuge_benutzer('kundin')
+        daten = {'first_name': 'Erika', 'last_name': 'Musterfrau',
+                 'email': 'erika@example.invalid', 'land': 'Deutschland'}
+        formular = forms.UserProfileForm(daten, instance=konto.profile)
+        self.assertTrue(formular.is_valid(), formular.errors)
+        formular.save()
+        konto.refresh_from_db()
+        self.assertEqual((konto.first_name, konto.last_name, konto.email),
+                         ('Erika', 'Musterfrau', 'erika@example.invalid'))
 
 
 @SCHNELLER_HASHER

@@ -418,7 +418,10 @@ def newsletter_subscribe(request):
         try:
             data = json.loads(request.body)
             email = data.get('email', '').strip()
-        except Exception:
+        except (ValueError, AttributeError):
+            # Kein JSON (ValueError, auch UnicodeDecodeError) oder JSON ohne
+            # Objekt bzw. ohne Text unter "email" (AttributeError): dann kam
+            # das Formular klassisch als POST-Felder.
             email = request.POST.get('email', '').strip()
 
         # Serverseitige Prüfung (FO06): ``type="email"`` im Formular umgeht
