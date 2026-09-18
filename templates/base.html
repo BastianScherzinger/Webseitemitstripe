@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Luviq Universe – Handbemalte Second Hand Mode aus Alsfeld | Hessen{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}Luviq Universe aus Alsfeld (Hessen): Handbemalte 1-of-1 Vintage-Unikate. Nachhaltige Second-Hand-Mode – deutschlandweit bestellen. Gießen, Fulda, Frankfurt &amp; mehr.{% endblock %}">
-    <meta name="keywords" content="Luviq, Luviq Universe, Second Hand Mode Alsfeld, Vintage Mode Hessen, handbemalte Kleidung kaufen, Upcycling Mode Deutschland, 1 of 1 Unikate, Second Hand Gießen, Vintage Fulda, nachhaltige Mode Hessen">
+    <meta name="description" content="{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Alsfeld (Hessen): Handbemalte 1-of-1 Vintage-Unikate. Nachhaltige Second-Hand-Mode – deutschlandweit bestellen. Gießen, Fulda, Frankfurt &amp; mehr.{% else %}Luviq Universe aus Alsfeld (Hessen): handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler. Marke im Aufbau – jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}">
+    <meta name="keywords" content="Luviq, Luviq Universe, Second Hand Mode Alsfeld, Vintage Mode Hessen, handbemalte Kleidung{% if verkauf_aktiv %} kaufen{% endif %}, Upcycling Mode Deutschland, 1 of 1 Unikate, Second Hand Gießen, Vintage Fulda, nachhaltige Mode Hessen">
     <meta name="author" content="Luisa Brehler">
 
     <!-- Geo / Local SEO -->
@@ -32,7 +32,7 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
-    <meta property="og:title" content="{% block og_title %}Luviq Universe – Handbemalte Vintage Mode kaufen{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Luviq Universe – Handbemalte Vintage Mode{% if verkauf_aktiv %} kaufen{% endif %}{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Entdecke handbemalte 1-of-1 Upcycling-Unikate bei Luviq Universe. Nachhaltige Vintage-Mode aus Deutschland – jedes Stück ein Kunstwerk.{% endblock %}">
     <meta property="og:locale" content="de_DE">
     <meta property="og:site_name" content="Luviq Universe">
@@ -56,7 +56,8 @@
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": ["Organization", "ClothingStore", "LocalBusiness"],
+          {% comment %}Verkaufsschalter: ohne Verkauf nur Organization - kein ClothingStore/LocalBusiness, keine Preisspanne, Zahlarten, Angebote oder Liefergebiet. Eine Geschaeftsbehauptung ohne angemeldetes Gewerbe waere eine irrefuehrende Angabe.{% endcomment %}
+          "@type": {% if verkauf_aktiv %}["Organization", "ClothingStore", "LocalBusiness"]{% else %}"Organization"{% endif %},
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
           "name": "Luviq Universe",
           "alternateName": ["Luviq", "Luviq Mode", "Luviq Alsfeld"],
@@ -67,7 +68,7 @@
           },
           "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}",
           "founder": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
-          "description": "Luviq Universe ist ein nachhaltiger Second-Hand-Shop aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Versand deutschlandweit.",
+          "description": "{% if verkauf_aktiv %}Luviq Universe ist ein nachhaltiger Second-Hand-Shop aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Versand deutschlandweit.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Derzeit findet kein Verkauf statt.{% endif %}",
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Grünberger Str. 16",
@@ -76,6 +77,7 @@
             "addressRegion": "Hessen",
             "addressCountry": "DE"
           },
+{% if verkauf_aktiv %}
           "geo": {
             "@type": "GeoCoordinates",
             "latitude": 50.7517,
@@ -104,7 +106,9 @@
             {"@type": "State", "name": "Hessen"},
             {"@type": "Country", "name": "Deutschland"}
           ],
+{% endif %}
           "email": "brehlerluisa@gmail.com",
+{% if verkauf_aktiv %}
           "priceRange": "€€",
           "currenciesAccepted": "EUR",
           "paymentAccepted": "PayPal, Banküberweisung",
@@ -117,6 +121,7 @@
               {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "1-of-1 Upcycling-Unikate"}}
             ]
           },
+{% endif %}
           "sameAs": [
             "https://www.instagram.com/luviq.universe/"
           ]
@@ -126,7 +131,7 @@
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
           "url": "{{ request.scheme }}://{{ request.get_host }}/",
           "name": "Luviq Universe",
-          "description": "Handbemalte Second Hand Mode und Vintage-Unikate aus Alsfeld, Hessen – deutschlandweit bestellen.",
+          "description": "Handbemalte Second Hand Mode und Vintage-Unikate aus Alsfeld, Hessen{% if verkauf_aktiv %} – deutschlandweit bestellen{% endif %}.",
           "inLanguage": "de-DE",
           "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
         },
@@ -352,11 +357,13 @@
                 </div>
                 <div class="hidden md:flex items-center space-x-6">
                     {% if user.is_authenticated %}
+                        {% if verkauf_aktiv %}
                         <a href="{% url 'warenkorb' %}" aria-label="Warenkorb ansehen" class="p-2 text-white/70 hover:text-glow-orange transition-colors relative">
                             <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                         </a>
+                        {% endif %}
                         <div class="relative" x-data="{ open: false }">
                             <button type="button" @click="open = !open" aria-label="Benutzermenü" aria-haspopup="true" :aria-expanded="open ? 'true' : 'false'" class="flex items-center space-x-2 text-sm font-semibold text-white/90 hover:text-glow-orange transition-colors">
                                 <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">👤</div>
@@ -415,7 +422,7 @@
                     </div>
                 {% else %}
                     <div class="border-t border-white/5 pt-2">
-                        <a href="{% url 'warenkorb' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">🛒 Warenkorb</a>
+                        {% if verkauf_aktiv %}<a href="{% url 'warenkorb' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">🛒 Warenkorb</a>{% endif %}
                         <a href="{% url 'profil' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">👤 Mein Profil</a>
                         <a href="{% url 'logout' %}" class="block px-3 py-3 rounded-xl text-red-400 hover:bg-white/5">Logout</a>
                     </div>
@@ -458,7 +465,7 @@
                         <li><a href="{% url 'produkte' %}" class="text-sm text-white/40 hover:text-white transition-colors">Produkte</a></li>
                         <li><a href="{% url 'kontakt' %}" class="text-sm text-white/40 hover:text-white transition-colors">Kontakt</a></li>
                         <li><a href="{% url 'ueber_uns' %}" class="text-sm text-white/40 hover:text-white transition-colors">Über uns</a></li>
-                        <li><a href="{% url 'liefergebiet' %}" class="text-sm text-white/40 hover:text-white transition-colors">Liefergebiet</a></li>
+                        <li><a href="{% url 'liefergebiet' %}" class="text-sm text-white/40 hover:text-white transition-colors">{% if verkauf_aktiv %}Liefergebiet{% else %}Herkunft{% endif %}</a></li>
                     </ul>
                 </div>
                 <div>
@@ -466,7 +473,8 @@
                     <ul class="space-y-4">
                         <li><a href="{% url 'datenschutz' %}" class="text-sm text-white/40 hover:text-white transition-colors">Datenschutz</a></li>
                         <li><a href="{% url 'impressum' %}" class="text-sm text-white/40 hover:text-white transition-colors">Impressum</a></li>
-                        <li><a href="{% url 'agb' %}" class="text-sm text-white/40 hover:text-white transition-colors">AGB</a></li>
+                        {% comment %}Verkaufsschalter: die AGB gelten erst ab Eröffnung des Shops und sind ohne Verkauf nicht verlinkt (die Seite bleibt erreichbar). An ihrer Stelle steht die Warteliste - gleiches Element, gleiche Klassen, damit der Seitenaufbau (Designwache) bleibt.{% endcomment %}
+                        {% if verkauf_aktiv %}<li><a href="{% url 'agb' %}" class="text-sm text-white/40 hover:text-white transition-colors">AGB</a></li>{% else %}<li><a href="{% url 'home' %}#newsletter-form" class="text-sm text-white/40 hover:text-white transition-colors">Warteliste</a></li>{% endif %}
                     </ul>
                 </div>
             </div>
@@ -488,8 +496,10 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
             </svg>
-            <span>Shop</span>
+            <span>{% if verkauf_aktiv %}Shop{% else %}Drop{% endif %}</span>
         </a>
+        {% comment %}Verkaufsschalter: ohne Verkauf führt dieser Platz auf die Warteliste (Newsletter mit Double-Opt-in auf der Startseite). Glocke statt Wagen, aber dieselben Elemente (svg, zwei circle, ein path), damit der Seitenaufbau bleibt.{% endcomment %}
+        {% if verkauf_aktiv %}
         <a href="{% url 'warenkorb' %}" class="mbn-item {% if request.resolver_match.url_name == 'warenkorb' %}active{% endif %}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
@@ -497,6 +507,14 @@
             {% if cart_count %}<span class="mbn-badge">{{ cart_count }}</span>{% endif %}
             <span>Warenkorb</span>
         </a>
+        {% else %}
+        <a href="{% url 'home' %}#newsletter-form" class="mbn-item ">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="20.5" r="1.5"/><circle cx="12" cy="2.5" r="0.5"/><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+            </svg>
+            <span>Warteliste</span>
+        </a>
+        {% endif %}
         <a href="{% url 'gaestebuch' %}" class="mbn-item {% if request.resolver_match.url_name == 'gaestebuch' %}active{% endif %}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -577,5 +595,4 @@
     </script>
     {% block extra_js %}{% endblock %}
 </body>
-</html>
-
+</html>

@@ -334,62 +334,6 @@ def admin_werbung_edit(request, werbung_id):
     return redirect('admin_werbung_list')
 
 
-def _geo_enrich_visitors(visitors):
-    """Batch geo-enrich visitor log entries that have no country yet."""
-    import urllib.request
-    import json as _json
-
-    PRIVATE = ('127.', '10.', '192.168.', '::1', '172.16.', '172.17.',
-               '172.18.', '172.19.', '172.20.', '172.21.', '172.22.',
-               '172.23.', '172.24.', '172.25.', '172.26.', '172.27.',
-               '172.28.', '172.29.', '172.30.', '172.31.',
-               '100.64.', '100.65.', '100.66.', '100.67.', '100.68.',
-               '100.69.', '100.70.', '100.71.', '100.72.', '100.73.',
-               '100.74.', '100.75.', '100.76.', '100.77.', '100.78.',
-               '100.79.', '100.80.', '100.81.', '100.82.', '100.83.',
-               '100.84.', '100.85.', '100.86.', '100.87.', '100.88.',
-               '100.89.', '100.90.', '100.91.', '100.92.', '100.93.',
-               '100.94.', '100.95.', '100.96.', '100.97.', '100.98.',
-               '100.99.', '100.100.', '100.101.', '100.102.', '100.103.',
-               '100.104.', '100.105.', '100.106.', '100.107.', '100.108.',
-               '100.109.', '100.110.', '100.111.', '100.112.', '100.113.',
-               '100.114.', '100.115.', '100.116.', '100.117.', '100.118.',
-               '100.119.', '100.120.', '100.121.', '100.122.', '100.123.',
-               '100.124.', '100.125.', '100.126.', '100.127.')
-
-    to_enrich = [v for v in visitors
-                 if not v.country and v.ip_address
-                 and not any(str(v.ip_address).startswith(p) for p in PRIVATE)]
-    if not to_enrich:
-        return
-    ips = [str(v.ip_address) for v in to_enrich[:10]]
-    ip_to_obj = {str(v.ip_address): v for v in to_enrich[:10]}
-    _log.debug('geo_enrich_visitors: querying %d IPs: %s', len(ips), ips)
-    try:
-        body = _json.dumps([{'query': ip} for ip in ips]).encode('utf-8')
-        req = urllib.request.Request(
-            'http://ip-api.com/batch?fields=query,status,country,countryCode,city',
-            data=body, headers={'Content-Type': 'application/json'},
-        )
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            results = _json.loads(resp.read())
-        _log.debug('geo_enrich_visitors: got %d results', len(results))
-        for r in results:
-            ip = r.get('query')
-            v = ip_to_obj.get(ip)
-            if v and r.get('status') == 'success':
-                v.country = r.get('country', '')
-                v.country_code = r.get('countryCode', '')
-                v.city = r.get('city', '')
-                VisitorLog.objects.filter(pk=v.pk).update(
-                    country=v.country, country_code=v.country_code, city=v.city,
-                )
-            elif v:
-                _log.warning('geo_enrich_visitors: ip-api fail ip=%s status=%s', ip, r.get('status'))
-    except Exception as e:
-        _log.error('geo_enrich_visitors: batch failed: %s', e)
-
-
 @admin_required
 def admin_stats(request):
     """Statistik-Seite mit Benutzerverwaltung und Bestellungen"""
@@ -451,7 +395,6 @@ def admin_stats(request):
             visitor_qs = VisitorLog.objects.filter(seite=site_name)
         visitors = list(visitor_qs.order_by('-timestamp')[:30])
         _log.debug('admin_stats: loaded %d visitor log entries (site=%s)', len(visitors), site_name)
-        _geo_enrich_visitors(visitors)
         recent_visitors = visitors
         total_visitor_logs = visitor_qs.count()
     except Exception as e:

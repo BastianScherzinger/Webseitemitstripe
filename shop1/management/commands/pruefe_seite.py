@@ -318,7 +318,10 @@ class Command(BaseCommand):
             self.fehler.append(f'/sitemap.xml antwortet mit {sitemap.status_code}.')
             return
         adressen = _LOC.findall(sitemap.content.decode('utf-8', 'replace'))
-        if len(adressen) < 8:
+        # Sieben feste Seiten; die AGB kommen nur mit eingeschaltetem Verkauf
+        # dazu (shop1/verkauf.py).
+        from ...verkauf import verkauf_aktiv
+        if len(adressen) < (8 if verkauf_aktiv() else 7):
             self.fehler.append(
                 f'Die Sitemap nennt nur {len(adressen)} Adressen – sie wirkt unvollständig.'
             )

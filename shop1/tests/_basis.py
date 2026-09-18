@@ -5,6 +5,7 @@ Kein Testmodul (Name beginnt nicht mit ``test``), wird nur importiert.
 
 from decimal import Decimal
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.test import TestCase
@@ -125,9 +126,12 @@ INHALTSSEITEN = [
 def _nicht_indexierbare_wissensseiten():
     """Aus dem Register abgeleitet, damit die Tests von selbst umschalten,
     sobald ein Beitrag freigegeben wird."""
-    from ..views.wissen import WISSEN_BEITRAEGE, uebersicht_indexierbar
+    from ..views.wissen import WISSEN_BEITRAEGE, freigegebene_beitraege, uebersicht_indexierbar
 
-    seiten = [f'/wissen/{slug}/' for slug, b in WISSEN_BEITRAEGE.items() if not b.get('freigegeben')]
+    # freigegebene_beitraege() statt des Registerfelds: sie berücksichtigt
+    # auch den Verkaufsschalter (Kaufweg-Beiträge nur mit Verkauf).
+    sichtbar = freigegebene_beitraege()
+    seiten = [f'/wissen/{slug}/' for slug in WISSEN_BEITRAEGE if slug not in sichtbar]
     if not uebersicht_indexierbar():
         seiten.insert(0, '/wissen/')
     return seiten
@@ -136,7 +140,11 @@ def _nicht_indexierbare_wissensseiten():
 #: Inhaltsseiten, die heute bewusst ``noindex`` tragen und deshalb in Sitemap
 #: und llms.txt fehlen müssen: ``/impressum/`` (dauerhaft, siehe legal.py) und
 #: die noch nicht freigegebenen Wissensseiten.
-NICHT_INDEXIERBARE_SEITEN = ['/impressum/'] + _nicht_indexierbare_wissensseiten()
+#: Ohne Verkauf (``VERKAUF_AKTIV`` aus, die Vorgabe) auch ``/agb/``: die AGB
+#: gelten erst ab Eröffnung des Shops (``shop1/verkauf.py``).
+NICHT_INDEXIERBARE_SEITEN = (['/impressum/']
+                             + ([] if settings.VERKAUF_AKTIV else ['/agb/'])
+                             + _nicht_indexierbare_wissensseiten())
 
 #: Die Inhaltsseiten, die Sitemap und llms.txt nennen müssen.
 INDEXIERBARE_SEITEN = [p for p in INHALTSSEITEN if p not in NICHT_INDEXIERBARE_SEITEN]

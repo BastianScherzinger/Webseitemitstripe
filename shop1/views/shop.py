@@ -22,6 +22,21 @@ from ._helpers import zu_viele_anfragen
 _log = logging.getLogger('shop1')
 
 
+def betreiber_konten():
+    """Benutzernamen der Betreiberin, deren Gästebuch-Beiträge die Startseite
+    nicht als Stimmen anderer zeigt.
+
+    ``ADMIN_USERNAME`` (wie im Kontextprozessor) plus ``BETREIBER_KONTEN``
+    (Komma-Liste). Die Vorgabe ``luisabre`` ist das Konto, unter dem am
+    18.09.2026 Beiträge auf der Live-Startseite standen und dessen Name zu
+    Luisa Brehler passt (nicht bestätigt) – wer es anders weiss, setzt die
+    Variable.
+    """
+    namen = {os.getenv('ADMIN_USERNAME', 'shopbesitzer')}
+    namen.update(n.strip() for n in os.getenv('BETREIBER_KONTEN', 'luisabre').split(','))
+    return sorted(n for n in namen if n)
+
+
 # offen-ok: die Startseite ist die öffentlichste Seite überhaupt. Geschrieben
 # wird nur der eigene Zähler der Werbeeinblendungen (WerbungStat), nichts, was
 # aus der Anfrage stammt.
@@ -40,8 +55,15 @@ def startseite(request):
     except Exception:
         _log.exception('Werbe-Impressionen auf der Startseite konnten nicht gezählt werden')
 
+    # Die Startseite zeigt die Beiträge direkt neben dem Google-Aufruf. Beiträge
+    # aus Konten der Betreiberin wirken dort wie Kundenstimmen (UWG Anh.
+    # Nr. 23b/23c) und bleiben deshalb weg – nur hier, im Gästebuch stehen sie
+    # weiter, gelöscht wird nichts.
     recent_comments = (
         Comment.objects.filter(parent=None)
+        .exclude(user__is_staff=True)
+        .exclude(user__is_superuser=True)
+        .exclude(user__username__in=betreiber_konten())
         .select_related('user')
         .prefetch_related('likes')
         .order_by('-erstellt_am')[:4]

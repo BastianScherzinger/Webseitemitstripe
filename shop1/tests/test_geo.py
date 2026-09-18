@@ -13,6 +13,7 @@ from html.parser import HTMLParser
 from urllib.parse import urlsplit
 from xml.etree import ElementTree
 
+from django.test import override_settings
 from django.utils import timezone
 
 from ._basis import INDEXIERBARE_SEITEN, INHALTSSEITEN, LuviqTestCase, erzeuge_produkt
@@ -459,6 +460,7 @@ class AntwortCrawlerTest(LuviqTestCase):
             with self.subTest(pfad=pfad):
                 self.assertEqual(self.hole(pfad).status_code, 200)
 
+    @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
     def test_die_kurzfassung_behauptet_nichts_anderes_als_die_agb(self):
         """Verhindert genau den Fehler, den dieser Bereich verhindern soll: die
         Kurzfassung nennt Zahlungsarten, die auf der Seite nicht gelten."""

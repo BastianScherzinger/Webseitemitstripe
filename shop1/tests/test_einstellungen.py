@@ -670,11 +670,12 @@ class PruefbefehlTest(LuviqTestCase):
         treffer = re.search(r'(\d+) von (\d+) Sitemap-Adressen', text)
         self.assertIsNotNone(treffer, text)
         self.assertEqual(treffer.group(1), treffer.group(2), text)
-        # Soll: jeder <loc> der ausgelieferten Sitemap – acht statische Seiten,
-        # die freigegebenen Wissensseiten und die Produktseite.
+        # Soll: jeder <loc> der ausgelieferten Sitemap – sieben statische Seiten
+        # (ohne Verkauf fehlen die AGB), die freigegebenen Wissensseiten und
+        # die Produktseite.
         sitemap = self.hole('/sitemap.xml').content.decode()
         self.assertEqual(int(treffer.group(1)), sitemap.count('<loc>'), text)
-        self.assertGreaterEqual(int(treffer.group(1)), 9, text)
+        self.assertGreaterEqual(int(treffer.group(1)), 8, text)
 
     def test_ein_aktives_produkt_ohne_beschreibung_wird_als_fehler_gemeldet(self):
         """Verhindert, dass ein Produkt mit leerem Pflichtwert unbemerkt in
@@ -746,29 +747,85 @@ class AusgabecacheTest(LuviqTestCase):
                 self.assertEqual(zweiter.content, erster.content)
 
 
+#: Browserkennung eines echten Handys; ohne Kennung zählt ein Abruf nicht.
+HANDY = ('Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 '
+         '(KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1')
+
+
 class BesucherprotokollTest(LuviqTestCase):
-    """``PageVisitMiddleware`` läuft bei jeder Antwort mit."""
+    """``PageVisitMiddleware`` zählt Besucher ohne Cookie, IP-Adresse und Fremddienst."""
+
+    def hole(self, pfad, **kwargs):
+        kwargs.setdefault('HTTP_USER_AGENT', HANDY)
+        return super().hole(pfad, **kwargs)
 
     def test_ein_seitenabruf_wird_protokolliert(self):
         """Verhindert, dass das Besucherprotokoll unbemerkt versiegt – im
         Admin-Dashboard fiele das erst Wochen später auf."""
         self.hole('/')
         self.assertEqual(VisitorLog.objects.filter(path='/').count(), 1)
+        self.assertEqual(PageVisit.objects.get().visits, 1)
 
-    def test_derselbe_pfad_wird_im_selben_zeitfenster_nur_einmal_gezaehlt(self):
-        """Verhindert, dass ein Neuladen der Seite das Protokoll aufbläht. Das
-        Fenster beträgt 5 Minuten (``diff < 300`` in ``middleware.py``)."""
+    def test_derselbe_pfad_wird_am_selben_tag_nur_einmal_gezaehlt(self):
+        """Verhindert, dass ein Neuladen der Seite das Protokoll aufbläht."""
         self.hole('/')
         self.hole('/')
         self.hole('/')
         self.assertEqual(VisitorLog.objects.filter(path='/').count(), 1)
+        self.assertEqual(PageVisit.objects.get().visits, 1)
 
     def test_verschiedene_pfade_werden_getrennt_protokolliert(self):
         """Gegenprobe: eine zu grobe Entdopplung würde alle Unterseiten
-        verschlucken und die Statistik wertlos machen."""
+        verschlucken; der Besucher selbst zählt trotzdem nur einmal."""
         self.hole('/')
         self.hole('/produkte/')
         self.assertEqual(VisitorLog.objects.count(), 2)
+        self.assertEqual(PageVisit.objects.get().visits, 1)
+
+    def test_zwei_besucher_zaehlen_zweimal(self):
+        """Verhindert, dass die Tageskennung alle Besucher zusammenwirft."""
+        self.hole('/', REMOTE_ADDR='203.0.113.5')
+        self.hole('/', REMOTE_ADDR='198.51.100.7')
+        self.assertEqual(PageVisit.objects.get().visits, 2)
+
+    def test_keine_ip_kein_cookie_kein_fremddienst(self):
+        """Der Kern der datensparsamen Zählung: in der Datenbank steht keine
+        IP-Adresse, die Sitzung bleibt unberührt (kein ``sessionid``-Cookie),
+        und kein Abruf geht an einen fremden Dienst wie früher ip-api.com."""
+        from .. import models
+
+        with mock.patch('urllib.request.urlopen') as urlopen:
+            antwort = self.hole('/produkte/', REMOTE_ADDR='203.0.113.5')
+        urlopen.assert_not_called()
+        self.assertNotIn('sessionid', antwort.cookies)
+        eintrag = VisitorLog.objects.get()
+        self.assertIsNone(eintrag.ip_address)
+        self.assertEqual(eintrag.user_agent, 'Handy · Safari')
+        kennung = models.TagesBesucher.objects.get().kennung
+        self.assertEqual(len(kennung), 16)
+        self.assertNotIn('203.0.113', kennung)
+
+    def test_bots_und_leere_kennungen_zaehlen_nicht(self):
+        """Verhindert, dass Crawler und Werkzeuge die Tageszahl aufblähen."""
+        self.hole('/', HTTP_USER_AGENT='Mozilla/5.0 (compatible; Googlebot/2.1)')
+        self.hole('/', HTTP_USER_AGENT='python-requests/2.32')
+        self.hole('/', HTTP_USER_AGENT='')
+        self.assertEqual(VisitorLog.objects.count(), 0)
+        self.assertEqual(PageVisit.objects.count(), 0)
+
+    def test_kennungen_der_vortage_werden_geloescht(self):
+        """Die Tageskennung darf nicht länger als einen Tag stehen bleiben."""
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        from .. import middleware, models
+
+        gestern = timezone.localdate() - timedelta(days=1)
+        models.TagesBesucher.objects.create(datum=gestern, kennung='a' * 16, pfad='/')
+        middleware._aufgeraeumt_am = None
+        self.hole('/')
+        self.assertFalse(models.TagesBesucher.objects.filter(datum=gestern).exists())
 
     def test_statische_dateien_und_sitemap_werden_nicht_protokolliert(self):
         """Verhindert, dass jeder Crawler-Abruf der Sitemap als Besuch zählt."""
@@ -779,9 +836,8 @@ class BesucherprotokollTest(LuviqTestCase):
     def test_der_abschalter_stoppt_das_protokoll_und_die_vorgabe_ist_an(self):
         """Verhindert zweierlei: dass ``VISITOR_TRACKING=False`` ohne Wirkung
         bleibt – dann liesse sich das Protokoll bei hakender pystore-Datenbank
-        nicht abschalten, und jeder Besucher wartete auf den Verbindungs-
-        timeout – und dass die Vorgabe umkippt und das Protokoll ohne die
-        Variable still versiegt."""
+        nicht abschalten – und dass die Vorgabe umkippt und das Protokoll
+        ohne die Variable still versiegt."""
         from ..middleware import TRACKING_ENV
 
         with mock.patch.dict(os.environ, {TRACKING_ENV: 'False'}):
@@ -796,34 +852,21 @@ class BesucherprotokollTest(LuviqTestCase):
         self.assertEqual(VisitorLog.objects.count(), 1)
         self.assertEqual(PageVisit.objects.count(), 1)
 
-    def test_der_geo_lookup_laeuft_im_pool_und_entfaellt_wenn_er_voll_ist(self):
-        """Verhindert die Rückkehr zum neuen Betriebssystem-Thread je
-        Seitenaufruf ohne Obergrenze – und dass ein voller Pool eine
-        Warteschlange aufbaut statt den Lookup auszulassen. Kein Netzzugriff:
-        ``submit`` wird abgefangen, der Lookup selbst läuft nie."""
-        from .. import middleware
+    def test_alte_eintraege_verlieren_ip_und_stadt(self):
+        """``besucher_anonymisieren`` (start.sh) leert Altbestände der eigenen
+        Seite und lässt fremde Seiten in der gemeinsamen Datenbank stehen."""
+        from io import StringIO
 
-        with mock.patch.object(middleware._geo_pool, 'submit') as submit:
-            # Private Adresse (Testclient): nichts nachzuschlagen.
-            self.hole('/')
-            submit.assert_not_called()
+        from django.core.management import call_command
 
-            # Öffentliche Adresse: genau ein Auftrag in den Pool.
-            self.hole('/produkte/', REMOTE_ADDR='203.0.113.5')
-            submit.assert_called_once()
-            self.assertIs(submit.call_args.args[0], middleware._geo_enrich)
-            middleware._geo_frei.release()   # der abgefangene Lookup gibt nie frei
-
-            # Alle Plätze belegt: der Lookup entfällt, nichts wird eingereiht.
-            belegt = [middleware._geo_frei.acquire(blocking=False)
-                      for _ in range(middleware.GEO_PLAETZE)]
-            try:
-                self.assertTrue(all(belegt))
-                self.assertFalse(middleware._geo_einreihen(99, '203.0.113.5'))
-                submit.assert_called_once()
-            finally:
-                for _ in belegt:
-                    middleware._geo_frei.release()
+        VisitorLog.objects.create(ip_address='203.0.113.5', city='Alsfeld', path='/', seite='luviq')
+        VisitorLog.objects.create(ip_address='198.51.100.7', city='Kiel', path='/', seite='andere')
+        with mock.patch.dict(os.environ, {'SITE_NAME': 'luviq'}):
+            call_command('besucher_anonymisieren', stdout=StringIO())
+        eigen = VisitorLog.objects.get(seite='luviq')
+        self.assertIsNone(eigen.ip_address)
+        self.assertEqual(eigen.city, '')
+        self.assertEqual(VisitorLog.objects.get(seite='andere').city, 'Kiel')
 
 
 class VerweisPruefbefehlTest(LuviqTestCase):
@@ -908,6 +951,7 @@ class VerweisPruefbefehlTest(LuviqTestCase):
             self.assertIsNotNone(Command._ausgelassen(pfad), pfad)
         self.assertIsNone(Command._ausgelassen('/produkte/'))
 
+    @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
     def test_weiterleitung_zur_anmeldung_ist_keine_beanstandung(self):
         """``/warenkorb/`` steht in der Fusszeile jeder Seite und schickt
         anonyme Besucher auf ``/login/``. Würde der Befehl das als Umweg

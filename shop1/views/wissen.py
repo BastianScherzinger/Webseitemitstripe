@@ -52,6 +52,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 
+from ..verkauf import verkauf_aktiv
+
 #: Slug → Beitrag. ``url_name`` ist der Routenname, ``template`` die Vorlage,
 #: ``titel`` die sichtbare Überschrift (zugleich ``h1`` der Seite), ``kurz``
 #: der Satz, mit dem die Übersicht den Beitrag ankündigt, ``freigegeben`` die
@@ -111,6 +113,9 @@ WISSEN_BEITRAEGE = {
         'kurz': 'Konto, Warenkorb, Pflichtangaben im Bestellvorgang, PayPal oder '
                 'Vorab-Überweisung, Prüfung der Zahlung, Bestätigung und Versand.',
         'freigegeben': True,
+        # Beschreibt den Kaufweg: ohne Verkauf (VERKAUF_AKTIV aus) noindex
+        # und nicht in Sitemap, llms.txt und Feed, siehe _sichtbar().
+        'nur_mit_verkauf': True,
         'veroeffentlicht': '2026-09-07',
     },
     'widerruf-und-ruecksendung': {
@@ -120,6 +125,9 @@ WISSEN_BEITRAEGE = {
         'kurz': 'Vierzehn Tage Widerrufsrecht nach § 5 der AGB, Anschrift für die '
                 'Rücksendung, Unregelmäßigkeiten der Bemalung und echte Mängel.',
         'freigegeben': True,
+        # Beschreibt den Kaufweg: ohne Verkauf (VERKAUF_AKTIV aus) noindex
+        # und nicht in Sitemap, llms.txt und Feed, siehe _sichtbar().
+        'nur_mit_verkauf': True,
         'veroeffentlicht': '2026-09-07',
     },
     'konto-und-daten': {
@@ -129,18 +137,34 @@ WISSEN_BEITRAEGE = {
         'kurz': 'Anmeldepflicht im Warenkorb, Angaben bei der Registrierung, '
                 'Besuchsprotokoll, eingebundene Dienste und wie ein Konto gelöscht wird.',
         'freigegeben': True,
+        # Beschreibt den Kaufweg: ohne Verkauf (VERKAUF_AKTIV aus) noindex
+        # und nicht in Sitemap, llms.txt und Feed, siehe _sichtbar().
+        'nur_mit_verkauf': True,
         'veroeffentlicht': '2026-09-07',
     },
 }
+
+
+def _sichtbar(beitrag):
+    """Freigegeben – und, wenn der Beitrag den Kaufweg beschreibt
+    (``nur_mit_verkauf``), nur bei eingeschaltetem Verkauf.
+
+    Solange kein Gewerbe angemeldet ist, bleiben Bestell-, Widerrufs- und
+    Kontobeitrag erreichbar (mit Hinweis „gilt ab Eröffnung des Shops"),
+    aber ``noindex`` und aus Sitemap, llms.txt und Feed heraus.
+    """
+    return bool(beitrag.get('freigegeben')) and (
+        verkauf_aktiv() or not beitrag.get('nur_mit_verkauf'))
 
 
 def freigegebene_beitraege():
     """Slug → Beitrag, nur die von der Betreiberin bestätigten Beiträge.
 
     Das ist die Menge, die Sitemap (``views/legal.py``) und llms.txt nennen
-    und die ohne ``noindex`` ausgeliefert wird.
+    und die ohne ``noindex`` ausgeliefert wird. Beiträge zum Kaufweg zählen
+    nur bei eingeschaltetem Verkauf dazu (``_sichtbar``).
     """
-    return {slug: b for slug, b in WISSEN_BEITRAEGE.items() if b.get('freigegeben')}
+    return {slug: b for slug, b in WISSEN_BEITRAEGE.items() if _sichtbar(b)}
 
 
 def uebersicht_indexierbar():
@@ -150,7 +174,8 @@ def uebersicht_indexierbar():
 
 def wissen(request):
     """Übersicht des Wissensbereichs mit allen angemeldeten Beiträgen."""
-    beitraege = [{'slug': slug, **beitrag} for slug, beitrag in WISSEN_BEITRAEGE.items()]
+    beitraege = [{'slug': slug, **beitrag, 'freigegeben': _sichtbar(beitrag)}
+                 for slug, beitrag in WISSEN_BEITRAEGE.items()]
     return render(request, 'shop1/wissen/uebersicht.html', {
         'beitraege': beitraege,
         'indexierbar': uebersicht_indexierbar(),
@@ -166,6 +191,9 @@ def wissen_beitrag(request, slug):
     beitrag = WISSEN_BEITRAEGE.get(slug)
     if beitrag is None:
         raise Http404(f'Kein Wissensbeitrag mit der Kennung "{slug}"')
+    # ``freigegeben`` im Kontext ist die wirksame Freigabe (samt
+    # Verkaufsschalter); die Vorlagen setzen danach ``noindex``.
+    beitrag = {**beitrag, 'freigegeben': _sichtbar(beitrag)}
     return render(request, beitrag['template'], {'beitrag': beitrag, 'slug': slug})
 
 

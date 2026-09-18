@@ -31,6 +31,9 @@ python manage.py loaddata initial_data.json 2>/dev/null || true
 echo "Fixing pystore schema (seite column)..."
 python manage.py fix_pystore_schema
 
+# ═══ ALTE BESUCHEREINTRÄGE OHNE IP ═══
+python manage.py besucher_anonymisieren || echo "WARNING: besucher_anonymisieren failed"
+
 # ═══ STATISCHE DATEIEN SAMMELN ═══
 echo "Collecting static files..."
 python manage.py collectstatic --noinput --clear || echo "WARNING: collectstatic failed"
