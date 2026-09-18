@@ -135,9 +135,45 @@ class BildformatTest(LuviqTestCase):
         url = 'https://res.cloudinary.com/demo/image/upload/v1/produkte/jacke.jpg'
         self.assertEqual(
             cloud(url),
-            'https://res.cloudinary.com/demo/image/upload/f_auto,q_auto/v1/produkte/jacke.jpg',
+            'https://res.cloudinary.com/demo/image/upload/f_auto,q_auto/v1/produkte/jacke.webp',
         )
         self.assertIn('f_auto,q_auto,w_800,h_1000,c_fill/', cloud(url, 'w_800,h_1000,c_fill'))
+
+    def test_die_adresse_nennt_ein_modernes_format(self):
+        """Verhindert, dass die Adresse wieder auf .jpg oder .png endet (PF15).
+        Mit ``f_auto`` ist die Endung nur der Rückfall für Browser ohne
+        modernes Format – steht dort JPEG, bekommen diese das alte Format,
+        und die Messung zählt jedes Produktbild als altes Format."""
+        basis = 'https://res.cloudinary.com/demo/image/upload/'
+        faelle = {
+            'v1/a/foto.JPG': 'f_auto,q_auto,w_200/v1/a/foto.webp',
+            'v1/a/Photoroom_1.png': 'f_auto,q_auto,w_200/v1/a/Photoroom_1.webp',
+            'v1/a/ohne_endung': 'f_auto,q_auto,w_200/v1/a/ohne_endung.webp',
+            'v1/a/schon.avif': 'f_auto,q_auto,w_200/v1/a/schon.avif',
+            'v1/a/schon.webp': 'f_auto,q_auto,w_200/v1/a/schon.webp',
+            'v1/a/bild.png?_a=x': 'f_auto,q_auto,w_200/v1/a/bild.webp?_a=x',
+        }
+        for quelle, ziel in faelle.items():
+            with self.subTest(quelle=quelle):
+                self.assertEqual(cloud(basis + quelle, 'w_200'), basis + ziel)
+
+    def test_produktbilder_der_startseite_enden_auf_webp(self):
+        """Verhindert, dass eine Einbindung den Filter umgeht und die Seite
+        wieder Bilder im alten Format nennt – an der ausgelieferten Seite
+        geprüft, so wie die Messung sie liest."""
+        from unittest import mock
+
+        from ..models import Produkt
+
+        erzeuge_produkt('Bemalte Bomberjacke')
+        adresse = 'https://res.cloudinary.com/demo/image/upload/v1/media/produkte/IMG_1.jpg'
+        with mock.patch.object(Produkt.bild.field.storage, 'url', return_value=adresse):
+            Produkt.objects.update(bild='produkte/IMG_1.jpg')
+            bilder = _sammle(self.hole('/').content.decode()).bilder
+        cloudinary = [b['src'] for b in bilder if '/image/upload/' in b.get('src', '')]
+        self.assertTrue(cloudinary, 'Die Startseite zeigt kein Produktbild')
+        for quelle in cloudinary:
+            self.assertTrue(quelle.endswith('.webp'), quelle)
 
     def test_der_filter_laesst_fremde_adressen_unveraendert(self):
         """Verhindert, dass lokale ``/media/``-Adressen im Entwicklungsmodus
@@ -173,3 +209,45 @@ class SchriftenTest(LuviqTestCase):
         for stelle in re.findall(r'fonts\.googleapis\.com/css2[^"\']+', seite):
             with self.subTest(stelle=stelle[:60]):
                 self.assertIn('display=swap', stelle)
+
+
+class StildateienGepacktTest(LuviqTestCase):
+    """Die Stildateien vor dem ersten Inhalt gehen gepackt raus (PF26)."""
+
+    def test_start_packt_die_statischen_dateien_nach_dem_sammeln(self):
+        """Verhindert, dass der Packschritt aus ``start.sh`` verschwindet oder
+        vor ``collectstatic`` rutscht – ``--clear`` löschte die .gz-Dateien
+        dann wieder. WhiteNoise packt nicht selbst, es liefert nur eine
+        vorhandene ``datei.gz`` aus; ohne sie gehen beide Stildateien, auf die
+        der erste Inhalt wartet, ungepackt raus."""
+        start = (Path(settings.BASE_DIR) / 'start.sh').read_text(encoding='utf-8')
+        befehle = [z.strip() for z in start.splitlines() if z.strip().startswith(('python', 'exec'))]
+        packen = [z for z in befehle if 'whitenoise.compress' in z]
+        self.assertEqual(len(packen), 1, befehle)
+        self.assertIn(f' {Path(settings.STATIC_ROOT).name} ', packen[0] + ' ')
+        self.assertIn('||', packen[0], 'Der Packschritt darf den Start nicht abbrechen')
+        stelle = befehle.index(packen[0])
+        sammeln = next(i for i, z in enumerate(befehle) if 'collectstatic' in z)
+        server = next(i for i, z in enumerate(befehle) if 'gunicorn' in z)
+        self.assertLess(sammeln, stelle)
+        self.assertLess(stelle, server)
+
+    def test_gepackt_sind_die_stildateien_weniger_als_ein_drittel(self):
+        """Hält fest, was der Schritt bringt: dieselbe Packung wie beim Start,
+        an den echten Stildateien gemessen."""
+        import shutil
+        import tempfile
+
+        from whitenoise.compress import Compressor
+
+        packer = Compressor(use_brotli=False, quiet=True)
+        with tempfile.TemporaryDirectory() as ordner:
+            for name in ('tailwind.css', 'style.css'):
+                quelle = Path(settings.BASE_DIR) / 'shop1' / 'static' / 'shop1' / name
+                ziel = Path(ordner) / name
+                shutil.copyfile(quelle, ziel)
+                with self.subTest(datei=name):
+                    self.assertTrue(packer.should_compress(name))
+                    gepackt = packer.compress(str(ziel))
+                    self.assertEqual(gepackt, [str(ziel) + '.gz'])
+                    self.assertLess(Path(gepackt[0]).stat().st_size * 3, quelle.stat().st_size)

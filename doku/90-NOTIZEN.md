@@ -4,7 +4,7 @@ titel: Notizen, Fallen und Verweise
 stand: 2026-09-18
 status: vollständig
 fortschritt: 100
-zusammenfassung: Vier Namen für ein Projekt, PayPal statt Stripe, Zweig gegenüber main, zehn Widersprüche zwischen Quellen und Live-Seite. Der Satz „kein Consent-Banner nötig" ist seit dem 18.09.2026 belegt statt behauptet: kein eigenes Cookie, kein Gerätespeicher, kein Analysedienst, und die Google-Karte lädt seit RE17 (Paket 248, Zweig sofort/2026-09-18-re15-und-2-weitere, nicht gemergt) erst nach einem Klick — vorher war die Aussage falsch (eigener Punkt EIG14, jetzt erledigt).
+zusammenfassung: Vier Namen für ein Projekt, PayPal statt Stripe, Zweig gegenüber main, zehn Widersprüche zwischen Quellen und Live-Seite. Der Satz „kein Consent-Banner nötig" ist seit dem 18.09.2026 belegt statt behauptet: kein eigenes Cookie, kein Gerätespeicher, kein Analysedienst, und die Google-Karte lädt seit RE17 (Paket 248, Zweig sofort/2026-09-18-re15-und-2-weitere, nicht gemergt) erst nach einem Klick — vorher war die Aussage falsch (eigener Punkt EIG14, jetzt erledigt). Die Startreihenfolge nennt seit Paket 267 (Zweig sofort/2026-09-18-kv11-und-2-weitere, nicht gemergt) den Packschritt whitenoise.compress nach collectstatic.
 quellen: CLAUDE.md, DOCUMENTATION.md, GOOGLE_SEO_GUIDE.md, LOGBUCH.md, paypal_sandbox_tutorial.md
 ---
 
@@ -86,7 +86,9 @@ Admin-Mails gibt es nur noch nutzergetriggert (Kontaktformular, Bestellungen).
 
 `start.sh`: `migrate` → Superuser aus `ADMIN_USERNAME`/`ADMIN_PASSWORD`/`ADMIN_EMAIL` anlegen oder
 abgleichen → `loaddata initial_data.json` (optional) → `fix_pystore_schema` → `collectstatic --clear`
-→ **`pruefe_seite`** (Zweig, nicht blockierend) → Gunicorn. **Das Passwort des Admin-Kontos wird bei
+→ **`python -m whitenoise.compress --quiet staticfiles`** (seit Paket 267, `5515bf3`, Zweig
+`sofort/2026-09-18-kv11-und-2-weitere`; nicht blockierend, muss **nach** `collectstatic --clear`
+stehen, sonst löscht `--clear` die `.gz`-Dateien wieder) → **`pruefe_seite`** (Zweig, nicht blockierend) → Gunicorn. **Das Passwort des Admin-Kontos wird bei
 jedem Start neu gesetzt** — eine im Panel geänderte Angabe hält nur bis zum nächsten Deploy.
 
 ### Designwache
