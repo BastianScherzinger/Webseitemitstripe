@@ -10,8 +10,9 @@
         <div class="lg:col-span-2 space-y-5">
             <div class="glass-card rounded-[2.5rem] overflow-hidden" style="border-color:rgba(200,150,92,0.12)">
                 <div style="position:relative;padding-bottom:66%;overflow:hidden;">
+                    {# RE17: kein src – die Karte lädt erst nach einem Klick, siehe base.html #}
                     <iframe
-                        src="https://maps.google.com/maps?q=Gr%C3%BCnberger+Str.+16%2C+36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=16"
+                        data-src="https://maps.google.com/maps?q=Gr%C3%BCnberger+Str.+16%2C+36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=16"
                         style="position:absolute;inset:0;width:100%;height:100%;border:0;"
                         allowfullscreen loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"
@@ -94,8 +95,9 @@
     <div class="glass-card rounded-[3rem] overflow-hidden mb-16" style="border-color:rgba(200,150,92,0.12)">
         <div class="grid grid-cols-1 md:grid-cols-2">
             <div style="position:relative;min-height:320px;">
+                {# RE17: kein src – die Karte lädt erst nach einem Klick, siehe base.html #}
                 <iframe
-                    src="https://maps.google.com/maps?q=Gr%C3%BCnberger+Str.+16%2C+36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=16"
+                    data-src="https://maps.google.com/maps?q=Gr%C3%BCnberger+Str.+16%2C+36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=16"
                     style="position:absolute;inset:0;width:100%;height:100%;border:0;"
                     allowfullscreen loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"

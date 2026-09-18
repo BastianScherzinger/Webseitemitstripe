@@ -520,6 +520,38 @@
                 bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
             }, { passive: true });
         }
+        // <iframe data-src="Adresse">: die eingebettete Karte lädt erst
+        // nach einem Klick (RE17). Vorher geht keine Anfrage an Google, also
+        // auch keine IP-Adresse der Besucherin. Der Platzhalter entsteht hier
+        // und nicht in der Vorlage, damit der ausgelieferte Seitenaufbau
+        // unverändert bleibt; ohne Klick bleibt der Rahmen leer.
+        document.querySelectorAll('iframe[data-src]').forEach(function (rahmen) {
+            var huelle = rahmen.parentNode;
+            if (!huelle) { return; }
+            var knopf = document.createElement('button');
+            knopf.type = 'button';
+            knopf.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:1;' +
+                'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
+                'gap:0.6rem;padding:1.5rem;border:0;cursor:pointer;text-align:center;' +
+                'background:rgba(18,13,10,0.96);color:#fff;font:inherit;';
+            var titel = document.createElement('span');
+            titel.textContent = 'Karte laden';
+            titel.style.cssText = 'font-weight:900;text-transform:uppercase;letter-spacing:0.2em;' +
+                'font-size:0.625rem;color:#c8965c;';
+            var hinweis = document.createElement('span');
+            hinweis.textContent = 'Beim Laden werden Daten an Google Maps übertragen.';
+            hinweis.style.cssText = 'font-size:0.6875rem;line-height:1.5;color:rgba(255,255,255,0.45);max-width:22rem;';
+            knopf.appendChild(titel);
+            knopf.appendChild(hinweis);
+            knopf.setAttribute('aria-label',
+                'Karte laden – dabei werden Daten an Google Maps übertragen');
+            knopf.addEventListener('click', function () {
+                rahmen.src = rahmen.getAttribute('data-src');
+                rahmen.removeAttribute('data-src');
+                knopf.parentNode.removeChild(knopf);
+            });
+            huelle.appendChild(knopf);
+        });
         // 3D card tilt (mouse/pointer devices only)
         if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches) {
             document.querySelectorAll('.product-card').forEach(function (card) {
