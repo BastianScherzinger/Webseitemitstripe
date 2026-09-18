@@ -349,7 +349,7 @@ class ContentSecurityPolicyTest(LuviqTestCase):
                     self.assertIn('nonce="{{ csp_nonce }}"', attribute)
             genutzt.update(re.findall(
                 r'\s(data-(?:bestaetigen|bei-fehler-ausblenden|auto-absenden|schrift-nachladen'
-                r'|karte-laden))\b', text))
+                r'|src))\b', text))
         basis = (Path(settings.BASE_DIR) / 'templates' / 'base.html').read_text(encoding='utf-8')
         self.assertEqual(len(genutzt), 5, f'Ersatzattribute nicht gefunden: {genutzt}')
         for attribut in genutzt:
@@ -435,7 +435,7 @@ class EinbettungErstNachKlickTest(LuviqTestCase):
     """RE17: eine eingebettete Karte darf den Browser nicht schon beim Aufruf
     zu Google schicken. Keine öffentliche Seite liefert deshalb einen
     ``<iframe>`` mit fremdem ``src`` aus; die Adresse steht in
-    ``data-karte-laden`` und wird erst nach einem Klick gesetzt."""
+    ``data-src`` und wird erst nach einem Klick gesetzt."""
 
     #: ``<iframe … src="https://…">`` – die Einbettung, die sofort lädt.
     SOFORT = re.compile(r'<iframe[^>]+\ssrc="(https?://[^"]+)"')
@@ -455,7 +455,7 @@ class EinbettungErstNachKlickTest(LuviqTestCase):
         for pfad in ('/', '/gaestebuch/'):
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
-                self.assertIn('data-karte-laden="https://maps.google.com', html)
+                self.assertIn('data-src="https://maps.google.com', html)
 
     def test_die_karte_bleibt_in_der_richtlinie_erlaubt(self):
         """Nach dem Klick lädt der Rahmen wirklich – dafür muss ``frame-src``

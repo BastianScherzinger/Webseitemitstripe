@@ -520,12 +520,12 @@
                 bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
             }, { passive: true });
         }
-        // <iframe data-karte-laden="Adresse">: die eingebettete Karte lädt erst
+        // <iframe data-src="Adresse">: die eingebettete Karte lädt erst
         // nach einem Klick (RE17). Vorher geht keine Anfrage an Google, also
         // auch keine IP-Adresse der Besucherin. Der Platzhalter entsteht hier
         // und nicht in der Vorlage, damit der ausgelieferte Seitenaufbau
         // unverändert bleibt; ohne Klick bleibt der Rahmen leer.
-        document.querySelectorAll('iframe[data-karte-laden]').forEach(function (rahmen) {
+        document.querySelectorAll('iframe[data-src]').forEach(function (rahmen) {
             var huelle = rahmen.parentNode;
             if (!huelle) { return; }
             var knopf = document.createElement('button');
@@ -546,8 +546,8 @@
             knopf.setAttribute('aria-label',
                 'Karte laden – dabei werden Daten an Google Maps übertragen');
             knopf.addEventListener('click', function () {
-                rahmen.src = rahmen.getAttribute('data-karte-laden');
-                rahmen.removeAttribute('data-karte-laden');
+                rahmen.src = rahmen.getAttribute('data-src');
+                rahmen.removeAttribute('data-src');
                 knopf.parentNode.removeChild(knopf);
             });
             huelle.appendChild(knopf);
