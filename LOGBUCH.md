@@ -10,6 +10,69 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 18.09.2026 — Marke im Aufbau: Verkaufsschalter `VERKAUF_AKTIV` (Zweig `recht/2026-09-18-marke-im-aufbau`, `9b12276`)
+
+**Was:** Ein zentraler Schalter `VERKAUF_AKTIV` (Umgebungsvariable, gelesen in
+`settings.py`, **Vorgabe aus**) schaltet den Verkauf ab, ohne ihn zu entfernen.
+Neues Modul `shop1/verkauf.py` mit Kontextprozessor (`verkauf_aktiv` in jeder
+Vorlage) und `VerkaufsschalterMiddleware`: Warenkorb, Hinzufügen/Entfernen/
+Ändern, Kasse, Bezahlseite, Erfolg und Abbruch leiten mit 302 auf
+`/#newsletter-form` (Meldung „Der Shop öffnet mit dem ersten Drop …"), der
+PayPal-Rückruf antwortet mit JSON 409. Die Views, Modelle, Migrationen und das
+Admin-Panel sind unverändert. Öffentlich ohne Verkauf: keine Preise (Karten,
+Karussell, Produktseite, llms.txt), kein Warenkorb-Symbol und kein
+Warenkorb-Knopf (an seiner Stelle „Frage zum Stück" und „Auf die Warteliste"),
+kein Satz zu § 19 UStG/Endpreis/Kleinunternehmerin, keine Zahlungs- und
+Versandaussagen auf Start, Produkten, Produktseite, Über uns, Kontakt,
+Liefergebiet (heisst ohne Verkauf „Herkunft"), Gästebuch; im JSON-LD nur
+`Organization` statt `ClothingStore`/`LocalBusiness`, kein `Offer`, keine
+Preisspanne und Zahlarten; AGB nicht im Fuss (dort steht „Warteliste"), aber
+erreichbar mit Hinweis „gelten erst ab Eröffnung des Shops", `noindex`, nicht in
+Sitemap und llms.txt; die Wissensbeiträge Bestellen, Widerruf und Konto tragen
+`nur_mit_verkauf` (erreichbar mit Hinweis, `noindex`, nicht in Sitemap, llms.txt
+und Feed), die übrigen Wissensseiten tragen den Hinweis ebenfalls. Der
+Willkommensrabatt wird nirgends mehr beworben. Die Warteliste ist die vorhandene
+Newsletter-Anmeldung mit Double-Opt-in — kein neues Formular.
+
+**Unabhängig vom Schalter:** Impressum „§ 5 DDG" statt „§ 5 TMG", Link auf die
+seit 20.07.2025 abgeschaltete OS-Plattform entfernt (der Knopf führt aufs
+Kontaktformular). Fest eingetippte „★★★★★" und „5.0" in `_reviews_map.html`
+entfernt (UWG Anh. Nr. 23b/23c), „Community & Bewertungen" heisst „Community &
+Gästebuch", und die Startseite zeigt keine Gästebuch-Beiträge von Staff-,
+Superuser-, `ADMIN_USERNAME`- oder `BETREIBER_KONTEN`-Konten (Vorgabe
+`luisabre`) mehr — nur ein Filter in `startseite()`, gelöscht wird nichts.
+Platzhalter „z.B. Musterstraße 123"/„z.B. 12345" im Registrierungsformular
+ersetzt. Newsletter-Mail: Knopf „Stück ansehen" statt „Jetzt Sichern" ohne
+Verkauf.
+
+**Warum:** Es ist kein Gewerbe angemeldet. Ein Shop mit Preisen, Kasse und
+„§ 19 UStG" wäre ein gewerblicher Verkauf ohne Anmeldung (§ 14 GewO) und
+behauptete eine Kleinunternehmerstellung ohne Steuernummer (UWG); dazu die
+Fernabsatzpflichten. Die Domain soll trotzdem als Marke weiterlaufen (Drops,
+Warteliste). Ein Schalter statt Entfernen, damit nach der Anmeldung
+`VERKAUF_AKTIV=1` alles zurückbringt — Checkliste in `doku/80-AUFGABEN.md`.
+
+**Designwache:** Fast alles ist Fliesstext innerhalb vorhandener Elemente;
+wo ein Element wegfiel, steht ein gleich gebautes an seiner Stelle (Fuss-Link,
+Glocke statt Wagen in der unteren Leiste mit denselben Tags, leere Sterne-
+Elemente). Gezielt nachgezogen in `aufbau_referenz.json`: `/` (Überschrift
+Herkunft ohne Versandsatz), `/kontakt/` (zwei FAQ-Fragen), `/liefergebiet/`
+(drei Überschriften), `/impressum/` (Überschrift § 5 DDG, ein `<p>` „Marke im
+Aufbau"), `/wissen/bestellen-und-bezahlen/` (Rabattfrage). Farben, Schriften,
+Klassen unverändert.
+
+**Tests:** neues Modul `test_verkauf` (22 Tests, beide Zustände). Kauftests
+(`test_warenkorb`, `test_zahlung`, Zugriffsschutz von Warenkorb/Kasse,
+Attributsyntax, angemeldete Bedienung, Verweisprüfung `/warenkorb/`,
+Kurzfassung gegen AGB, Liefer- und Zahlungsangaben, Feed) laufen mit
+`@override_settings(VERKAUF_AKTIV=True)`, nichts gelöscht. Nachgezogen:
+`MINDESTWOERTER` (Zustand ohne Verkauf, Werte in `test_inhalt`), Sitemap-
+Mindestzahl 9 → 8 (ohne AGB), `pruefe_seite` verlangt ohne Verkauf 7 statt 8
+Sitemap-Adressen. `manage.py check` grün, Suite 324/324 grün (lokal Python 3.14,
+Django 6.0.8, nach `collectstatic`).
+
+---
+
 ## 18.09.2026 — Paket 267: Bildformat in der Adresse, gepackte Stildateien (`PF15`, `PF26`)
 
 `PF15` — der Filter `cloud` (`templatetags/custom_tags.py`) setzt die Endung jeder
