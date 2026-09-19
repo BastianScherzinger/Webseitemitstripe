@@ -19,6 +19,7 @@ from ._basis import (ADMIN_SEITEN, INHALTSSEITEN, OEFFENTLICHE_SEITEN,
 
 STYLE_DATEI = Path(settings.BASE_DIR) / 'shop1' / 'static' / 'shop1' / 'style.css'
 TAILWIND_DATEI = STYLE_DATEI.with_name('tailwind.css')
+LUVIQ_DATEI = STYLE_DATEI.with_name('luviq.css')
 
 _FELDER = {'input', 'textarea', 'select'}
 
@@ -233,26 +234,19 @@ class AlternativtexteTest(LuviqTestCase):
         re.IGNORECASE,
     )
 
-    def test_der_logo_alternativtext_beschreibt_das_bild(self):
-        """Verhindert 'Luviq Universe Logo' als Ersatztext des Logos in der
-        Navigation. Das nennt den Dateizweck, nicht das Bild – wer es nicht
-        sieht, erfährt nicht, dass dort der Schriftzug mit dem Leitspruch
-        steht. Weil das Logo in ``base.html`` liegt, trifft der Fehler jede
-        Seite."""
+    def test_die_wortmarke_im_kopf_hat_einen_sprechbaren_namen(self):
+        """Seit dem Umbau „Nachtausgabe" (19.09.2026) steht im Kopf kein
+        Logo-Bild mehr, sondern die gesperrte Wortmarke „LUVIQ" als Text.
+        Vorgelesen würde sie Buchstabe für Buchstabe; deshalb trägt der Link
+        einen Namen, der Marke und Ziel nennt – nicht nur den Dateizweck.
+        Früher prüfte dieser Test den Alternativtext des Logo-Bildes."""
         for pfad in INHALTSSEITEN:
-            logos = [
-                bild for bild in _erhebe(self.hole(pfad).content.decode()).bilder
-                if bild['_in_nav'] and 'logo' in bild.get('src', '').lower()
-            ]
+            html = self.hole(pfad).content.decode()
             with self.subTest(pfad=pfad):
-                self.assertTrue(logos, f'{pfad}: kein Logo in der Navigation gefunden')
-                for logo in logos:
-                    text = logo.get('alt', '').strip()
-                    self.assertTrue(text, f'{pfad}: Logo in der Navigation ohne Alternativtext')
-                    self.assertIsNone(
-                        self._NUR_ZWECK.match(text),
-                        f'{pfad}: alt="{text}" nennt nur den Dateizweck, nicht den Inhalt',
-                    )
+                treffer = re.search(r'<a class="lv-wm"[^>]*aria-label="([^"]+)"', html)
+                self.assertTrue(treffer, f'{pfad}: Wortmarke ohne aria-label')
+                self.assertIn('Luviq Universe', treffer.group(1))
+                self.assertIsNone(self._NUR_ZWECK.match(treffer.group(1)))
 
 
 class BedienelementeTest(LuviqTestCase):
@@ -455,16 +449,22 @@ class DarstellungTest(LuviqTestCase):
         """Verhindert, dass die Seite trotz der Systemeinstellung 'Bewegung
         reduzieren' weiter animiert – für Menschen mit vestibulären Störungen
         löst das Übelkeit und Schwindel aus."""
-        css = STYLE_DATEI.read_text(encoding='utf-8')
-        self.assertIn('prefers-reduced-motion: reduce', css)
-        self.assertIn('animation-duration: 0.01ms !important', css)
+        # Seit dem Umbau „Nachtausgabe" laden die neuen Seiten nur luviq.css –
+        # die Regel muss in beiden Stildateien stehen.
+        for datei in (STYLE_DATEI, LUVIQ_DATEI):
+            css = datei.read_text(encoding='utf-8')
+            with self.subTest(datei=datei.name):
+                self.assertIn('prefers-reduced-motion: reduce', css)
+                self.assertIn('animation-duration: 0.01ms !important', css)
 
     def test_der_tastaturfokus_ist_sichtbar(self):
         """Verhindert, dass beim Bedienen mit der Tabulatortaste unsichtbar
         bleibt, wo man gerade steht – ohne Maus ist die Seite dann unbenutzbar."""
-        css = STYLE_DATEI.read_text(encoding='utf-8')
-        self.assertIn(':focus-visible', css)
-        self.assertIn('outline: 3px solid', css)
+        for datei in (STYLE_DATEI, LUVIQ_DATEI):
+            css = datei.read_text(encoding='utf-8')
+            with self.subTest(datei=datei.name):
+                self.assertIn(':focus-visible', css)
+                self.assertRegex(css, r'outline:\s*3px solid')
 
     def test_die_fokusregel_setzt_sich_gegen_outline_none_durch(self):
         """Verhindert einen Fokusring, der zwar im Stylesheet steht, aber nie

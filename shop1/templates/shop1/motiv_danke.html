@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% comment %}Bestätigung nach „Motiv anfragen". Zeigt nichts aus der Anfrage, noindex, nicht in Sitemap und llms.txt. Es geht keine Mail an die Absenderin – deshalb sagt die Seite, wie es weitergeht.{% endcomment %}
+
+{% block title %}Danke für deine Anfrage – Luviq Universe, Alsfeld{% endblock %}
+{% block meta_description %}Deine Motivanfrage ist bei Luisa Brehler in Alsfeld angekommen. Sie meldet sich persönlich per Instagram oder Mail mit ersten Vorschlägen.{% endblock %}
+{% block meta_robots %}noindex, follow{% endblock %}
+
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+
+{% block content %}
+<div class="lv-seite">
+    <section class="lv-danke" aria-labelledby="danke-titel">
+        <p class="lv-nr">Motiv anfragen</p>
+        <h1 class="lv-serif" id="danke-titel">Danke, deine Anfrage ist da.</h1>
+        <p>Ich schau sie mir an und melde mich persönlich bei dir, per Instagram oder Mail, je nachdem, was du angegeben hast. Dann bekommst du ein paar Vorschläge, und wir entscheiden zusammen. Eine automatische Bestätigung schicke ich bewusst nicht.</p>
+        <p>Bis dahin kannst du dir anschauen, was schon entstanden ist.</p>
+        <a class="lv-knopf" href="{% url 'produkte' %}">Zum Archiv <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </section>
+</div>
+{% endblock %}

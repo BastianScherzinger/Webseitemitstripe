@@ -134,7 +134,12 @@ UMFANG_PRODUKT_SEITE = '/produkt/bemalte-bomberjacke/'
 #: (895; die Seite ist ohne Verkauf ``noindex``, weil keiner ihrer
 #: Beiträge freigegeben ist), Grösse 859 (870, ebenfalls ``noindex``).
 MINDESTWOERTER = {
-    '/': 655,
+    # Umbau „Nachtausgabe" (19.09.2026): die Startseite folgt der knappen
+    # Vorlage (Markensatz, Anfrage, fünf Schritte, Archiv, Luisa, Warteliste);
+    # die langen Erklärabsätze stehen auf Archiv und Luisa. Bewusst gesenkt,
+    # begründet im LOGBUCH.
+    '/': 300,
+    '/motiv-anfragen/': 100,
     '/produkte/': 380,
     '/kontakt/': 235,
     '/ueber_uns/': 370,
@@ -301,7 +306,7 @@ class DatenschutzTest(LuviqTestCase):
         und keinen der Dienste nennt, an die beim Aufruf Daten fliessen.
         Seit der cookielosen Zählung geht keine Besucher-IP mehr an ip-api.com."""
         text = sichtbarer_text(self.hole('/datenschutz/').content.decode())
-        for dienst in ('Cloudinary', 'jsDelivr', 'Google Fonts',
+        for dienst in ('Cloudinary', 'jsDelivr',
                        'Google Maps', 'Brevo', 'PayPal', 'Railway'):
             with self.subTest(dienst=dienst):
                 self.assertIn(dienst, text)
@@ -312,6 +317,9 @@ class DatenschutzTest(LuviqTestCase):
         text = sichtbarer_text(self.hole('/datenschutz/').content.decode())
         self.assertNotIn('Supabase', text)
         self.assertNotIn('ip-api.com', text)
+        # Seit dem Umbau „Nachtausgabe" (19.09.2026) sind die Schriften selbst
+        # gehostet; Google Fonts wird nicht mehr geladen.
+        self.assertNotIn('Google Fonts', text)
 
     def test_das_besuchsprotokoll_ist_beschrieben(self):
         """Verhindert, dass die Seite bei jedem Aufruf IP-Adresse, Pfad und

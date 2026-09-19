@@ -1,10 +1,10 @@
 ---
 bereich: design
 titel: Design und Gestaltungslinie
-stand: 2026-09-18
+stand: 2026-09-19
 status: teilweise
 fortschritt: 77
-zusammenfassung: 18.09.2026 Neugestaltung beschlossen, nicht gebaut — B3 „Nachtausgabe“ mit Hero H4 „Panorama“, Vorgabe und Bauplan in Webagentur Scherzinger\Design\luviq\ENTSCHEIDUNG-UND-BAUPLAN.md. Bis dahin gilt: Dunkelbraun-Gold-Linie mit Glas-Karten steht und ist durch die Designwache eingefroren. Paket 248 (18.09.2026, d58a96c und 329dbc4, Zweig sofort/2026-09-18-re15-und-2-weitere, nicht gemergt) ändert zwei sichtbare Dinge: an der Stelle der Google-Karte auf Startseite und Gästebuch steht bis zum Klick ein dunkler Platzhalter mit „Karte laden" und dem Satz „Beim Laden werden Daten an Google Maps übertragen." (RE17), und der Absendeknopf des Bestellformulars heisst „Zahlungspflichtig bestellen" statt „Continue to Payment →" (RE21). Beides ohne Änderung am eingefrorenen Aufbau: den Platzhalter erzeugt erst das Skript in base.html, im ausgelieferten HTML steht weiterhin nur der Kartenrahmen, und der Knopf hat nur seinen Text gewechselt — aufbau_referenz.json ist nicht angefasst, test_aufbau unverändert. Der Platzhalter trägt keine Klasse der Linie, sondern Inline-Stile aus dem Skript (dunkler Grund, goldene Versalien-Zeile, gedämpfter Hinweis); wie er neben den Glas-Karten wirkt, hat im Browser niemand gesehen, und ohne JavaScript bleibt der Rahmen leer. Mit dem deutschen Knopf ist eine der englischen Restbeschriftungen weg — die übrigen bleiben offen. Paket 243 (17.09.2026, b736994 und 06503a7, Zweig sofort/2026-09-17-kv05-und-2-weitere, nicht gemergt) setzt einen sichtbaren Datenschutzhinweis ins Kontaktformular — bewusst als reiner Fliesstext ohne eigenes Element und ohne eigene Klasse, weil die Designwache Elemente, Kennungen und Klassen jeder Seite einfriert; der Hinweis erbt dadurch Schrift und Farbe des Formularrahmens statt der kleinen, gedämpften Schrift der übrigen Formulartexte, und angesehen hat das im Browser niemand. Das Fallenfeld des Spamschutzes trägt seine Kennzeichen jetzt selbst (KV06) — reine Attribute, am Aussehen ändert sich nichts. aufbau_referenz.json ist nicht angefasst, test_aufbau unverändert. Seit BF24 (Paket 227, 17.09.2026, a8190b8, seit f489e76 auf main) sagen Bildschirmleser die Meldungen im Rahmen an — role="alert" bei Fehlern, role="status" sonst, das Kontaktformular ist ein aria-live-Bereich; nur Attribute, am Aussehen ändert sich nichts. Mit der Nachbesserung aus Paket 238 (8014429, Zweig sofort/2026-09-17-bf24-und-2-weitere, seit dem Merge 911c26a auf main) steht die Fehlermeldung des Kontaktformulars im Formular selbst (div id=kontakt-fehler mit role=alert, vorhandene Klassen) und hängt über aria-describedby an jedem Pflichtfeld; der Block erscheint nur im Fehlerfall, damit der sichtbare Aufbau der Seite unverändert bleibt — aufbau_referenz.json ist nicht angefasst. Die Produktkarte liegt seit dem 12.09.2026 als Baustein unter shop1/templates/shop1/teile/, ohne eine Änderung am gerenderten HTML. Neu benannt (BF29, Paket 219, 17.09.2026): zu schwacher Kontrast im Seitenrahmen — Fusslinks, Copyright-Zeile und „Registrieren" weiss auf Gold; nicht behoben, weil jede Lösung eine Farbe der Linie ändert und eine Entscheidung der Betreiberin braucht. Offen sind ausserdem Google-Schriften von fremdem Server (RE07, am 12.09.2026 erneut als nicht möglich beendet: keine WOFF2 im Projekt, kein Netzzugang im Lauf), englische Restbeschriftungen und seit IS18 die Satzart des langen Versalien-Absatzes auf /produkte/ (braucht Freigabe).
+zusammenfassung: 19.09.2026 gebaut: „Nachtausgabe" – luviq.css (Tokens, ein Akzent #C8763F), Cormorant/Schibsted/JetBrains selbst gehostet, Radius 0, keine Schatten/Glas/Animationen außer dem Laufband; alte Seiten über die Schicht .lv-alt. Bericht docs/design-2026-09-BERICHT.md.
 offen: 7
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, shop1/static/shop1/style.css, tailwind.config.js, templates/base.html
 ---
@@ -13,7 +13,40 @@ quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, shop1/static/shop1/style.css, 
 
 *Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Barrierefreiheit** des Laufs vom 02.09.2026 (Regelstand `2026-09-02a`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
 
-## Gestaltungslinie
+## Gestaltungslinie seit 19.09.2026: „Nachtausgabe"
+
+Gebaut nach `C:\Users\basti\Desktop\Webagentur Scherzinger\Design\luviq\FINALER-BAUPLAN.md`,
+Bericht `docs/design-2026-09-BERICHT.md`. Ein Stylesheet für alle öffentlichen Seiten:
+`shop1/static/shop1/luviq.css`.
+
+| Token | Wert | Rolle |
+|---|---|---|
+| `--lv-grund` / `--lv-grund-2` | `#0A0A0A` / `#131211` | Seitengrund / abgesetzte Flächen |
+| `--lv-text` / `--lv-leise` | `#F2EEE6` / `#9C968C` | Text 17,1:1 / Nebentext 6,8:1 |
+| `--lv-linie` / `--lv-linie-2` | `rgba(242,238,230,.12)` / `.28` | Linien |
+| `--lv-akzent` | `#C8763F` | **einziger** Akzent (Nummern, feine Linien, Hover) – austauschbar, weil Luisa künftig mit Textilfarben malt |
+| `--lv-kachel` | `#E8E1D6` | Kachel hinter Freistellern (`mix-blend-mode: multiply`) |
+
+**Schriften, selbst gehostet** (`shop1/static/shop1/fonts/`, OFL daneben, zugeschnitten mit
+`tools/schriften_zuschneiden.py`): Cormorant Garamond kursiv 500 (Überschriften, Markensatz,
+Zitat) · Schibsted Grotesk 400–700 (Text; 700 gesperrt für „LUVIQ") · JetBrains Mono 400–500
+(Nummern, Daten, Uhr). Ersatzschriften mit gerechneten Metriken, Preload nur Cormorant +
+Schibsted. Kein Google Fonts mehr (RE07 erledigt).
+
+**Form:** Radius 0, keine Schatten, keine Verläufe, kein Glas, kein Glühen. Einzige Bewegung:
+das Laufband (steht bei `prefers-reduced-motion`). Desktop 1:1 zur Vorlage über
+`--u: min(1vw, 14.4px)`, unter 1024 px feste Werte aus dem Handy-Rahmen.
+
+**Zwei Seitenarten** (`{% block seitenart %}` in `base.html`): `lv-seite` für neu gebaute
+Seiten (Start, Motiv anfragen, Archiv, Stück, Luisa – laden nur `luviq.css`, kein Tailwind, kein
+Alpine) und `lv-alt` (Vorgabe) für Seiten mit altem Markup (Konto, Kasse, Gästebuch, Wissen,
+Rechtstexte): dort übersetzt eine Schicht in `luviq.css` Glas, Rundungen, Glühen und Knöpfe in
+die neue Linie. Das Admin-Panel (`lv-admin`) bleibt, wie es ist.
+
+**Designwache:** `shop1/tests/aufbau_referenz.json` am 19.09.2026 für alle 25 Seiten bewusst
+neu erfasst (LOGBUCH).
+
+## Frühere Gestaltungslinie (bis 18.09.2026, nur Geschichte)
 
 **„Dark Brown Edition"** (Kopfkommentar in `style.css`): ein durchgehend dunkler, warmer Grund,
 Gold als einziger Akzent, Glasflächen mit Weichzeichner, grosse schwarze Versalien in der

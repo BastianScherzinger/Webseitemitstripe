@@ -451,8 +451,9 @@ class EinbettungErstNachKlickTest(LuviqTestCase):
     def test_startseite_und_gaestebuch_tragen_die_karte_als_data_adresse(self):
         """Gegenbeweis zum Test darüber: die Karte ist nicht verschwunden,
         sondern wartet auf den Klick. Ohne diesen Test bliebe der obere auch
-        dann grün, wenn jemand die Einbettung einfach löschte."""
-        for pfad in ('/', '/gaestebuch/'):
+        dann grün, wenn jemand die Einbettung einfach löschte. Die Startseite
+        trägt seit dem Umbau „Nachtausgabe" (19.09.2026) keine Karte mehr."""
+        for pfad in ('/gaestebuch/',):
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
                 self.assertIn('data-src="https://maps.google.com', html)

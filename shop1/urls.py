@@ -21,6 +21,9 @@ urlpatterns = [
     path('kontakt/', views.kontakt, name='kontakt'),
     path('kontakt/danke/', views.kontakt_danke, name='kontakt_danke'),
     path('ueber_uns/', views.ueber_uns, name='ueber_uns'),
+    # Motiv anfragen (Stufe 1: ohne Preis, ohne Zahlung, Mail nur an Luisa)
+    path('motiv-anfragen/', views.motiv_anfragen, name='motiv_anfragen'),
+    path('motiv-anfragen/danke/', views.motiv_danke, name='motiv_danke'),
     path('liefergebiet/', views.liefergebiet, name='liefergebiet'),
     path('kontakte/<int:produkt_id>/', views.kontakte, name='kontakte'),
     path('login/', views.login, name='login'),
@@ -120,6 +123,7 @@ urlpatterns = [
     path('shop-admin/produkte/<int:produkt_id>/reset-newsletter/', admin_views.admin_newsletter_reset, name='admin_newsletter_reset'),
     path('shop-admin/produkte/<int:produkt_id>/toggle/', admin_views.admin_produkt_toggle, name='admin_produkt_toggle'),
     path('shop-admin/orders/', admin_views.admin_orders_list, name='admin_orders_list'),
+    path('shop-admin/motivanfragen/', admin_views.admin_motivanfragen, name='admin_motivanfragen'),
     path('shop-admin/orders/<int:order_id>/', admin_views.admin_order_detail, name='admin_order_detail'),
     path('shop-admin/orders/<int:order_id>/delete/', admin_views.admin_order_delete, name='admin_order_delete'),
 

@@ -1,0 +1,12 @@
+{% load custom_tags %}{% comment %}
+Karte eines Stücks im Archiv (Startseite und /produkte/), Look „Nachtausgabe"
+seit 19.09.2026. Freisteller liegen auf der hellen Kachel (multiply). Ohne
+Verkauf: Nummer + „vergeben", mit Verkauf: Nummer + Preis. Die ganze Karte
+ist über den Namen verlinkt (ein Link, kein zweiter Pfeil-Knopf).
+`produkt` und `forloop` kommen aus der umgebenden Schleife.
+{% endcomment %}<li class="lv-karte">
+    <figure>{% if produkt.bild %}<img src="{{ produkt.bild.url|cloud:'w_600,h_750,c_fill' }}" alt="Foto: {{ produkt.name }}, handbemaltes Einzelstück von Luviq Universe" width="600" height="750" loading="lazy" decoding="async">{% endif %}</figure>
+    <p class="lv-karte-kopf"><b>Nº {{ produkt.archiv_nummer }}</b>{% if verkauf_aktiv %}<span class="lv-preis">{{ produkt.preis }} €</span>{% else %}<span>vergeben</span>{% endif %}</p>
+    <h3 class="lv-serif"><a href="{{ produkt.get_absolute_url }}">{{ produkt.name }}</a></h3>
+    {% if produkt.material or produkt.technik %}<p class="lv-material">{{ produkt.material }}{% if produkt.material and produkt.technik %} · {% endif %}{{ produkt.technik }}</p>{% endif %}
+</li>

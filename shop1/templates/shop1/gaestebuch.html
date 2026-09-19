@@ -12,7 +12,7 @@
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
     {"@type": "ListItem", "position": 2, "name": "Gästebuch", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'gaestebuch' %}"}
   ]
 }
@@ -29,7 +29,7 @@
         <header class="mb-20 text-center">
             <div class="h-px w-12 bg-glow-orange mx-auto mb-10"></div>
             <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
-                Guest <span class="text-glow">Book</span>
+                Gästebuch
             </h1>
             <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">{% if verkauf_aktiv %}Das Gästebuch von Luviq Universe ist die öffentliche Rückmeldeseite des Shops: Hier stehen zurzeit {{ comments|length }} Beitr{{ comments|length|pluralize:"ag,äge" }} von Kundinnen und Kunden zu ihren handbemalten Einzelstücken.{% else %}Das Gästebuch von Luviq Universe ist die öffentliche Rückmeldeseite der Marke: Hier stehen zurzeit {{ comments|length }} Beitr{{ comments|length|pluralize:"ag,äge" }} aus der Community, auch von Luisa Brehler selbst.{% endif %} Wer angemeldet ist, kann selbst einen Beitrag schreiben. {% if verkauf_aktiv %}Luviq Universe ist ein reiner Online-Shop aus 36304 Alsfeld in Hessen ohne Ladengeschäft: Luisa Brehler bemalt gebrauchte Vintage-Kleidung von Hand, jedes Stück gibt es nur einmal, versendet wird deutschlandweit in der Regel innerhalb von 1-2 Werktagen.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus 36304 Alsfeld in Hessen ohne Ladengeschäft: Luisa Brehler bemalt gebrauchte Vintage-Kleidung von Hand, jedes Stück gibt es nur einmal, und verkauft wird erst mit dem ersten Drop.{% endif %} Die Beiträge sind öffentlich sichtbar und werden zusammen mit dem Benutzernamen und dem Zeitpunkt gespeichert, bis der Verfasser oder {% if verkauf_aktiv %}der Shop{% else %}die Betreiberin{% endif %} sie löscht – so steht es auch in der Datenschutzerklärung. Wer angemeldet ist, kann auf einen Beitrag antworten und ihn markieren; Antworten von Luisa Brehler sind als {% if verkauf_aktiv %}Shopbesitzer{% else %}Betreiberin{% endif %} gekennzeichnet. {% if verkauf_aktiv %}Hilfreich für andere ist ein Beitrag, der etwas über das gekaufte Stück sagt: wie es sitzt, wie die Bemalung aus der Nähe wirkt, wie lange der Versand gedauert hat.{% else %}Das Gästebuch ist ein Ort für Eindrücke, Fragen und Ideen rund um die handbemalten Stücke.{% endif %} Ein eigener Beitrag lässt sich jederzeit wieder löschen, entweder vom Verfasser selbst oder auf Bitte hin von der Betreiberin. {% if verkauf_aktiv %}Fragen zu einer laufenden Bestellung gehören nicht ins Gästebuch, sondern ins Kontaktformular – dort werden sie per E-Mail beantwortet.{% else %}Persönliche Fragen gehören nicht ins Gästebuch, sondern ins Kontaktformular – dort werden sie per E-Mail beantwortet.{% endif %} {% if verkauf_aktiv %}Die Karte auf dieser Seite zeigt den Sitz des Shops in der Grünberger Str. 16 in Alsfeld;{% else %}Die Karte auf dieser Seite zeigt den Sitz von Luviq Universe in der Grünberger Str. 16 in Alsfeld;{% endif %} einen Laden zum Betreten gibt es dort nicht.</p>
         </header>
@@ -53,7 +53,7 @@
                 
                 <div class="flex justify-end">
                     <button type="submit" class="btn-glow px-12 py-5 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] shadow-2xl hover:scale-105 transition-transform">
-                        In den Orbit senden
+                        Beitrag senden
                     </button>
                 </div>
             </form>
@@ -151,7 +151,7 @@
             </div>
             {% empty %}
             <div class="text-center py-24">
-                <p class="text-white/10 italic font-light tracking-[0.5em] uppercase text-xs">Noch keine Echos im Orbit...</p>
+                <p class="text-white/10 italic font-light tracking-[0.5em] uppercase text-xs">Noch keine Beiträge.</p>
             </div>
             {% endfor %}
         </div>

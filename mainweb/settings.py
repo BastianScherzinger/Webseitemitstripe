@@ -163,6 +163,7 @@ TEMPLATES = [
                 'shop1.context_processors.shop_owner_check',
                 'shop1.context_processors.csp_nonce',
                 'shop1.verkauf.verkauf_kontext',
+                'shop1.context_processors.luviq',
             ],
         },
     },
@@ -345,9 +346,10 @@ APPEND_SLASH = True
 # object-src.
 #
 # Positivliste der Fremdquellen, belegt durch die Templates:
-#   cdn.jsdelivr.net   Alpine.js, GSAP, Three.js (base.html, index.html),
+#   cdn.jsdelivr.net   Alpine.js (base.html, nur alte Seiten und Admin),
 #                      Chart.js (admin/stats.html, admin/werbung_list.html)
-#   fonts.googleapis.com / fonts.gstatic.com   Schriften (base.html)
+#   Seit dem Umbau „Nachtausgabe" (19.09.2026) sind GSAP, Three.js und Google
+#   Fonts entfernt: die Schriften liegen unter shop1/static/shop1/fonts/.
 #   *.paypal.com / *.paypalobjects.com / *.venmo.com   PayPal-SDK, seine
 #                      Iframes, Stile, Bilder und Telemetrie (payment.html);
 #                      je Direktive so, wie PayPal es für das JS-SDK angibt
@@ -388,8 +390,8 @@ CSP_QUELLEN = {
     'default-src': ["'self'"],
     # Kein 'unsafe-inline': die Nonce der Anfrage hängt die Middleware an.
     'script-src': ["'self'", "'unsafe-eval'", 'https://cdn.jsdelivr.net'] + _PAYPAL,
-    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'] + _PAYPAL,
-    'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
+    'style-src': ["'self'", "'unsafe-inline'"] + _PAYPAL,
+    'font-src': ["'self'", 'data:'],
     'img-src': ["'self'", 'data:', 'blob:', 'https:'],
     'connect-src': ["'self'"] + _PAYPAL,
     'frame-src': ['https://maps.google.com', 'https://www.google.com'] + _PAYPAL,
@@ -412,6 +414,15 @@ CSP_QUELLEN = {
 # Der Shop bleibt im Code. VERKAUF_AKTIV=1 (auch true/yes/on/ja/an) schaltet
 # ihn nach der Gewerbeanmeldung zurueck - Checkliste in doku/80-AUFGABEN.md.
 VERKAUF_AKTIV = os.getenv('VERKAUF_AKTIV', '').strip().lower() in ('1', 'true', 'yes', 'on', 'ja', 'an')
+
+# ═══ MOTIV ANFRAGEN ═══
+# /motiv-anfragen/ (Umbau „Nachtausgabe", 19.09.2026): Anfrage ohne Preis,
+# ohne Zahlung, ohne Zusage - ohne Gewerbe zulaessig. Vorgabe AN; aus heisst:
+# die Seite sagt „gerade keine Anfragen", die Startseite zeigt keinen Knopf.
+# Die Mail geht nur an MOTIV_EMPFAENGER (Vorgabe ADMIN_EMAIL), nie an die
+# eingetippte Adresse.
+MOTIVANFRAGE_AKTIV = os.getenv('MOTIVANFRAGE_AKTIV', '1').strip().lower() in ('1', 'true', 'yes', 'on', 'ja', 'an')
+MOTIV_EMPFAENGER = os.getenv('MOTIV_EMPFAENGER', '').strip()
 
 # ═══ PAYPAL ═══
 

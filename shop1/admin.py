@@ -4,7 +4,7 @@ Das eigene Verwaltungspanel unter ``/shop-admin/`` steht in
 ``admin_views.py``; hier geht es nur um die Standardoberfläche von Django.
 """
 from django.contrib import admin
-from .models import UserProfile, Produkt, Cart, CartItem, Order, OrderItem, Subscriber, KontaktAnfrage
+from .models import UserProfile, Produkt, Cart, CartItem, Order, OrderItem, Subscriber, KontaktAnfrage, Motivanfrage
 
 
 @admin.register(UserProfile)
@@ -68,9 +68,15 @@ class KontaktAnfrageAdmin(admin.ModelAdmin):
 
 @admin.register(Produkt)
 class ProduktAdmin(admin.ModelAdmin):
-    list_display = ('name', 'preis', 'aktiv', 'ersteller', 'erstellt_am')
+    """Stücke. ``nummer`` (Nº 001 …) ist direkt in der Liste änderbar – so
+    legt Luisa die Reihenfolge des Archivs fest. Material, Technik und Maße
+    erscheinen als Datenliste auf der Stückseite, leer entfällt die Zeile."""
+    list_display = ('nummer', 'name', 'preis', 'aktiv', 'ersteller', 'erstellt_am')
+    list_display_links = ('name',)
+    list_editable = ('nummer',)
     search_fields = ('name', 'beschreibung')
     list_filter = ('aktiv', 'erstellt_am')
+    ordering = ('nummer',)
     readonly_fields = ('erstellt_am', 'aktualisiert_am')
 
 
@@ -119,3 +125,18 @@ class OrderAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+
+@admin.register(Motivanfrage)
+class MotivanfrageAdmin(admin.ModelAdmin):
+    """Anfragen über „Motiv anfragen" (Stufe 1). Personenbezogene Daten –
+    jede Anfrage lässt sich einzeln löschen; änderbar ist nur der Status."""
+    list_display = ('erstellt_am', 'richtung', 'teil', 'platzierung', 'instagram', 'email', 'status', 'mail_gestartet')
+    list_filter = ('status', 'richtung', 'teil', 'erstellt_am')
+    list_editable = ('status',)
+    search_fields = ('instagram', 'email', 'bedeutung')
+    readonly_fields = ('richtung', 'teil', 'platzierung', 'bedeutung', 'instagram', 'email', 'mail_gestartet', 'erstellt_am')
+    ordering = ('-erstellt_am',)
+
+    def has_add_permission(self, request):
+        return False

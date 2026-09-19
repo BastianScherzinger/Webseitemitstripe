@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% comment %}Liste der Motivanfragen im Admin-Panel (seit 19.09.2026). Nur für die Betreiberin; Status neu / in Arbeit / erledigt.{% endcomment %}
+
+{% block title %}Motivanfragen – Luviq Admin{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 pt-16 pb-32">
+    <div class="flex flex-wrap gap-4 mb-12">
+        <a href="{% url 'admin_dashboard' %}" class="px-6 py-3 glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest">Overview</a>
+        <a href="{% url 'admin_orders_list' %}" class="px-6 py-3 glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest">Bestellungen</a>
+        <a href="{% url 'admin_produkte_list' %}" class="px-6 py-3 glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest">Inventory</a>
+        <a href="{% url 'admin_motivanfragen' %}" class="px-6 py-3 glass border-white/10 text-white text-[10px] font-black uppercase tracking-widest bg-glow-orange">Motivanfragen</a>
+    </div>
+
+    <h1 class="text-4xl font-black heading-font text-white mb-2">Motivanfragen</h1>
+    <p class="text-white/50 text-sm mb-8">{{ offen }} neu · Antwort bitte persönlich per Instagram oder Mail. An die Absenderin geht keine automatische Mail.</p>
+
+    <div class="flex flex-wrap gap-3 mb-8 text-xs">
+        <a href="{% url 'admin_motivanfragen' %}" class="px-4 py-2 glass {% if not current_status %}text-glow-orange{% else %}text-white/60{% endif %}">Alle</a>
+        {% for wert, name in status_choices %}<a href="?status={{ wert }}" class="px-4 py-2 glass {% if current_status == wert %}text-glow-orange{% else %}text-white/60{% endif %}">{{ name }}</a>{% endfor %}
+    </div>
+
+    <div class="grid gap-4">
+        {% for a in anfragen %}
+        <article class="glass p-6 border-white/10">
+            <div class="flex flex-wrap justify-between gap-4 mb-3">
+                <p class="text-white font-bold">{{ a.get_richtung_display }} · {{ a.get_teil_display }} · {{ a.get_platzierung_display }}</p>
+                <p class="text-white/40 text-xs">{{ a.erstellt_am|date:"d.m.Y H:i" }}{% if not a.mail_gestartet %} · Mail nicht angestoßen{% endif %}</p>
+            </div>
+            {% if a.bedeutung %}<p class="text-white/70 text-sm mb-3 whitespace-pre-line">{{ a.bedeutung }}</p>{% endif %}
+            <p class="text-sm mb-4">
+                {% if a.instagram %}<a class="text-glow-orange" href="https://www.instagram.com/{{ a.instagram|urlencode }}/" rel="noopener noreferrer" target="_blank">@{{ a.instagram }}</a>{% endif %}
+                {% if a.instagram and a.email %} · {% endif %}
+                {% if a.email %}<a class="text-glow-orange" href="mailto:{{ a.email }}">{{ a.email }}</a>{% endif %}
+            </p>
+            <form method="post" class="flex flex-wrap items-center gap-3">
+                {% csrf_token %}
+                <input type="hidden" name="anfrage" value="{{ a.pk }}">
+                <label class="text-white/50 text-xs" for="status-{{ a.pk }}">Status</label>
+                <select id="status-{{ a.pk }}" name="status" class="form-input text-sm">
+                    {% for wert, name in status_choices %}<option value="{{ wert }}"{% if a.status == wert %} selected{% endif %}>{{ name }}</option>{% endfor %}
+                </select>
+                <button type="submit" class="px-4 py-2 bg-glow-orange text-white text-xs font-bold">Speichern</button>
+            </form>
+        </article>
+        {% empty %}
+        <p class="text-white/40">Noch keine Anfragen.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

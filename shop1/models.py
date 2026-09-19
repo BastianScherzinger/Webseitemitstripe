@@ -116,8 +116,22 @@ class Produkt(models.Model):
     erstellt_am = models.DateTimeField(auto_now_add=True)
     aktualisiert_am = models.DateTimeField(auto_now=True)
     ersteller = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='produkte')
+    # Archivnummer „Nº 001" (19.09.2026, Umbau „Nachtausgabe"): eigene, von
+    # Luisa im Admin änderbare Zählung statt des Primärschlüssels. Leer =
+    # beim ersten Speichern die nächste freie Nummer (save()).
+    nummer = models.PositiveIntegerField(
+        unique=True, blank=True, null=True, verbose_name='Nummer',
+        help_text='Laufende Nummer im Archiv (Nº 001, 002 …). Leer = nächste freie Nummer.')
+    # Freiwillige Angaben für die Datenliste der Stückseite. Leer = die Zeile
+    # entfällt; es wird nichts geraten.
+    material = models.CharField(max_length=80, blank=True, help_text='z. B. „Sweat, Baumwolle". Leer = nicht angezeigt.')
+    technik = models.CharField(max_length=80, blank=True, help_text='z. B. „Bleiche" oder „Textilfarbe". Leer = nicht angezeigt.')
+    masse = models.CharField('Maße', max_length=120, blank=True, help_text='z. B. „Größe M, Brustweite 56 cm". Leer = nicht angezeigt.')
 
     def save(self, *args, **kwargs):
+        if self.nummer is None:
+            hoechste = Produkt.objects.exclude(pk=self.pk).aggregate(m=models.Max('nummer'))['m'] or 0
+            self.nummer = hoechste + 1
         if not self.slug:
             base = slugify(self.name) or f"produkt-{self.pk or 'neu'}"
             slug = base
@@ -172,11 +186,12 @@ class Produkt(models.Model):
 
     @property
     def archiv_nummer(self):
-        """Laufende Nummer für die Archivansicht ohne Verkauf: „007".
+        """Laufende Nummer im Archiv, dreistellig: „007".
 
-        Aus dem Primärschlüssel, dreistellig – stabil über Karte, Karussell
-        und Detailseite, und unabhängig von der Sortierung der Ansicht."""
-        return f'{self.pk or 0:03d}'
+        Aus dem Feld ``nummer`` (seit 19.09.2026, Migration 0023), sonst wie
+        früher aus dem Primärschlüssel – stabil über Karte und Stückseite und
+        unabhängig von der Sortierung der Ansicht."""
+        return f'{self.nummer or self.pk or 0:03d}'
 
     def __str__(self):
         return f"{self.name} ({self.preis} €)"
@@ -552,3 +567,57 @@ class PyStoreVisitorLog(models.Model):
 
     def __str__(self):
         return f"{self.seite} – {self.ip_address}"
+
+
+class Motivanfrage(models.Model):
+    """Eine Anfrage über „Motiv anfragen" (``/motiv-anfragen/``, Stufe 1).
+
+    Ohne Preis, ohne Zahlung, ohne Zusage – eine Anfrage, keine Bestellung
+    (Bauplan § 3, ohne Gewerbe zulässig). Gespeichert, **bevor** die Mail an
+    Luisa hinausgeht, wie bei ``KontaktAnfrage`` (MW18). An die eingetippte
+    Adresse geht nie eine Mail (Lehre vom 17.09.2026).
+    """
+    STATUS = [('neu', 'neu'), ('in_arbeit', 'in Arbeit'), ('erledigt', 'erledigt')]
+
+    richtung = models.CharField(max_length=20, verbose_name='Richtung')
+    teil = models.CharField(max_length=20, verbose_name='Teil')
+    platzierung = models.CharField(max_length=20, verbose_name='Platzierung')
+    bedeutung = models.TextField(blank=True, verbose_name='Was es bedeuten soll')
+    instagram = models.CharField(max_length=31, blank=True, verbose_name='Instagram')
+    email = models.EmailField(max_length=254, blank=True, verbose_name='E-Mail')
+    status = models.CharField(max_length=12, choices=STATUS, default='neu', verbose_name='Status')
+    mail_gestartet = models.BooleanField(default=False, verbose_name='Mailversand angestoßen')
+    erstellt_am = models.DateTimeField(auto_now_add=True, verbose_name='Eingegangen am')
+
+    class Meta:
+        verbose_name = 'Motivanfrage'
+        verbose_name_plural = 'Motivanfragen'
+        ordering = ['-erstellt_am']
+
+    def __str__(self):
+        return f"{self.get_richtung_display()} auf {self.get_teil_display()} – {self.kontakt}"
+
+    @staticmethod
+    def _name(liste, schluessel):
+        return dict(liste).get(schluessel, schluessel)
+
+    def get_richtung_display(self):
+        from .luviq_daten import RICHTUNGEN
+        return self._name(RICHTUNGEN, self.richtung)
+
+    def get_teil_display(self):
+        from .luviq_daten import TEILE
+        return self._name(TEILE, self.teil)
+
+    def get_platzierung_display(self):
+        from .luviq_daten import PLATZIERUNGEN
+        return self._name(PLATZIERUNGEN, self.platzierung)
+
+    @property
+    def kontakt(self):
+        teile = []
+        if self.instagram:
+            teile.append('@' + self.instagram)
+        if self.email:
+            teile.append(self.email)
+        return ' · '.join(teile)

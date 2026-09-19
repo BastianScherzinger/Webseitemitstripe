@@ -74,6 +74,10 @@ OEFFENTLICHE_SEITEN = [
     # deshalb nicht in INHALTSSEITEN.
     '/kontakt/danke/',
     '/ueber_uns/',
+    # Motiv anfragen (Umbau „Nachtausgabe", 19.09.2026) und ihre Danke-Seite
+    # (noindex, deshalb nur hier und nicht in INHALTSSEITEN).
+    '/motiv-anfragen/',
+    '/motiv-anfragen/danke/',
     '/liefergebiet/',
     '/gaestebuch/',
     '/impressum/',
@@ -122,6 +126,7 @@ INHALTSSEITEN = [
     '/produkte/',
     '/kontakt/',
     '/ueber_uns/',
+    '/motiv-anfragen/',
     '/liefergebiet/',
     '/gaestebuch/',
     '/impressum/',
