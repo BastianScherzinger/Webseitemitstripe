@@ -65,8 +65,12 @@ def startseite(request):
         _log.exception('Werbe-Impressionen auf der Startseite konnten nicht gezählt werden')
 
     hero = dict(luviq_daten.HERO_STUECK)
-    treffer = (Produkt.objects.filter(aktiv=True, name__icontains=hero['suche'])
-               .order_by('nummer').first())
+    treffer = None
+    for begriff in hero['suche']:
+        treffer = (Produkt.objects.filter(aktiv=True, name__icontains=begriff)
+                   .order_by('nummer').first())
+        if treffer:
+            break
     hero['nummer'] = treffer.archiv_nummer if treffer else ''
 
     return render(request, 'shop1/index.html', {

@@ -90,9 +90,10 @@ _MONATE = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August
            'September', 'Oktober', 'November', 'Dezember')
 
 #: Das Stück im Panorama-Foto (static/shop1/images/luviq/hero-*). Die Nummer
-#: kommt aus dem Archiv (Name enthält ``suche``), damit sie mit der Karte
-#: übereinstimmt; ohne Treffer steht nur der Name da.
-HERO_STUECK = {'name': 'Spinnennetz-Jeans', 'suche': 'spinnen',
+#: kommt aus dem Archiv (erster Name, der einen der ``suche``-Begriffe
+#: enthält), damit sie mit der Karte übereinstimmt; ohne Treffer steht nur der
+#: Name da. Live heißt die Spinnennetz-Jeans „Custom Pants" (Stand 19.09.2026).
+HERO_STUECK = {'name': 'Spinnennetz-Jeans', 'suche': ('spinnen', 'pants'),
                'alt': 'Handbemalte Jeans mit Spinnennetz-Motiv, draußen im Gras fotografiert'}
 
 #: Teaser vor dem Drop: (Datum, Titel, Bildadresse, Alternativtext). Leer ⇒
