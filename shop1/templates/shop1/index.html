@@ -1,20 +1,27 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_tags %}
+{% comment %}
+Startseite im Look „Nachtausgabe" (B3 + Hero H4 „Panorama"), gebaut am
+19.09.2026 nach Design/luviq/FINALER-BAUPLAN.md § 2. Reihenfolge wie die
+Vorlage: Hero · Motiv anfragen · Nº …, in Teilen (nur mit Teasern) ·
+Entstehung · Archiv · Luisa · Die nächste Ausgabe. Alle Texte aus
+shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
+{% endcomment %}
 
-{% block title %}Luviq Universe – Handbemalte Second Hand Mode aus Alsfeld | Hessen{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Alsfeld (Hessen): handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler, deutschlandweit versandt – auch nach Gießen und Fulda. Einzelstücke entdecken.{% else %}Luviq Universe aus Alsfeld (Hessen): handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler. Marke im Aufbau – jetzt in die Warteliste eintragen.{% endif %}{% endblock %}
-{% block og_title %}Luviq Universe – Handbemalte Second Hand Mode | Alsfeld, Hessen{% endblock %}
-{% block og_description %}{% if verkauf_aktiv %}Handbemalte 1-of-1 Vintage-Unikate aus Alsfeld. Nachhaltige Second-Hand-Mode von Luisa Brehler – deutschlandweit. Jetzt entdecken.{% else %}Handbemalte 1-of-1 Vintage-Unikate aus Alsfeld. Nachhaltige Second-Hand-Mode von Luisa Brehler – der erste Drop kommt. Jetzt auf die Warteliste.{% endif %}{% endblock %}
+{% block title %}Luviq Universe – Handbemalte Mode aus Alsfeld, Hessen{% endblock %}
+{% block meta_description %}Handbemalte Second-Hand-Mode aus Alsfeld: Luisa Brehler malt dein Motiv mit Bleiche und Pinsel auf ein Einzelstück. Kostenlos und unverbindlich Motiv anfragen.{% endblock %}
+{% block og_title %}Luviq Universe – Sag mir, was du willst, ich mal’s dir{% endblock %}
+{% block og_description %}Handbemalte Second-Hand-Teile aus Alsfeld. Du sagst Luisa, was drauf soll, sie schickt dir Vorschläge, und dann entsteht dein Stück. Jedes Motiv gibt es einmal.{% endblock %}
 {% block og_image_tag %}
-<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/hero-dragon.jpg' %}">
-<meta property="og:image:width" content="1536">
-<meta property="og:image:height" content="1024">
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/luviq/hero-panorama-1600.webp' %}">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="686">
 {% endblock %}
-{% block twitter_title %}Luviq Universe – {% if verkauf_aktiv %}Dein Second Hand Shop aus Hessen{% else %}Handbemalte Mode aus Hessen{% endif %}{% endblock %}
-{% block twitter_description %}{% if verkauf_aktiv %}Handbemalte Vintage-Unikate aus Alsfeld, Hessen. Nachhaltig. Einzigartig. Deutschlandweit.{% else %}Handbemalte Vintage-Unikate aus Alsfeld, Hessen. Nachhaltig. Einzigartig. Der erste Drop kommt.{% endif %}{% endblock %}
+{% block twitter_title %}Luviq Universe – Handbemalte Mode aus Hessen{% endblock %}
+{% block twitter_description %}Handbemalte Second-Hand-Teile aus Alsfeld, Hessen. Motiv anfragen, Vorschläge bekommen, Einzelstück tragen.{% endblock %}
 {% block twitter_image_tag %}
-<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/hero-dragon.jpg' %}">
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/luviq/hero-panorama-1600.webp' %}">
 {% endblock %}
 
 {% block schema_ld %}
@@ -30,709 +37,230 @@
   ]
 }
 </script>
-{# Das FAQ-Schema, das hier stand, nannte sieben Fragen und Antworten, die auf der Startseite nirgends sichtbar sind. Google verlangt fuer FAQPage sichtbaren Inhalt auf derselben Seite und entfernt Seiten, die das verletzen; eine Antwortmaschine zitiert sonst etwas, das niemand nachlesen kann. Eine Antwort nannte ausserdem "luviq.de" statt der tatsaechlichen Adresse. Die Inhalte stehen jetzt in llms.txt (views/legal.py) - dort sind sie ausdruecklich als Kurzfassung gedacht und brauchen keine Entsprechung im Seitenkoerper. Zurueck ins Schema koennen sie, sobald die Startseite einen sichtbaren Fragenbereich bekommt; das aendert den Aufbau und braucht eine Freigabe. #}
 {% endblock %}
 
-{% block extra_css %}
-<!-- LCP-Bild vorab laden für schnellstmögliches Largest Contentful Paint.
-     imagesrcset/imagesizes müssen wörtlich dem <img> unten entsprechen, sonst
-     lädt der Browser zwei verschiedene Fassungen. href ist der Rückfall für
-     Browser ohne imagesrcset. -->
-<link rel="preload" as="image"
-      href="{% static 'shop1/images/hero-dragon-1024.webp' %}"
-      imagesrcset="{% static 'shop1/images/hero-dragon-640.webp' %} 640w, {% static 'shop1/images/hero-dragon-1024.webp' %} 1024w, {% static 'shop1/images/hero-dragon-1536.webp' %} 1536w"
-      imagesizes="100vw"
-      fetchpriority="high">
-<style>
-#hero-section {
-    background:
-        radial-gradient(ellipse at 50% 115%, rgba(200, 150, 92, 0.13) 0%, transparent 60%),
-        radial-gradient(ellipse at 15% 35%,  rgba(160, 113, 74, 0.09) 0%, transparent 55%),
-        radial-gradient(ellipse at 85% 65%,  rgba(100,  60, 20, 0.07) 0%, transparent 50%),
-        linear-gradient(175deg, #160e08 0%, #0d0907 60%, #0a0805 100%);
-    border-radius: 1.5rem;
-    margin: 0.75rem 0.75rem 0;
-}
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
 
-/* 3D perspective wrapper for the hero title */
-#hero-3d-wrap { perspective: 1400px; }
-
-#hero-line1 {
-    will-change: transform, opacity;
-    transform-style: preserve-3d;
-    text-shadow:
-        2px 3px 0 rgba(100, 60, 20, 0.5),
-        4px 6px 0 rgba(80,  45, 10, 0.3),
-        0 0 80px rgba(200, 150, 92, 0.18);
-}
-#hero-line2 { will-change: transform, opacity; }
-
-/* Marquee ticker below the hero */
-.hero-ticker-wrap {
-    overflow: hidden;
-    white-space: nowrap;
-    -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
-    mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
-}
-.hero-ticker-track {
-    display: inline-flex;
-    align-items: center;
-    gap: 1.5rem;
-    animation: hero-ticker-scroll 32s linear infinite;
-    will-change: transform;
-}
-.hero-ticker-track span {
-    font-size: 0.7rem;
-    font-weight: 900;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.25);
-}
-.hero-ticker-track .tick-dot { color: rgba(200, 150, 92, 0.5); }
-@keyframes hero-ticker-scroll {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
-}
-@media (prefers-reduced-motion: reduce) {
-    .hero-ticker-track { animation: none; }
-}
-.hero-progress-fill {
-    width: 100%;
-    transform: scaleX(0);
-    transform-origin: left;
-    animation: hero-fill 4.5s linear forwards;
-}
-@keyframes hero-fill {
-    from { transform: scaleX(0); }
-    to   { transform: scaleX(1); }
-}
-@media (prefers-reduced-motion: reduce) {
-    .hero-progress-fill { animation: none; transform: scaleX(1); }
-}
-</style>
+{% block preload %}
+{# imagesrcset/imagesizes wörtlich wie <source>/<img> unten, sonst lädt der Browser zwei Fassungen. #}
+<link rel="preload" as="image" media="(min-width: 640px)" fetchpriority="high"
+      imagesrcset="{% static 'shop1/images/luviq/hero-panorama-960.webp' %} 960w, {% static 'shop1/images/luviq/hero-panorama-1600.webp' %} 1600w"
+      imagesizes="(min-width: 1440px) 1325px, 92vw">
+<link rel="preload" as="image" media="(max-width: 639px)" fetchpriority="high"
+      imagesrcset="{% static 'shop1/images/luviq/hero-hoch-480.webp' %} 480w, {% static 'shop1/images/luviq/hero-hoch-900.webp' %} 900w"
+      imagesizes="100vw">
 {% endblock %}
 
 {% block content %}
-<div class="relative min-h-screen">
-    <!-- Nebula Background Layer -->
-    <div class="energy-nebula"></div>
+<div class="lv-seite">
 
-    <!-- ═══ 3D HERO ═══ -->
-    <section id="hero-section" class="relative overflow-hidden px-4" style="min-height: 100svh;">
-        <!-- Background photo -->
-        <img
-            src="{% static 'shop1/images/hero-dragon-1024.webp' %}"
-            srcset="{% static 'shop1/images/hero-dragon-640.webp' %} 640w, {% static 'shop1/images/hero-dragon-1024.webp' %} 1024w, {% static 'shop1/images/hero-dragon-1536.webp' %} 1536w"
-            sizes="100vw"
-            alt="Handbemalter Dragon-Hoodie von Luviq Universe – 1-of-1 Unikat aus Alsfeld"
-            class="absolute inset-0 w-full h-full object-cover"
-            width="1536" height="1024"
-            loading="eager" fetchpriority="high" decoding="async">
-        <!-- Scrim overlays for text legibility -->
-        <div class="absolute inset-0 bg-gradient-to-r from-bg-base via-bg-base/85 to-bg-base/35"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/30 to-transparent"></div>
-
-        <!-- Three.js particle canvas (disabled on mobile for performance) -->
-        <canvas id="hero-canvas" class="absolute inset-0 w-full h-full pointer-events-none hidden sm:block opacity-60"></canvas>
-
-        <!-- Content -->
-        <div class="relative z-10 max-w-7xl mx-auto py-28 sm:py-32 grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-16 lg:gap-12 items-center">
-            <!-- Copy -->
-            <div id="hero-3d-wrap" class="text-center lg:text-left">
-                <!-- Badge -->
-                <div id="hero-badge" class="inline-flex items-center space-x-2 px-6 py-2 rounded-full glass border-white/5 mb-10" style="opacity:0">
-                    <span class="w-2 h-2 rounded-full bg-glow-orange animate-pulse"></span>
-                    <span class="text-xs font-black uppercase tracking-[0.3em] text-white/60">Sustainable Art Drop</span>
-                </div>
-
-                <!-- Titel – Fade + Slide-Up (kein overflow:hidden → kein Abschneiden) -->
-                <h1 id="hero-line1" class="text-[4.5rem] sm:text-[7rem] lg:text-[8.5rem] font-black heading-font tracking-tight text-glow leading-none mb-2 sm:mb-3" style="opacity:0;transform:translateY(80px) scale(0.72) rotateX(22deg)">
-                    LUVIQ
-                </h1>
-                <div id="hero-line2" class="text-xl sm:text-3xl lg:text-4xl font-black heading-font tracking-[0.4em] text-white/80 leading-none uppercase mb-10 sm:mb-14" style="opacity:0;transform:translateY(45px)">
-                    UNIVERSE
-                </div>
-
-                <p id="hero-sub" class="text-base sm:text-lg text-white/85 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed font-light tracking-wide glass px-8 py-5 rounded-2xl border-white/10" style="opacity:0;transform:translateY(28px)">
-                    {% if verkauf_aktiv %}Luviq Universe ist der Online-Shop von Luisa Brehler aus <strong class="text-white font-semibold">Alsfeld, Hessen</strong>, für handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück wird einzeln von Hand bemalt und existiert genau einmal – ein 1-of-1 Unikat, das nach dem Verkauf nicht nachproduziert wird. Bestellungen werden deutschlandweit versendet, in der Regel innerhalb von 1-2&nbsp;Werktagen.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus <strong class="text-white font-semibold">Alsfeld, Hessen</strong>, für handbemalte Second-Hand- und Vintage-Kleidung. Jedes Stück wird einzeln von Hand bemalt und existiert genau einmal – ein 1-of-1 Unikat, das es kein zweites Mal gibt. Die Marke ist im Aufbau: Die Stücke hier sind bisherige Arbeiten und bereits vergeben. Neue Stücke gibt es mit dem ersten Drop, und wer auf der Warteliste steht, erfährt als Erstes, wann es losgeht.{% endif %}
-                </p>
-
-                <div id="hero-cta" class="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-6 sm:gap-8 mb-12" style="opacity:0;transform:translateY(28px)">
-                    {% comment %}Verkaufsschalter: ohne Verkauf ist die Warteliste (Newsletter mit Double-Opt-in weiter unten) die Haupthandlung.{% endcomment %}
-                    <a href="{% if verkauf_aktiv %}{% url 'produkte' %}{% else %}#newsletter-form{% endif %}" class="btn-glow px-12 sm:px-14 py-5 sm:py-6 rounded-2xl text-white font-black uppercase tracking-widest text-xs shadow-[0_20px_50px_rgba(255,106,0,0.3)] hover:scale-105 transition-transform">
-                        {% if verkauf_aktiv %}Drop Entdecken{% else %}Auf die Warteliste{% endif %}
-                    </a>
-                    <a href="{% if verkauf_aktiv %}{% url 'ueber_uns' %}{% else %}{% url 'produkte' %}{% endif %}" class="px-12 sm:px-14 py-5 sm:py-6 rounded-2xl glass border-white/10 text-white font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all">
-                        {% if verkauf_aktiv %}Unsere Story{% else %}Archiv ansehen{% endif %}
-                    </a>
-                </div>
-
-                <!-- Trust badges -->
-                <div id="hero-trust" class="flex flex-wrap justify-center lg:justify-start gap-3" style="opacity:0;transform:translateY(20px)">
-                    <div class="inline-flex items-center gap-2 glass px-5 py-3 rounded-2xl border-white/5">
-                        <svg class="w-4 h-4 text-glow-orange flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M3 21c2-1 3-3 3.5-5L15 7.5l3.5 3.5L10 19.5C8 20 6 21 3 21z"/>
-                            <path d="M15 7.5L18 4.5a2 2 0 1 1 2.5 2.5l-2.5 3"/>
-                        </svg>
-                        <span class="text-[10px] font-black uppercase tracking-widest text-white/60">100% Handbemalt</span>
-                    </div>
-                    <div class="inline-flex items-center gap-2 glass px-5 py-3 rounded-2xl border-white/5">
-                        <svg class="w-4 h-4 text-glow-orange flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/>
-                        </svg>
-                        <span class="text-[10px] font-black uppercase tracking-widest text-white/60">1-of-1 Unikat</span>
-                    </div>
-                    <div class="inline-flex items-center gap-2 glass px-5 py-3 rounded-2xl border-white/5">
-                        <svg class="w-4 h-4 text-glow-orange flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M3 7h11v8H3z"/>
-                            <path d="M14 10h4l3 3v2h-7v-5z"/>
-                            <circle cx="7" cy="17" r="1.5"/>
-                            <circle cx="17" cy="17" r="1.5"/>
-                        </svg>
-                        <span class="text-[10px] font-black uppercase tracking-widest text-white/60">{% if verkauf_aktiv %}Versand DE{% else %}Aus Alsfeld{% endif %}</span>
-                    </div>
-                </div>
+    <!-- ═══ Hero H4 „Panorama": Foto ohne Text, darunter Markensatz und Drop ═══ -->
+    <section class="lv-hero" id="start" aria-labelledby="markensatz">
+        <p class="lv-mast"><span>LUVIQ · Ausgabe {{ drop.ausgabe|default:'01' }}</span><span>{{ drop.monat }}</span><span>Alsfeld</span></p>
+        <figure class="lv-pano">
+            <picture>
+                <source media="(max-width: 639px)" srcset="{% static 'shop1/images/luviq/hero-hoch-480.webp' %} 480w, {% static 'shop1/images/luviq/hero-hoch-900.webp' %} 900w" sizes="100vw" width="900" height="1125">
+                <img src="{% static 'shop1/images/luviq/hero-panorama-1600.webp' %}"
+                     srcset="{% static 'shop1/images/luviq/hero-panorama-960.webp' %} 960w, {% static 'shop1/images/luviq/hero-panorama-1600.webp' %} 1600w"
+                     sizes="(min-width: 1440px) 1325px, 92vw"
+                     alt="{{ hero.alt }}" width="1600" height="686"
+                     loading="eager" fetchpriority="high" decoding="async">
+            </picture>
+            <figcaption><span>{% if hero.nummer %}Nº {{ hero.nummer }} · {% endif %}{{ hero.name }}</span><span>Archiv · vergeben</span></figcaption>
+        </figure>
+        <div class="lv-unterbild">
+            <div>
+                <h1 class="lv-serif lv-satz" id="markensatz">{{ markensatz }}</h1>
+                <p class="lv-lead">{{ lead }}</p>
+                {% if motivanfrage_aktiv %}
+                <a class="lv-knopf" href="{% url 'motiv_anfragen' %}">Motiv anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                {% else %}
+                <a class="lv-knopf" href="#warteliste">Vormerken <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                {% endif %}
             </div>
-
-            <!-- Switchable Product Showcase -->
-            <div id="hero-showcase" class="relative" style="opacity:0;transform:translateY(40px) scale(0.96)">
-                {% with showcase=produkte_galerie|slice:":5" %}
-                <div class="relative rounded-[3rem] sm:rounded-[4rem] overflow-hidden glass border-white/5 p-3 shadow-2xl"
-                     role="region" aria-roledescription="carousel" aria-label="{% if verkauf_aktiv %}Aktuelle Unikate{% else %}Bisherige Unikate{% endif %}"
-                     {% if showcase %}x-data="{ active: 0, count: {{ showcase|length }}, paused: false, touchX: 0 }"
-                     x-init="setInterval(() => { if (!paused) active = (active + 1) % count }, 4500)"
-                     @mouseenter="paused = true" @mouseleave="paused = false"{% endif %}>
-                    <div class="group relative w-full h-[22rem] sm:h-[28rem] lg:h-[32rem] rounded-[2.5rem] sm:rounded-[3.5rem] overflow-hidden"
-                         @touchstart.passive="touchX = $event.changedTouches[0].clientX"
-                         @touchend.passive="let dx = $event.changedTouches[0].clientX - touchX; if (Math.abs(dx) > 40) active = dx > 0 ? (active - 1 + count) % count : (active + 1) % count">
-                        {% for produkt in showcase %}
-                        <a href="{{ produkt.get_absolute_url }}"
-                           class="absolute inset-0 block"
-                           x-show="active === {{ forloop.counter0 }}"
-                           :aria-hidden="active === {{ forloop.counter0 }} ? 'false' : 'true'"
-                           :tabindex="active === {{ forloop.counter0 }} ? 0 : -1"
-                           x-transition:enter="transition ease-out duration-700"
-                           x-transition:enter-start="opacity-0 scale-105"
-                           x-transition:enter-end="opacity-100 scale-100"
-                           x-transition:leave="transition ease-in duration-300"
-                           x-transition:leave-start="opacity-100"
-                           x-transition:leave-end="opacity-0">
-                            {% if produkt.bild %}
-                            <img src="{{ produkt.bild.url|cloud:'w_800,h_1000,c_fill' }}" alt="Produktfoto: {{ produkt.name }}, Upcycling-Einzelstück von Luviq Universe" class="w-full h-full object-cover" width="800" height="1000" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" {% if forloop.first %}fetchpriority="high"{% endif %} decoding="async">
-                            {% endif %}
-                            <div class="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/10 to-transparent"></div>
-                            <span class="absolute top-6 left-6 glass px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-white/50 border-white/10">{{ forloop.counter|stringformat:"02d" }} / {{ showcase|length|stringformat:"02d" }}</span>
-                            <span class="absolute top-6 right-6 glass px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest text-white/90 border-white/10">1 of 1</span>
-                            <div class="absolute bottom-7 left-7 right-7">
-                                <p class="text-white font-black text-lg sm:text-xl heading-font uppercase tracking-tight mb-2">{{ produkt.name }}</p>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-glow font-black text-2xl tracking-tighter">{% if verkauf_aktiv %}{{ produkt.preis }} €{% else %}Nº {{ produkt.archiv_nummer }} · Archiv{% endif %}</span>
-                                    <span class="glass w-11 h-11 rounded-2xl flex items-center justify-center">
-                                        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </a>
-                        {% empty %}
-                        <div class="absolute inset-0 flex items-center justify-center bg-white/[0.02]">
-                            <p class="text-white/20 italic font-light tracking-[0.3em] uppercase text-xs px-8 text-center">Neue Drops kommen bald</p>
-                        </div>
-                        {% endfor %}
-
-                        {% if showcase|length > 1 %}
-                        <button type="button" @click="active = (active - 1 + count) % count" aria-label="Vorheriges Produkt"
-                            class="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 items-center justify-center rounded-full glass border-white/10 text-white/70 opacity-0 group-hover:opacity-100 hover:text-white transition-all duration-300 focus-visible:opacity-100">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 19l-7-7 7-7"/></svg>
-                        </button>
-                        <button type="button" @click="active = (active + 1) % count" aria-label="Nächstes Produkt"
-                            class="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 items-center justify-center rounded-full glass border-white/10 text-white/70 opacity-0 group-hover:opacity-100 hover:text-white transition-all duration-300 focus-visible:opacity-100">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
-                        </button>
-                        {% endif %}
-                    </div>
-
-                    {% if showcase|length > 1 %}
-                    {% comment %}Bewusst kein role="tablist"/"tab": das vollständige Tabmuster verlangt role="tabpanel" mit Kennung und aria-controls auf jeder Folie, und Kennungen sind hier geschützt. Eine benannte Gruppe von Schaltflächen mit aria-pressed sagt Vorleseprogrammen wahrheitsgemäß, welche Folie gerade gezeigt wird.{% endcomment %}
-                    <div class="flex items-stretch gap-2 sm:gap-3 mt-4 px-1" role="group" aria-label="Produkte wechseln">
-                        {% for produkt in showcase %}
-                        <button
-                            type="button"
-                            @click="active = {{ forloop.counter0 }}"
-                            :aria-pressed="active === {{ forloop.counter0 }} ? 'true' : 'false'"
-                            aria-label="{{ produkt.name }} anzeigen"
-                            class="relative flex-1 h-14 sm:h-16 rounded-xl sm:rounded-2xl overflow-hidden ring-1 transition-all duration-300"
-                            :class="active === {{ forloop.counter0 }} ? 'ring-glow-orange opacity-100' : 'ring-white/10 opacity-40 hover:opacity-70'">
-                            {% if produkt.bild %}
-                            <img src="{{ produkt.bild.url|cloud:'w_200,h_140,c_fill' }}" alt="" class="w-full h-full object-cover" width="200" height="140" loading="lazy" decoding="async">
-                            {% endif %}
-                            <span class="absolute inset-x-0 bottom-0 h-[2px] bg-black/30">
-                                <span x-show="active === {{ forloop.counter0 }}" class="hero-progress-fill block h-full bg-glow-orange"></span>
-                            </span>
-                        </button>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+            <aside class="lv-dropkasten" aria-label="Die nächste Ausgabe">
+                {% if drop.termin %}
+                <p class="lv-dl">Nº {{ drop.nummer }} erscheint {{ drop.termin_text }}</p>
+                <div class="lv-uhr" data-ziel="{{ drop.termin_iso }}" role="timer" aria-label="Zeit bis zur nächsten Ausgabe">
+                    <div><b data-t="d">{{ drop.rest.d }}</b><small>Tage</small></div>
+                    <div><b data-t="h">{{ drop.rest.h }}</b><small>Std</small></div>
+                    <div><b data-t="m">{{ drop.rest.m }}</b><small>Min</small></div>
+                    <div><b data-t="s">{{ drop.rest.s }}</b><small>Sek</small></div>
                 </div>
-                {% endwith %}
-                <div class="absolute -top-10 -right-10 w-56 h-56 bg-glow-orange/20 blur-[100px] rounded-full pointer-events-none"></div>
-                <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-orange-900/10 blur-[110px] rounded-full pointer-events-none"></div>
-            </div>
-        </div>
-
-        <!-- Scroll hint -->
-        <div id="hero-scroll" class="absolute bottom-6 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-3" style="opacity:0">
-            <span class="text-[9px] font-black uppercase tracking-[0.5em] text-white/25">Scroll</span>
-            <div class="w-px h-12 bg-gradient-to-b from-glow-orange/60 to-transparent animate-pulse"></div>
+                {% else %}
+                <p class="lv-dl">Die nächste Ausgabe ist in Arbeit.</p>
+                {% endif %}
+                <form class="lv-feldzeile" data-newsletter novalidate>
+                    <label class="sr-only" for="vormerken-email">Deine E-Mail-Adresse zum Vormerken</label>
+                    <input type="email" id="vormerken-email" name="email" autocomplete="email" placeholder="deine@mail.de" required maxlength="254">
+                    <button type="submit">Vormerken</button>
+                </form>
+                <p class="lv-antwort" role="status" aria-live="polite"></p>
+                <p class="lv-klein">Eine Mail, wenn es losgeht. Du bestätigst deine Adresse per Link, abmelden geht mit einem Klick.</p>
+            </aside>
         </div>
     </section>
 
-    <!-- Marquee Ticker -->
-    <div class="hero-ticker-wrap py-5 border-y border-white/5 relative z-10" aria-hidden="true">
-        <div class="hero-ticker-track">
-            <span>1-OF-1 UNIKAT</span><span class="tick-dot">·</span>
-            <span>HANDBEMALT</span><span class="tick-dot">·</span>
-            <span>NACHHALTIG</span><span class="tick-dot">·</span>
-            <span>ALSFELD, HESSEN</span><span class="tick-dot">·</span>
-            <span>VINTAGE ART</span><span class="tick-dot">·</span>
-            <span>1-OF-1 UNIKAT</span><span class="tick-dot">·</span>
-            <span>HANDBEMALT</span><span class="tick-dot">·</span>
-            <span>NACHHALTIG</span><span class="tick-dot">·</span>
-            <span>ALSFELD, HESSEN</span><span class="tick-dot">·</span>
-            <span>VINTAGE ART</span><span class="tick-dot">·</span>
+    <!-- ═══ Motiv anfragen: Luisas Anfrage-System, direkt nach dem Hero ═══ -->
+    <section class="lv-anfragen" id="anfragen" aria-labelledby="anfragen-titel">
+        <div>
+            <p class="lv-nr">Motiv anfragen</p>
+            <h2 class="lv-serif" id="anfragen-titel">Du hast eine Idee? Sag sie mir.</h2>
+            <ol class="lv-ablauf">
+                {% for titel, text in ablauf %}<li><b>{{ titel }}</b><span>{{ text }}</span></li>{% endfor %}
+            </ol>
         </div>
-    </div>
-
-    <!-- Features Strip -->
-    <section class="py-24 sm:py-32 relative z-10">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/5 border-t border-b border-white/5">
-                <div class="scroll-reveal flex items-start gap-5 py-10 sm:py-4 sm:px-10 group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                    <svg class="w-7 h-7 text-glow-orange flex-shrink-0 mt-1 group-hover:scale-110 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M3 21c2-1 3-3 3.5-5L15 7.5l3.5 3.5L10 19.5C8 20 6 21 3 21z"/>
-                        <path d="M15 7.5L18 4.5a2 2 0 1 1 2.5 2.5l-2.5 3"/>
-                    </svg>
-                    <div>
-                        <h2 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Hand-Painted</h2>
-                        <p class="text-white/30 text-sm leading-relaxed font-light">Luisa Brehler bemalt jedes Kleidungsstück einzeln mit Pinsel und Textilfarbe. Es gibt keine Drucke und keine Serie: Jedes Motiv entsteht direkt auf dem Stoff und wird nicht wiederholt – darum trägt jedes Teil den Zusatz 1-of-1. {% if verkauf_aktiv %}Weil von Hand gemalt wird, gehören leichte Unregelmäßigkeiten in der Bemalung zum Stück; § 3 der AGB hält fest, dass sie keinen Mangel darstellen. Das Foto auf der Detailseite zeigt genau das Teil, das verschickt wird, und kein Beispiel aus einer Serie.{% else %}Weil von Hand gemalt wird, gehören leichte Unregelmäßigkeiten in der Bemalung zum Stück – sie sind Teil der Handschrift. Das Foto auf der Detailseite zeigt genau dieses eine Teil und kein Beispiel aus einer Serie.{% endif %}</p>
-                    </div>
-                </div>
-
-                <div class="scroll-reveal flex items-start gap-5 py-10 sm:py-4 sm:px-10 group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
-                    <svg class="w-7 h-7 text-glow-orange flex-shrink-0 mt-1 group-hover:scale-110 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M17 3l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
-                        <path d="M7 21l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
-                    </svg>
-                    <div>
-                        <h2 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Eco-Conscious</h2>
-                        <p class="text-white/30 text-sm leading-relaxed font-light">Grundlage jedes Stücks ist getragene Second-Hand- und Vintage-Kleidung, die weiter genutzt statt entsorgt wird. Es wird kein neues Kleidungsstück produziert: Ein vorhandenes Teil bekommt durch die Bemalung ein zweites Leben und einen neuen Wert. Daraus folgt auch, dass es jedes Stück nur in der einen Größe gibt, in der das Basisteil gefunden wurde – ein zweites Exemplar in einer anderen Größe gibt es nicht. {% if verkauf_aktiv %}Maße, Material oder Zustand eines Stücks lassen sich deshalb vor dem Kauf über das Kontaktformular erfragen.{% else %}Fragen zu Material und Arbeitsweise lassen sich über das Kontaktformular stellen.{% endif %}</p>
-                    </div>
-                </div>
-
-                <div class="scroll-reveal flex items-start gap-5 py-10 sm:py-4 sm:px-10 group" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
-                    <svg class="w-7 h-7 text-glow-orange flex-shrink-0 mt-1 group-hover:scale-110 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/>
-                        <path d="M19 15l0.8 2.2L22 18l-2.2 0.8L19 21l-0.8-2.2L16 18l2.2-0.8L19 15z"/>
-                    </svg>
-                    <div>
-                        <h2 class="text-lg font-black heading-font text-white mb-2 uppercase tracking-tight">Curated Style</h2>
-                        <p class="text-white/30 text-sm leading-relaxed font-light">Die Basisteile sucht Luisa Brehler selbst aus und bemalt nur Kleidung, deren Stoff und Schnitt sich als Leinwand eignen. {% if verkauf_aktiv %}Was hier im Shop steht, ist fertig bemalt und wird ausschließlich online verkauft – ein Ladengeschäft gibt es nicht. Gekauft wird also ein vorhandenes Stück und kein Auftrag, der erst nach der Bestellung angefertigt wird. Diese Startseite zeigt weiter unten die bis zu acht zuletzt eingestellten Stücke; alle, die gerade zu haben sind, stehen in der Produktübersicht. Ist ein Stück bezahlt, wird es abgeschaltet und erscheint in keiner der beiden Ansichten mehr.{% else %}Was hier zu sehen ist, ist fertig bemalt – ein vorhandenes Stück und kein Auftrag, der erst angefertigt wird. Ein Ladengeschäft gibt es nicht. Diese Startseite zeigt weiter unten die bis zu acht zuletzt eingestellten bisherigen Stücke; alle stehen im Archiv. Sie sind bereits vergeben – neue Stücke gibt es mit dem ersten Drop.{% endif %}</p>
-                    </div>
-                </div>
-            </div>
+        <div class="lv-anfragekasten">
+            {% if motivanfrage_aktiv %}
+            <p class="lv-frage" id="richtung-frage">In welche Richtung soll es gehen?</p>
+            <ul class="lv-chips" aria-labelledby="richtung-frage">
+                {% for schluessel, name in richtungen %}<li><a class="lv-chip" href="{% url 'motiv_anfragen' %}?richtung={{ schluessel }}">{{ name }}</a></li>{% endfor %}
+            </ul>
+            <a class="lv-knopf" href="{% url 'motiv_anfragen' %}">Motiv anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <p class="lv-klein">Kostet nichts und ist keine Bestellung. Ich melde mich persönlich.</p>
+            {% else %}
+            <p class="lv-frage">Gerade nehme ich keine neuen Anfragen an.</p>
+            <p class="lv-klein">Trag dich unten in die Liste ein, dann erfährst du als Erstes, wann es wieder geht.</p>
+            {% endif %}
         </div>
     </section>
 
-    <!-- Local SEO: Herkunft & Versand -->
-    <section class="py-16 sm:py-20 relative z-10 border-t border-b border-[rgba(200,150,92,0.08)]" aria-label="Herkunft{% if verkauf_aktiv %} und Versandgebiet{% endif %}">
-        <div class="max-w-5xl mx-auto px-4 text-center">
-            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-glow-orange mb-5">Made in Hessen · {% if verkauf_aktiv %}Versand Deutschland{% else %}Alsfeld im Vogelsberg{% endif %}</p>
-            <h2 class="text-white/80 text-lg sm:text-xl font-light leading-relaxed max-w-3xl mx-auto">
-                Luviq Universe kommt aus
-                <strong class="text-white font-semibold">Alsfeld</strong> im Vogelsberg —
-                {% if verkauf_aktiv %}unsere handbemalten Vintage-Unikate versenden wir in ganz Deutschland.
-                Von{% else %}hier entstehen die handbemalten Vintage-Unikate. Folgen kann man
-                dem ersten Drop von{% endif %} <strong class="text-white/90">Gießen</strong> über <strong class="text-white/90">Fulda</strong>
-                und <strong class="text-white/90">Marburg</strong> bis
-                <strong class="text-white/90">Frankfurt</strong>, <strong class="text-white/90">Berlin</strong>
-                und überall dazwischen.
-            </h2>
-            <div class="flex flex-wrap justify-center gap-3 mt-8 text-[10px] font-black uppercase tracking-[0.15em] text-white/20">
-                <span>Alsfeld</span><span class="text-glow-orange/40">·</span>
-                <span>Gießen</span><span class="text-glow-orange/40">·</span>
-                <span>Fulda</span><span class="text-glow-orange/40">·</span>
-                <span>Lauterbach</span><span class="text-glow-orange/40">·</span>
-                <span>Marburg</span><span class="text-glow-orange/40">·</span>
-                <span>Frankfurt</span><span class="text-glow-orange/40">·</span>
-                <span>Kassel</span><span class="text-glow-orange/40">·</span>
-                <span>Wiesbaden</span><span class="text-glow-orange/40">·</span>
-                <span>Ganz Deutschland</span>
-            </div>
+    {% if drop.teaser %}
+    <!-- ═══ Nº …, in Teilen: nur, solange Teaser gepflegt sind ═══ -->
+    <section class="lv-abschnitt" id="drop" aria-labelledby="drop-titel">
+        <div class="lv-abschnittskopf">
+            <h2 class="lv-serif" id="drop-titel">Nº {{ drop.nummer }}, in Teilen</h2>
+            <p>Ein Stück. Bis zur Ausgabe zeigt Luisa es nur in Teilen, jeden zweiten Tag ein bisschen mehr.</p>
         </div>
-    </section>
-
-    <!-- About Artist Section -->
-    <section class="py-24 sm:py-32 relative z-10 overflow-hidden bg-white/[0.01]">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div class="scroll-reveal relative" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                    <div class="relative z-10 rounded-[5rem] overflow-hidden glass border-white/5 p-5 shadow-2xl transform hover:scale-[1.01] transition-all duration-1000 group">
-                        <img src="{% static 'shop1/images/ich-900.webp' %}" srcset="{% static 'shop1/images/ich-450.webp' %} 450w, {% static 'shop1/images/ich-900.webp' %} 900w" sizes="(min-width: 1024px) 50vw, 100vw" alt="Luisa Brehler – Gründerin von Luviq Universe" class="w-full h-auto rounded-[4rem] object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000" width="900" height="1350" loading="lazy" decoding="async">
-                        <div class="absolute inset-0 bg-gradient-to-t from-bg-base/80 to-transparent opacity-60"></div>
-                    </div>
-                    <!-- Decorative elements -->
-                    <div class="absolute -top-16 -left-16 w-64 h-64 bg-glow-orange/20 blur-[100px] rounded-full animate-pulse"></div>
-                    <div class="absolute -bottom-16 -right-16 w-80 h-80 bg-amber-800/15 blur-[120px] rounded-full"></div>
-                </div>
-
-                <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.3s;">
-                    <div class="h-px w-12 bg-glow-orange mb-10"></div>
-                    <p class="text-[10px] font-black uppercase tracking-[0.6em] text-glow-orange mb-8">Creative Director</p>
-                    <h2 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-10 leading-[0.9]">
-                        Luisa <br> <span class="text-glow">Brehler</span>
-                    </h2>
-                    <p class="text-white/40 text-lg leading-relaxed font-light mb-12 tracking-wide">
-                        Hi, ich bin Luisa Brehler. Ich arbeite in Alsfeld in Hessen und nutze Kleidung als Leinwand: Jedes Teil, das du hier siehst, habe ich selbst ausgesucht und mit Pinsel und Textilfarbe von Hand bemalt.
-                        <br><br>
-                        In einer Welt der Massenware setze ich auf Individualität. Jedes Stück ist ein Unikat – ein 1-of-1, das es so nie wieder geben wird. {% if verkauf_aktiv %}Ist ein Stück verkauft, gibt es kein zweites Exemplar; eine Nachbestellung ist nicht möglich. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet. Bestellen kannst du nach der Anmeldung: Stück auf seiner Detailseite auswählen, in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und die Zahlungsart wählen. Bei PayPal fragt der Shop die Zahlung selbst bei PayPal ab, bevor die Bestellung als bezahlt gilt; bei Vorab-Überweisung bekommst du Kontoinhaberin, IBAN, Betrag und Verwendungszweck per E-Mail, und versendet wird nach Zahlungseingang. Das Paket geht in der Regel innerhalb von 1-2 Werktagen raus, innerhalb von Hessen ist es meist nach 1-3 Werktagen bei dir. Und wenn ein Stück doch nicht passt: Für jede Bestellung gilt das Widerrufsrecht von 14 Tagen, gerechnet ab dem Tag, an dem die Ware bei dir angekommen ist (§ 5 der AGB). Nummer, Datum und Stand jeder Bestellung findest du danach in deinem Profil.{% else %}Ist ein Motiv gemalt, gibt es kein zweites Exemplar davon; eine Nachbestellung ist nicht möglich. Luviq Universe ist gerade im Aufbau. Die Stücke, die du hier siehst, sind bisherige Arbeiten und bereits vergeben; neue gibt es mit dem ersten Drop. Wann er startet, erfährst du zuerst über die Warteliste weiter unten: Eine E-Mail-Adresse genügt, du bestätigst sie über einen Link, und erst dann schicke ich dir etwas. Bis dahin kannst du dir jedes bisherige Stück auf seiner Detailseite ansehen und mir über das Kontaktformular Fragen zur Arbeitsweise stellen.{% endif %}
-                    </p>
-                    <div class="grid grid-cols-2 gap-12">
-                        <div>
-                            <span class="block text-4xl font-black text-white mb-2">100%</span>
-                            <span class="text-[10px] text-white/20 uppercase tracking-[0.3em] font-black">Handgemalt</span>
-                        </div>
-                        <div>
-                            <span class="block text-4xl font-black text-white mb-2">Unikat</span>
-                            <span class="text-[10px] text-white/20 uppercase tracking-[0.3em] font-black">{% if verkauf_aktiv %}Garantie{% else %}Prinzip{% endif %}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {% if werbung_aktiv %}
-    <!-- ═══ GESPONSERT / WERBUNG ═══ -->
-    <section class="py-12 sm:py-16 relative z-10 border-t border-white/5">
-        <div class="max-w-7xl mx-auto px-4">
-            <p class="text-[9px] font-black uppercase tracking-[0.3em] text-white/15 mb-5">Gesponsert</p>
-            <style>
-            .ad-grid{display:flex;gap:1rem;flex-wrap:nowrap;overflow-x:auto;padding-bottom:.25rem;scrollbar-width:none;}
-            .ad-grid::-webkit-scrollbar{display:none;}
-            .ad-item{flex-shrink:0;display:flex;align-items:center;gap:.85rem;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:.85rem 1.1rem;text-decoration:none;min-width:240px;max-width:340px;transition:border-color .2s,background .2s;}
-            .ad-item:hover{border-color:rgba(249,115,22,0.25);background:rgba(249,115,22,0.04);}
-            @media(max-width:640px){
-                .ad-grid{flex-wrap:wrap;overflow-x:visible;}
-                .ad-item{flex-shrink:1;min-width:0;max-width:100%;width:100%;}
-            }
-            </style>
-            <div class="ad-grid">
-                {% for w in werbung_aktiv %}
-                <a href="{% url 'werbung_klick' w.id %}" target="_blank" rel="noopener sponsored" class="ad-item">
-                    {% if w.bild_src %}
-                    <img src="{{ w.bild_src }}" alt="{{ w.titel }}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;" loading="lazy" decoding="async" data-bei-fehler-ausblenden>
-                    {% endif %}
-                    <div style="overflow:hidden;flex:1;min-width:0;">
-                        <p style="font-weight:800;font-size:.88rem;color:#fff;margin:0 0 .15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ w.titel }}</p>
-                        {% if w.beschreibung %}
-                        <p style="font-size:.75rem;color:rgba(255,255,255,0.35);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ w.beschreibung }}</p>
-                        {% endif %}
-                    </div>
-                    <span style="color:#f97316;opacity:.7;flex-shrink:0;font-size:.9rem;">↗</span>
-                </a>
-                {% endfor %}
-            </div>
-        </div>
+        <ul class="lv-teaser">
+            {% for datum, titel, adresse, alt in drop.teaser %}<li><i><img src="{{ adresse }}" alt="{{ alt }}" width="600" height="800" loading="lazy" decoding="async"></i><p><b>{{ titel }}</b><span>{{ datum }}</span></p></li>{% endfor %}
+            <li class="gross"><i><span aria-hidden="true">?</span></i><p><b>Enthüllung</b><span>{{ drop.termin_text }}</span></p></li>
+        </ul>
     </section>
     {% endif %}
 
-    <!-- ═══ Community & Bewertungen ═══ -->
-    <section class="py-24 sm:py-32 relative z-10" id="community" aria-labelledby="community-heading">
-        <div class="max-w-7xl mx-auto px-4">
+    <!-- ═══ Wie ein Stück entsteht: Luisas fünf Schritte ═══ -->
+    <section class="lv-abschnitt dunkel" id="entstehung" aria-labelledby="entstehung-titel">
+        <div class="lv-abschnittskopf">
+            <h2 class="lv-serif" id="entstehung-titel">Wie ein Stück entsteht</h2>
+            <p>Fünf Schritte, von der Anfrage bis zum Paket. Meistens dauert das {{ dauer }}, je nach Motiv.</p>
+        </div>
+        <ol class="lv-schritte">
+            {% for titel, text, bild, alt in schritte %}
+            <li class="lv-schritt">
+                <figure><img src="{% static 'shop1/images/luviq/'|add:bild|add:'-360.webp' %}" srcset="{% static 'shop1/images/luviq/'|add:bild|add:'-360.webp' %} 360w, {% static 'shop1/images/luviq/'|add:bild|add:'-720.webp' %} 720w" sizes="(min-width: 1024px) 18vw, 72vw" alt="{{ alt }}" width="720" height="900" loading="lazy" decoding="async"></figure>
+                <p class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</p>
+                <h3 class="lv-serif">{{ titel }}</h3>
+                <p>{{ text }}</p>
+            </li>
+            {% endfor %}
+        </ol>
+        <p class="lv-wischen" aria-hidden="true">Seitlich wischen →</p>
+    </section>
 
-            <div class="flex flex-col sm:flex-row justify-between items-end mb-14 gap-6 scroll-reveal"
-                 x-data="{shown:false}" x-intersect.once="shown=true" :class="{'visible':shown}">
-                <div>
-                    <p class="text-[10px] font-black uppercase tracking-[0.5em] text-glow-orange mb-3">Community &amp; Gästebuch</p>
-                    <h2 id="community-heading" class="text-4xl md:text-5xl font-black heading-font text-white uppercase tracking-tighter leading-none">
-                        Was andere <span class="text-glow">sagen</span>
-                    </h2>
-                </div>
-                <a href="{% url 'gaestebuch' %}" class="glass px-8 py-4 rounded-2xl text-white/60 font-black uppercase tracking-widest text-[9px] hover:text-white transition-colors whitespace-nowrap"
-                   style="border-color:rgba(200,150,92,0.2)">
-                    Alle Kommentare lesen →
-                </a>
-            </div>
+    <!-- ═══ Das Archiv ═══ -->
+    <section class="lv-abschnitt" id="archiv" aria-labelledby="archiv-titel">
+        <div class="lv-abschnittskopf">
+            <h2 class="lv-serif" id="archiv-titel">Das Archiv</h2>
+            <p>{% if verkauf_aktiv %}Alles, was bisher entstanden ist. Jedes Stück gibt es genau einmal.{% else %}Alles, was bisher entstanden ist. Diese Stücke sind vergeben, sie kommen nicht wieder.{% endif %}</p>
+        </div>
+        {% if produkte_galerie %}
+        <ol class="lv-raster">
+            {% for produkt in produkte_galerie %}{% include 'shop1/teile/archiv_karte.html' %}{% endfor %}
+        </ol>
+        <p class="lv-weiter"><a class="lv-link" href="{% url 'produkte' %}">Das ganze Archiv <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+        {% else %}
+        <p class="lv-leer">Das Archiv ist gerade leer. Die nächste Ausgabe ist in Arbeit.</p>
+        {% endif %}
+    </section>
 
-            {% with show_compact=True %}
-            {% include 'shop1/_reviews_map.html' %}
-            {% endwith %}
-
+    <!-- ═══ Luisa ═══ -->
+    <section class="lv-luisa" id="luisa" aria-label="Luisa Brehler">
+        <blockquote>
+            <p class="lv-serif">„{{ zitat }}“</p>
+            <footer>{{ zitat_quelle }}</footer>
+        </blockquote>
+        <div class="lv-luisa-text">
+            <p>Luviq ist ein Ein-Personen-Atelier in Alsfeld. Die Teile sind Second Hand, die Motive freihand, mit Pinsel und Bleiche, bald auch mit Textilfarbe.</p>
+            <a class="lv-link" href="{% url 'ueber_uns' %}">Mehr über Luisa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
     </section>
 
-    <!-- Products Gallery Section -->
-    <section class="py-24 sm:py-32 relative z-10">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-                <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                    <h2 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">{% if verkauf_aktiv %}Aktuelle{% else %}Bisherige{% endif %} <span class="text-glow">Unikate</span></h2>
-                    <p class="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Hand-Selected Masterpieces</p>
-                </div>
-                <a href="{% url 'produkte' %}" class="btn-glow px-10 py-4 rounded-xl text-white font-black uppercase tracking-widest text-[9px] shadow-xl">
-                    View Full Orbit →
-                </a>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                {% for produkt in produkte_galerie %}
-                {% include 'shop1/teile/angebot_galerie.html' %}
-                {% empty %}
-                <div class="col-span-full glass-card p-32 text-center rounded-[4rem]">
-                    <p class="text-white/20 italic font-light tracking-[0.5em] uppercase text-xs">Der Orbit ist momentan leer...</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-
-    <!-- Newsletter Section -->
-    <section class="py-28 sm:py-36 relative overflow-hidden bg-white/[0.01]">
-        <div class="max-w-4xl mx-auto px-4 relative z-10 text-center">
-            <div class="scroll-reveal glass-card p-8 sm:p-14 md:p-20 rounded-[2.5rem] sm:rounded-[4rem] shadow-[0_0_120px_rgba(200,150,92,0.10)] relative overflow-hidden" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-                <div class="absolute -top-24 -left-24 w-64 h-64 bg-glow-orange/5 blur-[100px] rounded-full"></div>
-                <h2 class="text-4xl md:text-6xl font-black heading-font text-white mb-10 uppercase tracking-tighter">JOIN THE <span class="text-glow">ORBIT</span></h2>
-                <p class="text-white/30 mb-14 max-w-lg mx-auto font-light leading-relaxed tracking-wide uppercase text-xs">{% if verkauf_aktiv %}Melde dich an und erfahre als Erster von neuen Drops und exklusiven handbemalten Unikaten. Für die Anmeldung genügt eine E-Mail-Adresse, ein Kundenkonto ist dafür nicht nötig; verschickt wird der Newsletter über den E-Mail-Dienst Brevo.{% else %}Die Warteliste für den ersten Drop: Melde dich an und erfahre als Erste oder Erster, wann der Shop öffnet und welche handbemalten Unikate dabei sind. Für die Anmeldung genügt eine E-Mail-Adresse, ein Kundenkonto ist dafür nicht nötig; du bestätigst sie über einen Link in einer E-Mail, verschickt über den E-Mail-Dienst Brevo.{% endif %}</p>
-                
-                <form id="newsletter-form" class="flex flex-col sm:flex-row gap-5 relative z-10">
-                    <input type="email" id="newsletter-email" name="email" aria-label="Deine E-Mail-Adresse für den Newsletter" autocomplete="email" placeholder="DEINE EMAIL ADRESSE" class="flex-grow bg-white/5 border border-white/10 rounded-2xl px-10 py-6 text-white focus:outline-none focus:border-glow-orange focus:shadow-[0_0_15px_rgba(200,150,92,0.2)] transition-all uppercase tracking-[0.3em] text-[10px] font-black">
-                    <button type="submit" class="btn-glow px-12 py-6 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] shadow-2xl">{% if verkauf_aktiv %}Subscribe{% else %}Auf die Warteliste{% endif %}</button>
-                </form>
-                <p id="newsletter-message" class="mt-8 text-[10px] font-black uppercase tracking-[0.3em] hidden"></p>
-            </div>
-        </div>
+    <!-- ═══ Die nächste Ausgabe: Warteliste = Newsletter mit Double-Opt-in ═══ -->
+    <section class="lv-warteliste" id="warteliste" aria-labelledby="warteliste-titel">
+        <h2 class="lv-serif" id="warteliste-titel">Die nächste Ausgabe</h2>
+        <p>Eine Mail, wenn die nächste Ausgabe erscheint. Du bestätigst deine Adresse über einen Link, verschickt wird über den E-Mail-Dienst Brevo. Abmelden geht mit einem Klick.</p>
+        <form id="newsletter-form" class="lv-feldzeile" data-newsletter novalidate>
+            <label class="sr-only" for="newsletter-email">Deine E-Mail-Adresse für die Warteliste</label>
+            <input type="email" id="newsletter-email" name="email" autocomplete="email" placeholder="deine@mail.de" required maxlength="254">
+            <button type="submit">Eintragen</button>
+        </form>
+        <p id="newsletter-message" class="lv-antwort" role="status" aria-live="polite"></p>
     </section>
 </div>
+{% endblock %}
 
 {% block extra_js %}
-<!-- GSAP for Hero-Animation (defer = non-blocking). Three.js wird nur bei Bedarf
-     dynamisch nachgeladen (Desktop, keine Reduced-Motion) → spart ~450 KiB auf Mobil. -->
-<!-- integrity + crossorigin (SI17), Hash aus der jsDelivr-Dateiauskunft zur
-     festgenagelten Fassung 3.12.5: faellt der Vergleich durch, laedt GSAP
-     nicht – der Hero bleibt sichtbar, dafuer sorgt revealHeroFallback(). -->
-<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"
-        integrity="sha256-KAM+RJox68w5blvosTtjFSvwMJQoj7WGcDQyGSe84Ic=" crossorigin="anonymous"></script>
 <script nonce="{{ csp_nonce }}">
 (function () {
     'use strict';
-
-    // Fallback: Falls GSAP nicht (rechtzeitig) lädt, Hero-Inhalte trotzdem sichtbar machen.
-    function revealHeroFallback() {
-        ['hero-badge','hero-line1','hero-line2','hero-sub','hero-cta','hero-trust','hero-showcase','hero-scroll']
-            .forEach(function (id) {
-                var el = document.getElementById(id);
-                if (el) { el.style.opacity = '1'; el.style.transform = 'none'; }
-            });
-    }
-    var heroRevealed = false;
-
-    function runHeroAnimation() {
-        if (heroRevealed) return;
-        heroRevealed = true;
-        // ═══ GSAP HERO ANIMATION — 3D Fly-In ═══
-        if (typeof gsap === 'undefined') { revealHeroFallback(); return; }
-        gsap.registerPlugin && gsap.registerPlugin();
-        var tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
-        tl
-            .to('#hero-badge',  { opacity: 1, duration: 0.6, delay: 0.1, ease: 'power2.out' })
-            .to('#hero-line1',  { opacity: 1, y: 0, scale: 1, rotateX: 0, duration: 1.7, ease: 'expo.out' }, '-=0.2')
-            .to('#hero-line2',  { opacity: 1, y: 0, duration: 1.2, ease: 'expo.out' }, '-=1.1')
-            .to('#hero-sub',    { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' }, '-=0.65')
-            .to('#hero-cta',    { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=0.7')
-            .to('#hero-trust',  { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
-            .to('#hero-showcase', { opacity: 1, y: 0, scale: 1, duration: 1.3, ease: 'expo.out' }, '-=1.4')
-            .to('#hero-scroll', { opacity: 1, duration: 0.7 }, '-=0.3')
-            .then(function () {
-                var t = document.getElementById('hero-line1');
-                if (t) t.classList.add('animate-float');
-            });
-    }
-
-    // GSAP ist deferred → läuft vor DOMContentLoaded. Hero dann starten,
-    // mit Sicherheits-Timeout falls das CDN blockiert/langsam ist.
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', runHeroAnimation);
-    } else {
-        runHeroAnimation();
-    }
-    setTimeout(runHeroAnimation, 2500);
-
-    // ═══ THREE.JS PARTICLE FIELD (nur Desktop, dynamisch nachgeladen) ═══
-    var canvas = document.getElementById('hero-canvas');
-    var isMobile = window.innerWidth < 640;
-    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function initParticles() {
-        if (!canvas || typeof THREE === 'undefined') return;
-        var W = window.innerWidth;
-        var H = window.innerHeight;
-
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(70, W / H, 0.1, 1000);
-        camera.position.z = 6;
-
-        var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false });
-        renderer.setSize(W, H);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-
-        // Layer 1 — goldene Staubpartikel
-        var N = 220;
-        var pos = new Float32Array(N * 3);
-        var col = new Float32Array(N * 3);
-        for (var i = 0; i < N; i++) {
-            pos[i*3]   = (Math.random() - 0.5) * 26;
-            pos[i*3+1] = (Math.random() - 0.5) * 22;
-            pos[i*3+2] = (Math.random() - 0.5) * 18;
-            var t = Math.pow(Math.random(), 0.45);
-            col[i*3]   = 0.63 + t * 0.18;  // R: warm gold
-            col[i*3+1] = 0.42 + t * 0.17;  // G: warm
-            col[i*3+2] = 0.25 + t * 0.12;  // B: low, warm
+    // Countdown bis zur nächsten Ausgabe. Der Server schreibt den Stand beim
+    // Ausliefern hinein; das Skript zählt nur weiter.
+    document.querySelectorAll('[data-ziel]').forEach(function (uhr) {
+        var ziel = new Date(uhr.getAttribute('data-ziel'));
+        if (isNaN(ziel)) { return; }
+        var felder = uhr.querySelectorAll('[data-t]');
+        function stelle() {
+            var s = Math.max(0, Math.floor((ziel - new Date()) / 1000));
+            var werte = { d: Math.floor(s / 86400), h: Math.floor(s % 86400 / 3600), m: Math.floor(s % 3600 / 60), s: s % 60 };
+            felder.forEach(function (b) { b.textContent = String(werte[b.getAttribute('data-t')]).padStart(2, '0'); });
         }
-        var g1 = new THREE.BufferGeometry();
-        g1.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-        g1.setAttribute('color', new THREE.BufferAttribute(col, 3));
-        var m1 = new THREE.PointsMaterial({ size: 0.018, vertexColors: true, transparent: true, opacity: 0.65, sizeAttenuation: true });
-        var pts1 = new THREE.Points(g1, m1);
-        scene.add(pts1);
-
-        // Layer 2 — warme Creme-Sterne
-        var N2 = 50;
-        var pos2 = new Float32Array(N2 * 3);
-        var col2 = new Float32Array(N2 * 3);
-        for (var j = 0; j < N2; j++) {
-            pos2[j*3]   = (Math.random() - 0.5) * 34;
-            pos2[j*3+1] = (Math.random() - 0.5) * 32;
-            pos2[j*3+2] = (Math.random() - 0.5) * 16;
-            col2[j*3]   = 0.96;   // warm cream #f5ede4
-            col2[j*3+1] = 0.91;
-            col2[j*3+2] = 0.84;
-        }
-        var g2 = new THREE.BufferGeometry();
-        g2.setAttribute('position', new THREE.BufferAttribute(pos2, 3));
-        g2.setAttribute('color', new THREE.BufferAttribute(col2, 3));
-        var m2 = new THREE.PointsMaterial({ size: 0.045, vertexColors: true, transparent: true, opacity: 0.18, sizeAttenuation: true });
-        var pts2 = new THREE.Points(g2, m2);
-        scene.add(pts2);
-
-        // Mouse parallax
-        var mx = 0, my = 0, tx = 0, ty = 0;
-        document.addEventListener('mousemove', function (e) {
-            mx = (e.clientX / W - 0.5);
-            my = (e.clientY / H - 0.5);
-        }, { passive: true });
-
-        var clock = new THREE.Clock();
-
-        function animate() {
-            requestAnimationFrame(animate);
-            var elapsed = clock.getElapsedTime();
-            pts1.rotation.y = elapsed * 0.025;
-            pts1.rotation.x = elapsed * 0.008;
-            pts2.rotation.y = -elapsed * 0.018;
-            pts2.rotation.z = elapsed * 0.006;
-
-            tx += (mx - tx) * 0.035;
-            ty += (my - ty) * 0.035;
-            camera.position.x = tx * 1.8;
-            camera.position.y = -ty * 1.2;
-            camera.lookAt(scene.position);
-
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        window.addEventListener('resize', function () {
-            W = window.innerWidth;
-            H = window.innerHeight;
-            camera.aspect = W / H;
-            camera.updateProjectionMatrix();
-            renderer.setSize(W, H);
-        }, { passive: true });
-    }
-
-    // Three.js (~450 KiB) nur auf Desktop ohne Reduced-Motion nach dem Load laden,
-    // damit es LCP/TBT auf Mobil nicht belastet.
-    if (!isMobile && !prefersReduced && canvas) {
-        var loadThree = function () {
-            var s = document.createElement('script');
-            // integrity + crossorigin (SI17) gelten auch fuer nachgeladene
-            // Skripte. Der Abruf startet erst beim appendChild, beide stehen
-            // also rechtzeitig. Passt der Hash nicht, bleibt onload aus und
-            // der Partikel-Hero entfaellt – die Seite laeuft weiter.
-            s.integrity = 'sha256-Ozocl9485l7Fsowo2fKAWnOOllFiJpG6dxqpXHnUHVE=';
-            s.crossOrigin = 'anonymous';
-            s.src = 'https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js';
-            s.async = true;
-            s.onload = initParticles;
-            document.head.appendChild(s);
-        };
-        if (document.readyState === 'complete') {
-            loadThree();
-        } else {
-            window.addEventListener('load', loadThree);
-        }
-    }
-})();
-</script>
-{% endblock %}
-
-<script nonce="{{ csp_nonce }}">
-    document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        // Absendesperre (FO03): solange die Anmeldung läuft, schickt ein
-        // zweiter Klick keine zweite Anfrage.
-        const form = e.currentTarget;
-        const knopf = form.querySelector('button[type="submit"]');
-        if (knopf.disabled) return;
-        knopf.disabled = true;
-        form.setAttribute('aria-busy', 'true');
-        const email = document.getElementById('newsletter-email').value;
-        const message = document.getElementById('newsletter-message');
-
-        try {
-            const csrfToken = document.cookie.split(';')
-                .map(c => c.trim()).find(c => c.startsWith('csrftoken='))
-                ?.split('=')[1] || '';
-            const response = await fetch('/newsletter/subscribe/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken,
-                },
-                body: JSON.stringify({ email })
-            });
-            const data = await response.json();
-            
-            message.textContent = data.message || data.error;
-            message.classList.remove('hidden');
-            message.classList.add(response.ok ? 'text-emerald-400' : 'text-red-400');
-            
-            if(response.ok) document.getElementById('newsletter-form').reset();
-            // Zählbarer Abschluss (FO08): die Anmeldung bleibt auf der Seite,
-            // deshalb ein Ereignis statt einer Danke-Seite. dataLayer statt
-            // gtag(), weil die Seite heute kein Messskript lädt – gtag wäre
-            // undefiniert. Ohne Adresse oder andere Personendaten.
-            if (response.ok && data.neu) {
-                window.dataLayer = window.dataLayer || [];
-                window.dataLayer.push({ event: 'generate_lead', lead_quelle: 'newsletter' });
-            }
-        } catch (err) {
-            message.textContent = "Fehler bei der Verbindung zum Orbit.";
-            message.classList.remove('hidden');
-            message.classList.add('text-red-400');
-        } finally {
-            knopf.disabled = false;
-            form.removeAttribute('aria-busy');
-        }
+        stelle();
+        setInterval(stelle, 1000);
     });
+
+    // Warteliste und „Vormerken": dieselbe Anmeldung mit Double-Opt-in
+    // (/newsletter/subscribe/). Absendesperre (FO03): solange die Anmeldung
+    // läuft, schickt ein zweiter Klick keine zweite Anfrage.
+    document.querySelectorAll('form[data-newsletter]').forEach(function (form) {
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            var knopf = form.querySelector('button[type="submit"]');
+            if (knopf.disabled) { return; }
+            var antwort = form.nextElementSibling;
+            var email = form.querySelector('input[name="email"]').value;
+            knopf.disabled = true;
+            form.setAttribute('aria-busy', 'true');
+            try {
+                var csrfToken = (document.cookie.split(';').map(function (c) { return c.trim(); })
+                    .find(function (c) { return c.indexOf('csrftoken=') === 0; }) || '').split('=')[1] || '';
+                var response = await fetch('/newsletter/subscribe/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                    body: JSON.stringify({ email: email })
+                });
+                var data = await response.json();
+                antwort.textContent = data.message || data.error;
+                antwort.className = 'lv-antwort ' + (response.ok ? 'gut' : 'schlecht');
+                if (response.ok) { form.reset(); }
+                // Zählbarer Abschluss (FO08): die Anmeldung bleibt auf der Seite,
+                // deshalb ein Ereignis statt einer Danke-Seite. Ohne Adresse
+                // oder andere Personendaten.
+                if (response.ok && data.neu) {
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({ event: 'generate_lead', lead_quelle: 'newsletter' });
+                }
+            } catch (err) {
+                antwort.textContent = 'Das hat gerade nicht geklappt. Versuch es bitte gleich noch einmal.';
+                antwort.className = 'lv-antwort schlecht';
+            } finally {
+                knopf.disabled = false;
+                form.removeAttribute('aria-busy');
+            }
+        });
+    });
+})();
 </script>
 {% endblock %}

@@ -12,7 +12,7 @@
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
     {"@type": "ListItem", "position": 2, "name": "Kontakt", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'kontakt' %}"}
   ]
 }
@@ -76,7 +76,7 @@
         <!-- Header -->
         <div class="mb-20 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
             <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
-                Get in <span class="text-glow">Touch</span>
+                Kontakt
             </h1>
             <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">{% if verkauf_aktiv %}Luviq Universe ist ein reiner Online-Shop aus 36304 Alsfeld in Hessen; erreichbar ist Luisa Brehler über das Formular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Ein Ladengeschäft gibt es nicht. Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Über das Formular gehen Fragen zu einem einzelnen Stück – Maße, Material, Zustand –, zu einer laufenden Bestellung, zum Widerruf innerhalb von 14 Tagen oder zur Löschung eines Kontos. Geantwortet wird per E-Mail an die Adresse, die im Formular steht; eine Telefonnummer gibt es nicht. Wer zuerst nachlesen möchte: Bestellablauf und Zahlung, Widerruf und Rücksendung sowie Konto und Daten stehen ausführlich im Wissensbereich, die Versandzeiten unter Liefergebiet und die Vertragsbedingungen in den AGB.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus 36304 Alsfeld in Hessen; erreichbar ist Luisa Brehler über das Formular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Ein Ladengeschäft gibt es nicht, und verkauft wird erst mit dem ersten Drop. Über das Formular gehen Fragen zu einem einzelnen Stück – Maße, Material, Zustand –, zum ersten Drop oder zur Löschung eines Kontos. Geantwortet wird per E-Mail an die Adresse, die im Formular steht; eine Telefonnummer gibt es nicht. Wer zuerst nachlesen möchte: Hintergrund zu Upcycling, Second Hand und Vintage steht im Wissensbereich.{% endif %} Im Formular sind alle vier Felder Pflichtfelder und mit einem Stern (*) gekennzeichnet.</p>
             <div class="h-1 w-32 bg-glow-orange mt-8 rounded-full"></div>
@@ -88,13 +88,13 @@
                 <div class="glass-card rounded-[3.5rem] p-10 md:p-16">
                     {# aria-live (BF24): Änderungen im Formular – aria-busy beim Absenden – werden angesagt #}
                     <form method="post" class="space-y-8" data-einmal-absenden aria-live="polite">
-                        {# Fehleransage (BF24, WCAG 3.3.1): Die Meldung des Servers steht IM Formular,
+                        {% comment %}Fehleransage (BF24, WCAG 3.3.1): Die Meldung des Servers steht IM Formular,
                            wird mit role="alert" sofort vorgelesen und haengt ueber aria-describedby an
                            jedem Pflichtfeld. Sie erscheint nur, wenn die View einen Fehler meldet – ein
                            dauerhaft leerer Bereich waere ein Element mehr im sichtbaren Aufbau der Seite,
                            und der darf sich nicht aendern (Designwache, test_aufbau). Der Verweis der
                            Felder steht deshalb auch dann, wenn es (noch) nichts zu beschreiben gibt;
-                           ein Vorleseprogramm ueberliest ein Ziel, das es nicht gibt. #}
+                           ein Vorleseprogramm ueberliest ein Ziel, das es nicht gibt. Als {% comment %} statt {# #}: Django kennt {# #} nur einzeilig, mehrzeilig stand der Text bis 19.09.2026 sichtbar auf der Seite.{% endcomment %}
                         {% if fehler %}<div id="kontakt-fehler" role="alert" class="glass rounded-2xl p-4 border-l-4 border-red-500 text-white/90 text-sm font-medium">{{ fehler }}</div>{% endif %}
                         {% csrf_token %}
                         {# Spamschutz (shop1/spamschutz.py): Zeitstempel und ein Feld, das nur Bots ausfüllen #}
@@ -159,15 +159,7 @@
 
             <!-- Sidebar Info -->
             <div class="space-y-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
-                <!-- Me Section -->
-                <div class="glass-card p-4 rounded-[3rem] border-white/5 group overflow-hidden">
-                    <img src="{% static 'shop1/images/ich-900.webp' %}" srcset="{% static 'shop1/images/ich-450.webp' %} 450w, {% static 'shop1/images/ich-900.webp' %} 900w" sizes="(min-width: 1024px) 33vw, 100vw" alt="Luisa Brehler, Gründerin von Luviq Universe" class="w-full h-64 object-cover rounded-[2.5rem] grayscale group-hover:grayscale-0 transition-all duration-700" width="900" height="1350" loading="lazy" decoding="async">
-                    <div class="absolute inset-0 bg-gradient-to-t from-space-dark/80 to-transparent"></div>
-                    <div class="absolute bottom-6 left-6">
-                        <p class="text-white/40 text-[10px] uppercase tracking-widest leading-relaxed">Luisa Brehler</p>
-                    </div>
-                </div>
-
+                {# Das alte, freigestellte Foto von Luisa wird nicht mehr verwendet (Markenwissen § 9, 19.09.2026). #}
                 <div class="glass-card p-10 rounded-[3rem] border-white/5">
                     <h4 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Zentrale</h4>
                     <p class="text-white/60 leading-relaxed font-light">
@@ -204,7 +196,7 @@
 
         <!-- FAQ Section -->
         <div class="mt-32 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-            <h3 class="text-3xl font-black heading-font text-white uppercase tracking-tighter mb-12">Frequent <span class="text-glow">Queries</span></h3>
+            <h3 class="text-3xl font-black heading-font text-white uppercase tracking-tighter mb-12">Häufige Fragen</h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="glass-card p-10 rounded-[2.5rem]">
@@ -219,7 +211,7 @@
         </div>
         <!-- Feedback Section -->
         <div class="mt-32 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
-            <h3 class="text-3xl font-black heading-font text-white uppercase tracking-tighter mb-12">Echo <span class="text-glow">Feedback</span></h3>
+            <h3 class="text-3xl font-black heading-font text-white uppercase tracking-tighter mb-12">Gästebuch</h3>
             
             <div class="glass-card p-10 md:p-16 rounded-[4rem] border-white/5 relative overflow-hidden group">
                 <div class="absolute -top-24 -right-24 w-64 h-64 bg-glow-orange/5 blur-[80px] rounded-full group-hover:bg-glow-orange/10 transition-all duration-1000"></div>
@@ -242,7 +234,7 @@
                             class="w-full bg-white/5 border border-white/10 rounded-3xl p-6 text-white focus:outline-none focus:border-glow-orange transition-all font-light text-sm"
                             placeholder="Schreib ein kurzes Feedback..."></textarea>
                         <button type="submit" class="w-full btn-glow py-4 rounded-2xl text-white font-black uppercase tracking-widest text-[10px]">
-                            Post to Orbit
+                            Beitrag senden
                         </button>
                     </form>
                     {% else %}

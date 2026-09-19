@@ -10,6 +10,26 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 19.09.2026 — Umbau „Nachtausgabe" (Zweig `design/2026-09-b3-panorama`)
+
+**Was:** Neues Aussehen nach `Design\luviq\FINALER-BAUPLAN.md` (B3 + Hero H4 „Panorama"):
+`luviq.css` mit Tokens, selbst gehostete Schriften (Cormorant, Schibsted, JetBrains Mono),
+neue `base.html`, Startseite, Archiv, Stückseite, „Luisa"; **Motiv anfragen** als Seite
+`/motiv-anfragen/` mit Modell `Motivanfrage` (Migration `0023`), Panel-Liste und 26 Tests;
+Archivnummern als Feld `Produkt.nummer` (Datenmigration `0024`). Three.js, GSAP, Glas,
+Nebel und Google Fonts entfernt (auch aus `CSP_QUELLEN`). Bericht: `docs/design-2026-09-BERICHT.md`.
+**Warum:** Bastians Entscheidung vom 18.09. und Luisas Befragung vom 19.09.: ihr Markensatz,
+ihr Anfrage-System als Herzstück, ihre fünf Schritte; die alte Linie sah nach Kampagne aus.
+**Bewusst geänderte Prüfungen:** Designwache (`aufbau_referenz.json`) für alle 25 Seiten neu
+erfasst, weil jede Seite den neuen Kopf und Fuß trägt; Wortschwelle der Startseite 655 → 300,
+weil die Vorlage knapp ist und die Erklärtexte auf Archiv und „Luisa" stehen; Logo-Test →
+Name der Wortmarke; Karte nur noch im Gästebuch; Google Fonts nicht mehr in der
+Datenschutzerklärung.
+**Nebenfunde:** sichtbarer `{# #}`-Kommentar auf `/kontakt/` (mehrzeilig, Django kennt das
+nur einzeilig), altes Foto auf `/kontakt/`, veraltete Dienstliste im Datenschutz – behoben.
+
+---
+
 ## 18.09.2026 spät — Design-Upgrade beschlossen, nicht gebaut (nur Doku)
 
 **Was:** Bastian hat nach drei Entwurfsrunden B3 „Nachtausgabe“ mit Hero H4 „Panorama“ gewählt, vielleicht mit

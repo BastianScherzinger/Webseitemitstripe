@@ -1,0 +1,427 @@
+/* Luviq Universe — „Nachtausgabe" (B3 + Hero H4 „Panorama"), 19.09.2026.
+   Verbindlich: Design/luviq/FINALER-BAUPLAN.md (Firmenunterlagen).
+   Desktop 1:1 zur Vorlage: --u = min(1vw, 14.4px), die Vorlage rechnet in cqi
+   bei 1440 px. Unter 1024 px gelten feste Pixelwerte aus dem Handy-Rahmen.
+   Form: Radius 0, keine Schatten, keine Verläufe, kein Glas, kein Glühen.
+   Ein Akzent-Token (--lv-akzent): Luisa malt künftig auch mit Textilfarbe. */
+
+/* ── Schriften (selbst gehostet, OFL, zugeschnitten mit tools/schriften_zuschneiden.py) ── */
+@font-face{font-family:"Cormorant Garamond";font-style:italic;font-weight:500;font-display:swap;
+  src:url("fonts/cormorant-garamond-latin-italic.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Cormorant Garamond";font-style:italic;font-weight:500;font-display:swap;
+  src:url("fonts/cormorant-garamond-latin-ext-italic.woff2") format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Schibsted Grotesk";font-style:normal;font-weight:400 700;font-display:swap;
+  src:url("fonts/schibsted-grotesk-latin-normal.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Schibsted Grotesk";font-style:normal;font-weight:400 700;font-display:swap;
+  src:url("fonts/schibsted-grotesk-latin-ext-normal.woff2") format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 500;font-display:swap;
+  src:url("fonts/jetbrains-mono-latin-normal.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 500;font-display:swap;
+  src:url("fonts/jetbrains-mono-latin-ext-normal.woff2") format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+/* Ersatzschriften mit gerechneten Metriken: beim Tausch springt nichts. */
+@font-face{font-family:"Cormorant Ersatz";src:local("Georgia Italic"),local("Georgia-Italic");font-style:italic;
+  size-adjust:81%;ascent-override:114.07%;descent-override:35.43%;line-gap-override:0%}
+@font-face{font-family:"Schibsted Ersatz";src:local("Arial"),local("ArialMT");
+  size-adjust:103.98%;ascent-override:93.92%;descent-override:24.79%;line-gap-override:0%}
+@font-face{font-family:"JetBrains Ersatz";src:local("Consolas"),local("Menlo");
+  size-adjust:109.13%;ascent-override:93.47%;descent-override:27.49%;line-gap-override:0%}
+
+/* ── Tokens ── */
+:root{
+  --lv-grund:#0A0A0A;--lv-grund-2:#131211;
+  --lv-text:#F2EEE6;--lv-leise:#9C968C;
+  --lv-linie:rgba(242,238,230,.12);--lv-linie-2:rgba(242,238,230,.28);
+  --lv-akzent:#C8763F;
+  --lv-kachel:#E8E1D6;
+  --lv-fehler:#E8927A;
+  --lv-serif:"Cormorant Garamond","Cormorant Ersatz",Georgia,serif;
+  --lv-sans:"Schibsted Grotesk","Schibsted Ersatz",Arial,sans-serif;
+  --lv-mono:"JetBrains Mono","JetBrains Ersatz",Consolas,monospace;
+  --u:min(1vw,14.4px);
+  --rand:max(calc(var(--u)*4),calc((100vw - 1440px)/2 + 57.6px));
+  color-scheme:dark;
+}
+
+/* ── Grund ── */
+html{background:var(--lv-grund);scroll-padding-top:80px}
+body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--lv-grund);color:var(--lv-text);
+  font-family:var(--lv-sans);font-size:max(15px,calc(var(--u)*1.15));line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.lv *,.lv *::before,.lv *::after{box-sizing:border-box}
+.lv main{flex:1 0 auto}
+.lv-seite p,.lv-seite h1,.lv-seite h2,.lv-seite h3,.lv-seite figure,.lv-seite blockquote,.lv-seite ol,.lv-seite ul{margin:0}
+.lv-seite a,.lv-kopf a,.lv-fuss a,.lv-leiste a,.lv-band a{color:inherit;text-decoration:none}
+.lv-seite img{display:block;width:100%;height:100%;object-fit:cover}
+.lv svg{flex:none}
+.lv-serif{font-family:var(--lv-serif);font-style:italic;font-weight:500;letter-spacing:-.01em;line-height:.98;text-wrap:balance}
+.lv-nr{font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-akzent);letter-spacing:.08em;text-transform:uppercase}
+.lv-klein{font-size:max(12px,calc(var(--u)*.85));color:var(--lv-leise)}
+.lv-klein a{text-decoration:underline;text-underline-offset:.2em}
+.sr-only,.lv-versteckt{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.lv-sprung{position:absolute;left:8px;top:-60px;z-index:100;min-height:44px;display:inline-flex;align-items:center;padding:10px 14px;background:var(--lv-text);color:var(--lv-grund)!important;font-weight:700}
+.lv-sprung:focus{top:8px}
+
+/* Fokus: sichtbar auf allem, stärker als outline:none aus Alt-CSS und Tailwind. */
+.lv a:focus-visible,.lv button:focus-visible,.lv summary:focus-visible,.lv input:focus-visible,.lv textarea:focus-visible,.lv select:focus-visible{outline:3px solid var(--lv-akzent);outline-offset:3px}
+.lv .lv-wahl input:focus-visible+span{outline:3px solid var(--lv-akzent);outline-offset:3px}
+
+/* ── Knöpfe und Links ── */
+.lv-knopf{display:inline-flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*1.6);min-height:44px;
+  padding:calc(var(--u)*1.1) calc(var(--u)*1.6);background:var(--lv-text);color:var(--lv-grund)!important;border:0;border-radius:0;
+  font:700 max(14px,calc(var(--u)*1.1)) var(--lv-sans);letter-spacing:.02em;cursor:pointer;text-decoration:none}
+.lv-knopf svg{width:1.1em;height:1.1em}
+.lv-knopf:hover{background:var(--lv-akzent)}
+.lv-knopf[disabled]{opacity:.6;cursor:wait}
+.lv-link{display:inline-flex;align-items:center;gap:.5em;min-height:44px;border-bottom:1px solid var(--lv-linie-2);font-weight:600;color:var(--lv-text)}
+.lv-link svg{width:1em;height:1em}
+.lv-link:hover{border-color:var(--lv-akzent)}
+
+/* ── Laufband ── */
+.lv-band{border-bottom:1px solid var(--lv-linie);color:var(--lv-leise);overflow:hidden;white-space:nowrap;
+  font:500 max(10px,calc(var(--u)*.8)) var(--lv-mono);letter-spacing:.16em;text-transform:uppercase;padding:calc(var(--u)*.6) 0}
+.lv-band p{display:inline-flex;margin:0;animation:lv-lauf 48s linear infinite}
+.lv-band span{padding-right:.8em}
+.lv-band span::after{content:"·";padding-left:.8em}
+@keyframes lv-lauf{to{transform:translateX(-50%)}}
+
+/* ── Kopf ── */
+.lv-kopf{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:calc(var(--u)*3);padding:calc(var(--u)*1.5) var(--rand);
+  background:var(--lv-grund);border-bottom:1px solid var(--lv-linie)}
+.lv-wm{display:inline-flex;align-items:center;min-height:44px;font:700 max(15px,calc(var(--u)*1.5))/1 var(--lv-sans);letter-spacing:.6em;margin-right:-.6em;white-space:nowrap}
+.lv-nav{display:flex;align-items:center;gap:calc(var(--u)*2.6);margin-left:auto;color:var(--lv-leise);font-size:max(13px,calc(var(--u)*1))}
+.lv-nav a{padding:.3em 0}
+.lv-nav a:hover,.lv-nav a[aria-current="page"]{color:var(--lv-text)}
+.lv-nav .lv-nav-anfrage{color:var(--lv-text);border-bottom:1px solid var(--lv-akzent)}
+.lv-kopf-rechts{display:flex;align-items:center;gap:calc(var(--u)*1.6);padding-left:calc(var(--u)*2.4);border-left:1px solid var(--lv-linie);font-size:max(13px,calc(var(--u)*1))}
+.lv-ig{display:inline-flex;align-items:center;gap:.5em;font-weight:600}
+.lv-ig svg{width:1.3em;height:1.3em}
+.lv-kopf-rechts .lv-konto{color:var(--lv-leise)}
+.lv-kopf-rechts .lv-konto:hover{color:var(--lv-text)}
+.lv-menue{display:none}
+
+/* ── Meldungen ── */
+.lv-meldungen{padding:16px var(--rand) 0;display:grid;gap:8px}
+.lv-meldung{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 16px;border:1px solid var(--lv-linie-2);border-left:3px solid var(--lv-akzent);background:var(--lv-grund-2);font-size:14px}
+.lv-meldung.fehler{border-left-color:var(--lv-fehler)}
+.lv-meldung button{background:none;border:0;color:var(--lv-leise);font-size:22px;line-height:1;min-width:44px;min-height:44px;cursor:pointer}
+
+/* ── Hero H4 „Panorama" ── */
+.lv-hero{padding:calc(var(--u)*2) var(--rand) calc(var(--u)*6)}
+.lv-mast{display:flex;justify-content:space-between;gap:1em;border-bottom:1px solid var(--lv-linie-2);padding-bottom:calc(var(--u)*1);
+  font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.06em;text-transform:uppercase}
+.lv-pano{margin-top:calc(var(--u)*1.6)!important;display:grid;gap:calc(var(--u)*1)}
+.lv-pano picture{display:block;aspect-ratio:21/9;overflow:hidden;background:var(--lv-grund-2)}
+.lv-pano img{filter:saturate(.8)}
+.lv-pano figcaption{display:flex;justify-content:space-between;gap:1em;font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise)}
+.lv-unterbild{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:calc(var(--u)*5);margin-top:calc(var(--u)*3.4);align-items:start}
+.lv-satz{font-size:calc(var(--u)*6)}
+.lv-lead{margin-top:calc(var(--u)*1.8)!important;max-width:62ch}
+.lv-unterbild .lv-knopf{margin-top:calc(var(--u)*2.2)}
+.lv-unterbild>*{min-width:0}
+.lv-dropkasten{border:1px solid var(--lv-linie-2);padding:calc(var(--u)*2);display:grid;grid-template-columns:minmax(0,1fr);gap:calc(var(--u)*1.4)}
+.lv-dl{font-weight:500}
+.lv-uhr{display:flex;flex-wrap:wrap;gap:calc(var(--u)*2);font-family:var(--lv-mono)}
+.lv-uhr div{display:grid;gap:.3em}
+.lv-uhr b{font:500 max(24px,calc(var(--u)*3))/1 var(--lv-mono);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.lv-uhr small{font-size:max(10px,calc(var(--u)*.75));color:var(--lv-leise);letter-spacing:.16em;text-transform:uppercase}
+.lv-feldzeile{display:flex;border:1px solid var(--lv-linie-2);max-width:calc(var(--u)*44)}
+.lv-feldzeile input{flex:1;min-width:0;background:transparent;border:0;border-radius:0;color:var(--lv-text);font:inherit;font-size:max(16px,calc(var(--u)*1.1));padding:calc(var(--u)*1.1) calc(var(--u)*1.4)}
+.lv-feldzeile input::placeholder{color:var(--lv-leise)}
+.lv-feldzeile button{background:var(--lv-text);color:var(--lv-grund);border:0;border-radius:0;font:700 max(14px,calc(var(--u)*1.05)) var(--lv-sans);padding:0 calc(var(--u)*1.8);min-height:44px;cursor:pointer}
+.lv-feldzeile button:hover{background:var(--lv-akzent)}
+.lv-dropkasten .lv-feldzeile{max-width:none}
+.lv-antwort{font-size:14px;min-height:0}
+.lv-antwort.gut{color:#9FD4A8}.lv-antwort.schlecht{color:var(--lv-fehler)}
+.lv-antwort:empty{display:none}
+
+/* ── Motiv anfragen (Startseite) ── */
+.lv-anfragen{padding:calc(var(--u)*6) var(--rand);border-top:1px solid var(--lv-linie);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:calc(var(--u)*6);align-items:start}
+.lv-anfragen h2{font-size:calc(var(--u)*4.6);line-height:1;margin-top:calc(var(--u)*1)}
+.lv-ablauf{list-style:none;margin:calc(var(--u)*2.6) 0 0!important;padding:0;counter-reset:s;border-top:1px solid var(--lv-linie-2)}
+.lv-ablauf li{counter-increment:s;display:grid;grid-template-columns:calc(var(--u)*3.4) minmax(0,1fr);gap:calc(var(--u)*.2) calc(var(--u)*1);padding:calc(var(--u)*1.2) 0;border-bottom:1px solid var(--lv-linie)}
+.lv-ablauf li::before{content:counter(s,decimal-leading-zero);grid-row:span 2;font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-akzent);padding-top:.35em}
+.lv-ablauf b{font-weight:600}
+.lv-ablauf span{color:var(--lv-leise);font-size:max(14px,calc(var(--u)*1))}
+.lv-anfragekasten{border:1px solid var(--lv-linie-2);padding:calc(var(--u)*2.4);display:grid;gap:calc(var(--u)*1.4);background:var(--lv-grund-2)}
+.lv-frage{font-family:var(--lv-serif);font-style:italic;font-weight:500;font-size:max(21px,calc(var(--u)*2.4));line-height:1.1}
+.lv-chips{display:flex;flex-wrap:wrap;gap:calc(var(--u)*.8);list-style:none;padding:0}
+.lv-chip{border:1px solid var(--lv-linie-2);padding:calc(var(--u)*.7) calc(var(--u)*1.2);font-size:max(13px,calc(var(--u)*1));min-height:44px;display:inline-flex;align-items:center}
+.lv-chip:hover{border-color:var(--lv-text)}
+.lv-anfragekasten .lv-knopf{justify-self:start;margin-top:calc(var(--u)*.6)}
+
+/* ── Abschnittsköpfe (Drop, Entstehung, Archiv) ── */
+.lv-abschnitt{padding:calc(var(--u)*7) var(--rand);border-top:1px solid var(--lv-linie)}
+.lv-abschnitt.dunkel{background:var(--lv-grund-2)}
+.lv-abschnittskopf{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:calc(var(--u)*4);align-items:end;margin-bottom:calc(var(--u)*3)}
+.lv-abschnittskopf h1,.lv-abschnittskopf h2{font-size:calc(var(--u)*6)}
+.lv-abschnittskopf p{color:var(--lv-leise);max-width:46ch;justify-self:end}
+
+.lv-ohne-linie{border-top:0}
+.lv-prosa{display:grid;gap:1em;max-width:72ch;color:var(--lv-leise)}
+.lv-prosa h2{font-size:max(32px,calc(var(--u)*3.6));color:var(--lv-text);margin-bottom:.3em}
+.lv-prosa h3{font-size:max(22px,calc(var(--u)*2));color:var(--lv-text);margin-top:.6em}
+.lv-prosa a{color:var(--lv-text);text-decoration:underline;text-underline-offset:.2em}
+.lv-prosa a:hover{color:var(--lv-akzent)}
+.lv-prosa a.lv-knopf{text-decoration:none}
+.lv-prosa a.lv-knopf:hover{color:var(--lv-grund)}
+.lv-prosa strong{color:var(--lv-text);font-weight:600}
+
+/* Drop in Teilen */
+.lv-teaser{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,1.6fr);gap:calc(var(--u)*1.2);align-items:end;list-style:none;padding:0}
+.lv-teaser li{display:grid;gap:calc(var(--u)*.9)}
+.lv-teaser i{display:block;aspect-ratio:3/4;overflow:hidden;background:var(--lv-kachel)}
+.lv-teaser .gross i{aspect-ratio:4/5;background:var(--lv-grund);border:1px solid var(--lv-linie-2);display:grid;place-items:center}
+.lv-teaser .gross i span{font-family:var(--lv-serif);font-style:italic;font-size:calc(var(--u)*8);color:var(--lv-akzent)}
+.lv-teaser p{display:flex;justify-content:space-between;gap:1em;font-size:max(12px,calc(var(--u)*.9))}
+.lv-teaser p span{color:var(--lv-leise);font-family:var(--lv-mono)}
+
+/* Entstehung */
+.lv-schritte{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(var(--u)*1.6);list-style:none;padding:0}
+.lv-schritt{display:grid;gap:calc(var(--u)*.8);align-content:start}
+.lv-schritt figure{aspect-ratio:9/13;overflow:hidden;background:var(--lv-kachel)}
+.lv-schritt img{mix-blend-mode:multiply}
+.lv-schritt .lv-nr{margin-top:calc(var(--u)*.4)}
+.lv-schritt h3{font-size:max(20px,calc(var(--u)*2.2))}
+.lv-schritt p:last-child{color:var(--lv-leise);font-size:max(13px,calc(var(--u)*.98))}
+
+/* Archiv */
+.lv-raster{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(var(--u)*2.4) calc(var(--u)*1.4);list-style:none;padding:0}
+.lv-karte{display:grid;gap:calc(var(--u)*.6);align-content:start;position:relative}
+.lv-karte figure{aspect-ratio:4/5;overflow:hidden;background:var(--lv-kachel)}
+.lv-karte img{mix-blend-mode:multiply;filter:saturate(.9);transition:transform .6s ease}
+.lv-karte:hover img{transform:scale(1.03)}
+.lv-karte-kopf{display:flex;justify-content:space-between;gap:1em;margin-top:calc(var(--u)*.4);font:max(12px,calc(var(--u)*.85)) var(--lv-mono)}
+.lv-karte-kopf span{color:var(--lv-leise);letter-spacing:.08em;text-transform:uppercase}
+.lv-karte h3{font-size:max(19px,calc(var(--u)*1.7))}
+.lv-karte h3 a::after{content:"";position:absolute;inset:0}
+.lv-karte .lv-material{color:var(--lv-leise);font-size:max(13px,calc(var(--u)*.88))}
+.lv-karte .lv-preis{font:500 max(14px,calc(var(--u)*1)) var(--lv-mono)}
+.lv-leer{color:var(--lv-leise);padding:calc(var(--u)*3) 0}
+.lv-weiter{margin-top:calc(var(--u)*3)}
+
+/* Luisa */
+.lv-luisa{padding:calc(var(--u)*8) var(--rand);border-top:1px solid var(--lv-linie);display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:calc(var(--u)*5);align-items:end}
+.lv-luisa blockquote p{font-size:calc(var(--u)*6.4);line-height:1.02}
+.lv-luisa blockquote footer{margin-top:calc(var(--u)*1.6);font:max(11px,calc(var(--u)*.8)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.06em}
+.lv-luisa-text{display:grid;gap:calc(var(--u)*1.6);color:var(--lv-leise)}
+.lv-luisa-text .lv-link{justify-self:start}
+.lv-portraet{aspect-ratio:4/5;max-width:calc(var(--u)*22);overflow:hidden}
+
+/* Warteliste */
+.lv-warteliste{padding:calc(var(--u)*8) var(--rand);border-top:1px solid var(--lv-linie);display:grid;justify-items:center;text-align:center;gap:calc(var(--u)*1.8);background:var(--lv-grund-2)}
+.lv-warteliste h2{font-size:calc(var(--u)*7.4)}
+.lv-warteliste p{color:var(--lv-leise);max-width:52ch}
+.lv-warteliste .lv-feldzeile{width:100%}
+
+/* ── Fuß ── */
+.lv-fuss{padding:calc(var(--u)*4) var(--rand) calc(var(--u)*3);border-top:1px solid var(--lv-linie);display:grid;gap:calc(var(--u)*2);margin-top:auto}
+.lv-fuss-wm{font:700 calc(var(--u)*8)/.9 var(--lv-sans);letter-spacing:.3em;margin:0}
+.lv-fuss nav{display:flex;flex-wrap:wrap;gap:.2em calc(var(--u)*2.4);font-size:max(14px,calc(var(--u)*1))}
+.lv-fuss nav a{min-height:32px;display:inline-flex;align-items:center}
+.lv-fuss nav a:hover{color:var(--lv-akzent)}
+.lv-fuss nav .lv-ig{margin-left:auto}
+.lv-recht{display:flex;justify-content:space-between;gap:calc(var(--u)*2);padding-top:calc(var(--u)*1.4);border-top:1px solid var(--lv-linie);font-size:max(12px,calc(var(--u)*.82));color:var(--lv-leise);margin:0}
+.lv-recht a{text-decoration:underline;text-underline-offset:.2em}
+.lv-leiste{display:none}
+
+/* ── Seite „Motiv anfragen" ── */
+.lv-anfrageseite{padding:calc(var(--u)*4) var(--rand) calc(var(--u)*7);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:calc(var(--u)*6);align-items:start}
+.lv-anfrageseite .lv-satz{font-size:calc(var(--u)*5.2);margin-top:calc(var(--u)*1)}
+.lv-anfrageseite .lv-lead{color:var(--lv-leise)}
+.lv-stationen{display:flex;list-style:none;padding:0;margin-top:calc(var(--u)*2.6)!important}
+.lv-stationen li{flex:1;padding:calc(var(--u)*1) calc(var(--u)*1) 0 0;border-top:1px solid var(--lv-linie-2);font-weight:600}
+.lv-stationen .lv-nr{display:block;margin-bottom:calc(var(--u)*.4)}
+.lv-formular{display:grid;gap:calc(var(--u)*2.2);border:1px solid var(--lv-linie-2);padding:calc(var(--u)*2.6);background:var(--lv-grund-2)}
+.lv-formular fieldset{border:0;margin:0;padding:0;display:grid;gap:calc(var(--u)*1);min-width:0}
+.lv-formular legend,.lv-feld>span{display:flex;align-items:baseline;gap:calc(var(--u)*.8);font-weight:600;margin-bottom:calc(var(--u)*1);padding:0}
+.lv-formular legend .lv-nr,.lv-feld .lv-nr{font-size:max(11px,calc(var(--u)*.85))}
+.lv-formular em{font-style:normal;color:var(--lv-leise);font-weight:400;font-size:.9em}
+.lv-wahlen{display:flex;flex-wrap:wrap;gap:calc(var(--u)*.8)}
+.lv-wahl{position:relative;display:inline-flex}
+.lv-wahl input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.lv-wahl span{border:1px solid var(--lv-linie-2);padding:calc(var(--u)*.7) calc(var(--u)*1.2);min-height:44px;display:inline-flex;align-items:center;font-size:max(14px,calc(var(--u)*1))}
+.lv-wahl:hover span{border-color:var(--lv-text)}
+.lv-wahl input:checked+span{background:var(--lv-text);color:var(--lv-grund);border-color:var(--lv-text)}
+.lv-feld{display:grid}
+.lv-feld input,.lv-feld textarea{width:100%;background:transparent;border:1px solid var(--lv-linie-2);border-radius:0;color:var(--lv-text);font:inherit;font-size:max(16px,calc(var(--u)*1.05));padding:calc(var(--u)*1) calc(var(--u)*1.2)}
+.lv-feld input::placeholder,.lv-feld textarea::placeholder{color:var(--lv-leise)}
+.lv-feld textarea{resize:vertical;min-height:7em}
+.lv-feld2{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*1.4)}
+.lv-formular .lv-knopf{justify-self:start}
+.lv-fehler{border:1px solid var(--lv-fehler);color:var(--lv-text);padding:12px 14px;font-size:15px}
+.lv-fehler:empty{display:none}
+.lv-falle{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+.lv-danke{padding:calc(var(--u)*6) var(--rand) calc(var(--u)*8);display:grid;gap:calc(var(--u)*1.8);max-width:calc(900px + 2*var(--rand))}
+.lv-danke h1{font-size:max(40px,calc(var(--u)*5.2))}
+.lv-danke p{color:var(--lv-leise);max-width:58ch}
+.lv-danke .lv-knopf{justify-self:start}
+
+/* ── Stück (Produktseite) ── */
+.lv-stueck{padding:calc(var(--u)*3) var(--rand) calc(var(--u)*7);display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:calc(var(--u)*5);align-items:start}
+.lv-brotkrume{padding:calc(var(--u)*2) var(--rand) 0;font:max(12px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.04em}
+.lv-brotkrume ol{display:flex;flex-wrap:wrap;gap:.6em;list-style:none;padding:0;margin:0}
+.lv-brotkrume li+li::before{content:"/";margin-right:.6em;color:var(--lv-linie-2)}
+.lv-brotkrume a:hover{color:var(--lv-text)}
+.lv-stueck-bild{background:var(--lv-kachel)}
+.lv-stueck-bild img{mix-blend-mode:multiply;height:auto;max-height:80vh;object-fit:contain}
+.lv-stueck-nummer{font:500 calc(var(--u)*6)/1 var(--lv-mono);letter-spacing:-.03em;color:var(--lv-text)}
+.lv-stueck h1{font-size:max(36px,calc(var(--u)*4.4));margin-top:calc(var(--u)*1)}
+.lv-stueck-text{display:grid;gap:calc(var(--u)*1.6);align-content:start}
+.lv-stueck-text>p{color:var(--lv-leise)}
+.lv-stueck-text>p.lv-stueck-nummer,.lv-stueck-text>p.lv-stueck-preis{color:var(--lv-text)}
+.lv-stueck-text>p.lv-status{color:var(--lv-akzent)}
+.lv-daten{display:grid;grid-template-columns:auto 1fr;border-top:1px solid var(--lv-linie-2);margin:0}
+.lv-daten dt,.lv-daten dd{padding:10px 0;border-bottom:1px solid var(--lv-linie);margin:0}
+.lv-daten dt{font:max(11px,calc(var(--u)*.8)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.08em;text-transform:uppercase;padding-right:2em}
+.lv-status{font:500 max(12px,calc(var(--u)*.9)) var(--lv-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--lv-akzent)}
+.lv-stueck-knoepfe{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px}
+.lv-stueck-text .lv-klein a{color:var(--lv-text)}
+.lv-stueck-preis{font:500 max(28px,calc(var(--u)*2.6)) var(--lv-mono)}
+
+/* ── Übrige Seiten: Übersetzungsschicht für das alte Markup ──
+   Die Inhalte bleiben, das Aussehen folgt den Tokens: Radius 0, keine
+   Schatten, kein Glas, keine Glüh- und Einblendeffekte, Überschriften in
+   Cormorant kursiv, Knöpfe hell auf dunkel. Das Admin-Panel bleibt außen vor. */
+.lv-alt main{padding-bottom:calc(var(--u)*6)}
+.lv-alt main [class*="rounded"]{border-radius:0!important}
+.lv-alt main [class*="shadow"]{box-shadow:none!important}
+.lv-alt main .glass,.lv-alt main .glass-card{background:var(--lv-grund-2)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:1px solid var(--lv-linie)!important;box-shadow:none!important}
+.lv-alt main .glass-card:hover{transform:none!important}
+.lv-alt main h1,.lv-alt main h2,.lv-alt main h3,.lv-alt main .heading-font{font-family:var(--lv-serif)!important;font-style:italic;font-weight:500!important;text-transform:none!important;letter-spacing:-.01em!important;line-height:1.02}
+.lv-alt main h4,.lv-alt main h5{font-family:var(--lv-sans);letter-spacing:.02em}
+.lv-alt main .text-glow{color:var(--lv-text)!important;text-shadow:none!important;background:none!important;-webkit-text-fill-color:currentColor!important}
+.lv-alt main .text-glow-orange,.lv-alt main [class*="text-orange-"]{color:var(--lv-akzent)!important}
+.lv-alt main .btn-glow,.lv-alt main .bg-glow-orange,.lv-alt main button[type="submit"]:not(.lv-knopf){background:var(--lv-text)!important;color:var(--lv-grund)!important;border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;text-shadow:none!important}
+.lv-alt main .btn-glow::before{display:none}
+.lv-alt main .btn-glow:hover,.lv-alt main .bg-glow-orange:hover,.lv-alt main button[type="submit"]:not(.lv-knopf):hover{background:var(--lv-akzent)!important}
+.lv-alt main input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),.lv-alt main textarea,.lv-alt main select,.lv-alt main .form-input{background:transparent!important;border:1px solid var(--lv-linie-2)!important;border-radius:0!important;color:var(--lv-text)!important;box-shadow:none!important}
+.lv-alt main label{font-family:var(--lv-mono);letter-spacing:.06em}
+.lv-alt main .energy-nebula,.lv-alt main [class*="blur-["],.lv-alt .ambient-glow{display:none!important}
+.lv-alt main .scroll-reveal,.lv-alt main .animate-reveal{opacity:1!important;transform:none!important;transition:none!important}
+.lv-alt main .animate-pulse,.lv-alt main .animate-float{animation:none!important}
+.lv-alt main a:not([class]){color:var(--lv-text);text-decoration:underline;text-underline-offset:.2em}
+.lv-alt main .product-card{transform:none!important}
+.lv-alt main section{border-color:var(--lv-linie)}
+/* Gesperrte Großbuchstaben-Absätze waren kaum lesbar: Fließtext normal setzen. */
+.lv-alt main p{text-transform:none!important;letter-spacing:normal!important}
+/* Sehr blasses Weiß (text-white/10 … /40) unter 4.5:1 auf das leise Grau heben. */
+.lv-alt main [class*="text-white/1"],.lv-alt main [class*="text-white/2"],.lv-alt main [class*="text-white/3"],.lv-alt main [class*="text-white/4"]{color:var(--lv-leise)!important}
+
+/* ── Unter 1024 px: feste Werte aus dem Handy-Rahmen ── */
+@media (max-width:1023px){
+  :root{--rand:16px}
+  body.lv{font-size:15px;padding-bottom:76px}
+  body.lv.ohne-leiste{padding-bottom:0}
+  .lv-band{font-size:10px;padding:6px 0}
+  .lv-kopf{padding:10px var(--rand);gap:10px}
+  .lv-wm{font-size:15px;letter-spacing:.45em}
+  .lv-nav,.lv-kopf-rechts{display:none}
+  .lv-kopf{position:sticky}
+  .lv-menue{display:block;margin-left:auto;position:static}
+  .lv-menue summary{list-style:none;display:grid;place-items:center;width:44px;height:44px;margin-right:-10px;cursor:pointer}
+  .lv-menue summary::-webkit-details-marker{display:none}
+  .lv-menue summary i{display:block;width:22px;height:10px;border-block:2px solid var(--lv-text)}
+  .lv-menue[open] summary i{height:2px;border-bottom:0;transform:rotate(45deg);position:relative}
+  .lv-menue[open] summary i::after{content:"";position:absolute;left:0;right:0;top:-2px;border-top:2px solid var(--lv-text);transform:rotate(-90deg)}
+  .lv-menue nav{position:absolute;left:0;right:0;top:100%;background:var(--lv-grund);border-bottom:1px solid var(--lv-linie-2);padding:8px var(--rand) 20px;display:grid;max-height:calc(100vh - 70px);overflow:auto}
+  .lv-menue nav a{min-height:48px;display:flex;align-items:center;border-bottom:1px solid var(--lv-linie);font-size:17px}
+  .lv-menue nav .lv-nav-anfrage{color:var(--lv-akzent)}
+  .lv-menue nav .lv-menue-klein{font-size:14px;color:var(--lv-leise)}
+  .lv-hero{padding:12px var(--rand) 36px}
+  .lv-mast{font-size:10px;padding-bottom:6px}
+  .lv-mast span:nth-child(2){display:none}
+  .lv-pano{margin-top:12px!important;gap:8px}
+  .lv-pano picture{aspect-ratio:4/5}
+  .lv-pano figcaption{font-size:11px}
+  .lv-unterbild{grid-template-columns:minmax(0,1fr);gap:24px;margin-top:20px}
+  .lv-satz{font-size:40px}
+  .lv-lead{font-size:15.5px}
+  .lv-unterbild .lv-knopf,.lv-knopf{padding:12px 18px;font-size:15px}
+  .lv-unterbild .lv-knopf{margin-top:18px}
+  .lv-dropkasten{padding:16px;gap:12px}
+  .lv-uhr{gap:14px}
+  .lv-uhr b{font-size:24px}
+  .lv-uhr small{font-size:9.5px}
+  .lv-feldzeile{max-width:none}
+  .lv-feldzeile input{padding:12px}
+  .lv-feldzeile button{font-size:14px;padding:0 14px;min-height:48px}
+  .lv-klein{font-size:12px}
+  .lv-anfragen{grid-template-columns:minmax(0,1fr);padding:44px var(--rand);gap:24px}
+  .lv-anfragen h2{font-size:34px}
+  .lv-ablauf{margin-top:18px!important}
+  .lv-ablauf li{grid-template-columns:32px minmax(0,1fr);padding:10px 0}
+  .lv-ablauf span{font-size:13.5px}
+  .lv-anfragekasten{padding:16px;gap:12px}
+  .lv-chip{font-size:14px;padding:8px 12px}
+  .lv-abschnitt{padding:44px var(--rand)}
+  .lv-abschnittskopf{grid-template-columns:minmax(0,1fr);gap:8px;margin-bottom:20px}
+  .lv-abschnittskopf h1,.lv-abschnittskopf h2{font-size:36px}
+  .lv-abschnittskopf p{justify-self:start;font-size:14px}
+  .lv-teaser{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .lv-teaser .gross{grid-column:1/-1}
+  .lv-teaser .gross i{aspect-ratio:16/10}
+  .lv-teaser .gross i span{font-size:52px}
+  .lv-schritte{display:flex;overflow-x:auto;gap:12px;scroll-snap-type:x mandatory;margin-inline:calc(var(--rand)*-1);padding-inline:var(--rand);scrollbar-width:none;scroll-padding-inline:var(--rand)}
+  .lv-schritte::-webkit-scrollbar{display:none}
+  .lv-schritt{flex:0 0 min(72%,300px);scroll-snap-align:start;gap:6px}
+  .lv-schritt h3{font-size:22px}
+  .lv-schritt p:last-child{font-size:13.5px}
+  .lv-wischen{display:block;margin-top:12px;font:11px var(--lv-mono);color:var(--lv-leise);letter-spacing:.08em;text-transform:uppercase}
+  .lv-raster{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}
+  .lv-raster>li:first-child{grid-column:1/-1}
+  .lv-karte h3{font-size:18px}
+  .lv-karte-kopf{font-size:11px}
+  .lv-karte .lv-material{font-size:12.5px}
+  .lv-luisa{grid-template-columns:minmax(0,1fr);padding:48px var(--rand);gap:20px}
+  .lv-luisa blockquote p{font-size:36px}
+  .lv-luisa blockquote footer{font-size:10.5px}
+  .lv-luisa-text{font-size:15px;gap:12px}
+  .lv-warteliste{padding:48px var(--rand) 44px;gap:14px}
+  .lv-warteliste h2{font-size:40px}
+  .lv-warteliste p{font-size:14.5px}
+  .lv-fuss{padding:32px var(--rand) 28px;gap:16px}
+  .lv-fuss-wm{font-size:clamp(44px,14vw,110px)}
+  .lv-fuss nav{display:grid;grid-template-columns:1fr 1fr;gap:0;font-size:15px}
+  .lv-fuss nav a{min-height:44px}
+  .lv-fuss nav .lv-ig{margin:0;grid-column:1/-1}
+  .lv-recht{flex-direction:column;gap:6px;font-size:12px}
+  .lv-leiste{display:grid;position:fixed;left:0;right:0;bottom:0;z-index:45;grid-template-columns:1fr auto;gap:10px;align-items:center;
+    padding:10px var(--rand) calc(10px + env(safe-area-inset-bottom));background:var(--lv-grund);border-top:1px solid var(--lv-linie-2)}
+  .lv-leiste p{font:11.5px/1.3 var(--lv-mono);color:var(--lv-leise);margin:0}
+  .lv-leiste b{display:block;color:var(--lv-text);font-size:12.5px}
+  .lv-leiste a{min-height:48px;display:flex;align-items:center;padding:0 18px;background:var(--lv-akzent);color:var(--lv-grund)!important;font-weight:700;font-size:15px}
+  .lv-anfrageseite{grid-template-columns:minmax(0,1fr);padding:24px var(--rand) 48px;gap:24px}
+  .lv-anfrageseite .lv-satz{font-size:36px}
+  .lv-stationen{flex-wrap:wrap;gap:12px 0}
+  .lv-stationen li{flex:0 0 50%;font-size:14px;padding-top:8px}
+  .lv-formular{padding:16px;gap:24px}
+  .lv-wahlen{gap:8px}
+  .lv-wahl span{font-size:15px;padding:10px 14px}
+  .lv-feld input,.lv-feld textarea{padding:12px}
+  .lv-feld2{grid-template-columns:1fr;gap:16px}
+  .lv-danke{padding:40px var(--rand) 56px;gap:16px}
+  .lv-stueck{grid-template-columns:minmax(0,1fr);padding:16px var(--rand) 48px;gap:24px}
+  .lv-stueck-nummer{font-size:44px}
+  .lv-brotkrume{padding-top:16px;font-size:11px}
+}
+@media (min-width:640px) and (max-width:1023px){
+  .lv-unterbild{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px}
+  .lv-satz{font-size:48px}
+  .lv-raster{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .lv-raster>li:first-child{grid-column:auto}
+  .lv-luisa blockquote p{font-size:48px}
+  .lv-anfragen{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .lv-pano picture{aspect-ratio:16/9}
+}
+@media (min-width:1024px){.lv-wischen{display:none}}
+
+/* ── Bewegung reduzieren ── */
+@media (prefers-reduced-motion: reduce){
+  .lv-band p{animation:none}
+  .lv *,.lv *::before,.lv *::after{animation-duration: 0.01ms !important;animation-iteration-count:1 !important;transition-duration: 0.01ms !important;scroll-behavior:auto !important}
+}

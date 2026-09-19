@@ -15,8 +15,8 @@ from django.db.models import F
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 
-from ..models import Produkt, Werbung, WerbungStat, Comment, KontaktAnfrage
-from .. import spamschutz
+from ..models import Produkt, Werbung, WerbungStat, KontaktAnfrage
+from .. import luviq_daten, spamschutz
 from ..utils import send_brevo_email
 from ._helpers import zu_viele_anfragen
 
@@ -42,9 +42,17 @@ def betreiber_konten():
 # wird nur der eigene Zähler der Werbeeinblendungen (WerbungStat), nichts, was
 # aus der Anfrage stammt.
 def startseite(request):
-    produkte_galerie = Produkt.objects.filter(aktiv=True).order_by('-erstellt_am')[:8]
+    """Startseite im Look „Nachtausgabe" (19.09.2026, Bauplan § 2).
 
-    # Impressionen für aktive Werbung zählen (nur auf der Startseite)
+    Das Archiv steht nach Nummer sortiert (Nº 001 zuerst). Das Gästebuch-Band
+    mit den letzten Beiträgen ist entfallen (Bauplan § 2); ``betreiber_konten``
+    bleibt stehen für den Fall, dass es zurückkommt – dann gilt wieder: keine
+    Beiträge der Betreiberin als Stimmen anderer (UWG Anh. Nr. 23b/23c)."""
+    produkte_galerie = Produkt.objects.filter(aktiv=True).order_by('nummer', 'erstellt_am')[:10]
+
+    # Impressionen für aktive Werbung zählen (nur auf der Startseite). Die
+    # Startseite zeigt seit dem Umbau keine Werbung mehr; die Zählung bleibt,
+    # weil das pystore-Projekt sie liest.
     try:
         site_name = os.getenv('SITE_NAME', 'luviq')
         today = timezone.now().date()
@@ -56,24 +64,23 @@ def startseite(request):
     except Exception:
         _log.exception('Werbe-Impressionen auf der Startseite konnten nicht gezählt werden')
 
-    # Die Startseite zeigt die Beiträge direkt neben dem Google-Aufruf. Beiträge
-    # aus Konten der Betreiberin wirken dort wie Kundenstimmen (UWG Anh.
-    # Nr. 23b/23c) und bleiben deshalb weg – nur hier, im Gästebuch stehen sie
-    # weiter, gelöscht wird nichts.
-    recent_comments = (
-        Comment.objects.filter(parent=None)
-        .exclude(user__is_staff=True)
-        .exclude(user__is_superuser=True)
-        .exclude(user__username__in=betreiber_konten())
-        .select_related('user')
-        .prefetch_related('likes')
-        .order_by('-erstellt_am')[:4]
-    )
+    hero = dict(luviq_daten.HERO_STUECK)
+    treffer = (Produkt.objects.filter(aktiv=True, name__icontains=hero['suche'])
+               .order_by('nummer').first())
+    hero['nummer'] = treffer.archiv_nummer if treffer else ''
 
     return render(request, 'shop1/index.html', {
         'titel': 'Luviq-Shop',
         'produkte_galerie': produkte_galerie,
-        'recent_comments': recent_comments,
+        'hero': hero,
+        'lead': luviq_daten.LEAD,
+        'markensatz': luviq_daten.MARKENSATZ,
+        'richtungen': luviq_daten.RICHTUNGEN,
+        'ablauf': luviq_daten.ANFRAGE_ABLAUF,
+        'schritte': luviq_daten.SCHRITTE,
+        'dauer': luviq_daten.DAUER,
+        'zitat': luviq_daten.ZITAT,
+        'zitat_quelle': luviq_daten.ZITAT_QUELLE,
     })
 
 
@@ -245,7 +252,14 @@ def kontakt_danke(request):
 
 
 def ueber_uns(request):
-    return render(request, 'shop1/ueber_uns.html')
+    """„Luisa" (``/ueber_uns/``): ihr Satz, ihr Anfang, ihre fünf Schritte –
+    alles aus ``luviq_daten`` (Markenwissen vom 19.09.2026)."""
+    return render(request, 'shop1/ueber_uns.html', {
+        'zitat': luviq_daten.ZITAT,
+        'zitat_quelle': luviq_daten.ZITAT_QUELLE,
+        'schritte': luviq_daten.SCHRITTE,
+        'dauer': luviq_daten.DAUER,
+    })
 
 
 def liefergebiet(request):
@@ -260,7 +274,7 @@ def liefergebiet(request):
 
 def produkte(request):
     """Zeigt alle aktiven Produkte aus der Datenbank."""
-    produkte_liste = Produkt.objects.filter(aktiv=True).order_by('-erstellt_am')
+    produkte_liste = Produkt.objects.filter(aktiv=True).order_by('nummer', 'erstellt_am')
     return render(request, 'shop1/produkte.html', {'produkte_liste': produkte_liste})
 
 

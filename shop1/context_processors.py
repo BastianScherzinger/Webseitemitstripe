@@ -80,3 +80,24 @@ def shop_owner_check(request):
         'GOOGLE_REVIEW_URL': getattr(settings, 'GOOGLE_REVIEW_URL', ''),
         'seite': seite,
     }
+
+
+def luviq(request):
+    """Laufband, Drop-Kasten und Schalter des Looks „Nachtausgabe".
+
+    Werte aus ``shop1/luviq_daten.py``, nie aus einer Vorlage. Eine
+    Datenbankabfrage (nächste freie Archivnummer), nur für öffentliche Seiten."""
+    if request.path.startswith(('/shop-admin/', '/admin/', '/static/', '/media/')):
+        return {'motivanfrage_aktiv': settings.MOTIVANFRAGE_AKTIV}
+    from . import luviq_daten
+    try:
+        drop = luviq_daten.drop_kontext()
+    except Exception:
+        _log.exception('Drop-Angaben konnten nicht gelesen werden')
+        drop = None
+    return {
+        'drop': drop,
+        'motivanfrage_aktiv': settings.MOTIVANFRAGE_AKTIV,
+        'instagram_url': luviq_daten.INSTAGRAM,
+        'instagram_name': luviq_daten.INSTAGRAM_NAME,
+    }

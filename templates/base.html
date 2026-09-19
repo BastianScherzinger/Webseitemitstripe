@@ -1,7 +1,7 @@
 {% load static %}
 {% load custom_tags %}
 <!DOCTYPE html>
-<html lang="de" class="h-full">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -172,7 +172,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'shop1/images/flavicon.ico' %}">
     <link rel="apple-touch-icon" href="{% static 'shop1/images/logo-luviq.jpeg' %}">
     <link rel="manifest" href="{% static 'shop1/manifest.json' %}">
-    <meta name="theme-color" content="#0d0907">
+    <meta name="theme-color" content="#0A0A0A">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -238,6 +238,13 @@
                 }
             }
         });
+        // <button data-schliesst>: entfernt die umgebende Meldung [data-meldung]
+        // (ersetzt seit 19.09.2026 das Alpine-x-show der Meldungen).
+        document.addEventListener('click', function (e) {
+            var knopf = e.target.closest ? e.target.closest('[data-schliesst]') : null;
+            var meldung = knopf ? knopf.closest('[data-meldung]') : null;
+            if (meldung) { meldung.parentNode.removeChild(meldung); }
+        });
         // <select data-auto-absenden>: schickt sein Formular bei jeder Auswahl ab.
         document.addEventListener('change', function (e) {
             if (attr(e.target, 'data-auto-absenden') !== null && e.target.form) { e.target.form.submit(); }
@@ -245,304 +252,129 @@
     })();
     </script>
 
-    <!-- Tailwind CSS (self-hosted, purged) -->
+
+    <!-- Schriften selbst gehostet (19.09.2026): kein Abruf bei Google, kein
+         fremder Server im ersten Bildschirm. Vorab geladen werden nur die zwei
+         Schnitte, die über dem Falz stehen. -->
+    <link rel="preload" href="{% static 'shop1/fonts/cormorant-garamond-latin-italic.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{% static 'shop1/fonts/schibsted-grotesk-latin-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+
+    {% comment %}Alte Stildateien (Tailwind + style.css) nur noch für Seiten, deren Markup sie trägt: Konto, Kasse, Gästebuch, Wissen, Rechtstexte und das Admin-Panel. Die neu gebauten Seiten (Start, Motiv anfragen, Archiv, Stück, Luisa) leeren den Block und laden nur luviq.css.{% endcomment %}
+    {% block alte_stile %}
     <link rel="stylesheet" href="{% static 'shop1/tailwind.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'shop1/style.css' %}?v=5">
+    {% endblock %}
+    <link rel="stylesheet" href="{% static 'shop1/luviq.css' %}">
 
-    <!-- Google Fonts (async — non-render-blocking) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" media="print" data-schrift-nachladen href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;900&display=swap">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;900&display=swap"></noscript>
-
-    <!-- Alpine.js (pinned versions, defer = non-blocking).
-         integrity + crossorigin (SI17): der Browser fuehrt die Datei nur aus,
-         wenn ihr SHA-256 zum Wert passt – ein veraendertes Skript auf dem
-         fremden Server laeuft hier nicht. Die Hashes stammen aus der
-         jsDelivr-Dateiauskunft (data.jsdelivr.com, "hash" = SHA-256, base64)
-         und gehoeren zur festgenagelten Fassung; wer die Version aendert,
-         muss den Hash mitziehen, sonst laedt Alpine gar nicht mehr. -->
+    {% comment %}Alpine.js nur dort, wo es Funktion trägt (Warenkorb, Konto, Gästebuch, Admin). Die neuen Seiten leeren den Block.{% endcomment %}
+    {% block alpine %}
+    <!-- integrity + crossorigin (SI17): der Browser fuehrt die Datei nur aus,
+         wenn ihr SHA-256 zum Wert passt. Wer die Version aendert, zieht den
+         Hash mit (jsDelivr-Dateiauskunft, "hash" = SHA-256, base64). -->
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.14.8/dist/cdn.min.js"
             integrity="sha256-sav73qRAT3EB3ibvbi5l9O+uc757MwIUHuzyfe9oVg4=" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"
             integrity="sha256-tgDjY9mdlURNtUrL+y3v/smueSqpmgkim82geOW1VkM=" crossorigin="anonymous"></script>
-
-    <noscript>
-        <style>
-            .scroll-reveal { opacity: 1 !important; transform: none !important; }
-            .animate-reveal { opacity: 1 !important; transform: none !important; }
-        </style>
-    </noscript>
-
-    <!-- Eigenes CSS -->
-    <link rel="stylesheet" href="{% static 'shop1/style.css' %}?v=5">
-
-    <style>
-        :root {
-            --bg-base: #0d0907;
-            --bg-secondary: #160d06;
-            --accent-orange: #c8965c;
-            --accent-amber: #a0714a;
-            --text-main: #f5ede4;
-            --glass: rgba(20, 12, 6, 0.72);
-            --glass-border: rgba(200, 150, 92, 0.15);
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-base);
-            color: var(--text-main);
-            overflow-x: hidden;
-            background-attachment: fixed;
-            background-image:
-                radial-gradient(circle at 20% 30%, rgba(200, 150, 92, 0.04) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(160, 113, 74, 0.04) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(22, 13, 6, 1) 0%, rgba(13, 9, 7, 1) 100%);
-        }
-        @media (max-width: 768px) {
-            body { background-attachment: scroll; }
-        }
-
-        .heading-font { font-family: 'Outfit', sans-serif; }
-        
-        .glass {
-            background: var(--glass);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-        }
-
-        /* Ambient Glow Background Effect */
-        .ambient-glow {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            background:
-                radial-gradient(600px circle at 10% 10%, rgba(200, 150, 92, 0.025), transparent),
-                radial-gradient(800px circle at 90% 90%, rgba(160, 113, 74, 0.025), transparent);
-        }
-    </style>
+    {% endblock %}
 
     {% comment %}Vorabladen des groessten Bildes im ersten Bildschirm: der Browser findet es sonst erst beim Uebersetzen des Seitenkoerpers. Jede Seite fuellt den Block selbst, leer bleibt er ohne Wirkung.{% endcomment %}
     {% block preload %}{% endblock %}
 
     {% block extra_css %}{% endblock %}
 </head>
-<body class="min-h-screen flex flex-col">
-    <!-- Scroll progress indicator -->
-    <div id="scroll-progress" aria-hidden="true"></div>
-    <div class="ambient-glow"></div>
+{% with ist_panel=request.path|slice:":12" seitenname=request.resolver_match.url_name %}
+<body class="lv {% if ist_panel == '/shop-admin/' %}lv-admin{% else %}{% block seitenart %}lv-alt{% endblock %}{% endif %}{% if not motivanfrage_aktiv or seitenname == 'motiv_anfragen' or ist_panel == '/shop-admin/' %} ohne-leiste{% endif %}">
+    <a class="lv-sprung" href="#inhalt">Zum Inhalt springen</a>
 
-    <!-- ═══ NAVBAR ═══ -->
-    <nav class="glass sticky top-0 z-50 border-b border-white/5" x-data="{ mobileMenuOpen: false }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20">
-                <div class="flex items-center">
-                    <a href="{% url 'home' %}" class="flex-shrink-0 flex items-center group">
-                        <div class="h-12 w-12 rounded-full glass flex items-center justify-center p-2 group-hover:shadow-[0_0_20px_rgba(200,150,92,0.5)] transition-all">
-                            <img class="h-full w-auto" src="{% static 'shop1/images/logo-luviq-96.webp' %}" srcset="{% static 'shop1/images/logo-luviq-96.webp' %} 96w, {% static 'shop1/images/logo-luviq-192.webp' %} 192w" sizes="48px" alt="Luviq-Schriftzug in heller Schrift auf dunklem Grund mit dem Leitspruch „Less noise. More power.“" width="40" height="40" loading="eager" decoding="async">
-                        </div>
-                        <span class="ml-3 text-2xl font-black heading-font tracking-tighter text-white uppercase">Luviq</span>
-                    </a>
-                    <div class="hidden md:ml-10 md:flex md:space-x-8">
-                        <a href="{% url 'home' %}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-white/70 hover:text-glow-orange transition-colors">Home</a>
-                        <a href="{% url 'produkte' %}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-white/70 hover:text-glow-orange transition-colors">Produkte</a>
-                        <a href="{% url 'gaestebuch' %}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-white/70 hover:text-glow-orange transition-colors">Gästebuch</a>
-                        <a href="{% url 'kontakt' %}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-white/70 hover:text-glow-orange transition-colors">Kontakt</a>
-                        <a href="{% url 'ueber_uns' %}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-white/70 hover:text-glow-orange transition-colors">Über uns</a>
-                        {% if is_shop_owner %}
-                        <a href="{% url 'admin_dashboard' %}" class="inline-flex items-center px-1 pt-1 text-sm font-black text-glow-orange hover:text-white transition-colors uppercase tracking-widest text-[10px]">Dashboard</a>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="hidden md:flex items-center space-x-6">
-                    {% if user.is_authenticated %}
-                        {% if verkauf_aktiv %}
-                        <a href="{% url 'warenkorb' %}" aria-label="Warenkorb ansehen" class="p-2 text-white/70 hover:text-glow-orange transition-colors relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                        </a>
-                        {% endif %}
-                        <div class="relative" x-data="{ open: false }">
-                            <button type="button" @click="open = !open" aria-label="Benutzermenü" aria-haspopup="true" :aria-expanded="open ? 'true' : 'false'" class="flex items-center space-x-2 text-sm font-semibold text-white/90 hover:text-glow-orange transition-colors">
-                                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">👤</div>
-                                <span>{{ user.first_name|default:user.username }}</span>
-                            </button>
-                            <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-4 w-48 rounded-2xl glass shadow-2xl py-2 z-50">
-                                <a href="{% url 'profil' %}" class="block px-4 py-2 text-sm text-white/80 hover:bg-white/5 hover:text-white transition-colors">Profil</a>
-                                {% if is_shop_owner %}
-                                <div class="px-4 py-2 text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-2">Control Room</div>
-                                <a href="{% url 'admin_dashboard' %}" class="block px-4 py-2 text-sm text-glow-orange hover:bg-white/5 transition-colors font-bold">Übersicht</a>
-                                <a href="{% url 'admin_orders_list' %}" class="block px-4 py-2 text-xs text-white/90 hover:text-white transition-colors pl-6">Bestellungen verwalten</a>
-                                <a href="{% url 'admin_produkte_list' %}" class="block px-4 py-2 text-xs text-white/90 hover:text-white transition-colors pl-6">Inventar</a>
-                                <a href="{% url 'admin_stats' %}" class="block px-4 py-2 text-xs text-white/90 hover:text-white transition-colors pl-6">Statistiken & User</a>
-                                <a href="{% url 'admin_produkt_upload' %}" class="block px-4 py-2 text-xs text-white/90 hover:text-white transition-colors pl-6">Neuer Drop</a>
-                                <a href="/admin/" class="block px-4 py-2 text-[10px] text-white/20 hover:text-white transition-colors mt-2">Django Core Admin</a>
-                                {% endif %}
-                                <hr class="border-white/5 my-2">
-                                <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-red-400 hover:bg-white/5 transition-colors">Logout</a>
-                            </div>
-                        </div>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="text-sm font-semibold text-white/70 hover:text-white transition-colors">Login</a>
-                        <a href="{% url 'register' %}" class="px-6 py-2 rounded-full bg-glow-orange text-white text-sm font-bold hover:shadow-[0_0_20px_rgba(200,150,92,0.6)] transition-all transform hover:scale-105 active:scale-95">Registrieren</a>
-                    {% endif %}
-                </div>
-                
-                <div id="hamburger-wrap" class="md:hidden flex items-center">
-                    <button type="button" @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Hauptmenü" :aria-expanded="mobileMenuOpen ? 'true' : 'false'" class="text-white/70">
-                        <svg class="h-6 w-6" aria-hidden="true" focusable="false" x-show="!mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                        <svg class="h-6 w-6" aria-hidden="true" focusable="false" x-show="mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
-                </div>
-            </div>
+    {% if drop %}
+    <!-- Laufband: Texte aus shop1/luviq_daten.py. Ab der vierten Zeile nur
+         die Wiederholung für den nahtlosen Lauf, für Vorleseprogramme stumm. -->
+    <div class="lv-band"><p>{% for teil in drop.laufband %}<span>{{ teil }}</span>{% endfor %}{% for runde in "123" %}{% for teil in drop.laufband %}<span aria-hidden="true">{{ teil }}</span>{% endfor %}{% endfor %}</p></div>
+    {% endif %}
+
+    <header class="lv-kopf">
+        <a class="lv-wm" href="{% url 'home' %}" aria-label="Luviq Universe, zur Startseite">LUVIQ</a>
+        <nav class="lv-nav" aria-label="Hauptnavigation">
+            {% if motivanfrage_aktiv %}<a class="lv-nav-anfrage" href="{% url 'motiv_anfragen' %}"{% if seitenname == 'motiv_anfragen' %} aria-current="page"{% endif %}>Motiv anfragen</a>{% endif %}
+            <a href="{% url 'home' %}{% if drop.teaser %}#drop{% else %}#warteliste{% endif %}">Drop</a>
+            <a href="{% url 'produkte' %}"{% if seitenname == 'produkte' %} aria-current="page"{% endif %}>Archiv</a>
+            <a href="{% url 'home' %}#entstehung">Entstehung</a>
+            <a href="{% url 'ueber_uns' %}"{% if seitenname == 'ueber_uns' %} aria-current="page"{% endif %}>Luisa</a>
+        </nav>
+        <div class="lv-kopf-rechts">
+            <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.universe/' }}" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg>Instagram</a>
+            {% if user.is_authenticated %}
+            {% if verkauf_aktiv %}<a class="lv-konto" href="{% url 'warenkorb' %}">Warenkorb{% if cart_count %} ({{ cart_count }}){% endif %}</a>{% endif %}
+            {% if is_shop_owner %}<a class="lv-konto" href="{% url 'admin_dashboard' %}">Panel</a>{% endif %}
+            <a class="lv-konto" href="{% url 'profil' %}">Konto</a>
+            {% else %}
+            <a class="lv-konto" href="{% url 'login' %}">Anmelden</a>
+            {% endif %}
         </div>
-
-        <!-- Mobile menu -->
-        <div x-show="mobileMenuOpen" x-transition class="md:hidden glass border-t border-white/5">
-            <div class="px-4 pt-2 pb-6 space-y-2">
-                <a href="{% url 'home' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">Home</a>
-                <a href="{% url 'produkte' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">Produkte</a>
-                <a href="{% url 'gaestebuch' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">Gästebuch</a>
-                <a href="{% url 'kontakt' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">Kontakt</a>
-                <a href="{% url 'ueber_uns' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">Über uns</a>
-                
-                {% if is_shop_owner %}
-                    <div class="border-t border-white/5 my-2 pt-2">
-                        <p class="px-3 text-[9px] font-black text-glow-orange uppercase tracking-widest mb-1">Admin Panel</p>
-                        <a href="{% url 'admin_dashboard' %}" class="block px-3 py-3 rounded-xl text-glow-orange font-black bg-glow-orange/5">Bestellungen verwalten</a>
-                    </div>
-                {% endif %}
-
-                {% if not user.is_authenticated %}
-                    <div class="border-t border-white/5 pt-2">
-                        <a href="{% url 'login' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">Login</a>
-                        <a href="{% url 'register' %}" class="block px-3 py-3 rounded-xl text-glow-orange font-bold">Registrieren</a>
-                    </div>
+        <details class="lv-menue">
+            <summary aria-label="Menü öffnen"><i></i></summary>
+            <nav aria-label="Menü">
+                {% if motivanfrage_aktiv %}<a class="lv-nav-anfrage" href="{% url 'motiv_anfragen' %}">Motiv anfragen</a>{% endif %}
+                <a href="{% url 'home' %}{% if drop.teaser %}#drop{% else %}#warteliste{% endif %}">Drop</a>
+                <a href="{% url 'produkte' %}">Archiv</a>
+                <a href="{% url 'home' %}#entstehung">Entstehung</a>
+                <a href="{% url 'ueber_uns' %}">Luisa</a>
+                <a class="lv-menue-klein" href="{{ instagram_url|default:'https://www.instagram.com/luviq.universe/' }}" rel="noopener" target="_blank">Instagram</a>
+                {% if user.is_authenticated %}
+                {% if verkauf_aktiv %}<a class="lv-menue-klein" href="{% url 'warenkorb' %}">Warenkorb</a>{% endif %}
+                {% if is_shop_owner %}<a class="lv-menue-klein" href="{% url 'admin_dashboard' %}">Panel</a>{% endif %}
+                <a class="lv-menue-klein" href="{% url 'profil' %}">Konto</a>
+                <a class="lv-menue-klein" href="{% url 'logout' %}">Abmelden</a>
                 {% else %}
-                    <div class="border-t border-white/5 pt-2">
-                        {% if verkauf_aktiv %}<a href="{% url 'warenkorb' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">🛒 Warenkorb</a>{% endif %}
-                        <a href="{% url 'profil' %}" class="block px-3 py-3 rounded-xl text-white/70 hover:bg-white/5">👤 Mein Profil</a>
-                        <a href="{% url 'logout' %}" class="block px-3 py-3 rounded-xl text-red-400 hover:bg-white/5">Logout</a>
-                    </div>
+                <a class="lv-menue-klein" href="{% url 'login' %}">Anmelden</a>
                 {% endif %}
-            </div>
-        </div>
-    </nav>
+            </nav>
+        </details>
+    </header>
 
-    <!-- ═══ MELDUNGEN ═══ -->
     {% if messages %}
-    <div class="max-w-7xl mx-auto px-4 mt-6">
+    <div class="lv-meldungen">
         {% for message in messages %}
         {# role (BF24): Bildschirmleser sagen Fehler sofort an, alles andere höflich #}
-        <div role="{% if message.level_tag == 'error' %}alert{% else %}status{% endif %}" x-data="{ show: true }" x-show="show" x-transition class="rounded-2xl p-4 mb-4 glass flex items-center justify-between border-l-4 {% if message.tags == 'success' %}border-emerald-500{% elif message.tags == 'error' %}border-red-500{% else %}border-glow-orange{% endif %}">
-            <span class="text-white/90 text-sm font-medium">{{ message }}</span>
-            <button type="button" @click="show = false" aria-label="Meldung ausblenden" class="text-white/50 hover:text-white">&times;</button>
+        <div class="lv-meldung{% if message.level_tag == 'error' %} fehler{% endif %}" data-meldung role="{% if message.level_tag == 'error' %}alert{% else %}status{% endif %}">
+            <span>{{ message }}</span>
+            <button type="button" data-schliesst aria-label="Meldung ausblenden">&times;</button>
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
-    <!-- ═══ SEITENINHALT ═══ -->
-    <main class="flex-grow">
+    <main id="inhalt">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- ═══ FOOTER ═══ -->
-    <footer class="mt-20 border-t border-[rgba(200,150,92,0.12)] bg-space-black/80">
-        <div class="max-w-7xl mx-auto px-4 py-16">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                <div>
-                    <div class="flex items-center">
-                        <span class="text-2xl font-black heading-font text-white uppercase tracking-tighter">Luviq</span>
-                    </div>
-                    <p class="mt-6 text-white/50 text-sm leading-relaxed max-w-xs">Handbemalte 1-of-1 Vintage-Unikate aus Alsfeld, Hessen. Second Hand neu gedacht — nachhaltig, handgemacht, einzigartig.</p>
-                </div>
-                <div>
-                    <h3 class="text-xs font-bold text-glow-orange uppercase tracking-widest mb-6">Navigation</h3>
-                    <ul class="space-y-4">
-                        <li><a href="{% url 'produkte' %}" class="text-sm text-white/40 hover:text-white transition-colors">Produkte</a></li>
-                        <li><a href="{% url 'kontakt' %}" class="text-sm text-white/40 hover:text-white transition-colors">Kontakt</a></li>
-                        <li><a href="{% url 'ueber_uns' %}" class="text-sm text-white/40 hover:text-white transition-colors">Über uns</a></li>
-                        <li><a href="{% url 'liefergebiet' %}" class="text-sm text-white/40 hover:text-white transition-colors">{% if verkauf_aktiv %}Liefergebiet{% else %}Herkunft{% endif %}</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-xs font-bold text-glow-orange uppercase tracking-widest mb-6">Rechtliches</h3>
-                    <ul class="space-y-4">
-                        <li><a href="{% url 'datenschutz' %}" class="text-sm text-white/40 hover:text-white transition-colors">Datenschutz</a></li>
-                        <li><a href="{% url 'impressum' %}" class="text-sm text-white/40 hover:text-white transition-colors">Impressum</a></li>
-                        {% comment %}Verkaufsschalter: die AGB gelten erst ab Eröffnung des Shops und sind ohne Verkauf nicht verlinkt (die Seite bleibt erreichbar). An ihrer Stelle steht die Warteliste - gleiches Element, gleiche Klassen, damit der Seitenaufbau (Designwache) bleibt.{% endcomment %}
-                        {% if verkauf_aktiv %}<li><a href="{% url 'agb' %}" class="text-sm text-white/40 hover:text-white transition-colors">AGB</a></li>{% else %}<li><a href="{% url 'home' %}#newsletter-form" class="text-sm text-white/40 hover:text-white transition-colors">Warteliste</a></li>{% endif %}
-                    </ul>
-                </div>
-            </div>
-            <div class="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-xs text-white/30 uppercase tracking-widest">&copy; 2026 Luviq Universe - All Rights Reserved</p>
-            </div>
-        </div>
+    <footer class="lv-fuss">
+        <p class="lv-fuss-wm" aria-hidden="true">LUVIQ</p>
+        <nav aria-label="Fußnavigation">
+            <a href="{% url 'home' %}">Start</a>
+            {% if motivanfrage_aktiv %}<a href="{% url 'motiv_anfragen' %}">Motiv anfragen</a>{% endif %}
+            <a href="{% url 'produkte' %}">Archiv</a>
+            <a href="{% url 'ueber_uns' %}">Luisa</a>
+            <a href="{% url 'wissen' %}">Wissen</a>
+            <a href="{% url 'gaestebuch' %}">Gästebuch</a>
+            <a href="{% url 'kontakt' %}">Kontakt</a>
+            <a href="{% url 'liefergebiet' %}">{% if verkauf_aktiv %}Liefergebiet{% else %}Herkunft{% endif %}</a>
+            <a href="{% url 'home' %}#newsletter-form">Warteliste</a>
+            <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.universe/' }}" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg>{{ instagram_name|default:'luviq.universe' }}</a>
+        </nav>
+        {% comment %}Verkaufsschalter: die AGB gelten erst ab Eröffnung des Shops und sind ohne Verkauf nicht verlinkt (die Seite bleibt erreichbar).{% endcomment %}
+        <p class="lv-recht"><span>Marke im Aufbau · Alsfeld, Hessen</span><span><a href="{% url 'impressum' %}">Impressum</a> · <a href="{% url 'datenschutz' %}">Datenschutz</a>{% if verkauf_aktiv %} · <a href="{% url 'agb' %}">AGB</a>{% endif %}</span></p>
     </footer>
 
-    <!-- ═══ MOBILE BOTTOM NAV ═══ -->
-    <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
-        <a href="{% url 'home' %}" class="mbn-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-            <span>Home</span>
-        </a>
-        <a href="{% url 'produkte' %}" class="mbn-item {% if request.resolver_match.url_name == 'produkte' %}active{% endif %}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-            <span>{% if verkauf_aktiv %}Shop{% else %}Archiv{% endif %}</span>
-        </a>
-        {% comment %}Verkaufsschalter: ohne Verkauf führt dieser Platz auf die Warteliste (Newsletter mit Double-Opt-in auf der Startseite). Glocke statt Wagen, aber dieselben Elemente (svg, zwei circle, ein path), damit der Seitenaufbau bleibt.{% endcomment %}
-        {% if verkauf_aktiv %}
-        <a href="{% url 'warenkorb' %}" class="mbn-item {% if request.resolver_match.url_name == 'warenkorb' %}active{% endif %}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-            </svg>
-            {% if cart_count %}<span class="mbn-badge">{{ cart_count }}</span>{% endif %}
-            <span>Warenkorb</span>
-        </a>
-        {% else %}
-        <a href="{% url 'home' %}#newsletter-form" class="mbn-item ">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="20.5" r="1.5"/><circle cx="12" cy="2.5" r="0.5"/><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
-            </svg>
-            <span>Warteliste</span>
-        </a>
-        {% endif %}
-        <a href="{% url 'gaestebuch' %}" class="mbn-item {% if request.resolver_match.url_name == 'gaestebuch' %}active{% endif %}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-            <span>Gästebuch</span>
-        </a>
-        {% if user.is_authenticated %}
-        <a href="{% url 'profil' %}" class="mbn-item {% if request.resolver_match.url_name == 'profil' %}active{% endif %}">
-        {% else %}
-        <a href="{% url 'login' %}" class="mbn-item {% if request.resolver_match.url_name == 'login' %}active{% endif %}">
-        {% endif %}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-            </svg>
-            <span>{% if user.is_authenticated %}Profil{% else %}Login{% endif %}</span>
-        </a>
-    </nav>
+    {% if motivanfrage_aktiv and ist_panel != '/shop-admin/' and seitenname != 'motiv_anfragen' %}
+    <div class="lv-leiste">
+        <p><b>Eigenes Motiv?</b>Kostet nichts</p>
+        <a href="{% url 'motiv_anfragen' %}">Motiv anfragen</a>
+    </div>
+    {% endif %}
 
     <script nonce="{{ csp_nonce }}">
     (function () {
-        // Scroll progress bar
-        var bar = document.getElementById('scroll-progress');
-        if (bar) {
-            window.addEventListener('scroll', function () {
-                var max = document.documentElement.scrollHeight - window.innerHeight;
-                bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
-            }, { passive: true });
-        }
         // <iframe data-src="Adresse">: die eingebettete Karte lädt erst
         // nach einem Klick (RE17). Vorher geht keine Anfrage an Google, also
         // auch keine IP-Adresse der Besucherin. Der Platzhalter entsteht hier
@@ -556,14 +388,14 @@
             knopf.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:1;' +
                 'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
                 'gap:0.6rem;padding:1.5rem;border:0;cursor:pointer;text-align:center;' +
-                'background:rgba(18,13,10,0.96);color:#fff;font:inherit;';
+                'background:#131211;color:#F2EEE6;font:inherit;';
             var titel = document.createElement('span');
             titel.textContent = 'Karte laden';
-            titel.style.cssText = 'font-weight:900;text-transform:uppercase;letter-spacing:0.2em;' +
-                'font-size:0.625rem;color:#c8965c;';
+            titel.style.cssText = 'font-weight:700;text-transform:uppercase;letter-spacing:0.2em;' +
+                'font-size:0.75rem;color:#C8763F;';
             var hinweis = document.createElement('span');
             hinweis.textContent = 'Beim Laden werden Daten an Google Maps übertragen.';
-            hinweis.style.cssText = 'font-size:0.6875rem;line-height:1.5;color:rgba(255,255,255,0.45);max-width:22rem;';
+            hinweis.style.cssText = 'font-size:0.8125rem;line-height:1.5;color:#9C968C;max-width:22rem;';
             knopf.appendChild(titel);
             knopf.appendChild(hinweis);
             knopf.setAttribute('aria-label',
@@ -575,24 +407,17 @@
             });
             huelle.appendChild(knopf);
         });
-        // 3D card tilt (mouse/pointer devices only)
-        if (!('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches) {
-            document.querySelectorAll('.product-card').forEach(function (card) {
-                card.addEventListener('mousemove', function (e) {
-                    var r = card.getBoundingClientRect();
-                    var x = (e.clientX - r.left) / r.width - 0.5;
-                    var y = (e.clientY - r.top) / r.height - 0.5;
-                    card.style.transform = 'translateY(-10px) scale(1.02) rotateX(' + (-y * 8) + 'deg) rotateY(' + (x * 8) + 'deg)';
-                    card.style.transition = 'transform 0.1s ease-out, border-color 0.5s, box-shadow 0.5s';
-                });
-                card.addEventListener('mouseleave', function () {
-                    card.style.transform = '';
-                    card.style.transition = 'transform 0.6s cubic-bezier(0.16,1,0.3,1), border-color 0.5s, box-shadow 0.5s';
-                });
+        // Das Handy-Menü schließt, sobald ein Anker auf derselben Seite
+        // angesprungen wird – sonst bliebe es über dem Ziel liegen.
+        document.querySelectorAll('.lv-menue a').forEach(function (a) {
+            a.addEventListener('click', function () {
+                var menue = a.closest('details');
+                if (menue) { menue.removeAttribute('open'); }
             });
-        }
+        });
     })();
     </script>
     {% block extra_js %}{% endblock %}
 </body>
-</html>
+{% endwith %}
+</html>

@@ -112,7 +112,7 @@
                 <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
                     <div class="glass-card p-10 md:p-12 rounded-[3.5rem]">
                         <div class="flex justify-between items-center mb-10">
-                            <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange">Mission History</h3>
+                            <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange">Bestellungen</h3>
                             <span class="text-[10px] font-black uppercase tracking-widest text-white/30">Total: {{ profil.bestellungen }}</span>
                         </div>
 
@@ -153,7 +153,7 @@
                             </div>
                         {% else %}
                             <div class="text-center py-12 glass rounded-[2.5rem] border-dashed border-white/10">
-                                <p class="text-white/20 text-xs uppercase tracking-widest">Noch keine Missionen aufgezeichnet.</p>
+                                <p class="text-white/20 text-xs uppercase tracking-widest">Noch keine Bestellungen.</p>
                                 <a href="{% url 'produkte' %}" class="inline-block mt-6 text-glow-orange font-black text-[10px] uppercase tracking-widest">Katalog öffnen</a>
                             </div>
                         {% endif %}

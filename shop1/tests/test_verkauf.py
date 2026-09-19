@@ -189,7 +189,10 @@ class OhneVerkaufTest(_Grundlage):
         mit Double-Opt-in – kein zweites Formular."""
         self.assertContains(self.hole('/'), 'id="newsletter-form"')
         self.assertContains(self.hole(self.produktseite), 'href="/#newsletter-form"')
-        self.assertContains(self.hole('/'), 'Auf die Warteliste')
+        # Seit dem Umbau „Nachtausgabe" (19.09.2026) heißt der Knopf auf der
+        # Startseite „Eintragen" (Vorlage); „Auf die Warteliste" steht auf
+        # der Stückseite, dort ist es die Haupthandlung.
+        self.assertContains(self.hole(self.produktseite), 'Auf die Warteliste')
 
     def test_datenschutz_beschreibt_den_zustand_ohne_verkauf(self):
         html = self.hole('/datenschutz/').content.decode()
@@ -221,9 +224,11 @@ class BewertungenTest(_Grundlage):
         Comment.objects.create(user=mitarbeit, text='Beitrag vom Team')
         Comment.objects.create(user=self.kundin, text='Beitrag einer Kundin')
 
+        # Seit dem Umbau „Nachtausgabe" (19.09.2026) zeigt die Startseite gar
+        # keine Gästebuch-Beiträge mehr (Bauplan § 2) – erst recht keine der
+        # Betreiberin als Stimmen anderer.
         start = self.hole('/').content.decode()
-        self.assertIn('Beitrag einer Kundin', start)
-        for text in ('Beitrag vom Adminkonto', 'Beitrag von luisabre', 'Beitrag vom Team'):
+        for text in ('Beitrag vom Adminkonto', 'Beitrag von luisabre', 'Beitrag vom Team', 'Beitrag einer Kundin'):
             self.assertNotIn(text, start)
         # Im Gästebuch bleiben alle stehen – gelöscht wird nichts.
         gaestebuch = self.hole('/gaestebuch/').content.decode()
@@ -319,10 +324,15 @@ class ArchivOhneVerkaufTest(_Grundlage):
     """Ohne Verkauf erscheinen die Stücke neutral als Archiv bisheriger Stücke."""
 
     def test_karten_karussell_und_produktseite_zeigen_das_archiv(self):
-        nummer = f'Nº {self.produkt.pk:03d} · Archiv'
+        # Archivnummer aus dem Feld ``nummer`` (Migration 0024), auf den
+        # Karten als „Nº 001" + „vergeben", auf der Stückseite zusätzlich
+        # „Nº 001 · Archiv · Bereits vergeben …".
+        nummer = f'Nº {self.produkt.archiv_nummer}'
         for pfad in ('/', '/produkte/', self.produktseite):
             with self.subTest(pfad=pfad):
                 self.assertContains(self.hole(pfad), nummer)
+                self.assertContains(self.hole(pfad), 'vergeben')
+        self.assertContains(self.hole(self.produktseite), f'{nummer} · Archiv')
         produktseite = self.hole(self.produktseite).content.decode()
         self.assertIn('Dieses Stück ist bereits vergeben. Neue Stücke gibt es mit dem ersten '
                       'Drop – trag dich in die Warteliste ein', produktseite)
@@ -345,8 +355,9 @@ class ArchivOhneVerkaufTest(_Grundlage):
                                           self.hole('/produkte/').content.decode(), re.S).group(1))
 
     def test_ueberschriften_heissen_archiv(self):
-        self.assertContains(self.hole('/produkte/'), '<span class="text-glow">Archive</span>')
-        self.assertContains(self.hole('/'), 'Bisherige <span class="text-glow">Unikate</span>')
+        self.assertContains(self.hole('/produkte/'), 'id="archiv-titel">Das Archiv</h1>')
+        self.assertContains(self.hole('/'), 'id="archiv-titel">Das Archiv</h2>')
+        self.assertContains(self.hole('/'), 'Diese Stücke sind vergeben')
 
     def test_llms_txt_nennt_das_archiv(self):
         llms = self.hole('/llms.txt').content.decode()
@@ -372,9 +383,9 @@ class ArchivMitVerkaufTest(_Grundlage):
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
                 self.assertNotIn('· Archiv', html)
+                self.assertNotIn('<span>vergeben</span>', html)
                 self.assertRegex(html, r'87[.,]50 €')
-        self.assertContains(self.hole('/produkte/'), '<span class="text-glow">Drop</span>')
-        self.assertContains(self.hole('/'), 'Aktuelle <span class="text-glow">Unikate</span>')
+        self.assertContains(self.hole('/'), 'Jedes Stück gibt es genau einmal.')
 
     def test_titel_mit_kaufen_und_antwortsatz_mit_preis(self):
         html = self.hole(self.produktseite).content.decode()

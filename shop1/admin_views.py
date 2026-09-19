@@ -14,7 +14,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 from .forms import ProduktForm, AdminUserEditForm, AdminUserCreationForm
-from .models import Produkt, Order, PageVisit, Werbung, WerbungStat, VisitorLog
+from .models import Produkt, Order, PageVisit, Werbung, WerbungStat, VisitorLog, Motivanfrage
 
 _log = logging.getLogger('shop1')
 
@@ -730,3 +730,29 @@ def admin_order_delete(request, order_id):
         return redirect('admin_orders_list')
     
     return render(request, 'shop1/admin/order_delete.html', {'order': order})
+
+
+@admin_required
+def admin_motivanfragen(request):
+    """Anfragen über „Motiv anfragen" – neueste zuerst, Status per POST.
+
+    Nur für die Betreiberin (``admin_required``): die Anfragen enthalten
+    Instagram-Namen und E-Mail-Adressen."""
+    if request.method == 'POST':
+        anfrage = get_object_or_404(Motivanfrage, pk=request.POST.get('anfrage'))
+        status = request.POST.get('status')
+        if status in dict(Motivanfrage.STATUS):
+            anfrage.status = status
+            anfrage.save(update_fields=['status'])
+            messages.success(request, 'Status gespeichert.')
+        return redirect('admin_motivanfragen')
+    filter_status = request.GET.get('status')
+    anfragen = Motivanfrage.objects.all()
+    if filter_status in dict(Motivanfrage.STATUS):
+        anfragen = anfragen.filter(status=filter_status)
+    return render(request, 'shop1/admin/motivanfragen.html', {
+        'anfragen': anfragen,
+        'status_choices': Motivanfrage.STATUS,
+        'current_status': filter_status,
+        'offen': Motivanfrage.objects.filter(status='neu').count(),
+    })

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% comment %}
+Motiv anfragen (Stufe 1), Umbau „Nachtausgabe" 19.09.2026, Bauplan § 3.
+Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
+<fieldset>/<legend>. Honeypot und Zeitfalle wie beim Kontaktformular.
+{% endcomment %}
+
+{% block title %}Motiv anfragen – handbemalte Einzelstücke aus Alsfeld{% endblock %}
+{% block meta_description %}Sag Luisa Brehler aus Alsfeld, welches Motiv du willst: Richtung, Teil, Bedeutung. Du bekommst Vorschläge, kostenlos und ohne Bestellung. Jetzt anfragen.{% endblock %}
+{% block og_title %}Motiv anfragen – Luviq Universe aus Alsfeld{% endblock %}
+{% block og_description %}Beschreib dein Motiv, Luisa schickt dir Vorschläge, und ihr entscheidet zusammen. Kostet nichts und ist keine Bestellung.{% endblock %}
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Motiv anfragen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'motiv_anfragen' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+
+{% block content %}
+<div class="lv-seite">
+    <section class="lv-anfrageseite" aria-labelledby="anfrage-titel">
+        <div>
+            <p class="lv-nr">Motiv anfragen</p>
+            <h1 class="lv-serif lv-satz" id="anfrage-titel">Sag mir, was du willst — ich mal’s dir.</h1>
+            {% if geschlossen %}
+            <p class="lv-lead">Gerade nehme ich in Alsfeld keine neuen Motivanfragen an. Trag dich auf der Startseite in die Warteliste ein, dann erfährst du als Erstes, wann es wieder geht.</p>
+            <p><a class="lv-knopf" href="{% url 'home' %}#warteliste">Zur Warteliste</a></p>
+            {% else %}
+            <p class="lv-lead">Beschreib mir kurz, was dir vorschwebt. Ich bin Luisa aus Alsfeld, ich schick dir Vorschläge, und wir entscheiden zusammen. Das kostet nichts und ist keine Bestellung.</p>
+            <ol class="lv-stationen" aria-label="So geht es weiter">
+                {% for station in stationen %}<li><span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span>{{ station }}</li>{% endfor %}
+            </ol>
+            {% endif %}
+        </div>
+
+        {% if not geschlossen %}
+        <form class="lv-formular" method="post" action="{% url 'motiv_anfragen' %}" data-einmal-absenden aria-labelledby="anfrage-titel" aria-describedby="anfrage-fehler">
+            {% csrf_token %}
+            <p class="lv-fehler" id="anfrage-fehler" role="alert">{% if fehler %}{{ fehler }}{% endif %}</p>
+
+            <fieldset>
+                <legend><span class="lv-nr">1</span>In welche Richtung?</legend>
+                <div class="lv-wahlen">
+                    {% for schluessel, name in richtungen %}<label class="lv-wahl"><input type="radio" name="richtung" value="{{ schluessel }}" required{% if werte.richtung == schluessel %} checked{% endif %}><span>{{ name }}</span></label>{% endfor %}
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend><span class="lv-nr">2</span>Auf welches Teil?</legend>
+                <div class="lv-wahlen">
+                    {% for schluessel, name in teile %}<label class="lv-wahl"><input type="radio" name="teil" value="{{ schluessel }}" required{% if werte.teil == schluessel %} checked{% endif %}><span>{{ name }}</span></label>{% endfor %}
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend><span class="lv-nr">3</span>Wo soll es hin?</legend>
+                <div class="lv-wahlen">
+                    {% for schluessel, name in platzierungen %}<label class="lv-wahl"><input type="radio" name="platzierung" value="{{ schluessel }}" required{% if werte.platzierung == schluessel %} checked{% endif %}><span>{{ name }}</span></label>{% endfor %}
+                </div>
+            </fieldset>
+
+            <label class="lv-feld" for="motiv-bedeutung"><span><span class="lv-nr">4</span>Was soll es für dich bedeuten? <em>freiwillig</em></span>
+                <textarea id="motiv-bedeutung" name="bedeutung" rows="4" maxlength="{{ laengen.bedeutung }}" placeholder="Zum Beispiel: ein Drache für meinen Bruder, eher verspielt als böse.">{{ werte.bedeutung|default:'' }}</textarea>
+            </label>
+
+            <div class="lv-feld2">
+                <label class="lv-feld" for="motiv-instagram"><span><span class="lv-nr">5</span>Instagram</span>
+                    <input id="motiv-instagram" name="instagram" type="text" autocomplete="off" maxlength="{{ laengen.instagram }}" placeholder="@deinname" value="{{ werte.instagram|default:'' }}">
+                </label>
+                <label class="lv-feld" for="motiv-email"><span>oder E-Mail</span>
+                    <input id="motiv-email" name="email" type="email" autocomplete="email" maxlength="{{ laengen.email }}" placeholder="deine@mail.de" value="{{ werte.email|default:'' }}">
+                </label>
+            </div>
+
+            {# Spamschutz: Falle und signierter Zeitpunkt. Das Fallenfeld trägt seine Kennzeichen selbst (KV06) – versteckt über die Klasse statt style="" (CSP). #}
+            <div class="lv-falle" aria-hidden="true">
+                <label for="motiv-{{ feld_falle }}">Webseite (bitte leer lassen)</label>
+                <input class="lv-falle" id="motiv-{{ feld_falle }}" name="{{ feld_falle }}" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+            </div>
+            <input type="hidden" name="formzeit" value="{{ formzeit }}">
+
+            <p class="lv-klein">Eins von beiden reicht. Deine Angaben nutze ich nur für die Antwort auf deine Anfrage. <a href="{% url 'datenschutz' %}">Datenschutz</a></p>
+            <button class="lv-knopf" type="submit">Anfrage schicken <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </form>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

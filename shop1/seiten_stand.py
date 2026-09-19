@@ -18,15 +18,17 @@ Modul wird bei jedem Request aus dem Kontextprozessor gelesen.
 
 #: Routenname → Datum der letzten inhaltlichen Änderung (ISO 8601).
 SEITEN_STAND = {
-    'home':         '2026-09-18',
-    'produkte':     '2026-09-18',
-    'gaestebuch':   '2026-09-18',
-    'ueber_uns':    '2026-09-18',
+    'home':         '2026-09-19',
+    'produkte':     '2026-09-19',
+    'gaestebuch':   '2026-09-19',
+    'ueber_uns':    '2026-09-19',
     'liefergebiet': '2026-09-18',
-    'kontakt':      '2026-09-18',
+    'kontakt':      '2026-09-19',
     'impressum':    '2026-09-18',
-    'datenschutz':  '2026-09-18',
+    'datenschutz':  '2026-09-19',
     'agb':          '2026-09-18',
+    # Umbau „Nachtausgabe" (19.09.2026): neue Seite Motiv anfragen.
+    'motiv_anfragen': '2026-09-19',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
     'wissen':           '2026-09-18',
     'wissen_pflege':    '2026-09-18',
@@ -46,15 +48,16 @@ SEITEN_STAND = {
 #: keinem Menü; ihr Name ist der Text ihrer ``h1`` (die Übersicht: die
 #: Bereichsbezeichnung „Wissen", die dort als Kicker über der ``h1`` steht).
 SEITEN_NAME = {
-    'home':         'Home',
-    'produkte':     'Produkte',
+    'home':         'Start',
+    'produkte':     'Archiv',
     'gaestebuch':   'Gästebuch',
-    'ueber_uns':    'Über uns',
+    'ueber_uns':    'Luisa',
     'liefergebiet': 'Liefergebiet',
     'kontakt':      'Kontakt',
     'impressum':    'Impressum',
     'datenschutz':  'Datenschutz',
     'agb':          'AGB',
+    'motiv_anfragen': 'Motiv anfragen',
     'wissen':           'Wissen',
     'wissen_pflege':    'Wie pflege ich handbemalte Kleidung?',
     'wissen_upcycling': 'Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?',

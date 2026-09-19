@@ -25,9 +25,9 @@
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {# Die Namen muessen woertlich den sichtbaren Beschriftungen der Brotkrume weiter unten entsprechen ("Orbit", "Objekte") - ein Schema, das etwas anderes behauptet als die Seite, ist schlimmer als keines. #}
-    {"@type": "ListItem", "position": 1, "name": "Orbit", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
-    {"@type": "ListItem", "position": 2, "name": "Objekte", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}"},
+    {# Die Namen muessen woertlich den sichtbaren Beschriftungen der Brotkrume weiter unten entsprechen ("Start", "Archiv") - ein Schema, das etwas anderes behauptet als die Seite, ist schlimmer als keines. #}
+    {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Archiv", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}"},
     {"@type": "ListItem", "position": 3, "name": "{{ produkt.name|escapejs }}", "item": "{{ request.build_absolute_uri }}"}
   ]
 }
@@ -59,121 +59,59 @@
 </script>
 {% endblock %}
 
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+
 {% block content %}
-<div class="relative min-h-screen pt-20 pb-32">
-    <!-- Nebula Background Layer -->
-    <div class="energy-nebula"></div>
-
-    <div class="max-w-7xl mx-auto px-4 relative z-10 animate-reveal">
-        <!-- Breadcrumb -->
-        <nav class="flex mb-12 text-xs font-bold uppercase tracking-[0.2em] text-white/30" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-4">
-                <li><a href="{% url 'home' %}" class="hover:text-glow-orange transition-colors">Orbit</a></li>
-                <li class="flex items-center">
-                    <span class="mr-4 opacity-50">/</span>
-                    <a href="{% url 'produkte' %}" class="hover:text-glow-orange transition-colors">Objekte</a>
-                </li>
-                <li class="flex items-center">
-                    <span class="mr-4 opacity-50">/</span>
-                    <span class="text-white/60">{{ produkt.name }}</span>
-                </li>
-            </ol>
-        </nav>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
-            <!-- Produktbild -->
-            <div class="relative">
-                <div class="glass-card rounded-[4rem] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.5)] group">
-                    {% if produkt.bild %}
-                        {# c_limit statt c_fill: das Hauptbild darf nicht beschnitten werden. #}
-                        <img
-                          src="{{ produkt.bild.url|cloud:'w_1200,c_limit' }}"
-                          srcset="{{ produkt.bild.url|cloud:'w_600,c_limit' }} 600w, {{ produkt.bild.url|cloud:'w_900,c_limit' }} 900w, {{ produkt.bild.url|cloud:'w_1200,c_limit' }} 1200w"
-                          sizes="(min-width: 1024px) 50vw, 100vw"
-                          class="w-full h-auto object-cover transform transition-transform duration-[2000ms] group-hover:scale-110"
-                          alt="{{ produkt.name }} – handbemaltes Upcycling-Unikat von Luviq Universe"
-                          loading="eager"
-                          fetchpriority="high"
-                          decoding="async"
-                        >
-                    {% else %}
-                        <div class="h-[600px] bg-space-dark flex items-center justify-center text-white/5">
-                            <svg class="w-32 h-32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                        </div>
-                    {% endif %}
-                </div>
-                <!-- Glowing Aura -->
-                <div class="absolute -inset-4 bg-glow-orange/5 blur-3xl -z-10 rounded-full animate-pulse"></div>
-            </div>
-
-            <!-- Produktdetails -->
-            <div class="flex flex-col justify-center">
-                <div class="glass-card rounded-[3.5rem] p-12 md:p-16 shadow-2xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-glow-orange/5 blur-3xl"></div>
-                    
-                    <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-6 leading-none">
-                        {{ produkt.name }}
-                    </h1>
-                    
-                    <div class="flex items-center mb-12">
-                        <span class="text-4xl font-black text-glow mr-6">{% if verkauf_aktiv %}{{ produkt.preis|floatformat:2 }} €{% else %}Nº {{ produkt.archiv_nummer }} · Archiv{% endif %}</span>
-                        <div class="px-4 py-2 glass rounded-full border-white/5">
-                            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Einzelstück · 1 of 1</span>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-12">
-                        <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-6">Spezifikationen</h3>
-                        <p class="text-white/50 leading-relaxed text-lg font-light">
-                            {# Antwortsatz zuerst (GE23) aus dem Baustein antwort_produkt.html, erst danach der Text der Betreiberin. #}
-                            {% include 'shop1/antwort_produkt.html' %}
-                            {{ produkt.beschreibung|linebreaksbr }}
-                            {# Statischer Teil, gilt fuer jedes Stueck: nur Aussagen, die fuer alle Unikate zutreffen (belegt in agb.html, kontakt.html, liefergebiet.html). Kein eigenes Element, weil die Designwache jedes Tag erfasst. #}
-                            {% if verkauf_aktiv %}Bezahlt wird per PayPal oder Vorab-Überweisung; der angezeigte Preis ist ein Endpreis, nach § 19 UStG wird keine Umsatzsteuer berechnet. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen; innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt. Gekauft wird über den Warenkorb, und dafür ist ein Konto nötig: Warenkorb und Bestellvorgang sind an eine Anmeldung gebunden. Wer per Vorab-Überweisung zahlt, bekommt die Bankdaten per E-Mail; über PayPal wird die Zahlung sofort abgeschlossen. Für die Bestellung gilt das Widerrufsrecht von 14 Tagen ab dem Tag, an dem die Ware angekommen ist (§ 5 der AGB). Weil das Basisteil getragene Second-Hand-Kleidung ist, gehören leichte Unregelmäßigkeiten der Bemalung und kleine Gebrauchsspuren des Stoffes zum Stück und sind kein Mangel (§ 3 der AGB). Die Fotos zeigen genau dieses Teil; Maße, Material oder Zustand fragst du vor dem Kauf über das Kontaktformular ab, ein zweites Exemplar zum Vergleich gibt es nicht.{% else %}Dieses Stück ist bereits vergeben. Neue Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein: Eine E-Mail-Adresse genügt, ein Konto ist dafür nicht nötig, und erst nach der Bestätigung über den Link in der E-Mail kommt Post. Weil das Basisteil getragene Second-Hand-Kleidung ist, gehören leichte Unregelmäßigkeiten der Bemalung und kleine Gebrauchsspuren des Stoffes zum Stück. Die Fotos zeigen genau dieses Teil; ein zweites Exemplar gibt es nicht, und Fragen zum Stück oder zur Arbeitsweise gehen über das Kontaktformular. Das Motiv entsteht direkt auf dem Stoff, mit Pinsel und Textilfarbe, und wird nicht wiederholt – darum trägt das Stück den Zusatz 1-of-1. Grundlage ist ein getragenes Second-Hand- oder Vintage-Teil, das Luisa Brehler selbst ausgesucht hat, weil sich Stoff und Schnitt als Leinwand eignen. Ein Ladengeschäft zum Anschauen gibt es nicht.{% endif %}
-                        </p>
-                    </div>
-                    
-                    <!-- Features -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
-                        <div class="flex items-center p-6 glass rounded-3xl border-white/5">
-                            <span class="text-3xl mr-4">🛰️</span>
-                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">{% if verkauf_aktiv %}Versand deutschlandweit · in der Regel 1-2 Werktage{% else %}Handbemalt in Alsfeld · 1-of-1{% endif %}</span>
-                        </div>
-                        <div class="flex items-center p-6 glass rounded-3xl border-white/5">
-                            <span class="text-3xl mr-4">💠</span>
-                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">{% if verkauf_aktiv %}PayPal oder Vorab-Überweisung · Endpreis nach § 19 UStG{% else %}Bereits vergeben · Neue Stücke mit dem ersten Drop{% endif %}</span>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="flex flex-col sm:flex-row gap-6 pt-12 border-t border-white/5">
-                        {% comment %}Verkaufsschalter: ohne Verkauf kein Warenkorb-Knopf. Dieselben zwei Links mit denselben Klassen wie für Gäste, damit der Seitenaufbau bleibt: Frage zum Stück und die Warteliste (Newsletter mit Double-Opt-in auf der Startseite).{% endcomment %}
-                        {% if not verkauf_aktiv %}
-                            <a href="{% url 'kontakt' %}" class="flex-1 py-5 px-8 glass rounded-2xl font-black uppercase tracking-widest text-xs text-white text-center hover:bg-white/5 transition-all">
-                                Frage zum Stück
-                            </a>
-                            <a href="{% url 'home' %}#newsletter-form" class="flex-1 py-5 px-8 btn-glow rounded-2xl font-black uppercase tracking-widest text-xs text-white text-center shadow-2xl">
-                                Auf die Warteliste
-                            </a>
-                        {% elif user.is_authenticated %}
-                            <a href="{% url 'add_to_cart' produkt.id %}" class="flex-1 py-5 px-8 glass rounded-2xl font-black uppercase tracking-widest text-xs text-white text-center hover:bg-white/5 transition-all">
-                                🛒 Add to Orbit
-                            </a>
-                            <a href="{% url 'add_to_cart' produkt.id %}?next=warenkorb" class="flex-1 py-5 px-8 btn-glow rounded-2xl font-black uppercase tracking-widest text-xs text-white text-center shadow-2xl">
-                                💳 Deploy Now
-                            </a>
-                        {% else %}
-                            <a href="{% url 'login' %}" class="flex-1 py-5 px-8 glass rounded-2xl font-black uppercase tracking-widest text-xs text-white text-center hover:bg-white/5 transition-all">
-                                🔐 Auth Required
-                            </a>
-                            <a href="{% url 'register' %}" class="flex-1 py-5 px-8 btn-glow rounded-2xl font-black uppercase tracking-widest text-xs text-white text-center shadow-2xl">
-                                📝 Initiate Registration
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
+{% comment %}„Stück" im Look „Nachtausgabe" (19.09.2026, Bauplan § 4): Nummer groß (Mono), Name kursiv, Datenliste aus den Feldern material/technik/masse (leer = Zeile entfällt), beide Zustände des Verkaufsschalters. Der Antwortsatz (GE23) und der statische Teil stehen unverändert im ersten Absatz nach der Überschrift.{% endcomment %}
+<div class="lv-seite">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Start</a></li><li><a href="{% url 'produkte' %}">Archiv</a></li><li aria-current="page">{{ produkt.name }}</li></ol></nav>
+    <article class="lv-stueck">
+        <figure class="lv-stueck-bild">
+            {% if produkt.bild %}
+            {# c_limit statt c_fill: das Hauptbild darf nicht beschnitten werden. #}
+            <img class="produkt_detail" src="{{ produkt.bild.url|cloud:'w_1200,c_limit' }}"
+                 srcset="{{ produkt.bild.url|cloud:'w_600,c_limit' }} 600w, {{ produkt.bild.url|cloud:'w_900,c_limit' }} 900w, {{ produkt.bild.url|cloud:'w_1200,c_limit' }} 1200w"
+                 sizes="(min-width: 1024px) 50vw, 100vw"
+                 alt="{{ produkt.name }} – handbemaltes Upcycling-Unikat von Luviq Universe"
+                 loading="eager" fetchpriority="high" decoding="async">
+            {% endif %}
+        </figure>
+        <div class="lv-stueck-text">
+            <p class="lv-stueck-nummer">Nº {{ produkt.archiv_nummer }}</p>
+            <h1 class="lv-serif">{{ produkt.name }}</h1>
+            <p>{% include 'shop1/antwort_produkt.html' %}
+                {{ produkt.beschreibung|linebreaksbr }}
+                {% if verkauf_aktiv %}Bezahlt wird per PayPal oder Vorab-Überweisung; der angezeigte Preis ist ein Endpreis, nach § 19 UStG wird keine Umsatzsteuer berechnet. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen; innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt. Gekauft wird über den Warenkorb, und dafür ist ein Konto nötig: Warenkorb und Bestellvorgang sind an eine Anmeldung gebunden. Wer per Vorab-Überweisung zahlt, bekommt die Bankdaten per E-Mail; über PayPal wird die Zahlung sofort abgeschlossen. Für die Bestellung gilt das Widerrufsrecht von 14 Tagen ab dem Tag, an dem die Ware angekommen ist (§ 5 der AGB). Weil das Basisteil getragene Second-Hand-Kleidung ist, gehören leichte Unregelmäßigkeiten der Bemalung und kleine Gebrauchsspuren des Stoffes zum Stück und sind kein Mangel (§ 3 der AGB). Die Fotos zeigen genau dieses Teil; Maße, Material oder Zustand fragst du vor dem Kauf über das Kontaktformular ab, ein zweites Exemplar zum Vergleich gibt es nicht.{% else %}Dieses Stück ist bereits vergeben. Neue Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein: Eine E-Mail-Adresse genügt, ein Konto ist dafür nicht nötig, und erst nach der Bestätigung über den Link in der E-Mail kommt Post. Weil das Basisteil getragene Second-Hand-Kleidung ist, gehören leichte Unregelmäßigkeiten der Bemalung und kleine Gebrauchsspuren des Stoffes zum Stück. Die Fotos zeigen genau dieses Teil; ein zweites Exemplar gibt es nicht, und Fragen zum Stück oder zur Arbeitsweise gehen über das Kontaktformular. Das Motiv entsteht direkt auf dem Stoff, mit Pinsel und Bleiche oder Textilfarbe, und wird nicht wiederholt – darum trägt das Stück den Zusatz 1-of-1. Grundlage ist ein getragenes Second-Hand- oder Vintage-Teil, das Luisa Brehler selbst ausgesucht hat, weil sich Stoff und Schnitt als Leinwand eignen. Ein Ladengeschäft zum Anschauen gibt es nicht.{% endif %}</p>
+            <dl class="lv-daten">
+                <dt>Nummer</dt><dd>Nº {{ produkt.archiv_nummer }}</dd>
+                {% if produkt.material %}<dt>Material</dt><dd>{{ produkt.material }}</dd>{% endif %}
+                {% if produkt.technik %}<dt>Technik</dt><dd>{{ produkt.technik }}</dd>{% endif %}
+                {% if produkt.masse %}<dt>Maße</dt><dd>{{ produkt.masse }}</dd>{% endif %}
+                <dt>Stück</dt><dd>Second Hand, von Hand bemalt, 1-of-1</dd>
+            </dl>
+            {% if verkauf_aktiv %}
+            <p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} €</p>
+            <p class="lv-klein">Endpreis nach § 19 UStG · PayPal oder Vorab-Überweisung · Versand deutschlandweit, in der Regel 1-2 Werktage</p>
+            {% else %}
+            <p class="lv-status">Nº {{ produkt.archiv_nummer }} · Archiv · Bereits vergeben · Neue Stücke mit dem ersten Drop</p>
+            {% endif %}
+            <p class="lv-stueck-knoepfe">
+                {% comment %}Verkaufsschalter: ohne Verkauf kein Warenkorb-Knopf, sondern die Warteliste (Newsletter mit Double-Opt-in auf der Startseite) und die Frage zum Stück.{% endcomment %}
+                {% if not verkauf_aktiv %}
+                <a class="lv-knopf" href="{% url 'home' %}#newsletter-form">Auf die Warteliste <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                <a class="lv-link" href="{% url 'kontakt' %}">Frage zum Stück</a>
+                {% elif user.is_authenticated %}
+                <a class="lv-knopf" href="{% url 'add_to_cart' produkt.id %}?next=warenkorb">In den Warenkorb <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                <a class="lv-link" href="{% url 'kontakt' %}">Frage zum Stück</a>
+                {% else %}
+                <a class="lv-knopf" href="{% url 'login' %}">Anmelden und kaufen</a>
+                <a class="lv-link" href="{% url 'register' %}">Konto anlegen</a>
+                {% endif %}
+            </p>
+            {% if motivanfrage_aktiv %}<p class="lv-klein">So eins, aber mit deinem Motiv? <a href="{% url 'motiv_anfragen' %}">Motiv anfragen</a></p>{% endif %}
         </div>
-    </div>
+    </article>
 </div>
 {% endblock %}

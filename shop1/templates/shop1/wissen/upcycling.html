@@ -16,7 +16,7 @@
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
     {"@type": "ListItem", "position": 2, "name": "Wissen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen' %}"},
     {"@type": "ListItem", "position": 3, "name": "Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen_upcycling' %}"}
   ]
