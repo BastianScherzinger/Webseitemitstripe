@@ -7,8 +7,8 @@ fortschritt: 70
 zusammenfassung: Der LCP der Produktseite ist der teuerste Posten der Seite (Cloudinary-Bilder ohne srcset). Paket 267 (18.09.2026, Zweig sofort/2026-09-18-kv11-und-2-weitere, 1737e74 und 5515bf3, nicht gemergt) bringt zwei Tempomassnahmen, beide anders eingebaut als geraten — PF15: der Filter cloud lässt jede Cloudinary-Adresse auf .webp enden, der Rückfall von f_auto ist damit WebP statt JPEG/PNG (kein picture-Element wegen der Designwache); PF26: start.sh packt die statischen Dateien nach collectstatic mit whitenoise.compress, sodass tailwind.css und style.css gzip-gepackt ausgehen (kein eingebettetes kritisches CSS). Ob der erste Inhalt mobil damit unter 1,8 s fällt, zeigt erst die Messung nach dem Deploy. PF31 (Skripte nicht von fremdem CDN) ist am 17.09.2026 in Paket 227 als nicht möglich beendet — Alpine, @alpinejs/intersect, GSAP und Three.js kommen weiter von cdn.jsdelivr.net, weil die Dateien nicht im Projekt liegen und der Lauf sie nicht holen konnte. Die gemessenen Werte stehen im erzeugten Block unter „Messwerte".
 offen: 9
 pagespeed_mobil: 90
-pagespeed_desktop: 94
-antwortzeit_ms: 7
+pagespeed_desktop: 93
+antwortzeit_ms: 8
 quellen: DOCUMENTATION.md, LOGBUCH.md, start.sh
 antwortzeit_quelle: PageSpeed server-response-time
 ---
@@ -24,45 +24,47 @@ und live noch nicht wirksam.
 ## Messwerte
 
 <!-- tempo:anfang -->
-**Messung vom 18.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-17b). Bereich „Performance & Core Web Vitals“: **91,3 von 100**, Reifegrad „Referenz“.
+**Messung vom 19.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-17b). Bereich „Performance & Core Web Vitals“: **91,2 von 100**, Reifegrad „Referenz“.
 
 ### Lighthouse je Seite
 
 | Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
 |---|---|---:|---:|---:|---:|---:|
-| `/` | mobile | **85** | 3,63 s | 0,000 | 0 ms | 44 ms |
-| `/` | desktop | **86** | 0,89 s | 0,000 | 295 ms | 7 ms |
-| `/datenschutz/` | mobile | **92** | 2,71 s | 0,000 | 0 ms | 2 ms |
-| `/datenschutz/` | desktop | **99** | 0,72 s | 0,000 | 0 ms | 3 ms |
-| `/impressum/` | mobile | **92** | 2,71 s | 0,000 | 0 ms | 2 ms |
-| `/impressum/` | desktop | **99** | 0,72 s | 0,000 | 0 ms | 2 ms |
-| `/kontakt/` | mobile | **91** | 2,81 s | 0,000 | 0 ms | 6 ms |
-| `/kontakt/` | desktop | **92** | 0,69 s | 0,008 | 207 ms | 1 ms |
-| `/produkte/` | mobile | **88** | 3,31 s | 0,000 | 0 ms | 3 ms |
-| `/produkte/` | desktop | **96** | 0,69 s | 0,000 | 158 ms | 3 ms |
+| `/` | mobile | **85** | 3,63 s | 0,000 | 0 ms | 45 ms |
+| `/` | desktop | **70** | 1,26 s | 0,000 | 626 ms | 6 ms |
+| `/datenschutz/` | mobile | **92** | 2,74 s | 0,000 | 0 ms | 3 ms |
+| `/datenschutz/` | desktop | **99** | 0,69 s | 0,000 | 0 ms | 11 ms |
+| `/impressum/` | mobile | **92** | 2,74 s | 0,000 | 0 ms | 2 ms |
+| `/impressum/` | desktop | **99** | 0,72 s | 0,000 | 0 ms | 1 ms |
+| `/kontakt/` | mobile | **91** | 2,74 s | 0,000 | 0 ms | 3 ms |
+| `/kontakt/` | desktop | **99** | 0,69 s | 0,008 | 0 ms | 3 ms |
+| `/produkte/` | mobile | **88** | 3,31 s | 0,000 | 0 ms | 2 ms |
+| `/produkte/` | desktop | **99** | 0,72 s | 0,000 | 0 ms | 4 ms |
 
 10 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 
-**Serverzeit (`server-response-time` aus PageSpeed): 7,3 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
+**Serverzeit (`server-response-time` aus PageSpeed): 8,0 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
 
 ### Tempo-Regeln, die offen sind
 
 | Regel | Titel | Ergebnis | Beleg |
 |---|---|---|---|
 | `PF01` | Lighthouse Leistung mobil erreicht 90 von 100 | teilweise | Lighthouse Leistung mobil: 90 von 100 über 5 Messungen; unter 90: / (85), /produkte/ (88) |
-| `PF02` | Lighthouse Leistung Desktop erreicht 95 von 100 | teilweise | Lighthouse Leistung Desktop: 94 von 100 über 5 Messungen; unter 95: / (86), /kontakt/ (92) |
+| `PF02` | Lighthouse Leistung Desktop erreicht 95 von 100 | teilweise | Lighthouse Leistung Desktop: 93 von 100 über 5 Messungen; unter 95: / (70) |
 | `PF17` | Lazy-Loading unterhalb des Falzes, nicht auf dem LCP-Bild | teilweise | 23 von 31 Bildern unterhalb des ersten sind lazy; 3 von 12 Seiten laden ihr erstes Bild lazy: /kontakt/ → ich-900.5b4b9566ab5b.webp, /gaestebuch/ → logo-luviq-96.72290a22b8e2.webp, /ueber_uns/ → ich-900.5b4b9566ab5b.webp |
 | `PF23` | Kein Bild ist grösser als 300 kB | teilweise | 1 von 23 Bildern über 300 kB: IMG_4376_fupstq.webp (389 kB) |
 | `PF16` | Bilder werden in mehreren Grössen angeboten | teilweise | 28 von 43 Bildern mit srcset; ohne: / → IMG_4376_fupstq.webp, / → Photoroom_20260504_222908_zundp7.webp, / → Photoroom_20260504_222730_jjwtm5.webp, / → Photoroom_20260504_222549_kmlpwf.webp, / → Photoroom_20260504_221823 |
 | `PF18` | Das Hero-Bild trägt fetchpriority=high | teilweise | 3 von 10 Seiten ohne fetchpriority=high am ersten Bild: /kontakt/ → ich-900.5b4b9566ab5b.webp, /gaestebuch/ → logo-luviq-96.72290a22b8e2.webp, /ueber_uns/ → ich-900.5b4b9566ab5b.webp |
 | `PF19` | Das LCP-Bild wird vorgeladen, und nur dort, wo es eins gibt | teilweise | 2 von 3 Schlüsselseiten mit Bild laden es nicht vor: /produkte/, /kontakt/ |
 | `PF25` | Jedes Bild trägt Breite und Höhe | teilweise | 5 von 43 Bildern ohne feste Masse: t/v1/media/produkte/IMG_4376_fupstq.webp, te/Photoroom_20260504_221823_rh0ykx.webp, te/Photoroom_20260504_222549_kmlpwf.webp, te/Photoroom_20260504_222730_jjwtm5.webp … (+1) |
-| `PF26` | Erster Inhalt erscheint mobil unter 1,8 Sekunden | nicht bestanden | FCP 2.76 s mobil, Mittel über 5 Messungen; über 1,8 s: / (2.9 s), /produkte/ (2.7 s), /kontakt/ (2.8 s), /impressum/ (2.7 s), /datenschutz/ (2.7 s) |
+| `PF26` | Erster Inhalt erscheint mobil unter 1,8 Sekunden | nicht bestanden | FCP 2.77 s mobil, Mittel über 5 Messungen; über 1,8 s: / (2.9 s), /produkte/ (2.7 s), /kontakt/ (2.7 s), /impressum/ (2.7 s), /datenschutz/ (2.7 s) |
 | `PF31` | Skripte und Stile kommen nicht von einem fremden CDN | nicht bestanden | 12 von 12 Seiten laden von einem fremden CDN: / (cdn.jsdelivr.net), /produkte/ (cdn.jsdelivr.net), /kontakt/ (cdn.jsdelivr.net), /datenschutz/ (cdn.jsdelivr.net) … (+8) |
 
 ### Die grössten Bremsen laut Lighthouse
 
-Keine Einsparchance über 150 ms.
+| Audit | Titel | Ersparnis |
+|---|---|---:|
+| `unused-javascript` | Reduce unused JavaScript | 270 ms |
 <!-- tempo:ende -->
 
 **Was hier erzeugt wird und was von Hand kommt.** Jede gemessene Zahl steht im Block
