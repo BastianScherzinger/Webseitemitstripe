@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-09-19
+stand: 2026-09-24
 status: teilweise
 fortschritt: 70
 zusammenfassung: 19.09.2026: Umbau „Nachtausgabe" gebaut (B3 + Hero H4, Markensatz, Motiv anfragen als Seite mit Modell, Archivnummern, Schriften selbst gehostet, Deko entfernt), 383 Tests grün; Bericht docs/design-2026-09-BERICHT.md. Verkauf bleibt aus.
@@ -52,43 +52,42 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–17.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 19.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-17b) — **Gesamtstand 83,6 von 100**, Reifegrad „Solide“. 329 von 372 Regeln an 14 URLs und 144 Dateien (33.472 Zeilen) geprüft.
+**Messung vom 24.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-17b) — **Gesamtstand 83,4 von 100**, Reifegrad „Solide“. 330 von 372 Regeln an 15 URLs und 158 Dateien (33.491 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Substanz & Reichweite | **48** | Lückenhaft |
-| Konversion | **61** | Brauchbar |
-| GEO — KI-Sichtbarkeit | **78** | Solide |
-| Recht & Vertrauen | **79** | Solide |
+| Substanz & Reichweite | **49** | Lückenhaft |
+| Konversion | **56** | Lückenhaft |
+| GEO — KI-Sichtbarkeit | **77** | Solide |
+| SEO — Inhalt | **79** | Solide |
 | Erreichbarkeit & Postfach | **79** | Solide |
 | Betrieb & Auslieferung | **80** | Solide |
-| SEO — Inhalt | **80** | Solide |
 | Vorlagen-Konformität | **82** | Solide |
-| Barrierefreiheit | **88** | Solide |
-| Performance & Core Web Vitals | **91** | Referenz |
+| Recht & Vertrauen | **82** | Solide |
+| Barrierefreiheit | **90** | Referenz |
+| Performance & Core Web Vitals | **92** | Referenz |
+| Code-Qualität & Projektreife | **93** | Referenz |
 | Sicherheit | **93** | Referenz |
-| Code-Qualität & Projektreife | **94** | Referenz |
 | SEO — Technik | **96** | Referenz |
-| Formulare & Preisrechner | **100** | Referenz |
+| Formulare & Preisrechner | **99** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 144 Dateien, **83 Befunde**, davon 0 kritisch und 22 wichtig.
+Quelltext: 158 Dateien, **89 Befunde**, davon 0 kritisch und 27 wichtig.
 
 Kritische Befunde:
 
+- **Umfang passt zur Aufgabe der Seite** (`IS18`) — Unter dem Umfang, den ihre Aufgabe verlangt: 7 von 7 Seiten — / (340/700 W), /produkte/ (418/600 W), /produkt/custom-hoodie-mit-print/ (222/600 W), /produkt/custom-print-hoodie-1/ (220/600 W), /produkt/custom-pants/ (219/600 W) … (+2)
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
 - **Wissensinhalte vorhanden** (`SU04`) — 0 Wissensseiten, Zielgröße 3 — es gibt keinen einzigen Ratgeberbereich
-- **axe-core findet keine schweren Verstösse** (`BF29`) — 3 von 3 Seiten mit schweren Verstössen: color-contrast (3×)
-- **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 12 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /kontakt/, /datenschutz/, /gaestebuch/ … (+7)
-- **Keine Google-Schriften von fremden Servern nachgeladen** (`RE07`) — 12 von 12 Seiten laden Google-Schriften von fremden Servern: fonts.googleapis.com, https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700 · betroffen: /, /produkte/, /kontakt/ … (+9)
+- **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 13 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /kontakt/, /datenschutz/, /gaestebuch/ … (+8)
 - **Eine eigene Sicherung außerhalb des Hosters ist frisch und geprüft** (`BT15`) — keine einzige eigene Sicherung; der letzte Versuch scheiterte: Docker läuft nicht — ohne pg_dump keine externe Sicherung
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
-- **Umfang passt zur Aufgabe der Seite** (`IS18`) — Unter dem Umfang, den ihre Aufgabe verlangt: 6 von 7 Seiten — /produkte/ (438/600 W), /produkt/custom-hoodie-mit-print/ (212/600 W), /produkt/custom-print-hoodie-1/ (210/600 W), /produkt/custom-pants/ (209/600 W), /produkt/custom-print-jack
-- **Genug eigener Inhalt insgesamt** (`SU02`) — 4.246 Eigenwörter über 12 Seiten, Zielgröße 12.000 (von 5.278 Wörtern Gesamttext); die umfangreichsten Seiten: / (789 W), /datenschutz/ (556 W), /produkte/ (438 W)
+- **Genug eigener Inhalt insgesamt** (`SU02`) — 3.847 Eigenwörter über 13 Seiten, Zielgröße 12.000 (von 5.591 Wörtern Gesamttext); die umfangreichsten Seiten: /datenschutz/ (555 W), /produkte/ (418 W), /ueber_uns/ (370 W)
+- **Kein nennenswerter Anteil dünner Seiten** (`IS19`) — 8% der Seiten sind dünn (1 von 13): /motiv-anfragen/ (124 W)
 - **Keine Kannibalisierung durch gleiche Hauptbegriffe** (`IS23`) — Von mehreren Seiten besetzte Hauptbegriffe: 1; betroffen sind 3 von 5 Seiten — custom print auf 3 Seiten (/produkt/custom-print-hoodie-1/, /produkt/custom-print-jacke/ … (+1))
-- **Genug rankfähige Seiten für das Geschäft** (`SU01`) — 12 rankfähige Seiten, Zielgröße für diese Geschäftsart 30 (Beispiele: /, /produkte/, /kontakt/)
+- **Genug rankfähige Seiten für das Geschäft** (`SU01`) — 13 rankfähige Seiten, Zielgröße für diese Geschäftsart 30 (Beispiele: /, /produkte/, /kontakt/)
 <!-- messung:ende -->
 
 Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen
