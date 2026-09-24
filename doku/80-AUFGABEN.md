@@ -432,4 +432,5 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | EIG107 | Impressum zitiert zwei aufgehobene Normen und verlinkt eine abgeschaltete Plattform | inhalte | offen | bei einer anderen betreuten Seite aufgefallen am 12.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-12 |
 | EIG108 | Die Kurzfassung für Antwortmaschinen bewirbt „Website ab 500 €" ohne die Bedingung | inhalte | offen | bei einer anderen betreuten Seite aufgefallen am 12.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-12 |
 | EIG109 | RE03 ist nachgeprüft ein Fehlbefund und steht weiter als „trotzdem nachsehen" | notizen | offen | bei einer anderen betreuten Seite aufgefallen am 12.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-12 |
+| EIG110 | Die Aufgabenliste enthält den Abschnitt „Eigene Punkte“ elfmal | aufgaben | offen | bei einer anderen betreuten Seite aufgefallen am 24.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-24 |
 <!-- eigenepunkte:ende -->
