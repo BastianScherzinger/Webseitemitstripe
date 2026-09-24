@@ -314,6 +314,7 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | KV14 | beim Kunden | Der Angebotsblock lässt sich ohne eine geschäftliche Telefonnummer nicht vervollständigen, und im ganzen Projekt steht keine: weder `telephone` noch ein `tel:`-Link in einer Vorlage (Suche über alle `*.html`, 18.09.2026) — der einzige Treffer ist der Vermerk in `shop1/templates/shop1/kontakt.html:183`, dass dort eine Platzhalternummer stand und entfernt wurde; sie steht als verbotenes Ziel in `FALSCHE_ZIELE` (`shop1/tests/test_inhalt.py`). Derselbe Engpass wie `KV01` und `GE09` in diesem Block. Eine Nummer zu erfinden hiesse, Kunden auf einen fremden Anschluss zu schicken — nennen kann sie nur Luisa Brehler (siehe „Beim Kunden" Nr. 4). In Paket 313 wurde dafür keine Zeile Code geändert. | 2026-09-18 |
 | SI16 | bewusst so | CSRF_COOKIE_HTTPONLY=False ist Absicht: shop1/templates/shop1/index.html liest das CSRF-Token per JavaScript aus dem Cookie csrftoken und schickt es als X-CSRFToken (mainweb/settings.py:81) | 2026-09-24 |
 | KV10 | nicht anwendbar | Verkauf ist abgeschaltet (VERKAUF_AKTIV aus, mainweb/settings.py:416), kein Gewerbe angemeldet – Preise und Angebote sind bewusst nicht gewollt | 2026-09-24 |
+| GE40 | nicht anwendbar | Verkauf ist abgeschaltet (VERKAUF_AKTIV aus), kein Gewerbe angemeldet – ein vollständiges Produktangebot (Offer/Preis) ist bewusst nicht gewollt | 2026-09-24 |
 <!-- bewertung:ende -->
 
 ## Eigene Punkte
