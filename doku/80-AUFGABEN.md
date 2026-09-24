@@ -315,6 +315,7 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | SI16 | bewusst so | CSRF_COOKIE_HTTPONLY=False ist Absicht: shop1/templates/shop1/index.html liest das CSRF-Token per JavaScript aus dem Cookie csrftoken und schickt es als X-CSRFToken (mainweb/settings.py:81) | 2026-09-24 |
 | KV10 | nicht anwendbar | Verkauf ist abgeschaltet (VERKAUF_AKTIV aus, mainweb/settings.py:416), kein Gewerbe angemeldet – Preise und Angebote sind bewusst nicht gewollt | 2026-09-24 |
 | GE40 | nicht anwendbar | Verkauf ist abgeschaltet (VERKAUF_AKTIV aus), kein Gewerbe angemeldet – ein vollständiges Produktangebot (Offer/Preis) ist bewusst nicht gewollt | 2026-09-24 |
+| RE10 | nicht anwendbar | Kein Onlinegeschäft: Verkauf abgeschaltet (VERKAUF_AKTIV aus), kein Gewerbe angemeldet – ohne Verkauf keine AGB | 2026-09-24 |
 <!-- bewertung:ende -->
 
 ## Eigene Punkte
