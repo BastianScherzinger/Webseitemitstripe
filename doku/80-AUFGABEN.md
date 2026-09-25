@@ -316,6 +316,7 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | KV10 | nicht anwendbar | Verkauf ist abgeschaltet (VERKAUF_AKTIV aus, mainweb/settings.py:416), kein Gewerbe angemeldet – Preise und Angebote sind bewusst nicht gewollt | 2026-09-24 |
 | GE40 | nicht anwendbar | Verkauf ist abgeschaltet (VERKAUF_AKTIV aus), kein Gewerbe angemeldet – ein vollständiges Produktangebot (Offer/Preis) ist bewusst nicht gewollt | 2026-09-24 |
 | RE10 | nicht anwendbar | Kein Onlinegeschäft: Verkauf abgeschaltet (VERKAUF_AKTIV aus), kein Gewerbe angemeldet – ohne Verkauf keine AGB | 2026-09-24 |
+| GE21 | nicht anwendbar | Luviq ist ein bundesweit versendender Online-Shop ohne Einzugsgebiet; areaServed misst ein Merkmal lokaler Dienstleister. Fuer GE20 (Oeffnungszeiten) ist aus demselben Grund (kein Ladengeschaeft) bereits eine nicht_anwendbar-Ausnahme gesetzt, GE21 folgt derselben Logik. | 2026-09-26 |
 <!-- bewertung:ende -->
 
 ## Eigene Punkte
