@@ -433,4 +433,5 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | EIG108 | Die Kurzfassung für Antwortmaschinen bewirbt „Website ab 500 €" ohne die Bedingung | inhalte | offen | bei einer anderen betreuten Seite aufgefallen am 12.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-12 |
 | EIG109 | RE03 ist nachgeprüft ein Fehlbefund und steht weiter als „trotzdem nachsehen" | notizen | offen | bei einer anderen betreuten Seite aufgefallen am 12.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-12 |
 | EIG110 | Die Aufgabenliste enthält den Abschnitt „Eigene Punkte“ elfmal | aufgaben | offen | bei einer anderen betreuten Seite aufgefallen am 24.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-24 |
+| EIG111 | Live-Seite verkauft noch, obwohl der dokumentierte Sollstand den Verkauf abschaltet | status | offen | Tiefenanalyse 25.09.2026 (Schwere: kritisch): [Startseite](https://www.luviq-alsfeld.com/) (WebFetch, letzte Woche): „Online-Shop“, fünf Produktpreise sowie PayPal/Vorab-Überweisung; `mainweb/settings.py:412-416` setzt Verkauf standardmäßig aus. | 2026-09-25 |
 <!-- eigenepunkte:ende -->
