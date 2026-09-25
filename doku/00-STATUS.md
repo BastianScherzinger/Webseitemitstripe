@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-09-24
+stand: 2026-09-25
 status: teilweise
 fortschritt: 70
 zusammenfassung: 19.09.2026: Umbau „Nachtausgabe" gebaut (B3 + Hero H4, Markensatz, Motiv anfragen als Seite mit Modell, Archivnummern, Schriften selbst gehostet, Deko entfernt), 383 Tests grün; Bericht docs/design-2026-09-BERICHT.md. Verkauf bleibt aus.
@@ -52,23 +52,23 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–17.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 24.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-17b) — **Gesamtstand 83,4 von 100**, Reifegrad „Solide“. 330 von 372 Regeln an 15 URLs und 158 Dateien (33.491 Zeilen) geprüft.
+**Messung vom 25.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-24c) — **Gesamtstand 84,1 von 100**, Reifegrad „Solide“. 330 von 372 Regeln an 15 URLs und 158 Dateien (33.501 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
 | Substanz & Reichweite | **49** | Lückenhaft |
-| Konversion | **56** | Lückenhaft |
-| GEO — KI-Sichtbarkeit | **77** | Solide |
+| Konversion | **59** | Lückenhaft |
 | SEO — Inhalt | **79** | Solide |
 | Erreichbarkeit & Postfach | **79** | Solide |
+| GEO — KI-Sichtbarkeit | **79** | Solide |
 | Betrieb & Auslieferung | **80** | Solide |
 | Vorlagen-Konformität | **82** | Solide |
-| Recht & Vertrauen | **82** | Solide |
-| Barrierefreiheit | **90** | Referenz |
+| Recht & Vertrauen | **88** | Solide |
+| Code-Qualität & Projektreife | **89** | Solide |
+| Barrierefreiheit | **91** | Referenz |
 | Performance & Core Web Vitals | **92** | Referenz |
-| Code-Qualität & Projektreife | **93** | Referenz |
-| Sicherheit | **93** | Referenz |
 | SEO — Technik | **96** | Referenz |
+| Sicherheit | **96** | Referenz |
 | Formulare & Preisrechner | **99** | Referenz |
 
 Keine Sperre greift.

@@ -24,26 +24,26 @@ und live noch nicht wirksam.
 ## Messwerte
 
 <!-- tempo:anfang -->
-**Messung vom 24.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-17b). Bereich „Performance & Core Web Vitals“: **91,6 von 100**, Reifegrad „Referenz“.
+**Messung vom 25.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-24c). Bereich „Performance & Core Web Vitals“: **91,5 von 100**, Reifegrad „Referenz“.
 
 ### Lighthouse je Seite
 
 | Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
 |---|---|---:|---:|---:|---:|---:|
-| `/` | mobile | **96** | 2,80 s | 0,006 | 0 ms | 2 ms |
-| `/` | desktop | **100** | 0,54 s | 0,043 | 0 ms | 2 ms |
-| `/datenschutz/` | mobile | **99** | 1,85 s | 0,000 | 0 ms | 7 ms |
-| `/datenschutz/` | desktop | **100** | 0,49 s | 0,001 | 0 ms | 7 ms |
-| `/impressum/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 1 ms |
-| `/impressum/` | desktop | **100** | 0,47 s | 0,001 | 0 ms | 2 ms |
-| `/kontakt/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 2 ms |
-| `/kontakt/` | desktop | **100** | 0,48 s | 0,001 | 0 ms | 1 ms |
-| `/produkte/` | mobile | **99** | 2,06 s | 0,006 | 0 ms | 1 ms |
-| `/produkte/` | desktop | **100** | 0,61 s | 0,050 | 0 ms | 1 ms |
+| `/` | mobile | **95** | 2,95 s | 0,006 | 0 ms | 7 ms |
+| `/` | desktop | **100** | 0,60 s | 0,043 | 0 ms | 2 ms |
+| `/datenschutz/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 2 ms |
+| `/datenschutz/` | desktop | **100** | 0,48 s | 0,001 | 0 ms | 8 ms |
+| `/impressum/` | mobile | **99** | 2,11 s | 0,000 | 0 ms | 2 ms |
+| `/impressum/` | desktop | **100** | 0,50 s | 0,001 | 0 ms | 1 ms |
+| `/kontakt/` | mobile | **99** | 2,10 s | 0,000 | 17 ms | 2 ms |
+| `/kontakt/` | desktop | **100** | 0,60 s | 0,001 | 46 ms | 6 ms |
+| `/produkte/` | mobile | **99** | 2,06 s | 0,006 | 0 ms | 2 ms |
+| `/produkte/` | desktop | **100** | 0,61 s | 0,050 | 0 ms | 2 ms |
 
 10 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 
-**Serverzeit (`server-response-time` aus PageSpeed): 2,6 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
+**Serverzeit (`server-response-time` aus PageSpeed): 3,4 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
 
 ### Tempo-Regeln, die offen sind
 
@@ -51,7 +51,7 @@ und live noch nicht wirksam.
 |---|---|---|---|
 | `PF17` | Lazy-Loading unterhalb des Falzes, nicht auf dem LCP-Bild | teilweise | 14 von 14 Bildern unterhalb des ersten sind lazy; 2 von 8 Seiten laden ihr erstes Bild lazy: /produkte/ → Photoroom_20260504_221823_rh0ykx.webp, /gaestebuch/ → logo-luviq-96.72290a22b8e2.webp |
 | `PF23` | Kein Bild ist grösser als 300 kB | teilweise | 1 von 17 Bildern über 300 kB: IMG_4376_fupstq.webp (389 kB) |
-| `PF16` | Bilder werden in mehreren Grössen angeboten | teilweise | 12 von 22 Bildern mit srcset; ohne: / → Photoroom_20260504_221823_rh0ykx.webp, / → Photoroom_20260504_222549_kmlpwf.webp, / → Photoroom_20260504_222730_jjwtm5.webp, / → Photoroom_20260504_222908_zundp7.webp, / → IMG_4376 |
+| `PF16` | Bilder werden in mehreren Grössen angeboten | teilweise | 11 von 21 Bildern mit srcset oder <picture> (1 SVG und Symbole nicht mitgezählt); ohne: / → Photoroom_20260504_221823_rh0ykx.webp, / → Photoroom_20260504_222549_kmlpwf.webp, / → Photoroom_20260504_222730_jjwtm5.webp, / → |
 | `PF18` | Das Hero-Bild trägt fetchpriority=high | teilweise | 2 von 8 Seiten ohne fetchpriority=high am ersten Bild: /produkte/ → Photoroom_20260504_221823_rh0ykx.webp, /gaestebuch/ → logo-luviq-96.72290a22b8e2.webp |
 | `PF19` | Das LCP-Bild wird vorgeladen, und nur dort, wo es eins gibt | teilweise | 2 von 2 Schlüsselseiten mit Bild laden es nicht vor: /, /produkte/ |
 | `PF24` | Bilder werden nicht weit grösser geladen als angezeigt | nicht bestanden | 2 von 3 Seiten laden übergrosse Bilder: / (5 Bilder, z. B. 600 statt 221 px), /produkte/ (5 Bilder, z. B. 600 statt 221 px) |
