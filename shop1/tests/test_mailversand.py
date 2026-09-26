@@ -107,7 +107,7 @@ class KeineKopieTest(LuviqTestCase):
 
     def test_keine_dublette_wenn_bastian_schon_empfaenger_ist(self):
         with mock.patch(_KONTAKT) as luisa, \
-                mock.patch.dict(os.environ, {'ADMIN_EMAIL': 'Bastian.Scherzinger69@Gmail.com'}):
+                mock.patch.dict(os.environ, {'ADMIN_EMAIL': 'Bastian.Scherzinger05@Gmail.com'}):
             self.sende('/kontakt/', KONTAKT)
         self.assertEqual(luisa.call_count, 1)
         self.kopie_versand.assert_not_called()
