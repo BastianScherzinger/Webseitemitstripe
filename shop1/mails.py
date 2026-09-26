@@ -37,7 +37,7 @@ _log = logging.getLogger('shop1')
 
 SEITENNAME = 'Luviq'
 MARKE = 'Luviq Universe'
-BETREIBER_VORGABE = 'bastian.scherzinger69@gmail.com'
+BETREIBER_VORGABE = 'bastian.scherzinger05@gmail.com'
 KONTAKT_EMAIL = 'brehlerluisa@gmail.com'
 INSTAGRAM_NAME = 'luviq.universe'
 INSTAGRAM_URL = 'https://www.instagram.com/luviq.universe/'

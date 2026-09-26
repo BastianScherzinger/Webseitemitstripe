@@ -318,7 +318,7 @@ HTML-Teil. Gestaltung und Kopie an die Webagentur stehen in `shop1/mails.py`.
   Django, Nachrichten mit `linebreaksbr`. Scheitert die Gestaltung, geht die
   Mail an Luisa mit der Textfassung hinaus.
 - **Kopie an die Webagentur:** Umgebungsvariable `BETREIBER_KOPIE_AN`
-  (kommagetrennt; ohne Variable `bastian.scherzinger69@gmail.com`; leer oder
+  (kommagetrennt; ohne Variable `bastian.scherzinger05@gmail.com`; leer oder
   `aus` schaltet ab). Eigene Mail mit eigenem `try/except`, erst nach
   Drosselung, Feldprüfung, Spamschutz und Doppelsperre — Spam und
   Doppelklicks lösen keine Kopie aus. Ist die Adresse schon regulärer
