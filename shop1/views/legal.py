@@ -479,16 +479,18 @@ def _bestaetigung_senden(request, abo):
     from ..utils import send_brevo_email
     token = signing.dumps({'e': abo.email}, salt=_NEWSLETTER_SALT)
     link = settings.SITE_URL.rstrip('/') + reverse('newsletter_bestaetigen') + '?t=' + token
+    from ..mails import rendern
+    # Gestaltet seit 26.09.2026 (templates/emails/besucher.html) – weiter ohne
+    # Text aus dem Formular.
     send_brevo_email(
         'Luviq – Bitte bestätige deine Newsletter-Anmeldung',
-        f"""<html><body>
-            <p>Hallo,</p>
-            <p>für diese Adresse wurde der Luviq-Newsletter bestellt. Bitte bestätige das
-            mit einem Klick:</p>
-            <p><a href="{link}">Anmeldung bestätigen</a></p>
-            <p>Warst du das nicht, ignoriere diese E-Mail einfach – ohne Bestätigung
-            schicken wir dir nichts.</p>
-        </body></html>""",
+        rendern('besucher.html', titel='Bitte bestätige deine Anmeldung', kopf_label='Newsletter',
+                preheader='Ein Klick, dann bekommst du Post, wenn es Neues von Luviq gibt.',
+                absaetze=['für diese Adresse wurde der Luviq-Newsletter angemeldet. Bitte bestätige '
+                          'das mit einem Klick:'],
+                link=link, knopf='Anmeldung bestätigen',
+                nachsatz='Warst du das nicht, ignoriere diese E-Mail einfach – ohne Bestätigung '
+                         'schicken wir dir nichts.'),
         abo.email,
         text_content=f'Bitte bestätige deine Newsletter-Anmeldung: {link}\n\n'
                      'Warst du das nicht, ignoriere diese E-Mail einfach.',

@@ -1,0 +1,15 @@
+{% extends 'emails/basis.html' %}
+{% block kopf_label %}Kopie · Betreuung{% endblock %}
+{% block inhalt %}
+<p class="lv-leise" style="margin:0 0 4px;font-family:Consolas,'SFMono-Regular',Menlo,monospace;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#5E5850;">{{ marke }} · <a href="{{ live_url }}" class="lv-link" style="color:#8A4A22;">{{ domain }}</a></p>
+<h1 style="margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-style:italic;font-size:26px;line-height:1.25;color:#0A0A0A;">{{ titel }}</h1>
+<p class="lv-leise" style="margin:0 0 24px;font-size:13px;color:#5E5850;">{{ zeitpunkt }}{% if herkunft %} · {{ herkunft }}{% endif %}</p>
+{% include 'emails/_felder.html' %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="lv-kasten" style="margin:24px 0 0;background:#F2EEE6;border:1px solid #E6E0D5;">
+  <tr><td style="padding:14px 18px;font-size:13px;line-height:1.7;color:#0A0A0A;">
+{% for bezeichnung, wert in status %}    <span class="lv-leise" style="color:#5E5850;">{{ bezeichnung }}:</span> {{ wert }}<br>
+{% endfor %}  </td></tr>
+</table>
+{% if admin_url %}<p style="margin:20px 0 0;font-size:14px;"><a href="{{ admin_url }}" class="lv-link" style="color:#8A4A22;">Eintrag im Django-Admin öffnen</a></p>{% endif %}
+{% endblock %}
+{% block fuss %}Kopie für die Webagentur Scherzinger – Betreuung dieser Website.<br>Antworten geht{% if antwort_an %} direkt an den Absender der Anfrage{% else %} an die Versandadresse der Seite{% endif %}.{% endblock %}
