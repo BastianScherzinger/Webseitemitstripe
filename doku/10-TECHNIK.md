@@ -85,6 +85,19 @@ Auf main fehlen Schritt 6 und die Gunicorn-Parameter; `DOCUMENTATION.md` §5 nen
 
 **In Railway zu setzen:** `CANONICAL_HOST=www.luviq-alsfeld.com` (sonst bleibt die 301 für den Apex wirkungslos — der Zweig vom 11.09. ändert daran nichts, die Vorgabe ist dort weiter leer). Optional: `CSP_MODUS` (Vorgabe `scharf`, seit `0c18ea7` auf main; `report-only` ist der Rückweg, falls die Bezahlseite oder — mit dem Zweig SI09 — ein Ersatzskript im Browser etwas blockiert), `VISITOR_TRACKING` (Vorgabe an), `GUNICORN_*`.
 
+### Railway-Inventur 26.09.2026
+
+Erhoben lesend am 26.09.2026 (Werte nie notiert; „gleich“ über Hash im Speicher verglichen). Gesamtbild und Befunde K1–K13: `Webagentur Scherzinger\Betrieb-Railway\RAILWAY-INVENTAR.md`; Plan zur Entflechtung: `…\Betrieb-Railway\TRENNUNGSPLAN.md`.
+
+| Punkt | Stand 26.09.2026 |
+|---|---|
+| Railway | Projekt `webseiten`, Umgebung `shop`, Dienst `Luviq-Luisa` (`2f19cb96-4b35-4f82-ac08-cba3be9698a2`), Repo `Webseitemitstripe`, `main`, Auto-Deploy |
+| Letzter Deploy | SUCCESS 26.09.2026; 5xx-Quote 7 Tage: 4 von 11 785 |
+| Datenbank | `DATABASE_URL`: **gemeinsame Supabase-Datenbank „A“**, Schema `public`, App `shop1` — dieselben Tabellen `auth_user`, `django_migrations`, `django_session` wie RTC, Rümpelwerk, WVM-IT, JARVIS 4 (K1, hoch). `PYSTORE_DATABASE_URL`: Supabase „B“, außer Luviq nur von toten Diensten genutzt |
+| Variablen (eigene Werte) | `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_URL`, `ADMIN_USERNAME`, `ALLOWED_HOSTS`, `ALLOWED_HOSTS_EXTRA`, `BANK_IBAN`, `BANK_INHABER`, `BREVO_API_KEY`, `CANONICAL_HOST`, `CLOUDINARY_URL`, `DATABASE_URL`, `DEBUG`, `DEFAULT_FROM_EMAIL`, `EMAIL_BACKEND`, `EMAIL_HOST`, `EMAIL_HOST_PASSWORD`, `EMAIL_HOST_USER`, `EMAIL_PORT`, `EMAIL_USE_SSL`, `EMAIL_USE_TLS`, `PAYPAL_CLIENT_ID`, `PAYPAL_EMAIL`, `PAYPAL_MODE`, `PAYPAL_SECRET`, `PYSTORE_DATABASE_URL`, `SECRET_KEY`, `SITE_NAME`, `SITE_URL`, `STRIPE_PUBLIC_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `USE_SMTP_EMAIL`, `WERBUNG_CLOUDINARY_URL` |
+| Geteilte Werte | **Stripe (alle drei), PayPal Client/Secret, Brevo, SMTP-Zugang, Admin-Benutzer und -Passwort sind gleich wie in den toten Diensten `tutorials` und `pixvault`** (K7, hoch). `CLOUDINARY_URL` = Rümpelwerk; `WERBUNG_CLOUDINARY_URL` = WVM-IT/JARVIS (K6) |
+| Domains | luviq-alsfeld.com (301 → www), www.luviq-alsfeld.com (200) |
+
 ## Umgebungsvariablen
 
 Nur Namen. Werte stehen in Railway bzw. in der lokalen `.env` (nicht in Git).
