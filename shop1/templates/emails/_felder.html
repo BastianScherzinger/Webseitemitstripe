@@ -1,0 +1,8 @@
+{% comment %}Felder einer Anfrage als Tabelle; Werte autoescaped, Langtext mit linebreaksbr.{% endcomment %}<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin:0 0 8px;">
+{% for feld in felder %}  <tr>
+    <td class="lv-feld-b lv-leise" valign="top" style="width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E6E0D5;font-size:13px;color:#5E5850;">{{ feld.bezeichnung }}</td>
+    <td class="lv-feld-w" valign="top" style="padding:10px 0;border-bottom:1px solid #E6E0D5;font-size:15px;color:#0A0A0A;word-break:break-word;">{% if feld.typ == 'mail' %}<a href="mailto:{{ feld.wert }}" class="lv-link" style="color:#8A4A22;">{{ feld.wert }}</a>{% elif feld.typ == 'tel' %}<a href="tel:{{ feld.wert|cut:' ' }}" class="lv-link" style="color:#8A4A22;">{{ feld.wert }}</a>{% elif feld.typ == 'insta' %}<a href="https://www.instagram.com/{{ feld.wert|cut:'@' }}/" class="lv-link" style="color:#8A4A22;">{{ feld.wert }}</a>{% else %}{{ feld.wert }}{% endif %}</td>
+  </tr>
+{% endfor %}</table>
+{% if langtext_titel %}<p class="lv-leise" style="margin:22px 0 6px;font-size:13px;color:#5E5850;">{{ langtext_titel }}</p>
+<div class="lv-kasten" style="padding:16px 18px;background:#F2EEE6;border-left:2px solid #0A0A0A;font-size:15px;line-height:1.6;color:#0A0A0A;word-break:break-word;">{% if langtext %}{{ langtext|linebreaksbr }}{% else %}–{% endif %}</div>{% endif %}

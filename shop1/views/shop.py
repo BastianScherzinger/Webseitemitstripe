@@ -16,7 +16,7 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 
 from ..models import Produkt, Werbung, WerbungStat, KontaktAnfrage
-from .. import luviq_daten, spamschutz
+from .. import luviq_daten, mails, spamschutz
 from ..utils import send_brevo_email
 from ._helpers import zu_viele_anfragen
 
@@ -209,10 +209,16 @@ def kontakt(request):
             except DatabaseError:
                 _log.exception('Kontaktformular: Anfrage nicht gespeichert')
                 anfrage = None
+            felder = [('Name', safe_name), ('E-Mail', safe_email, 'mail'), ('Betreff', safe_betreff)]
             try:
                 # reply_to (MW21): „Antworten“ im Postfach der Betreiberin geht
                 # an den Anfragenden, nicht an die eigene Versandadresse.
-                send_brevo_email(subject, message, recipient, recipient_name="Shop Admin", text_content=message,
+                # HTML-Teil gestaltet (26.09.2026), Textteil unverändert.
+                subject, html, message = mails.anfrage_an_luisa(
+                    art='Kontaktanfrage', betreff=subject, felder=felder, text=message,
+                    antwort_an=safe_email, langtext_titel='Nachricht', langtext=nachricht,
+                    objekt=anfrage)
+                send_brevo_email(subject, html, recipient, recipient_name="Shop Admin", text_content=message,
                                  reply_to=safe_email)
             except Exception:
                 _log.exception('Kontaktformular: Mailversand nicht gestartet')
@@ -224,6 +230,12 @@ def kontakt(request):
                         KontaktAnfrage.objects.filter(pk=anfrage.pk).update(mail_gestartet=True)
                     except DatabaseError:
                         _log.exception('Kontaktformular: Versandvermerk nicht gespeichert')
+            # Eigene Kopie an die Webagentur (26.09.2026) – wirft nie, ändert
+            # nichts an Speichern, Mail an Luisa oder Antwort an den Besucher.
+            mails.betreiber_kopie(
+                art='Kontaktanfrage', name=safe_name, felder=felder, antwort_an=safe_email,
+                langtext_titel='Nachricht', langtext=nachricht, objekt=anfrage,
+                gespeichert=anfrage is not None, admin_mail=gestartet, schon=[recipient])
             if gestartet or anfrage is not None:
                 # Weiterleitung auf eine eigene Adresse statt einer Meldung auf
                 # derselben Seite (KV07): nur so ist ein abgeschicktes Formular

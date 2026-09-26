@@ -1,0 +1,67 @@
+{% comment %}
+Gemeinsame Grundlage aller Mails von Luviq Universe (shop1/mails.py).
+Tabellenlayout, höchstens 600 px, nur Inline-Styles; das <style> im Kopf
+trägt nur die Handy- und Dunkel-Ergänzung. Farben aus luviq.css:
+Grund #0A0A0A, Papier #F2EEE6, Akzent #C8763F (nur auf Schwarz, dort AA),
+Text #0A0A0A, leise #5E5850. Radius 0, keine Schatten, keine Bilder.
+{% endcomment %}<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>{{ titel }}</title>
+<style>
+  @media (max-width: 620px) {
+    .lv-rahmen { padding: 0 !important; }
+    .lv-innen { padding: 28px 20px !important; }
+    .lv-kopf { padding: 22px 20px !important; }
+    .lv-feld-b, .lv-feld-w { display: block !important; width: 100% !important; }
+    .lv-feld-b { padding-bottom: 2px !important; border-bottom: 0 !important; }
+  }
+  @media (prefers-color-scheme: dark) {
+    .lv-grund { background: #0A0A0A !important; }
+    .lv-karte { background: #131211 !important; border-color: #2A2826 !important; }
+    .lv-text, .lv-text td, .lv-text p, .lv-text h1, .lv-text h2 { color: #F2EEE6 !important; }
+    .lv-leise { color: #B3ADA3 !important; }
+    .lv-linie { border-color: #2A2826 !important; }
+    .lv-feld-b, .lv-feld-w { border-color: #2A2826 !important; }
+    .lv-kasten { background: #0A0A0A !important; border-color: #2A2826 !important; }
+    .lv-knopf { background: #F2EEE6 !important; color: #0A0A0A !important; }
+    .lv-link { color: #E0A77E !important; }
+  }
+</style>
+</head>
+<body class="lv-grund" style="margin:0;padding:0;background:#F2EEE6;-webkit-text-size-adjust:100%;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">{{ preheader }}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="lv-grund" style="background:#F2EEE6;">
+  <tr>
+    <td align="center" class="lv-rahmen" style="padding:32px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="lv-karte" style="width:100%;max-width:600px;background:#FBF9F5;border:1px solid #DDD6CA;">
+        <tr>
+          <td class="lv-kopf" style="background:#0A0A0A;padding:26px 36px;border-bottom:2px solid #C8763F;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:28px;line-height:1;color:#F2EEE6;letter-spacing:.5px;">{% block wortmarke %}Luviq{% endblock %}</td>
+                <td align="right" style="font-family:Consolas,'SFMono-Regular',Menlo,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C8763F;">{% block kopf_label %}{% endblock %}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="lv-innen lv-text" style="padding:36px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#0A0A0A;">
+            {% block inhalt %}{% endblock %}
+          </td>
+        </tr>
+        <tr>
+          <td class="lv-linie" style="padding:22px 36px;border-top:1px solid #DDD6CA;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;">
+            <p class="lv-leise" style="margin:0;color:#5E5850;">{% block fuss %}{{ marke }} · {{ impressum_zeile }}<br><a href="{{ impressum_url }}" class="lv-link" style="color:#8A4A22;">Impressum</a> · <a href="{{ live_url }}" class="lv-link" style="color:#8A4A22;">{{ domain }}</a>{% endblock %}</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

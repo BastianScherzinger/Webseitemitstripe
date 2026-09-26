@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 
+from .. import mails
 from ..forms import CustomUserCreationForm, UserProfileForm
 from ..models import UserProfile, Order
 from ._helpers import _is_admin, _sync_session_to_db, zu_viele_anfragen
@@ -65,6 +66,13 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            # Eigene Kopie an die Webagentur (26.09.2026): nur Benutzername und
+            # Adresse, kein Passwort, kein Bestätigungslink. Wirft nie.
+            mails.betreiber_kopie(
+                art='Registrierung', name=user.username,
+                felder=[('Benutzername', user.username), ('E-Mail', user.email, 'mail')],
+                objekt=user, admin_mail=None,
+                kunden_mail='Bestätigungslink an die Adresse angestoßen')
             try:
                 messages.success(
                     request,
