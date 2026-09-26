@@ -10,6 +10,11 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 26.09.2026 — Gestaltete Mails und Kopie an die Webagentur (Zweig `mail/2026-09-26-benachrichtigung`)
+
+- **Was:** Neue `shop1/mails.py` und Vorlagen `shop1/templates/emails/`; Kontakt- und Motivanfrage-Mail an Luisa, Konto- und Newsletter-Bestätigung bekommen einen gestalteten HTML-Teil (Textteil unverändert). Jede echte Kontakt- und Motivanfrage und jede Registrierung geht zusätzlich als eigene Mail an `BETREIBER_KOPIE_AN` (Vorgabe Bastian Scherzinger). **Warum:** Bastian betreut die Seite und soll sehen, ob und wo Anfragen eingehen; die alten Mails waren ungestaltet (Kontakt: Text als HTML).
+- Die Kopie hat ein eigenes `try/except` und kommt erst nach Spamschutz und Doppelsperre; die Bestellmails (`checkout.py`) und die Regel „nie an die eingetippte Adresse" sind unverändert. Doku: `doku/10-TECHNIK.md`, Abschnitt „E-Mail-Versand"; Tests: `test_mailversand`.
+
 ## 19.09.2026 — Umbau „Nachtausgabe" (Zweig `design/2026-09-b3-panorama`)
 
 **Was:** Neues Aussehen nach `Design\luviq\FINALER-BAUPLAN.md` (B3 + Hero H4 „Panorama"):

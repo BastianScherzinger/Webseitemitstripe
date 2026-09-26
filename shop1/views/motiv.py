@@ -24,10 +24,9 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import DatabaseError, transaction
 from django.shortcuts import redirect, render
-from django.utils.html import escape, linebreaks
 from django.views.decorators.cache import never_cache
 
-from .. import luviq_daten, spamschutz
+from .. import luviq_daten, mails, spamschutz
 from ..models import Motivanfrage
 from ..utils import send_brevo_email
 from ._helpers import zu_viele_anfragen
@@ -103,12 +102,24 @@ def _mail(anfrage):
     text += '\n'.join(f'{k}: {v}' for k, v in zeilen)
     text += '\n\nWas es bedeuten soll:\n' + (anfrage.bedeutung or '–')
     text += '\n\nAlle Anfragen stehen im Admin-Panel unter „Motivanfragen".'
-    html = ('<p>Neue Motivanfrage über luviq-alsfeld.com</p><table>'
-            + ''.join(f'<tr><td><b>{escape(k)}</b></td><td>{escape(v)}</td></tr>' for k, v in zeilen)
-            + '</table><p><b>Was es bedeuten soll:</b></p>'
-            + (linebreaks(escape(anfrage.bedeutung)) if anfrage.bedeutung else '<p>–</p>')
-            + '<p>Alle Anfragen stehen im Admin-Panel unter „Motivanfragen".</p>')
+    # HTML-Teil gestaltet (26.09.2026, shop1/mails.py), Textteil unverändert.
+    betreff, html, text = mails.anfrage_an_luisa(
+        art='Motivanfrage', betreff=betreff, felder=_felder(anfrage), text=text,
+        antwort_an=anfrage.email, langtext_titel='Was es bedeuten soll',
+        langtext=anfrage.bedeutung, objekt=anfrage if anfrage.pk else None,
+        hinweis='Alle Anfragen stehen im Admin-Panel unter „Motivanfragen".')
     return betreff, html, text
+
+
+def _felder(anfrage):
+    """Felder der Anfrage für die gestalteten Mails (Typ für Links)."""
+    return [
+        ('Richtung', anfrage.get_richtung_display()),
+        ('Teil', anfrage.get_teil_display()),
+        ('Wo', anfrage.get_platzierung_display()),
+        ('Instagram', f'@{anfrage.instagram}' if anfrage.instagram else '', 'insta'),
+        ('E-Mail', anfrage.email, 'mail'),
+    ]
 
 
 def _seite(request, werte=None, fehler=None, status=200):
@@ -185,6 +196,15 @@ def motiv_anfragen(request):
                 Motivanfrage.objects.filter(pk=anfrage.pk).update(mail_gestartet=True)
             except DatabaseError:
                 _log.exception('Motivanfrage: Versandvermerk nicht gespeichert')
+
+    # Eigene Kopie an die Webagentur (26.09.2026) – wirft nie, ändert nichts
+    # an Speichern oder der Mail an Luisa.
+    mails.betreiber_kopie(
+        art='Motivanfrage',
+        name=f'@{anfrage.instagram}' if anfrage.instagram else anfrage.email,
+        felder=_felder(anfrage), antwort_an=anfrage.email,
+        langtext_titel='Was es bedeuten soll', langtext=anfrage.bedeutung,
+        objekt=anfrage, gespeichert=gespeichert, admin_mail=gestartet, schon=[empfaenger()])
 
     if gestartet or gespeichert:
         return redirect('motiv_danke')

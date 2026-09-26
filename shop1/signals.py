@@ -74,21 +74,15 @@ def send_verification_email(user, profile):
     verification_url = f"{base_url}/verify/{profile.verification_token}/"
     subject = "Luviq Universe – Bitte bestätige deine E-Mail-Adresse"
 
-    # HTML Nachricht
-    html_content = f"""
-    <html>
-        <body>
-            <h2>Hallo,</h2>
-            <p>vielen Dank für deine Registrierung bei Luviq Universe!</p>
-            <p>Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Button klickst:</p>
-            <a href="{verification_url}"
-               style="background-color: #ff6a00; color: white; padding: 10px 20px;
-                      text-decoration: none; border-radius: 5px; display: inline-block;"
-               >E-Mail bestätigen</a>
-            <p>Oder kopiere diesen Link in deinen Browser:<br>{verification_url}</p>
-            <p>Viele Grüße,<br>Dein Luviq Universe Team</p>
-        </body>
-    </html>
-    """
-    
+    # Gestaltet seit 26.09.2026 (templates/emails/besucher.html) – weiter ohne
+    # Namen und ohne eingetippten Text.
+    from .mails import rendern
+    html_content = rendern(
+        'besucher.html', titel='Bitte bestätige deine E-Mail-Adresse', kopf_label='Konto',
+        preheader='Ein Klick, dann ist dein Konto bei Luviq Universe bestätigt.',
+        absaetze=['danke, dass du dich bei Luviq Universe registriert hast. Bitte bestätige '
+                  'deine E-Mail-Adresse mit einem Klick:'],
+        link=verification_url, knopf='E-Mail bestätigen',
+        nachsatz='Hast du dich nicht registriert? Dann ignoriere diese E-Mail einfach.')
+
     send_brevo_email(subject, html_content, user.email, recipient_name="", text_content=f"Bestätige deine E-Mail: {verification_url}")

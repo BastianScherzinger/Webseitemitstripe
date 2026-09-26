@@ -1,0 +1,20 @@
+{% extends 'emails/basis.html' %}
+{% comment %}
+Mail an Besucher ohne Formulartext (Konto bestätigen, Newsletter bestätigen).
+Kein Name, kein eingetippter Text: die Adresse hat noch niemand bestätigt
+(Lehre vom 17.09.2026). Keine Preise, kein Bestell-Wortlaut.
+{% endcomment %}
+{% block kopf_label %}{{ kopf_label }}{% endblock %}
+{% block inhalt %}
+<h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-style:italic;font-size:26px;line-height:1.25;color:#0A0A0A;">{{ titel }}</h1>
+<p style="margin:0 0 16px;">Hallo,</p>
+{% for absatz in absaetze %}<p style="margin:0 0 16px;">{{ absatz }}</p>
+{% endfor %}
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0;">
+  <tr><td class="lv-knopf" style="background:#0A0A0A;"><a href="{{ link }}" class="lv-knopf" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#F2EEE6;text-decoration:none;background:#0A0A0A;">{{ knopf }}</a></td></tr>
+</table>
+<p class="lv-leise" style="margin:0 0 16px;font-size:13px;color:#5E5850;">Falls der Knopf nicht geht, kopiere diesen Link in deinen Browser:<br><a href="{{ link }}" class="lv-link" style="color:#8A4A22;word-break:break-all;">{{ link }}</a></p>
+{% if nachsatz %}<p style="margin:0 0 16px;">{{ nachsatz }}</p>{% endif %}
+<p style="margin:24px 0 0;">Viele Grüße<br>Luisa</p>
+<p class="lv-leise" style="margin:22px 0 0;font-size:13px;color:#5E5850;">Fragen? Schreib mir an <a href="mailto:{{ kontakt_email }}" class="lv-link" style="color:#8A4A22;">{{ kontakt_email }}</a> oder auf Instagram <a href="{{ instagram_url }}" class="lv-link" style="color:#8A4A22;">@{{ instagram_name }}</a>.</p>
+{% endblock %}

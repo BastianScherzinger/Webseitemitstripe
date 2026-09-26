@@ -4,6 +4,7 @@ Kein Testmodul (Name beginnt nicht mit ``test``), wird nur importiert.
 """
 
 from decimal import Decimal
+from unittest import mock
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -40,6 +41,16 @@ class LuviqTestCase(TestCase):
     def _pre_setup(self):
         super()._pre_setup()
         cache.clear()
+        # 4. Die Kopie an die Webagentur (``shop1/mails.py``) geht über einen
+        #    eigenen Verweis auf ``send_brevo_email``; sie wird in jedem Test
+        #    ersetzt, damit kein Thread nachträglich in ``mail.outbox`` schreibt
+        #    und nie eine echte Mail hinausgeht. ``self.kopie_versand`` zählt.
+        self._kopie_patch = mock.patch('shop1.mails.send_brevo_email')
+        self.kopie_versand = self._kopie_patch.start()
+
+    def _post_teardown(self):
+        self._kopie_patch.stop()
+        super()._post_teardown()
 
     def hole(self, pfad, **kwargs):
         """GET über HTTPS – siehe Klassendokumentation, Punkt 1."""

@@ -1,0 +1,12 @@
+{% extends 'emails/basis.html' %}
+{% block kopf_label %}{{ art }}{% endblock %}
+{% block inhalt %}
+<h1 style="margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-style:italic;font-size:26px;line-height:1.25;color:#0A0A0A;">{{ titel }}</h1>
+<p class="lv-leise" style="margin:0 0 24px;font-size:13px;color:#5E5850;">über {{ domain }} · {{ zeitpunkt }}</p>
+{% include 'emails/_felder.html' %}
+{% if hinweis %}<p class="lv-leise" style="margin:18px 0 0;font-size:13px;color:#5E5850;">{{ hinweis }}</p>{% endif %}
+{% if antwort_an %}<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 0;">
+  <tr><td class="lv-knopf" style="background:#0A0A0A;"><a href="mailto:{{ antwort_an }}?subject={{ antwort_betreff|urlencode }}" class="lv-knopf" style="display:inline-block;padding:13px 26px;font-size:15px;font-weight:600;color:#F2EEE6;text-decoration:none;background:#0A0A0A;">Antworten</a></td></tr>
+</table>{% endif %}
+{% if admin_url %}<p style="margin:22px 0 0;font-size:14px;"><a href="{{ admin_url }}" class="lv-link" style="color:#8A4A22;">Eintrag in der Verwaltung öffnen</a></p>{% endif %}
+{% endblock %}
