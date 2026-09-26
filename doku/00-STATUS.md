@@ -52,7 +52,7 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–17.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 26.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-26a) — **Gesamtstand 84,6 von 100**, Reifegrad „Solide“. 329 von 373 Regeln an 15 URLs und 158 Dateien (33.517 Zeilen) geprüft.
+**Messung vom 26.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-26b) — **Gesamtstand 84,7 von 100**, Reifegrad „Solide“. 329 von 373 Regeln an 15 URLs und 158 Dateien (33.533 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
@@ -64,9 +64,9 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–17.09.2026).
 | Vorlagen-Konformität | **82** | Solide |
 | Recht & Vertrauen | **89** | Solide |
 | Barrierefreiheit | **91** | Referenz |
-| Code-Qualität & Projektreife | **92** | Referenz |
 | Performance & Core Web Vitals | **92** | Referenz |
 | Betrieb & Auslieferung | **93** | Referenz |
+| Code-Qualität & Projektreife | **93** | Referenz |
 | SEO — Technik | **96** | Referenz |
 | Sicherheit | **96** | Referenz |
 | Formulare & Preisrechner | **99** | Referenz |
