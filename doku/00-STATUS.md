@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-09-25
+stand: 2026-09-26
 status: teilweise
 fortschritt: 70
 zusammenfassung: 19.09.2026: Umbau „Nachtausgabe" gebaut (B3 + Hero H4, Markensatz, Motiv anfragen als Seite mit Modell, Archivnummern, Schriften selbst gehostet, Deko entfernt), 383 Tests grün; Bericht docs/design-2026-09-BERICHT.md. Verkauf bleibt aus.
@@ -52,21 +52,21 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–17.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 25.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-24c) — **Gesamtstand 84,1 von 100**, Reifegrad „Solide“. 330 von 372 Regeln an 15 URLs und 158 Dateien (33.501 Zeilen) geprüft.
+**Messung vom 26.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-26a) — **Gesamtstand 84,6 von 100**, Reifegrad „Solide“. 329 von 373 Regeln an 15 URLs und 158 Dateien (33.517 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
 | Substanz & Reichweite | **49** | Lückenhaft |
-| Konversion | **59** | Lückenhaft |
+| Konversion | **56** | Lückenhaft |
+| Erreichbarkeit & Postfach | **78** | Solide |
 | SEO — Inhalt | **79** | Solide |
-| Erreichbarkeit & Postfach | **79** | Solide |
-| GEO — KI-Sichtbarkeit | **79** | Solide |
-| Betrieb & Auslieferung | **80** | Solide |
+| GEO — KI-Sichtbarkeit | **81** | Solide |
 | Vorlagen-Konformität | **82** | Solide |
-| Recht & Vertrauen | **88** | Solide |
-| Code-Qualität & Projektreife | **89** | Solide |
+| Recht & Vertrauen | **89** | Solide |
 | Barrierefreiheit | **91** | Referenz |
+| Code-Qualität & Projektreife | **92** | Referenz |
 | Performance & Core Web Vitals | **92** | Referenz |
+| Betrieb & Auslieferung | **93** | Referenz |
 | SEO — Technik | **96** | Referenz |
 | Sicherheit | **96** | Referenz |
 | Formulare & Preisrechner | **99** | Referenz |
@@ -81,7 +81,6 @@ Kritische Befunde:
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
 - **Wissensinhalte vorhanden** (`SU04`) — 0 Wissensseiten, Zielgröße 3 — es gibt keinen einzigen Ratgeberbereich
 - **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 13 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /kontakt/, /datenschutz/, /gaestebuch/ … (+8)
-- **Eine eigene Sicherung außerhalb des Hosters ist frisch und geprüft** (`BT15`) — keine einzige eigene Sicherung; der letzte Versuch scheiterte: Docker läuft nicht — ohne pg_dump keine externe Sicherung
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
 - **Genug eigener Inhalt insgesamt** (`SU02`) — 3.847 Eigenwörter über 13 Seiten, Zielgröße 12.000 (von 5.591 Wörtern Gesamttext); die umfangreichsten Seiten: /datenschutz/ (555 W), /produkte/ (418 W), /ueber_uns/ (370 W)
