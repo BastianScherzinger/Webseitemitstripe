@@ -149,10 +149,8 @@ INHALTSSEITEN = [
     # und llms.txt – siehe NICHT_INDEXIERBARE_SEITEN.
     '/wissen/',
     '/wissen/pflege-handbemalte-kleidung/',
-    '/wissen/groesse-bei-einzelstuecken/',
-    # Freigegeben seit Paket 527 (SU04): keine unbestätigte Sachangabe (siehe
-    # Docstring in views/wissen.py) – anders als Pflege- und Grössenseite.
     '/wissen/upcycling-mode-second-hand-vintage/',
+    '/wissen/groesse-bei-einzelstuecken/',
     # Belegte Beiträge ohne Freigabevorbehalt (SU04): von Anfang an
     # indexierbar, weil sie nur wiedergeben, was AGB, Datenschutzerklärung,
     # Impressum, Liefergebiet und der Code des Bestellvorgangs belegen.

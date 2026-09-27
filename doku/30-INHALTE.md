@@ -1,10 +1,10 @@
 ---
 bereich: inhalte
 titel: Inhalte und Seitenbestand
-stand: 2026-09-27
+stand: 2026-09-19
 status: teilweise
 fortschritt: 40
-zusammenfassung: 27.09.2026 (Paket 527): Wissensbeitrag „Upcycling-Mode" (upcycling-mode-second-hand-vintage) auf freigegeben: True gesetzt — nennt keine unbestätigte Sachangabe, anders als Pflege- und Grössenbeitrag, deren gemeinsame Sperre organisatorisch war. Damit sind vier von sechs Wissensbeiträgen indexiert (drei davon nur mit VERKAUF_AKTIV). Davor, 19.09.2026: Texte der Startseite, „Luisa" und Motiv anfragen aus shop1/luviq_daten.py (Luisas Befragung); neue Seite /motiv-anfragen/ in Sitemap und llms.txt; /ueber_uns/ ohne Legende und ohne altes Foto.
+zusammenfassung: 19.09.2026: Texte der Startseite, „Luisa" und Motiv anfragen aus shop1/luviq_daten.py (Luisas Befragung); neue Seite /motiv-anfragen/ in Sitemap und llms.txt; /ueber_uns/ ohne Legende und ohne altes Foto.
 offen: 9
 quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/legal.py, shop1/tests/test_inhalt.py
 ---
@@ -40,7 +40,7 @@ Summe: **1.557 Eigenwörter** über 13 abgerufene Seiten (von 2.434 Wörtern Ges
 
 **Nicht in der Sitemap, aber erreichbar:** `/login/`, `/register/`, `/profil/`, `/warenkorb/`, `/checkout/`, `/payment/…`, `/verify/…`, `/password-reset/…`, `/delete-account/`, `/newsletter/subscribe/`, `/shop-admin/…` — alle per `robots.txt` gesperrt. `/produkt/<id>/` leitet auf die Slug-URL um (Altlink-Kompatibilität); `/produkt/` → 301 auf `/produkte/` (Zweig; live 404).
 
-**Zweig zusätzlich:** `/wissen/` (Übersicht) und sechs Beiträge. Von den drei ersten stehen Pflege und Grösse auf `freigegeben: False`, also `noindex, follow` und nicht in Sitemap und llms.txt, sind aber erreichbar und getestet; der Upcycling-Beitrag ist seit Paket 527 (`SU04`) `freigegeben: True`, weil er anders als die beiden anderen keine unbestätigte Sachangabe nennt. Die drei aus SU04 vom 07.09.2026 (Bestellen, Widerruf, Konto) sind ebenfalls `freigegeben: True` — sie geben ausschliesslich wieder, was an anderer Stelle dieser Seite belegt ist —, aber an `VERKAUF_AKTIV` gebunden und deshalb ohne Verkauf nicht sichtbar. Die Übersicht ist wegen des Upcycling-Beitrags indexierbar.
+**Zweig zusätzlich:** `/wissen/` (Übersicht) und sechs Beiträge. Die drei ersten stehen auf `freigegeben: False`, also `noindex, follow` und nicht in Sitemap und llms.txt, sind aber erreichbar und getestet; die drei aus SU04 (07.09.2026) sind `freigegeben: True` und damit indexiert — sie geben ausschliesslich wieder, was an anderer Stelle dieser Seite belegt ist, und brauchen keine Zuarbeit. Die Übersicht ist damit indexierbar.
 
 **Zweig `sofort/2026-09-11-kv07-und-2-weitere` zusätzlich (KV07, `2d78a55`, nicht gemergt):** `/kontakt/danke/` — Ziel nach dem Absenden des Kontaktformulars, auch direkt abrufbar, `noindex, follow`, weder in Sitemap noch in `llms.txt`. Titel „Nachricht abgeschickt – Luviq Universe", `h1` „Danke für deine Nachricht". Der Text nennt nur, was schon auf `kontakt.html` steht: die Nachricht geht an Luisa Brehler, geantwortet wird per E-Mail an die Adresse aus dem Formular, eine Telefonnummer gibt es nicht, `brehlerluisa@gmail.com` als zweiter Weg; dazu Verweise auf die drei freigegebenen Wissensbeiträge (Bestellen und Bezahlen, Widerruf und Rücksendung, Konto und Daten). **Keine Antwortzeit** — im Projekt steht keine. Die Seite sagt „abgeschickt", nicht „zugestellt", weil der Versand erst im Thread scheitern kann (`EIG10`). Sie steht nicht in `seiten_stand.py`, trägt deshalb kein `dateModified`, und zählt nicht zu `INHALTSSEITEN` (keine Wortzahl-Vorgabe).
 
@@ -65,7 +65,7 @@ deshalb mit `2026-09-18` statt `2026-09-01` — `lastmod` und `dateModified` der
 | URL (Zweig) | Titel (= h1) | Wörter | Index | Offene Sachangabe |
 |---|---|---:|---|---|
 | `/wissen/pflege-handbemalte-kleidung/` | Wie pflege ich handbemalte Kleidung? | 821 | nein | 30 °C, kein Trockner, kein Weichspüler, Bügeln nur von links |
-| `/wissen/upcycling-mode-second-hand-vintage/` | Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand? | 941 | **ja** (seit Paket 527) | keine — Begriffsklärung, einzige Zahl als Handelskonvention markiert |
+| `/wissen/upcycling-mode-second-hand-vintage/` | Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand? | 941 | nein | keine strittige Zahl; Auflage nennt alle drei |
 | `/wissen/groesse-bei-einzelstuecken/` | Wie finde ich bei Einzelstücken die richtige Größe? | 890 | nein | „fünf Zentimeter Unterschied in der Brustweite sind eine ganze Grösse" |
 | `/wissen/bestellen-und-bezahlen/` | Wie bestelle und bezahle ich bei Luviq Universe? | 1.129 | **ja** | keine — Belege: `cart.py`, `checkout.py`, `forms.py`, `agb.html` § 2/§ 4, `liefergebiet.html` |
 | `/wissen/widerruf-und-ruecksendung/` | Widerruf und Rücksendung: was gilt bei einem Einzelstück? | 1.034 | **ja** | keine — Belege: `agb.html` § 3/§ 4/§ 5, Impressum, Datenschutz; Rückporto und Rückzahlungsfrist stehen als offene Frage **im Text** |
@@ -192,7 +192,7 @@ von `/produkte/`: [20-DESIGN.md](20-DESIGN.md).
 
 | Was fehlt | Beleg (Messung 02.09.2026) | Regel |
 |---|---|---|
-| Ratgeber live — 0 Wissensseiten (im Zweig 6: vier indexiert — drei aus SU04 nur mit Verkauf —, zwei `noindex` bis Freigabe) | Zielgrösse 3 | SU04 (Paket 527: 1 von 3), SU07, VL11, VL12 |
+| Ratgeber live — 0 Wissensseiten (im Zweig 6: drei indexiert, drei `noindex` bis Freigabe) | Zielgrösse 3 | SU04 (Zweig erfüllt), SU07, VL11, VL12 |
 | Umfang: 13 statt 30 rankfähige Seiten; Startseite 390/700, Produktseiten 25/600 Wörter — **Umfang je Seitenart im Zweig** (11.09.2026, `2591fde`) für `/`, `/produkte/` und `/wissen/` aufgeholt, für die Produktseiten nicht | | SU01, IS18 (Zweig: 3 Seitenarten), IS17 |
 | Konkrete Zahlen auf `/`, `/datenschutz/`, `/agb/`, `/ueber_uns/`, `/liefergebiet/` (live) — **im Zweig ergänzt** (08.09.2026): Versandzeiten, PLZ, § 19, 14-Tage-Frist, Cookie-Laufzeit, Dedup-Fenster der Besuchszählung | 0 von 5 | GE25 (Zweig erfüllt) |
 | Eigene Beschreibung je Einzelstück — der Zusatz aus IS19 ist auf allen fünf Produktseiten wortgleich | Produktseiten 211 W, davon nichts über das einzelne Teil | SU06, IS18, IS21 |
@@ -206,7 +206,7 @@ von `/produkte/`: [20-DESIGN.md](20-DESIGN.md).
 
 ## Offen
 
-1. **Freigabe der zwei verbleibenden Wissensbeiträge** (Pflege, Grösse) durch die Betreiberin → `'freigegeben': True` (siehe [80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden). Der Upcycling-Beitrag ist seit Paket 527 freigegeben.
+1. **Freigabe der drei Wissensbeiträge** durch die Betreiberin → `'freigegeben': True` (siehe [80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden).
 2. Zweig mergen, damit die neuen Texte, Meta-Angaben und die Platzhalter-Korrektur auf `/kontakt/` live sind.
 3. Impressum aus der Sitemap nehmen **oder** `noindex` entfernen — heute widersprechen sich beide (SU11).
 4. Produktnamen im Shop-Admin eindeutig machen („Custom print hoodie" ×2) — Pflegeaufgabe der Betreiberin, oder `seo_titel` setzen.

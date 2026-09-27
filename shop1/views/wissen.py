@@ -33,20 +33,8 @@ Beiträgen: sie ist indexierbar, sobald mindestens ein Beitrag freigegeben ist
 – eine Übersicht, die nur auf ``noindex``-Seiten zeigt, wäre für
 Suchmaschinen eine leere Seite, und ihr Kurztext wiederholt die Pflegeangaben.
 
-Der dritte Beitrag der ursprünglichen Gruppe – Upcycling-Mode gegenüber
-Second Hand – steht seit Paket 527 (``SU04``) abweichend auf ``freigegeben``:
-Anders als Pflege- und Grössenseite nennt er keine unbestätigte Sachangabe.
-Er klärt Begriffe (Upcycling, Second Hand, Vintage) und verweist auf Pflege-
-und Grössenfragen, statt sie selbst zu beantworten; die einzige Zahl darin
-(„mindestens etwa 20 Jahre" für Vintage) ist ausdrücklich als Handelskonvention
-markiert, keine Zusage von Luviq Universe. Die eigene ``FAQPage`` vermerkt
-seit ihrer Anlage sogar selbst, dass sie „keine Marktzahlen, keine
-Umweltbilanz, keine Prozentangaben" nennt. Die gemeinsame Sperre der drei
-Beiträge war organisatorisch („die Auflage nennt alle drei Beiträge"), keine
-inhaltliche – sie betraf diesen Beitrag nie in der Sache.
-
 Die drei später hinzugekommenen Beiträge – Bestellen und Bezahlen, Widerruf
-und Rücksendung, Konto und Daten – stehen ebenfalls von Anfang an auf
+und Rücksendung, Konto und Daten – stehen dagegen von Anfang an auf
 ``freigegeben``: Sie geben ausschliesslich wieder, was an anderer Stelle
 dieser Seite belegt ist (AGB, Datenschutzerklärung, Impressum, Liefergebiet
 und das Verhalten von Warenkorb, Bestellvorgang und Anmeldung im Code). Sie
@@ -97,9 +85,8 @@ WISSEN_BEITRAEGE = {
         'titel': 'Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?',
         'kurz': 'Begriffsklärung Upcycling, Second Hand und Vintage, warum ein Einzelstück '
                 'nicht nachbestellbar ist und woran man Handbemalung von Druck unterscheidet.',
-        # Freigegeben seit Paket 527 (SU04): keine unbestätigte Sachangabe,
-        # siehe Docstring oben.
-        'freigegeben': True,
+        # Offen: keine strittige Zahl, aber die Auflage nennt alle drei Beiträge.
+        'freigegeben': False,
         'veroeffentlicht': '2026-09-01',
     },
     'groesse-bei-einzelstuecken': {
