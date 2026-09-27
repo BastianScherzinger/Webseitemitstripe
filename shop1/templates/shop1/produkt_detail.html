@@ -24,6 +24,7 @@
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  "@id": "{{ request.build_absolute_uri }}#breadcrumb",
   "itemListElement": [
     {# Die Namen muessen woertlich den sichtbaren Beschriftungen der Brotkrume weiter unten entsprechen ("Start", "Archiv") - ein Schema, das etwas anderes behauptet als die Seite, ist schlimmer als keines. #}
     {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
@@ -49,6 +50,7 @@
   "datePublished": "{{ produkt.erstellt_am|date:'c' }}"{% if verkauf_aktiv %},
   "offers": {
     "@type": "Offer",
+    "@id": "{{ request.build_absolute_uri }}#offer",
     "priceCurrency": "EUR",
     "price": "{{ produkt.preis|floatformat:2 }}",
     "availability": "{% if produkt.lagerbestand > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",

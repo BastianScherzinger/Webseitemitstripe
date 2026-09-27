@@ -18,6 +18,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  "@id": "{{ request.build_absolute_uri }}#breadcrumb",
   "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
     {"@type": "ListItem", "position": 2, "name": "Luisa", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}"}
