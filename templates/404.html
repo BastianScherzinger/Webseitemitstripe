@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% comment %}Eigene 404-Seite (TS20): ohne diese Vorlage antwortet Django bei
+DEBUG=False mit seiner eingebauten, sehr knappen Standardseite. Zeigt keine
+erfundene Angabe, nur einen Verweis zurück in die Seite.{% endcomment %}
+
+{% block title %}Seite nicht gefunden – Luviq Universe{% endblock %}
+{% block meta_description %}Diese Adresse gibt es bei Luviq Universe nicht (mehr). Weiter geht es im Archiv oder auf der Startseite.{% endblock %}
+{% block meta_robots %}noindex, follow{% endblock %}
+
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+
+{% block content %}
+<div class="lv-seite">
+    <section class="lv-danke" aria-labelledby="fehler-titel">
+        <p class="lv-nr">Fehler 404</p>
+        <h1 class="lv-serif" id="fehler-titel">Diese Seite gibt es nicht.</h1>
+        <p>Die Adresse ist falsch geschrieben, veraltet oder verweist auf ein Stück, das nicht mehr da ist. Im Archiv oder auf der Startseite findest du weiter, was es bei Luviq Universe gibt.</p>
+        <a class="lv-knopf" href="{% url 'home' %}">Zur Startseite <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </section>
+</div>
+{% endblock %}
