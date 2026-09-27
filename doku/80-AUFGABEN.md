@@ -132,7 +132,7 @@ Noch nicht begonnen — kein Code, kein Plan, kein Termin.
 | Formular | Pflichtfeld-Stern und `maxlength` an den übrigen Formularen (Newsletter auf `/`, Anmeldung, Registrierung, Checkout) — Paket 216 hat nur `/kontakt/` gekennzeichnet und begrenzt | `FO04`, `FO07` (Rest) |
 | GEO | `llms-full.txt`. ~~`speakable`, Antwort-zuerst-Baustein als Vorlagenteil, IndexNow~~ — seit 18.09.2026 im Zweig (`0b94d8e`, Paket 306, siehe „Erledigt" und „Offen" Nr. 0n); IndexNow meldet erst, wenn `INDEXNOW_KEY` gesetzt ist. Ob `VL09` die drei Bausteine anerkennt, zeigt erst die Messung | `GE31` (`VL09`, `PJ13`, `GE19` im Zweig) |
 | Konto | **`CustomUserCreationForm` speichert `land` leer statt „Deutschland"**, wenn das Feld bei der Registrierung leer bleibt: `.get('land', 'Deutschland')` in `shop1/forms.py` greift nur bei fehlendem Schlüssel, nicht bei `''`. Beim Schreiben von `KontoBausteineTest` aufgefallen (`LOGBUCH.md`, Paket 306), bewusst nicht angefasst | — |
-| Sitemap | Segmentierung in mehrere Klassen, Sitemap-Index, Bild-Erweiterung für alle Einträge | `VL07`, `TS19` |
+| Sitemap | Bild-Erweiterung für alle Einträge (heute nur bei 5 Produkten) — die Segmentierung in mehrere Klassen/Sitemap-Index (`VL07`) ist seit Paket 517 als bewusste Ausnahme im Bewertungsblock oben entschieden, keine offene Aufgabe mehr | `TS19` |
 | Bilder | Produktbilder aus Cloudinary mit `srcset` (der Zweig fasst nur die statischen Bilder an). Das Format ist seit Paket 267 im Zweig angegangen — Endung `.webp` über den Filter `cloud`, siehe „Erledigt" und „Offen" Nr. 0l | `PF16`, `VL15` (`PF15` im Zweig) |
 | Betrieb | `STRIPE_*`-Variablen in Railway entfernen — welche Namen dort genau stehen, ist nicht dokumentiert | — |
 
