@@ -98,7 +98,9 @@ Migrationen `0013` und `0014` legen `shop1_werbung`, `shop1_werbungstat` und `sh
 `Produkt.save()` generiert den Slug automatisch aus dem Namen (mit Kollisions-Suffix `-1`, `-2`, …) falls keiner gesetzt ist. Es existieren zwei URL-Routen: `produkt/<int:produkt_id>/` (Redirect auf Slug-URL, Altlink-Kompatibilität) und `produkt/<slug:slug>/` (kanonisch).
 
 ### E-Mail: zwei parallele Wege
-1. Standard-Django-`send_mail` über SMTP (Brevo-Relay), konfiguriert in `settings.py` (`USE_SMTP_EMAIL`/`DEBUG`-abhängig, Console-Backend im Dev-Modus).
+**Seit 27.09.2026 läuft aller Versand über Gmail-SMTP (`brehlerluisa@gmail.com`, App-Passwort in Railway `EMAIL_HOST_PASSWORD`, kein `BREVO_API_KEY` mehr gesetzt → Weg 2 fällt auf SMTP zurück).**
+
+1. Standard-Django-`send_mail` über SMTP (früher Brevo-Relay, jetzt smtp.gmail.com:587), konfiguriert in `settings.py` (`USE_SMTP_EMAIL`/`DEBUG`-abhängig, Console-Backend im Dev-Modus).
 2. `shop1/utils.py::send_brevo_email()` — direkter HTTP-Call an die Brevo-API (Bypass für von Railway blockierte SMTP-Ports), läuft asynchron in einem `threading.Thread`. Für Bestell- und Benachrichtigungs-Mails wird dieser Weg bevorzugt.
 
 Gestaltung (Vorlagen `shop1/templates/emails/`) und die **Kopie jeder echten Anfrage an die Webagentur** (`BETREIBER_KOPIE_AN`, eigene Mail, wirft nie) stehen in `shop1/mails.py`; `LuviqTestCase` ersetzt den Versand der Kopie in jedem Test. Übersicht: `doku/10-TECHNIK.md`, Abschnitt „E-Mail-Versand".

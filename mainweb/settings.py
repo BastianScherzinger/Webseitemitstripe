@@ -269,7 +269,9 @@ USE_SMTP_EMAIL = os.getenv('USE_SMTP_EMAIL', 'False') == 'True'
 
 if USE_SMTP_EMAIL or not DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp-relay.brevo.com')
+    # Seit 27.09.2026 Gmail (Postfach von Luisa, App-Passwort in Railway) statt
+    # Brevo. Ohne BREVO_API_KEY geht send_brevo_email() diesen SMTP-Weg.
+    EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
     EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
     EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
     EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
