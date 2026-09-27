@@ -18,19 +18,19 @@ Modul wird bei jedem Request aus dem Kontextprozessor gelesen.
 
 #: Routenname → Datum der letzten inhaltlichen Änderung (ISO 8601).
 SEITEN_STAND = {
-    'home':         '2026-09-19',
+    'home':         '2026-09-27',
     'produkte':     '2026-09-19',
     'gaestebuch':   '2026-09-19',
     'ueber_uns':    '2026-09-19',
     'liefergebiet': '2026-09-18',
-    'kontakt':      '2026-09-19',
+    'kontakt':      '2026-09-27',
     'impressum':    '2026-09-18',
-    'datenschutz':  '2026-09-19',
+    'datenschutz':  '2026-09-27',
     'agb':          '2026-09-18',
     # IS19 (27.09.2026): Erklärsätze der Stationen, Dauer, Bestätigungshinweis.
     'motiv_anfragen': '2026-09-27',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
-    'wissen':           '2026-09-18',
+    'wissen':           '2026-09-27',
     'wissen_pflege':    '2026-09-18',
     'wissen_upcycling': '2026-09-18',
     'wissen_groesse':   '2026-09-18',
@@ -38,7 +38,7 @@ SEITEN_STAND = {
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
     'wissen_bestellen': '2026-09-17',
     'wissen_widerruf':  '2026-09-17',
-    'wissen_konto':     '2026-09-17',
+    'wissen_konto':     '2026-09-27',
 }
 
 #: Routenname → Bezeichnung der Seite, wörtlich so, wie sie in der Navigation
