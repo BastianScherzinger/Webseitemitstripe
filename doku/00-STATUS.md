@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-09-26
+stand: 2026-09-27
 status: teilweise
 fortschritt: 70
 zusammenfassung: 19.09.2026: Umbau „Nachtausgabe" gebaut (B3 + Hero H4, Markensatz, Motiv anfragen als Seite mit Modell, Archivnummern, Schriften selbst gehostet, Deko entfernt), 383 Tests grün; Bericht docs/design-2026-09-BERICHT.md. Verkauf bleibt aus.
@@ -52,28 +52,28 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–17.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 26.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-26b) — **Gesamtstand 84,7 von 100**, Reifegrad „Solide“. 329 von 373 Regeln an 15 URLs und 158 Dateien (33.533 Zeilen) geprüft.
+**Messung vom 27.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-27a) — **Gesamtstand 83,6 von 100**, Reifegrad „Solide“. 331 von 373 Regeln an 15 URLs und 163 Dateien (34.181 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Substanz & Reichweite | **49** | Lückenhaft |
-| Konversion | **56** | Lückenhaft |
-| Erreichbarkeit & Postfach | **78** | Solide |
-| SEO — Inhalt | **79** | Solide |
-| GEO — KI-Sichtbarkeit | **81** | Solide |
-| Vorlagen-Konformität | **82** | Solide |
+| Substanz & Reichweite | **39** | Rohbau |
+| Konversion | **54** | Lückenhaft |
+| GEO — KI-Sichtbarkeit | **78** | Solide |
+| SEO — Inhalt | **78** | Solide |
+| Erreichbarkeit & Postfach | **79** | Solide |
+| Vorlagen-Konformität | **85** | Solide |
+| Code-Qualität & Projektreife | **89** | Solide |
 | Recht & Vertrauen | **89** | Solide |
 | Barrierefreiheit | **91** | Referenz |
 | Performance & Core Web Vitals | **92** | Referenz |
 | Betrieb & Auslieferung | **93** | Referenz |
-| Code-Qualität & Projektreife | **93** | Referenz |
 | SEO — Technik | **96** | Referenz |
 | Sicherheit | **96** | Referenz |
 | Formulare & Preisrechner | **99** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 158 Dateien, **89 Befunde**, davon 0 kritisch und 27 wichtig.
+Quelltext: 163 Dateien, **73 Befunde**, davon 1 kritisch und 27 wichtig.
 
 Kritische Befunde:
 
