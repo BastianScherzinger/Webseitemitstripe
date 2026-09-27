@@ -318,6 +318,7 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | RE10 | nicht anwendbar | Kein Onlinegeschäft: Verkauf abgeschaltet (VERKAUF_AKTIV aus), kein Gewerbe angemeldet – ohne Verkauf keine AGB | 2026-09-24 |
 | GE21 | nicht anwendbar | Luviq ist ein bundesweit versendender Online-Shop ohne Einzugsgebiet; areaServed misst ein Merkmal lokaler Dienstleister. Fuer GE20 (Oeffnungszeiten) ist aus demselben Grund (kein Ladengeschaeft) bereits eine nicht_anwendbar-Ausnahme gesetzt, GE21 folgt derselben Logik. | 2026-09-26 |
 | PJ16 | beim Kunden | Der lokale Zweig `main` liegt einen Commit hinter GitHub (`78bdd60`, Doku zur Railway-Inventur vom 26.09.2026). Ungepushte Commits gibt es keine, also hilft Pushen nicht. Bastian muss auf `main` ein `git pull` ausführen, und Zweigwechsel und Pull sind diesem Lauf untersagt. | 2026-09-26 |
+| TS06 | bewusst so | `/agb/` trägt `noindex` nur, solange kein Verkauf stattfindet (`shop1/templates/shop1/legal/agb.html:5`, `verkauf_aktiv`) – ohne Verkauf gelten die AGB noch nicht, und eine indexierte Seite mit nicht geltenden Vertragsbedingungen wäre irreführend; die Seite steht deshalb auch nicht in der Sitemap (`shop1/views/legal.py:390`), aus demselben Grund wie `RE10`/`KV10`/`GE40` in diesem Block. Der Schalter dreht sich mit `verkauf_aktiv()` automatisch auf `index, follow`, sobald Verkauf beginnt – dann braucht es keine Codeänderung. | 2026-09-27 |
 <!-- bewertung:ende -->
 
 ## Eigene Punkte
