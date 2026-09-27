@@ -27,8 +27,8 @@ SEITEN_STAND = {
     'impressum':    '2026-09-18',
     'datenschutz':  '2026-09-19',
     'agb':          '2026-09-18',
-    # Umbau „Nachtausgabe" (19.09.2026): neue Seite Motiv anfragen.
-    'motiv_anfragen': '2026-09-19',
+    # IS19 (27.09.2026): Erklärsätze der Stationen, Dauer, Bestätigungshinweis.
+    'motiv_anfragen': '2026-09-27',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
     'wissen':           '2026-09-18',
     'wissen_pflege':    '2026-09-18',

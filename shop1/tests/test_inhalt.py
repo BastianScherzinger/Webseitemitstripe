@@ -133,13 +133,21 @@ UMFANG_PRODUKT_SEITE = '/produkt/bemalte-bomberjacke/'
 #: aus": ``/`` 658 (vorher 660), ``/produkte/`` 381 (385), ``/wissen/`` 554
 #: (895; die Seite ist ohne Verkauf ``noindex``, weil keiner ihrer
 #: Beiträge freigegeben ist), Grösse 859 (870, ebenfalls ``noindex``).
+#:
+#: IS19 (2026-09-27): ``/motiv-anfragen/`` stand mit 123 Wörtern unter der
+#: Zielgrösse 200 – die vier Stationen tragen jetzt einen Erklärsatz statt
+#: nur ihres Namens (``luviq_daten.ANFRAGE_STATIONEN``, dieselben Fakten wie
+#: ``ANFRAGE_ABLAUF`` und ``SCHRITTE``), dazu die Dauer aus ``luviq_daten.DAUER``
+#: (schon auf ``/`` verwendet) und der Hinweis auf die persönliche statt
+#: automatische Bestätigung (schon auf ``/motiv-anfragen/danke/``). Gemessen:
+#: 213 Wörter.
 MINDESTWOERTER = {
     # Umbau „Nachtausgabe" (19.09.2026): die Startseite folgt der knappen
     # Vorlage (Markensatz, Anfrage, fünf Schritte, Archiv, Luisa, Warteliste);
     # die langen Erklärabsätze stehen auf Archiv und Luisa. Bewusst gesenkt,
     # begründet im LOGBUCH.
     '/': 300,
-    '/motiv-anfragen/': 100,
+    '/motiv-anfragen/': 200,
     '/produkte/': 380,
     '/kontakt/': 235,
     '/ueber_uns/': 370,

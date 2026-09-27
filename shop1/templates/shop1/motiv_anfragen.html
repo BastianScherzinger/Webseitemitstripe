@@ -36,9 +36,9 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
             <p class="lv-lead">Gerade nehme ich in Alsfeld keine neuen Motivanfragen an. Trag dich auf der Startseite in die Warteliste ein, dann erfährst du als Erstes, wann es wieder geht.</p>
             <p><a class="lv-knopf" href="{% url 'home' %}#warteliste">Zur Warteliste</a></p>
             {% else %}
-            <p class="lv-lead">Beschreib mir kurz, was dir vorschwebt. Ich bin Luisa aus Alsfeld, ich schick dir Vorschläge, und wir entscheiden zusammen. Das kostet nichts und ist keine Bestellung.</p>
+            <p class="lv-lead">Beschreib mir kurz, was dir vorschwebt. Ich bin Luisa aus Alsfeld, ich schick dir Vorschläge, und wir entscheiden zusammen. Das kostet nichts und ist keine Bestellung. Jedes Stück ist ein handbemaltes Einzelstück, kein zweites entsteht genauso. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.</p>
             <ol class="lv-stationen" aria-label="So geht es weiter">
-                {% for station in stationen %}<li><span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span>{{ station }}</li>{% endfor %}
+                {% for titel, beschreibung in stationen %}<li><span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span>{{ titel }} — {{ beschreibung }}</li>{% endfor %}
             </ol>
             {% endif %}
         </div>
@@ -89,7 +89,7 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
             </div>
             <input type="hidden" name="formzeit" value="{{ formzeit }}">
 
-            <p class="lv-klein">Eins von beiden reicht. Deine Angaben nutze ich nur für die Antwort auf deine Anfrage. <a href="{% url 'datenschutz' %}">Datenschutz</a></p>
+            <p class="lv-klein">Eins von beiden reicht. Deine Angaben nutze ich nur für die Antwort auf deine Anfrage. Eine automatische Bestätigung schicke ich bewusst nicht, ich melde mich persönlich bei dir. <a href="{% url 'datenschutz' %}">Datenschutz</a></p>
             <button class="lv-knopf" type="submit">Anfrage schicken <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </form>
         {% endif %}

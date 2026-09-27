@@ -168,8 +168,15 @@ ANFRAGE_ABLAUF = [
     ('Wir entscheiden zusammen', 'Erst wenn es passt, fange ich an.'),
 ]
 
-#: Die vier Stationen auf der Seite /motiv-anfragen/.
-ANFRAGE_STATIONEN = ['Anfrage', 'Vorschläge', 'Entscheidung', 'Malen']
+#: Die vier Stationen auf der Seite /motiv-anfragen/, mit Erklärsatz je
+#: Station (IS19, 2026-09-27) – dieselben Fakten wie ANFRAGE_ABLAUF und
+#: SCHRITTE, nur auf vier Stationen statt drei bzw. fünf verteilt.
+ANFRAGE_STATIONEN = [
+    ('Anfrage', 'Du beschreibst dein Motiv: Richtung, Teil und was es dir bedeutet.'),
+    ('Vorschläge', 'Ich schick dir Vorschläge, per Instagram oder Mail, persönlich von mir.'),
+    ('Entscheidung', 'Wir entscheiden zusammen. Erst wenn es passt, fange ich an.'),
+    ('Malen', 'Ich zeichne dein Motiv vor, trage die Bleiche mit dem Pinsel auf, wasche und fotografiere dein fertiges Stück.'),
+]
 
 # ── Entstehung ───────────────────────────────────────────────────────────────
 
