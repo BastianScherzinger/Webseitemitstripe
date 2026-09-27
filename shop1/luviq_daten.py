@@ -19,9 +19,9 @@ MARKENSATZ = 'Sag mir, was du willst — ich mal’s dir.'
 
 #: Erster Absatz nach der Überschrift. Nennt den Ort, weil Antwortmaschinen
 #: den ersten Absatz zitieren (test_inhalt: Anbieter oder Ort im ersten Absatz).
-LEAD = ('Ich bemale in Alsfeld Second-Hand-Teile von Hand, mit Bleiche und Pinsel. '
-        'Du sagst mir, was drauf soll, ich schick dir Vorschläge, und dann entsteht '
-        'dein Stück. Jedes Motiv gibt es genau einmal.')
+LEAD = ('Ich bemale in Alsfeld Second-Hand-Teile von Hand, mit Bleiche und Pinsel, meist '
+        'in 2 bis 5 Tagen. Du sagst mir, was drauf soll, ich schick dir Vorschläge, und '
+        'dann entsteht dein Stück. Jedes Motiv gibt es genau einmal.')
 
 #: Erfahrungswert von Luisa, **nie als Zusage** schreiben („meistens").
 DAUER = '2 bis 5 Tage'
