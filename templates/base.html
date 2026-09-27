@@ -77,10 +77,22 @@
             "addressRegion": "Hessen",
             "addressCountry": "DE"
           },
-          "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 50.7517,
-            "longitude": 9.2685
+          {% comment %}geo gehoert nach schema.org nicht direkt an Organization, sondern an einen Place-Knoten - deshalb ueber location eingehaengt, unabhaengig vom Verkaufsschalter gueltig.{% endcomment %}
+          "location": {
+            "@type": "Place",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Grünberger Str. 16",
+              "addressLocality": "Alsfeld",
+              "postalCode": "36304",
+              "addressRegion": "Hessen",
+              "addressCountry": "DE"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 50.7517,
+              "longitude": 9.2685
+            }
           },
 {% if verkauf_aktiv %}
           "areaServed": [
