@@ -464,4 +464,5 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | EIG137 | Sieben unterschiedliche Seiten teilen denselben Open-Graph-Titel und dieselbe Beschreibung | seo | offen | bei einer anderen betreuten Seite aufgefallen am 26.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-26 |
 | EIG138 | Zwei Prüfstand-Regeln zählen Beträge, die keine Preise des Betriebs sind, und sagen es nicht | technik | offen | bei einer anderen betreuten Seite aufgefallen am 27.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-27 |
 | EIG139 | Die Doku führt gebaute Änderungen als „nicht auf main, nicht live“, obwohl der Code auf `main` liegt | status | offen | bei einer anderen betreuten Seite aufgefallen am 27.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-27 |
+| EIG140 | Der Hinweis unter jedem Formular sagt „keine Weitergabe", obwohl jede Anfrage weitergeht | inhalte | offen | bei einer anderen betreuten Seite aufgefallen am 27.09.2026. **An dieser Seite noch nicht geprüft.** | 2026-09-27 |
 <!-- eigenepunkte:ende -->
