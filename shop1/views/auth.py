@@ -8,6 +8,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.views.decorators.debug import sensitive_post_parameters
 
 from .. import mails
 from ..forms import CustomUserCreationForm, UserProfileForm
@@ -17,6 +18,7 @@ from ._helpers import _is_admin, _sync_session_to_db, zu_viele_anfragen
 _log = logging.getLogger('shop1')
 
 
+@sensitive_post_parameters()
 def login(request):
     """Anmeldung; übernimmt den Sitzungs-Warenkorb ins Konto (``_sync_session_to_db``)."""
     if request.method == 'POST':
@@ -53,6 +55,7 @@ def logout(request):
 # offen-ok: die Registrierung muss offen sein – wer sich anmelden soll, ist
 # noch nicht angemeldet. Geschrieben wird nur, was das geprüfte Formular
 # durchlässt (CustomUserCreationForm), und django-axes begrenzt die Versuche.
+@sensitive_post_parameters()
 def register(request):
     """Registrierung; die Bestätigungsmail verschickt das Signal in ``signals.py``."""
     if request.method == 'POST':
@@ -197,6 +200,7 @@ def profil(request):
 
 
 @login_required(login_url='login')
+@sensitive_post_parameters()
 def change_password(request):
     """View zum Ändern des Passworts."""
     if request.method == 'POST':

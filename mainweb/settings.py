@@ -453,9 +453,16 @@ if not DEBUG and os.getenv('ADMIN_EMAIL'):
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        # Haelt eine sich wiederholende Ausnahme davon ab, das Postfach zu
+        # fluten (dasselbe Muster wie die einmal schon gestoppte Mail-Flut der
+        # Besuchszaehlung, siehe LOGBUCH.md 13.07.2026).
+        'fehlermail_drossel': {'()': 'shop1.logging_filters.FehlermailDrossel'},
+    },
     'handlers': {
         'console': {'class': 'logging.StreamHandler'},
-        'mail_admins': {'level': 'ERROR', 'class': 'django.utils.log.AdminEmailHandler'},
+        'mail_admins': {'level': 'ERROR', 'filters': ['fehlermail_drossel'],
+                        'class': 'django.utils.log.AdminEmailHandler'},
     },
     'loggers': {
         'shop1': {'handlers': ['console'], 'level': 'INFO', 'propagate': True},
