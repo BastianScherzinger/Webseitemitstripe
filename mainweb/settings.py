@@ -441,13 +441,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ═══ GOOGLE MAPS ═══
 GOOGLE_REVIEW_URL = os.getenv('GOOGLE_REVIEW_URL', 'https://www.google.com/maps/search/Luviq+Universe+Alsfeld')
 
+# ═══ FEHLER-MONITORING (VL19) ═══
+# Kein Sentry o.ä. (neue Abhaengigkeit, in diesem Lauf verboten) - stattdessen
+# Djangos eigener AdminEmailHandler: bei DEBUG=False und gesetzter ADMIN_EMAIL
+# geht jeder serverseitige Fehler (500) als Mail an die Betreiberin, ueber den
+# ohnehin konfigurierten Mailweg.
+if not DEBUG and os.getenv('ADMIN_EMAIL'):
+    ADMINS = [('Luviq Universe', os.getenv('ADMIN_EMAIL'))]
+    SERVER_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@luviq-alsfeld.com')
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
         'console': {'class': 'logging.StreamHandler'},
+        'mail_admins': {'level': 'ERROR', 'class': 'django.utils.log.AdminEmailHandler'},
     },
     'loggers': {
         'shop1': {'handlers': ['console'], 'level': 'INFO', 'propagate': True},
+        'django.request': {'handlers': ['console', 'mail_admins'], 'level': 'ERROR', 'propagate': False},
     },
 }
