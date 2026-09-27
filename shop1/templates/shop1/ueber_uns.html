@@ -18,6 +18,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  "@id": "{{ request.build_absolute_uri }}#breadcrumb",
   "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
     {"@type": "ListItem", "position": 2, "name": "Luisa", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}"}
@@ -33,6 +34,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
   "@graph": [
     {
       "@type": "AboutPage",
+      "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}#aboutpage",
       "name": "Luisa Brehler – Luviq Universe",
       "description": "Luisa Brehler bemalt in Alsfeld Second-Hand-Kleidung von Hand, mit Bleiche und Pinsel; jedes Motiv gibt es genau einmal.",
       "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}",
