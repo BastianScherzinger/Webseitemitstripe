@@ -296,6 +296,20 @@ und wird von `pruefe_links` daher nicht abgerufen (`_MD_LINK`). Kein
 
 ## E-Mail-Versand
 
+**Stand 27.09.2026 — Versand über Gmail statt Brevo.** Alle Mails gehen per SMTP über
+Luisas Postfach `brehlerluisa@gmail.com` (`smtp.gmail.com:587`, STARTTLS). Railway
+(webseiten/shop/Luviq-Luisa): `EMAIL_HOST=smtp.gmail.com`, `EMAIL_PORT=587`,
+`EMAIL_HOST_USER` = `DEFAULT_FROM_EMAIL` = `brehlerluisa@gmail.com`, `EMAIL_HOST_PASSWORD` =
+Google-App-Passwort (nur in Railway, von Bastian eingetragen), **`BREVO_API_KEY` entfernt** →
+`send_brevo_email()` nimmt den SMTP-Zweig (der Funktionsname bleibt). Gmail verschickt nur von
+der eigenen Adresse, deshalb ist der Absender dieselbe Adresse wie die Anmeldung.
+Vorgeschichte: Der alte Brevo-Schlüssel gehörte einem fremden Brevo-Konto mit IP-Sperre (401
+„unrecognised IP“ seit mindestens 17.09.; keine echte Anfrage verloren, alle in `KontaktAnfrage`/
+`Motivanfrage` gespeichert), am 27.09. kurz Brevo-Konto …69, dann Gmail. Texte auf Startseite,
+Kontakt, Datenschutz und Wissen nennen Gmail (Google Ireland) statt Brevo; `DatenschutzTest`
+hält das. Offen: `pruefe_mail` spricht in Meldungen noch von Brevo (prüft den SMTP-Weg aber
+richtig). Vergleich aller Seiten: `pystore-overview/docs/MAILVERSAND.md`.
+
 Stand 26.09.2026, Zweig `mail/2026-09-26-benachrichtigung` (nicht gemergt).
 Alle Mails laufen über `shop1/utils.py::send_brevo_email` (Brevo-API, ohne
 `BREVO_API_KEY` SMTP mit `EmailMultiAlternatives`), jede mit Text- **und**
