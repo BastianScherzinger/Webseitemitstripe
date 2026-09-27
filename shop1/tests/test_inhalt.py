@@ -315,7 +315,7 @@ class DatenschutzTest(LuviqTestCase):
         Seit der cookielosen Zählung geht keine Besucher-IP mehr an ip-api.com."""
         text = sichtbarer_text(self.hole('/datenschutz/').content.decode())
         for dienst in ('Cloudinary', 'jsDelivr',
-                       'Google Maps', 'Brevo', 'PayPal', 'Railway'):
+                       'Google Maps', 'Gmail', 'PayPal', 'Railway'):
             with self.subTest(dienst=dienst):
                 self.assertIn(dienst, text)
 
@@ -325,6 +325,8 @@ class DatenschutzTest(LuviqTestCase):
         text = sichtbarer_text(self.hole('/datenschutz/').content.decode())
         self.assertNotIn('Supabase', text)
         self.assertNotIn('ip-api.com', text)
+        # Seit dem 27.09.2026 verschickt die Seite über Gmail statt Brevo.
+        self.assertNotIn('Brevo', text)
         # Seit dem Umbau „Nachtausgabe" (19.09.2026) sind die Schriften selbst
         # gehostet; Google Fonts wird nicht mehr geladen.
         self.assertNotIn('Google Fonts', text)

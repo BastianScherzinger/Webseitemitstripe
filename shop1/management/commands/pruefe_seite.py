@@ -217,8 +217,9 @@ class Command(BaseCommand):
             'ADMIN_PASSWORD': 'ohne sie legt start.sh keinen Superuser an',
         }
         empfohlen = {
-            'BREVO_API_KEY': 'ohne ihn wird keine Bestell- oder '
-                             'Kontaktmail zugestellt',
+            # Seit 27.09.2026 Gmail-SMTP statt Brevo-API (doku/10-TECHNIK.md).
+            'EMAIL_HOST_PASSWORD': 'ohne das Gmail-App-Passwort wird keine '
+                                   'Bestell- oder Kontaktmail zugestellt',
             'CLOUDINARY_URL': 'ohne ihn liegen hochgeladene Produktbilder im '
                               'Container und sind nach dem naechsten Deploy weg',
             'DEFAULT_FROM_EMAIL': 'ohne ihn verschickt der Shop als '
