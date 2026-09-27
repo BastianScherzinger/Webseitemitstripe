@@ -39,10 +39,11 @@
 {
   "@context": "https://schema.org",
   "@type": "Product",
+  "@id": "{{ request.build_absolute_uri }}#product",
   "name": "{{ produkt.name|escapejs }}",
   "description": "{{ produkt.beschreibung|escapejs }}",{% if produkt.bild %}
   "image": "{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}",{% endif %}
-  "brand": {"@type": "Brand", "name": "Luviq Universe"},
+  "brand": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
   "sku": "LUVIQ-{{ produkt.id }}",
   "dateModified": "{{ produkt.aktualisiert_am|date:'c' }}",
   "datePublished": "{{ produkt.erstellt_am|date:'c' }}"{% if verkauf_aktiv %},
@@ -52,7 +53,7 @@
     "price": "{{ produkt.preis|floatformat:2 }}",
     "availability": "{% if produkt.lagerbestand > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
     "itemCondition": "https://schema.org/UsedCondition",
-    "seller": {"@type": "Organization", "name": "Luviq Universe"},
+    "seller": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
     "url": "{{ request.build_absolute_uri }}"
   }{% endif %}
 }

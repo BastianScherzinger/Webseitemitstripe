@@ -29,6 +29,7 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
 {
   "@context": "https://schema.org",
   "@type": "ItemList",
+  "@id": "{{ request.scheme }}://{{ request.get_host }}/#archiv",
   "name": "{% if verkauf_aktiv %}Aktuelle Unikate – Luviq Universe Alsfeld{% else %}Bisherige Unikate – Archiv von Luviq Universe Alsfeld{% endif %}",
   "description": "{% if verkauf_aktiv %}Handbemalte 1-of-1 Upcycling-Mode aus Alsfeld, Hessen – exklusive Einzelstücke.{% else %}Handbemalte 1-of-1 Upcycling-Mode aus Alsfeld, Hessen – bisherige Einzelstücke, bereits vergeben.{% endif %}",
   "url": "{{ request.scheme }}://{{ request.get_host }}/",

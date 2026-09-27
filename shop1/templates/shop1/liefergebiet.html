@@ -28,6 +28,7 @@
   "@graph": [
     {
       "@type": "FAQPage",
+      "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'liefergebiet' %}#faq",
       "mainEntity": [
         {
           "@type": "Question",

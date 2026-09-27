@@ -33,6 +33,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
   "@graph": [
     {
       "@type": "AboutPage",
+      "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}#aboutpage",
       "name": "Luisa Brehler – Luviq Universe",
       "description": "Luisa Brehler bemalt in Alsfeld Second-Hand-Kleidung von Hand, mit Bleiche und Pinsel; jedes Motiv gibt es genau einmal.",
       "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}",

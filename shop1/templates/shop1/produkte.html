@@ -24,20 +24,18 @@
 {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
+  "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}#collection",
   "name": "{% if verkauf_aktiv %}Luviq Universe – Vintage Upcycling Mode Kollektion{% else %}Luviq Universe – Archiv der bisherigen Stücke{% endif %}",
   "description": "{% if verkauf_aktiv %}Handbemalte 1-of-1 Vintage-Unikate. Nachhaltige Upcycling-Mode aus Deutschland.{% else %}Bisherige handbemalte 1-of-1 Vintage-Unikate, bereits vergeben. Upcycling-Mode aus Alsfeld, Hessen.{% endif %}",
   "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}",
-  "provider": {
-    "@type": "Organization",
-    "name": "Luviq Universe",
-    "url": "{{ request.scheme }}://{{ request.get_host }}/"
-  },
+  "provider": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
   "hasPart": [{% for p in produkte_liste %}
     {
       "@type": "Product",
+      "@id": "{{ request.scheme }}://{{ request.get_host }}{{ p.get_absolute_url }}#product",
       "name": "{{ p.name|escapejs }}",
       "url": "{{ request.scheme }}://{{ request.get_host }}{{ p.get_absolute_url }}",
-      "brand": {"@type": "Brand", "name": "Luviq Universe"}{% if verkauf_aktiv %},
+      "brand": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}{% if verkauf_aktiv %},
       "offers": {
         "@type": "Offer",
         "price": "{{ p.preis|floatformat:2 }}",

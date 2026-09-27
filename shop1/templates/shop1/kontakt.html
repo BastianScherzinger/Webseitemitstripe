@@ -26,6 +26,7 @@
   "@graph": [
     {
       "@type": "ContactPage",
+      "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'kontakt' %}#contactpage",
       "name": "Kontakt – Luviq Universe",
       "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'kontakt' %}",
       "description": "Kontaktformular für Luviq Universe – handbemalte Vintage-Mode und Upcycling-Unikate.",
@@ -43,6 +44,7 @@
     {% comment %}Beide Fragen und beide Antworten stehen woertlich im sichtbaren Text weiter unten. Wer hier etwas aendert, muss es dort mitaendern - der Test test_jede_frage_im_schema_steht_auch_auf_der_seite schlaegt sonst an.{% endcomment %}
     {
       "@type": "FAQPage",
+      "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'kontakt' %}#faq",
       "mainEntity": [
         {
           "@type": "Question",
