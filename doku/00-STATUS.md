@@ -52,39 +52,37 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–17.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 27.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-27a) — **Gesamtstand 83,6 von 100**, Reifegrad „Solide“. 331 von 373 Regeln an 15 URLs und 163 Dateien (34.181 Zeilen) geprüft.
+**Messung vom 28.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-28a) — **Gesamtstand 84,8 von 100**, Reifegrad „Solide“. 332 von 373 Regeln an 15 URLs und 165 Dateien (34.353 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Substanz & Reichweite | **39** | Rohbau |
+| Substanz & Reichweite | **44** | Lückenhaft |
 | Konversion | **54** | Lückenhaft |
-| GEO — KI-Sichtbarkeit | **78** | Solide |
-| SEO — Inhalt | **78** | Solide |
-| Erreichbarkeit & Postfach | **79** | Solide |
-| Vorlagen-Konformität | **85** | Solide |
+| GEO — KI-Sichtbarkeit | **79** | Solide |
+| Erreichbarkeit & Postfach | **80** | Solide |
+| SEO — Inhalt | **83** | Solide |
+| Vorlagen-Konformität | **87** | Solide |
 | Code-Qualität & Projektreife | **89** | Solide |
 | Recht & Vertrauen | **89** | Solide |
 | Barrierefreiheit | **91** | Referenz |
 | Performance & Core Web Vitals | **92** | Referenz |
-| Betrieb & Auslieferung | **93** | Referenz |
-| SEO — Technik | **96** | Referenz |
+| Betrieb & Auslieferung | **96** | Referenz |
 | Sicherheit | **96** | Referenz |
+| SEO — Technik | **97** | Referenz |
 | Formulare & Preisrechner | **99** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 163 Dateien, **73 Befunde**, davon 1 kritisch und 27 wichtig.
+Quelltext: 165 Dateien, **73 Befunde**, davon 1 kritisch und 27 wichtig.
 
 Kritische Befunde:
 
-- **Umfang passt zur Aufgabe der Seite** (`IS18`) — Unter dem Umfang, den ihre Aufgabe verlangt: 7 von 7 Seiten — / (340/700 W), /produkte/ (418/600 W), /produkt/custom-hoodie-mit-print/ (222/600 W), /produkt/custom-print-hoodie-1/ (220/600 W), /produkt/custom-pants/ (219/600 W) … (+2)
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
 - **Wissensinhalte vorhanden** (`SU04`) — 0 Wissensseiten, Zielgröße 3 — es gibt keinen einzigen Ratgeberbereich
 - **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 13 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /kontakt/, /datenschutz/, /gaestebuch/ … (+8)
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
-- **Genug eigener Inhalt insgesamt** (`SU02`) — 3.847 Eigenwörter über 13 Seiten, Zielgröße 12.000 (von 5.591 Wörtern Gesamttext); die umfangreichsten Seiten: /datenschutz/ (555 W), /produkte/ (418 W), /ueber_uns/ (370 W)
-- **Kein nennenswerter Anteil dünner Seiten** (`IS19`) — 8% der Seiten sind dünn (1 von 13): /motiv-anfragen/ (124 W)
+- **Genug eigener Inhalt insgesamt** (`SU02`) — 3.983 Eigenwörter über 13 Seiten, Zielgröße 12.000 (von 5.727 Wörtern Gesamttext); die umfangreichsten Seiten: /datenschutz/ (585 W), /produkte/ (418 W), /ueber_uns/ (370 W)
 - **Keine Kannibalisierung durch gleiche Hauptbegriffe** (`IS23`) — Von mehreren Seiten besetzte Hauptbegriffe: 1; betroffen sind 3 von 5 Seiten — custom print auf 3 Seiten (/produkt/custom-print-hoodie-1/, /produkt/custom-print-jacke/ … (+1))
 - **Genug rankfähige Seiten für das Geschäft** (`SU01`) — 13 rankfähige Seiten, Zielgröße für diese Geschäftsart 30 (Beispiele: /, /produkte/, /kontakt/)
 <!-- messung:ende -->
