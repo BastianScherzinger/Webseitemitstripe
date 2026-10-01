@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-09-30
+stand: 2026-10-01
 status: teilweise
 fortschritt: 70
 zusammenfassung: 28.09.2026, Paket 544 (Zweig sofort/2026-09-28-vl11-und-2-weitere, nicht gemergt, nicht gepusht): VL19 anders eingebaut — Fehler-Monitoring ohne neue Abhängigkeit über Djangos eigenen AdminEmailHandler, nachgebessert gegen Klartext-Passwörter in der Fehlermail und Mail-Flut; VL13 als bewusste Ausnahme eingetragen. VL11 in derselben Nachbesserung neu begründet: „Über uns" scheitert an der Bindestrich-Katalogregel, der Ratgeber (/wissen/) dagegen daran, dass die Übersicht bei ausgeschaltetem VERKAUF_AKTIV tatsächlich noindex ist und in der Sitemap fehlt (die drei „von sich aus freigegebenen" Beiträge sind nur mit Verkauf sichtbar) — zwei verschiedene Gründe, nicht derselbe. Keine Zeile Code geändert, 399 Tests grün. Einzelheiten 10-TECHNIK.md und 80-AUFGABEN.md. Davor, 19.09.2026: Umbau „Nachtausgabe" gebaut (B3 + Hero H4, Markensatz, Motiv anfragen als Seite mit Modell, Archivnummern, Schriften selbst gehostet, Deko entfernt), 383 Tests grün; Bericht docs/design-2026-09-BERICHT.md. Verkauf bleibt aus.
@@ -52,14 +52,14 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–17.09.2026).
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 30.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-28a) — **Gesamtstand 84,6 von 100**, Reifegrad „Solide“. 332 von 373 Regeln an 15 URLs und 165 Dateien (34.351 Zeilen) geprüft.
+**Messung vom 01.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-28a) — **Gesamtstand 84,7 von 100**, Reifegrad „Solide“. 331 von 373 Regeln an 15 URLs und 165 Dateien (34.351 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
 | Substanz & Reichweite | **44** | Lückenhaft |
 | Konversion | **54** | Lückenhaft |
 | GEO — KI-Sichtbarkeit | **79** | Solide |
-| Erreichbarkeit & Postfach | **80** | Solide |
+| Erreichbarkeit & Postfach | **79** | Solide |
 | SEO — Inhalt | **83** | Solide |
 | Code-Qualität & Projektreife | **86** | Solide |
 | Vorlagen-Konformität | **87** | Solide |
@@ -68,7 +68,7 @@ Aus den Köpfen der zehn Bereichsdateien (Stand 02.09.–17.09.2026).
 | Performance & Core Web Vitals | **92** | Referenz |
 | Betrieb & Auslieferung | **96** | Referenz |
 | Sicherheit | **96** | Referenz |
-| SEO — Technik | **97** | Referenz |
+| SEO — Technik | **98** | Referenz |
 | Formulare & Preisrechner | **99** | Referenz |
 
 Keine Sperre greift.
