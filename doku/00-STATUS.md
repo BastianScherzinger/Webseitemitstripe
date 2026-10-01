@@ -53,28 +53,28 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 01.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 01.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-28a) — **Gesamtstand 84,7 von 100**, Reifegrad „Solide“. 331 von 373 Regeln an 15 URLs und 165 Dateien (34.351 Zeilen) geprüft.
+**Messung vom 01.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-02a) — **Gesamtstand 85,5 von 100**, Reifegrad „Solide“. 333 von 374 Regeln an 15 URLs und 166 Dateien (34.509 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
 | Substanz & Reichweite | **44** | Lückenhaft |
-| Konversion | **54** | Lückenhaft |
-| GEO — KI-Sichtbarkeit | **79** | Solide |
-| Erreichbarkeit & Postfach | **79** | Solide |
+| Konversion | **57** | Lückenhaft |
+| Erreichbarkeit & Postfach | **77** | Solide |
+| GEO — KI-Sichtbarkeit | **80** | Solide |
 | SEO — Inhalt | **83** | Solide |
-| Code-Qualität & Projektreife | **86** | Solide |
-| Vorlagen-Konformität | **87** | Solide |
+| Vorlagen-Konformität | **89** | Solide |
 | Recht & Vertrauen | **89** | Solide |
 | Barrierefreiheit | **91** | Referenz |
 | Performance & Core Web Vitals | **92** | Referenz |
-| Betrieb & Auslieferung | **96** | Referenz |
+| Code-Qualität & Projektreife | **92** | Referenz |
 | Sicherheit | **96** | Referenz |
-| SEO — Technik | **98** | Referenz |
+| Betrieb & Auslieferung | **97** | Referenz |
+| SEO — Technik | **99** | Referenz |
 | Formulare & Preisrechner | **99** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 165 Dateien, **73 Befunde**, davon 1 kritisch und 27 wichtig.
+Quelltext: 166 Dateien, **63 Befunde**, davon 1 kritisch und 27 wichtig.
 
 Kritische Befunde:
 

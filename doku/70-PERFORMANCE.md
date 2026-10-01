@@ -30,22 +30,22 @@ und live noch nicht wirksam.
 ## Messwerte
 
 <!-- tempo:anfang -->
-**Messung vom 01.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-28a). Bereich „Performance & Core Web Vitals“: **91,5 von 100**, Reifegrad „Referenz“.
+**Messung vom 01.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-02a). Bereich „Performance & Core Web Vitals“: **91,5 von 100**, Reifegrad „Referenz“.
 
 ### Lighthouse je Seite
 
 | Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
 |---|---|---:|---:|---:|---:|---:|
-| `/` | mobile | **95** | 2,87 s | 0,006 | 0 ms | 2 ms |
-| `/` | desktop | **100** | 0,58 s | 0,043 | 0 ms | 1 ms |
-| `/datenschutz/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 2 ms |
-| `/datenschutz/` | desktop | **100** | 0,47 s | 0,001 | 0 ms | 2 ms |
+| `/` | mobile | **96** | 2,80 s | 0,006 | 0 ms | 3 ms |
+| `/` | desktop | **100** | 0,59 s | 0,043 | 0 ms | 1 ms |
+| `/datenschutz/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 1 ms |
+| `/datenschutz/` | desktop | **100** | 0,48 s | 0,001 | 0 ms | 1 ms |
 | `/impressum/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 1 ms |
-| `/impressum/` | desktop | **100** | 0,47 s | 0,001 | 0 ms | 1 ms |
+| `/impressum/` | desktop | **100** | 0,47 s | 0,001 | 0 ms | 2 ms |
 | `/kontakt/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 2 ms |
-| `/kontakt/` | desktop | **100** | 0,49 s | 0,001 | 0 ms | 2 ms |
-| `/produkte/` | mobile | **99** | 2,04 s | 0,006 | 0 ms | 1 ms |
-| `/produkte/` | desktop | **100** | 0,60 s | 0,050 | 0 ms | — |
+| `/kontakt/` | desktop | **100** | 0,51 s | 0,001 | 0 ms | 1 ms |
+| `/produkte/` | mobile | **99** | 2,06 s | 0,006 | 0 ms | 2 ms |
+| `/produkte/` | desktop | **100** | 0,57 s | 0,000 | 0 ms | 2 ms |
 
 10 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 
