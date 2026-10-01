@@ -1,14 +1,16 @@
 ---
 bereich: notizen
 titel: Notizen, Fallen und Verweise
-stand: 2026-09-18
+stand: 2026-10-01
 status: vollständig
 fortschritt: 100
-zusammenfassung: Vier Namen für ein Projekt, PayPal statt Stripe, Zweig gegenüber main, zehn Widersprüche zwischen Quellen und Live-Seite. Der Satz „kein Consent-Banner nötig" ist seit dem 18.09.2026 belegt statt behauptet: kein eigenes Cookie, kein Gerätespeicher, kein Analysedienst, und die Google-Karte lädt seit RE17 (Paket 248, Zweig sofort/2026-09-18-re15-und-2-weitere, nicht gemergt) erst nach einem Klick — vorher war die Aussage falsch (eigener Punkt EIG14, jetzt erledigt). Die Startreihenfolge nennt seit Paket 267 (Zweig sofort/2026-09-18-kv11-und-2-weitere, nicht gemergt) den Packschritt whitenoise.compress nach collectstatic.
+zusammenfassung: Stand 01.10.2026: Vier Namen für ein Projekt, PayPal statt Stripe (Verkauf aus, kein Gewerbe), alle Zweige in main, Mail über Gmail; die Widerspruchstabelle vom 02.09.2026 ist am 01.10.2026 gegen die Live-Seite nachgeprüft (sechs behoben, vier bleiben).
 quellen: CLAUDE.md, DOCUMENTATION.md, GOOGLE_SEO_GUIDE.md, LOGBUCH.md, paypal_sandbox_tutorial.md
 ---
 
 # Notizen — Luviq Universe
+
+> **Stand 01.10.2026 (geprüft):** Alle bis dahin geführten Arbeitszweige (`sofort/…`, `mail/…`, `recht/…`, `design/…`) sind in `main` gemergt (`git branch -r --no-merged origin/main` ist leer); `main` = `origin/main` = `36c0741` (TS19, Bild-Sitemap, 01.10.2026), und die Live-Seite zeigt diesen Stand (Sitemap mit Bild-Auszeichnung am 01.10.2026 abgerufen). Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
 
 ## Besonderheiten
 
@@ -16,7 +18,7 @@ quellen: CLAUDE.md, DOCUMENTATION.md, GOOGLE_SEO_GUIDE.md, LOGBUCH.md, paypal_sa
 
 Fünf der sechs betreuten Seiten sind Prospekte. Luviq nicht: Es gibt Kundenkonten mit
 E-Mail-Verifizierung, Warenkörbe, Bestellungen, PayPal-Zahlung und Vorab-Überweisung, ein eigenes
-Admin-Panel mit 24 Routen und zwei Datenbanken. **Ein Fehler kostet hier direkt Geld.** Daraus
+Admin-Panel mit 24 Routen und zwei Datenbanken — **Stand 01.10.2026: der Verkauf ist abgeschaltet** (`VERKAUF_AKTIV`, Marke im Aufbau, kein Gewerbe angemeldet); der Code bleibt. **Mit eingeschaltetem Verkauf kostet ein Fehler hier direkt Geld.** Daraus
 folgen zwei Regeln, die in keinem anderen Projekt gelten:
 
 1. **Änderungen an Warenkorb, Checkout oder Zahlung nur mit Sandbox-Test** nach
@@ -28,37 +30,13 @@ folgen zwei Regeln, die in keinem anderen Projekt gelten:
    eigene Felder statt als Fremdschlüssel — Absicht, damit geänderte oder gelöschte Produkte alte
    Bestellungen nicht verändern.
 
-### Lauf 4 liegt gepusht auf einem Zweig und ist nicht live
+### Zweige und main (Stand 01.10.2026)
 
-Der Projektordner steht auf **`cockpit/2026-09-01-verbesserung-4`** (Commit `511ffe5`,
-02.09.2026, 02:56), **63 Commits vor `main`**, Arbeitsbaum sauber, auf GitHub gepusht,
-215/215 Tests grün. `main` steht seit dem 15.07.2026 auf `2a17edd`; die letzte Railway-Auslieferung
-war am 18.08.2026 (`645842b`). **Die Live-Seite zeigt also main, nicht diesen Zweig.**
+Der Projektordner steht auf **`main`**, `main` = `origin/main` = **`36c0741`** (TS19, 01.10.2026). Alle Arbeitszweige sind gemergt (`cockpit/…`, `sofort/…`, `mail/…`, `recht/…`, `design/…` — `git branch -r --no-merged origin/main` ist leer); die Live-Seite zeigt diesen Stand (Bild-Sitemap am 01.10.2026 abgerufen). Der frühere Abschnitt „Lauf 4 liegt gepusht auf einem Zweig und ist nicht live“ (Stand 02.09.2026: Zweig `cockpit/2026-09-01-verbesserung-4`, 63 Commits vor `main`, `main` auf `2a17edd`) ist überholt: der Zweig steckt seit dem 11.09.2026 in `main`.
 
-Der Zweig ändert 95 Dateien (+13.811 / −2.390 Zeilen). Die grössten Posten:
+Was der Merge der Läufe live gebracht hat (belegt am 01.10.2026): 301 vom Apex auf `www`, `llms.txt`, KI-Crawler-Regeln in der `robots.txt`, Schema-Knoten mit `@id`, gepflegte `lastmod` (Register `seiten_stand.py`), WebP-Bilder, GZip, Gunicorn mit Threads, scharfe CSP, der Prüfbefehl in `start.sh` — und die Korrektur der Platzhalter-Kontaktdaten. **Nicht live sichtbar:** die drei Wissensbeiträge `pflege`, `upcycling`, `groesse` stehen auf `noindex` (`'freigegeben': False`), die drei verkaufsnahen leiten ohne Verkauf um.
 
-| Was | Umfang |
-|---|---|
-| Testsuite `shop1/tests/` — 14 Module, 215 Tests, `_basis.py`, `_aufbau.py`, `aufbau_referenz.json` (5.148 Zeilen) | neu, rund 5.000 Zeilen Testcode |
-| `LOGBUCH.md` | +1.260 Zeilen |
-| Prüfbefehl `shop1/management/commands/pruefe_seite.py` | +438 Zeilen |
-| Wissensbereich: `views/wissen.py`, `templates/shop1/wissen/` (Übersicht + drei Beiträge) | +654 Zeilen |
-| `shop1/middleware.py` (CanonicalHost, CSP, Geo-Pool, Abschalter) | +202 Zeilen |
-| `mainweb/settings.py` (CSP-Quellen, CACHES, CANONICAL_HOST, GZip) | +115 Zeilen |
-| `shop1/views/legal.py` (robots mit 13 KI-Crawlern, llms.txt, Sitemap mit lastmod) | +252 Zeilen |
-| `shop1/seiten_stand.py` (Register für lastmod und dateModified) | neu |
-| Bilder: WebP in mehreren Breiten, Favicon als ICO; ein totes Hintergrundbild (336 KB) entfernt | |
-| Gelöscht: `django_tutorial.html` (1.862 Zeilen), `railway_deployment_tutorial.html` (80 Zeilen) | Altlasten |
-
-**Was der Merge live bringt:** 301 vom Apex auf `www` (nur mit `CANONICAL_HOST` in Railway),
-`llms.txt`, KI-Crawler-Regeln, `WebPage`/`Person`/`BreadcrumbList`-Knoten, gepflegte `lastmod`,
-Meta-Beschreibungen in der Zielspanne, Antwort-zuerst-Texte auf sieben Seiten, beschriftete
-Formularfelder, die vollständige Datenschutzerklärung, WebP-Bilder, GZip, Caches, Gunicorn mit
-Threads, den Prüfbefehl in `start.sh` — und die Korrektur der Platzhalter-Kontaktdaten.
-
-**Was der Merge nicht bringt:** die drei Wissensbeiträge in den Index (sie stehen auf
-`freigegeben: False` → `noindex`, nicht in Sitemap und llms.txt) und die lokal gehosteten
-Schriften (`RE07`).
+**Zwei lokale Stände, die man nicht verwechseln darf:** Das Werkzeug schreibt seine Messcommits („Doku: Messung vom …“) lokal auf `main`; sie liegen erst nach dem Push auf `origin/main`.
 
 ### Zwei Datenbanken
 
@@ -71,24 +49,18 @@ Test-Runner die Namen der beiden Testdatenbanken. `PyStoreVisitorLog` ist ein `m
 auf dieselbe Tabelle (`db_column='site'`, das Feld heisst im Modell `seite`). Jeder Test braucht
 `databases = {'default', 'pystore'}`, weil die Besuchs-Middleware bei jeder Antwort schreibt.
 
-### Zwei E-Mail-Wege
+### Mail (Stand 27.09.2026): Gmail statt Brevo
 
-1. Django-`send_mail` über SMTP (Brevo-Relay), im Entwicklungsmodus Console-Backend.
-2. `shop1/utils.py::send_brevo_email()` — direkter HTTP-Aufruf an die Brevo-API in einem Thread,
-   **weil Railway SMTP-Ports blockt**. Für Bestell- und Benachrichtigungsmails wird dieser Weg
-   bevorzugt. Ein Mailausfall lässt die Bestellung bestehen und steht im Protokoll.
+Aller Versand läuft über SMTP von Luisas Gmail-Postfach (`smtp.gmail.com:587`; Railway: `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD` als App-Passwort, `BREVO_API_KEY` entfernt). `shop1/utils.py::send_brevo_email()` heißt weiter so, nimmt ohne `BREVO_API_KEY` aber den SMTP-Weg und läuft in einem Thread; ein Mailausfall lässt die Anfrage bestehen (sie liegt in `KontaktAnfrage` bzw. `Motivanfrage`). Die frühere Beschreibung „zwei Wege: Brevo-Relay und Brevo-API“ gilt nicht mehr; Einzelheiten in [10-TECHNIK.md](10-TECHNIK.md), „E-Mail-Versand“.
 
-Seit `e58775a` (13.07.2026) gibt es **keine Admin-Mail pro Seitenbesuch** mehr: Clients und Bots
-ohne Cookies galten bei jedem Aufruf als neu und lösten eine Mail-Flut aus, die Brevo überlastete.
-Admin-Mails gibt es nur noch nutzergetriggert (Kontaktformular, Bestellungen).
+Seit `e58775a` (13.07.2026) gibt es **keine Admin-Mail pro Seitenbesuch** mehr: Clients und Bots ohne Cookies galten bei jedem Aufruf als neu und lösten eine Mail-Flut aus. Admin-Mails gibt es nur noch nutzergetriggert (Kontaktformular, Motivanfrage, Registrierung).
 
 ### Startreihenfolge im Container
 
 `start.sh`: `migrate` → Superuser aus `ADMIN_USERNAME`/`ADMIN_PASSWORD`/`ADMIN_EMAIL` anlegen oder
 abgleichen → `loaddata initial_data.json` (optional) → `fix_pystore_schema` → `collectstatic --clear`
-→ **`python -m whitenoise.compress --quiet staticfiles`** (seit Paket 267, `5515bf3`, Zweig
-`sofort/2026-09-18-kv11-und-2-weitere`; nicht blockierend, muss **nach** `collectstatic --clear`
-stehen, sonst löscht `--clear` die `.gz`-Dateien wieder) → **`pruefe_seite`** (Zweig, nicht blockierend) → Gunicorn. **Das Passwort des Admin-Kontos wird bei
+→ **`python -m whitenoise.compress --quiet staticfiles`** (seit Paket 267, `5515bf3`, in `main`; nicht blockierend, muss **nach** `collectstatic --clear`
+stehen, sonst löscht `--clear` die `.gz`-Dateien wieder) → **`pruefe_seite`** (nicht blockierend) → Gunicorn. **Das Passwort des Admin-Kontos wird bei
 jedem Start neu gesetzt** — eine im Panel geänderte Angabe hält nur bis zum nächsten Deploy.
 
 ### Designwache
@@ -177,16 +149,26 @@ Eigenes Panel `/shop-admin/…` (`shop1/admin_views.py`) mit dem dort **selbst**
 | 9 | Die Überblicksdoku `docs/luviq.md` nennt 67,0 (Index) bzw. 70,1 (Messabschnitt) | 70,1 ist die Zahl vom 02.09.2026; 67,0 stammt aus einem älteren Lauf. Ältere Zahlen sind ohnehin nicht vergleichbar — am 01.09.2026 wurde der Maßstab von 54 auf 244 Regeln umgestellt |
 | 10 | Das Code-Audit meldet vier „verwaiste" Templates: `lockout.html` und die drei `wissen/*.html` | Fehlalarm: `lockout.html` hängt an `AXES_LOCKOUT_TEMPLATE`, die Wissensseiten am Register `WISSEN_BEITRAEGE` — beide werden nicht per `render('…')` im Klartext referenziert |
 
+
+**Nachprüfung am 01.10.2026 gegen die Live-Seite:**
+
+| # | Stand heute |
+|---|---|
+| 1 | **behoben:** `/kontakt/` nennt Luisa Brehler, 36304 Alsfeld, `brehlerluisa@gmail.com` und „eine Telefonnummer gibt es nicht“ |
+| 2 | **behoben:** Impressum nennt „Website: www.luviq-alsfeld.com“ |
+| 3 | **behoben:** Apex antwortet mit 301 auf `www` |
+| 4 | gilt weiter: `DOCUMENTATION.md` ist an dieser Stelle veraltet, `start.sh` gilt |
+| 5 | überholt: die Startseite wurde am 19.09.2026 neu gebaut (Panoramafoto, kein Three.js/GSAP mehr in `index.html` und `base.html`); `DOCUMENTATION.md` §8 beschreibt die alte Startseite |
+| 6 | **behoben:** die CSP-Middleware ist live und scharf (Kopfzeile `content-security-policy` abgerufen) |
+| 7 | **behoben:** das Impressum steht nicht mehr in der Sitemap |
+| 8 | **behoben:** Live-Seite und lokaler Ordner sind derselbe Stand (`main`) |
+| 9 | gilt weiter: ältere Zahlen sind nicht vergleichbar (Regelstand 2026-09-28a, 373 Regeln) |
+| 10 | gilt weiter (Fehlalarm des Code-Audits: `lockout.html` und Wissensseiten hängen an Einstellung bzw. Register); die Wissensvorlagen sind inzwischen sieben |
+
 ### Weitere Beobachtungen
 
-- **Die Sitemap kennt keine `lastmod` für statische Seiten** (live): nur die fünf Produktseiten
-  tragen eines, mit zwei verschiedenen Daten (14.06. und 11.05.2026). Der Zweig speist alle
-  statischen Seiten aus dem Register `shop1/seiten_stand.py`, das **von Hand** nachgezogen wird —
-  bewusst kein Datei- oder Build-Datum, weil das bei jedem Deploy hochspringt. Kein Test kann ein
-  vergessenes Nachziehen erzwingen.
-- **13 KI-Crawler sind im Zweig namentlich zugelassen** (GPTBot, PerplexityBot, ClaudeBot,
-  Google-Extended, Applebot-Extended, CCBot, meta-externalagent, Bytespider u. a.) — eine bewusste
-  Entscheidung für Sichtbarkeit in Antwortmaschinen (`GE02`).
+- **Die Sitemap trägt `lastmod` für alle Einträge** (Daten zwischen 11.05. und 27.09.2026, abgerufen 01.10.2026) — die statischen Seiten aus dem Register `shop1/seiten_stand.py`, das **von Hand** nachgezogen wird (bewusst kein Datei- oder Build-Datum, weil das bei jedem Deploy hochspringt; kein Test kann ein vergessenes Nachziehen erzwingen). Seit `36c0741` hängen an Start- und Produktseite Bild-Auszeichnungen.
+- **Die `robots.txt` lässt KI-Crawler namentlich zu** (14 `User-agent`-Blöcke, GPTBot, PerplexityBot, ClaudeBot, Google-Extended u. a.) — eine bewusste Entscheidung für Sichtbarkeit in Antwortmaschinen (`GE02`).
 - **Der Bewertungskasten** (`_reviews_map.html`) zeigt „5.0 ★★★★★" und einen Knopf „Bei Google
   bewerten" (Ziel aus `GOOGLE_REVIEW_URL`). Die Zahl ist **nicht belegt** und wurde deshalb weder
   aufgegriffen noch ins Schema übernommen.
@@ -199,7 +181,7 @@ Eigenes Panel `/shop-admin/…` (`shop1/admin_views.py`) mit dem dort **selbst**
   die Seite setzt kein eigenes Cookie und greift auf keinen Gerätespeicher zu (kein Treffer für
   `set_cookie`, `localStorage`, `sessionStorage` in `shop1/`, `templates/`, `mainweb/`), die
   Besuchszählung läuft serverseitig in `PageVisitMiddleware` ohne Analysedienst, und die einzige
-  fremde Einbettung — die Google-Karte auf `/` und `/gaestebuch/` — lädt **seit `RE17`
+  fremde Einbettung — die Google-Karte auf `/gaestebuch/` (auf der Startseite seit dem Umbau vom 19.09.2026 nicht mehr) — lädt **seit `RE17`
   (18.09.2026, `d58a96c`) erst nach einem Klick** auf „Karte laden". Bis dahin stimmte der Satz
   nicht: der Kartenrahmen holte sich seine Adresse ungefragt bei Google (eigener Punkt `EIG14`,
   jetzt erledigt). Sitzungs- und CSRF-Cookie von Django bleiben — sie sind für Warenkorb und

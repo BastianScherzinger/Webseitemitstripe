@@ -1,11 +1,11 @@
 ---
 bereich: inhalte
 titel: Inhalte und Seitenbestand
-stand: 2026-09-19
+stand: 2026-10-01
 status: teilweise
-fortschritt: 40
-zusammenfassung: 19.09.2026: Texte der Startseite, „Luisa" und Motiv anfragen aus shop1/luviq_daten.py (Luisas Befragung); neue Seite /motiv-anfragen/ in Sitemap und llms.txt; /ueber_uns/ ohne Legende und ohne altes Foto.
-offen: 9
+fortschritt: 44
+zusammenfassung: Stand 01.10.2026: 13 Sitemap-URLs (Start, Archiv, Gästebuch, Luisa, Motiv anfragen, Herkunft, Kontakt, Datenschutz, fünf Archivstücke), sechs Wissensbeiträge (drei erreichbar, alle noindex bis zur Freigabe), Archiv statt Shop; Seitenbestand und Offen-Liste gegen die Live-Seite erneuert. Substanz (Messwert 44) bleibt der schwächste Bereich.
+offen: 8
 quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/legal.py, shop1/tests/test_inhalt.py
 ---
 
@@ -13,9 +13,32 @@ quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/l
 
 *Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Substanz** des Laufs vom 02.09.2026 (Regelstand `2026-09-02a`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
 
+> **Stand 01.10.2026 (geprüft):** Alle bis dahin geführten Arbeitszweige (`sofort/…`, `mail/…`, `recht/…`, `design/…`) sind in `main` gemergt (`git branch -r --no-merged origin/main` ist leer); `main` = `origin/main` = `36c0741` (TS19, Bild-Sitemap, 01.10.2026), und die Live-Seite zeigt diesen Stand (Sitemap mit Bild-Auszeichnung am 01.10.2026 abgerufen). Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
+
 ## Seitenbestand
 
-**Live (main, Sitemap 02.09.2026): 14 URLs** — 9 statische Seiten ohne `lastmod`, 5 Produktseiten mit `lastmod`.
+**Live (main, Sitemap und Stichproben, abgerufen 01.10.2026): 13 URLs in der Sitemap** — acht statische Seiten und fünf Archivstücke (Produktseiten). Messung 01.10.2026: 3.983 Eigenwörter über 13 Seiten gegen das Ziel von 12.000 (`SU02`), 13 rankfähige Seiten gegen 30 (`SU01`) — Zahlen aus dem Messblock in [00-STATUS.md](00-STATUS.md).
+
+| URL | Seite | Index |
+|---|---|---|
+| `/` | Startseite „Nachtausgabe“ (Markensatz, Motiv anfragen, Drop-Countdown, Entstehung, Archiv, Warteliste) | ja, Sitemap |
+| `/produkte/` | Archiv der bisherigen Stücke („bereits vergeben“, keine Preise) | ja, Sitemap |
+| `/produkt/custom-hoodie-mit-print/`, `/produkt/custom-print-hoodie-1/`, `/produkt/custom-pants/`, `/produkt/custom-print-jacke/`, `/produkt/custom-print-hoodie/` | je ein Archivstück (`custom-pants` hieß bis 18.09.2026 `custom-pants-sold`, leitet per 301 um) | ja, Sitemap |
+| `/motiv-anfragen/` | Motiv anfragen (Stufe 1: ohne Preis, Zahlung, Zusage) | ja, Sitemap |
+| `/ueber_uns/` | „Luisa“ | ja, Sitemap |
+| `/liefergebiet/` | „Herkunft“ (mit Verkauf „Liefergebiet“) | ja, Sitemap |
+| `/kontakt/` | Kontakt, Formular | ja, Sitemap |
+| `/gaestebuch/` | Gästebuch (Kommentare angemeldeter Nutzer) | ja, Sitemap |
+| `/datenschutz/` | Datenschutzerklärung | ja, Sitemap |
+| `/impressum/`, `/agb/` | Impressum, AGB | `noindex, follow`, **nicht** in der Sitemap (der frühere Widerspruch Impressum/Sitemap ist behoben) |
+| `/wissen/` und `/wissen/pflege-handbemalte-kleidung/`, `/wissen/upcycling-mode-second-hand-vintage/`, `/wissen/groesse-bei-einzelstuecken/` | Wissensbereich: 200, `noindex, follow`, nicht in Sitemap und `llms.txt` bis zur Freigabe der Betreiberin | nein |
+| `/wissen/bestellen-und-bezahlen/`, `/wissen/widerruf-und-ruecksendung/`, `/wissen/konto-und-daten/` | verkaufsnahe Beiträge: leiten ohne Verkauf per 302 um (`nur_mit_verkauf`) | nein |
+| `/kontakt/danke/`, `/motiv-anfragen/danke/` | Danke-Seiten, `noindex, follow` | nein |
+| `/feed/`, `/llms.txt`, `/robots.txt`, `/sitemap.xml` | Feed der freigegebenen Wissensbeiträge, KI-Übersicht, Crawler-Regeln, Sitemap (alle 200); `/llms-full.txt` gibt es nicht (404) | — |
+
+Nicht in der Sitemap, aber erreichbar und per `robots.txt` gesperrt: `/login/`, `/register/`, `/profil/`, `/warenkorb/` (ohne Verkauf 302), `/checkout/` (302), `/payment/…`, `/verify/…`, `/password-reset/…`, `/delete-account/`, `/shop-admin/…`.
+
+**Verlauf: Messung vom 02.09.2026** (Wortzahlen und Preise gelten für die Zeit vor dem Umbau und vor dem Abschalten des Verkaufs):
 
 | URL | Seite | Eigenwörter live (Messung 02.09.2026) | Ziel | Titel live |
 |---|---|---:|---:|---|
@@ -190,6 +213,8 @@ von `/produkte/`: [20-DESIGN.md](20-DESIGN.md).
 
 ## Fehlende Inhalte
 
+*Stand 01.10.2026: Zeilen mit „im Zweig erledigt“ sind seit dem Merge in `main` erledigt (Danke-Seite KV07, Datenschutzhinweis und Honigtopf KV05/KV06, Zahlen GE25, Wissensbereich). Muster-Widerrufsformular, BFSG-Erklärung und die Rücksendekosten werden erst mit dem Verkauf relevant.*
+
 | Was fehlt | Beleg (Messung 02.09.2026) | Regel |
 |---|---|---|
 | Ratgeber live — 0 Wissensseiten (im Zweig 6: drei indexiert, drei `noindex` bis Freigabe) | Zielgrösse 3 | SU04 (Zweig erfüllt), SU07, VL11, VL12 |
@@ -206,13 +231,13 @@ von `/produkte/`: [20-DESIGN.md](20-DESIGN.md).
 
 ## Offen
 
-1. **Freigabe der drei Wissensbeiträge** durch die Betreiberin → `'freigegeben': True` (siehe [80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden).
-2. Zweig mergen, damit die neuen Texte, Meta-Angaben und die Platzhalter-Korrektur auf `/kontakt/` live sind.
-3. Impressum aus der Sitemap nehmen **oder** `noindex` entfernen — heute widersprechen sich beide (SU11).
-4. Produktnamen im Shop-Admin eindeutig machen („Custom print hoodie" ×2) — Pflegeaufgabe der Betreiberin, oder `seo_titel` setzen.
-5. Weitere Wissensbeiträge nach Kundenfragen. Bestellablauf, Widerruf und Konto sind mit SU04 (07.09.2026) gebaut; alles Weitere braucht Angaben der Betreiberin — namentlich die Kosten der Rücksendung und die Frist der Rückzahlung, die heute in `/wissen/widerruf-und-ruecksendung/` ausdrücklich als ungeklärt stehen.
-6. Muster-Widerrufsformular als eigene Seite.
-7. Entscheidung Öffnungs-/Antwortzeiten und Telefonnummer — nur die Betreiberin kann sie nennen.
-8. **Eine eigene Beschreibung je Einzelstück** (`Produkt.beschreibung` im Shop-Admin). Der Zuwachs aus IS19 (08.09.2026) beschreibt den Kauf, nicht das Stück, und steht wortgleich auf allen fünf Produktseiten — siehe [80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 14. Seit IS18 (11.09.2026) ist das der einzige offene Teil des Umfangs je Seitenart.
-9. ~~**`seiten_stand.py` für `kontakt` nachziehen**~~ — **erledigt am 17.09.2026** (`9cd641f`, Paket 243, im Zweig): das Register nennt für `kontakt` jetzt `2026-09-17` statt `2026-09-01`. Anlass war der Datenschutzhinweis aus `KV05`; der Satz aus Paket 216 (`370fce7`, `FO04`) ist damit mit abgedeckt. `lastmod` der Sitemap und `dateModified` des `WebPage`-Knotens folgen dem Register — live gilt der neue Stand erst nach dem Merge. Kein Test erzwingt das Nachziehen.
-10. **Datenschutzhinweis und Honigtopf an den übrigen Formularen** (Newsletter auf `/`, Gästebuch, Anmeldung, Registrierung): Paket 243 hat nur `/kontakt/` angefasst. Der Wortlaut lässt sich von dort übernehmen, muss aber je Formular stimmen — gespeichert wird bei Newsletter und Gästebuch anderes als beim Kontaktformular.
+Stand 01.10.2026. Erledigt und entfernt: Merge des Zweigs mit den neuen Texten und der Platzhalter-Korrektur auf `/kontakt/` (live), Widerspruch Impressum `noindex` und Sitemap (Impressum steht nicht mehr in der Sitemap), `seiten_stand.py` für `kontakt`.
+
+1. **Freigabe der drei Wissensbeiträge** (Pflege, Upcycling, Größe) durch die Betreiberin → `'freigegeben': True` (siehe [80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden). Bis dahin `noindex`.
+2. **Texte der „Nachtausgabe“ von Luisa gegenlesen** ([80-AUFGABEN.md](80-AUFGABEN.md) → Offen).
+3. **Produktnamen im Shop-Admin eindeutig machen** („Custom print hoodie“ zweimal) oder `seo_titel` setzen — Pflegeaufgabe der Betreiberin; der Messbefund `IS21` (Beinahe-Duplikate, höchster Wert 100 %) und `IS23` (Kannibalisierung „custom print“) stehen im Messblock vom 01.10.2026.
+4. **Eine eigene Beschreibung je Archivstück** (`Produkt.beschreibung` im Shop-Admin, dazu Material, Technik, Maße je Stück) — der Zusatztext ist auf allen fünf Produktseiten gleich.
+5. **Weitere Wissensbeiträge** nach Kundenfragen; alles Weitere braucht Angaben der Betreiberin (Kosten der Rücksendung, Frist der Rückzahlung — erst mit Verkauf).
+6. **Muster-Widerrufsformular als eigene Seite** und BFSG-Erklärung — erst mit Verkauf bzw. Klärung, ob die Kleinstunternehmen-Ausnahme greift (nicht dokumentiert).
+7. **Entscheidung Öffnungs-/Antwortzeiten und Telefonnummer** — nur die Betreiberin kann sie nennen; bis dahin steht auf `/kontakt/` „eine Telefonnummer gibt es nicht“.
+8. **Datenschutzhinweis und Honigtopf an den übrigen Formularen** (Newsletter/Warteliste, Gästebuch, Anmeldung, Registrierung): Paket 243 hat nur `/kontakt/` angefasst; der Wortlaut ist je Formular zu prüfen. Nicht neu geprüft am 01.10.2026.

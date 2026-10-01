@@ -1,11 +1,11 @@
 ---
 bereich: local-seo
 titel: Local SEO
-stand: 2026-09-27
+stand: 2026-10-01
 status: teilweise
 fortschritt: 25
-zusammenfassung: 27.09.2026 (Zweig, Paket 527): GE46 (sameAs soll auch auf das Google-Unternehmensprofil verweisen) als beim Kunden im Bewertungsblock eingetragen — derselbe Befund wie GE11, ein Unternehmensprofil ist weiterhin nicht dokumentiert und GOOGLE_REVIEW_URL zeigt im Standard auf einen Maps-Suchlink statt auf ein Profil; keine Zeile Code geändert, der Local-SEO-Stand selbst ändert sich dadurch nicht. Davor, 18.09.2026: Die eingebettete Google-Karte auf Startseite und Gästebuch lädt seit dem 18.09.2026 (RE17, Paket 248, Zweig sofort/2026-09-18-re15-und-2-weitere, nicht gemergt) erst nach einem Klick auf „Karte laden"; Anschrift, Bewertungsknopf und Schema bleiben unverändert, am Local-SEO-Stand ändert sich dadurch nichts. KV09 (Vertrauenssignale) ist am 17.09.2026 (Paket 243) als nicht möglich beendet und steht seitdem als beim Kunden im Bewertungsblock: weder Gründungsjahr noch Zertifikat noch eine belegte Bewertungszahl stehen im Projekt, ein AggregateRating wäre erfunden. Search Console seit 03.09.2026 verbunden (Property sc-domain:luviq-alsfeld.com im Konto …05@gmail.com); Unternehmensprofil und Bewertungen bleiben nicht dokumentiert — der Standardwert von GOOGLE_REVIEW_URL ist ein Maps-Suchlink, kein Profil (settings.py:409, geprüft 12.09.2026). Die Platzhalterdaten auf /kontakt/ und „www.luviq.de“ im Impressum sind auf main ersetzt, ob Railway das ausgeliefert hat, ist nicht geprüft. GE11 (sameAs) ist am 11.09. und am 12.09.2026 nicht möglich und steht seit dem 12.09.2026 als beim Kunden im Bewertungsblock: ausser Instagram ist keine Profiladresse dokumentiert.
-offen: 5
+zusammenfassung: Stand 01.10.2026: Search Console verbunden (Property sc-domain:luviq-alsfeld.com im Konto …05), Platzhalter-NAP auf /kontakt/ und falsche Domain im Impressum live behoben; ein Google-Unternehmensprofil und Bewertungen sind weiter nicht belegt — Fragen an die Betreiberin stehen unter Offen.
+offen: 4
 unternehmensprofil: unbekannt
 search_console: ja
 gsc_property: sc-domain:luviq-alsfeld.com
@@ -16,6 +16,9 @@ quellen: GOOGLE_SEO_GUIDE.md, templates/base.html, shop1/templates/shop1/_review
 ---
 
 # Local SEO — Luviq Universe
+
+> **Stand 01.10.2026 (geprüft):** Alle bis dahin geführten Arbeitszweige (`sofort/…`, `mail/…`, `recht/…`, `design/…`) sind in `main` gemergt (`git branch -r --no-merged origin/main` ist leer); `main` = `origin/main` = `36c0741` (TS19, Bild-Sitemap, 01.10.2026), und die Live-Seite zeigt diesen Stand (Sitemap mit Bild-Auszeichnung am 01.10.2026 abgerufen). Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
+
 
 *Woran sich der Fortschritt bemisst: an vier Punkten zu je 25 — Unternehmensprofil vorhanden · Search Console verbunden · Bewertungen vorhanden · NAP überall gleich. Bei allen sechs betreuten Seiten dieselben vier Punkte.*
 
@@ -61,6 +64,8 @@ Das **Gästebuch** (`/gaestebuch/`, Modell `Comment`, Likes, nur angemeldete Nut
 
 ## NAP und Verzeichnisse
 
+*Stand 01.10.2026: die Zeilen mit „live (Messung 02.09.2026)“ beschreiben den Zustand vor der Korrektur; live stimmen Kontaktseite und Impressum jetzt mit dem Schema überein (Anschrift Grünberger Str. 16, 36304 Alsfeld; E-Mail; kein Telefon).*
+
 | Ort | Name | Anschrift | Kontakt | Stand |
 |---|---|---|---|---|
 | Impressum (live und Zweig) | Luisa Brehler / „Luisa Brehler – Luviq Universe" | Grünberger Str. 16, 36304 Alsfeld, Deutschland | brehlerluisa@gmail.com; **kein Telefon** | Messung 02.09.2026: „Website: www.luviq.de" (**falsche Domain**); auf `main` inzwischen `{{ request.get_host }}` (geprüft 11.09.2026, Auslieferung nicht geprüft) |
@@ -75,9 +80,10 @@ Die Messung meldet KV01 „1 von 13 Seiten mit tel:-Link" — dieser eine Link w
 
 ## Offen
 
+Stand 01.10.2026. Erledigt und entfernt: Auslieferung der NAP-Korrektur — live geprüft: `/kontakt/` nennt Luisa Brehler, 36304 Alsfeld und `brehlerluisa@gmail.com` und sagt „eine Telefonnummer gibt es nicht“, das Impressum nennt „Website: www.luviq-alsfeld.com“ (abgerufen 01.10.2026).
+
 | Punkt | Wer |
 |---|---|
-| Auslieferung prüfen — `main` enthält die Korrektur des falschen NAP (Berlin, 030-Nummer, `info@luviq.universe`) und von „www.luviq.de" im Impressum (geprüft 11.09.2026); ob Railway sie ausgeliefert hat, ist nicht geprüft | Bastian |
 | Gibt es ein Google-Unternehmensprofil? Wohin zeigt `GOOGLE_REVIEW_URL`? — nachsehen, dokumentieren, ggf. anlegen (Profil muss auf die Betreiberin laufen) | Betreiberin + Bastian |
 | Search Console: die Property `sc-domain:luviq-alsfeld.com` liegt seit dem 03.09.2026 nachweislich im Agenturkonto `…05@gmail.com` und ist im Werkzeug eingetragen — offen bleibt die Entscheidung, ob sie auf ein Konto der Betreiberin übergeht (Bastian dann als Nutzer) | Betreiberin |
 | Telefonnummer und Erreichbarkeitszeiten — nur wenn es sie gibt (KV01, KV11, GE09) | Betreiberin |

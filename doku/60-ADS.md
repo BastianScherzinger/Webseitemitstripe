@@ -1,9 +1,9 @@
 ---
 bereich: ads
 titel: Google Ads
-stand: 2026-09-16
+stand: 2026-10-01
 status: nicht zutreffend
-zusammenfassung: Es gibt keine Google-Ads-Kampagne und kein Konto; Voraussetzungen für Shopping-/Suchanzeigen sind benannt. Seit Paket 208 (Zweig, nicht gemergt) schiebt eine neue Newsletter-Anmeldung generate_lead in den dataLayer — gezählt wird es erst, wenn ein Messskript samt Einwilligung eingebunden ist, und das gibt es nicht.
+zusammenfassung: Keine Google-Ads-Kampagne, kein Konto, kein Tracking-Tag (Quelltext am 01.10.2026 erneut durchsucht: nur ein dataLayer-Ereignis der Warteliste ohne Messskript); ohne Verkauf (kein Gewerbe) kommen Shopping-Anzeigen nicht in Frage, Voraussetzungen sind benannt.
 offen: 0
 quellen: GOOGLE_SEO_GUIDE.md, templates/base.html
 ---
@@ -11,6 +11,8 @@ quellen: GOOGLE_SEO_GUIDE.md, templates/base.html
 # Google Ads — Luviq Universe
 
 ## Stand
+
+**Stand 01.10.2026:** erneut geprüft — in `templates/`, `shop1/templates/` und `shop1/static/` kein `gtag`, kein Google Tag Manager, kein Analytics, kein Meta-Pixel; einzige Spur ist das `dataLayer`-Ereignis `generate_lead` der Warteliste (`index.html`), das ohne Messskript den Browser nicht verlässt. Der Verkauf ist aus (Marke im Aufbau, kein Gewerbe angemeldet): Shopping- oder Produktanzeigen scheiden damit aus, solange es nichts zu verkaufen gibt.
 
 **Für Luviq Universe gibt es keine Google-Ads-Kampagne, kein Google-Ads-Konto und keine Anzeigen
 auf einer anderen Plattform, die dokumentiert wären.** Im Quelltext findet sich kein Conversion-Tag,
@@ -36,8 +38,8 @@ Keine. Was fehlt, damit überhaupt gemessen werden könnte:
 | Voraussetzung | Stand | Regel |
 |---|---|---|
 | Eigene Danke-/Bestätigungs-URL nach Kontaktformular | fehlt — Meldung auf derselben Seite | KV07 |
-| Newsletter-Anmeldung als Ereignis | **im Zweig 16.09.2026** (`FO08`, `9b3fc07`, nicht gemergt): das Skript der Startseite schiebt nach einer *neuen* Anmeldung `{event: 'generate_lead', lead_quelle: 'newsletter'}` in `window.dataLayer` — die Form, die Google Tag Manager und `gtag.js` lesen. Ohne Adresse, eine wiederholte Anmeldung zählt nicht. **Solange kein Tag eingebunden ist, verlässt das Ereignis den Browser nicht** | FO08 |
-| Bestellabschluss als eigene URL | vorhanden: `/payment/success/<order_id>/` (per `robots.txt` gesperrt, was richtig ist) | — |
+| Newsletter-Anmeldung als Ereignis | **seit dem Merge `d978a89` auf `main`** (`FO08`, `9b3fc07`, 16.09.2026): das Skript der Startseite schiebt nach einer *neuen* Anmeldung `{event: 'generate_lead', lead_quelle: 'newsletter'}` in `window.dataLayer` — die Form, die Google Tag Manager und `gtag.js` lesen. Ohne Adresse, eine wiederholte Anmeldung zählt nicht. **Solange kein Tag eingebunden ist, verlässt das Ereignis den Browser nicht** | FO08 |
+| Bestellabschluss als eigene URL | im Code vorhanden: `/payment/success/<order_id>/` (per `robots.txt` gesperrt, was richtig ist) — erst mit eingeschaltetem Verkauf erreichbar | — |
 | Conversion-Tag oder serverseitige Conversion | fehlt; jedes Tag braucht eine Einwilligung (Consent) — es gibt heute **kein Consent-Banner**, weil nichts Einwilligungspflichtiges geladen wird | — |
 | Einträge in der Datenschutzerklärung | Ads/Conversion nicht genannt (müsste bei Einführung ergänzt werden) | RE06 |
 
@@ -54,7 +56,7 @@ Ohne Zahlen — keine Budgets, keine Klickpreise geschätzt.
 1. **Konto bei der Betreiberin** (Google Ads, bei Shopping zusätzlich Merchant Center), Zwei-Faktor-Anmeldung, Zahlungsmittel der Betreiberin.
 2. **Produktdaten:** `Product`/`Offer`-Schema ist auf den Produktseiten vorhanden (Preis, Verfügbarkeit, Bild, Marke); für das Merchant Center zusätzlich ein Produktfeed oder die automatische Feed-Erzeugung aus den strukturierten Daten — nicht vorhanden. Bei 1-of-1-Artikeln muss `availability` sofort auf „ausverkauft" springen, sonst laufen Anzeigen auf verkaufte Stücke; heute filtert der Shop nur nach `aktiv`.
 3. **Conversion-Tag** oder serverseitige Messung des Bestellabschlusses (`/payment/success/`) — mit Consent-Banner und Ergänzung der Datenschutzerklärung.
-4. **Landingpages:** Kategorieseite `/produkte/` und Produktseiten sind heute dünn (62 bzw. 25 Eigenwörter live); Anzeigen auf dünne Seiten haben schlechte Qualitätsfaktoren.
+4. **Landingpages:** Kategorieseite `/produkte/` und Produktseiten sind heute dünn (Messung 02.09.2026: 62 bzw. 25 Eigenwörter; seitdem erweitert, nicht neu gezählt); Anzeigen auf dünne Seiten haben schlechte Qualitätsfaktoren.
 5. **Rechtliches:** Widerrufsbelehrung mit Muster-Widerrufsformular (RE09), vollständige Datenschutzerklärung (RE06), Telefonnummer oder zweiter Kontaktweg im Impressum (RE03) — Google prüft Shop-Anzeigen auf Rückgabe- und Kontaktangaben.
 
 ## Erledigt
