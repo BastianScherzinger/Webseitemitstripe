@@ -6,7 +6,7 @@ status: teilweise
 fortschritt: 70
 zusammenfassung: Der LCP der Produktseite ist der teuerste Posten der Seite (Cloudinary-Bilder ohne srcset). Paket 267 (18.09.2026, Zweig sofort/2026-09-18-kv11-und-2-weitere, 1737e74 und 5515bf3, nicht gemergt) bringt zwei Tempomassnahmen, beide anders eingebaut als geraten — PF15: der Filter cloud lässt jede Cloudinary-Adresse auf .webp enden, der Rückfall von f_auto ist damit WebP statt JPEG/PNG (kein picture-Element wegen der Designwache); PF26: start.sh packt die statischen Dateien nach collectstatic mit whitenoise.compress, sodass tailwind.css und style.css gzip-gepackt ausgehen (kein eingebettetes kritisches CSS). Ob der erste Inhalt mobil damit unter 1,8 s fällt, zeigt erst die Messung nach dem Deploy. PF31 (Skripte nicht von fremdem CDN) ist am 17.09.2026 in Paket 227 als nicht möglich beendet — Alpine, @alpinejs/intersect, GSAP und Three.js kommen weiter von cdn.jsdelivr.net, weil die Dateien nicht im Projekt liegen und der Lauf sie nicht holen konnte. Die gemessenen Werte stehen im erzeugten Block unter „Messwerte".
 offen: 9
-pagespeed_mobil: 97
+pagespeed_mobil: 98
 pagespeed_desktop: 100
 antwortzeit_ms: 2
 quellen: DOCUMENTATION.md, LOGBUCH.md, start.sh
@@ -24,22 +24,22 @@ und live noch nicht wirksam.
 ## Messwerte
 
 <!-- tempo:anfang -->
-**Messung vom 27.09.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-27a). Bereich „Performance & Core Web Vitals“: **91,5 von 100**, Reifegrad „Referenz“.
+**Messung vom 01.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-09-28a). Bereich „Performance & Core Web Vitals“: **91,5 von 100**, Reifegrad „Referenz“.
 
 ### Lighthouse je Seite
 
 | Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
 |---|---|---:|---:|---:|---:|---:|
-| `/` | mobile | **92** | 3,29 s | 0,006 | 0 ms | 2 ms |
-| `/` | desktop | **100** | 0,57 s | 0,043 | 0 ms | 1 ms |
-| `/datenschutz/` | mobile | **98** | 2,10 s | 0,000 | 0 ms | 2 ms |
-| `/datenschutz/` | desktop | **100** | 0,48 s | 0,001 | 0 ms | 1 ms |
+| `/` | mobile | **95** | 2,87 s | 0,006 | 0 ms | 2 ms |
+| `/` | desktop | **100** | 0,58 s | 0,043 | 0 ms | 1 ms |
+| `/datenschutz/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 2 ms |
+| `/datenschutz/` | desktop | **100** | 0,47 s | 0,001 | 0 ms | 2 ms |
 | `/impressum/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 1 ms |
-| `/impressum/` | desktop | **100** | 0,48 s | 0,001 | 0 ms | 1 ms |
+| `/impressum/` | desktop | **100** | 0,47 s | 0,001 | 0 ms | 1 ms |
 | `/kontakt/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 2 ms |
-| `/kontakt/` | desktop | **100** | 0,47 s | 0,001 | 0 ms | 2 ms |
-| `/produkte/` | mobile | **99** | 2,04 s | 0,006 | 0 ms | 2 ms |
-| `/produkte/` | desktop | **100** | 0,61 s | 0,050 | 0 ms | 2 ms |
+| `/kontakt/` | desktop | **100** | 0,49 s | 0,001 | 0 ms | 2 ms |
+| `/produkte/` | mobile | **99** | 2,04 s | 0,006 | 0 ms | 1 ms |
+| `/produkte/` | desktop | **100** | 0,60 s | 0,050 | 0 ms | — |
 
 10 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 
