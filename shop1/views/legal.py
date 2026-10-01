@@ -366,6 +366,43 @@ def _llms_txt_ohne_verkauf(basis):
                         content_type="text/plain; charset=utf-8")
 
 
+def _bild_xml(bild_url: str, titel: str) -> str:
+    """Ein ``<image:image>``-Block, Adresse und Titel XML-sicher."""
+    def esc(text):
+        return text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+    return ('    <image:image>\n'
+            f'      <image:loc>{esc(bild_url)}</image:loc>\n'
+            f'      <image:title>{esc(titel)}</image:title>\n'
+            '    </image:image>\n')
+
+
+def _seitenbilder(name: str, base_url: str) -> list[tuple[str, str]]:
+    """Die Bilder, die eine statische Seite **wirklich zeigt** — Adresse und Alttext.
+
+    Nur Startseite (Titelbild + die fünf Entstehungsschritte, beide aus
+    ``luviq_daten``, derselben Quelle wie ``index.html``) und Produktübersicht
+    (die aktiven Stücke). Seiten ohne Inhaltsbild bekommen bewusst keins: das
+    Logo an jede Adresse zu hängen, hiesse Bilder anzumelden, die dort nicht stehen.
+    """
+    from django.templatetags.static import static
+    from .. import luviq_daten
+
+    def absolut(adresse):
+        return adresse if adresse.startswith('http') else f"{base_url}{adresse}"
+
+    if name == 'home':
+        bilder = [(absolut(static('shop1/images/luviq/hero-panorama-1600.webp')),
+                   luviq_daten.HERO_STUECK['alt'])]
+        bilder += [(absolut(static(f'shop1/images/luviq/{bild}-720.webp')), alt)
+                   for _titel, _text, bild, alt in luviq_daten.SCHRITTE]
+        return bilder
+    if name == 'produkte':
+        return [(absolut(p.bild.url), f'{p.name} – Luviq Universe')
+                for p in Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am')
+                if p.bild]
+    return []
+
+
 @cache_page(AUSGABE_CACHE_SEKUNDEN)
 def sitemap_xml(request):
     """Erzeugt eine vollständige sitemap.xml mit lastmod und Bild-URLs."""
@@ -416,6 +453,8 @@ def sitemap_xml(request):
         xml += f'    <lastmod>{SEITEN_STAND[page["name"]]}</lastmod>\n'
         xml += f'    <changefreq>{page["changefreq"]}</changefreq>\n'
         xml += f'    <priority>{page["priority"]}</priority>\n'
+        for bild_url, titel in _seitenbilder(page['name'], base_url):
+            xml += _bild_xml(bild_url, titel)
         xml += '  </url>\n'
 
     for produkt in Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am'):
