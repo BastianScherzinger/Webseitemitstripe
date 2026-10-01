@@ -1,11 +1,11 @@
 ---
 bereich: design
 titel: Design und Gestaltungslinie
-stand: 2026-09-19
+stand: 2026-10-01
 status: teilweise
-fortschritt: 77
-zusammenfassung: 19.09.2026 gebaut: „Nachtausgabe" – luviq.css (Tokens, ein Akzent #C8763F), Cormorant/Schibsted/JetBrains selbst gehostet, Radius 0, keine Schatten/Glas/Animationen außer dem Laufband; alte Seiten über die Schicht .lv-alt. Bericht docs/design-2026-09-BERICHT.md.
-offen: 7
+fortschritt: 91
+zusammenfassung: Stand 01.10.2026: Linie „Nachtausgabe“ (seit 19.09.2026, luviq.css, ein Akzent #C8763F, selbst gehostete Schriften, Radius 0) ist live; Seitenaufbau, Farben/Schriften und Offen-Liste gegen die Vorlagen und die Live-Seite erneuert, die frühere Dunkelbraun-Gold-Linie steht nur noch als Geschichte da.
+offen: 6
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, shop1/static/shop1/style.css, tailwind.config.js, templates/base.html
 ---
 
@@ -13,7 +13,11 @@ quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, shop1/static/shop1/style.css, 
 
 *Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Barrierefreiheit** des Laufs vom 02.09.2026 (Regelstand `2026-09-02a`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
 
-## Gestaltungslinie seit 19.09.2026: „Nachtausgabe"
+> **Stand 01.10.2026 (geprüft):** Alle bis dahin geführten Arbeitszweige (`sofort/…`, `mail/…`, `recht/…`, `design/…`) sind in `main` gemergt (`git branch -r --no-merged origin/main` ist leer); `main` = `origin/main` = `36c0741` (TS19, Bild-Sitemap, 01.10.2026), und die Live-Seite zeigt diesen Stand (Sitemap mit Bild-Auszeichnung am 01.10.2026 abgerufen). Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
+
+## Gestaltungslinie
+
+**Seit 19.09.2026: „Nachtausgabe“.**
 
 Gebaut nach `C:\Users\basti\Desktop\Webagentur Scherzinger\Design\luviq\FINALER-BAUPLAN.md`,
 Bericht `docs/design-2026-09-BERICHT.md`. Ein Stylesheet für alle öffentlichen Seiten:
@@ -55,15 +59,13 @@ Display-Schrift, dazu ein animierter „Nebel"-Hintergrund und auf dem Desktop e
 nicht Boutique. Die Startseite ist als Bühne gebaut (Hero mit Produktfoto als Hintergrund,
 umschaltbarer Produkt-Showcase, Trust-Badges, Ticker — Commits `82f3077`, `67fb4fb`, 03.07.2026).
 
-**Neugestaltung beschlossen (18.09.2026), noch nicht gebaut.** Bastian hat nach drei Runden
-Entwürfen **B3 „Nachtausgabe“ mit Hero H4 „Panorama“** gewählt: Schwarz, Cormorant Garamond kursiv,
-Schibsted Grotesk gesperrt, ein Foto über die ganze Breite ohne Text darauf, das Archiv mit Nummern.
-Entscheidung, Design-Vorgabe (Farben, Schriften, Aufbau) und Bauplan stehen **außerhalb dieses Repos** in
-`C:\Users\basti\Desktop\Webagentur Scherzinger\Design\luviq\ENTSCHEIDUNG-UND-BAUPLAN.md`, die Entwürfe
-daneben in `entwuerfe\`. **Bis zum Bau** gilt die Linie unten weiter, und die Verbesserungsläufe verändern
-kein Element, keine Klasse und keine Kennung. Der Umbau selbst schreibt die Designwache-Referenz bewusst neu.
+**Neugestaltung (18.09.2026 beschlossen, am 19.09.2026 gebaut und live):** Bastian hat nach drei Runden Entwürfen **B3 „Nachtausgabe“ mit Hero H4 „Panorama“** gewählt — Schwarz, Cormorant Garamond kursiv, Schibsted Grotesk gesperrt, ein Foto über die ganze Breite ohne Text darauf, das Archiv mit Nummern. Entscheidung und Bauplan stehen außerhalb dieses Repos in `C:\Users\basti\Desktop\Webagentur Scherzinger\Design\luviq\ENTSCHEIDUNG-UND-BAUPLAN.md` und `FINALER-BAUPLAN.md`, der Umbaubericht in `../docs/design-2026-09-BERICHT.md`. Die Designwache-Referenz wurde dabei bewusst neu erfasst (siehe oben).
 
 ## Farben und Schriften
+
+**Aktuell (seit 19.09.2026):** die Tokens `--lv-*` in `shop1/static/shop1/luviq.css` (Zeilen 37–41, geprüft 01.10.2026): Grund `#0A0A0A` / `#131211`, Text `#F2EEE6`, Nebentext `#9C968C`, **ein** Akzent `#C8763F`, Kachel `#E8E1D6`; `theme-color` `#0A0A0A` (`base.html`). Schriften: Cormorant Garamond kursiv 500, Schibsted Grotesk 400–700, JetBrains Mono 400–500 — selbst gehostet in `shop1/static/shop1/fonts/`, **kein Google Fonts mehr** (in keiner Vorlage mehr ein Verweis auf `fonts.googleapis.com`, geprüft 01.10.2026). Die vollständige Tabelle steht oben unter „Gestaltungslinie seit 19.09.2026“.
+
+### Frühere Farben und Schriften (bis 18.09.2026, nur Geschichte)
 
 Tokens aus `style.css` (`:root`) und `tailwind.config.js` (`theme.extend.colors`), identische Werte:
 
@@ -96,6 +98,22 @@ versioniert, und der Lauf hatte keinen Netzzugang, um die Schnitte zu holen. Die
 bleibt damit offen ([80-AUFGABEN.md](80-AUFGABEN.md) → Offen Nr. 3). Fallback `sans-serif`.
 
 ## Seitenaufbau
+
+**Stand 01.10.2026, gegen `templates/base.html` und die Vorlagen geprüft.**
+
+**Rahmen (`templates/base.html`):** Sprunglink „Zum Inhalt springen“ (`.lv-sprung`) als erstes Element; Kopf `.lv-kopf` mit Wortmarke „LUVIQ“ und Hauptnavigation *Motiv anfragen · Drop · Archiv · Entstehung · Luisa · Konto/Anmelden* (Warenkorb nur bei `VERKAUF_AKTIV`, „Panel“ nur für die Betreiberin), mobil ein Menü per `<details>`; Fuß `.lv-fuss` mit *Start · Motiv anfragen · Archiv · Luisa · Wissen · Gästebuch · Kontakt · Herkunft (mit Verkauf „Liefergebiet“) · Warteliste*, der Zeile „Marke im Aufbau · Alsfeld, Hessen“ sowie Impressum, Datenschutz (AGB nur mit Verkauf). Keine Telefonnummer — es gibt keine belegte.
+
+**Zwei Seitenarten** (`{% block seitenart %}`): `lv-seite` für Startseite, Motiv anfragen (und Danke-Seite), Archiv (`/produkte/`), Stückseite, „Luisa“ (`/ueber_uns/`) und die 404-Seite; `lv-alt` (Vorgabe) mit Übersetzungsschicht für Kontakt, Gästebuch, Wissen, Rechtstexte, Konto und Kasse; das Admin-Panel bleibt `lv-admin`.
+
+**Startseite (`index.html`, sieben Abschnitte):** Hero `#start` (Ausgabe-Datum, Nº und Titel des letzten Stücks, Markensatz „Sag mir, was du willst — ich mal’s dir.“, Panoramafoto) → `#anfragen` („Du hast eine Idee?“, drei Schritte, Richtungsauswahl, Motiv anfragen) → `#drop` (Countdown „Nº 006 erscheint Donnerstag, 08.10., 18 Uhr“, Warteliste-Feld) → `#entstehung` („Wie ein Stück entsteht“, fünf Schritte) → `#archiv` (Karten `teile/archiv_karte.html`, „vergeben“) → `#luisa` (Zitat) → `#warteliste`. Texte und Werte kommen aus `shop1/luviq_daten.py`.
+
+**Archiv (`/produkte/`) und Stückseite:** Karten mit Nummer, Name und dem Vermerk „Archiv · vergeben“, ohne Preise und ohne Warenkorb-Knopf (Verkauf aus); die Seite erklärt, dass es hier keine Preise, keinen Warenkorb und keine Bestellung gibt.
+
+**Google-Karte:** nur noch auf `/gaestebuch/` (`_reviews_map.html`); seit `RE17` (18.09.2026, `d58a96c`) liegt bis zum Klick ein Platzhalter „Karte laden“ darüber, der im Skript von `base.html` entsteht — der Aufbau der Vorlage bleibt unberührt. Die Startseite der „Nachtausgabe“ bettet keine Karte mehr ein.
+
+**Danke-Seiten:** `/kontakt/danke/` und `/motiv-anfragen/danke/` (beide `noindex, follow`, nicht in Sitemap und `llms.txt`).
+
+### Seitenaufbau der früheren Linie (bis 18.09.2026, nur Geschichte)
 
 **Rahmen (`templates/base.html`):** klebrige Glas-Navigation (`Home · Produkte · Gästebuch ·
 Kontakt · Über uns · Login · Registrieren`, mobil per Alpine-Menü), Fusszeile mit zwei Linkgruppen
@@ -156,11 +174,13 @@ Produktbilder von Cloudinary (JPEG/PNG, ohne `srcset` — PF15/PF16). Bildsumme 
 
 ## Entscheidungen
 
+*Zeilen, die Glas-Karten, Nebel, Gold oder Tailwind-Klassen nennen, stammen aus der früheren Linie; gültig geblieben sind die Designwache, der Grundsatz „Text wächst in vorhandenen Absätzen“ und die Regeln zu Barrierefreiheit. Neue Entscheidungen der „Nachtausgabe“ stehen oben unter „Gestaltungslinie seit 19.09.2026“.*
+
 | Entscheidung | Warum | Beleg |
 |---|---|---|
 | **Designwache** `test_aufbau` friert den sichtbaren Aufbau jeder öffentlichen Seite ein (Tag-Reihenfolge, `id`/`class`, Überschriften, Elementzahlen); `<head>`, `alt`, `aria-*`, `src`, `srcset` bewusst ausgenommen | Verbesserungsläufe dürfen Text, Meta und Schema ändern, nicht das Aussehen; blockiert seit Auflage 4 (`47769d4`) auch bei null verglichenen Seiten | `CLAUDE.md`, `shop1/tests/_aufbau.py` |
 | Neuer Inhalt wächst in **vorhandenen** Absätzen; keine neuen Elemente | Regel 1 der Läufe; `/produkte/` hatte ausser `h1` und Karten nur einen Absatz | Logbuch Schritte 21–24 |
-| Kein Link auf `/wissen/` in Navigation oder Fusszeile | verworfen (Plan Lauf 4, Zeile 7); Wissensseiten sind über die Übersicht und untereinander verlinkt | Logbuch Schritt 26 |
+| Link auf `/wissen/`: bis 18.09.2026 bewusst keiner (Plan Lauf 4); in der „Nachtausgabe“ steht „Wissen“ in der Fußnavigation (`base.html`, geprüft 01.10.2026) | Der Plan galt der alten Linie; die neue Fußnavigation führt den Bereich | `templates/base.html` |
 | Three.js nur Desktop, ohne reduzierte Bewegung, nachgeladen; `setPixelRatio ≤ 1,5`, `antialias: false` | LCP/TBT mobil | `DOCUMENTATION.md` §8, `index.html` |
 | Fokusring per `body :is(...)` (Spezifität 0,2,1), damit er `.form-input:focus` und `focus:outline-none` schlägt | Tastaturfokus war unsichtbar | Schritt 9 (`508d0ec`); Sichtprüfung im Browser durch die Betreiberin steht aus (Auflage 2) |
 | Karussell: benannte Schaltflächengruppe mit `aria-pressed` statt halbem ARIA-Tabmuster | Barrierefreiheit | Schritt 7 (`5eb59b9`) |
@@ -169,7 +189,7 @@ Produktbilder von Cloudinary (JPEG/PNG, ohne `srcset` — PF15/PF16). Bildsumme 
 | **Der Datenschutzhinweis im Kontaktformular steht als reiner Fliesstext** (`KV05`): kein `<p>`, kein `<a>`, keine eigene Klasse — der Text hängt direkt im `<div>` unter dem Nachrichtenfeld, die Adresse der Datenschutzerklärung ist ausgeschrieben statt verlinkt. Ein Absatz mit Verweis wären zwei Elemente mehr im sichtbaren Aufbau, und den friert die Designwache ein; verlinkt bleibt die Erklärung in der Fusszeile jeder Seite. **Folge fürs Aussehen:** ohne eigene Klasse erbt der Hinweis Schriftgrösse und Farbe des Formularrahmens statt der kleinen, gedämpften Schrift der übrigen Formulartexte — **im Browser nicht angesehen**. Eine Klasse nachzutragen wäre eine Änderung am eingefrorenen Aufbau und braucht eine bewusste Entscheidung. Das Fallenfeld des Spamschutzes (`KV06`) bleibt unsichtbar: `aria-hidden` und `style` sind Attribute, die die Designwache nicht erfasst | Art. 13 DSGVO verlangt den Hinweis dort, wo die Daten eingegeben werden; ein Test in `test_formulare` hält ihn zwischen `<form>` und `</form>` fest. `aufbau_referenz.json` nicht angefasst, `test_aufbau` unverändert | `b736994`, `06503a7` (Zweig `sofort/2026-09-17-kv05-und-2-weitere`, 17.09.2026, nicht gemergt) |
 | **Der Kartenplatzhalter wird im Skript gebaut, nicht in der Vorlage** (`RE17`): die Vorlage liefert den Rahmen ohne `src`, das Skript in `base.html` legt den Knopf darüber und setzt `src` erst im Klick. Ein Platzhalter in der Vorlage wäre ein Element und eine Klasse mehr im sichtbaren Aufbau — den friert die Designwache ein. **Folge fürs Aussehen:** der Knopf trägt Inline-Stile statt Klassen der Linie, und ohne JavaScript bleibt der Rahmen leer; beides ist im Browser nicht angesehen | Vor dem Klick geht keine Anfrage an `maps.google.com`, also auch keine IP-Adresse (`RE17`, `RE15`); drei Tests in `test_einstellungen` (`EinbettungErstNachKlickTest`), `aufbau_referenz.json` nicht angefasst | `d58a96c` (Zweig `sofort/2026-09-18-re15-und-2-weitere`, 18.09.2026, nicht gemergt) |
 | **Der Bestellknopf heisst „Zahlungspflichtig bestellen"** (`RE21`) statt „Continue to Payment →" — nur der Text von `checkout.html:114`, keine Klasse, keine Kennung, kein Element | § 312j Abs. 3 BGB verlangt die eindeutige Beschriftung, und die AGB nannten sie längst (`legal/agb.html:42`); die Seite widersprach sich selbst. Auf `/payment/` beschriftet PayPals SDK seinen Knopf selbst | `329dbc4` (derselbe Zweig, 18.09.2026, nicht gemergt) |
-| Platzhalter-Kontaktdaten auf `/kontakt/` („Musterstraße 123, Berlin", „+49 (0) 30 123456", `info@luviq.universe`) durch belegte Angaben ersetzt, **Telefon entfernt statt erfunden** | keine belegte Nummer im Projekt | Zweig `kontakt.html`; live (main) stehen die Platzhalter noch |
+| Platzhalter-Kontaktdaten auf `/kontakt/` („Musterstraße 123, Berlin“, „+49 (0) 30 123456“, `info@luviq.universe`) durch belegte Angaben ersetzt, **Telefon entfernt statt erfunden** — seit dem Merge live: `/kontakt/` nennt Luisa Brehler, Alsfeld und `brehlerluisa@gmail.com` und sagt „eine Telefonnummer gibt es nicht“ (abgerufen 01.10.2026) | keine belegte Nummer im Projekt | `kontakt.html` |
 | „5.0 ★★★★★" im Bewertungskasten nicht angefasst | Quelle der Zahl nicht belegt | Logbuch Schritt 23 |
 
 **Was am Aussehen nicht angefasst wird:** Farbtokens, Glas-Bauteile, Nebel-Hintergrund, der
@@ -180,14 +200,13 @@ zusätzlich nur mit Sandbox-Test ([10-TECHNIK.md](10-TECHNIK.md) → Fallen).
 
 ## Offen
 
-| Punkt | Beleg (Messung 02.09.2026) | Regel |
+Stand 01.10.2026. Erledigt und deshalb entfernt: Google-Schriften (selbst gehostet), Sprungmarke „Zum Inhalt“ (`.lv-sprung`), Kontrastwerte des alten Rahmens (neue Palette 17,1:1 bzw. 6,8:1 laut Bauplan).
+
+| Punkt | Beleg | Regel |
 |---|---|---|
-| Inter und Outfit als WOFF2 selbst hosten, `@font-face` mit `font-display: swap` | 13 von 13 Seiten laden von `fonts.googleapis.com` | RE07, VL16 |
-| Sprungmarke „Zum Inhalt" als erstes Element im `body` | 13 von 13 ohne | BF08, VL17 |
-| Kontrast im Seitenrahmen: Fusslinks (`text-white/40`), Copyright-Zeile (`text-white/30`), „Registrieren" weiss auf Gold. Am 17.09.2026 (Paket 219) als nicht möglich beendet, keine Zeile geändert — braucht eine Farbentscheidung der Betreiberin ([80-AUFGABEN.md](80-AUFGABEN.md), „Beim Kunden" Nr. 18), danach Tailwind neu bauen | Messung 16.09.2026: 4 von 4 Seiten mit `color-contrast` | BF29 |
-| `prefers-reduced-motion` auch für die CSS-Animationen (`nebula-evolve`, `rotate`, Ticker) — im ausgelieferten Stilblatt nicht gefunden; nur der Three.js-Pfad prüft es | BF19 | BF19 |
-| Darstellung des Datenschutzhinweises auf `/kontakt/` im Browser ansehen (Paket 243, `KV05`): Er trägt keine eigene Klasse und erbt Schriftgrösse und Farbe des Formularrahmens. Passt das nicht zum Rest des Formulars, ist eine Klasse eine Änderung am eingefrorenen Aufbau und braucht eine bewusste Entscheidung samt Nachziehen von `aufbau_referenz.json` | im Zweig gebaut, nie angesehen | KV05 |
-| Den Kartenplatzhalter auf `/` und `/gaestebuch/` im Browser ansehen (Paket 248, `RE17`): dunkler Kasten mit „Karte laden" über der ganzen Kartenfläche, Gestaltung aus Inline-Stilen statt aus Klassen der Linie. Passt er nicht zu den Glas-Karten daneben, ist eine Klasse eine Änderung am eingefrorenen Aufbau und braucht eine bewusste Entscheidung samt Nachziehen von `aufbau_referenz.json`. Dabei auch ohne JavaScript ansehen — dann bleibt der Rahmen leer | im Zweig gebaut, nie angesehen | RE17 |
-| Englische Restbeschriftungen ohne Aussage („Get in Touch", „Zentrale/Channels", „Legal Notice", „Art is not a luxury…", „JOIN THE") — Geschmacksfrage der Betreiberin, nicht der Messung; „Continue to Payment →" ist mit `RE21` (18.09.2026) durch „Zahlungspflichtig bestellen" ersetzt | — | — |
-| Menüknopf und Icon-Knöpfe ohne Namen (13 Seiten × 1); 5 namenlose Links auf `/produkte/` | BF12, BF11 | BF12, VL18 |
-| Satzart des Einleitungsabsatzes auf `/produkte/`: Versalien mit weiter Laufweite bei einem Absatz im Umfang einer Kategorieseite (seit IS18, `2591fde`). Eine andere Satzart ist eine Änderung am Aussehen — eigenes Paket, Freigabe, Designwache-Referenz bewusst nachziehen | Nebenbefund `LOGBUCH.md`, Paket 165 (keine Messung) | — |
+| Alte Seiten (Kontakt, Gästebuch, Wissen, Rechtstexte, Konto, Kasse) laufen noch über die Übersetzungsschicht `lv-alt` statt als neu gebaute `lv-seite` | `{% block seitenart %}` nur in sechs Vorlagen auf `lv-seite` (Start, Motiv anfragen, Danke, Archiv, Stück, Luisa) | VL-Konformität |
+| Kasse, Warenkorb, Zahlung und Profil tragen noch „Orbit/Mission“-Texte („Your Orbit“, „Mission Checkout“) — vor dem Einschalten des Verkaufs sprachlich nachziehen | [80-AUFGABEN.md](80-AUFGABEN.md), „Verkauf einschalten nach Gewerbeanmeldung“ | — |
+| Neue Fotos (Porträt vor echter Wand, Arbeitsfoto) — dann Porträt auf „Luisa“ und Entstehungsbilder 2–4 tauschen | [80-AUFGABEN.md](80-AUFGABEN.md), „Offen“; Ablage `Webagentur Scherzinger\Design\luviq\fotos-neu\` | — |
+| Kartenplatzhalter auf `/gaestebuch/` im Browser ansehen: Gestaltung aus Inline-Stilen statt aus Klassen der Linie; die Sichtprüfung hat nach den Quellen niemand durchgeführt | `base.html` (Skript), `RE17` | RE17 |
+| Texte der „Nachtausgabe“ von Luisa gegenlesen (Lead, „Du hast eine Idee?“, Anfrageseite, Danke-Seite, „Luisa“) | `shop1/luviq_daten.py`; [80-AUFGABEN.md](80-AUFGABEN.md) | — |
+| Darstellung des Datenschutzhinweises auf `/kontakt/` im Browser ansehen (reiner Fließtext ohne Klasse, `KV05`) | Paket 243; nicht belegt als angesehen | KV05 |

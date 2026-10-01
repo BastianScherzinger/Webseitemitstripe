@@ -158,6 +158,27 @@ class SitemapTest(LuviqTestCase):
             f'Der Produktname kommt nicht unversehrt aus der Sitemap zurück: {titel}',
         )
 
+    def test_bildseiten_tragen_ihre_bilder_und_nur_die(self):
+        """Startseite und Produktübersicht zeigen Bilder und melden sie an;
+        Seiten ohne Inhaltsbild (Datenschutz) melden keins — kein Logo als
+        Platzhalter (Overview TS19, 01.10.2026)."""
+        self.produkt.bild = 'produkte/probe.jpg'
+        self.produkt.save()
+        wurzel = ElementTree.fromstring(self.hole('/sitemap.xml').content)
+        ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9',
+              'image': 'http://www.google.com/schemas/sitemap-image/1.1'}
+        bilder = {}
+        for eintrag in wurzel.findall('sm:url', ns):
+            pfad = eintrag.find('sm:loc', ns).text.split('testserver', 1)[-1] or '/'
+            bilder[pfad.rstrip('/') or '/'] = [b.text for b in eintrag.findall('image:image/image:loc', ns)]
+        self.assertTrue(any('hero-panorama' in b for b in bilder['/']), bilder['/'])
+        self.assertGreaterEqual(len(bilder['/']), 6)
+        self.assertTrue(any('probe' in b for b in bilder['/produkte']), bilder['/produkte'])
+        self.assertEqual(bilder['/datenschutz'], [])
+        for liste_ in bilder.values():
+            for adresse in liste_:
+                self.assertNotIn('logo', adresse)
+
     def test_jede_adresse_der_sitemap_antwortet_mit_200(self):
         """Verhindert die häufigste Sitemap-Fehlermeldung der Search Console:
         eine gelistete Adresse, die 404 liefert. Passiert, sobald eine Route

@@ -10,6 +10,10 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 01.10.2026 — Bilder der Start- und Produktseite in der Sitemap (Zweig `seo/2026-10-01-bildsitemap`)
+
+- **Was:** `sitemap_xml` hängt an die Startseite das Titelbild und die fünf Bilder der Entstehungsschritte (aus `luviq_daten`, derselben Quelle wie `index.html`) und an `/produkte/` die Bilder der aktiven Stücke (`_seitenbilder`, `_bild_xml` in `shop1/views/legal.py`). **Warum:** Overview-Regel TS19 — nur 5 von 13 Einträgen trugen eine Bild-Auszeichnung, obwohl die Startseite elf Bilder zeigt. Seiten ohne Inhaltsbild bekommen bewusst keins (kein Logo als Platzhalter); Test `test_bildseiten_tragen_ihre_bilder_und_nur_die`.
+
 ## 26.09.2026 — Gestaltete Mails und Kopie an die Webagentur (Zweig `mail/2026-09-26-benachrichtigung`)
 
 - **Was:** Neue `shop1/mails.py` und Vorlagen `shop1/templates/emails/`; Kontakt- und Motivanfrage-Mail an Luisa, Konto- und Newsletter-Bestätigung bekommen einen gestalteten HTML-Teil (Textteil unverändert). Jede echte Kontakt- und Motivanfrage und jede Registrierung geht zusätzlich als eigene Mail an `BETREIBER_KOPIE_AN` (Vorgabe Bastian Scherzinger). **Warum:** Bastian betreut die Seite und soll sehen, ob und wo Anfragen eingehen; die alten Mails waren ungestaltet (Kontakt: Text als HTML).
