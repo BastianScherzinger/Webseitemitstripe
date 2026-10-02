@@ -12,9 +12,11 @@ class CustomUserCreationForm(UserCreationForm):
     # User-Felder
     email = forms.EmailField(
         required=True,
+        max_length=254,
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': 'E-Mail-Adresse'
+            'placeholder': 'E-Mail-Adresse',
+            'autocomplete': 'email',
         })
     )
     first_name = forms.CharField(
@@ -23,7 +25,8 @@ class CustomUserCreationForm(UserCreationForm):
         label="Vorname",
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Vorname'
+            'placeholder': 'Vorname',
+            'autocomplete': 'given-name',
         })
     )
     last_name = forms.CharField(
@@ -32,7 +35,8 @@ class CustomUserCreationForm(UserCreationForm):
         label="Nachname",
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Nachname'
+            'placeholder': 'Nachname',
+            'autocomplete': 'family-name',
         })
     )
     
@@ -94,16 +98,23 @@ class CustomUserCreationForm(UserCreationForm):
         # Styling für Standard-Felder
         self.fields['username'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Benutzername'
+            'placeholder': 'Benutzername',
+            'autocomplete': 'username',
         })
         self.fields['password1'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Passwort'
+            'placeholder': 'Passwort',
+            'autocomplete': 'new-password',
         })
         self.fields['password2'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Passwort wiederholen'
+            'placeholder': 'Passwort wiederholen',
+            'autocomplete': 'new-password',
         })
+        # Pflichtfelder tragen den Stern in der Beschriftung (FO04); die Erklärung
+        # steht im Einleitungssatz der Seite.
+        for name in ('username', 'email', 'first_name', 'last_name', 'password1', 'password2'):
+            self.fields[name].label_suffix = ' *'
     
     def save(self, commit=True):
         user = super().save(commit=False)

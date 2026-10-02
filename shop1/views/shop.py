@@ -18,7 +18,7 @@ from django.views.decorators.cache import never_cache
 from ..models import Produkt, Werbung, WerbungStat, KontaktAnfrage
 from .. import luviq_daten, mails, spamschutz
 from ..utils import send_brevo_email
-from ._helpers import zu_viele_anfragen
+from ._helpers import mail_ergebnis_vermerken, zu_viele_anfragen
 
 _log = logging.getLogger('shop1')
 
@@ -85,6 +85,9 @@ def startseite(request):
         'dauer': luviq_daten.DAUER,
         'zitat': luviq_daten.ZITAT,
         'zitat_quelle': luviq_daten.ZITAT_QUELLE,
+        # Spamschutz der beiden Wartelisten-Formulare (shop1/spamschutz.py).
+        'formzeit': spamschutz.zeitstempel(),
+        'feld_falle': spamschutz.FELD_FALLE,
     })
 
 
@@ -155,6 +158,10 @@ def doppelt_abgeschickt(email, betreff, nachricht):
     return not cache.add(_doppelt_schluessel(email, betreff, nachricht), 1, DOPPELT_FENSTER)
 
 
+class _MailObergrenze(Exception):
+    """Interner Abbruch: die Mail-Obergrenze ist erreicht, es wird nur gespeichert."""
+
+
 # offen-ok: das Kontaktformular richtet sich an Besucher ohne Konto. Geschrieben
 # wird nur eine KontaktAnfrage (MW18), und erst nach Drosselung je IP,
 # Feldprüfung (kontakt_fehler), Spamschutz und Doppelsperre.
@@ -164,6 +171,10 @@ def kontakt(request):
     # Seite, sondern in den Block ``role="alert"`` innerhalb des Formulars –
     # dort, wo die Pflichtfelder ihn über ``aria-describedby`` erwarten.
     fehler = None
+    # ``werte``: das Getippte, damit es nach einem Fehler im Formular stehen
+    # bleibt (EIG90) – vorher kam die Seite leer zurück, und eine lange Nachricht
+    # war weg.
+    werte = {}
     if request.method == 'POST':
         # .strip(): ohne das zaehlt ein Feld, in dem nur ein Leerzeichen steht,
         # als ausgefuellt – der billigste Weg, das Formular mit Leermeldungen
@@ -172,11 +183,15 @@ def kontakt(request):
         email = request.POST.get('email', '').strip()
         betreff = request.POST.get('betreff', '').strip()
         nachricht = request.POST.get('nachricht', '').strip()
+        werte = {'name': name, 'email': email, 'betreff': betreff, 'nachricht': nachricht}
 
         # Drosselung je IP-Adresse (FO09) vor jeder Prüfung: auch eine
         # Schleife ungültiger Anfragen kostet Rechenzeit.
         if zu_viele_anfragen(request, 'kontakt'):
             return render(request, 'shop1/kontakt.html', {
+                'formzeit': spamschutz.zeitstempel(),
+                'feld_falle': spamschutz.FELD_FALLE,
+                'werte': werte,
                 'fehler': 'Du hast gerade mehrere Nachrichten geschickt. '
                           'Bitte versuche es in einer Viertelstunde noch einmal.',
             }, status=429)
@@ -210,7 +225,12 @@ def kontakt(request):
                 _log.exception('Kontaktformular: Anfrage nicht gespeichert')
                 anfrage = None
             felder = [('Name', safe_name), ('E-Mail', safe_email, 'mail'), ('Betreff', safe_betreff)]
+            # Mail-Obergrenze je Stunde und Tag (Missbrauchsschutz): darüber steht
+            # die Anfrage gespeichert im Panel, nur die Mails entfallen.
+            mail_erlaubt = spamschutz.mail_budget_ok('kontakt')
             try:
+                if not mail_erlaubt:
+                    raise _MailObergrenze()
                 # reply_to (MW21): „Antworten“ im Postfach der Betreiberin geht
                 # an den Anfragenden, nicht an die eigene Versandadresse.
                 # HTML-Teil gestaltet (26.09.2026), Textteil unverändert.
@@ -219,7 +239,10 @@ def kontakt(request):
                     antwort_an=safe_email, langtext_titel='Nachricht', langtext=nachricht,
                     objekt=anfrage)
                 send_brevo_email(subject, html, recipient, recipient_name="Shop Admin", text_content=message,
-                                 reply_to=safe_email)
+                                 reply_to=safe_email,
+                                 danach=mail_ergebnis_vermerken(KontaktAnfrage, anfrage.pk if anfrage else None))
+            except _MailObergrenze:
+                gestartet = False
             except Exception:
                 _log.exception('Kontaktformular: Mailversand nicht gestartet')
                 gestartet = False
@@ -232,10 +255,11 @@ def kontakt(request):
                         _log.exception('Kontaktformular: Versandvermerk nicht gespeichert')
             # Eigene Kopie an die Webagentur (26.09.2026) – wirft nie, ändert
             # nichts an Speichern, Mail an Luisa oder Antwort an den Besucher.
-            mails.betreiber_kopie(
-                art='Kontaktanfrage', name=safe_name, felder=felder, antwort_an=safe_email,
-                langtext_titel='Nachricht', langtext=nachricht, objekt=anfrage,
-                gespeichert=anfrage is not None, admin_mail=gestartet, schon=[recipient])
+            if mail_erlaubt:
+                mails.betreiber_kopie(
+                    art='Kontaktanfrage', name=safe_name, felder=felder, antwort_an=safe_email,
+                    langtext_titel='Nachricht', langtext=nachricht, objekt=anfrage,
+                    gespeichert=anfrage is not None, admin_mail=gestartet, schon=[recipient])
             if gestartet or anfrage is not None:
                 # Weiterleitung auf eine eigene Adresse statt einer Meldung auf
                 # derselben Seite (KV07): nur so ist ein abgeschicktes Formular
@@ -250,6 +274,7 @@ def kontakt(request):
     return render(request, 'shop1/kontakt.html', {
         'formzeit': spamschutz.zeitstempel(),
         'feld_falle': spamschutz.FELD_FALLE,
+        'werte': werte,
         'fehler': fehler,
     })
 

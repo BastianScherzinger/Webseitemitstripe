@@ -85,3 +85,17 @@ def _sync_session_to_db(request, user):
 
     request.session['warenkorb'] = {}
     request.session.modified = True
+
+
+def mail_ergebnis_vermerken(modell, pk):
+    """Rückruf für ``send_brevo_email(danach=…)`` (EIG10): scheitert der Versand im
+    Hintergrund, steht an der gespeicherten Anfrage wieder „Mail nicht angestoßen“ —
+    sichtbar im Panel statt nur im Protokoll. Gibt ``None`` zurück, wenn die Anfrage
+    nicht gespeichert werden konnte (nichts zu vermerken)."""
+    if pk is None:
+        return None
+
+    def danach(ok):
+        if not ok:
+            modell.objects.filter(pk=pk).update(mail_gestartet=False)
+    return danach

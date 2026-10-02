@@ -10,7 +10,7 @@ _log = logging.getLogger('shop1')
 
 
 def send_brevo_email(subject, html_content, recipient_email, recipient_name="", text_content="",
-                     reply_to=""):
+                     reply_to="", danach=None):
     """
     Zentrale Funktion zum Versenden von Emails via Brevo API (asynchron).
     Bypass für Railway SMTP-Port-Sperren.
@@ -18,8 +18,31 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
     ``reply_to`` (MW21): die Adresse, an die „Antworten“ im Postfach geht.
     Ohne sie ginge die Antwort auf eine Kontaktanfrage an die eigene
     Versandadresse statt an den Anfragenden. Beide Wege setzen sie.
+
+    ``danach`` (EIG10): ein Aufruf ``danach(ok)`` am Ende des Hintergrund-Threads, ``ok``
+    ist ``True``, wenn Brevo bzw. der SMTP-Server die Mail angenommen hat. Damit kann
+    der Aufrufer ein Scheitern festhalten, das sonst nur im Protokoll stünde. Das
+    Ergebnis erreicht den Besucher nicht mehr — die Antwortseite ist da längst
+    ausgeliefert —, aber die gespeicherte Anfrage (Panel) trägt es.
     """
     def _send():
+        ok = False
+        try:
+            ok = _senden()
+        finally:
+            if danach is not None:
+                try:
+                    danach(ok)
+                except Exception:
+                    _log.exception("Nachbearbeitung nach dem Mailversand fehlgeschlagen")
+                finally:
+                    # Der Thread hat eine eigene Datenbankverbindung geöffnet; im
+                    # Hauptthread (Tests, die den Thread ersetzen) bleibt sie offen.
+                    if threading.current_thread() is not threading.main_thread():
+                        from django.db import connections
+                        connections.close_all()
+
+    def _senden():
         api_key = os.getenv('BREVO_API_KEY')
         sender_name = "Luviq-Shop"
         sender_email = settings.DEFAULT_FROM_EMAIL
@@ -46,10 +69,11 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
                 response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=10)
                 if response.status_code < 300:
                     _log.info("E-Mail via Brevo API gesendet an %s", recipient_email)
-                else:
-                    _log.error("Brevo API Fehler (%s): %s", response.status_code, response.text)
+                    return True
+                _log.error("Brevo API Fehler (%s): %s", response.status_code, response.text)
             except Exception as e:
                 _log.error("Brevo API Verbindungsfehler: %s", e)
+            return False
         else:
             try:
                 # EmailMultiAlternatives statt send_mail: nur so lässt sich
@@ -65,8 +89,10 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
                 sent = mail.send(fail_silently=False)
                 if sent:
                     _log.info("E-Mail via SMTP gesendet an %s", recipient_email)
+                return bool(sent)
             except Exception as e:
                 _log.error("SMTP Fehler: %s", e)
+            return False
 
     # Im Hintergrund senden
     threading.Thread(target=_send).start()

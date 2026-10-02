@@ -29,7 +29,7 @@ from django.views.decorators.cache import never_cache
 from .. import luviq_daten, mails, spamschutz
 from ..models import Motivanfrage
 from ..utils import send_brevo_email
-from ._helpers import zu_viele_anfragen
+from ._helpers import mail_ergebnis_vermerken, zu_viele_anfragen
 
 _log = logging.getLogger('shop1')
 
@@ -141,6 +141,10 @@ def _seite(request, werte=None, fehler=None, status=200):
     }, status=status)
 
 
+class _MailObergrenze(Exception):
+    """Interner Abbruch: die Mail-Obergrenze ist erreicht, es wird nur gespeichert."""
+
+
 # offen-ok: die Anfrage richtet sich an Besucher ohne Konto. Geschrieben wird
 # nur eine Motivanfrage, und erst nach Drosselung je IP, Feldprüfung,
 # Spamschutz und Doppelsperre.
@@ -163,8 +167,11 @@ def motiv_anfragen(request):
         spamschutz.FELD_FALLE: request.POST.get(spamschutz.FELD_FALLE, ''),
         spamschutz.FELD_ZEIT: request.POST.get(spamschutz.FELD_ZEIT, ''),
         'name': werte['instagram'],
+        'email': werte['email'],
         'betreff': '',
         'nachricht': werte['bedeutung'],
+        # Die Falle des alten Namens gilt auch hier (Formulare vor dem 02.10.2026).
+        spamschutz.FELD_FALLE_ALT: request.POST.get(spamschutz.FELD_FALLE_ALT, ''),
     })
     if punkte >= spamschutz.SCHWELLE:
         _log.warning('Motivanfrage: Spam verworfen (%s: %s)', punkte, ','.join(gruende))
@@ -183,10 +190,18 @@ def motiv_anfragen(request):
     else:
         gespeichert = True
 
+    # Mail-Obergrenze je Stunde und Tag (Missbrauchsschutz): darüber steht die
+    # Anfrage gespeichert im Panel, nur die Mails entfallen.
+    mail_erlaubt = spamschutz.mail_budget_ok('motiv')
     betreff, html, text = _mail(anfrage)
     try:
+        if not mail_erlaubt:
+            raise _MailObergrenze()
         send_brevo_email(betreff, html, empfaenger(), recipient_name='Luisa', text_content=text,
-                         reply_to=anfrage.email)
+                         reply_to=anfrage.email,
+                         danach=mail_ergebnis_vermerken(Motivanfrage, anfrage.pk if gespeichert else None))
+    except _MailObergrenze:
+        gestartet = False
     except Exception:
         _log.exception('Motivanfrage: Mailversand nicht gestartet')
         gestartet = False
@@ -200,12 +215,13 @@ def motiv_anfragen(request):
 
     # Eigene Kopie an die Webagentur (26.09.2026) – wirft nie, ändert nichts
     # an Speichern oder der Mail an Luisa.
-    mails.betreiber_kopie(
-        art='Motivanfrage',
-        name=f'@{anfrage.instagram}' if anfrage.instagram else anfrage.email,
-        felder=_felder(anfrage), antwort_an=anfrage.email,
-        langtext_titel='Was es bedeuten soll', langtext=anfrage.bedeutung,
-        objekt=anfrage, gespeichert=gespeichert, admin_mail=gestartet, schon=[empfaenger()])
+    if mail_erlaubt:
+        mails.betreiber_kopie(
+            art='Motivanfrage',
+            name=f'@{anfrage.instagram}' if anfrage.instagram else anfrage.email,
+            felder=_felder(anfrage), antwort_an=anfrage.email,
+            langtext_titel='Was es bedeuten soll', langtext=anfrage.bedeutung,
+            objekt=anfrage, gespeichert=gespeichert, admin_mail=gestartet, schon=[empfaenger()])
 
     if gestartet or gespeichert:
         return redirect('motiv_danke')

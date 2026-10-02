@@ -93,13 +93,20 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
                 {% else %}
                 <p class="lv-dl">Die nächste Ausgabe ist in Arbeit.</p>
                 {% endif %}
-                <form class="lv-feldzeile" data-newsletter novalidate>
+                {% comment %}Ohne JavaScript schickt das Formular klassisch per POST (EIG89/EIG129); mit JavaScript übernimmt das Skript unten. Honigtopf und Zeitfalle wie beim Kontaktformular (shop1/spamschutz.py). aria-describedby verweist auf die Antwortzeile darunter (BF24).{% endcomment %}
+                <form class="lv-feldzeile" method="post" action="{% url 'newsletter_subscribe' %}" data-newsletter novalidate>
+                    {% csrf_token %}
                     <label class="sr-only" for="vormerken-email">Deine E-Mail-Adresse zum Vormerken</label>
-                    <input type="email" id="vormerken-email" name="email" autocomplete="email" placeholder="deine@mail.de" required maxlength="254">
+                    <input type="email" id="vormerken-email" name="email" autocomplete="email" placeholder="deine@mail.de" required maxlength="254" aria-describedby="vormerken-meldung">
+                    <div class="lv-falle" aria-hidden="true">
+                        <label for="vormerken-website">Webseite (bitte leer lassen)</label>
+                        <input class="lv-falle" id="vormerken-website" name="{{ feld_falle }}" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+                    </div>
+                    <input type="hidden" name="formzeit" value="{{ formzeit }}">
                     <button type="submit">Vormerken</button>
                 </form>
-                <p class="lv-antwort" role="status" aria-live="polite"></p>
-                <p class="lv-klein">Eine Mail, wenn es losgeht. Du bestätigst deine Adresse per Link, abmelden geht mit einem Klick.</p>
+                <p class="lv-antwort" id="vormerken-meldung" role="status" aria-live="polite"></p>
+                <p class="lv-klein">Eine Mail, wenn es losgeht. Du bestätigst deine Adresse per Link; abmelden: kurze Nachricht an brehlerluisa@gmail.com. Was mit der Adresse geschieht, steht in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
             </aside>
         </div>
     </section>
@@ -192,10 +199,16 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
     <!-- ═══ Die nächste Ausgabe: Warteliste = Newsletter mit Double-Opt-in ═══ -->
     <section class="lv-warteliste" id="warteliste" aria-labelledby="warteliste-titel">
         <h2 class="lv-serif" id="warteliste-titel">Die nächste Ausgabe</h2>
-        <p>Eine Mail, wenn die nächste Ausgabe erscheint. Du bestätigst deine Adresse über einen Link, verschickt wird über das Gmail-Postfach von Luviq Universe (Google). Abmelden geht mit einem Klick.</p>
-        <form id="newsletter-form" class="lv-feldzeile" data-newsletter novalidate>
+        <p>Eine Mail, wenn die nächste Ausgabe erscheint. Du bestätigst deine Adresse über einen Link, verschickt wird über das Gmail-Postfach von Luviq Universe (Google). Abmelden: eine kurze Nachricht an brehlerluisa@gmail.com. Was mit der Adresse geschieht, steht in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
+        <form id="newsletter-form" class="lv-feldzeile" method="post" action="{% url 'newsletter_subscribe' %}" data-newsletter novalidate>
+            {% csrf_token %}
             <label class="sr-only" for="newsletter-email">Deine E-Mail-Adresse für die Warteliste</label>
-            <input type="email" id="newsletter-email" name="email" autocomplete="email" placeholder="deine@mail.de" required maxlength="254">
+            <input type="email" id="newsletter-email" name="email" autocomplete="email" placeholder="deine@mail.de" required maxlength="254" aria-describedby="newsletter-message">
+            <div class="lv-falle" aria-hidden="true">
+                <label for="newsletter-website">Webseite (bitte leer lassen)</label>
+                <input class="lv-falle" id="newsletter-website" name="{{ feld_falle }}" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+            </div>
+            <input type="hidden" name="formzeit" value="{{ formzeit }}">
             <button type="submit">Eintragen</button>
         </form>
         <p id="newsletter-message" class="lv-antwort" role="status" aria-live="polite"></p>
@@ -231,7 +244,10 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
             var knopf = form.querySelector('button[type="submit"]');
             if (knopf.disabled) { return; }
             var antwort = form.nextElementSibling;
-            var email = form.querySelector('input[name="email"]').value;
+            var feld = form.querySelector('input[name="email"]');
+            var email = feld.value;
+            var falle = form.querySelector('.lv-falle input');
+            var zeit = form.querySelector('input[name="formzeit"]');
             knopf.disabled = true;
             form.setAttribute('aria-busy', 'true');
             try {
@@ -240,11 +256,13 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
                 var response = await fetch('/newsletter/subscribe/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
-                    body: JSON.stringify({ email: email })
+                    body: JSON.stringify({ email: email, website: falle ? falle.value : '', formzeit: zeit ? zeit.value : '' })
                 });
                 var data = await response.json();
                 antwort.textContent = data.message || data.error;
                 antwort.className = 'lv-antwort ' + (response.ok ? 'gut' : 'schlecht');
+                // Fehler auch am Feld kenntlich machen (BF24): Hilfsmittel lesen die Meldung über aria-describedby.
+                if (response.ok) { feld.removeAttribute('aria-invalid'); } else { feld.setAttribute('aria-invalid', 'true'); }
                 if (response.ok) { form.reset(); }
                 // Zählbarer Abschluss (FO08): die Anmeldung bleibt auf der Seite,
                 // deshalb ein Ereignis statt einer Danke-Seite. Ohne Adresse
@@ -256,6 +274,7 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
             } catch (err) {
                 antwort.textContent = 'Das hat gerade nicht geklappt. Versuch es bitte gleich noch einmal.';
                 antwort.className = 'lv-antwort schlecht';
+                feld.setAttribute('aria-invalid', 'true');
             } finally {
                 knopf.disabled = false;
                 form.removeAttribute('aria-busy');
