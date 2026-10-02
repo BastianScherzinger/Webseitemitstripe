@@ -142,10 +142,6 @@ def _seite(request, werte=None, fehler=None, status=200):
     }, status=status)
 
 
-class _MailObergrenze(Exception):
-    """Interner Abbruch: die Mail-Obergrenze ist erreicht, es wird nur gespeichert."""
-
-
 # offen-ok: die Anfrage richtet sich an Besucher ohne Konto. Geschrieben wird
 # nur eine Motivanfrage, und erst nach Drosselung je IP, Feldprüfung,
 # Spamschutz und Doppelsperre.
@@ -165,55 +161,18 @@ def motiv_anfragen(request):
         return _seite(request, werte, fehler)
 
     # Bot-Spam still verwerfen: dieselbe Danke-Seite, keine Mail, kein Eintrag.
-    punkte, gruende = spamschutz.bewerte({
-        spamschutz.FELD_FALLE: request.POST.get(spamschutz.FELD_FALLE, ''),
-        spamschutz.FELD_ZEIT: request.POST.get(spamschutz.FELD_ZEIT, ''),
-        'name': werte['instagram'],
-        'email': werte['email'],
-        'betreff': '',
-        'nachricht': werte['bedeutung'],
-        # Die Falle des alten Namens gilt auch hier (Formulare vor dem 02.10.2026).
-        spamschutz.FELD_FALLE_ALT: request.POST.get(spamschutz.FELD_FALLE_ALT, ''),
-    })
-    if punkte >= spamschutz.SCHWELLE:
-        _log.warning('Motivanfrage: Spam verworfen (%s: %s)', punkte, ','.join(gruende))
+    if _ist_spam(request.POST, werte):
         return redirect('motiv_danke')
     if not cache.add(_doppelt_schluessel(werte), 1, DOPPELT_FENSTER):
         _log.info('Motivanfrage: doppelt abgeschickte Anfrage zusammengeführt')
         return redirect('motiv_danke')
 
-    try:
-        with transaction.atomic():
-            anfrage = Motivanfrage.objects.create(**werte)
-    except DatabaseError:
-        _log.exception('Motivanfrage: nicht gespeichert')
-        anfrage = Motivanfrage(**werte)
-        gespeichert = False
-    else:
-        gespeichert = True
+    anfrage, gespeichert = _speichern(werte)
 
     # Mail-Obergrenze je Stunde und Tag (Missbrauchsschutz): darüber steht die
     # Anfrage gespeichert im Panel, nur die Mails entfallen.
     mail_erlaubt = spamschutz.mail_budget_ok('motiv')
-    betreff, html, text = _mail(anfrage)
-    try:
-        if not mail_erlaubt:
-            raise _MailObergrenze()
-        send_brevo_email(betreff, html, empfaenger(), recipient_name='Luisa', text_content=text,
-                         reply_to=anfrage.email,
-                         danach=mail_ergebnis_vermerken(Motivanfrage, anfrage.pk if gespeichert else None))
-    except _MailObergrenze:
-        gestartet = False
-    except Exception:
-        _log.exception('Motivanfrage: Mailversand nicht gestartet')
-        gestartet = False
-    else:
-        gestartet = True
-        if gespeichert:
-            try:
-                Motivanfrage.objects.filter(pk=anfrage.pk).update(mail_gestartet=True)
-            except DatabaseError:
-                _log.exception('Motivanfrage: Versandvermerk nicht gespeichert')
+    gestartet = mail_erlaubt and _mail_an_luisa(anfrage, gespeichert)
 
     # Eigene Kopie an die Webagentur (26.09.2026) – wirft nie, ändert nichts
     # an Speichern oder der Mail an Luisa.
@@ -230,6 +189,55 @@ def motiv_anfragen(request):
     cache.delete(_doppelt_schluessel(werte))
     return _seite(request, werte, 'Entschuldige, beim Senden ist etwas schiefgegangen. '
                                   'Versuch es bitte gleich noch einmal oder schreib mir auf Instagram.', status=500)
+
+
+def _ist_spam(post, werte):
+    """Honigtopf, Zeitfalle und Inhalt bewerten; ``True`` heißt still verwerfen."""
+    punkte, gruende = spamschutz.bewerte({
+        spamschutz.FELD_FALLE: post.get(spamschutz.FELD_FALLE, ''),
+        spamschutz.FELD_ZEIT: post.get(spamschutz.FELD_ZEIT, ''),
+        'name': werte['instagram'],
+        'email': werte['email'],
+        'betreff': '',
+        'nachricht': werte['bedeutung'],
+        # Die Falle des alten Namens gilt auch hier (Formulare vor dem 02.10.2026).
+        spamschutz.FELD_FALLE_ALT: post.get(spamschutz.FELD_FALLE_ALT, ''),
+    })
+    if punkte >= spamschutz.SCHWELLE:
+        _log.warning('Motivanfrage: Spam verworfen (%s: %s)', punkte, ','.join(gruende))
+        return True
+    return False
+
+
+def _speichern(werte):
+    """``(anfrage, gespeichert)`` – scheitert die Datenbank, bleibt die Anfrage
+    ungespeichert im Speicher, damit die Mail sie trotzdem trägt."""
+    try:
+        with transaction.atomic():
+            anfrage = Motivanfrage.objects.create(**werte)
+    except DatabaseError:
+        _log.exception('Motivanfrage: nicht gespeichert')
+        return Motivanfrage(**werte), False
+    return anfrage, True
+
+
+def _mail_an_luisa(anfrage, gespeichert):
+    """Startet die Mail an Luisa; ``True``, wenn der Versand gestartet ist."""
+    betreff, html, text = _mail(anfrage)
+    try:
+        send_brevo_email(betreff, html, empfaenger(), recipient_name='Luisa', text_content=text,
+                         reply_to=anfrage.email,
+                         danach=mail_ergebnis_vermerken(Motivanfrage,
+                                                        anfrage.pk if gespeichert else None))
+    except Exception:
+        _log.exception('Motivanfrage: Mailversand nicht gestartet')
+        return False
+    if gespeichert:
+        try:
+            Motivanfrage.objects.filter(pk=anfrage.pk).update(mail_gestartet=True)
+        except DatabaseError:
+            _log.exception('Motivanfrage: Versandvermerk nicht gespeichert')
+    return True
 
 
 @never_cache
