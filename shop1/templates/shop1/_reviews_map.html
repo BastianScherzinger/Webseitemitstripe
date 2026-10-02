@@ -47,7 +47,7 @@
         <div class="lg:col-span-3 space-y-5">
             {% for comment in recent_comments %}
             <div class="glass-card p-7 rounded-[2rem] scroll-reveal"
-                 x-data="{shown:false}" x-intersect.once="shown=true" :class="{'visible':shown}"
+
                  style="border-color:rgba(200,150,92,0.08);transition-delay:{{ forloop.counter0 }}00ms">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-9 h-9 rounded-xl glass flex items-center justify-center text-base" style="border-color:rgba(200,150,92,0.15)">👤</div>

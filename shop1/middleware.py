@@ -1,8 +1,8 @@
-"""Eigene Middleware: kanonischer Host, Content-Security-Policy, Besuchsprotokoll.
+"""Eigene Middleware: kanonischer Host, Content-Security-Policy, Permissions-Policy, Besuchsprotokoll.
 
 Reihenfolge in ``settings.MIDDLEWARE``: ``CanonicalHostMiddleware`` ganz vorn,
-``ContentSecurityPolicyMiddleware`` nach WhiteNoise, ``PageVisitMiddleware``
-zuletzt.
+``ContentSecurityPolicyMiddleware`` und ``PermissionsPolicyMiddleware`` nach
+WhiteNoise, ``PageVisitMiddleware`` zuletzt.
 """
 import hashlib
 import hmac
@@ -145,6 +145,38 @@ class ContentSecurityPolicyMiddleware:
         kopf = csp_kopfname()
         if kopf and not any(response.has_header(k) for k in CSP_KOPF.values()):
             response[kopf] = csp_wert(nonce=request.csp_nonce)
+        return response
+
+
+# ═══ PERMISSIONS-POLICY ════════════════════════════════════════════════════
+
+def permissions_policy_wert():
+    """Die Richtlinie als Kopfzeilenwert aus ``settings.PERMISSIONS_POLICY``.
+
+    ``{'camera': [], 'payment': ["'self'"]}`` wird zu
+    ``camera=(), payment=(self)``; Quellen mit Anführungszeichen für Hosts
+    stehen im Wert bereits so, wie der Kopf sie verlangt.
+    """
+    teile = []
+    for merkmal, quellen in settings.PERMISSIONS_POLICY.items():
+        liste = ' '.join(quellen)
+        teile.append(f'{merkmal}=({liste})')
+    return ', '.join(teile)
+
+
+class PermissionsPolicyMiddleware:
+    """Setzt ``Permissions-Policy`` (SI07, VL04): Geräterechte aus, die die Seite nie braucht.
+
+    Eine Kopfzeile, die eine View selbst gesetzt hat, bleibt unangetastet.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if not response.has_header('Permissions-Policy'):
+            response['Permissions-Policy'] = permissions_policy_wert()
         return response
 
 

@@ -392,7 +392,10 @@ class ContentSecurityPolicyTest(LuviqTestCase):
                             _quelle_erlaubt(url, settings.CSP_QUELLEN[direktive]),
                             f'{pfad} bindet {url} ein, {direktive} erlaubt es nicht',
                         )
-        self.assertGreaterEqual(gefunden, 5, 'Kaum Fremdquellen gefunden – Suchmuster prüfen')
+        # Seit dem 02.10.2026 (PF31) liegen alle Skripte im Projekt; übrig bleibt
+        # die Karte (Iframe, ``frame-src``). Findet der Test auch die nicht
+        # mehr, hat sich die Suchweise von den Templates entfernt.
+        self.assertGreaterEqual(gefunden, 1, 'Kaum Fremdquellen gefunden – Suchmuster prüfen')
 
     def test_die_csp_deckt_paypal_auf_der_bezahlseite(self):
         """Verhindert den schlimmsten Fall aus dem Plan: der Checkout

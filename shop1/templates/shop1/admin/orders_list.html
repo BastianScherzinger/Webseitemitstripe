@@ -29,7 +29,7 @@
         </div>
 
         <!-- Header -->
-        <div class="mb-12 flex flex-col md:flex-row justify-between items-end gap-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+        <div class="mb-12 flex flex-col md:flex-row justify-between items-end gap-8 scroll-reveal">
             <div>
                 <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                     Mission <span class="text-glow">Control</span>
@@ -51,7 +51,7 @@
         </div>
 
         <!-- Orders Table -->
-        <div class="glass-card rounded-[3.5rem] overflow-hidden shadow-2xl scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+        <div class="glass-card rounded-[3.5rem] overflow-hidden shadow-2xl scroll-reveal">
             <div class="overflow-x-auto">
                 <table class="admin-table">
                     <thead>

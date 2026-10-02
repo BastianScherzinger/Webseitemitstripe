@@ -78,7 +78,9 @@ CSRF_TRUSTED_ORIGINS = [
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 CSRF_USE_SESSIONS = False
-CSRF_COOKIE_HTTPONLY = False      # False = HTMX/JS kann CSRF-Token lesen
+# HttpOnly (SI16): Skripte lesen das Token aus <meta name="csrf-token"> in base.html,
+# nicht aus dem Cookie.
+CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SECURE = not DEBUG
 
@@ -111,6 +113,9 @@ MIDDLEWARE = [
     # statische Dateien die Kopfzeile nicht tragen – sie brauchen keine.
     # Betriebsart und Positivliste: CSP_MODUS / CSP_QUELLEN weiter unten.
     'shop1.middleware.ContentSecurityPolicyMiddleware',
+    # Permissions-Policy (SI07, VL04): Geräterechte aus, die die Seite nie
+    # braucht. Werte: PERMISSIONS_POLICY weiter unten.
+    'shop1.middleware.PermissionsPolicyMiddleware',
     # GZip für alle dynamischen Antworten (HTML, sitemap.xml, llms.txt).
     # Steht bewusst NACH WhiteNoise: statische Dateien liefert WhiteNoise
     # vorher aus und sie sollen nicht bei jedem Abruf neu gepackt werden.
@@ -334,13 +339,11 @@ APPEND_SLASH = True
 # einziges Skript im <head> von base.html auswertet – eine Nonce deckt
 # Handler-Attribute nicht, sie blieben sonst wirkungslos.
 #
+# 'unsafe-eval' steht seit dem 02.10.2026 nirgends mehr (SI09): Alpine.js, das
+# jeden Ausdruck mit new Function auswertete, ist entfernt; seine drei Aufgaben
+# (Einblenden, Antwortfeld, Alle auswählen) erledigt shop1/static/shop1/luviq.js.
+#
 # Weiter offen, bewusst:
-#   'unsafe-eval' in script-src   Alpine.js (Standardfassung) wertet jeden
-#                      x-data-/@click-/x-intersect-Ausdruck mit new Function
-#                      aus; ohne das Schlüsselwort stünde jeder dieser
-#                      Bausteine in den Vorlagen still. Die CSP-Fassung von
-#                      Alpine wäre ein anderes Paket und verlangte jeden
-#                      Ausdruck als registrierte Komponente neu geschrieben.
 #   'unsafe-inline' in style-src  style="…"-Attribute und <style>-Blöcke in
 #                      den Vorlagen; das PayPal-SDK setzt eigene Stile.
 # Scharf sind dazu frame-ancestors (niemand darf die Seite einbetten),
@@ -348,8 +351,8 @@ APPEND_SLASH = True
 # object-src.
 #
 # Positivliste der Fremdquellen, belegt durch die Templates:
-#   cdn.jsdelivr.net   Alpine.js (base.html, nur alte Seiten und Admin),
-#                      Chart.js (admin/stats.html, admin/werbung_list.html)
+#   (kein Fremdhost mehr in script-src: Chart.js liegt seit 02.10.2026 als
+#   shop1/static/shop1/chart-4.4.0.umd.js im Projekt, Alpine.js ist entfernt)
 #   Seit dem Umbau „Nachtausgabe" (19.09.2026) sind GSAP, Three.js und Google
 #   Fonts entfernt: die Schriften liegen unter shop1/static/shop1/fonts/.
 #   *.paypal.com / *.paypalobjects.com / *.venmo.com   PayPal-SDK, seine
@@ -391,7 +394,9 @@ _PAYPAL = ['https://*.paypal.com', 'https://*.paypalobjects.com', 'https://*.ven
 CSP_QUELLEN = {
     'default-src': ["'self'"],
     # Kein 'unsafe-inline': die Nonce der Anfrage hängt die Middleware an.
-    'script-src': ["'self'", "'unsafe-eval'", 'https://cdn.jsdelivr.net'] + _PAYPAL,
+    # Seit 02.10.2026 weder 'unsafe-eval' noch ein Fremdhost: Alpine.js (das
+    # eval brauchte) ist entfernt, Chart.js liegt unter static/. Nur PayPal.
+    'script-src': ["'self'"] + _PAYPAL,
     'style-src': ["'self'", "'unsafe-inline'"] + _PAYPAL,
     'font-src': ["'self'", 'data:'],
     'img-src': ["'self'", 'data:', 'blob:', 'https:'],
@@ -406,6 +411,29 @@ CSP_QUELLEN = {
     # des SDKs, bräche der Kauf erst beim zahlenden Kunden.
     'form-action': ["'self'", 'https://*.paypal.com'],
     'object-src': ["'none'"],
+}
+
+# ═══ PERMISSIONS-POLICY (SI07, VL04) ═══
+# Kopfzeile Permissions-Policy, gesetzt von PermissionsPolicyMiddleware.
+# Leere Liste = für niemanden erlaubt, auch nicht für die eigene Seite. Die
+# Seite braucht weder Kamera noch Mikrofon noch Standort, USB, Sensoren oder
+# Bluetooth. payment bleibt für die eigene Seite und PayPal offen, damit
+# die Kasse nach dem Einschalten des Verkaufs nicht an einer Sperre bricht
+# (Zahlungsfenster des PayPal-SDKs); browsing-topics ist Googles
+# Interessenerhebung und gehört nicht auf diese Seite.
+PERMISSIONS_POLICY = {
+    'geolocation': [],
+    'camera': [],
+    'microphone': [],
+    'usb': [],
+    'bluetooth': [],
+    'serial': [],
+    'hid': [],
+    'accelerometer': [],
+    'gyroscope': [],
+    'magnetometer': [],
+    'browsing-topics': [],
+    'payment': ["self", '"https://*.paypal.com"'],
 }
 
 # ═══ VERKAUF ═══

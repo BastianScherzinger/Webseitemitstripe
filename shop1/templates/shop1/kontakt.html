@@ -77,7 +77,7 @@
 
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <!-- Header -->
-        <div class="mb-20 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+        <div class="mb-20 scroll-reveal">
             <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                 Kontakt
             </h1>
@@ -87,7 +87,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
             <!-- Contact Form -->
-            <div class="lg:col-span-2 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
+            <div class="lg:col-span-2 scroll-reveal" style="transition-delay: 0.1s;">
                 <div class="glass-card rounded-[3.5rem] p-10 md:p-16">
                     {# aria-live (BF24): Änderungen im Formular – aria-busy beim Absenden – werden angesagt #}
                     <form method="post" class="space-y-8" data-einmal-absenden aria-live="polite">
@@ -161,7 +161,7 @@
             </div>
 
             <!-- Sidebar Info -->
-            <div class="space-y-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+            <div class="space-y-8 scroll-reveal" style="transition-delay: 0.2s;">
                 {# Das alte, freigestellte Foto von Luisa wird nicht mehr verwendet (Markenwissen § 9, 19.09.2026). #}
                 <div class="glass-card p-10 rounded-[3rem] border-white/5">
                     <h4 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Zentrale</h4>
@@ -198,7 +198,7 @@
         </div>
 
         <!-- FAQ Section -->
-        <div class="mt-32 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+        <div class="mt-32 scroll-reveal">
             <h3 class="text-3xl font-black heading-font text-white uppercase tracking-tighter mb-12">Häufige Fragen</h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -213,7 +213,7 @@
             </div>
         </div>
         <!-- Feedback Section -->
-        <div class="mt-32 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+        <div class="mt-32 scroll-reveal">
             <h3 class="text-3xl font-black heading-font text-white uppercase tracking-tighter mb-12">Gästebuch</h3>
             
             <div class="glass-card p-10 md:p-16 rounded-[4rem] border-white/5 relative overflow-hidden group">

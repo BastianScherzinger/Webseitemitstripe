@@ -314,7 +314,7 @@ class DatenschutzTest(LuviqTestCase):
         und keinen der Dienste nennt, an die beim Aufruf Daten fliessen.
         Seit der cookielosen Zählung geht keine Besucher-IP mehr an ip-api.com."""
         text = sichtbarer_text(self.hole('/datenschutz/').content.decode())
-        for dienst in ('Cloudinary', 'jsDelivr',
+        for dienst in ('Cloudinary',
                        'Google Maps', 'Gmail', 'PayPal', 'Railway'):
             with self.subTest(dienst=dienst):
                 self.assertIn(dienst, text)
@@ -330,6 +330,9 @@ class DatenschutzTest(LuviqTestCase):
         # Seit dem Umbau „Nachtausgabe" (19.09.2026) sind die Schriften selbst
         # gehostet; Google Fonts wird nicht mehr geladen.
         self.assertNotIn('Google Fonts', text)
+        # Seit dem 02.10.2026 liegen Chart.js und die Seitenskripte im Projekt;
+        # jsDelivr wird nirgends mehr abgerufen (PF31).
+        self.assertNotIn('jsDelivr', text)
 
     def test_das_besuchsprotokoll_ist_beschrieben(self):
         """Verhindert, dass die Seite bei jedem Aufruf IP-Adresse, Pfad und
