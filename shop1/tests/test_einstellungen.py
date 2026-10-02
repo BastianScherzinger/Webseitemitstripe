@@ -519,6 +519,30 @@ class KanonischerHostTest(LuviqTestCase):
                 self.assertEqual(antwort.status_code, 200)
                 self.assertEqual(antwort.content, b'ok')
 
+    def test_http_auf_den_kanonischen_host_ist_eine_einzige_weiterleitung(self):
+        """Jede Eingangsvariante erreicht das Ziel mit genau einer 301:
+        http://www (SecurityMiddleware), http://ohne-www und
+        http://Railway-Adresse (CanonicalHostMiddleware). Das Ziel selbst
+        antwortet danach mit 200 – keine Kette http → https → www."""
+        ziel = 'https://www.luviq-alsfeld.com/kontakt/'
+        for host in ('www.luviq-alsfeld.com', 'luviq-alsfeld.com',
+                     'luviq-luisa-shop.up.railway.app'):
+            with self.subTest(host=host):
+                antwort = self.client.get('/kontakt/', HTTP_HOST=host)
+                self.assertEqual(antwort.status_code, 301)
+                self.assertEqual(antwort['Location'], ziel)
+        endziel = self.client.get('/kontakt/', HTTP_HOST='www.luviq-alsfeld.com', secure=True)
+        self.assertEqual(endziel.status_code, 200)
+
+    def test_die_gesundheitsadresse_wird_auf_keinem_host_umgeleitet(self):
+        """Auch die Nebenvariante ohne www und der kanonische Host selbst
+        liefern ``/health/`` ohne Weiterleitung, selbst über http."""
+        for host in ('www.luviq-alsfeld.com', 'luviq-alsfeld.com'):
+            with self.subTest(host=host):
+                antwort = self.client.get('/health/', HTTP_HOST=host)
+                self.assertEqual(antwort.status_code, 200)
+                self.assertEqual(antwort.content, b'ok')
+
     def test_ohne_variable_wird_nichts_umgeleitet(self):
         """Verhindert, dass die Middleware ohne ``CANONICAL_HOST`` etwas
         rät – etwa aus ``SITE_URL`` oder ``ALLOWED_HOSTS`` – und lokal oder

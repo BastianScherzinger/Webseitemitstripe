@@ -27,7 +27,9 @@
     <link rel="alternate" hreflang="x-default" href="{{ seiten_url }}">
 
     <!-- Feed (GE32): neue Wissensbeitraege ohne Crawl der ganzen Seite -->
+    {% if feed_beworben %}
     <link rel="alternate" type="application/rss+xml" title="Luviq Universe – Wissen" href="{% url 'wissen_feed' %}">
+    {% endif %}
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
@@ -38,8 +40,9 @@
     <meta property="og:site_name" content="Luviq Universe">
     {% block og_image_tag %}
     <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}">
-    <meta property="og:image:width" content="800">
-    <meta property="og:image:height" content="800">
+    <meta property="og:image:width" content="1290">
+    <meta property="og:image:height" content="1346">
+    <meta property="og:image:alt" content="Luviq Universe – Logo">
     {% endblock %}
 
     <!-- Twitter Card -->

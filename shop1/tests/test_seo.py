@@ -425,6 +425,42 @@ class FeedTest(LuviqTestCase):
                     r'<link rel="alternate" type="application/rss\+xml"[^>]*href="/feed/"')
 
 
+class FeedVerweisTest(LuviqTestCase):
+    """EIG128: der ``rel=alternate``-Verweis steht nur im Kopf, wenn der Feed
+    freigegebene Beiträge hat. ``/feed/`` bleibt auch leer erreichbar."""
+
+    VERWEIS = re.compile(r'<link rel="alternate" type="application/rss\+xml"')
+
+    def test_ohne_freigegebene_beitraege_wird_der_feed_nicht_beworben(self):
+        with mock.patch('shop1.views.wissen.WISSEN_BEITRAEGE', {}):
+            html = self.hole('/kontakt/').content.decode()
+            self.assertNotRegex(html, self.VERWEIS)
+            self.assertEqual(self.hole('/feed/').status_code, 200)
+
+    @override_settings(VERKAUF_AKTIV=False)
+    def test_ohne_verkauf_ist_der_feed_derzeit_leer_und_nicht_beworben(self):
+        """Der einzige freigegebene Beitrag beschreibt den Kaufweg und zählt
+        ohne Verkauf nicht: Feed leer (erreichbar), Verweis im Kopf entfällt."""
+        html = self.hole('/').content.decode()
+        self.assertNotRegex(html, self.VERWEIS)
+        wurzel = ElementTree.fromstring(self.hole('/feed/').content)
+        self.assertEqual(list(wurzel.iter('item')), [])
+
+    def test_mit_freigegebenem_beitrag_wird_der_feed_beworben(self):
+        beitrag = {'titel': 'T', 'kurz': 'K', 'freigegeben': True,
+                   'veroeffentlicht': date(2026, 9, 1)}
+        with mock.patch('shop1.views.wissen.WISSEN_BEITRAEGE', {'t': beitrag}):
+            html = self.hole('/kontakt/').content.decode()
+            self.assertRegex(html, self.VERWEIS)
+
+    def test_das_standard_og_bild_nennt_die_echten_masse(self):
+        """``logo-luviq.jpeg`` ist 1290 × 1346 – nicht die früher
+        angegebenen 800 × 800."""
+        html = self.hole('/kontakt/').content.decode()
+        self.assertIn('<meta property="og:image:width" content="1290">', html)
+        self.assertIn('<meta property="og:image:height" content="1346">', html)
+
+
 class RobotsTest(LuviqTestCase):
     """robots.txt – die Datei, mit der man sich am schnellsten selbst aussperrt."""
 

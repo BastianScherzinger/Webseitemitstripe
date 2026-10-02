@@ -35,6 +35,18 @@ def oeffentliche_adresse(request):
     return {'seiten_url': oeffentliche_basis(request) + request.get_full_path()}
 
 
+def feed_beworben(request):
+    """Ob base.html den Feed per ``rel=alternate`` bewirbt (EIG128).
+
+    Nur mit mindestens einem freigegebenen Wissensbeitrag – derselben Menge,
+    die der Feed selbst ausgibt. Ein leerer Feed bleibt unter ``/feed/``
+    erreichbar, wird aber nicht in jedem Seitenkopf angekündigt. Reines
+    Nachschlagen im Register, kein Datenbankzugriff.
+    """
+    from .views.wissen import uebersicht_indexierbar
+    return {'feed_beworben': uebersicht_indexierbar()}
+
+
 def shop_owner_check(request):
     """Inhaberkennung, Warenkorbzähler, aktive Werbung und Seitenstand.
 
