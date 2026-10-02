@@ -291,7 +291,8 @@ def liefergebiet(request):
 def produkte(request):
     """Zeigt alle aktiven Produkte aus der Datenbank."""
     produkte_liste = Produkt.objects.filter(aktiv=True).order_by('nummer', 'erstellt_am')
-    return render(request, 'shop1/produkte.html', {'produkte_liste': produkte_liste})
+    return render(request, 'shop1/produkte.html',
+                  {'produkte_liste': produkte_liste, 'dauer': luviq_daten.DAUER})
 
 
 #: Slug-Endung eines früheren Verkaufsvermerks („custom-pants-sold"), auch mit
@@ -330,7 +331,8 @@ def produkt_detail_slug(request, slug):
         if neu is not None and neu.slug != slug:
             return redirect(neu.get_absolute_url(), permanent=True)
         produkt = get_object_or_404(Produkt, slug=slug, aktiv=True)
-    return render(request, 'shop1/produkt_detail.html', {'produkt': produkt})
+    return render(request, 'shop1/produkt_detail.html',
+                  {'produkt': produkt, 'dauer': luviq_daten.DAUER})
 
 
 def produkt_detail_redirect(request, produkt_id):

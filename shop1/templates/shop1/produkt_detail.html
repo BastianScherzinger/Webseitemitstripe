@@ -113,7 +113,7 @@
                 <a class="lv-link" href="{% url 'register' %}">Konto anlegen</a>
                 {% endif %}
             </p>
-            {% if motivanfrage_aktiv %}<p class="lv-klein">So eins, aber mit deinem Motiv? <a href="{% url 'motiv_anfragen' %}">Motiv anfragen</a></p>{% endif %}
+            {% if motivanfrage_aktiv %}{% include 'shop1/teile/motivanfrage.html' with klasse='lv-klein' frage='So eins, aber mit deinem Motiv?' %}{% endif %}
         </div>
     </article>
 </div>

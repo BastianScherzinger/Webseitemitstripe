@@ -472,6 +472,58 @@ class AntwortCrawlerTest(LuviqTestCase):
         self.assertIn('PayPal oder Vorab-Überweisung', agb)
 
 
+class ArchivSchemaTest(LuviqTestCase):
+    """Die Stücke stehen auf ``/produkte/`` als Knoten der obersten Ebene (GE13).
+
+    Ein Product-Knoten, der nur verschachtelt in ``hasPart`` steckt, sieht für
+    jeden, der die Knoten des Graphen liest, aus wie gar keiner. Ohne Verkauf
+    trägt er kein ``offers``: ein Angebot ohne Verkauf wäre falsch."""
+
+    def setUp(self):
+        self.stuecke = [erzeuge_produkt('Bemalte Bomberjacke'), erzeuge_produkt('Bemalte Hose')]
+
+    def _knoten(self):
+        return schema_knoten(self.hole('/produkte/').content.decode())
+
+    def test_jedes_stueck_ist_ein_product_knoten_der_obersten_ebene(self):
+        produkte = [k for k in self._knoten() if k.get('@type') == 'Product']
+        self.assertEqual(len(produkte), len(self.stuecke))
+        pfade = [urlsplit(k['url']).path for k in produkte]
+        for stueck in self.stuecke:
+            with self.subTest(stueck=stueck.name):
+                self.assertIn(stueck.get_absolute_url(), pfade)
+
+    def test_die_sammlung_verweist_per_id_auf_die_knoten(self):
+        knoten = self._knoten()
+        ids = {k['@id'] for k in knoten if '@id' in k}
+        sammlung = next(k for k in knoten if k.get('@type') == 'CollectionPage')
+        verweise = [t['@id'] for t in sammlung['hasPart']]
+        self.assertEqual(len(verweise), len(self.stuecke))
+        for ziel in verweise:
+            with self.subTest(ziel=ziel):
+                self.assertIn(ziel, ids)
+
+    def test_die_ids_stimmen_mit_denen_der_stueckseiten_ueberein(self):
+        """Gleiche @id wie auf der Stückseite: JSON-LD führt beide zusammen."""
+        stueck = self.stuecke[0]
+        auf_uebersicht = {k['@id'] for k in self._knoten() if k.get('@type') == 'Product'}
+        auf_stueckseite = {k['@id'] for k in schema_knoten(
+            self.hole(stueck.get_absolute_url()).content.decode()) if k.get('@type') == 'Product'}
+        self.assertTrue(auf_stueckseite <= auf_uebersicht)
+
+    def test_ohne_verkauf_traegt_kein_stueck_ein_angebot(self):
+        for k in self._knoten():
+            with self.subTest(knoten=k.get('@id')):
+                self.assertNotIn('offers', k)
+
+    @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
+    def test_mit_verkauf_tragen_die_stuecke_ein_angebot(self):
+        for k in self._knoten():
+            if k.get('@type') == 'Product':
+                with self.subTest(knoten=k['@id']):
+                    self.assertEqual(k['offers']['@type'], 'Offer')
+
+
 class LlmsVolltextTest(LuviqTestCase):
     """``/llms-full.txt`` (GE31, VL08): die Kurzfassung plus der Text der Seiten.
 

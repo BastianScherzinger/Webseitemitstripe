@@ -450,3 +450,53 @@ class UmfangTest(LuviqTestCase):
                     f'{pfad}: im ersten Drittel des Inhalts steht keine Zahl: '
                     f'"{drittel[:200]}…"',
                 )
+
+
+class AnfrageBausteinTest(LuviqTestCase):
+    """Der Anfrage-Absatz liegt als eigener Baustein vor (VL21) und führt zum
+    nächsten Schritt (KV12): ``teile/motivanfrage.html``, eingebunden auf der
+    Archivübersicht und auf jeder Stückseite."""
+
+    BAUSTEIN = 'shop1/templates/shop1/teile/motivanfrage.html'
+
+    def _quelle(self, pfad):
+        from pathlib import Path
+        from django.conf import settings
+
+        return (Path(settings.BASE_DIR) / pfad).read_text(encoding='utf-8')
+
+    def test_der_baustein_liegt_im_teile_ordner_und_wird_eingebunden(self):
+        self.assertIn("{% url 'motiv_anfragen' %}", self._quelle(self.BAUSTEIN))
+        for vorlage in ('produkte.html', 'produkt_detail.html'):
+            with self.subTest(vorlage=vorlage):
+                self.assertIn("shop1/teile/motivanfrage.html",
+                              self._quelle(f'shop1/templates/shop1/{vorlage}'))
+
+    def test_der_absatz_steht_nicht_mehr_je_vorlage_ausgeschrieben(self):
+        """Ein Absatz, der in jeder Vorlage noch einmal steht, ist nach der
+        dritten Änderung dreimal verschieden."""
+        for vorlage in ('produkte.html', 'produkt_detail.html'):
+            with self.subTest(vorlage=vorlage):
+                self.assertNotIn('>Motiv anfragen</a>',
+                                 self._quelle(f'shop1/templates/shop1/{vorlage}'))
+
+    def test_uebersicht_und_stueck_fuehren_zur_anfrage_mit_der_belegten_dauer(self):
+        stueck = erzeuge_produkt('Bemalte Bomberjacke')
+        for pfad in ('/produkte/', stueck.get_absolute_url()):
+            with self.subTest(pfad=pfad):
+                html = self.hole(pfad).content.decode()
+                self.assertIn('href="/motiv-anfragen/"', html)
+                text = sichtbarer_text(html)
+                self.assertIn('dauert es meistens 2 bis 5 Tage, je nach Motiv', text)
+
+    def test_die_uebersicht_verweist_im_inhalt_auf_das_kontaktformular(self):
+        """KV12: eine Leistungsseite ohne nächsten Schritt ist eine Sackgasse.
+        Gezählt wird nur, was in ``<main>`` steht."""
+        haupt = self.hole('/produkte/').content.decode().split('<main', 1)[1]
+        self.assertIn('href="/kontakt/"', haupt)
+
+    def test_der_baustein_nennt_weder_preis_noch_kaufweg(self):
+        quelle = self._quelle(self.BAUSTEIN).lower()
+        for verboten in ('€', 'preis', 'kaufen', 'warenkorb', 'bestell'):
+            with self.subTest(verboten=verboten):
+                self.assertNotIn(verboten, quelle.split('{% endcomment %}', 1)[1])
