@@ -4,7 +4,7 @@
 {% block title %}{{ produkt.meta_title }}{% endblock %}
 {% block meta_description %}{{ produkt.meta_description }}{% endblock %}
 {% block preload %}{% if produkt.bild %}<link rel="preload" as="image" href="{{ produkt.bild.url|cloud:'w_900,c_limit' }}" imagesrcset="{{ produkt.bild.url|cloud_srcset:'600,900,1200' }}" imagesizes="(min-width: 1024px) 50vw, 100vw" fetchpriority="high">{% endif %}{% endblock %}
-{% block og_type %}product{% endblock %}
+{% block og_type %}{% if verkauf_aktiv %}product{% else %}website{% endif %}{% endblock %}
 {% block og_title %}{{ produkt.meta_title }}{% endblock %}
 {% block og_description %}{{ produkt.meta_description }}{% endblock %}
 {% block twitter_title %}{{ produkt.meta_title }}{% endblock %}

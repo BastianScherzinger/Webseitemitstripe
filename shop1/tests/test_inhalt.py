@@ -14,6 +14,7 @@ Stand fest, damit er nicht still wieder abschmilzt.
 import re
 from html.parser import HTMLParser
 
+from django.conf import settings
 from django.test import override_settings
 from ._basis import INHALTSSEITEN, OEFFENTLICHE_SEITEN, LuviqTestCase, erzeuge_produkt, ohne_kaufweg
 from .test_geo import sichtbarer_text
@@ -171,6 +172,12 @@ MINDESTWOERTER = {
 # Ohne Verkauf leiten die drei Kaufweg-Beiträge auf /wissen/ um
 # (_basis.KAUFWEG_WISSENSSEITEN); ihre Schwellen gelten mit VERKAUF_AKTIV=1.
 MINDESTWOERTER = {p: n for p, n in MINDESTWOERTER.items() if ohne_kaufweg([p])}
+# Rechtstexte ohne Verkauf (02.10.2026): /agb/ zeigt dann statt der fünf
+# Paragraphen nur den Hinweis, dass es ohne Verkauf noch keine AGB gibt
+# (Seite noindex, nicht verlinkt). Gemessen 145 Wörter; die Schwelle 230 gilt
+# mit VERKAUF_AKTIV=1, wo der Wortlaut zurückkommt.
+if not settings.VERKAUF_AKTIV:
+    MINDESTWOERTER['/agb/'] = 100
 
 #: Seiten, deren erstes Drittel noch keine Zahl nennt. Die Menge ist seit
 #: GE23 (2026-09-08) leer: ``/liefergebiet/`` war die letzte Ausnahme und

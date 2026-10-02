@@ -24,7 +24,8 @@
   "@type": {% if verkauf_aktiv %}"LocalBusiness"{% else %}"Organization"{% endif %},
   "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
   "name": "Luviq Universe",
-  "legalName": "Luisa Brehler – Luviq Universe",
+  {% comment %}legalName „Name – Marke" liest sich wie die Bezeichnung eines Gewerbes; ohne Verkauf (kein Gewerbe angemeldet) entfällt er.{% endcomment %}
+  {% if verkauf_aktiv %}"legalName": "Luisa Brehler – Luviq Universe",{% endif %}
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Grünberger Str. 16",

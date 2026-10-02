@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}AGB & Widerrufsrecht – Luviq Universe, Alsfeld{% endblock %}
-{% block meta_description %}Allgemeine Geschäftsbedingungen von Luviq Universe aus Alsfeld: Vertragsschluss, Preise, Zahlungsarten, Lieferung und Widerrufsrecht. Vor dem Kauf nachlesen.{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Allgemeine Geschäftsbedingungen von Luviq Universe aus Alsfeld: Vertragsschluss, Preise, Zahlungsarten, Lieferung und Widerrufsrecht. Vor dem Kauf nachlesen.{% else %}Luviq Universe aus Alsfeld verkauft derzeit nichts, AGB gibt es deshalb noch nicht. Den Hinweis dazu hier nachlesen.{% endif %}{% endblock %}
 {% comment %}Verkaufsschalter: ohne Verkauf gelten die AGB noch nicht - Seite bleibt erreichbar, aber noindex, nicht im Fuss verlinkt und nicht in Sitemap und llms.txt.{% endcomment %}
 {% block meta_robots %}{% if verkauf_aktiv %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
 {% block brotkrume_ld %}
@@ -31,13 +31,25 @@
                 <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                     Allgemeine Geschäftsbedingungen
                 </h1>
-                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Allgemeine Geschäftsbedingungen – diese AGB von Luviq Universe, Luisa Brehler aus 36304 Alsfeld, regeln in fünf Paragraphen den Vertragsschluss, die Beschaffenheit der handbemalten Unikate, Preise und Zahlung sowie das Widerrufsrecht von 14 Tagen. Maßgeblich ist der Wortlaut der Paragraphen darunter.{% if not verkauf_aktiv %} Diese AGB gelten erst ab Eröffnung des Shops.{% endif %}</p>
+                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Allgemeine Geschäftsbedingungen – diese AGB von Luviq Universe, Luisa Brehler aus 36304 Alsfeld, {% if verkauf_aktiv %}regeln in fünf Paragraphen den Vertragsschluss, die Beschaffenheit der handbemalten Unikate, Preise und Zahlung sowie das Widerrufsrecht von 14 Tagen. Maßgeblich ist der Wortlaut der Paragraphen darunter.{% else %}gelten erst ab Eröffnung des Shops. Derzeit findet kein Verkauf statt, deshalb gibt es noch keine Geschäftsbedingungen.{% endif %}</p>
             </header>
 
             <div class="space-y-16 text-white/60 leading-relaxed font-light">
+                {% comment %}
+                Ohne Verkauf (VERKAUF_AKTIV aus) erscheint statt der Paragraphen nur der
+                Hinweis: Ein veröffentlichter AGB-Entwurf mit Zahlungsarten, Versand und
+                Widerruf liest sich wie ein Angebot, obwohl kein Gewerbe angemeldet ist.
+                Der Wortlaut bleibt unverändert im Code und kommt mit VERKAUF_AKTIV=1 zurück.
+                {% endcomment %}
+                {% if not verkauf_aktiv %}
+                <section>
+                    <h2 class="text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5">Derzeit kein Verkauf</h2>
+                    <p>Hinweis: Diese AGB gelten erst ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt: Auf dieser Seite lässt sich nichts bestellen und nichts bezahlen. Die Stücke im Archiv sind bisherige Arbeiten und bereits vergeben. Eine Anfrage über das Kontaktformular oder über „Motiv anfragen“ ist unverbindlich. Die Allgemeinen Geschäftsbedingungen und die Belehrung über das Widerrufsrecht werden erst veröffentlicht, wenn der Shop eröffnet.</p>
+                </section>
+                {% else %}
                 <section>
                     <h2 class="text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5">§ 1 Geltungsbereich</h2>
-                    <p>{% if not verkauf_aktiv %}Hinweis: Diese AGB gelten erst ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Für die Geschäftsbeziehung zwischen <strong>Luviq (Luisa Brehler)</strong> und dem Besteller gelten ausschließlich die nachfolgenden Allgemeinen Geschäftsbedingungen in ihrer zum Zeitpunkt der Bestellung gültigen Fassung.</p>
+                    <p>Für die Geschäftsbeziehung zwischen <strong>Luviq (Luisa Brehler)</strong> und dem Besteller gelten ausschließlich die nachfolgenden Allgemeinen Geschäftsbedingungen in ihrer zum Zeitpunkt der Bestellung gültigen Fassung.</p>
                 </section>
 
                 <section>
@@ -59,6 +71,7 @@
                     <h2 class="text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5">§ 5 Widerrufsrecht</h2>
                     <p>Du hast das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Frist beträgt 14 Tage und beginnt ab dem Tag, an dem du die Ware in Besitz genommen hast.</p>
                 </section>
+                {% endif %}
             </div>
 
             <div class="mt-24 pt-12 border-t border-white/5 text-center">
