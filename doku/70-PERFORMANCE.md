@@ -25,40 +25,30 @@ und live noch nicht wirksam.
 ## Messwerte
 
 <!-- tempo:anfang -->
-**Messung vom 02.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-02a). Bereich „Performance & Core Web Vitals“: **91,5 von 100**, Reifegrad „Referenz“.
+**Messung vom 02.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-02c). Bereich „Performance & Core Web Vitals“: **100,0 von 100**, Reifegrad „Referenz“.
 
 ### Lighthouse je Seite
 
 | Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
 |---|---|---:|---:|---:|---:|---:|
-| `/` | mobile | **97** | 2,59 s | 0,006 | 0 ms | 2 ms |
-| `/` | desktop | **100** | 0,58 s | 0,043 | 0 ms | 2 ms |
-| `/datenschutz/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 2 ms |
-| `/datenschutz/` | desktop | **100** | 0,49 s | 0,001 | 0 ms | 1 ms |
-| `/impressum/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 2 ms |
-| `/impressum/` | desktop | **100** | 0,49 s | 0,001 | 0 ms | 2 ms |
-| `/kontakt/` | mobile | **98** | 2,11 s | 0,000 | 0 ms | 2 ms |
-| `/kontakt/` | desktop | **100** | 0,50 s | 0,001 | 0 ms | 1 ms |
-| `/produkte/` | mobile | **99** | 2,04 s | 0,006 | 0 ms | 2 ms |
-| `/produkte/` | desktop | **100** | 0,61 s | 0,050 | 0 ms | 2 ms |
+| `/` | mobile | **92** | 3,38 s | 0,014 | 0 ms | 3 ms |
+| `/` | desktop | **100** | 0,57 s | 0,043 | 0 ms | 4 ms |
+| `/datenschutz/` | mobile | **100** | 1,66 s | 0,000 | 0 ms | 2 ms |
+| `/datenschutz/` | desktop | **100** | 0,37 s | 0,001 | 0 ms | 1 ms |
+| `/impressum/` | mobile | **100** | 1,65 s | 0,000 | 0 ms | 1 ms |
+| `/impressum/` | desktop | **100** | 0,38 s | 0,000 | 0 ms | 2 ms |
+| `/kontakt/` | mobile | **100** | 1,50 s | 0,000 | 0 ms | 1 ms |
+| `/kontakt/` | desktop | **100** | 0,38 s | 0,001 | 0 ms | 2 ms |
+| `/produkte/` | mobile | **99** | 1,96 s | 0,000 | 0 ms | 3 ms |
+| `/produkte/` | desktop | **100** | 0,49 s | 0,050 | 0 ms | 3 ms |
 
 10 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 
-**Serverzeit (`server-response-time` aus PageSpeed): 1,8 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
+**Serverzeit (`server-response-time` aus PageSpeed): 2,2 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
 
 ### Tempo-Regeln, die offen sind
 
-| Regel | Titel | Ergebnis | Beleg |
-|---|---|---|---|
-| `PF17` | Lazy-Loading unterhalb des Falzes, nicht auf dem LCP-Bild | teilweise | 14 von 14 Bildern unterhalb des ersten sind lazy; 2 von 8 Seiten laden ihr erstes Bild lazy: /produkte/ → Photoroom_20260504_221823_rh0ykx.webp, /gaestebuch/ → logo-luviq-96.72290a22b8e2.webp |
-| `PF23` | Kein Bild ist grösser als 300 kB | teilweise | 1 von 17 Bildern über 300 kB: IMG_4376_fupstq.webp (389 kB) |
-| `PF16` | Bilder werden in mehreren Grössen angeboten | teilweise | 11 von 21 Bildern mit srcset oder <picture> (1 SVG und Symbole nicht mitgezählt); ohne: / → Photoroom_20260504_221823_rh0ykx.webp, / → Photoroom_20260504_222549_kmlpwf.webp, / → Photoroom_20260504_222730_jjwtm5.webp, / → |
-| `PF18` | Das Hero-Bild trägt fetchpriority=high | teilweise | 2 von 8 Seiten ohne fetchpriority=high am ersten Bild: /produkte/ → Photoroom_20260504_221823_rh0ykx.webp, /gaestebuch/ → logo-luviq-96.72290a22b8e2.webp |
-| `PF19` | Das LCP-Bild wird vorgeladen, und nur dort, wo es eins gibt | teilweise | 2 von 2 Schlüsselseiten mit Bild laden es nicht vor: /, /produkte/ |
-| `PF24` | Bilder werden nicht weit grösser geladen als angezeigt | nicht bestanden | 2 von 3 Seiten laden übergrosse Bilder: / (5 Bilder, z. B. 600 statt 221 px), /produkte/ (5 Bilder, z. B. 600 statt 221 px) |
-| `PF25` | Jedes Bild trägt Breite und Höhe | teilweise | 5 von 22 Bildern ohne feste Masse: t/v1/media/produkte/IMG_4376_fupstq.webp, te/Photoroom_20260504_221823_rh0ykx.webp, te/Photoroom_20260504_222549_kmlpwf.webp, te/Photoroom_20260504_222730_jjwtm5.webp … (+1) |
-| `PF27` | Höchstens vier Schriftdateien, die wichtigste vorgeladen | teilweise | 6 Schriftdateien (cormorant-garamond-latin-ext-italic.e1d2bbac3ddb.woff2, cormorant-garamond-latin-italic.19c1e46e752b.woff2, jetbrains-mono-latin-ext-normal.e4315f31f7dd.woff2, jetbrains-mono-latin-normal.a3156cd57b50.w |
-| `PF31` | Skripte und Stile kommen nicht von einem fremden CDN | teilweise | 4 von 13 Seiten laden von einem fremden CDN: /kontakt/ (cdn.jsdelivr.net), /datenschutz/ (cdn.jsdelivr.net), /gaestebuch/ (cdn.jsdelivr.net), /liefergebiet/ (cdn.jsdelivr.net) |
+Keine. Alle messbaren Tempo-Regeln sind bestanden.
 
 ### Die grössten Bremsen laut Lighthouse
 
