@@ -24,7 +24,7 @@ SEITEN_STAND = {
     'ueber_uns':    '2026-10-02',
     'liefergebiet': '2026-10-02',
     'kontakt':      '2026-10-02',
-    'impressum':    '2026-09-18',
+    'impressum':    '2026-10-02',
     'datenschutz':  '2026-10-02',
     'agb':          '2026-09-18',
     # IS19 (27.09.2026): Erklärsätze der Stationen, Dauer, Bestätigungshinweis.
@@ -39,7 +39,7 @@ SEITEN_STAND = {
     'wissen_groesse':   '2026-09-18',
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
-    'wissen_bestellen': '2026-09-17',
+    'wissen_bestellen': '2026-10-02',
     'wissen_widerruf':  '2026-09-17',
     'wissen_konto':     '2026-09-27',
 }
