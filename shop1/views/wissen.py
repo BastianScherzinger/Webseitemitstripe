@@ -72,14 +72,11 @@ WISSEN_BEITRAEGE = {
         'url_name': 'wissen_pflege',
         'template': 'shop1/wissen/pflege.html',
         'titel': 'Wie pflege ich handbemalte Kleidung?',
-        # Bewusst ohne die Pflegeangaben: ``kurz`` steht auf der indexierbaren
-        # Übersicht, und 30 °C, kein Trockner usw. sind nicht belegt (EIG12).
-        # Nach Luisas Freigabe darf hier wieder die Aufzählung stehen.
-        'kurz': 'Wie man ein handbemaltes Teil wäscht, trocknet, bügelt und lagert – '
-                'allgemeine Textilpflege; was für ein einzelnes Stück von Luviq '
-                'Universe gilt, beantwortet Luisa Brehler über das Kontaktformular.',
-        # Offen: 30 °C, kein Trockner, kein Weichspüler, Bügeln nur von links.
-        'freigegeben': False,
+        # Pflegeangaben (30 °C, kein Trockner, kein Weichspüler, Bügeln nur von
+        # links) am 02.10.2026 freigegeben (Bastian für Luisa Brehler, EIG12).
+        'kurz': 'Waschen auf links bei 30 °C, kein Trockner, kein Weichspüler, Bügeln '
+                'nur von links – so bleibt die Bemalung lange schön.',
+        'freigegeben': True,
         'veroeffentlicht': '2026-09-01',
     },
     'upcycling-mode-second-hand-vintage': {
@@ -88,8 +85,8 @@ WISSEN_BEITRAEGE = {
         'titel': 'Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?',
         'kurz': 'Begriffsklärung Upcycling, Second Hand und Vintage, warum ein Einzelstück '
                 'nicht nachbestellbar ist und woran man Handbemalung von Druck unterscheidet.',
-        # Offen: keine strittige Zahl, aber die Auflage nennt alle drei Beiträge.
-        'freigegeben': False,
+        # Freigegeben am 02.10.2026 (Bastian für Luisa Brehler).
+        'freigegeben': True,
         'veroeffentlicht': '2026-09-01',
     },
     'groesse-bei-einzelstuecken': {
@@ -98,8 +95,9 @@ WISSEN_BEITRAEGE = {
         'titel': 'Wie finde ich bei Einzelstücken die richtige Größe?',
         'kurz': 'Maße mit der eigenen Kleidung vergleichen statt aufs Etikett zu vertrauen, '
                 'warum Vintage-Schnitte abweichen und wie man vor dem Kauf nachfragt.',
-        # Offen: „fünf Zentimeter Unterschied in der Brustweite sind eine ganze Grösse".
-        'freigegeben': False,
+        # Faustregel „fünf Zentimeter Brustweite = eine Grösse" freigegeben am
+        # 02.10.2026 (Bastian für Luisa Brehler).
+        'freigegeben': True,
         'veroeffentlicht': '2026-09-01',
     },
     # Ab hier: Beiträge, die ausschliesslich aus dem Projekt belegte Angaben

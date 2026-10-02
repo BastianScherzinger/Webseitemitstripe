@@ -34,14 +34,34 @@ DAUER = '2 bis 5 Tage'
 ZITAT = 'Langeweile, schwere Zeit — und Bock, was zu bemalen.'
 ZITAT_QUELLE = 'Luisa Brehler, wie Luviq angefangen hat'
 
-INSTAGRAM = 'https://www.instagram.com/luviq.universe/'
-INSTAGRAM_NAME = 'luviq.universe'
+#: Das frühere Profil ``luviq.universe`` gibt es nicht mehr (live geprüft
+#: 02.10.2026, „Seite nicht verfügbar"); das aktive heißt ``luviq.archive``.
+INSTAGRAM = 'https://www.instagram.com/luviq.archive/'
+INSTAGRAM_NAME = 'luviq.archive'
+
+#: TikTok „luviq" (@luviq.archive); die Bio verweist auf dasselbe
+#: Instagram-Profil (live geprüft 02.10.2026).
+TIKTOK = 'https://www.tiktok.com/@luviq.archive'
+
+#: Google-Unternehmensprofil „Luviq", Grünberger Str. 16, 36304 Alsfeld,
+#: Website luviq-alsfeld.com (Maps, live geprüft 02.10.2026; CID aus der
+#: Profiladresse 0xc0e5d5a554eadc30).
+GOOGLE_PROFIL = 'https://www.google.com/maps?cid=13899750731019902000'
+
+#: Belegte Profiladressen für ``sameAs`` (Schema) und ``llms.txt``.
+PROFILE = (INSTAGRAM, TIKTOK, GOOGLE_PROFIL)
+
+#: Antwortzeit auf Anfragen, von Bastian für Luisa am 02.10.2026 bestätigt.
+#: Eine Erreichbarkeit, keine Öffnungszeit (kein Ladengeschäft, GE20).
+ANTWORT = 'innerhalb von 2 Stunden'
 
 # ── Drop ─────────────────────────────────────────────────────────────────────
 
 #: Vorgabe für ``DROP_TERMIN``. Leer setzen (``DROP_TERMIN=``) heißt: kein
 #: Termin, der Kasten sagt „Die nächste Ausgabe ist in Arbeit." ohne Uhr.
-DROP_TERMIN_VORGABE = '2026-10-08T18:00+02:00'
+#: Seit 02.10.2026 leer: der nächste Drop kommt, ein fester Termin steht noch
+#: nicht (Bastian). Mit Termin wieder setzen, z. B. '2026-11-01T18:00+01:00'.
+DROP_TERMIN_VORGABE = ''
 
 _WOCHENTAGE = ('Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag')
 

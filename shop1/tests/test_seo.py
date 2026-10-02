@@ -439,17 +439,18 @@ class FeedTest(LuviqTestCase):
                 self.assertNotIn(beitrag['titel'], beschreibung)
 
     @override_settings(VERKAUF_AKTIV=False)
-    def test_ohne_freigegebenen_beitrag_bewirbt_llms_txt_keinen_feed(self):
-        """EIG128: ein leerer Feed ist kein Wegweiser. Ohne Verkauf ist kein Beitrag
-        freigegeben (die drei Kaufweg-Beiträge brauchen den Verkauf, die übrigen
-        die Bestätigung der Betreiberin)."""
+    def test_ohne_verkauf_zaehlen_nur_die_von_der_betreiberin_freigegebenen(self):
+        """EIG128: Ohne Verkauf zählen die drei Kaufweg-Beiträge nicht; Pflege,
+        Upcycling und Grösse sind seit 02.10.2026 freigegeben und machen den
+        Feed zum Wegweiser in ``llms.txt``."""
         from ..views.wissen import freigegebene_beitraege
 
-        self.assertEqual(freigegebene_beitraege(), {})
-        self.assertNotIn('Feed:', self.hole('/llms.txt').content.decode())
+        self.assertEqual(set(freigegebene_beitraege()), {
+            'pflege-handbemalte-kleidung', 'upcycling-mode-second-hand-vintage',
+            'groesse-bei-einzelstuecken'})
+        self.assertIn('Feed:', self.hole('/llms.txt').content.decode())
         feed = ElementTree.fromstring(self.hole('/feed/').content)
-        self.assertEqual(list(feed.iter('item')), [])
-        self.assertIn('keine', feed.find('channel').findtext('description'))
+        self.assertEqual(len(list(feed.iter('item'))), 3)
 
     def test_jede_seite_verlinkt_den_feed_im_kopfbereich(self):
         """Ohne den Verweis im ``<head>`` findet ihn niemand, der ihn nicht
@@ -475,13 +476,13 @@ class FeedVerweisTest(LuviqTestCase):
             self.assertEqual(self.hole('/feed/').status_code, 200)
 
     @override_settings(VERKAUF_AKTIV=False)
-    def test_ohne_verkauf_ist_der_feed_derzeit_leer_und_nicht_beworben(self):
-        """Der einzige freigegebene Beitrag beschreibt den Kaufweg und zählt
-        ohne Verkauf nicht: Feed leer (erreichbar), Verweis im Kopf entfällt."""
+    def test_ohne_verkauf_wird_der_feed_mit_den_freigegebenen_beworben(self):
+        """Seit 02.10.2026 hat der Feed auch ohne Verkauf drei Beiträge (Pflege,
+        Upcycling, Grösse); der Verweis im Kopf steht deshalb."""
         html = self.hole('/').content.decode()
-        self.assertNotRegex(html, self.VERWEIS)
+        self.assertRegex(html, self.VERWEIS)
         wurzel = ElementTree.fromstring(self.hole('/feed/').content)
-        self.assertEqual(list(wurzel.iter('item')), [])
+        self.assertEqual(len(list(wurzel.iter('item'))), 3)
 
     def test_mit_freigegebenem_beitrag_wird_der_feed_beworben(self):
         beitrag = {'titel': 'T', 'kurz': 'K', 'freigegeben': True,

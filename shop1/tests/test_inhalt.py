@@ -133,6 +133,9 @@ UMFANG_PRODUKT_SEITE = '/produkt/bemalte-bomberjacke/'
 #: aus": ``/`` 658 (vorher 660), ``/produkte/`` 381 (385), ``/wissen/`` 554
 #: (895; die Seite ist ohne Verkauf ``noindex``, weil keiner ihrer
 #: Beiträge freigegeben ist), Grösse 859 (870, ebenfalls ``noindex``).
+#: Freigabe 02.10.2026: Pflege, Upcycling und Grösse sind freigegeben, die
+#: Übersicht verliert den Hinweis auf die ausstehende Freigabe – ``/wissen/``
+#: 548 (554), Schwelle 540.
 #:
 #: IS19 (2026-09-27): ``/motiv-anfragen/`` stand mit 123 Wörtern unter der
 #: Zielgrösse 200 – die vier Stationen tragen jetzt einen Erklärsatz statt
@@ -157,7 +160,7 @@ MINDESTWOERTER = {
     '/datenschutz/': 430,
     '/agb/': 230,
     UMFANG_PRODUKT_SEITE: 200,
-    '/wissen/': 550,
+    '/wissen/': 540,
     '/wissen/pflege-handbemalte-kleidung/': 800,
     '/wissen/upcycling-mode-second-hand-vintage/': 920,
     '/wissen/groesse-bei-einzelstuecken/': 855,
@@ -630,20 +633,21 @@ class Widersprueche02102026Test(LuviqTestCase):
         self.assertIn('Später kommen Textilfarben dazu', self._text('/ueber_uns/'))
 
     # EIG12 / EIG128 -----------------------------------------------------
-    def test_die_wissensuebersicht_nennt_keine_unbelegten_pflegeangaben(self):
-        """Die Übersicht ist ohne Verkauf noindex, aber öffentlich; der Kurztext
-        des nicht freigegebenen Pflegebeitrags nannte 30 °C und die Bügelregel
-        (EIG12)."""
+    def test_die_wissensuebersicht_nennt_nur_freigegebene_pflegeangaben(self):
+        """EIG12: Die Pflegeangaben (30 °C, Bügeln nur von links) sind seit
+        02.10.2026 freigegeben (Bastian für Luisa Brehler). Nicht belegte
+        Angaben wie „Trocknen an der Luft“ bleiben draussen."""
         text = self._text('/wissen/')
-        for angabe in ('30 °C', 'Bügeln nur von links', 'Trocknen an der Luft'):
-            self.assertNotIn(angabe, text)
+        self.assertIn('30 °C', text)
+        self.assertIn('Bügeln nur von links', text)
+        self.assertNotIn('Trocknen an der Luft', text)
 
-    def test_der_leere_feed_beschreibt_keine_beitraege(self):
-        """Ohne freigegebenen Beitrag hat der Feed keine Einträge; seine
-        Beschreibung darf dann nicht drei Beiträge ankündigen (EIG128)."""
+    def test_der_feed_fuehrt_genau_die_freigegebenen_beitraege(self):
+        """EIG128: Der Feed führt die drei freigegebenen Beiträge, nicht die
+        Kaufweg-Beiträge, solange der Verkauf aus ist."""
         xml = self.hole('/feed/').content.decode()
-        self.assertNotIn('<item>', xml)
-        self.assertNotIn('Pflege, Upcycling und Größen', xml)
+        self.assertEqual(xml.count('<item>'), 3)
+        self.assertNotIn('/wissen/bestellen-und-bezahlen/', xml)
 
     # EIG78 --------------------------------------------------------------
     def test_das_liefergebiet_behauptet_keine_kundenverteilung(self):

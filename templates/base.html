@@ -138,7 +138,9 @@
           },
 {% endif %}
           "sameAs": [
-            "https://www.instagram.com/luviq.universe/"
+            "https://www.instagram.com/luviq.archive/",
+            "https://www.tiktok.com/@luviq.archive",
+            "https://www.google.com/maps?cid=13899750731019902000"
           ]
         },
         {
@@ -310,7 +312,7 @@
             <a href="{% url 'ueber_uns' %}"{% if seitenname == 'ueber_uns' %} aria-current="page"{% endif %}>Luisa</a>
         </nav>
         <div class="lv-kopf-rechts">
-            <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.universe/' }}" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg>Instagram</a>
+            <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg>Instagram</a>
             {% if user.is_authenticated %}
             {% if verkauf_aktiv %}<a class="lv-konto" href="{% url 'warenkorb' %}">Warenkorb{% if cart_count %} ({{ cart_count }}){% endif %}</a>{% endif %}
             {% if is_shop_owner %}<a class="lv-konto" href="{% url 'admin_dashboard' %}">Panel</a>{% endif %}
@@ -327,7 +329,7 @@
                 <a href="{% url 'produkte' %}">Archiv</a>
                 <a href="{% url 'home' %}#entstehung">Entstehung</a>
                 <a href="{% url 'ueber_uns' %}">Luisa</a>
-                <a class="lv-menue-klein" href="{{ instagram_url|default:'https://www.instagram.com/luviq.universe/' }}" rel="noopener" target="_blank">Instagram</a>
+                <a class="lv-menue-klein" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank">Instagram</a>
                 {% if user.is_authenticated %}
                 {% if verkauf_aktiv %}<a class="lv-menue-klein" href="{% url 'warenkorb' %}">Warenkorb</a>{% endif %}
                 {% if is_shop_owner %}<a class="lv-menue-klein" href="{% url 'admin_dashboard' %}">Panel</a>{% endif %}
@@ -368,10 +370,10 @@
             <a href="{% url 'kontakt' %}">Kontakt</a>
             <a href="{% url 'liefergebiet' %}">{% if verkauf_aktiv %}Liefergebiet{% else %}Herkunft{% endif %}</a>
             <a href="{% url 'home' %}#newsletter-form">Warteliste</a>
-            <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.universe/' }}" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg>{{ instagram_name|default:'luviq.universe' }}</a>
+            <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg>{{ instagram_name|default:'luviq.archive' }}</a>
         </nav>
         {% comment %}Verkaufsschalter: die AGB gelten erst ab Eröffnung des Shops und sind ohne Verkauf nicht verlinkt (die Seite bleibt erreichbar).{% endcomment %}
-        <p class="lv-recht"><span>© {% now "Y" %} Luviq Universe · Marke im Aufbau · Alsfeld, Hessen</span><span><a href="{% url 'impressum' %}">Impressum</a> · <a href="{% url 'datenschutz' %}">Datenschutz</a>{% if verkauf_aktiv %} · <a href="{% url 'agb' %}">AGB</a>{% endif %}</span></p>
+        <p class="lv-recht"><span>© {% now "Y" %} Luviq Universe · Marke im Aufbau · Alsfeld, Hessen · Antwort auf Nachrichten {{ antwort|default:"innerhalb von 2 Stunden" }}</span><span><a href="{% url 'impressum' %}">Impressum</a> · <a href="{% url 'datenschutz' %}">Datenschutz</a>{% if verkauf_aktiv %} · <a href="{% url 'agb' %}">AGB</a>{% endif %}</span></p>
     </footer>
 
     {% if motivanfrage_aktiv and ist_panel != '/shop-admin/' and seitenname != 'motiv_anfragen' %}

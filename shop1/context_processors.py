@@ -126,4 +126,6 @@ def luviq(request):
         # Luisas Erfahrungswert „2 bis 5 Tage“ (nie als Zusage): jede Seite, die ihn
         # nennt, liest ihn von hier, nicht aus eigener Abschrift.
         'dauer': luviq_daten.DAUER,
+        # Antwortzeit auf Nachrichten (bestätigt 02.10.2026), eine Quelle.
+        'antwort': luviq_daten.ANTWORT,
     }

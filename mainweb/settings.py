@@ -322,7 +322,7 @@ INDEXNOW_KEY = os.getenv('INDEXNOW_KEY', '').strip()
 # Festes Ablaufdatum nach RFC 9116 (höchstens ein Jahr voraus). Nicht je Abruf
 # berechnen: dann liefe die Datei nie ab und das Feld wäre wertlos. Vor dem
 # Ablauf von Hand um ein Jahr verlängern; pruefe_seite warnt 60 Tage vorher.
-SECURITY_TXT_EXPIRES = '2027-09-30T00:00:00.000Z'
+SECURITY_TXT_EXPIRES = '2027-10-01T00:00:00.000Z'
 
 # ═══ SICHERHEITSEINSTELLUNGEN ═══
 
@@ -496,6 +496,10 @@ LOGIN_URL = '/login/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ═══ GOOGLE MAPS ═══
+# Vorgabe bleibt die Maps-Suche: das Unternehmensprofil „Luviq“ (seit 02.10.2026
+# in luviq_daten.GOOGLE_PROFIL und sameAs) ist ein Kartenlink, kein
+# Bewertungsformular – dann hiesse der Knopf zu Unrecht „bewerten“ (EIG87).
+# Den echten Bewertungslink (g.page/r/…/review) als Railway-Variable setzen.
 GOOGLE_REVIEW_URL = os.getenv('GOOGLE_REVIEW_URL', 'https://www.google.com/maps/search/Luviq+Universe+Alsfeld')
 
 # ═══ FEHLER-MONITORING (VL19) ═══

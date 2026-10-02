@@ -644,14 +644,14 @@ class LlmsVolltextTest(LuviqTestCase):
                 self.assertNotIn(verboten, voll)
 
     def test_der_volltext_laesst_noindex_seiten_aus(self):
-        """Nicht freigegebene Wissensbeiträge und Rechtstexte gehören weder in
-        die Sitemap noch hierher."""
+        """Nicht freigegebene Wissensbeiträge und noindex-Seiten gehören weder
+        in die Sitemap noch hierher. Seit 02.10.2026 sind Pflege, Upcycling und
+        Grösse freigegeben; die Kaufweg-Beiträge bleiben ohne Verkauf draussen."""
         voll = self.hole('/llms-full.txt').content.decode()
-        for pfad in ('/wissen/pflege-handbemalte-kleidung/', '/wissen/groesse-bei-einzelstuecken/',
-                     '/kontakt/danke/', '/login/', '/register/'):
+        for pfad in ('/wissen/bestellen-und-bezahlen/', '/kontakt/danke/', '/login/', '/register/'):
             with self.subTest(pfad=pfad):
                 self.assertNotIn(pfad, voll)
-        self.assertNotIn('Waschen auf links', voll)
+        self.assertIn('/wissen/pflege-handbemalte-kleidung/', voll)
 
     def test_der_volltext_enthaelt_kein_formular_und_keine_navigation(self):
         voll = self.hole('/llms-full.txt').content.decode()
