@@ -439,3 +439,6 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-band p{animation:none}
   .lv *,.lv *::before,.lv *::after{animation-duration: 0.01ms !important;animation-iteration-count:1 !important;transition-duration: 0.01ms !important;scroll-behavior:auto !important}
 }
+
+/* Rechtstexte: Aufzählung der Betroffenenrechte (Datenschutz) */
+.lv-recht-liste{list-style:disc;padding-left:1.25rem}
