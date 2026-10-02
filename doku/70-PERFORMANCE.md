@@ -4,8 +4,8 @@ titel: Performance und Core Web Vitals
 stand: 2026-10-02
 status: teilweise
 fortschritt: 99
-zusammenfassung: Stand 02.10.2026 (lokal, nicht gepusht): Produktbilder in mehreren Größen mit srcset, LCP-Bild mit fetchpriority und Vorladen, Bildmaße (Migration 0027), vier Schriftdateien, Critical CSS, Alpine.js entfernt. Stand 01.10.2026: PageSpeed mobil 95–99, Desktop 100, Serverzeit 1,6 ms, CLS 0,00–0,05 (Messblock vom 01.10.2026); WebP, GZip, Cache, gthread und die Cloudinary-.webp-Endung sind in main und live. Offen sind Bildgrößen und -attribute, sechs statt vier Schriftdateien und die Fremdskripte (Alpine, Chart.js).
-offen: 3
+zusammenfassung: Stand 02.10.2026 (live, main = 7ae67ab): Produktbilder in mehreren Größen mit srcset und Bildmaßen, LCP-Bild mit fetchpriority und Preload, vier eigene Schriftdateien, Critical CSS, gepackte Stildateien, kein Fremdskript; Lighthouse Desktop 100, mobil 89 (LCP 3,76 s), Serverzeit 3–4 ms. Offen sind vier Später-Punkte mit Begründung (Besuchsprotokoll im Request, ein großes Original-Bild, mobil ein Punkt unter dem Ziel, Nachmessung mit Verkauf).
+offen: 4
 pagespeed_mobil: 97
 pagespeed_desktop: 100
 antwortzeit_ms: 2
@@ -16,11 +16,7 @@ antwortzeit_quelle: PageSpeed server-response-time
 # Performance — Luviq Universe
 
 *Woran sich der Fortschritt bemisst: am gemessenen Tempo-Wert des **letzten** Laufs (PageSpeed mobil doppelt, Desktop einfach gewichtet), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße. Die Zahl selbst steht im erzeugten Block unter „Messwerte“, nicht in diesem Satz.*
-Gemessen wird die **Live-Seite**, also der Stand `main` — seit dem 01.10.2026 ist das derselbe Stand wie der lokale Ordner (alle Arbeitszweige gemergt, `main` = `36c0741`). Was früher unter „im Zweig, noch nicht live“ stand (Verbesserungslauf 4, Paket 267), ist seit den Merges live und unten unter „Umgesetzt“ geführt.
-
-Gemessen wird die **Live-Seite**, also der Stand `main`. Der Verbesserungslauf 4 (Zweig) ist
-**nicht** enthalten — seine Tempomassnahmen sind unten unter „Umgesetzt (im Zweig)" aufgeführt
-und live noch nicht wirksam.
+Gemessen wird die **Live-Seite**, also der Stand `main`. Seit dem 02.10.2026 ist das derselbe Stand wie der lokale Ordner (`main` = `origin/main` = `7ae67ab`, alle Arbeitszweige gemergt, GitHub-Prüfungen grün). Was unten unter „Umgesetzt“ als „im Zweig, noch nicht live“ steht (Verbesserungslauf 4, Paket 267, Sammelzweig `fix/2026-10-02-luviq-fertig`), ist seit den Merges live.
 
 ## Messwerte
 
@@ -134,24 +130,12 @@ sind — die Zahlen dazu stehen im Block oben:
 
 ## Offen
 
-**Stand 02.10.2026 (Sammelzweig `fix/2026-10-02-luviq-fertig`, lokal geprüft, nicht gepusht):** erledigt und aus der Liste unten entfernt sind `srcset` für Produktbilder, LCP-Bild mit `fetchpriority` und Vorladen, vier Schriftdateien und Alpine.js (entfernt, `3540c1a`) — Pakete L2-B1/L2-B2 (`9402995`). Die lokale Messung zeigt PF15/PF24/PF25/VL15 nur, weil lokal JPGs aus `media/` statt Cloudinary ausgeliefert werden; live erst nach dem Deploy nachmessen. Die zweite, ältere Tabelle weiter unten ist Verlauf.
-Was zu tun ist. Wie weit die genannten Regeln gerade sind und mit welchem Beleg, steht im erzeugten Block unter „Messwerte“ — hier steht keine Messzahl. Stand 01.10.2026; erledigt und entfernt sind die Merge-Aufgaben (Verbesserungslauf 4 und Paket 267 sind live).
-
-Was zu tun ist. Wie weit die genannten Regeln gerade sind und mit welchem Beleg, steht im
-erzeugten Block unter „Messwerte" — hier steht keine Messzahl.
+Stand 02.10.2026, gegen Code und Live-Seite geprüft; wie weit die Regeln gerade sind, steht im erzeugten Block unter „Messwerte“ — hier steht keine Messzahl. Erledigt und entfernt (alles in `main` und live): Paket 267 (WebP-Endung, gepackte Stildateien, `42008d9`), Produktbilder mit `srcset` und `width`/`height` (`9402995`, Migration 0027, Befehl `bildmasse_nachtragen`), LCP-Bild mit `fetchpriority="high"` und Vorladen (`9402995`), Schriften lokal (`1737e74`, `5515bf3`), Alpine.js entfernt und GSAP/Three.js ohne Fremd-CDN (`3540c1a`), Critical CSS über `tools/kritisches_css.py` (nach jeder Änderung an `luviq.css` neu laufen lassen) und der Zweig-Merge selbst. Live am 02.10.2026 belegt: die statischen Dateien kommen mit `Content-Encoding: gzip`, die Startseite trägt `srcset`, `fetchpriority` und einen Preload, externe Hosts sind nur Cloudinary und Instagram.
 
 | Punkt | Regel |
-| Das eine Bild über 300 kB verkleinern (`IMG_4376_fupstq.webp`) (`width`/`height` sind seit 02.10.2026 gesetzt, Migration 0027 und Befehl `bildmasse_nachtragen`) | PF23, PF25 |
-| `PageVisit`/`VisitorLog`-Schreibvorgänge aus dem Request nehmen — sie laufen synchron gegen zwei Datenbanken; nicht wegen `PF10`, sondern weil sie bei Last Antwortzeit kosten | — |
-| ~~Critical CSS je Seitentyp inline~~ — seit 02.10.2026 gebaut: `tools/kritisches_css.py` erzeugt es aus `luviq.css`; nach jeder Änderung an `luviq.css` neu laufen lassen | PF26 |
-| Nach einer Änderung der Seitenart oder des Verkaufsschalters nachmessen: mit Verkauf kommen Warenkorb und Kasse als neue Seiten hinzu | — |
 |---|---|
-| Zweig nach `main` — WebP, GZip, Cache, gthread und die kleinere Startseite wirken erst dann | PF15, PF16 |
-| Produktbilder aus Cloudinary mit `srcset` ausliefern (Cloudinary kann das über Transformationsparameter). Das Format ist mit Paket 267 im Zweig angegangen (Endung `.webp`, siehe „Umgesetzt"); nach Merge und Deploy nachmessen, ob `PF15` die Bilder als modern zählt. **`/produkte/` ist der teuerste LCP der Seite** | PF15, PF16, VL15 |
-| Paket 267 mergen und nach dem Deploy nachmessen: den ersten Inhalt mobil (`PF26`) und die Bildformate (`PF15`); dazu im Browser prüfen, dass `tailwind.css` und `style.css` mit `Content-Encoding: gzip` ankommen | PF15, PF26 |
-| LCP-Bild je Schlüsselseite vorladen und mit `fetchpriority="high"` auszeichnen; das Logo ist heute überall das erste Bild | PF18, PF19 |
-| `PageVisit`/`VisitorLog`-Schreibvorgänge aus dem Request nehmen — sie laufen synchron gegen zwei Datenbanken. **Nicht wegen `PF10`** (das misst seit `2026-09-04a` die Serverzeit aus PageSpeed und ist bestanden), sondern weil eine Schreiboperation im Request unter Last der erste Engpass ist | — |
-| Critical CSS je Seitentyp inline, Hauptstilblatt asynchron (in Paket 267 bewusst nicht gebaut — die Stildateien stehen unter der Designwache des Tors; stattdessen gepackt ausgeliefert); Schriften lokal (heute von `fonts.googleapis.com`) | VL16, RE07 |
-| Alpine.js und `@alpinejs/intersect` (`base.html`), GSAP und das nachgeladene Three.js (`index.html`) selbst ausliefern statt von `cdn.jsdelivr.net` — spart die Verbindung zu einem zweiten Host. Am 17.09.2026 (Paket 227) **nicht möglich:** keine der vier Dateien liegt im Projekt, der Lauf konnte sie nicht herunterladen; steht als „beim Kunden" im Bewertungsblock von [80-AUFGABEN.md](80-AUFGABEN.md). Mit den Dateien: nach `shop1/static/shop1/`, `src` auf `{% static %}`, `integrity` und `CSP_QUELLEN` nachziehen | PF31 |
-| `width`/`height` an den Bildern ohne Masse (Admin-Vorlagen, `index.html:38`, `produkt_detail.html:89`) | VL15 |
-| Lighthouse mobil auf 90 und Desktop auf 95 heben — die grössten Posten sind unbenutztes JavaScript und die Bildformate | PF01, PF02 |
+| Später: `PageVisit`/`VisitorLog`-Schreibvorgänge aus dem Request nehmen — sie laufen synchron gegen zwei Datenbanken. Grund: die Serverzeit liegt gemessen bei 3–4 ms (Messung 02.10.2026), es ist also kein Engpass; ein Hintergrundjob oder eine Warteschlange wäre ein neuer Dienst | — |
+| Später: das Bild `IMG_4376_fupstq` verkleinern. Grund: die ausgelieferte Variante (`w_900`) wiegt nach eigener Messung am 02.10.2026 etwa 233 kB, das Original in Cloudinary 1,8 MB; die früher gemeldeten 389 kB ließen sich nicht reproduzieren, und das Original tauscht nur, wer Zugang zum Cloudinary-Konto hat | PF23, PF25 |
+| Später: Lighthouse mobil von 89 auf 90 heben (Messung 02.10.2026 für `/`: LCP 3,76 s, Desktop 100). Grund: ein Punkt unter dem Ziel, die Ursache des LCP ist nicht untersucht; die Messwerte des Bereichs sind „Referenz“ | PF01, PF02 |
+| Später: nach einer Änderung der Seitenart oder des Verkaufsschalters nachmessen — mit Verkauf kommen Warenkorb und Kasse als neue Seiten hinzu. Grund: ohne Verkauf nicht zu messen | — |
+

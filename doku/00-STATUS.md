@@ -3,8 +3,8 @@ bereich: status
 titel: Stand der Seite
 stand: 2026-10-02
 status: teilweise
-fortschritt: 85
-zusammenfassung: Stand 01.10.2026: main = origin/main = 36c0741 und live (Bild-Sitemap TS19 heute ausgeliefert), alle Arbeitszweige gemergt; Verkauf aus (Marke im Aufbau, kein Gewerbe angemeldet); Gesamtstand siehe Messblock weiter unten (vom Werkzeug geschrieben). Offen sind Freigaben und Angaben der Betreiberin, kein Code-Rückstau.
+fortschritt: 97
+zusammenfassung: Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau, kein Gewerbe angemeldet). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
 offen: 4
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 ---
@@ -18,37 +18,37 @@ quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 | | |
 |---|---|
 | **Kundin** | Luisa Brehler (Anrede: Frau Brehler) |
-| **Sitz** | Grünberger Str. 16, 36304 Alsfeld (Hessen) · brehlerluisa@gmail.com · kein Ladengeschäft; keine Telefonnummer (laut `/kontakt/` und Impressum, abgerufen 01.10.2026) |
-| **Art** | Marke im Aufbau: **kein Verkauf** (Impressum live: „Derzeit findet kein Verkauf statt“). Die bisherigen Stücke stehen als Archiv „bereits vergeben“; es gibt Motivanfrage (kostenlos, keine Bestellung), Warteliste mit Double-Opt-in und einen Countdown auf den nächsten Drop. Der Shop-Code (Konten, Warenkorb, Kasse, PayPal) bleibt im Projekt, ist aber hinter `VERKAUF_AKTIV` abgeschaltet (Vorgabe aus). **Kein Gewerbe angemeldet** (Angabe des Betreibers 01.10.2026) — deshalb keine Unternehmensangaben auf der Seite |
+| **Sitz** | Grünberger Str. 16, 36304 Alsfeld (Hessen) · brehlerluisa@gmail.com · kein Ladengeschäft; keine Telefonnummer, Antwort „in der Regel innerhalb von 2 Stunden“ (laut `/kontakt/` und Impressum, abgerufen 02.10.2026) |
+| **Art** | Marke im Aufbau: **kein Verkauf** (Impressum live: „Derzeit findet kein Verkauf statt“). Die bisherigen Stücke stehen als Archiv „bereits vergeben“; es gibt Motivanfrage (kostenlos, keine Bestellung), Warteliste mit Double-Opt-in und den Hinweis „Die nächste Ausgabe ist in Arbeit“ — **ohne Termin und ohne Countdown** (`DROP_TERMIN_VORGABE` ist seit `3073388` leer). Der Wissensbereich mit drei Beiträgen ist live. Der Shop-Code (Konten, Warenkorb, Kasse, PayPal) bleibt im Projekt, ist aber hinter `VERKAUF_AKTIV` abgeschaltet (Vorgabe aus). **Kein Gewerbe angemeldet** (Angabe des Betreibers 01.10.2026) — deshalb keine Unternehmensangaben auf der Seite |
 | **Bezahlung** | derzeit keine. Im Code: **PayPal** oder Vorab-Überweisung, **kein Stripe** — erst nach Einschalten des Verkaufs relevant ([80-AUFGABEN.md](80-AUFGABEN.md), „Verkauf einschalten nach Gewerbeanmeldung“) |
-| **Domain** | `https://www.luviq-alsfeld.com` (200) · Apex `https://luviq-alsfeld.com` leitet per **301 auf www** (abgerufen 01.10.2026; `CanonicalHostMiddleware`, `CANONICAL_HOST` in Railway gesetzt) · Railway `luviq-luisa-shop.up.railway.app` (200, 01.10.2026) |
+| **Domain** | `https://www.luviq-alsfeld.com` (200) · Apex `https://luviq-alsfeld.com` leitet per **301 auf www** (abgerufen 02.10.2026; `CanonicalHostMiddleware`, `CANONICAL_HOST` in Railway gesetzt) · Railway `luviq-luisa-shop.up.railway.app` leitet seit `feeb95e` ebenfalls per 301 auf `www` (abgerufen 02.10.2026) |
 | **Projektordner** | `C:\Users\basti\Desktop\webseiten buisnes\WebseiteMAIN` |
 | **GitHub** | `BastianScherzinger/Webseitemitstripe` · Hauptzweig `main` |
 | **Railway** | Projekt `webseiten` → Dienst `Luviq-Luisa` (Umgebung `shop`), Auto-Deploy von `main` |
 | **Technik** | Django 5.2.17 (`requirements.txt` festgenagelt, `requirements.lock`), Docker (`python:3.11-slim`), Gunicorn `gthread`, PostgreSQL (zwei Datenbanken), Cloudinary (Bilder), WhiteNoise, **Mail über Gmail-SMTP seit 27.09.2026** (Brevo abgelöst), django-axes, Tailwind-CLI (kein npm im Repo), eigene CSP-Middleware (scharf) |
-| **Live-Stand** | `main` = `origin/main` = **`36c0741`** (01.10.2026, „Sitemap: Bilder der Start- und Produktseite auszeichnen (TS19)“). Die Live-Sitemap trägt die Bild-Auszeichnung (abgerufen 01.10.2026) — die Auslieferung von `36c0741` ist damit belegt |
-| **Ordner-Stand** | Der Projektordner steht auf `main`; alle früheren Arbeitszweige (`sofort/…`, `mail/…`, `recht/…`, `design/…`) sind gemergt (`git branch -r --no-merged origin/main` leer, 01.10.2026). Lokal liegen vier Messcommits des Werkzeugs („Doku: Messung vom …“, bis 01.10.2026) noch nicht auf `origin/main` — sie ändern nur den Messblock hier und `70-PERFORMANCE.md` |
-| **Tests** | `shop1/tests/` mit siebzehn Modulen, 400 `def test_` im Code (gezählt 01.10.2026); Lauf zuletzt in Paket 544 am 28.09.2026: 399 Tests grün. CI: `.github/workflows/pruefungen.yml` |
+| **Live-Stand** | `main` = `origin/main` = **`7ae67ab`** (02.10.2026; letzter Code-Commit `f03bf61`, „GE47: Wissensbeiträge zeigen ihr Datum sichtbar, TS37: quadratische Icons“). Live belegt am 02.10.2026: Sitemap mit 17 Adressen samt der drei Wissensbeiträge, `<time>` „Aktualisiert am“, `/llms-full.txt` 200, `Permissions-Policy` im Kopf |
+| **Ordner-Stand** | Der Projektordner steht auf `main`; alle Arbeitszweige (`fix/2026-10-02-*`, `sofort/…`, `mail/…`, `recht/…`, `design/…`) sind gemergt (`git log origin/main..<zweig>` leer, `git branch -r --no-merged origin/main` leer, 02.10.2026). Es liegt keine unveröffentlichte Arbeit auf Zweigen |
+| **Tests** | `shop1/tests/` mit 29 Testmodulen und 737 `def test_` im Code (gezählt 02.10.2026). Lauf am 02.10.2026 nach `collectstatic` und ohne `DEBUG` (Python des Projekt-venv mit Django 6.0.4): 737 Tests, alle grün, 3 übersprungen (Stand `3b915fe`). CI: `.github/workflows/pruefungen.yml`, zuletzt grün auf `main` (Lauf 37040107996, Python 3.12, Django 5.2.17). Code-Audit der Overview: 202 Dateien, 0 Befunde, 0 Module ohne Test |
 | **Zertifikat** | Let's Encrypt, gültig bis **30.11.2026** (geprüft 01.10.2026) |
 | **Verfügbarkeit** | nicht neu erhoben; Railway-Inventur 26.09.2026: 5xx-Quote 7 Tage 4 von 11.785 Anfragen, letzter Deploy SUCCESS. Letzte Uptime-Messung 02.09.2026: 24 h 100 % (1.670 Messungen), 7 Tage 99,92 % |
 | **Gesamtstand** | siehe Messblock unten (vom Werkzeug geschrieben, nicht von Hand ändern) |
 
 ## Ampel je Bereich
 
-Aus den Köpfen der zehn Bereichsdateien, alle am 01.10.2026 gegen Code und Live-Seite geprüft. „Status“ und „Fortschritt“ sagen, wie weit der Bereich **auf der Seite** ist (Bezugsgröße je Datei, meist der gemessene Bereichswert vom 01.10.2026); was im Einzelnen offen ist, steht in [80-AUFGABEN.md](80-AUFGABEN.md).
+Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live-Seite geprüft. „Status“ und „Fortschritt“ sagen, wie weit der Bereich **auf der Seite** ist (Bezugsgröße je Datei, meist der gemessene Bereichswert vom 02.10.2026); was im Einzelnen offen ist, steht in [80-AUFGABEN.md](80-AUFGABEN.md).
 
 | Bereich | Status | Fortschritt | Zusammenfassung | Datei |
 |---|---|---:|---|---|
-| Wegweiser | vollständig | 100 | Elf Dateien nach Doku-Standard, gegen main (`36c0741`) geprüft. | [README.md](README.md) |
-| Technik | teilweise | 86 | Django 5.2.17, Mail über Gmail, Verkaufsschalter aus, Fehler-Monitoring per `AdminEmailHandler`, CSP scharf; offen: `Permissions-Policy`, `unsafe-eval`, Fremdskripte, Drosselzähler je Prozess, geteilte Datenbank. | [10-TECHNIK.md](10-TECHNIK.md) |
-| Design | teilweise | 91 | Linie „Nachtausgabe“ (seit 19.09.2026) live; offen: sechs Seiten noch im alten Markup (`lv-alt`), Kasse-Texte, neue Fotos. | [20-DESIGN.md](20-DESIGN.md) |
-| Inhalte | teilweise | 44 | 13 Sitemap-URLs, Wissensbeiträge noch `noindex`; Substanz bleibt der schwächste Messwert (3.983 Eigenwörter gegen 12.000). | [30-INHALTE.md](30-INHALTE.md) |
-| SEO / GEO | teilweise | 87 | Sitemap mit Bildern (TS19), llms.txt, Feed, Schema, Apex-301 live; offen: Freigaben, Profiladressen, `llms-full.txt`. | [40-SEO.md](40-SEO.md) |
-| Local SEO | teilweise | 25 | Search Console verbunden; Unternehmensprofil und Bewertungen nicht belegt. | [50-LOCAL-SEO.md](50-LOCAL-SEO.md) |
-| Ads | nicht zutreffend | — | Keine Anzeigen, kein Konto, kein Tracking. | [60-ADS.md](60-ADS.md) |
-| Performance | teilweise | 99 | PageSpeed mobil 95–99, Desktop 100, Serverzeit 1,6 ms; offen: Bildgrößen und -attribute, sechs Schriftdateien, Alpine/Chart.js von Fremd-CDN. | [70-PERFORMANCE.md](70-PERFORMANCE.md) |
-| Aufgaben | teilweise | 60 | 52 erledigt gegen 7 offen, 12 fehlend, 20 beim Kunden (Zählung 01.10.2026). | [80-AUFGABEN.md](80-AUFGABEN.md) |
-| Notizen | vollständig | 100 | Namensfallen, Zweige und main, Widersprüche zwischen Quellen und Live-Seite (am 01.10.2026 nachgeprüft). | [90-NOTIZEN.md](90-NOTIZEN.md) |
+| Wegweiser | vollständig | 100 | Elf Dateien nach Doku-Standard, am 02.10.2026 gegen main (`7ae67ab`) und die Live-Seite geprüft. | [README.md](README.md) |
+| Technik | teilweise | 100 | Code-Qualität 100 gemessen; Django 5.2.17, Mail über Gmail, CSP ohne `unsafe-eval`, `Permissions-Policy`, `/health/`, Admin-Aktionen nur per POST. Offen sind Bastians Railway-Handgriffe (`INDEXNOW_KEY`, `STRIPE_*`, eigene Datenbank, geteilte Zugangswerte) und fünf begründete Später-Punkte. | [10-TECHNIK.md](10-TECHNIK.md) |
+| Design | teilweise | 100 | Linie „Nachtausgabe“ live, Barrierefreiheit 100 gemessen; offen: Umbau der `lv-alt`-Seiten und Orbit-Texte der Kasse (später, ohne Verkauf unsichtbar), drei Sichtprüfungen im Browser (Bastian). | [20-DESIGN.md](20-DESIGN.md) |
+| Inhalte | teilweise | 85 | 17 Sitemap-URLs, Wissensbereich indexiert, `llms-full.txt` live; Substanz & Reichweite 85 gemessen. Es fehlen Stücktexte, Produktnamen und Stoff für zweite Seiten — nur Luisa kann sie liefern. | [30-INHALTE.md](30-INHALTE.md) |
+| SEO / GEO | teilweise | 98 | Sitemap mit Bildern (TS19), `llms.txt`/`llms-full.txt`, Feed, Schema, `sameAs` mit Instagram, TikTok und Google-Profil, Apex-301 live; offen: Indexierung beantragen (TS46) und zwei Entscheidungen von Bastian. | [40-SEO.md](40-SEO.md) |
+| Local SEO | teilweise | 60 | Google-Unternehmensprofil „Luviq“ und Search Console da; nicht belegt: Bestätigung des Profils und Bewertungen. `GOOGLE_REVIEW_URL` zeigt noch auf die Maps-Suche. | [50-LOCAL-SEO.md](50-LOCAL-SEO.md) |
+| Ads | nicht zutreffend | — | Keine Anzeigen, kein Konto, kein Tracking (Quelltext 02.10.2026 durchsucht); ohne Verkauf gibt es nichts zu bewerben. | [60-ADS.md](60-ADS.md) |
+| Performance | teilweise | 99 | Lighthouse Desktop 100, mobil 89 (LCP 3,76 s), Serverzeit 3–4 ms; `srcset`, Bildmaße, Preload, lokale Schriften und Critical CSS live; offen: vier Später-Punkte. | [70-PERFORMANCE.md](70-PERFORMANCE.md) |
+| Aufgaben | teilweise | 90 | 116 erledigt gegen 4 offen (Später), 0 fehlend und 14 beim Kunden (Zählung 02.10.2026). | [80-AUFGABEN.md](80-AUFGABEN.md) |
+| Notizen | vollständig | 100 | Namensfallen, Zweige und main, Widersprüche zwischen Quellen und Live-Seite (am 02.10.2026 nachgeprüft). | [90-NOTIZEN.md](90-NOTIZEN.md) |
 
 ## Messung
 
@@ -89,19 +89,21 @@ Ordner (Zweig)** — die Zahl mischt also zwei Stände, siehe
 
 ## Die wichtigsten offenen Punkte
 
-Alle vier hängen an Entscheidungen oder Angaben der Betreiberin bzw. des Betreibers.
+Die Punkte hängen an Entscheidungen oder Angaben von Betreiberin und Betreiber; im Code liegt nichts mehr aus.
 
 1. **Verkauf bleibt aus, bis ein Gewerbe angemeldet und die Liste in [80-AUFGABEN.md](80-AUFGABEN.md) („Verkauf einschalten nach Gewerbeanmeldung“) abgearbeitet ist.** Bis dahin nichts auf der Seite ergänzen, was ein Unternehmen, Preise oder Kleinunternehmer-Sätze behauptet.
-2. **Freigabe der Betreiberin für die Wissensbeiträge** `pflege-handbemalte-kleidung`, `upcycling-mode-second-hand-vintage` und `groesse-bei-einzelstuecken` (`'freigegeben': False` in `shop1/views/wissen.py`; live `noindex`, nicht in Sitemap und `llms.txt`, abgerufen 01.10.2026). Die drei verkaufsnahen Beiträge (Bestellen, Widerruf, Konto) leiten ohne Verkauf per 302 um. Daran hängen `SU04`, `SU07`, `SU01`, `VL11`.
-3. **Texte und Drop-Termin der „Nachtausgabe“ von Luisa gegenlesen lassen** und den Termin bestätigen: live steht „Nº 006 erscheint Donnerstag, 08.10., 18 Uhr“ mit Countdown (abgerufen 01.10.2026). Der Termin ist die Vorgabe im Code (`DROP_TERMIN_VORGABE` in `shop1/luviq_daten.py`); ob in Railway ein `DROP_TERMIN` gesetzt ist, ist nicht dokumentiert. Ohne Bestätigung `DROP_TERMIN` in Railway auf leer setzen (dann entfällt der Countdown). Einzelheiten in [80-AUFGABEN.md](80-AUFGABEN.md), Abschnitt „Offen“.
-4. **Offene Fragen an die Betreiberin zu Google:** Gibt es ein Unternehmensprofil, und wohin zeigt `GOOGLE_REVIEW_URL`? Soll die Search-Console-Property auf ein Konto der Betreiberin übergehen? Dazu: `luviq-alsfeld.com` hat laut Messung keinen MX- und keinen SPF-Eintrag (`MW01`, `MW04`); Mail geht von der Gmail-Adresse der Betreiberin — ob eine eigene Domainadresse gewünscht ist, ist nicht entschieden ([50-LOCAL-SEO.md](50-LOCAL-SEO.md)).
+2. **Luisa (80-AUFGABEN, „Beim Kunden“, 14 Zeilen):** Texte der „Nachtausgabe“ und die Rechtstexte gegenlesen, eigene Beschreibung je Stück und eindeutige Produktnamen, neue Fotos, Stoff für zweite Seiten, Vertrauenssignale und Bewertungen, Aufbewahrungsfristen, Drop-Termin und -Inhalt. Erledigt am 02.10.2026: Freigabe der Wissensbeiträge, Antwortzeit, Profiladressen.
+3. **Bastian:** Railway-Variablen und -Einstellungen (`INDEXNOW_KEY`, `STRIPE_*` entfernen, eigene Datenbank K1, geteilte Zugangswerte K7, Healthcheck-Pfad, `GOOGLE_REVIEW_URL` auf den echten Bewertungslink), Search Console (Indexierung beantragen, TS46), Bestätigung des Google-Profils prüfen, Livetest des Kontaktformulars, drei Sichtprüfungen im Browser, zwei Entscheidungen (Stückseiten `noindex`?, `/ueber_uns/` umziehen?). Einzelzeilen in [10-TECHNIK.md](10-TECHNIK.md), [20-DESIGN.md](20-DESIGN.md), [40-SEO.md](40-SEO.md) und [50-LOCAL-SEO.md](50-LOCAL-SEO.md).
+4. **Eigene Domainadresse für Mail?** `luviq-alsfeld.com` hat laut Messung keinen MX- und keinen SPF-Eintrag (`MW01`, `MW04`); Mail geht von der Gmail-Adresse der Betreiberin — der schwächste Messbereich („Erreichbarkeit & Postfach“, 77). Entscheidung der Betreiberin (80-AUFGABEN, „Beim Kunden“).
 
 ## Zuletzt erledigt
 
-*Einträge vom 28.09.2026 und älter nennen teils „Zweig, nicht gemergt“ — das war der Stand des jeweiligen Tages; seit dem 01.10.2026 ist alles in `main` (siehe Steckbrief).*
+*Einträge vom 28.09.2026 und älter nennen teils „Zweig, nicht gemergt“ — das war der Stand des jeweiligen Tages; seit dem 01.10.2026 ist alles in `main`, am 02.10.2026 erneut geprüft (siehe Steckbrief).*
 
 | Datum | Was | Beleg |
 |---|---|---|
+| 02.10.2026 | **Doku-Durchgang A3:** alle elf Dateien gegen `origin/main` (`7ae67ab`), Code und Live-Seite geprüft; alle „Zweig, nicht gemergt“-Angaben, die Wissens-Freigabe, Profile, `llms-full.txt`, Drop-Termin und das Formular-Missbrauchsschutz-Raster berichtigt; jede offene Zeile als „Beim Kunden“, „Bei Bastian“ oder „Später“ mit Grund eingeordnet. Code: `pruefe_mail` nennt den SMTP-Weg, die Gästebuch-Meldung ist klar | `3b915fe`, Arbeitszweig `doku/2026-10-02-a3` (nicht gepusht) |
+| 02.10.2026 | **Luisa-Punkte erledigt:** Wissensbeiträge frei und live, Profile (Instagram `luviq.archive`, TikTok, Google), Antwortzeit 2 Stunden, kein Drop-Termin, `security.txt` bis 01.10.2027; Rechtstexte ohne Verkauf nachgeschärft | `3073388`, `25ff237`, `c943006` |
 | 01.10.2026 | **TS19** — Bilder in der Sitemap: `sitemap_xml` hängt an die Startseite das Titelbild und die fünf Entstehungsschritte (aus `luviq_daten`, derselben Quelle wie `index.html`) und an `/produkte/` die Bilder der aktiven Stücke; Seiten ohne Inhaltsbild bleiben ohne Bild-Auszeichnung (kein Logo als Platzhalter). Ein Test mehr in `test_seo`. Live: die Sitemap trägt die `image:image`-Blöcke (abgerufen 01.10.2026) | `36c0741` |
 | 01.10.2026 | Doku-Durchgang: alle elf Dateien gegen `main`, Code und Live-Seite geprüft; überholte „Zweig/nicht gemergt“-Angaben, Brevo-Angaben, Domain-Alias und Seitenaufbau der alten Linie berichtigt. Nur `doku/` | Arbeitszweig `doku/2026-10-01-vollstaendig` |
 | 28.09.2026 | Merge `ac0e984`: `VL19` (Fehler-Monitoring per `AdminEmailHandler`), `VL11` (beim Kunden), `VL13` (bewusst so) sind in `main`. Davor `532c0cc` (Paket 542: `GE22`, `PJ05`, `KV08`) | `ac0e984`, `532c0cc` |

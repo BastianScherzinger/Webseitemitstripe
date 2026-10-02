@@ -1,23 +1,23 @@
 ---
 bereich: inhalte
 titel: Inhalte und Seitenbestand
-stand: 2026-10-01
+stand: 2026-10-02
 status: teilweise
-fortschritt: 44
-zusammenfassung: Stand 01.10.2026: 13 Sitemap-URLs (Start, Archiv, Gästebuch, Luisa, Motiv anfragen, Herkunft, Kontakt, Datenschutz, fünf Archivstücke), sechs Wissensbeiträge (drei erreichbar, alle noindex bis zur Freigabe), Archiv statt Shop; Seitenbestand und Offen-Liste gegen die Live-Seite erneuert. Substanz (Messwert 44) bleibt der schwächste Bereich.
-offen: 8
+fortschritt: 85
+zusammenfassung: Stand 02.10.2026: 17 Sitemap-URLs (Start, Archiv, Gästebuch, Luisa, Motiv anfragen, Herkunft, Kontakt, Datenschutz, Wissensbereich mit drei Beiträgen, fünf Archivstücke), llms-full.txt und Feed live, Archiv statt Shop; Substanz & Reichweite 85 gemessen (02.10.2026). Offen bei Luisa: Beschreibung je Stück, Produktnamen, Stoff für zweite Seiten, Textfreigabe; zwei Später-Punkte.
+offen: 2
 quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/legal.py, shop1/tests/test_inhalt.py
 ---
 
 # Inhalte — Luviq Universe
 
-*Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Substanz** des Laufs vom 02.09.2026 (Regelstand `2026-09-02a`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
+*Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Substanz** des Laufs vom 02.10.2026 (Regelstand `2026-10-02e`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
 
-> **Stand 01.10.2026 (geprüft):** Alle bis dahin geführten Arbeitszweige (`sofort/…`, `mail/…`, `recht/…`, `design/…`) sind in `main` gemergt (`git branch -r --no-merged origin/main` ist leer); `main` = `origin/main` = `36c0741` (TS19, Bild-Sitemap, 01.10.2026), und die Live-Seite zeigt diesen Stand (Sitemap mit Bild-Auszeichnung am 01.10.2026 abgerufen). Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
+> **Stand 02.10.2026 (geprüft, abends):** `main` = `origin/main` = `7ae67ab` und live. Alle Arbeitszweige des Tages (`fix/2026-10-02-luviq-fertig`, `-rest`, `-luisa`, `-recht`, `-wissen`, `fix/2026-10-02d-standard`) sind gemergt (`git log origin/main..<zweig>` leer, `git branch -r --no-merged origin/main` leer); die GitHub-Prüfungen auf `main` sind grün (Lauf 37040107996, 02.10.2026). Live belegt am 02.10.2026 (curl): Sitemap mit 17 Adressen samt der drei Wissensbeiträge, `/llms-full.txt` 200, „Aktualisiert am …“ (`<time>`) auf den Wissensbeiträgen (GE47), `Permissions-Policy` im Kopf, `/health/` 200, Apex 301 auf www. Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
 
 ## Seitenbestand
 
-**Live (main, Sitemap und Stichproben, abgerufen 01.10.2026): 13 URLs in der Sitemap** — acht statische Seiten und fünf Archivstücke (Produktseiten). Messung 01.10.2026: 3.983 Eigenwörter über 13 Seiten gegen das Ziel von 12.000 (`SU02`), 13 rankfähige Seiten gegen 30 (`SU01`) — Zahlen aus dem Messblock in [00-STATUS.md](00-STATUS.md).
+**Live (main, Sitemap und Stichproben, abgerufen 02.10.2026): 17 URLs in der Sitemap** — acht statische Seiten, der Wissensbereich (Übersicht und drei Beiträge) und fünf Archivstücke (Produktseiten). Messung 02.10.2026: Substanz & Reichweite 85 von 100 (Messblock in [00-STATUS.md](00-STATUS.md)); lokal gemessen mit den drei freigegebenen Wissensbeiträgen 7.202 Eigenwörter über 17 Seiten gegen das Ziel von 12.000 (`SU02`) und 17 rankfähige Seiten gegen 30 (`SU01`, Bewertungsblock in [80-AUFGABEN.md](80-AUFGABEN.md)).
 
 | URL | Seite | Index |
 |---|---|---|
@@ -31,10 +31,10 @@ quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/l
 | `/gaestebuch/` | Gästebuch (Kommentare angemeldeter Nutzer) | ja, Sitemap |
 | `/datenschutz/` | Datenschutzerklärung | ja, Sitemap |
 | `/impressum/`, `/agb/` | Impressum, AGB | `noindex, follow`, **nicht** in der Sitemap (der frühere Widerspruch Impressum/Sitemap ist behoben) |
-| `/wissen/` und `/wissen/pflege-handbemalte-kleidung/`, `/wissen/upcycling-mode-second-hand-vintage/`, `/wissen/groesse-bei-einzelstuecken/` | Wissensbereich: 200, `noindex, follow`, nicht in Sitemap und `llms.txt` bis zur Freigabe der Betreiberin | nein |
+| `/wissen/` und `/wissen/pflege-handbemalte-kleidung/`, `/wissen/upcycling-mode-second-hand-vintage/`, `/wissen/groesse-bei-einzelstuecken/` | Wissensbereich: 200, `index, follow`, mit „Aktualisiert am …“ (`<time>`), seit der Freigabe vom 02.10.2026 (`3073388`) in Sitemap und `llms.txt` | ja, Sitemap |
 | `/wissen/bestellen-und-bezahlen/`, `/wissen/widerruf-und-ruecksendung/`, `/wissen/konto-und-daten/` | verkaufsnahe Beiträge: leiten ohne Verkauf per 302 um (`nur_mit_verkauf`) | nein |
 | `/kontakt/danke/`, `/motiv-anfragen/danke/` | Danke-Seiten, `noindex, follow` | nein |
-| `/feed/`, `/llms.txt`, `/robots.txt`, `/sitemap.xml` | Feed der freigegebenen Wissensbeiträge, KI-Übersicht, Crawler-Regeln, Sitemap (alle 200); `/llms-full.txt` gibt es nicht (404) | — |
+| `/feed/`, `/llms.txt`, `/llms-full.txt`, `/robots.txt`, `/sitemap.xml` | Feed der freigegebenen Wissensbeiträge, KI-Übersicht (kurz und ausführlich, `bf8882e`), Crawler-Regeln, Sitemap (alle 200, abgerufen 02.10.2026) | — |
 
 Nicht in der Sitemap, aber erreichbar und per `robots.txt` gesperrt: `/login/`, `/register/`, `/profil/`, `/warenkorb/` (ohne Verkauf 302), `/checkout/` (302), `/payment/…`, `/verify/…`, `/password-reset/…`, `/delete-account/`, `/shop-admin/…`.
 
@@ -63,7 +63,7 @@ Summe: **1.557 Eigenwörter** über 13 abgerufene Seiten (von 2.434 Wörtern Ges
 
 **Nicht in der Sitemap, aber erreichbar:** `/login/`, `/register/`, `/profil/`, `/warenkorb/`, `/checkout/`, `/payment/…`, `/verify/…`, `/password-reset/…`, `/delete-account/`, `/newsletter/subscribe/`, `/shop-admin/…` — alle per `robots.txt` gesperrt. `/produkt/<id>/` leitet auf die Slug-URL um (Altlink-Kompatibilität); `/produkt/` → 301 auf `/produkte/` (Zweig; live 404).
 
-**Zweig zusätzlich:** `/wissen/` (Übersicht) und sechs Beiträge. Die drei ersten stehen auf `freigegeben: False`, also `noindex, follow` und nicht in Sitemap und llms.txt, sind aber erreichbar und getestet; die drei aus SU04 (07.09.2026) sind `freigegeben: True` und damit indexiert — sie geben ausschliesslich wieder, was an anderer Stelle dieser Seite belegt ist, und brauchen keine Zuarbeit. Die Übersicht ist damit indexierbar.
+**Wissensbereich (Stand 02.10.2026):** `/wissen/` (Übersicht) und sechs Beiträge. Pflege, Upcycling und Größe sind seit `3073388` freigegeben, indexierbar und in Sitemap und `llms.txt`; Bestellen, Widerruf und Konto sind `nur_mit_verkauf` und leiten ohne Verkauf per 302 um. Die Beiträge zeigen ihr Datum sichtbar (`GE47`, `f03bf61`) und wurden nach der Freigabe nachgeschärft (`c943006`).
 
 **Zweig `sofort/2026-09-11-kv07-und-2-weitere` zusätzlich (KV07, `2d78a55`, nicht gemergt):** `/kontakt/danke/` — Ziel nach dem Absenden des Kontaktformulars, auch direkt abrufbar, `noindex, follow`, weder in Sitemap noch in `llms.txt`. Titel „Nachricht abgeschickt – Luviq Universe", `h1` „Danke für deine Nachricht". Der Text nennt nur, was schon auf `kontakt.html` steht: die Nachricht geht an Luisa Brehler, geantwortet wird per E-Mail an die Adresse aus dem Formular, eine Telefonnummer gibt es nicht, `brehlerluisa@gmail.com` als zweiter Weg; dazu Verweise auf die drei freigegebenen Wissensbeiträge (Bestellen und Bezahlen, Widerruf und Rücksendung, Konto und Daten). **Keine Antwortzeit** — im Projekt steht keine. Die Seite sagt „abgeschickt", nicht „zugestellt", weil der Versand erst im Thread scheitern kann (`EIG10`). Sie steht nicht in `seiten_stand.py`, trägt deshalb kein `dateModified`, und zählt nicht zu `INHALTSSEITEN` (keine Wortzahl-Vorgabe).
 
@@ -85,11 +85,11 @@ zunächst nur einen Platzhalter, und erst wenn Sie auf 'Karte laden' klicken, wi
 Google abgerufen und Ihre IP-Adresse dorthin übertragen." `seiten_stand.py` führt `datenschutz`
 deshalb mit `2026-09-18` statt `2026-09-01` — `lastmod` und `dateModified` der Seite stimmen also.
 
-| URL (Zweig) | Titel (= h1) | Wörter | Index | Offene Sachangabe |
+| URL | Titel (= h1) | Wörter (Stand der Messung 02.09.2026) | Index (live 02.10.2026) | Freigabe |
 |---|---|---:|---|---|
-| `/wissen/pflege-handbemalte-kleidung/` | Wie pflege ich handbemalte Kleidung? | 821 | nein | 30 °C, kein Trockner, kein Weichspüler, Bügeln nur von links |
-| `/wissen/upcycling-mode-second-hand-vintage/` | Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand? | 941 | nein | keine strittige Zahl; Auflage nennt alle drei |
-| `/wissen/groesse-bei-einzelstuecken/` | Wie finde ich bei Einzelstücken die richtige Größe? | 890 | nein | „fünf Zentimeter Unterschied in der Brustweite sind eine ganze Grösse" |
+| `/wissen/pflege-handbemalte-kleidung/` | Wie pflege ich handbemalte Kleidung? | 821 | **ja** | freigegeben 02.10.2026 (`3073388`) |
+| `/wissen/upcycling-mode-second-hand-vintage/` | Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand? | 941 | **ja** | freigegeben 02.10.2026 (`3073388`) |
+| `/wissen/groesse-bei-einzelstuecken/` | Wie finde ich bei Einzelstücken die richtige Größe? | 890 | **ja** | freigegeben 02.10.2026 (`3073388`) |
 | `/wissen/bestellen-und-bezahlen/` | Wie bestelle und bezahle ich bei Luviq Universe? | 1.129 | **ja** | keine — Belege: `cart.py`, `checkout.py`, `forms.py`, `agb.html` § 2/§ 4, `liefergebiet.html` |
 | `/wissen/widerruf-und-ruecksendung/` | Widerruf und Rücksendung: was gilt bei einem Einzelstück? | 1.034 | **ja** | keine — Belege: `agb.html` § 3/§ 4/§ 5, Impressum, Datenschutz; Rückporto und Rückzahlungsfrist stehen als offene Frage **im Text** |
 | `/wissen/konto-und-daten/` | Was speichert der Shop – und warum braucht der Kauf ein Konto? | 1.000 | **ja** | keine — Belege: `datenschutz.html`, `forms.py`, `settings.py` (`AXES_*`), `views/auth.py` |
@@ -104,7 +104,7 @@ Jeder Beitrag: Antwort zuerst, sechs bis zehn Fragen als `h2`, `FAQPage` deckung
 |---|---:|---|
 | `/produkt/` (Einzelstücke) | 5 | hält 56 % aller Unterseiten (SU10); Übersicht ist `/produkte/`, der Pfad `/produkt/` selbst hat live keine Seite (SU09; Zweig: 301) |
 | `/produkte/` | 1 | Kategorieseite; im Zweig mit Auskunft zu 1-of-1, Bestellung, Zahlung, Versand |
-| `/wissen/` | 0 live / 6 + Übersicht im Zweig | Ratgeber; Zielgrösse 3 (SU04) im Zweig **erreicht**: drei belegte Beiträge indexiert, drei warten auf Freigabe |
+| `/wissen/` | 3 Beiträge und Übersicht live (02.10.2026) | Ratgeber; Zielgrösse 3 (SU04) erreicht: Pflege, Upcycling, Größe indexierbar (`3073388`); die drei Kaufweg-Beiträge leiten ohne Verkauf um |
 | Betrieb | `/ueber_uns/`, `/liefergebiet/`, `/kontakt/`, `/gaestebuch/` | je eine Seite (SU08) |
 | Recht | `/impressum/`, `/datenschutz/`, `/agb/` | |
 
@@ -213,31 +213,12 @@ von `/produkte/`: [20-DESIGN.md](20-DESIGN.md).
 
 ## Fehlende Inhalte
 
-*Stand 01.10.2026: Zeilen mit „im Zweig erledigt“ sind seit dem Merge in `main` erledigt (Danke-Seite KV07, Datenschutzhinweis und Honigtopf KV05/KV06, Zahlen GE25, Wissensbereich). Muster-Widerrufsformular, BFSG-Erklärung und die Rücksendekosten werden erst mit dem Verkauf relevant.*
-
-| Was fehlt | Beleg (Messung 02.09.2026) | Regel |
-|---|---|---|
-| Ratgeber live — 0 Wissensseiten (im Zweig 6: drei indexiert, drei `noindex` bis Freigabe) | Zielgrösse 3 | SU04 (Zweig erfüllt), SU07, VL11, VL12 |
-| Umfang: 13 statt 30 rankfähige Seiten; Startseite 390/700, Produktseiten 25/600 Wörter — **Umfang je Seitenart im Zweig** (11.09.2026, `2591fde`) für `/`, `/produkte/` und `/wissen/` aufgeholt, für die Produktseiten nicht | | SU01, IS18 (Zweig: 3 Seitenarten), IS17 |
-| Konkrete Zahlen auf `/`, `/datenschutz/`, `/agb/`, `/ueber_uns/`, `/liefergebiet/` (live) — **im Zweig ergänzt** (08.09.2026): Versandzeiten, PLZ, § 19, 14-Tage-Frist, Cookie-Laufzeit, Dedup-Fenster der Besuchszählung | 0 von 5 | GE25 (Zweig erfüllt) |
-| Eigene Beschreibung je Einzelstück — der Zusatz aus IS19 ist auf allen fünf Produktseiten wortgleich | Produktseiten 211 W, davon nichts über das einzelne Teil | SU06, IS18, IS21 |
-| Frage-Überschriften (live 2 von 13 Seiten; Zweig: Wissensseiten durchgehend) | | GE24 |
-| Über-uns-Seite mit **benannter Person** im Sinne der Vorlage (Luisa Brehler steht als Text, im Zweig auch als `Person`-Knoten `#luisa`) | | VL11 |
-| Muster-Widerrufsformular als eigene, aus dem Fuss verlinkte Seite | Widerrufsbelehrung nur in `/agb/` | RE09 |
-| Erklärung zur Barrierefreiheit (BFSG) — sofern nicht als Kleinstunternehmen ausgenommen; **nicht dokumentiert**, ob die Ausnahme greift | | RE12 |
-| Öffnungs-/Erreichbarkeitszeiten auf Startseite und Kontakt — es gibt keine belegten | | KV11 |
-| Eigene Danke-Seite nach dem Kontaktformular — **im Zweig erledigt** (11.09.2026, `2d78a55` auf `sofort/2026-09-11-kv07-und-2-weitere`, nicht gemergt): `/kontakt/danke/`, siehe „Seitenbestand" | | KV07 (Zweig erfüllt) |
-| Datenschutzhinweis am Kontaktformular; Honigtopf — **beides im Zweig erledigt** (17.09.2026, `b736994` und `06503a7` auf `sofort/2026-09-17-kv05-und-2-weitere`, nicht gemergt): der Hinweis steht als Fliesstext zwischen Nachrichtenfeld und Absendeknopf, der Honigtopf wirkt seit `d90067a` auf `main` und trägt seine Kennzeichen jetzt am Feld selbst. Beides gilt nur für `/kontakt/` — Newsletter, Gästebuch, Anmeldung und Registrierung haben weiter keinen Hinweis und keine Falle. Live nachgemessen ist nichts davon | 0 von 1 (Messung 02.09.2026) | KV05, KV06 (Zweig erfüllt für `/kontakt/`) |
+*Stand 02.10.2026, gegen die Live-Seite geprüft.* Nichts mehr, wofür kein Zuständiger genannt wäre: Der Wissensbereich ist live (`3073388`), die Danke-Seite (KV07), der Datenschutzhinweis am Kontaktformular und der Honigtopf (KV05/KV06, `38bb573`) sowie die konkreten Zahlen (GE25) stehen auf `main`, Frage-Überschriften (GE24) sind „bewusst so“ im Bewertungsblock von [80-AUFGABEN.md](80-AUFGABEN.md), und die Über-uns-Seite gibt es (`/ueber_uns/`, Luisa Brehler namentlich; dass `VL11` sie nicht erkennt, ist ein Messfehler des Musters, siehe Bewertungsblock). Was an Inhalt noch fehlt, braucht Angaben von Luisa und steht deshalb dort unter „Beim Kunden“: eigene Beschreibung je Einzelstück und eindeutige Produktnamen (`SU06`, `IS21`, `IS23`), Stoff für zweite Seiten je Bereich (`SU08`, `SU01`, `SU02`: 17 statt 30 rankfähige Seiten, 7.202 statt 12.000 Eigenwörter lokal), Vertrauenssignale (`KV09`) und das Gegenlesen der „Nachtausgabe“-Texte. Muster-Widerrufsformular (RE09) und BFSG-Erklärung (RE12) gibt es erst mit Verkauf (80-AUFGABEN, „Offen“, Später). Eine Telefonnummer und Öffnungszeiten gibt es bewusst nicht (KV01, KV08, KV11 im Bewertungsblock; die Antwortzeit „in der Regel innerhalb von 2 Stunden“ steht seit `3073388` auf `/kontakt/`).
 
 ## Offen
 
-Stand 01.10.2026. Erledigt und entfernt: Merge des Zweigs mit den neuen Texten und der Platzhalter-Korrektur auf `/kontakt/` (live), Widerspruch Impressum `noindex` und Sitemap (Impressum steht nicht mehr in der Sitemap), `seiten_stand.py` für `kontakt`.
+Stand 02.10.2026. Erledigt und entfernt: Freigabe der drei Wissensbeiträge (`3073388`), Datenschutzhinweis an beiden Newsletter-Formularen (`c49b121`) und Honigtopf (`38bb573`) (Gästebuch und Registrierung tragen einen Datenschutzhinweis, Quelltext am 02.10.2026), Merge der Texte und der Platzhalter-Korrektur auf `/kontakt/` (live), Widerspruch Impressum `noindex` und Sitemap, `seiten_stand.py` für `kontakt`. Die Zeilen zu Gegenlesen der Texte, Produktnamen und Beschreibung je Stück stehen nur noch unter „Beim Kunden“ in [80-AUFGABEN.md](80-AUFGABEN.md), die zu Rücksendekosten, Muster-Widerrufsformular und BFSG unter „Offen“ (Später: erst mit Verkauf).
 
-1. **Freigabe der drei Wissensbeiträge** (Pflege, Upcycling, Größe) durch die Betreiberin → `'freigegeben': True` (siehe [80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden). Bis dahin `noindex`.
-2. **Texte der „Nachtausgabe“ von Luisa gegenlesen** ([80-AUFGABEN.md](80-AUFGABEN.md) → Offen).
-3. **Produktnamen im Shop-Admin eindeutig machen** („Custom print hoodie“ zweimal) oder `seo_titel` setzen — Pflegeaufgabe der Betreiberin; der Messbefund `IS21` (Beinahe-Duplikate, höchster Wert 100 %) und `IS23` (Kannibalisierung „custom print“) stehen im Messblock vom 01.10.2026.
-4. **Eine eigene Beschreibung je Archivstück** (`Produkt.beschreibung` im Shop-Admin, dazu Material, Technik, Maße je Stück) — der Zusatztext ist auf allen fünf Produktseiten gleich.
-5. **Weitere Wissensbeiträge** nach Kundenfragen; alles Weitere braucht Angaben der Betreiberin (Kosten der Rücksendung, Frist der Rückzahlung — erst mit Verkauf).
-6. **Muster-Widerrufsformular als eigene Seite** und BFSG-Erklärung — erst mit Verkauf bzw. Klärung, ob die Kleinstunternehmen-Ausnahme greift (nicht dokumentiert).
-7. **Entscheidung Öffnungs-/Antwortzeiten und Telefonnummer** — nur die Betreiberin kann sie nennen; bis dahin steht auf `/kontakt/` „eine Telefonnummer gibt es nicht“.
-8. **Datenschutzhinweis und Honigtopf an den übrigen Formularen** (Newsletter/Warteliste, Gästebuch, Anmeldung, Registrierung): Paket 243 hat nur `/kontakt/` angefasst; der Wortlaut ist je Formular zu prüfen. Nicht neu geprüft am 01.10.2026.
+- Später: weitere Wissensbeiträge nach Kundenfragen. Grund: es sind keine Kundenfragen dokumentiert, und jeder neue Beitrag braucht belegte Angaben (Eintrag in `WISSEN_BEITRAEGE`, `seiten_stand.py`, Tests, Aufbau-Referenz).
+- Später: Datenschutzhinweis am Anmeldeformular (`login.html`). Grund: das Formular fragt nur Benutzername und Passwort; was beim Anmelden gespeichert wird (Anmeldeprotokoll), nennt die Datenschutzerklärung, der Hinweis am Formular selbst fehlt.
+

@@ -3,19 +3,19 @@ bereich: design
 titel: Design und Gestaltungslinie
 stand: 2026-10-02
 status: teilweise
-fortschritt: 91
-zusammenfassung: Stand 02.10.2026: Alpine.js entfernt (Menü als details-Element, Einblenden ohne x-intersect), vier Schriftdateien, Critical CSS über tools/kritisches_css.py, Überschriften als h2 mit unveränderter Optik; Stand 01.10.2026: Linie „Nachtausgabe“ (seit 19.09.2026, luviq.css, ein Akzent #C8763F, selbst gehostete Schriften, Radius 0) ist live; Seitenaufbau, Farben/Schriften und Offen-Liste gegen die Vorlagen und die Live-Seite erneuert, die frühere Dunkelbraun-Gold-Linie steht nur noch als Geschichte da.
-offen: 6
+fortschritt: 100
+zusammenfassung: Stand 02.10.2026: Linie „Nachtausgabe“ (luviq.css, ein Akzent #C8763F, selbst gehostete Schriften, Radius 0) live; Alpine.js entfernt (Menü als details-Element), Critical CSS über tools/kritisches_css.py, Überschriften ohne Sprung, Barrierefreiheit 100 gemessen. Offen sind drei Punkte: Umbau der alten lv-alt-Seiten und Orbit-Texte der Kasse (beide später, ohne Verkauf unsichtbar) und eine Sichtprüfung im Browser durch Bastian; Fotos und Textfreigabe liegen bei Luisa (80-AUFGABEN).
+offen: 3
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, shop1/static/shop1/style.css, tailwind.config.js, templates/base.html
 ---
 
 # Design — Luviq Universe
 
-> **Stand 02.10.2026 (Sammelzweig `fix/2026-10-02-luviq-fertig`, lokal geprüft, nicht gepusht):** Alpine.js ist entfernt; wo hier noch `x-intersect` oder Alpine steht, ist das die Fassung vor dem 02.10.2026 — das Einblenden läuft über `shop1/static/shop1/luviq.js`, das Menü über `<details>`. Schriften: vier Dateien unter `shop1/static/shop1/fonts/` (Cormorant kursiv, JetBrains Mono, Schibsted latin und latin-ext). Nach jeder Änderung an `luviq.css` `python tools/kritisches_css.py` laufen lassen (Critical CSS). Die Designwache `shop1/tests/aufbau_referenz.json` wurde nur für die bewusst geänderten Seiten neu erzeugt.
+> **Stand 02.10.2026 (Sammelzweig `fix/2026-10-02-luviq-fertig`, seit dem Merge in `main` und live):** Alpine.js ist entfernt; wo hier noch `x-intersect` oder Alpine steht, ist das die Fassung vor dem 02.10.2026 — das Einblenden läuft über `shop1/static/shop1/luviq.js`, das Menü über `<details>`. Schriften: vier Dateien unter `shop1/static/shop1/fonts/` (Cormorant kursiv, JetBrains Mono, Schibsted latin und latin-ext). Nach jeder Änderung an `luviq.css` `python tools/kritisches_css.py` laufen lassen (Critical CSS). Die Designwache `shop1/tests/aufbau_referenz.json` wurde nur für die bewusst geänderten Seiten neu erzeugt.
 
-*Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Barrierefreiheit** des Laufs vom 02.09.2026 (Regelstand `2026-09-02a`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
+*Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Barrierefreiheit** des Laufs vom 02.10.2026 (Regelstand `2026-10-02e`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
 
-> **Stand 01.10.2026 (geprüft):** Alle bis dahin geführten Arbeitszweige (`sofort/…`, `mail/…`, `recht/…`, `design/…`) sind in `main` gemergt (`git branch -r --no-merged origin/main` ist leer); `main` = `origin/main` = `36c0741` (TS19, Bild-Sitemap, 01.10.2026), und die Live-Seite zeigt diesen Stand (Sitemap mit Bild-Auszeichnung am 01.10.2026 abgerufen). Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
+> **Stand 02.10.2026 (geprüft, abends):** `main` = `origin/main` = `7ae67ab` und live. Alle Arbeitszweige des Tages (`fix/2026-10-02-luviq-fertig`, `-rest`, `-luisa`, `-recht`, `-wissen`, `fix/2026-10-02d-standard`) sind gemergt (`git log origin/main..<zweig>` leer, `git branch -r --no-merged origin/main` leer); die GitHub-Prüfungen auf `main` sind grün (Lauf 37040107996, 02.10.2026). Live belegt am 02.10.2026 (curl): Sitemap mit 17 Adressen samt der drei Wissensbeiträge, `/llms-full.txt` 200, „Aktualisiert am …“ (`<time>`) auf den Wissensbeiträgen (GE47), `Permissions-Policy` im Kopf, `/health/` 200, Apex 301 auf www. Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
 
 ## Gestaltungslinie
 
@@ -202,13 +202,11 @@ zusätzlich nur mit Sandbox-Test ([10-TECHNIK.md](10-TECHNIK.md) → Fallen).
 
 ## Offen
 
-Stand 01.10.2026. Erledigt und deshalb entfernt: Google-Schriften (selbst gehostet), Sprungmarke „Zum Inhalt“ (`.lv-sprung`), Kontrastwerte des alten Rahmens (neue Palette 17,1:1 bzw. 6,8:1 laut Bauplan).
+Stand 02.10.2026, gegen die Vorlagen und die Live-Seite geprüft. Erledigt und deshalb entfernt: Google-Schriften (selbst gehostet), Sprungmarke „Zum Inhalt“ (`.lv-sprung`), Kontrastwerte des alten Rahmens (neue Palette 17,1:1 bzw. 6,8:1 laut Bauplan), Überschriften ohne Sprung und Bilder mit `alt` sowie Breite und Höhe (`5a57175`, `9402995`; live 02.10.2026: je Seite eine h1, kein Bild ohne `alt`). Was nur Luisa liefern kann — neue Fotos (Porträt vor echter Wand, Arbeitsfoto; `fotos-neu\` enthält am 02.10.2026 nur `LIESMICH.md`) und das Gegenlesen der „Nachtausgabe“-Texte —, steht unter „Beim Kunden“ in [80-AUFGABEN.md](80-AUFGABEN.md).
 
 | Punkt | Beleg | Regel |
 |---|---|---|
-| Alte Seiten (Kontakt, Gästebuch, Wissen, Rechtstexte, Konto, Kasse) laufen noch über die Übersetzungsschicht `lv-alt` statt als neu gebaute `lv-seite` | `{% block seitenart %}` nur in sechs Vorlagen auf `lv-seite` (Start, Motiv anfragen, Danke, Archiv, Stück, Luisa) | VL-Konformität |
-| Kasse, Warenkorb, Zahlung und Profil tragen noch „Orbit/Mission“-Texte („Your Orbit“, „Mission Checkout“) — vor dem Einschalten des Verkaufs sprachlich nachziehen | [80-AUFGABEN.md](80-AUFGABEN.md), „Verkauf einschalten nach Gewerbeanmeldung“ | — |
-| Neue Fotos (Porträt vor echter Wand, Arbeitsfoto) — dann Porträt auf „Luisa“ und Entstehungsbilder 2–4 tauschen | [80-AUFGABEN.md](80-AUFGABEN.md), „Offen“; Ablage `Webagentur Scherzinger\Design\luviq\fotos-neu\` | — |
-| Kartenplatzhalter auf `/gaestebuch/` im Browser ansehen: Gestaltung aus Inline-Stilen statt aus Klassen der Linie; die Sichtprüfung hat nach den Quellen niemand durchgeführt | `base.html` (Skript), `RE17` | RE17 |
-| Texte der „Nachtausgabe“ von Luisa gegenlesen (Lead, „Du hast eine Idee?“, Anfrageseite, Danke-Seite, „Luisa“) | `shop1/luviq_daten.py`; [80-AUFGABEN.md](80-AUFGABEN.md) | — |
-| Darstellung des Datenschutzhinweises auf `/kontakt/` im Browser ansehen (reiner Fließtext ohne Klasse, `KV05`) | Paket 243; nicht belegt als angesehen | KV05 |
+| Später: alte Seiten (Kontakt, Gästebuch, Wissen, Rechtstexte, Konto, Kasse) von der Übersetzungsschicht `lv-alt` auf neu gebaute `lv-seite` umstellen. Grund: sie sind seit dem Umbau vom 19.09.2026 lesbar und bestehen die Messung (Barrierefreiheit 100, Vorlagen-Konformität 99); ein Neubau verändert Seiten unter der Designwache (`aufbau_referenz.json`) und braucht Luisas Blick | `{% block seitenart %}` steht in `base.html` und in den Vorlagen Start, Archiv, Stück, Luisa, Motiv anfragen, Danke und 404 (Zählung 02.10.2026) | VL-Konformität |
+| Später: Kasse, Warenkorb, Zahlung und Profil tragen noch „Orbit/Mission“-Texte („Your Orbit“, „Mission Checkout“) — erst vor dem Einschalten des Verkaufs sprachlich nachziehen. Grund: ohne Verkauf sind diese Seiten gesperrt und für Besucher unsichtbar; die öffentliche Meldung nach einem Gästebuchbeitrag ist bereits klar („Dein Beitrag wurde veröffentlicht.“, Test `GaestebuchMeldungTest`) | [80-AUFGABEN.md](80-AUFGABEN.md), „Verkauf einschalten nach Gewerbeanmeldung“ | — |
+| Bei Bastian: drei Sichtprüfungen im Browser — Kartenplatzhalter auf `/gaestebuch/` (Gestaltung aus Inline-Stilen statt aus Klassen der Linie, `RE17`), Darstellung des Datenschutzhinweises auf `/kontakt/` (reiner Fließtext ohne Klasse, `KV05`) und Fokusring (Geschmacksentscheidung). Grund: ein Agent ohne Browser kann sie nicht sehen; Quelltext und Tests belegen nur, dass die Elemente da sind | `_reviews_map.html`, `kontakt.html`, `luviq.css`; nach den Quellen hat sie noch niemand durchgeführt | RE17, KV05 |
+

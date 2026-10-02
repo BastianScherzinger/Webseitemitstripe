@@ -1,9 +1,9 @@
 ---
 bereich: ads
 titel: Google Ads
-stand: 2026-10-01
+stand: 2026-10-02
 status: nicht zutreffend
-zusammenfassung: Keine Google-Ads-Kampagne, kein Konto, kein Tracking-Tag (Quelltext am 01.10.2026 erneut durchsucht: nur ein dataLayer-Ereignis der Warteliste ohne Messskript); ohne Verkauf (kein Gewerbe) kommen Shopping-Anzeigen nicht in Frage, Voraussetzungen sind benannt.
+zusammenfassung: Keine Google-Ads-Kampagne, kein Konto, kein Tracking-Tag (Quelltext am 02.10.2026 erneut durchsucht, kein Treffer für gtag, Tag Manager, Analytics oder Pixel; nur ein dataLayer-Ereignis der Warteliste ohne Messskript); ohne Verkauf (kein Gewerbe) kommen Shopping-Anzeigen nicht in Frage, Voraussetzungen sind benannt. Nicht zutreffend, weil es nichts zu bewerben gibt.
 offen: 0
 quellen: GOOGLE_SEO_GUIDE.md, templates/base.html
 ---
@@ -12,7 +12,7 @@ quellen: GOOGLE_SEO_GUIDE.md, templates/base.html
 
 ## Stand
 
-**Stand 01.10.2026:** erneut geprüft — in `templates/`, `shop1/templates/` und `shop1/static/` kein `gtag`, kein Google Tag Manager, kein Analytics, kein Meta-Pixel; einzige Spur ist das `dataLayer`-Ereignis `generate_lead` der Warteliste (`index.html`), das ohne Messskript den Browser nicht verlässt. Der Verkauf ist aus (Marke im Aufbau, kein Gewerbe angemeldet): Shopping- oder Produktanzeigen scheiden damit aus, solange es nichts zu verkaufen gibt.
+**Stand 02.10.2026:** erneut geprüft (Quelltext und Live-Startseite) — in `templates/`, `shop1/templates/` und `shop1/static/` kein `gtag`, kein Google Tag Manager, kein Analytics, kein Meta-Pixel; einzige Spur ist das `dataLayer`-Ereignis `generate_lead` der Warteliste (`index.html`), das ohne Messskript den Browser nicht verlässt. Der Verkauf ist aus (Marke im Aufbau, kein Gewerbe angemeldet): Shopping- oder Produktanzeigen scheiden damit aus, solange es nichts zu verkaufen gibt.
 
 **Für Luviq Universe gibt es keine Google-Ads-Kampagne, kein Google-Ads-Konto und keine Anzeigen
 auf einer anderen Plattform, die dokumentiert wären.** Im Quelltext findet sich kein Conversion-Tag,
@@ -37,7 +37,7 @@ Keine. Was fehlt, damit überhaupt gemessen werden könnte:
 
 | Voraussetzung | Stand | Regel |
 |---|---|---|
-| Eigene Danke-/Bestätigungs-URL nach Kontaktformular | fehlt — Meldung auf derselben Seite | KV07 |
+| Eigene Danke-/Bestätigungs-URL nach Kontaktformular | **vorhanden:** `/kontakt/danke/` und `/motiv-anfragen/danke/` (`noindex, follow`, live 200 am 02.10.2026); die Form für eine Zielseiten-Conversion ist damit gegeben, gemessen wird mangels Tag nichts | KV07 |
 | Newsletter-Anmeldung als Ereignis | **seit dem Merge `d978a89` auf `main`** (`FO08`, `9b3fc07`, 16.09.2026): das Skript der Startseite schiebt nach einer *neuen* Anmeldung `{event: 'generate_lead', lead_quelle: 'newsletter'}` in `window.dataLayer` — die Form, die Google Tag Manager und `gtag.js` lesen. Ohne Adresse, eine wiederholte Anmeldung zählt nicht. **Solange kein Tag eingebunden ist, verlässt das Ereignis den Browser nicht** | FO08 |
 | Bestellabschluss als eigene URL | im Code vorhanden: `/payment/success/<order_id>/` (per `robots.txt` gesperrt, was richtig ist) — erst mit eingeschaltetem Verkauf erreichbar | — |
 | Conversion-Tag oder serverseitige Conversion | fehlt; jedes Tag braucht eine Einwilligung (Consent) — es gibt heute **kein Consent-Banner**, weil nichts Einwilligungspflichtiges geladen wird | — |

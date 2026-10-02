@@ -3,17 +3,17 @@ bereich: seo
 titel: SEO und GEO
 stand: 2026-10-02
 status: teilweise
-fortschritt: 87
-zusammenfassung: Stand 01.10.2026: Bild-Sitemap TS19 live (36c0741), llms.txt, Feed, @id-Schema mit speakable und location/Place, Apex-301, noindex für Wissensbereich bis zur Freigabe; Messwerte SEO-Technik 98, SEO-Inhalt 83, GEO 79. Offen sind Freigaben und Profiladressen der Betreiberin sowie llms-full.txt und IndexNow. Seit 02.10.2026 im Code (nicht ausgeliefert): sichtbares Änderungsdatum der Wissensbeiträge aus SEITEN_STAND (GE47).
-offen: 9
+fortschritt: 98
+zusammenfassung: Stand 02.10.2026: Wissensbereich frei und indexierbar (17 Sitemap-URLs), llms.txt und llms-full.txt, Feed, sameAs mit Instagram, TikTok und Google-Profil, @id-Schema mit speakable, Apex-301; gemessen SEO-Inhalt 94, SEO-Technik 99, GEO 100. Offen: Indexierung beantragen (Bastian, TS46), zwei Entscheidungen (Stückseiten noindex, Pfad /ueber_uns/) und die Alt-Texte je Stück (später).
+offen: 4
 quellen: GOOGLE_SEO_GUIDE.md, LOGBUCH.md, DOCUMENTATION.md, shop1/views/legal.py, shop1/seiten_stand.py, shop1/indexnow.py, templates/base.html
 ---
 
 # SEO und GEO — Luviq Universe
 
-*Woran sich der Fortschritt bemisst: am Mittel der drei gemessenen Bereichswerte **SEO-Technik, SEO-Inhalt und GEO** des Laufs vom 02.09.2026 (Regelstand `2026-09-02a`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße. Nennt die Datei zusätzlich einen Planfortschritt (etwa „52 von 73 Aufgaben“), steht der im Abschnitt „Stand“ — er misst den Plan, nicht die Seite.*
+*Woran sich der Fortschritt bemisst: am Mittel der drei gemessenen Bereichswerte **SEO-Technik, SEO-Inhalt und GEO** des Laufs vom 02.10.2026 (Regelstand `2026-10-02e`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße. Nennt die Datei zusätzlich einen Planfortschritt (etwa „52 von 73 Aufgaben“), steht der im Abschnitt „Stand“ — er misst den Plan, nicht die Seite.*
 
-> **Stand 01.10.2026 (geprüft):** Alle bis dahin geführten Arbeitszweige (`sofort/…`, `mail/…`, `recht/…`, `design/…`) sind in `main` gemergt (`git branch -r --no-merged origin/main` ist leer); `main` = `origin/main` = `36c0741` (TS19, Bild-Sitemap, 01.10.2026), und die Live-Seite zeigt diesen Stand (Sitemap mit Bild-Auszeichnung am 01.10.2026 abgerufen). Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
+> **Stand 02.10.2026 (geprüft, abends):** `main` = `origin/main` = `7ae67ab` und live. Alle Arbeitszweige des Tages (`fix/2026-10-02-luviq-fertig`, `-rest`, `-luisa`, `-recht`, `-wissen`, `fix/2026-10-02d-standard`) sind gemergt (`git log origin/main..<zweig>` leer, `git branch -r --no-merged origin/main` leer); die GitHub-Prüfungen auf `main` sind grün (Lauf 37040107996, 02.10.2026). Live belegt am 02.10.2026 (curl): Sitemap mit 17 Adressen samt der drei Wissensbeiträge, `/llms-full.txt` 200, „Aktualisiert am …“ (`<time>`) auf den Wissensbeiträgen (GE47), `Permissions-Policy` im Kopf, `/health/` 200, Apex 301 auf www. Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
 
 ## Stand
 
@@ -46,9 +46,9 @@ luviq" war falsch und ist gestrichen.
 | Baustein | Stand |
 |---|---|
 | `robots.txt` | 200; sperrt Konto-, Kasse- und Admin-Pfade, regelt 14 `User-agent`-Blöcke (darunter KI-Crawler ausdrücklich erlaubt, `GE02`), nennt `Sitemap: https://www.luviq-alsfeld.com/sitemap.xml` |
-| `sitemap.xml` | 200, **13 URLs** mit `lastmod` (Daten zwischen 11.05. und 27.09.2026); **Bild-Auszeichnung seit TS19 (`36c0741`, 01.10.2026)**: Startseite mit Titelbild und fünf Entstehungsbildern, `/produkte/` und die Produktseiten mit den Stückbildern (16 `image:image`-Blöcke gesamt); Seiten ohne Inhaltsbild bleiben ohne Bild. Impressum, AGB, Wissensbereich und Danke-Seiten stehen nicht darin |
-| `llms.txt` | 200: Antwortabsatz („Marke im Aufbau … noch kein Verkauf“), Eckdaten (Luisa Brehler, Anschrift, E-Mail, Instagram), Seitenliste, Archiv der Stücke; `llms-full.txt` gibt es nicht (404) |
-| `/feed/` (RSS) | 200, Wissensbeiträge (nur freigegebene — derzeit leer) |
+| `sitemap.xml` | 200, **17 URLs** (abgerufen 02.10.2026) mit `lastmod` (Daten zwischen 11.05. und 27.09.2026); **Bild-Auszeichnung seit TS19 (`36c0741`, 01.10.2026)**: Startseite mit Titelbild und fünf Entstehungsbildern, `/produkte/` und die Produktseiten mit den Stückbildern (16 `image:image`-Blöcke gesamt); Seiten ohne Inhaltsbild bleiben ohne Bild. Impressum, AGB und Danke-Seiten stehen nicht darin; der Wissensbereich (Übersicht und drei Beiträge) steht seit der Freigabe vom 02.10.2026 (`3073388`) darin |
+| `llms.txt` | 200: Antwortabsatz („Marke im Aufbau … noch kein Verkauf“), Eckdaten (Luisa Brehler, Anschrift, E-Mail, Instagram `luviq.archive`, TikTok, Google-Profil), Seitenliste, Archiv der Stücke; **`llms-full.txt` gibt es seit `bf8882e` (200, abgerufen 02.10.2026)** |
+| `/feed/` (RSS) | 200, die freigegebenen Wissensbeiträge (seit `3073388` drei; abgerufen 02.10.2026) |
 | Canonical / Host | Canonical je Seite; **Apex `luviq-alsfeld.com` → 301 auf `www`** (`TS11` live behoben) |
 | 404 | eigene Seite im Stil der „Nachtausgabe“ („Seite nicht gefunden – Luviq Universe“, `TS20`) |
 | Schutzköpfe | HSTS (1 Jahr, preload), CSP scharf (mit `'unsafe-eval'`, `'unsafe-inline'` in `style-src`), `X-Frame-Options: DENY`, `nosniff`, Referrer-Policy, COOP; **keine `Permissions-Policy`** (`SI07`) |
@@ -136,6 +136,11 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 
 | Datum | Was | Beleg |
 |---|---|---|
+| 02.10.2026 | **Wissensbereich frei und live:** Pflege, Upcycling und Größe `index, follow`, in Sitemap (17 URLs), `llms.txt` und Feed; Titel, FAQPage, Quellen nachgeschärft; sichtbares Datum „Aktualisiert am …“ (`GE47`) | `3073388`, `c943006`, `f03bf61` (live 02.10.2026 abgerufen) |
+| 02.10.2026 | **`sameAs` erweitert** (GE11, GE46): Instagram `luviq.archive`, TikTok `@luviq.archive`, Google-Unternehmensprofil „Luviq“ in `sameAs` und `llms.txt` | `3073388` (live `llms.txt` abgerufen) |
+| 02.10.2026 | **`llms-full.txt`** (GE31, VL09): 200, 44 KB; von `robots.txt` und `llms.txt` genannt | `bf8882e` |
+| 02.10.2026 | **Überschriftensprünge und Alt-Texte** (IS14, BF15, VL17): keine Sprünge, je Seite eine h1, kein Bild ohne `alt`, Breite und Höhe gesetzt (live 02.10.2026 geprüft) | `08db0ed`, `5a57175`, `9402995` |
+| 02.10.2026 | **Apex- und Railway-Adresse** per 301 auf `www` (TS11, EIG18, EIG60); `/health/`, `security.txt` (bis 01.10.2027) | `feeb95e`, `3073388` |
 | vor 25.05.2026 | Dynamische Sitemap, robots.txt, Meta/Open Graph, semantisches HTML, Schema `Organization`/`ClothingStore`/`WebSite`/`ItemList`/`Product` | `GOOGLE_SEO_GUIDE.md`, `DOCUMENTATION.md` §7 |
 | 01.09.2026 | Falscher Zielbegriff „railway hosting luviq" aus dem Guide gestrichen | `GOOGLE_SEO_GUIDE.md` |
 | 01.09.2026 (Zweig) | Meta-Beschreibungen, Ortsbezug im Produkttitel, Produkt-Meta-Längen, `lastmod`-Register, `/produkt/` → 301 | Schritte 11–15 (`6bfc4ea` … `23f8b24`) |
@@ -159,16 +164,12 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 
 ## Offen
 
-Stand 01.10.2026. Erledigt und entfernt: Merges der Arbeitszweige (alle in `main`), `CANONICAL_HOST`/Apex-301, Impressum-Widerspruch, Bild-Erweiterung der Sitemap (TS19).
+Stand 02.10.2026, gegen `origin/main` und die Live-Seite geprüft. Erledigt und entfernt: Freigabe der Wissensbeiträge, `sameAs`, `llms-full.txt`, Überschriftensprünge und Merges der Arbeitszweige (siehe „Erledigt“ oben); `INDEXNOW_KEY` steht als Bastian-Zeile in [10-TECHNIK.md](10-TECHNIK.md), Produktnamen, Beschreibung je Stück und eine belegte Bewertungszahl (`AggregateRating`, KV09) unter „Beim Kunden“ in [80-AUFGABEN.md](80-AUFGABEN.md) — dort stehen sie nur einmal.
 
 | Punkt | Regel | Wo |
 |---|---|---|
-| Freigabe der drei ersten Wissensbeiträge (Pflege, Upcycling, Größe) → aus `noindex`, in Sitemap, `llms.txt` und Feed; die verkaufsnahen drei erscheinen erst mit Verkauf | SU04, SU07, SU01, VL11 | `shop1/views/wissen.py` — Entscheidung der Betreiberin |
-| `sameAs` erweitern (Unternehmensprofil, TikTok) — Adressen nicht dokumentiert, am 11./12.09. und 27.09.2026 als nicht möglich beendet | GE11, GE46 | beim Kunden ([80-AUFGABEN.md](80-AUFGABEN.md)) |
-| `llms-full.txt` fehlt (404) | GE31, VL09 | `views/legal.py` |
-| IndexNow ist aus — `INDEXNOW_KEY` in Railway setzen oder bewusst aus lassen | PJ13 | Railway |
-| Produktnamen/-titel eindeutig, „custom print“-Kannibalisierung | IS23, IS03 | beim Kunden (Name und `seo_titel` setzt nur die Betreiberin) |
-| Search Console: Indexierung der Sitemap-Seiten beantragen und Ausschlussgründe lesen (`TS46`) — geht nur im Konto `…05@gmail.com`; ob die Sitemap dort eingereicht ist, steht in keiner Doku | TS46 | Search Console |
-| Überschriftensprünge `h1 → h3` auf Bestandsseiten — seit dem Umbau vom 19.09.2026 nicht neu gezählt | IS14, BF15 | Templates + `aufbau_referenz.json` |
-| Alt-Texte schablonenhaft (Messung 02.09.2026: 21 von 39) — nicht neu gezählt | IS25 | Templates |
-| `AggregateRating` fehlt, und es gibt keine belegte Bewertungszahl | KV09 | bewusst nicht erfunden |
+| Bei Bastian: Search Console — Indexierung der 17 Sitemap-Seiten beantragen und die Ausschlussgründe lesen (`TS46`). Grund: das geht nur mit Zugang zur Property (liegt im Konto von Luisa, `/u/3`) und im Kontingent von etwa 10 Anträgen je Konto und Tag | TS46 | Search Console |
+| Bei Bastian: Entscheidung, ob die fünf Archiv-Stückseiten auf `noindex, follow` gehen. Für: sie sind bis auf Name, Nº und Beschreibung wortgleich (IS21: 10 Paare bis 100 %, IS17/SU06: unter 300 Wörtern). Gegen: sie sind die einzigen Belege der Arbeit (Bilder, Nº, Bildersuche) und verschwänden aus Google, Bild-Sitemap und `llms.txt`. Bei Ja: Bedingung für `robots` in `produkt_detail.html`, Sitemap und `llms.txt` filtern, Tests und `aufbau_referenz.json` nachziehen | IS21, IS17, SU06 | `produkt_detail.html`, `legal.py` |
+| Bei Bastian: Entscheidung, ob `/ueber_uns/` auf `/ueber-uns/` mit 301 umzieht (Bindestrich ist Googles Empfehlung). Gegen: die Adresse ist live und vermutlich indexiert, jede Umbenennung kostet Zeit bis zum Umzug bei Google; dass `VL11` die Seite nicht als Über-uns-Seite erkennt, ist ein Messfehler des Musters (an das Overview-Team gemeldet). Bei Ja: neuer Pfad in `shop1/urls.py`, 301 vom alten, Pfade in Tests und `aufbau_referenz.json` | VL11 | `shop1/urls.py` |
+| Später: Alt-Texte der Stückbilder je Stück beschreiben statt „Foto: <Name>, handbemaltes Einzelstück von Luviq Universe“. Grund: die zwei Stücke „Custom print hoodie“ tragen denselben Alt-Text; ein eigener Text braucht die Beschreibung je Stück von Luisa (siehe „Beim Kunden“); die Bilder der Startseite haben beschreibende Alt-Texte | IS25 | Templates |
+
