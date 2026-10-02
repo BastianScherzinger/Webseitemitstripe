@@ -83,13 +83,13 @@
             <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                 Kontakt
             </h1>
-            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">{% if verkauf_aktiv %}Luviq Universe ist ein reiner Online-Shop aus 36304 Alsfeld in Hessen; erreichbar ist Luisa Brehler über das Formular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Ein Ladengeschäft gibt es nicht. Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Über das Formular gehen Fragen zu einem einzelnen Stück – Maße, Material, Zustand –, zu einer laufenden Bestellung, zum Widerruf innerhalb von 14 Tagen oder zur Löschung eines Kontos. Geantwortet wird per E-Mail an die Adresse, die im Formular steht; eine Telefonnummer gibt es nicht. Wer zuerst nachlesen möchte: Bestellablauf und Zahlung, Widerruf und Rücksendung sowie Konto und Daten stehen ausführlich im Wissensbereich, die Versandzeiten unter Liefergebiet und die Vertragsbedingungen in den AGB.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus 36304 Alsfeld in Hessen; erreichbar ist Luisa Brehler über das Formular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Ein Ladengeschäft gibt es nicht, und verkauft wird erst mit dem ersten Drop. Über das Formular gehen Fragen zu einem einzelnen Stück – Maße, Material, Zustand –, zum ersten Drop oder zur Löschung eines Kontos. Geantwortet wird per E-Mail an die Adresse, die im Formular steht; eine Telefonnummer gibt es nicht. Wer zuerst nachlesen möchte: Hintergrund zu Upcycling, Second Hand und Vintage steht im Wissensbereich.{% endif %} Im Formular sind alle vier Felder Pflichtfelder und mit einem Stern (*) gekennzeichnet.</p>
+            <p class="text-white/40 text-lg md:text-xl font-light tracking-widest uppercase">{% if verkauf_aktiv %}Luviq Universe ist ein reiner Online-Shop aus 36304 Alsfeld in Hessen; erreichbar ist Luisa Brehler über das Formular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Ein Ladengeschäft gibt es nicht. Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Über das Formular gehen Fragen zu einem einzelnen Stück – Maße, Material, Zustand –, zu einer laufenden Bestellung, zum Widerruf innerhalb von 14 Tagen oder zur Löschung eines Kontos. Geantwortet wird per E-Mail an die Adresse, die im Formular steht; eine Telefonnummer gibt es nicht. Wer zuerst nachlesen möchte: Bestellablauf und Zahlung, Widerruf und Rücksendung sowie Konto und Daten stehen ausführlich im Wissensbereich, die Versandzeiten unter Liefergebiet und die Vertragsbedingungen in den AGB.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus 36304 Alsfeld in Hessen; erreichbar ist Luisa Brehler über das Formular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Ein Ladengeschäft gibt es nicht, und verkauft wird erst mit dem ersten Drop. Über das Formular gehen Fragen zu einem einzelnen Stück – Maße, Material, Zustand –, zum ersten Drop oder zur Löschung eines Kontos. Geantwortet wird per E-Mail an die Adresse, die im Formular steht; eine Telefonnummer gibt es nicht. {% if motivanfrage_aktiv %}Wer ein eigenes Motiv möchte, fragt es über die Motivanfrage an; von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv. {% endif %}Wer zuerst nachlesen möchte: Hintergrund zu Upcycling, Second Hand und Vintage steht im Wissensbereich.{% endif %} Im Formular sind alle vier Felder Pflichtfelder und mit einem Stern (*) gekennzeichnet.</p>
             <div class="h-1 w-32 bg-glow-orange mt-8 rounded-full"></div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
             <!-- Contact Form -->
-            <div class="lg:col-span-2 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
+            <section class="lg:col-span-2 scroll-reveal" aria-label="Kontaktformular" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
                 <div class="glass-card rounded-[3.5rem] p-10 md:p-16">
                     {# aria-live (BF24): Änderungen im Formular – aria-busy beim Absenden – werden angesagt #}
                     <form method="post" class="space-y-8" data-einmal-absenden aria-live="polite">
@@ -160,7 +160,7 @@
                         </button>
                     </form>
                 </div>
-            </div>
+            </section>
 
             <!-- Sidebar Info -->
             <div class="space-y-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
@@ -176,17 +176,17 @@
 
                 <div class="glass-card p-10 rounded-[3rem] border-white/5">
                     <h4 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Channels</h4>
-                    <div class="space-y-4">
+                    <ul class="space-y-4">
                         {# Hier stand eine Platzhalter-Telefonnummer ("+49 (0) 30 123456"). Es gibt keine belegte Nummer im Projekt - auch das Impressum nennt keine -, und eine zu erfinden ist ausgeschlossen. Der Verweis fuehrt deshalb auf die Anbieterangaben. Sobald eine Nummer vorliegt, wird daraus wieder ein tel:-Link. #}
-                        <a href="{% url 'impressum' %}" class="block text-white/60 hover:text-white transition-colors flex items-center group">
+                        <li><a href="{% url 'impressum' %}" class="block text-white/60 hover:text-white transition-colors flex items-center group">
                             <span class="mr-3 p-3 glass rounded-xl group-hover:bg-glow-orange transition-all">📄</span>
                             Anbieterangaben im Impressum
-                        </a>
-                        <a href="mailto:brehlerluisa@gmail.com" class="block text-white/60 hover:text-white transition-colors flex items-center group">
+                        </a></li>
+                        <li><a href="mailto:brehlerluisa@gmail.com" class="block text-white/60 hover:text-white transition-colors flex items-center group">
                             <span class="mr-3 p-3 glass rounded-xl group-hover:bg-glow-orange transition-all">📧</span>
                             brehlerluisa@gmail.com
-                        </a>
-                    </div>
+                        </a></li>
+                    </ul>
                 </div>
 
                 <div class="glass-card p-10 rounded-[3rem] border-white/5">

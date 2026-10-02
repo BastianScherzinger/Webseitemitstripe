@@ -93,6 +93,7 @@ def robots_txt(request):
     lines += [
         f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
         f"# Kurzfassung fuer Antwortmaschinen: {request.build_absolute_uri('/llms.txt')}",
+        f"# Volltext fuer Antwortmaschinen: {request.build_absolute_uri('/llms-full.txt')}",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
@@ -151,6 +152,14 @@ def wissen_routen_fuer_llms():
 #: Schema und Host (``build_absolute_uri``), www und Railway-Adresse werden
 #: also getrennt gehalten.
 AUSGABE_CACHE_SEKUNDEN = 60 * 15
+
+
+def _feed_zeile(basis):
+    """Die ``Feed:``-Zeile der llms.txt – leer, solange der Feed keinen Eintrag
+    hat (EIG128: der Feed war leer, die Datei bewarb ihn trotzdem)."""
+    if not freigegebene_beitraege():
+        return []
+    return [f"Feed: {basis}{reverse('wissen_feed')}"]
 
 
 @cache_page(AUSGABE_CACHE_SEKUNDEN)
@@ -248,8 +257,8 @@ def llms_txt(request):
         "meist nach 1-3 Werktagen zugestellt.",
         "",
         "### Was verkauft Luviq Universe?",
-        "Handbemalte Second-Hand- und Vintage-Kleidung, vor allem Jacken und",
-        "Shirts. Jedes Stueck ist ein Einzelstueck und nur einmal zu haben.",
+        "Handbemalte Second-Hand- und Vintage-Kleidung, vor allem Hoodies und",
+        "Jacken. Jedes Stueck ist ein Einzelstueck und nur einmal zu haben.",
         "",
         "### Wie bestellt man?",
         f"Ueber diese Seite: Einzelstueck auf {basis}{reverse('produkte')} auswaehlen,",
@@ -269,8 +278,11 @@ def llms_txt(request):
         f"Sitemap: {basis}/sitemap.xml",
         # Der Feed (GE32) steht hier, weil llms.txt die Datei ist, die eine
         # Antwortmaschine zuerst liest: ueber ihn erfaehrt sie, was neu ist,
-        # ohne die ganze Seite noch einmal abzulaufen.
-        f"Feed: {basis}{reverse('wissen_feed')}",
+        # ohne die ganze Seite noch einmal abzulaufen. Nur mit mindestens einem
+        # freigegebenen Beitrag (EIG128): ein leerer Feed ist kein Wegweiser.
+        *_feed_zeile(basis),
+        # Der Volltext (GE31): der Text der Seiten in einem Abruf.
+        f"Volltext: {basis}{reverse('llms_full_txt')}",
     ]
 
     return HttpResponse("\n".join(zeilen) + "\n",
@@ -360,10 +372,67 @@ def _llms_txt_ohne_verkauf(basis):
         f"- [Datenschutzerklaerung]({basis}{reverse('datenschutz')})",
         "",
         f"Sitemap: {basis}/sitemap.xml",
-        f"Feed: {basis}{reverse('wissen_feed')}",
+        *_feed_zeile(basis),
+        f"Volltext: {basis}{reverse('llms_full_txt')}",
     ]
     return HttpResponse("\n".join(zeilen) + "\n",
                         content_type="text/plain; charset=utf-8")
+
+
+@cache_page(AUSGABE_CACHE_SEKUNDEN)
+def llms_full_txt(request):
+    """``/llms-full.txt``: die Kurzfassung plus der Text der Seiten (GE31, VL08).
+
+    Der Anfang ist wortgleich ``llms.txt`` (dieselbe Funktion, gleicher
+    Verkaufsschalter, gleiche Freigabe der Wissensbeiträge). Darunter steht
+    je Seite der Text aus ihrem ``<main>`` – gelesen aus der ausgelieferten
+    Seite, nicht aus einer zweiten Abschrift (``shop1/llms_volltext.py``).
+    Aufgenommen sind nur Seiten, die auch in die Sitemap dürfen; kein Formular,
+    kein Konto, keine Rechtstexte. Eine Seite, die gerade nicht rendert,
+    fehlt in der Datei, statt sie zu kippen."""
+    from .. import llms_volltext
+    from . import motiv, shop
+    from .wissen import WISSEN_BEITRAEGE, wissen as wissen_uebersicht, wissen_beitrag
+
+    basis = request.build_absolute_uri('/')[:-1]
+    kurz = llms_txt.__wrapped__(request).content.decode('utf-8').rstrip('\n')
+
+    verkauf = verkauf_aktiv()
+    seiten = [
+        ('Alle Unikate' if verkauf else 'Archiv', reverse('produkte'), shop.produkte, ()),
+        ('Über Luisa Brehler', reverse('ueber_uns'), shop.ueber_uns, ()),
+        ('Liefergebiet' if verkauf else 'Herkunft', reverse('liefergebiet'), shop.liefergebiet, ()),
+        ('Motiv anfragen', reverse('motiv_anfragen'), motiv.motiv_anfragen, ()),
+    ]
+    for produkt in Produkt.objects.filter(aktiv=True).order_by('nummer', 'id')[:50]:
+        if produkt.slug:
+            seiten.append((produkt.name, produkt.get_absolute_url(),
+                           shop.produkt_detail_slug, (produkt.slug,)))
+    erlaubt = wissen_routen_fuer_llms()
+    if 'wissen' in erlaubt:
+        seiten.append(('Wissen: Übersicht', reverse('wissen'), wissen_uebersicht, ()))
+    for slug, beitrag in WISSEN_BEITRAEGE.items():
+        if beitrag['url_name'] in erlaubt:
+            seiten.append((beitrag['titel'], reverse(beitrag['url_name']),
+                           wissen_beitrag, (slug,)))
+
+    zeilen = [kurz, '', '## Volltext der Seiten', '',
+              'Der Text der Seiten, wie er dort steht. Formulare, Navigation und',
+              'Rechtstexte fehlen; die Rechtstexte stehen unter den Adressen oben.', '']
+    for titel, pfad, view, args in seiten:
+        try:
+            antwort = view(request, *args)
+            if hasattr(antwort, 'render') and not antwort.is_rendered:
+                antwort.render()
+            text = llms_volltext.seite_als_text(antwort)
+        except Exception:
+            _log.exception('llms-full.txt: Seite %s nicht lesbar', titel)
+            continue
+        if not text:
+            continue
+        zeilen += [f'### {titel}', f'Adresse: {basis}{pfad}', ''] + text + ['']
+    return HttpResponse('\n'.join(zeilen).rstrip('\n') + '\n',
+                        content_type='text/plain; charset=utf-8')
 
 
 def _bild_xml(bild_url: str, titel: str) -> str:

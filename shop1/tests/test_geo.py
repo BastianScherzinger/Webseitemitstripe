@@ -472,6 +472,242 @@ class AntwortCrawlerTest(LuviqTestCase):
         self.assertIn('PayPal oder Vorab-Überweisung', agb)
 
 
+class SchemaBildAdressenTest(LuviqTestCase):
+    """EIG07: das Schema baut keine Bildadresse von Hand am Static-Manifest vorbei.
+
+    ``ManifestStaticFilesStorage`` hängt einen Inhalts-Hash an jede Datei
+    (``logo-luviq.<hash>.jpeg``). Eine von Hand getippte ``/static/…``-Adresse
+    zeigte nach dem nächsten Deploy ins Leere oder auf eine alte Fassung."""
+
+    def test_das_logo_im_schema_traegt_den_manifest_hash(self):
+        knoten = schema_knoten(self.hole('/').content.decode())
+        betrieb = next(k for k in knoten if k.get('@id', '').endswith('/#organization')
+                       and 'logo' in k)
+        for adresse in (betrieb['logo']['url'], betrieb['image']):
+            with self.subTest(adresse=adresse):
+                self.assertRegex(urlsplit(adresse).path,
+                                 r'^/static/shop1/images/logo-luviq\.[0-9a-f]{12}\.jpeg$')
+
+    def test_keine_vorlage_tippt_eine_static_adresse_ins_schema(self):
+        from pathlib import Path
+        from django.conf import settings
+
+        for vorlage in list(Path(settings.BASE_DIR, 'shop1', 'templates').rglob('*.html')) +                 [Path(settings.BASE_DIR, 'templates', 'base.html')]:
+            quelle = vorlage.read_text(encoding='utf-8')
+            for block in _JSONLD.findall(quelle):
+                with self.subTest(vorlage=vorlage.name):
+                    self.assertNotIn('"/static/', block)
+                    self.assertNotIn('/static/shop1/', block.replace("{% static 'shop1/", ''))
+
+
+class UnaufgeloestePlatzhalterTest(LuviqTestCase):
+    """EIG01: in llms.txt und llms-full.txt steht keine ungefüllte Vorlagenvariable
+    und kein Python-``None`` – in beiden Zuständen des Verkaufsschalters."""
+
+    def _pruefe(self):
+        erzeuge_produkt('Bemalter Hoodie')
+        for pfad in ('/llms.txt', '/llms-full.txt'):
+            text = self.hole(pfad).content.decode()
+            with self.subTest(pfad=pfad):
+                self.assertNotRegex(text, r'\{\{|\{%|%\(|None|True|False')
+
+    def test_ohne_verkauf(self):
+        self._pruefe()
+
+    @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
+    def test_mit_verkauf(self):
+        self._pruefe()
+
+
+class BelegteKleidungsartenTest(LuviqTestCase):
+    """EIG79: Schema und llms.txt nennen nur Kleidungsarten, die es im Bestand gibt
+    (Hoodies, Hose, Jacke) – keine Shirts."""
+
+    @override_settings(VERKAUF_AKTIV=True)  # Katalog und Fließtext stehen nur mit Verkauf
+    def test_weder_schema_noch_llms_txt_versprechen_shirts(self):
+        erzeuge_produkt('Bemalter Hoodie')
+        self.assertNotIn('Shirts', self.hole('/llms.txt').content.decode())
+        self.assertNotIn('Shirts', self.hole('/llms-full.txt').content.decode().split('## Volltext', 1)[0])
+        self.assertNotIn('Vintage-Shirts', self.hole('/').content.decode())
+        self.assertIn('Vintage-Hoodies', self.hole('/').content.decode())
+
+
+class ArchivSchemaTest(LuviqTestCase):
+    """Die Stücke stehen auf ``/produkte/`` als Knoten der obersten Ebene (GE13).
+
+    Ein Product-Knoten, der nur verschachtelt in ``hasPart`` steckt, sieht für
+    jeden, der die Knoten des Graphen liest, aus wie gar keiner. Ohne Verkauf
+    trägt er kein ``offers``: ein Angebot ohne Verkauf wäre falsch."""
+
+    def setUp(self):
+        self.stuecke = [erzeuge_produkt('Bemalte Bomberjacke'), erzeuge_produkt('Bemalte Hose')]
+
+    def _knoten(self):
+        return schema_knoten(self.hole('/produkte/').content.decode())
+
+    def test_jedes_stueck_ist_ein_product_knoten_der_obersten_ebene(self):
+        produkte = [k for k in self._knoten() if k.get('@type') == 'Product']
+        self.assertEqual(len(produkte), len(self.stuecke))
+        pfade = [urlsplit(k['url']).path for k in produkte]
+        for stueck in self.stuecke:
+            with self.subTest(stueck=stueck.name):
+                self.assertIn(stueck.get_absolute_url(), pfade)
+
+    def test_die_sammlung_verweist_per_id_auf_die_knoten(self):
+        knoten = self._knoten()
+        ids = {k['@id'] for k in knoten if '@id' in k}
+        sammlung = next(k for k in knoten if k.get('@type') == 'CollectionPage')
+        verweise = [t['@id'] for t in sammlung['hasPart']]
+        self.assertEqual(len(verweise), len(self.stuecke))
+        for ziel in verweise:
+            with self.subTest(ziel=ziel):
+                self.assertIn(ziel, ids)
+
+    def test_die_ids_stimmen_mit_denen_der_stueckseiten_ueberein(self):
+        """Gleiche @id wie auf der Stückseite: JSON-LD führt beide zusammen."""
+        stueck = self.stuecke[0]
+        auf_uebersicht = {k['@id'] for k in self._knoten() if k.get('@type') == 'Product'}
+        auf_stueckseite = {k['@id'] for k in schema_knoten(
+            self.hole(stueck.get_absolute_url()).content.decode()) if k.get('@type') == 'Product'}
+        self.assertTrue(auf_stueckseite <= auf_uebersicht)
+
+    def test_ohne_verkauf_traegt_kein_stueck_ein_angebot(self):
+        for k in self._knoten():
+            with self.subTest(knoten=k.get('@id')):
+                self.assertNotIn('offers', k)
+
+    @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
+    def test_mit_verkauf_tragen_die_stuecke_ein_angebot(self):
+        for k in self._knoten():
+            if k.get('@type') == 'Product':
+                with self.subTest(knoten=k['@id']):
+                    self.assertEqual(k['offers']['@type'], 'Offer')
+
+
+class LlmsVolltextTest(LuviqTestCase):
+    """``/llms-full.txt`` (GE31, VL08): die Kurzfassung plus der Text der Seiten.
+
+    Der Volltext darf nichts sagen, was die Seite nicht sagt – er wird deshalb
+    aus den ausgelieferten Seiten gelesen, nicht noch einmal getippt."""
+
+    def test_der_volltext_wird_als_text_ausgeliefert(self):
+        antwort = self.hole('/llms-full.txt')
+        self.assertEqual(antwort.status_code, 200)
+        self.assertTrue(antwort['Content-Type'].startswith('text/plain'))
+
+    def test_der_volltext_beginnt_mit_der_kurzfassung(self):
+        """Dieselbe Quelle wie ``llms.txt``: wer eine ändert, ändert beide."""
+        kurz = self.hole('/llms.txt').content.decode().rstrip('\n')
+        voll = self.hole('/llms-full.txt').content.decode()
+        self.assertTrue(voll.startswith(kurz))
+        self.assertIn('## Volltext der Seiten', voll)
+
+    def test_der_volltext_ist_ein_volltext(self):
+        """GE31 verlangt mehr als 500 Wörter, sonst gilt er als zu knapp."""
+        erzeuge_produkt('Bemalte Bomberjacke')
+        voll = self.hole('/llms-full.txt').content.decode()
+        self.assertGreater(len(voll.split()), 500)
+
+    def test_der_volltext_enthaelt_den_text_der_seiten_wortgleich(self):
+        """Ein Satz aus ``/ueber_uns/`` und einer aus dem Archiv stehen
+        unverändert im Volltext."""
+        erzeuge_produkt('Bemalte Bomberjacke')
+        voll = self.hole('/llms-full.txt').content.decode()
+        for pfad in ('/ueber_uns/', '/produkte/'):
+            haupt = self.hole(pfad).content.decode().split('<main', 1)[1]
+            erster = next(
+                a for a in re.findall(r'<p[^>]*>(.*?)</p>', haupt, re.DOTALL)
+                if len(re.sub(r'<[^>]+>', '', a).split()) >= 15
+            )
+            satz = ' '.join(re.sub(r'<[^>]+>', ' ', erster).split())[:80]
+            with self.subTest(pfad=pfad):
+                self.assertIn(satz, voll)
+            self.assertIn(f'Adresse: https://testserver{pfad}', voll)
+
+    def test_der_volltext_fuehrt_nur_aktive_stuecke(self):
+        aktiv = erzeuge_produkt('Bemalte Bomberjacke')
+        weg = erzeuge_produkt('Bereits verkauftes Teil', aktiv=False)
+        voll = self.hole('/llms-full.txt').content.decode()
+        self.assertIn(aktiv.get_absolute_url(), voll)
+        self.assertNotIn(weg.get_absolute_url(), voll)
+        self.assertIn('Bemalte Bomberjacke', voll)
+
+    def test_der_volltext_nennt_ohne_verkauf_keine_preise_und_keine_kaufwege(self):
+        """Verkaufsschalter aus: dieselbe Zurückhaltung wie in ``llms.txt``."""
+        erzeuge_produkt('Bemalte Bomberjacke')
+        voll = self.hole('/llms-full.txt').content.decode()
+        for verboten in (' EUR', '€', 'UStG', 'PayPal', 'Vorab-Überweisung', '/agb/',
+                         '/warenkorb/', '/checkout/'):
+            with self.subTest(verboten=verboten):
+                self.assertNotIn(verboten, voll)
+
+    def test_der_volltext_laesst_noindex_seiten_aus(self):
+        """Nicht freigegebene Wissensbeiträge und Rechtstexte gehören weder in
+        die Sitemap noch hierher."""
+        voll = self.hole('/llms-full.txt').content.decode()
+        for pfad in ('/wissen/pflege-handbemalte-kleidung/', '/wissen/groesse-bei-einzelstuecken/',
+                     '/kontakt/danke/', '/login/', '/register/'):
+            with self.subTest(pfad=pfad):
+                self.assertNotIn(pfad, voll)
+        self.assertNotIn('Waschen auf links', voll)
+
+    def test_der_volltext_enthaelt_kein_formular_und_keine_navigation(self):
+        voll = self.hole('/llms-full.txt').content.decode()
+        for fremd in ('<form', '<input', '<script', 'csrfmiddlewaretoken', 'Zum Inhalt springen'):
+            with self.subTest(fremd=fremd):
+                self.assertNotIn(fremd, voll)
+
+    def test_robots_und_kurzfassung_verweisen_auf_den_volltext(self):
+        self.assertIn('/llms-full.txt', self.hole('/robots.txt').content.decode())
+        self.assertIn('Volltext: https://testserver/llms-full.txt',
+                      self.hole('/llms.txt').content.decode())
+
+    def test_eine_nicht_lesbare_seite_kippt_die_datei_nicht(self):
+        """Fällt eine View aus, fehlt nur ihr Abschnitt."""
+        from unittest import mock
+
+        with mock.patch('shop1.views.shop.ueber_uns', side_effect=RuntimeError('kaputt')),                 self.assertLogs('shop1', level='ERROR'):
+            antwort = self.hole('/llms-full.txt')
+        self.assertEqual(antwort.status_code, 200)
+        text = antwort.content.decode()
+        self.assertNotIn('/ueber_uns/', text.split('## Volltext der Seiten', 1)[1])
+        self.assertIn('### Archiv', text)
+
+    @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
+    def test_mit_verkauf_folgt_der_volltext_der_kurzfassung(self):
+        erzeuge_produkt('Bemalte Bomberjacke')
+        kurz = self.hole('/llms.txt').content.decode().rstrip('\n')
+        voll = self.hole('/llms-full.txt').content.decode()
+        self.assertTrue(voll.startswith(kurz))
+        self.assertIn('### Alle Unikate', voll)
+
+
+class VolltextLeserTest(LuviqTestCase):
+    """Der Leser hinter ``llms-full.txt`` (``shop1/llms_volltext.py``)."""
+
+    def test_nur_der_inhalt_von_main_zaehlt(self):
+        from ..llms_volltext import haupttext
+
+        html = (
+            '<html><body><nav><a href="/">Start</a></nav>'
+            '<main><h1>Titel</h1><p>Erster Absatz.</p>'
+            '<form><label>Name</label><input name="x"></form>'
+            '<script>var x = 1;</script>'
+            '<p aria-hidden="true">versteckt</p>'
+            '<ul><li>eins</li><li>zwei</li></ul>'
+            '<p><span>Nº 001</span><span>vergeben</span></p>'
+            '</main><footer>Fuß</footer></body></html>'
+        )
+        zeilen = haupttext(html)
+        self.assertEqual(zeilen, ['#### Titel', 'Erster Absatz.', '- eins', '- zwei',
+                                  'Nº 001 vergeben'])
+
+    def test_ohne_main_kommt_nichts(self):
+        from ..llms_volltext import haupttext
+
+        self.assertEqual(haupttext('<html><body><p>Text</p></body></html>'), [])
+
+
 class RatgeberSchemaTest(LuviqTestCase):
     """``Article`` auf den Wissensbeiträgen (GE15).
 

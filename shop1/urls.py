@@ -71,6 +71,8 @@ urlpatterns = [
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
     path('llms.txt', views.llms_txt, name='llms_txt'),
+    # Volltext der Seiten fuer Antwortmaschinen (GE31/VL08), siehe views/legal.py.
+    path('llms-full.txt', views.llms_full_txt, name='llms_full_txt'),
     # Schluesseldatei fuer IndexNow (shop1/indexnow.py); 404, solange
     # INDEXNOW_KEY leer ist. Der Pfad steht auch in indexnow.SCHLUESSEL_PFAD.
     path('indexnow-schluessel.txt', views.indexnow_schluessel, name='indexnow_schluessel'),

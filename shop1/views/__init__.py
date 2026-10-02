@@ -5,7 +5,7 @@ from .shop import (startseite, werbung_klick, kontakt, kontakt_danke, kontakte, 
 from .auth import login, logout, register, verify_email, resend_verification, delete_account, profil, change_password
 from .cart import warenkorb, add_to_cart, remove_from_cart, update_cart
 from .checkout import checkout, payment, paypal_capture, payment_success, payment_cancel
-from .legal import (impressum, datenschutz, agb, robots_txt, sitemap_xml, llms_txt, newsletter_subscribe,
+from .legal import (impressum, datenschutz, agb, robots_txt, sitemap_xml, llms_txt, llms_full_txt, newsletter_subscribe,
                     newsletter_bestaetigen, produkt_uebersicht_redirect, indexnow_schluessel)
 from .gaestebuch import gaestebuch, comment_add, comment_like, comment_delete
 from .motiv import motiv_anfragen, motiv_danke
@@ -22,7 +22,7 @@ __all__ = [
     # checkout
     'checkout', 'payment', 'paypal_capture', 'payment_success', 'payment_cancel',
     # legal
-    'impressum', 'datenschutz', 'agb', 'robots_txt', 'sitemap_xml', 'llms_txt', 'newsletter_subscribe',
+    'impressum', 'datenschutz', 'agb', 'robots_txt', 'sitemap_xml', 'llms_txt', 'llms_full_txt', 'newsletter_subscribe',
     'newsletter_bestaetigen', 'produkt_uebersicht_redirect', 'indexnow_schluessel',
     # motiv (Umbau „Nachtausgabe“, 19.09.2026)
     'motiv_anfragen', 'motiv_danke',

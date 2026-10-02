@@ -95,15 +95,16 @@
             <p class="text-white/30 text-xs sm:text-sm text-center max-w-2xl mx-auto mb-14 uppercase tracking-widest">
                 Ein Auszug aus unserer Community: {{ orte|length }} Orte entlang der Strecke Fulda – Alsfeld – Gießen
             </p>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {% comment %}Die Orte sind eine Liste und stehen jetzt als solche da (GE27): ul/li statt div, gleiche Klassen, gleiches Aussehen (Tailwind setzt Listen ohne Punkt und Einzug zurück).{% endcomment %}
+            <ul class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
                 {% for ort in orte %}
-                <div class="scroll-reveal glass rounded-2xl px-4 py-5 text-center border-white/5" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <li class="scroll-reveal glass rounded-2xl px-4 py-5 text-center border-white/5" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                     <span class="text-white/70 text-sm font-semibold">{{ ort }}</span>
-                </div>
+                </li>
                 {% endfor %}
-            </div>
+            </ul>
             <p class="text-white/20 text-xs text-center mt-10 max-w-xl mx-auto leading-relaxed">
-                {% if verkauf_aktiv %}Du wohnst woanders? Kein Problem – wir versenden jedes Unikat deutschlandweit.{% else %}Du wohnst woanders? Die Warteliste steht allen offen.{% endif %}
+                {% if verkauf_aktiv %}Du wohnst woanders? Kein Problem – wir versenden jedes Unikat deutschlandweit.{% else %}Du wohnst woanders? Die Warteliste steht allen offen.{% if motivanfrage_aktiv %} Ein eigenes Motiv lässt sich schon jetzt anfragen; von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.{% endif %}{% endif %}
             </p>
         </section>
 

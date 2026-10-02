@@ -450,3 +450,110 @@ class UmfangTest(LuviqTestCase):
                     f'{pfad}: im ersten Drittel des Inhalts steht keine Zahl: '
                     f'"{drittel[:200]}…"',
                 )
+
+
+class AnfrageBausteinTest(LuviqTestCase):
+    """Der Anfrage-Absatz liegt als eigener Baustein vor (VL21) und führt zum
+    nächsten Schritt (KV12): ``teile/motivanfrage.html``, eingebunden auf der
+    Archivübersicht und auf jeder Stückseite."""
+
+    BAUSTEIN = 'shop1/templates/shop1/teile/motivanfrage.html'
+
+    def _quelle(self, pfad):
+        from pathlib import Path
+        from django.conf import settings
+
+        return (Path(settings.BASE_DIR) / pfad).read_text(encoding='utf-8')
+
+    def test_der_baustein_liegt_im_teile_ordner_und_wird_eingebunden(self):
+        self.assertIn("{% url 'motiv_anfragen' %}", self._quelle(self.BAUSTEIN))
+        for vorlage in ('produkte.html', 'produkt_detail.html'):
+            with self.subTest(vorlage=vorlage):
+                self.assertIn("shop1/teile/motivanfrage.html",
+                              self._quelle(f'shop1/templates/shop1/{vorlage}'))
+
+    def test_der_absatz_steht_nicht_mehr_je_vorlage_ausgeschrieben(self):
+        """Ein Absatz, der in jeder Vorlage noch einmal steht, ist nach der
+        dritten Änderung dreimal verschieden."""
+        for vorlage in ('produkte.html', 'produkt_detail.html'):
+            with self.subTest(vorlage=vorlage):
+                self.assertNotIn('>Motiv anfragen</a>',
+                                 self._quelle(f'shop1/templates/shop1/{vorlage}'))
+
+    def test_uebersicht_und_stueck_fuehren_zur_anfrage_mit_der_belegten_dauer(self):
+        stueck = erzeuge_produkt('Bemalte Bomberjacke')
+        for pfad in ('/produkte/', stueck.get_absolute_url()):
+            with self.subTest(pfad=pfad):
+                html = self.hole(pfad).content.decode()
+                self.assertIn('href="/motiv-anfragen/"', html)
+                text = sichtbarer_text(html)
+                self.assertIn('dauert es meistens 2 bis 5 Tage, je nach Motiv', text)
+
+    def test_die_uebersicht_verweist_im_inhalt_auf_das_kontaktformular(self):
+        """KV12: eine Leistungsseite ohne nächsten Schritt ist eine Sackgasse.
+        Gezählt wird nur, was in ``<main>`` steht."""
+        haupt = self.hole('/produkte/').content.decode().split('<main', 1)[1]
+        self.assertIn('href="/kontakt/"', haupt)
+
+    def test_der_baustein_nennt_weder_preis_noch_kaufweg(self):
+        quelle = self._quelle(self.BAUSTEIN).lower()
+        for verboten in ('€', 'preis', 'kaufen', 'warenkorb', 'bestell'):
+            with self.subTest(verboten=verboten):
+                self.assertNotIn(verboten, quelle.split('{% endcomment %}', 1)[1])
+
+
+class AntwortAbsatzUndListenTest(LuviqTestCase):
+    """GE23, GE25, GE26, GE27: ein zitierfähiger Absatz, eine belegte Zahl, eine
+    gegliederte Seite – ohne etwas zu erfinden. Die Zahl ist Luisas Erfahrungswert
+    aus ``luviq_daten.DAUER``; sie steht nur, wo die Motivanfrage aktiv ist."""
+
+    def test_kontakt_gaestebuch_und_herkunft_nennen_die_belegte_dauer(self):
+        for pfad in ('/kontakt/', '/gaestebuch/', '/liefergebiet/'):
+            with self.subTest(pfad=pfad):
+                text = sichtbarer_text(self.hole(pfad).content.decode())
+                self.assertIn('dauert es meistens 2 bis 5 Tage, je nach Motiv', text)
+
+    def test_die_dauer_steht_nicht_da_wo_die_motivanfrage_aus_ist(self):
+        with override_settings(MOTIVANFRAGE_AKTIV=False):
+            for pfad in ('/kontakt/', '/gaestebuch/', '/liefergebiet/'):
+                with self.subTest(pfad=pfad):
+                    text = sichtbarer_text(self.hole(pfad).content.decode())
+                    self.assertNotIn('dauert es meistens', text)
+
+    def test_das_gaestebuch_beginnt_im_inhalt_mit_einem_kurzen_antwortabsatz(self):
+        """Ein Absatz von 15 bis 90 Wörtern, der sagt, was das Gästebuch ist –
+        ausserhalb des ``<header>``, den das Messwerkzeug aus dem Inhalt streicht."""
+        haupt = self.hole('/gaestebuch/').content.decode().split('<main', 1)[1]
+        haupt = re.sub(r'<header.*?</header>', '', haupt, flags=re.DOTALL)
+        absaetze = [' '.join(re.sub(r'<[^>]+>', ' ', a).split())
+                    for a in re.findall(r'<p[^>]*>(.*?)</p>', haupt, re.DOTALL)]
+        lange = [a for a in absaetze if len(a.split()) >= 15]
+        erster = lange[0]
+        self.assertLessEqual(len(erster.split()), 90, erster)
+        self.assertIn('Das Gästebuch ist die öffentliche Rückmeldeseite', erster)
+
+    def test_der_ablauf_im_gaestebuch_ist_eine_nummerierte_liste(self):
+        html = self.hole('/gaestebuch/').content.decode()
+        liste = re.search(r'<ol[^>]*>(.*?)</ol>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<li>'), 6)
+        self.assertIn('Ein Beitrag darf höchstens 2.000 Zeichen lang sein', liste)
+
+    def test_die_orte_auf_der_herkunftsseite_sind_eine_liste(self):
+        html = self.hole('/liefergebiet/').content.decode()
+        liste = re.search(r'<ul class="grid[^>]*>(.*?)</ul>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<li '), 16)
+
+    def test_kontakt_und_gaestebuch_haben_ein_section_im_inhalt(self):
+        """GE28: ``<main>`` allein genügt nicht; ein ``section`` oder ``article`` im
+        Inhalt sagt der Maschine, welcher Teil der Seite der Inhalt ist."""
+        for pfad in ('/kontakt/', '/gaestebuch/'):
+            with self.subTest(pfad=pfad):
+                haupt = self.hole(pfad).content.decode().split('<main', 1)[1]
+                self.assertIn('<section', haupt)
+
+    def test_die_kontaktwege_sind_eine_liste(self):
+        """GE27: Impressum und E-Mail-Adresse stehen als Listenpunkte da."""
+        html = self.hole('/kontakt/').content.decode()
+        liste = re.search(r'<ul class="space-y-4">(.*?)</ul>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<li>'), 2)
+        self.assertIn('mailto:brehlerluisa@gmail.com', liste)
