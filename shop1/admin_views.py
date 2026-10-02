@@ -693,32 +693,10 @@ def admin_order_detail(request, order_id):
         messages.error(request, f"Fehler beim Laden der Bestellung: {e}")
         return redirect('admin_orders_list')
     
-    if request.method == 'POST':
-        action = request.POST.get('action')
-        
-        if action == 'update_status':
-            new_status = request.POST.get('status')
-            if new_status in dict(Order.STATUS_CHOICES):
-                from .views.checkout import BEZAHLT_STATI, bestellung_abschliessen, send_order_confirmation_email
-                vorher_bezahlt = order.status in BEZAHLT_STATI
-                if new_status in BEZAHLT_STATI and not vorher_bezahlt:
-                    # Beim Wechsel in einen bezahlten Zustand: Bestand, Rabatt und
-                    # Stück-Abschaltung wie bei PayPal – über die Kennung des
-                    # Stücks, nicht über den Namen (EIG08). Eine Überweisung
-                    # bekommt jetzt ihre zugesagte Bestätigung (EIG66).
-                    bestellung_abschliessen(order, new_status)
-                    if order.payment_method == 'bank_transfer':
-                        try:
-                            send_order_confirmation_email(order)
-                        except Exception:
-                            _log.exception('Bestellbestätigung konnte nicht versendet werden (Bestellung %s)', order.id)
-                else:
-                    order.status = new_status
-                    order.save()
+    if request.method == 'POST' and request.POST.get('action') == 'update_status':
+        _bestellstatus_setzen(request, order, request.POST.get('status'))
+        return redirect('admin_order_detail', order_id=order.id)
 
-                messages.success(request, f'✅ Status für Bestellung #{order.id} wurde auf "{order.get_status_display()}" aktualisiert!')
-            return redirect('admin_order_detail', order_id=order.id)
-            
     # Produkte in der DB finden für Bilder
     items_with_products = []
     for item in order.items.all():
@@ -734,6 +712,32 @@ def admin_order_detail(request, order_id):
         'status_choices': Order.STATUS_CHOICES,
     }
     return render(request, 'shop1/admin/order_detail.html', context)
+
+
+def _bestellstatus_setzen(request, order, new_status):
+    """Setzt den Status einer Bestellung; ein unbekannter Status ändert nichts."""
+    if new_status not in dict(Order.STATUS_CHOICES):
+        return
+    from .views.checkout import BEZAHLT_STATI, bestellung_abschliessen, send_order_confirmation_email
+    vorher_bezahlt = order.status in BEZAHLT_STATI
+    if new_status in BEZAHLT_STATI and not vorher_bezahlt:
+        # Beim Wechsel in einen bezahlten Zustand: Bestand, Rabatt und
+        # Stück-Abschaltung wie bei PayPal – über die Kennung des
+        # Stücks, nicht über den Namen (EIG08). Eine Überweisung
+        # bekommt jetzt ihre zugesagte Bestätigung (EIG66).
+        bestellung_abschliessen(order, new_status)
+        if order.payment_method == 'bank_transfer':
+            try:
+                send_order_confirmation_email(order)
+            except Exception:
+                _log.exception('Bestellbestätigung konnte nicht versendet werden (Bestellung %s)',
+                               order.id)
+    else:
+        order.status = new_status
+        order.save()
+
+    messages.success(request, f'✅ Status für Bestellung #{order.id} wurde auf '
+                              f'"{order.get_status_display()}" aktualisiert!')
 
 
 @admin_required
