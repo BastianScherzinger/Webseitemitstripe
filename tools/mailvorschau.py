@@ -5,7 +5,8 @@
 Schreibt ``admin-kontakt.html``, ``admin-motiv.html`` (Mails an Luisa),
 ``bastian.html`` (Kopie an die Webagentur, Kontaktanfrage),
 ``bastian-motiv.html``, ``bastian-registrierung.html`` und
-``kunde.html`` / ``kunde-newsletter.html`` (Konto bzw. Newsletter bestätigen)
+``kunde.html`` / ``kunde-newsletter.html`` (Konto bzw. Newsletter bestätigen),
+``newsletter-neues-stueck.html`` (Newsletter zu einem neuen Stück)
 – ``admin.html`` ist eine Kopie von ``admin-kontakt.html``.
 Braucht eine ``.env`` wie jeder ``manage.py``-Befehl.
 """
@@ -94,6 +95,17 @@ def main(ziel):
         link=mails.live_url() + '/newsletter/bestaetigen/?t=beispiel', knopf='Anmeldung bestätigen',
         nachsatz='Warst du das nicht, ignoriere diese E-Mail einfach – ohne Bestätigung '
                  'schicken wir dir nichts.'), encoding='utf-8')
+    # Newsletter zu einem neuen Stück (utils.send_newsletter_email) – der Versand wird abgefangen.
+    from shop1 import utils
+    produkt = SimpleNamespace(name='Fuchs auf Jeansjacke', bild=None,
+                              get_absolute_url=lambda: '/produkt/fuchs-auf-jeansjacke/')
+    original = utils.send_brevo_email
+    utils.send_brevo_email = lambda betreff, html, *a, **k: gefangen.setdefault('newsletter', html)
+    try:
+        utils.send_newsletter_email(produkt, [SimpleNamespace(email='leserin@example.invalid')])
+    finally:
+        utils.send_brevo_email = original
+    (ziel / 'newsletter-neues-stueck.html').write_text(gefangen['newsletter'], encoding='utf-8')
     print(f'Vorschau geschrieben nach {ziel}')
 
 

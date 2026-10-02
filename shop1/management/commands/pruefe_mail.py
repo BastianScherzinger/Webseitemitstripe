@@ -290,7 +290,7 @@ class Command(BaseCommand):
 
         if schluessel:
             nutzlast = {
-                'sender': {'name': 'Luviq-Shop',
+                'sender': {'name': 'Luviq Universe',
                            'email': settings.DEFAULT_FROM_EMAIL},
                 'to': [{'email': adresse}],
                 'subject': betreff,

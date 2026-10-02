@@ -296,8 +296,11 @@ else:
 
 # Vorgabeabsender auf der eigenen Domain (MW22). Bis zum 18.09.2026 stand hier
 # noreply@luviq-shop.de – eine Domain, die es nicht gibt (DNS: NXDOMAIN) und
-# für die sich deshalb kein SPF/DKIM setzen lässt. Brevo signiert erst, wenn
-# luviq-alsfeld.com im Brevo-Konto als Absenderdomain bestätigt ist.
+# für die sich deshalb kein SPF/DKIM setzen lässt. Stand 02.10.2026: luviq-alsfeld.com
+# hat keinen MX-Eintrag und kein Postfach; über Gmail-SMTP schreibt Google den
+# Absender ohnehin auf das angemeldete Konto um, die Vorgabe ist nur der Rückfall.
+# Eine echte Absenderadresse auf der Domain setzt erst ein Postfach dort voraus
+# (doku/80-AUFGABEN.md, „Beim Kunden“ Nr. 20).
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@luviq-alsfeld.com')
 # Vorgabe (EIG18): ohne eigene Angabe die kanonische Adresse, sonst die
 # Railway-Adresse des Dienstes. Bis 02.10.2026 stand hier ein Host, der mit 404

@@ -1,0 +1,20 @@
+{% extends 'emails/basis.html' %}
+{% comment %}
+Newsletter zu einem neuen Stück (utils.send_newsletter_email). Deutsch, im Look der
+übrigen Mails (basis.html). Gesendet wird nur an bestätigte Adressen (Double-Opt-in).
+Ohne Verkauf (VERKAUF_AKTIV aus): kein Preis, kein Kaufaufruf, keine Bestell-Wörter.
+Abmeldung: so, wie es die Datenschutzerklärung sagt – eine kurze Nachricht.
+{% endcomment %}
+{% block kopf_label %}Neues Stück{% endblock %}
+{% block inhalt %}
+{% if bild_url %}<img src="{{ bild_url }}" width="528" alt="{{ produkt_name }}" style="display:block;width:100%;max-width:528px;height:auto;margin:0 0 24px;border:0;">
+{% endif %}<h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-style:italic;font-size:26px;line-height:1.25;color:#0A0A0A;">{{ produkt_name }}</h1>
+<p style="margin:0 0 16px;">Hallo,</p>
+<p style="margin:0 0 16px;">ein neues Stück ist da: „{{ produkt_name }}“. Handbemalt, ein Einzelstück.</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0;">
+  <tr><td class="lv-knopf" style="background:#0A0A0A;"><a href="{{ link }}" class="lv-knopf" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#F2EEE6;text-decoration:none;background:#0A0A0A;">{{ knopf }}</a></td></tr>
+</table>
+<p class="lv-leise" style="margin:0 0 16px;font-size:13px;color:#5E5850;">Falls der Knopf nicht geht, kopiere diesen Link in deinen Browser:<br><a href="{{ link }}" class="lv-link" style="color:#8A4A22;word-break:break-all;">{{ link }}</a></p>
+<p style="margin:24px 0 0;">Viele Grüße<br>Luisa</p>
+<p class="lv-leise" style="margin:22px 0 0;font-size:13px;color:#5E5850;">Du bekommst diese Mail, weil du dich für den Newsletter angemeldet und die Anmeldung bestätigt hast. Abmelden: schreib mir kurz an <a href="mailto:{{ kontakt_email }}" class="lv-link" style="color:#8A4A22;">{{ kontakt_email }}</a>.</p>
+{% endblock %}
