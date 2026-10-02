@@ -268,7 +268,7 @@
     <!-- Schriften selbst gehostet (19.09.2026): kein Abruf bei Google, kein
          fremder Server im ersten Bildschirm. Vorab geladen werden nur die zwei
          Schnitte, die über dem Falz stehen. -->
-    <link rel="preload" href="{% static 'shop1/fonts/cormorant-garamond-latin-italic.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{% static 'shop1/fonts/cormorant-garamond-italic.woff2' %}" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="{% static 'shop1/fonts/schibsted-grotesk-latin-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
 
     {% comment %}Alte Stildateien (Tailwind + style.css) nur noch für Seiten, deren Markup sie trägt: Konto, Kasse, Gästebuch, Wissen, Rechtstexte und das Admin-Panel. Die neu gebauten Seiten (Start, Motiv anfragen, Archiv, Stück, Luisa) leeren den Block und laden nur luviq.css.{% endcomment %}
