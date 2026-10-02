@@ -65,6 +65,7 @@
 {% block alte_stile %}{% endblock %}
 {% block alpine %}{% endblock %}
 {% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='stueck' %}{% endblock %}
 
 {% block content %}
 {% comment %}„Stück" im Look „Nachtausgabe" (19.09.2026, Bauplan § 4): Nummer groß (Mono), Name kursiv, Datenliste aus den Feldern material/technik/masse (leer = Zeile entfällt), beide Zustände des Verkaufsschalters. Der Antwortsatz (GE23) und der statische Teil stehen unverändert im ersten Absatz nach der Überschrift.{% endcomment %}

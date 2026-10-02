@@ -276,7 +276,8 @@
     <link rel="stylesheet" href="{% static 'shop1/tailwind.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'shop1/style.css' %}?v=5">
     {% endblock %}
-    <link rel="stylesheet" href="{% static 'shop1/luviq.css' %}">
+    {% comment %}Neue Seiten (lv-seite) setzen den Block mit shop1/teile/stil_kritisch.html: kritisches CSS inline, luviq.css ohne Blockierung.{% endcomment %}
+    {% block hauptstil %}<link rel="stylesheet" href="{% static 'shop1/luviq.css' %}">{% endblock %}
 
     {% comment %}Alpine.js nur dort, wo es Funktion trägt (Warenkorb, Konto, Gästebuch, Admin). Die neuen Seiten leeren den Block.{% endcomment %}
     {% block alpine %}

@@ -1,0 +1,10 @@
+{% load static %}{% comment %}
+Stil für die neu gebauten Seiten (lv-seite): Critical CSS des Seitentyps (erster
+Bildschirm, erzeugt mit tools/kritisches_css.py aus luviq.css, Dateien unter
+shop1/stile/) steht inline im head, luviq.css lädt ohne Blockierung nach.
+`profil` = Seitentyp (start, archiv, stueck, luisa, anfrage, danke). data-schrift-nachladen:
+das Skript im head von base.html schaltet media="print" beim Laden auf "all". Ohne
+Skript greift noscript. Die Einbindungen stehen einzeln, damit jede Datei erkennbar benutzt wird.
+{% endcomment %}<style>{% if profil == 'start' %}{% include 'shop1/stile/kritisch-start.html' %}{% elif profil == 'archiv' %}{% include 'shop1/stile/kritisch-archiv.html' %}{% elif profil == 'stueck' %}{% include 'shop1/stile/kritisch-stueck.html' %}{% elif profil == 'luisa' %}{% include 'shop1/stile/kritisch-luisa.html' %}{% elif profil == 'anfrage' %}{% include 'shop1/stile/kritisch-anfrage.html' %}{% elif profil == 'danke' %}{% include 'shop1/stile/kritisch-danke.html' %}{% endif %}</style>
+<link rel="stylesheet" href="{% static 'shop1/luviq.css' %}" media="print" data-schrift-nachladen>
+<noscript><link rel="stylesheet" href="{% static 'shop1/luviq.css' %}"></noscript>

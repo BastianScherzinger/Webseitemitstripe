@@ -43,6 +43,7 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
 {% block alte_stile %}{% endblock %}
 {% block alpine %}{% endblock %}
 {% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='start' %}{% endblock %}
 
 {% block preload %}
 {# imagesrcset/imagesizes wörtlich wie <source>/<img> unten, sonst lädt der Browser zwei Fassungen. #}
