@@ -553,6 +553,25 @@ def newsletter_bestaetigen(request):
     return redirect('/')
 
 
+# offen-ok: der Abmeldelink steht in jeder Newsletter-Mail und richtet sich an
+# Empfänger ohne Konto. Er trägt eine Signatur; gelöscht wird nur die Adresse
+# aus dem Token, und nur per POST.
+def newsletter_abmelden(request):
+    """Newsletter abbestellen: GET zeigt die Seite, POST löscht die Adresse (EIG17)."""
+    from ..newsletter import email_aus_token
+    token = request.POST.get('t') or request.GET.get('t', '')
+    email = email_aus_token(token)
+    if email is None:
+        messages.error(request, 'Der Abmeldelink ist ungültig. Schreib uns kurz über das Kontaktformular, '
+                                'dann nehmen wir dich aus dem Verteiler.')
+        return redirect('/')
+    if request.method == 'POST':
+        Subscriber.objects.filter(email=email).delete()
+        messages.success(request, 'Du bist abgemeldet. Es kommt keine Newsletter-Post mehr an diese Adresse.')
+        return redirect('/')
+    return render(request, 'shop1/newsletter_abmelden.html', {'token': token})
+
+
 # offen-ok: die Newsletter-Anmeldung steht auf der Startseite und richtet sich
 # an Besucher ohne Konto. Geschrieben wird eine einzelne E-Mail-Adresse, und
 # das unique-Feld verhindert Mehrfacheinträge derselben Adresse.

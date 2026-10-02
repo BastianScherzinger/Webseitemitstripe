@@ -105,6 +105,19 @@ class CustomUserCreationForm(UserCreationForm):
             'placeholder': 'Passwort wiederholen'
         })
     
+    def clean_email(self):
+        """Eine Adresse gehört zu höchstens einem Konto (Beim Kunden Nr. 10).
+
+        Ohne die Prüfung legte eine zweite Registrierung mit derselben Adresse
+        ein zweites Konto an, und „Passwort vergessen“ ginge für beide an ein
+        Postfach. Verglichen wird ohne Rücksicht auf Groß- und Kleinschreibung."""
+        email = self.cleaned_data['email'].strip()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError(
+                'Mit dieser E-Mail-Adresse gibt es schon ein Konto. Melde dich an '
+                'oder setze dein Passwort zurück.')
+        return email
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
@@ -187,6 +200,16 @@ class UserProfileForm(forms.ModelForm):
             self.fields['last_name'].initial = self.instance.user.last_name
             self.fields['email'].initial = self.instance.user.email
     
+    def clean_email(self):
+        """Wie bei der Registrierung: keine Adresse, die ein anderes Konto trägt."""
+        email = self.cleaned_data['email'].strip()
+        andere = User.objects.filter(email__iexact=email)
+        if self.instance.user_id:
+            andere = andere.exclude(pk=self.instance.user_id)
+        if andere.exists():
+            raise forms.ValidationError('Diese E-Mail-Adresse gehört schon zu einem anderen Konto.')
+        return email
+
     def save(self, commit=True):
         profile = super().save(commit=False)
         

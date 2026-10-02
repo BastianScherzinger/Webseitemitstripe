@@ -16,6 +16,7 @@ from django.http import HttpResponsePermanentRedirect
 from django.utils import timezone
 from django.db import IntegrityError
 from django.db.models import F
+from .clientip import client_ip
 from .models import PageVisit, TagesBesucher, VisitorLog
 
 _log = logging.getLogger('shop1')
@@ -295,7 +296,6 @@ class PageVisitMiddleware:
 
     @staticmethod
     def _get_ip(request):
-        xff = request.META.get('HTTP_X_FORWARDED_FOR')
-        if xff:
-            return xff.split(',')[0].strip()
-        return request.META.get('REMOTE_ADDR')
+        # Letzter Eintrag von X-Forwarded-For = der Besucher, wie ihn der Proxy
+        # sah (EIG105); der erste Eintrag ist vom Absender frei wählbar.
+        return client_ip(request)

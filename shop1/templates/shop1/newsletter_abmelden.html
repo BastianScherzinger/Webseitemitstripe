@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Newsletter abbestellen – Luviq Universe{% endblock %}
+{% block meta_description %}Newsletter von Luviq Universe abbestellen: ein Klick, dann kommt keine Post mehr an diese Adresse.{% endblock %}
+{% comment %}Ziel des Abmeldelinks in jeder Newsletter-Mail (EIG17). Keine Seite für den Suchindex: noindex, nofollow, und ohne gültige Signatur im Link wird gar nicht erst gerendert. Abgemeldet wird erst mit dem Klick (POST), nicht durch das Öffnen des Links.{% endcomment %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen pt-20 pb-32 flex items-center justify-center">
+    <div class="energy-nebula"></div>
+
+    <div class="max-w-3xl w-full mx-auto px-4 relative z-10 fade-in-blur">
+        <div class="glass-card p-12 md:p-20 rounded-[4rem] shadow-2xl text-center border-glow-orange/20 relative overflow-hidden">
+            <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-6">
+                Newsletter <span class="text-glow">abbestellen</span>
+            </h1>
+            <p class="text-white/60 leading-relaxed font-light mb-12">
+                Mit einem Klick nehmen wir diese Adresse aus dem Verteiler. Danach kommt keine Newsletter-Post mehr an.
+            </p>
+            <form method="post" action="{% url 'newsletter_abmelden' %}">
+                {% csrf_token %}
+                <input type="hidden" name="t" value="{{ token }}">
+                <button type="submit" class="px-10 py-5 rounded-2xl btn-glow text-white font-black uppercase tracking-widest text-[10px] shadow-2xl">
+                    Jetzt abbestellen
+                </button>
+            </form>
+            <p class="mt-8">
+                <a href="{% url 'home' %}" class="text-white/40 hover:text-white text-[10px] uppercase tracking-widest">Doch lieber dabeibleiben</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

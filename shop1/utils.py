@@ -92,7 +92,12 @@ def send_newsletter_email(produkt, subscribers):
     else:
         image_url = ""
     
+    from django.utils.html import escape
+    from .newsletter import abmelde_adresse
+    produkt_name = escape(produkt.name)
     for sub in subscribers:
+        # Abmeldelink in jeder Mail (EIG17), je Adresse signiert.
+        abmelde_url = escape(abmelde_adresse(sub.email))
         html_content = f"""
         <html>
             <body style="margin: 0; padding: 0; background-color: #050816; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #ffffff;">
@@ -101,13 +106,13 @@ def send_newsletter_email(produkt, subscribers):
                         <td align="center">
                             <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
                                 <!-- Header Image -->
-                                {"<tr><td><img src='" + image_url + "' width='600' style='width: 100%; height: auto; display: block;' alt='" + produkt.name + "'></td></tr>" if image_url else ""}
+                                {"<tr><td><img src='" + image_url + "' width='600' style='width: 100%; height: auto; display: block;' alt='" + produkt_name + "'></td></tr>" if image_url else ""}
                                 
                                 <!-- Content -->
                                 <tr>
                                     <td style="padding: 40px; text-align: center;">
                                         <h1 style="color: #ff6a00; font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; margin: 0 0 20px 0; text-shadow: 0 0 20px rgba(255,106,0,0.3);">New Drop</h1>
-                                        <h2 style="font-size: 24px; font-weight: 300; margin: 0 0 30px 0; color: #f4f7fb;">"{produkt.name}"</h2>
+                                        <h2 style="font-size: 24px; font-weight: 300; margin: 0 0 30px 0; color: #f4f7fb;">"{produkt_name}"</h2>
                                         
                                         <div style="height: 1px; width: 60px; background-color: #ff6a00; margin: 0 auto 30px auto;"></div>
                                         
@@ -128,6 +133,9 @@ def send_newsletter_email(produkt, subscribers):
                                         <p style="font-size: 10px; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 2px; margin: 0;">
                                             © {settings.SITE_URL.replace('https://', '').replace('http://', '')} // Luviq Cinematic Branding
                                         </p>
+                                        <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin: 14px 0 0 0;">
+                                            <a href="{abmelde_url}" style="color: rgba(255,255,255,0.4);">Newsletter abbestellen</a>
+                                        </p>
                                     </td>
                                 </tr>
                             </table>
@@ -137,4 +145,7 @@ def send_newsletter_email(produkt, subscribers):
             </body>
         </html>
         """
-        send_brevo_email(subject, html_content, sub.email)
+        text = (f'Neu bei Luviq: {produkt.name}\n{produkt_url}\n\n'
+                f'Newsletter abbestellen: {abmelde_adresse(sub.email)}')
+        send_brevo_email(subject, html_content, sub.email, text_content=text)
+

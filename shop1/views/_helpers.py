@@ -4,6 +4,7 @@ import os
 
 from django.core.cache import cache
 
+from ..clientip import client_ip
 from ..models import Cart, CartItem
 
 #: Anfragen je IP-Adresse und Bereich im Zeitfenster (FO09). Grosszügig für
@@ -13,16 +14,7 @@ ANFRAGE_GRENZE = 5
 ANFRAGE_FENSTER = 15 * 60
 
 
-def _client_ip(request):
-    """Die Adresse des Absenders hinter dem Railway-Proxy.
-
-    Der letzte Eintrag in ``X-Forwarded-For`` ist der, den der einzige Proxy
-    vor Gunicorn (``DOCUMENTATION.md`` §1) selbst gesehen hat. Den ersten
-    kann der Absender frei setzen und so jede Drosselung umgehen."""
-    xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
-    if xff.strip():
-        return xff.split(',')[-1].strip()
-    return request.META.get('REMOTE_ADDR', '')
+_client_ip = client_ip  # Name bleibt für bestehende Aufrufer; Logik in shop1/clientip.py
 
 
 def zu_viele_anfragen(request, bereich, grenze=ANFRAGE_GRENZE, fenster=ANFRAGE_FENSTER):

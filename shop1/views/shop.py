@@ -18,6 +18,7 @@ from django.views.decorators.cache import never_cache
 from ..models import Produkt, Werbung, WerbungStat, KontaktAnfrage
 from .. import luviq_daten, mails, spamschutz
 from ..utils import send_brevo_email
+from ..middleware import ist_bot
 from ._helpers import zu_viele_anfragen
 
 _log = logging.getLogger('shop1')
@@ -53,10 +54,17 @@ def startseite(request):
     # Impressionen für aktive Werbung zählen (nur auf der Startseite). Die
     # Startseite zeigt seit dem Umbau keine Werbung mehr; die Zählung bleibt,
     # weil das pystore-Projekt sie liest.
+    # EIG58: nur Aufrufe von Browsern zählen. Crawler, Link-Vorschauen und
+    # Prüfwerkzeuge (``middleware.ist_bot``) sowie Vorab-Laden und andere
+    # Methoden als GET zählen nicht – sonst sind die Zahlen im Panel und in der
+    # geteilten pystore-Datenbank keine Reichweite.
+    vorladen = request.META.get('HTTP_SEC_PURPOSE', '') + request.META.get('HTTP_PURPOSE', '')
+    zaehlen = (request.method == 'GET' and 'prefetch' not in vorladen.lower()
+               and not ist_bot(request.META.get('HTTP_USER_AGENT', '')))
     try:
         site_name = os.getenv('SITE_NAME', 'luviq')
         today = timezone.now().date()
-        for w in Werbung.objects.filter(aktiv=True):
+        for w in (Werbung.objects.filter(aktiv=True) if zaehlen else []):
             if w.ist_aktiv:
                 Werbung.objects.filter(id=w.id).update(impressionen=F('impressionen') + 1)
                 stat, _ = WerbungStat.objects.get_or_create(werbung=w, seite=site_name, datum=today)

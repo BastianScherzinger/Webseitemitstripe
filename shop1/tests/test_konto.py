@@ -125,26 +125,22 @@ class RegistrierungTest(LuviqTestCase):
         self.assertEqual(User.objects.filter(username='neu').count(), 1)
         versand.assert_not_called()
 
-    def test_eine_vorhandene_email_legt_heute_ein_zweites_konto_an(self):
-        """Hält den **heutigen** Zustand fest, damit er nicht vergessen wird:
-        ``CustomUserCreationForm`` (``forms.py``) prüft die Adresse nicht auf
-        Eindeutigkeit, ``User.email`` ist es auch in der Datenbank nicht.
-        Eine zweite Registrierung mit derselben Adresse legt deshalb ein
-        zweites Konto an und verschickt eine zweite Bestätigungsmail; die
-        Passwort-Zurücksetzen-Mail ginge später für beide Konten an ein
-        Postfach. Der Plan (Welle 9, Schritt 43) erwartete die Ablehnung –
-        sie gibt es nicht. Bekommt das Formular eine ``clean_email``-Prüfung,
-        wird dieser Test rot und ist dann bewusst umzudrehen (Status 200,
-        kein zweites Konto, keine Mail)."""
+    def test_eine_vorhandene_email_legt_kein_zweites_konto_an(self):
+        """Beim Kunden Nr. 10 (zweiter Teil): ``CustomUserCreationForm`` prüft die
+        Adresse jetzt auf Eindeutigkeit (``clean_email``, ohne Rücksicht auf
+        Groß- und Kleinschreibung). Früher hielt dieser Test den Ist-Zustand
+        fest (zweites Konto, zweite Mail) und war für diesen Fall bewusst
+        umzudrehen: Status 200, kein zweites Konto, keine Mail."""
         with mock.patch(_MAIL) as versand:
             erzeuge_benutzer('erste', email='neu@example.invalid')
             versand.reset_mock()
-            antwort = self.sende('/register/', dict(REGISTRIERUNG, username='zweite'))
+            antwort = self.sende('/register/', dict(REGISTRIERUNG, username='zweite',
+                                                    email='Neu@Example.Invalid'))
 
-        self.assertEqual(antwort.status_code, 302)
-        self.assertTrue(User.objects.filter(username='zweite').exists())
-        self.assertEqual(User.objects.filter(email='neu@example.invalid').count(), 2)
-        self.assertEqual(versand.call_count, 1)
+        self.assertEqual(antwort.status_code, 200)
+        self.assertFalse(User.objects.filter(username='zweite').exists())
+        self.assertEqual(User.objects.filter(email__iexact='neu@example.invalid').count(), 1)
+        versand.assert_not_called()
 
 
 class KontoBausteineTest(LuviqTestCase):
@@ -191,6 +187,21 @@ class KontoBausteineTest(LuviqTestCase):
         konto.refresh_from_db()
         self.assertEqual((konto.first_name, konto.last_name, konto.email),
                          ('Erika', 'Musterfrau', 'erika@example.invalid'))
+
+    def test_das_profilformular_nimmt_keine_adresse_eines_anderen_kontos_an(self):
+        """Gegenstück zur Registrierung: auch über das Profil lässt sich keine
+        Adresse eintragen, die schon ein anderes Konto trägt – die eigene
+        Adresse bleibt dagegen frei änderbar (und unverändert speicherbar)."""
+        erzeuge_benutzer('erste', email='besetzt@example.invalid')
+        konto = erzeuge_benutzer('kundin', email='eigene@example.invalid')
+        daten = {'first_name': 'Erika', 'last_name': 'Musterfrau',
+                 'email': 'Besetzt@Example.Invalid', 'land': 'Deutschland'}
+        formular = forms.UserProfileForm(daten, instance=konto.profile)
+        self.assertFalse(formular.is_valid())
+        self.assertIn('email', formular.errors)
+
+        daten['email'] = 'eigene@example.invalid'
+        self.assertTrue(forms.UserProfileForm(daten, instance=konto.profile).is_valid())
 
 
 @SCHNELLER_HASHER
