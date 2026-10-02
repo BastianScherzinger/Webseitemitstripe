@@ -52,7 +52,7 @@
           "name": "{% if verkauf_aktiv %}Welche Region beliefert Luviq besonders oft?{% else %}Woher kommt die Luviq-Community?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Ein Großteil unserer Community kommt aus dem Vogelsbergkreis und der weiteren Umgebung zwischen Fulda und Gießen. Versendet wird aber deutschlandweit – egal wo du wohnst.{% else %}Ein Großteil unserer Community kommt aus dem Vogelsbergkreis und der weiteren Umgebung zwischen Fulda und Gießen.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Versendet wird deutschlandweit – egal wo du wohnst. Welche Region am häufigsten bestellt, wertet diese Seite nicht aus.{% else %}Luviq Universe sitzt in Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen. Wie sich die Community zusammensetzt, wertet diese Seite nicht aus; die Warteliste steht allen offen.{% endif %}"
           }
         }
       ]
@@ -90,10 +90,10 @@
         <!-- Region Grid -->
         <section class="mb-28">
             <h2 class="text-2xl md:text-4xl font-black heading-font text-white uppercase tracking-tighter mb-4 text-center">
-                Beliebt in <span class="text-glow">deiner Nähe</span>
+                Orte in <span class="text-glow">deiner Nähe</span>
             </h2>
             <p class="text-white/30 text-xs sm:text-sm text-center max-w-2xl mx-auto mb-14 uppercase tracking-widest">
-                Ein Auszug aus unserer Community: {{ orte|length }} Orte entlang der Strecke Fulda – Alsfeld – Gießen
+                {{ orte|length }} Orte entlang der Strecke Fulda – Alsfeld – Gießen
             </p>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
                 {% for ort in orte %}
@@ -123,7 +123,7 @@
                 </div>
                 <div class="scroll-reveal glass-card p-8 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
                     <h3 class="text-white font-bold mb-3">{% if verkauf_aktiv %}Welche Region beliefert Luviq besonders oft?{% else %}Woher kommt die Luviq-Community?{% endif %}</h3>
-                    <p class="text-white/50 font-light leading-relaxed">{% if verkauf_aktiv %}Ein Großteil unserer Community kommt aus dem Vogelsbergkreis und der weiteren Umgebung zwischen Fulda und Gießen. Versendet wird aber deutschlandweit – egal wo du wohnst.{% else %}Ein Großteil unserer Community kommt aus dem Vogelsbergkreis und der weiteren Umgebung zwischen Fulda und Gießen.{% endif %}</p>
+                    <p class="text-white/50 font-light leading-relaxed">{% if verkauf_aktiv %}Versendet wird deutschlandweit – egal wo du wohnst. Welche Region am häufigsten bestellt, wertet diese Seite nicht aus.{% else %}Luviq Universe sitzt in Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen. Wie sich die Community zusammensetzt, wertet diese Seite nicht aus; die Warteliste steht allen offen.{% endif %}</p>
                 </div>
             </div>
         </section>
