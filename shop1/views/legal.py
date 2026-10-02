@@ -121,15 +121,19 @@ WISSEN_SEITEN = [
     ('wissen_pflege', 'Wie pflege ich handbemalte Kleidung?',
      'Waschen auf links bei 30 Grad, Trocknen an der Luft, Buegeln nur von links, Lagern ohne Druck auf die Bemalung, Flecken'),
     ('wissen_upcycling', 'Was ist Upcycling-Mode - und was unterscheidet sie von Second Hand?',
-     'Begriffsklaerung Upcycling, Second Hand und Vintage; warum ein Einzelstueck nicht nachbestellbar ist; Handbemalung von Druck unterscheiden'),
+     'Begriffsklaerung Upcycling, Second Hand und Vintage; warum ein Einzelstueck '
+     'nicht nachbestellbar ist; Handbemalung von Druck unterscheiden'),
     ('wissen_groesse', 'Wie finde ich bei Einzelstuecken die richtige Groesse?',
      'Masse mit eigener Kleidung vergleichen statt Etikett, warum Vintage-Schnitte abweichen, vorab nachfragen, Widerruf'),
     ('wissen_bestellen', 'Wie bestelle und bezahle ich bei Luviq Universe?',
-     'Anmeldepflicht, Weg in den Warenkorb, Pflichtangaben, PayPal oder Vorab-Ueberweisung, Pruefung der Zahlung, Bestaetigung, Versand in 1-2 Werktagen'),
+     'Anmeldepflicht, Weg in den Warenkorb, Pflichtangaben, PayPal oder '
+     'Vorab-Ueberweisung, Pruefung der Zahlung, Bestaetigung, Versand in 1-2 Werktagen'),
     ('wissen_widerruf', 'Widerruf und Ruecksendung: was gilt bei einem Einzelstueck?',
-     'Vierzehn Tage Widerrufsrecht ab Erhalt, Anschrift der Anbieterin, kein Umtausch bei Unikaten, Unregelmaessigkeiten der Bemalung sind kein Mangel'),
+     'Vierzehn Tage Widerrufsrecht ab Erhalt, Anschrift der Anbieterin, kein Umtausch '
+     'bei Unikaten, Unregelmaessigkeiten der Bemalung sind kein Mangel'),
     ('wissen_konto', 'Was speichert der Shop - und warum braucht der Kauf ein Konto?',
-     'Warum der Warenkorb ein Konto verlangt, Angaben der Registrierung, Besuchsprotokoll, eingebundene Dienste, Zahlungsdaten, Kontoloeschung'),
+     'Warum der Warenkorb ein Konto verlangt, Angaben der Registrierung, '
+     'Besuchsprotokoll, eingebundene Dienste, Zahlungsdaten, Kontoloeschung'),
 ]
 
 
@@ -184,8 +188,62 @@ def llms_txt(request):
     # Steuerangaben, keine Preise und kein Verweis auf die AGB.
     if not verkauf_aktiv():
         return _llms_txt_ohne_verkauf(basis)
+    zeilen = (_llms_kopf_mit_verkauf(basis)
+              + _llms_produktzeilen(basis, mit_preis=True)
+              + _llms_wissenzeilen(basis)
+              + _llms_fragen_mit_verkauf(basis))
+    return HttpResponse("\n".join(zeilen) + "\n",
+                        content_type="text/plain; charset=utf-8")
 
-    zeilen = [
+
+def _llms_txt_ohne_verkauf(basis):
+    """llms.txt, solange ``VERKAUF_AKTIV`` aus ist: Marke im Aufbau.
+
+    Nur Angaben, die bei ausgeschaltetem Verkauf auch auf der Seite stehen –
+    keine Preise, keine Zahlungsarten, kein Versand, kein Paragraph 19 UStG,
+    kein Verweis auf die AGB (sie gelten erst ab Eröffnung des Shops).
+    """
+    zeilen = (_llms_kopf_ohne_verkauf(basis)
+              + _llms_produktzeilen(basis, mit_preis=False)
+              + _llms_wissenzeilen(basis)
+              + _llms_fragen_ohne_verkauf(basis))
+    return HttpResponse("\n".join(zeilen) + "\n",
+                        content_type="text/plain; charset=utf-8")
+
+
+def _llms_produktzeilen(basis, mit_preis):
+    """Die Einzelstücke der llms.txt: mit Verkauf samt Preis, sonst als Archiv."""
+    zeilen = []
+    produkte = Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am')[:50]
+    for produkt in produkte:
+        beschreibung = ' '.join(produkt.beschreibung.split())[:160]
+        adresse = f"- [{produkt.name}]({basis}{produkt.get_absolute_url()})"
+        if mit_preis:
+            zeilen.append(f"{adresse}: {produkt.preis} EUR"
+                          + (f" – {beschreibung}" if beschreibung else ""))
+        else:
+            zeilen.append(adresse + (f": {beschreibung}" if beschreibung else ""))
+    if not zeilen:
+        zeilen.append("- Zurzeit ist kein Einzelstueck verfuegbar." if mit_preis
+                      else "- Zurzeit ist kein Einzelstueck eingestellt.")
+    return zeilen
+
+
+def _llms_wissenzeilen(basis):
+    """Abschnitt „Wissen“ mit den freigegebenen Beiträgen – leer, wenn keiner darf."""
+    erlaubt = wissen_routen_fuer_llms()
+    wissen_zeilen = [eintrag for eintrag in WISSEN_SEITEN if eintrag[0] in erlaubt]
+    if not wissen_zeilen:
+        return []
+    zeilen = ["", "## Wissen", ""]
+    for routenname, ankertext, beschreibung in wissen_zeilen:
+        zeilen.append(f"- [{ankertext}]({basis}{reverse(routenname)}): {beschreibung}")
+    return zeilen
+
+
+def _llms_kopf_mit_verkauf(basis):
+    """Kopf, Eckdaten und Seitenliste der llms.txt bei eingeschaltetem Verkauf."""
+    return [
         "# Luviq Universe",
         "",
         "> Luviq Universe ist ein Online-Shop aus Alsfeld (36304) in Hessen, zwischen",
@@ -212,8 +270,10 @@ def llms_txt(request):
         f"- [Startseite]({basis}{reverse('home')}): Ueberblick, aktuelle Einzelstuecke",
         f"- [Alle Unikate]({basis}{reverse('produkte')}): jedes verfuegbare Einzelstueck",
         f"- [Ueber uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
-        f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, Vorschlaege bekommen - kostenlos, keine Bestellung",
-        f"- [Liefergebiet]({basis}{reverse('liefergebiet')}): Versandgebiet zwischen Fulda und Giessen, Fragen und Antworten",
+        f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
+        "Vorschlaege bekommen - kostenlos, keine Bestellung",
+        f"- [Liefergebiet]({basis}{reverse('liefergebiet')}): Versandgebiet zwischen Fulda "
+        "und Giessen, Fragen und Antworten",
         f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
         f"- [Gaestebuch]({basis}{reverse('gaestebuch')}): Rueckmeldungen von Kundinnen und Kunden",
         "",
@@ -221,26 +281,10 @@ def llms_txt(request):
         "",
     ]
 
-    produkte = Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am')[:50]
-    if produkte:
-        for produkt in produkte:
-            beschreibung = ' '.join(produkt.beschreibung.split())[:160]
-            zeilen.append(
-                f"- [{produkt.name}]({basis}{produkt.get_absolute_url()}): "
-                f"{produkt.preis} EUR"
-                + (f" – {beschreibung}" if beschreibung else "")
-            )
-    else:
-        zeilen.append("- Zurzeit ist kein Einzelstueck verfuegbar.")
 
-    erlaubt = wissen_routen_fuer_llms()
-    wissen_zeilen = [eintrag for eintrag in WISSEN_SEITEN if eintrag[0] in erlaubt]
-    if wissen_zeilen:
-        zeilen += ["", "## Wissen", ""]
-        for routenname, ankertext, beschreibung in wissen_zeilen:
-            zeilen.append(f"- [{ankertext}]({basis}{reverse(routenname)}): {beschreibung}")
-
-    zeilen += [
+def _llms_fragen_mit_verkauf(basis):
+    """Häufige Fragen, Rechtliches und Verweise der llms.txt bei eingeschaltetem Verkauf."""
+    return [
         "",
         "## Haeufige Fragen",
         "",
@@ -287,18 +331,10 @@ def llms_txt(request):
         f"Volltext: {basis}{reverse('llms_full_txt')}",
     ]
 
-    return HttpResponse("\n".join(zeilen) + "\n",
-                        content_type="text/plain; charset=utf-8")
 
-
-def _llms_txt_ohne_verkauf(basis):
-    """llms.txt, solange ``VERKAUF_AKTIV`` aus ist: Marke im Aufbau.
-
-    Nur Angaben, die bei ausgeschaltetem Verkauf auch auf der Seite stehen –
-    keine Preise, keine Zahlungsarten, kein Versand, kein Paragraph 19 UStG,
-    kein Verweis auf die AGB (sie gelten erst ab Eröffnung des Shops).
-    """
-    zeilen = [
+def _llms_kopf_ohne_verkauf(basis):
+    """Kopf, Eckdaten und Seitenliste der llms.txt ohne Verkauf (Marke im Aufbau)."""
+    return [
         "# Luviq Universe",
         "",
         "> Luviq Universe ist eine Modemarke im Aufbau aus Alsfeld (36304) in Hessen,",
@@ -320,7 +356,8 @@ def _llms_txt_ohne_verkauf(basis):
         f"- [Startseite]({basis}{reverse('home')}): Ueberblick, bisherige Stuecke, Warteliste",
         f"- [Archiv]({basis}{reverse('produkte')}): bisherige Einzelstuecke, bereits vergeben",
         f"- [Ueber uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
-        f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, Vorschlaege bekommen - kostenlos, keine Bestellung",
+        f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
+        "Vorschlaege bekommen - kostenlos, keine Bestellung",
         f"- [Herkunft]({basis}{reverse('liefergebiet')}): Alsfeld zwischen Fulda und Giessen",
         f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
         f"- [Gaestebuch]({basis}{reverse('gaestebuch')}): Beitraege aus der Community",
@@ -328,25 +365,11 @@ def _llms_txt_ohne_verkauf(basis):
         "## Archiv: bisherige Einzelstuecke (bereits vergeben)",
         "",
     ]
-    produkte = Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am')[:50]
-    if produkte:
-        for produkt in produkte:
-            beschreibung = ' '.join(produkt.beschreibung.split())[:160]
-            zeilen.append(
-                f"- [{produkt.name}]({basis}{produkt.get_absolute_url()})"
-                + (f": {beschreibung}" if beschreibung else "")
-            )
-    else:
-        zeilen.append("- Zurzeit ist kein Einzelstueck eingestellt.")
 
-    erlaubt = wissen_routen_fuer_llms()
-    wissen_zeilen = [eintrag for eintrag in WISSEN_SEITEN if eintrag[0] in erlaubt]
-    if wissen_zeilen:
-        zeilen += ["", "## Wissen", ""]
-        for routenname, ankertext, beschreibung in wissen_zeilen:
-            zeilen.append(f"- [{ankertext}]({basis}{reverse(routenname)}): {beschreibung}")
 
-    zeilen += [
+def _llms_fragen_ohne_verkauf(basis):
+    """Häufige Fragen, Rechtliches und Verweise der llms.txt ohne Verkauf."""
+    return [
         "",
         "## Haeufige Fragen",
         "",
@@ -377,8 +400,6 @@ def _llms_txt_ohne_verkauf(basis):
         *_feed_zeile(basis),
         f"Volltext: {basis}{reverse('llms_full_txt')}",
     ]
-    return HttpResponse("\n".join(zeilen) + "\n",
-                        content_type="text/plain; charset=utf-8")
 
 
 @cache_page(AUSGABE_CACHE_SEKUNDEN)
@@ -480,7 +501,19 @@ def _seitenbilder(name: str, base_url: str) -> list[tuple[str, str]]:
 def sitemap_xml(request):
     """Erzeugt eine vollständige sitemap.xml mit lastmod und Bild-URLs."""
     base_url = oeffentliche_basis(request)
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
+    xml += '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n'
+    for page in _sitemap_seiten():
+        xml += _seite_xml(page, base_url)
+    for produkt in Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am'):
+        xml += _produkt_xml(produkt, base_url)
+    xml += '</urlset>'
+    return HttpResponse(xml, content_type='application/xml; charset=utf-8')
 
+
+def _sitemap_seiten():
+    """Die festen Seiten der Sitemap samt Wissensbereich, je nach Verkaufsschalter."""
     # 'home' behält absichtlich den leeren Pfad: die Startseite steht seit
     # jeher ohne Schrägstrich am Ende in der Sitemap, und eine andere
     # Schreibweise wäre für Google eine neue Adresse.
@@ -515,53 +548,52 @@ def sitemap_xml(request):
     # meta robots auf "noindex, follow". Eine Adresse gleichzeitig zur
     # Aufnahme anzumelden und die Aufnahme zu verbieten, meldet die Search
     # Console als Fehler. Massgeblich ist die Angabe auf der Seite selbst.
+    return static_pages
 
-    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
-    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
-    xml += '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n'
 
-    for page in static_pages:
-        xml += '  <url>\n'
-        xml += f'    <loc>{base_url}{page["loc"]}</loc>\n'
-        # Ein vergessener Registereintrag kostet nur das lastmod dieser Seite,
-        # nicht die ganze Sitemap (EIG25); test_seo hält das Register vollständig.
-        stand = SEITEN_STAND.get(page['name'])
-        if stand:
-            xml += f'    <lastmod>{stand}</lastmod>\n'
-        xml += f'    <changefreq>{page["changefreq"]}</changefreq>\n'
-        xml += f'    <priority>{page["priority"]}</priority>\n'
-        for bild_url, titel in _seitenbilder(page['name'], base_url):
-            xml += _bild_xml(bild_url, titel)
-        xml += '  </url>\n'
+def _seite_xml(page, base_url):
+    """Ein ``<url>``-Eintrag einer festen Seite, mit lastmod aus ``SEITEN_STAND``."""
+    xml = '  <url>\n'
+    xml += f'    <loc>{base_url}{page["loc"]}</loc>\n'
+    # Ein vergessener Registereintrag kostet nur das lastmod dieser Seite,
+    # nicht die ganze Sitemap (EIG25); test_seo hält das Register vollständig.
+    stand = SEITEN_STAND.get(page['name'])
+    if stand:
+        xml += f'    <lastmod>{stand}</lastmod>\n'
+    xml += f'    <changefreq>{page["changefreq"]}</changefreq>\n'
+    xml += f'    <priority>{page["priority"]}</priority>\n'
+    for bild_url, titel in _seitenbilder(page['name'], base_url):
+        xml += _bild_xml(bild_url, titel)
+    return xml + '  </url>\n'
 
-    for produkt in Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am'):
-        if produkt.slug:
-            loc = reverse('produkt_detail_slug', args=[produkt.slug])
-        else:
-            loc = reverse('produkt_detail', args=[produkt.id])
 
-        xml += '  <url>\n'
-        xml += f'    <loc>{base_url}{loc}</loc>\n'
-        xml += f'    <lastmod>{produkt.aktualisiert_am.strftime("%Y-%m-%d")}</lastmod>\n'
-        xml += '    <changefreq>weekly</changefreq>\n'
-        xml += '    <priority>0.8</priority>\n'
+def _produkt_xml(produkt, base_url):
+    """Ein ``<url>``-Eintrag einer Produktseite, mit Bild, wenn es eines gibt."""
+    if produkt.slug:
+        loc = reverse('produkt_detail_slug', args=[produkt.slug])
+    else:
+        loc = reverse('produkt_detail', args=[produkt.id])
 
-        if produkt.bild:
-            bild_url = produkt.bild.url
-            if not bild_url.startswith('http'):
-                bild_url = f"{base_url}{bild_url}"
-            escaped = bild_url.replace('&', '&amp;')
-            name_esc = produkt.name.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            xml += '    <image:image>\n'
-            xml += f'      <image:loc>{escaped}</image:loc>\n'
-            xml += f'      <image:title>{name_esc} (Nº {produkt.archiv_nummer}) – Luviq Universe</image:title>\n'
-            xml += f'      <image:caption>Handbemaltes 1-of-1 Upcycling-Unikat: {name_esc}</image:caption>\n'
-            xml += '    </image:image>\n'
+    xml = '  <url>\n'
+    xml += f'    <loc>{base_url}{loc}</loc>\n'
+    xml += f'    <lastmod>{produkt.aktualisiert_am.strftime("%Y-%m-%d")}</lastmod>\n'
+    xml += '    <changefreq>weekly</changefreq>\n'
+    xml += '    <priority>0.8</priority>\n'
 
-        xml += '  </url>\n'
+    if produkt.bild:
+        bild_url = produkt.bild.url
+        if not bild_url.startswith('http'):
+            bild_url = f"{base_url}{bild_url}"
+        escaped = bild_url.replace('&', '&amp;')
+        name_esc = produkt.name.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+        xml += '    <image:image>\n'
+        xml += f'      <image:loc>{escaped}</image:loc>\n'
+        xml += (f'      <image:title>{name_esc} (Nº {produkt.archiv_nummer}) – Luviq Universe'
+                '</image:title>\n')
+        xml += f'      <image:caption>Handbemaltes 1-of-1 Upcycling-Unikat: {name_esc}</image:caption>\n'
+        xml += '    </image:image>\n'
 
-    xml += '</urlset>'
-    return HttpResponse(xml, content_type='application/xml; charset=utf-8')
+    return xml + '  </url>\n'
 
 
 def produkt_uebersicht_redirect(request):
@@ -660,72 +692,82 @@ def newsletter_subscribe(request):
     und bekommt eine Weiterleitung auf die Warteliste mit einer Meldung. Erkannt wird der
     zweite Weg am ``Accept``-Kopf des Browsers (``text/html``) – Skriptaufrufe und Tests
     schicken ihn nicht."""
-    if request.method == 'POST':
-        klassisch = 'text/html' in request.headers.get('Accept', '')
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid request'}, status=405)
+    klassisch = 'text/html' in request.headers.get('Accept', '')
 
-        def antwort_fehler(text, status):
-            if klassisch:
-                messages.error(request, text)
-                return redirect(reverse('home') + '#warteliste')
-            return JsonResponse({'error': text}, status=status)
-
-        # Drosselung je IP-Adresse (FO09): ohne sie füllt eine Schleife die
-        # Abonnentenliste mit fremden Adressen.
-        if zu_viele_anfragen(request, 'newsletter'):
-            return antwort_fehler('Zu viele Anmeldungen in kurzer Zeit. '
+    # Drosselung je IP-Adresse (FO09): ohne sie füllt eine Schleife die
+    # Abonnentenliste mit fremden Adressen.
+    if zu_viele_anfragen(request, 'newsletter'):
+        return _newsletter_fehler(request, klassisch, 'Zu viele Anmeldungen in kurzer Zeit. '
                                   'Bitte versuche es später noch einmal.', 429)
 
-        try:
-            data = json.loads(request.body)
-            email = data.get('email', '').strip()
-            falle = {k: data.get(k, '') for k in (spamschutz.FELD_FALLE, spamschutz.FELD_FALLE_ALT,
-                                                  spamschutz.FELD_ZEIT)}
-        except (ValueError, AttributeError):
-            # Kein JSON (ValueError, auch UnicodeDecodeError) oder JSON ohne
-            # Objekt bzw. ohne Text unter "email" (AttributeError): dann kam
-            # das Formular klassisch als POST-Felder.
-            email = request.POST.get('email', '').strip()
-            falle = {k: request.POST.get(k, '') for k in (spamschutz.FELD_FALLE, spamschutz.FELD_FALLE_ALT,
-                                                          spamschutz.FELD_ZEIT)}
+    email, falle = _newsletter_eingabe(request)
 
-        # Serverseitige Prüfung (FO06): ``type="email"`` im Formular umgeht
-        # jeder Abruf ohne Browser. 254 Zeichen ist die Länge des Modellfelds
-        # (``EmailField``); ``validate_email`` selbst lässt bis zu 320 zu.
-        try:
-            if len(email) > 254:
-                raise ValidationError('zu lang')
-            validate_email(email)
-        except ValidationError:
-            return antwort_fehler('Bitte gib eine gültige Email an.', 400)
+    # Serverseitige Prüfung (FO06): ``type="email"`` im Formular umgeht
+    # jeder Abruf ohne Browser. 254 Zeichen ist die Länge des Modellfelds
+    # (``EmailField``); ``validate_email`` selbst lässt bis zu 320 zu.
+    try:
+        if len(email) > 254:
+            raise ValidationError('zu lang')
+        validate_email(email)
+    except ValidationError:
+        return _newsletter_fehler(request, klassisch, 'Bitte gib eine gültige Email an.', 400)
 
-        # Der Antworttext ist für neue, offene und bestätigte Adressen – und für
-        # verworfene Bots – derselbe: sonst verrät er, wer schon Abonnent ist.
-        text_ok = ('Fast geschafft! Bitte bestätige deine Anmeldung '
-                   'über den Link in der E-Mail, die wir dir geschickt haben.')
+    # Bot-Spam still verwerfen (Honigtopf, Zeitfalle, Markennachahmung in der
+    # Adresse): dieselbe Antwort, kein Eintrag, keine Mail.
+    punkte, gruende = spamschutz.bewerte(dict(falle, email=email))
+    if punkte >= spamschutz.SCHWELLE:
+        _log.warning('Newsletter: Spam verworfen (%s: %s)', punkte, ','.join(gruende))
+        return _newsletter_ok(request, klassisch, neu=False)
 
-        # Bot-Spam still verwerfen (Honigtopf, Zeitfalle, Markennachahmung in der
-        # Adresse): dieselbe Antwort, kein Eintrag, keine Mail.
-        punkte, gruende = spamschutz.bewerte(dict(falle, email=email))
-        if punkte >= spamschutz.SCHWELLE:
-            _log.warning('Newsletter: Spam verworfen (%s: %s)', punkte, ','.join(gruende))
-            if klassisch:
-                messages.success(request, text_ok)
-                return redirect(reverse('home') + '#warteliste')
-            return JsonResponse({'message': text_ok}, status=200)
+    # Double-Opt-in (17.09.2026). Die Antwort ist fuer neue, offene und
+    # bestaetigte Adressen dieselbe - sonst verraet sie, wer schon Abonnent ist.
+    abo, neu = Subscriber.objects.get_or_create(email=email)
+    if not abo.bestaetigt and spamschutz.mail_budget_ok('newsletter', stunde=30, tag=150):
+        _bestaetigung_senden(request, abo)
+    return _newsletter_ok(request, klassisch, neu=neu)
 
-        # Double-Opt-in (17.09.2026). Die Antwort ist fuer neue, offene und
-        # bestaetigte Adressen dieselbe - sonst verraet sie, wer schon Abonnent ist.
-        abo, neu = Subscriber.objects.get_or_create(email=email)
-        if not abo.bestaetigt and spamschutz.mail_budget_ok('newsletter', stunde=30, tag=150):
-            _bestaetigung_senden(request, abo)
-        if klassisch:
-            messages.success(request, text_ok)
-            return redirect(reverse('home') + '#warteliste')
-        antwort = {'message': text_ok}
-        if neu:
-            # ``neu`` sagt dem Skript der Startseite, dass diese Anmeldung als
-            # Abschluss zählt (FO08); eine Wiederholung zählt nicht.
-            antwort['neu'] = True
-        return JsonResponse(antwort, status=200)
 
-    return JsonResponse({'error': 'Invalid request'}, status=405)
+#: Der Antworttext ist für neue, offene und bestätigte Adressen – und für
+#: verworfene Bots – derselbe: sonst verrät er, wer schon Abonnent ist.
+_NEWSLETTER_TEXT_OK = ('Fast geschafft! Bitte bestätige deine Anmeldung '
+                       'über den Link in der E-Mail, die wir dir geschickt haben.')
+
+
+def _newsletter_eingabe(request):
+    """``(email, falle)`` aus JSON (Skript der Startseite) oder aus POST-Feldern."""
+    felder = (spamschutz.FELD_FALLE, spamschutz.FELD_FALLE_ALT, spamschutz.FELD_ZEIT)
+    try:
+        data = json.loads(request.body)
+        email = data.get('email', '').strip()
+        falle = {k: data.get(k, '') for k in felder}
+    except (ValueError, AttributeError):
+        # Kein JSON (ValueError, auch UnicodeDecodeError) oder JSON ohne
+        # Objekt bzw. ohne Text unter "email" (AttributeError): dann kam
+        # das Formular klassisch als POST-Felder.
+        email = request.POST.get('email', '').strip()
+        falle = {k: request.POST.get(k, '') for k in felder}
+    return email, falle
+
+
+def _newsletter_fehler(request, klassisch, text, status):
+    """Fehler: ohne JavaScript Meldung und Weiterleitung, sonst JSON mit Status."""
+    if klassisch:
+        messages.error(request, text)
+        return redirect(reverse('home') + '#warteliste')
+    return JsonResponse({'error': text}, status=status)
+
+
+def _newsletter_ok(request, klassisch, neu):
+    """Erfolg (auch für still verworfene Bots): Meldung bzw. JSON.
+
+    ``neu`` sagt dem Skript der Startseite, dass diese Anmeldung als
+    Abschluss zählt (FO08); eine Wiederholung zählt nicht."""
+    if klassisch:
+        messages.success(request, _NEWSLETTER_TEXT_OK)
+        return redirect(reverse('home') + '#warteliste')
+    antwort = {'message': _NEWSLETTER_TEXT_OK}
+    if neu:
+        antwort['neu'] = True
+    return JsonResponse(antwort, status=200)
