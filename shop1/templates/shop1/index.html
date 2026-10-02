@@ -110,7 +110,7 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
                     <button type="submit">Vormerken</button>
                 </form>
                 <p class="lv-antwort" id="vormerken-meldung" role="status" aria-live="polite"></p>
-                <p class="lv-klein">Eine Mail, wenn es losgeht. Du bestätigst deine Adresse per Link; abmelden: kurze Nachricht an brehlerluisa@gmail.com. Was mit der Adresse geschieht, steht in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
+                <p class="lv-klein">Eine Mail, wenn es losgeht. Du bestätigst deine Adresse per Link; abmelden mit einem Klick über den Link in jeder Mail oder per kurzer Nachricht an brehlerluisa@gmail.com. Was mit der Adresse geschieht, steht in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
             </aside>
         </div>
     </section>
@@ -203,7 +203,7 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
     <!-- ═══ Die nächste Ausgabe: Warteliste = Newsletter mit Double-Opt-in ═══ -->
     <section class="lv-warteliste" id="warteliste" aria-labelledby="warteliste-titel">
         <h2 class="lv-serif" id="warteliste-titel">Die nächste Ausgabe</h2>
-        <p>Eine Mail, wenn die nächste Ausgabe erscheint. Du bestätigst deine Adresse über einen Link, verschickt wird über das Gmail-Postfach von Luviq Universe (Google). Abmelden: eine kurze Nachricht an brehlerluisa@gmail.com. Was mit der Adresse geschieht, steht in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
+        <p>Eine Mail, wenn die nächste Ausgabe erscheint. Du bestätigst deine Adresse über einen Link, verschickt wird über das Gmail-Postfach von Luviq Universe (Google). Abmelden: mit einem Klick über den Link in jeder Mail oder per kurzer Nachricht an brehlerluisa@gmail.com. Was mit der Adresse geschieht, steht in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
         <form id="newsletter-form" class="lv-feldzeile" method="post" action="{% url 'newsletter_subscribe' %}" data-newsletter novalidate>
             {% csrf_token %}
             <label class="sr-only" for="newsletter-email">Deine E-Mail-Adresse für die Warteliste</label>

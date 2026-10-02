@@ -235,6 +235,16 @@ class SitemapTest(LuviqTestCase):
         self.assertIn(self.produkt.get_absolute_url(), pfade)
         self.assertIn('<lastmod>', xml)
 
+    def test_fehlender_registereintrag_kippt_die_sitemap_nicht(self):
+        """EIG25: Fehlt eine Seite im Register ``SEITEN_STAND``, steht sie ohne
+        ``lastmod`` in der Sitemap – die Datei selbst bleibt auslieferbar. Dass
+        das Register vollständig ist, hält der Test darunter fest."""
+        ohne_start = {k: v for k, v in SEITEN_STAND.items() if k != 'home'}
+        with mock.patch.dict('shop1.views.legal.SEITEN_STAND', ohne_start, clear=True):
+            antwort = self.hole('/sitemap.xml')
+        self.assertEqual(antwort.status_code, 200)
+        ElementTree.fromstring(antwort.content)
+
     def test_jeder_sitemap_eintrag_traegt_ein_gueltiges_lastmod(self):
         """Verhindert den Zustand vor Schritt 14: nur Produktseiten trugen ein
         ``lastmod``, die acht statischen Seiten keines – Google crawlt sie

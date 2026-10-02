@@ -226,11 +226,15 @@ class NewsletterOhneSkriptTest(LuviqTestCase):
         self.assertEqual(Subscriber.objects.count(), 1)
         versand.assert_not_called()
 
-    def test_die_startseite_verspricht_keine_abmeldung_mit_einem_klick(self):
-        """EIG121: eine Abmelde-Adresse gibt es nicht – der Text nennt den echten Weg."""
+    def test_die_startseite_nennt_die_echten_abmeldewege(self):
+        """EIG121: die Startseite verspricht nur, was es gibt – den Abmeldelink in
+        jeder Newsletter-Mail (``newsletter_abmelden``, ``utils.send_newsletter_email``)
+        und die Nachricht an die Impressums-Adresse."""
         html = self.hole('/').content.decode()
-        self.assertNotIn('bmelden geht mit einem Klick', html)
-        self.assertIn('abmelden: kurze Nachricht an brehlerluisa@gmail.com', html)
+        self.assertIn('mit einem Klick über den Link in jeder Mail', html)
+        self.assertIn('brehlerluisa@gmail.com', html)
+        # ohne gültiges Token führt der Link zurück zur Startseite – es gibt ihn aber
+        self.assertEqual(self.hole('/newsletter/abmelden/').status_code, 302)
 
 
 class MailRueckrufTest(LuviqTestCase):

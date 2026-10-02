@@ -523,7 +523,11 @@ def sitemap_xml(request):
     for page in static_pages:
         xml += '  <url>\n'
         xml += f'    <loc>{base_url}{page["loc"]}</loc>\n'
-        xml += f'    <lastmod>{SEITEN_STAND[page["name"]]}</lastmod>\n'
+        # Ein vergessener Registereintrag kostet nur das lastmod dieser Seite,
+        # nicht die ganze Sitemap (EIG25); test_seo hält das Register vollständig.
+        stand = SEITEN_STAND.get(page['name'])
+        if stand:
+            xml += f'    <lastmod>{stand}</lastmod>\n'
         xml += f'    <changefreq>{page["changefreq"]}</changefreq>\n'
         xml += f'    <priority>{page["priority"]}</priority>\n'
         for bild_url, titel in _seitenbilder(page['name'], base_url):

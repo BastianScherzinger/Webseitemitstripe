@@ -109,7 +109,7 @@
             <div class="p-10 flex flex-col justify-center gap-6">
                 <div class="flex items-center gap-4">
                     <div class="w-14 h-14 rounded-2xl glass flex items-center justify-center p-2.5" style="border-color:rgba(200,150,92,0.2)">
-                        <a href="{% url 'home' %}" aria-label="Luviq Universe, zur Startseite" class="block w-full h-full"><img src="{% static 'shop1/images/logo-luviq-96.webp' %}" srcset="{% static 'shop1/images/logo-luviq-96.webp' %} 96w, {% static 'shop1/images/logo-luviq-192.webp' %} 192w" sizes="56px" alt="" class="w-full h-full object-cover rounded-xl" width="56" height="56" loading="lazy" decoding="async"></a>
+                        <a href="{% url 'home' %}" aria-label="Luviq Universe, zur Startseite" class="block w-full h-full"><img src="{% static 'shop1/images/logo-luviq-96.webp' %}" srcset="{% static 'shop1/images/logo-luviq-96.webp' %} 96w, {% static 'shop1/images/logo-luviq-192.webp' %} 192w" sizes="56px" alt="" class="w-full h-full object-cover rounded-xl" width="56" height="56" fetchpriority="high" decoding="async"></a>
                     </div>
                     <div>
                         <p class="text-white font-black text-lg">Luviq Universe</p>
