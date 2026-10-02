@@ -360,6 +360,7 @@
         {% endif %}
 
     </div>
+    {% if werbungen %}{{ timeline|json_script:"werbung-timeline" }}{{ site_breakdown|json_script:"werbung-plattformen" }}{% endif %}
 </div>
 
 <script src="{% static 'shop1/chart-4.4.0.umd.js' %}"></script>
@@ -396,7 +397,7 @@ Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
 
 {% if werbungen %}
 // ── KPI totals aus Timeline ───────────────────────────────────────────────
-const TIMELINE = {{ timeline_json|safe }};
+const TIMELINE = JSON.parse(document.getElementById('werbung-timeline').textContent);
 const totalViews30  = TIMELINE.views.reduce((s, v) => s + v, 0);
 const totalKlicks30 = TIMELINE.klicks.reduce((s, v) => s + v, 0);
 document.getElementById('kpi-views').textContent  = totalViews30.toLocaleString('de-DE');
@@ -404,7 +405,7 @@ document.getElementById('kpi-klicks').textContent = totalKlicks30.toLocaleString
 
 // ── Chart 1: Reichweite nach Plattform (Balken) ──────────────────────────
 (function() {
-    const BD = {{ site_breakdown_json|safe }};
+    const BD = JSON.parse(document.getElementById('werbung-plattformen').textContent);
     const canvas = document.getElementById('siteChart');
     const noData = document.getElementById('site-no-data');
     if (!canvas) return;

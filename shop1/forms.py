@@ -105,6 +105,18 @@ class CustomUserCreationForm(UserCreationForm):
             'placeholder': 'Passwort wiederholen'
         })
     
+    def clean_email(self):
+        """Eine Adresse gehört zu genau einem Konto (Groß-/Kleinschreibung egal).
+
+        Ohne diese Prüfung legte jede zweite Registrierung mit derselben
+        Adresse ein weiteres Konto und eine weitere Bestätigungsmail an."""
+        adresse = self.cleaned_data['email'].strip()
+        if User.objects.filter(email__iexact=adresse).exists():
+            raise forms.ValidationError(
+                'Zu dieser E-Mail-Adresse gibt es schon ein Konto. '
+                'Bitte melde dich an oder nimm eine andere Adresse.')
+        return adresse
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
@@ -120,7 +132,9 @@ class CustomUserCreationForm(UserCreationForm):
             profile.adresse = self.cleaned_data.get('adresse', '')
             profile.postleitzahl = self.cleaned_data.get('postleitzahl', '')
             profile.stadt = self.cleaned_data.get('stadt', '')
-            profile.land = self.cleaned_data.get('land', 'Deutschland')
+            # Leer gelassen (oder geleert) heißt Vorgabe – ``.get(..., 'Deutschland')``
+            # griff nur bei fehlendem Schlüssel, nicht bei ``''``.
+            profile.land = self.cleaned_data.get('land') or 'Deutschland'
             profile.save()
         
         return user

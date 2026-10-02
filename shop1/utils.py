@@ -1,3 +1,6 @@
+"""Mailversand über die Brevo-API und der Newsletter-Text: ``send_brevo_email`` (asynchron),
+``send_newsletter_email`` (an die übergebenen Abonnenten; die Auswahl der bestätigten trifft der Aufrufer)."""
+
 import os
 import logging
 import threading

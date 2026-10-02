@@ -9,10 +9,14 @@ Luisas Satz. Quelle der Wortlaute: ``Design/luviq/MARKENWISSEN-luisa.md`` und
 Kein Datum und kein Satz davon steht in einer Vorlage.
 """
 
+import logging
 import os
 from datetime import datetime
 
+from django.db import DatabaseError
 from django.utils import timezone
+
+_log = logging.getLogger('shop1')
 
 #: Luisas Markensatz, von ihr gewählt am 19.09.2026. Gesprochen, nicht gesetzt.
 MARKENSATZ = 'Sag mir, was du willst — ich mal’s dir.'
@@ -79,7 +83,10 @@ def drop_nummer():
     from .models import Produkt
     try:
         hoechste = Produkt.objects.aggregate(m=Max('nummer'))['m'] or 0
-    except Exception:
+    except DatabaseError:
+        # Die Seite muss auch ohne lesbare Tabelle rendern (frische Datenbank,
+        # Migration läuft): dann beginnt die Zählung bei Nº 001.
+        _log.warning('drop_nummer: Archivnummern nicht lesbar, Nº 001 angenommen', exc_info=True)
         hoechste = 0
     return f'{hoechste + 1:03d}'
 
@@ -102,6 +109,7 @@ TEASER = []
 
 
 def laufband(nummer, termin):
+    """Die drei Teile des Laufbands; mit Termin nennt der mittlere die Ausgabe."""
     teile = ['Motiv anfragen, ohne Kosten']
     if termin:
         teile.append(f'Nº {nummer} erscheint {termin_text(termin)}')

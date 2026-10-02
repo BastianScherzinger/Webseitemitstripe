@@ -125,26 +125,34 @@ class RegistrierungTest(LuviqTestCase):
         self.assertEqual(User.objects.filter(username='neu').count(), 1)
         versand.assert_not_called()
 
-    def test_eine_vorhandene_email_legt_heute_ein_zweites_konto_an(self):
-        """Hält den **heutigen** Zustand fest, damit er nicht vergessen wird:
-        ``CustomUserCreationForm`` (``forms.py``) prüft die Adresse nicht auf
-        Eindeutigkeit, ``User.email`` ist es auch in der Datenbank nicht.
-        Eine zweite Registrierung mit derselben Adresse legt deshalb ein
-        zweites Konto an und verschickt eine zweite Bestätigungsmail; die
-        Passwort-Zurücksetzen-Mail ginge später für beide Konten an ein
-        Postfach. Der Plan (Welle 9, Schritt 43) erwartete die Ablehnung –
-        sie gibt es nicht. Bekommt das Formular eine ``clean_email``-Prüfung,
-        wird dieser Test rot und ist dann bewusst umzudrehen (Status 200,
-        kein zweites Konto, keine Mail)."""
+    def test_eine_vorhandene_email_legt_kein_zweites_konto_an(self):
+        """Verhindert, dass dieselbe Adresse zwei Konten bekommt: sonst ginge
+        eine zweite Bestätigungsmail an ein fremdes Postfach, und die
+        Passwort-zurücksetzen-Mail gälte später für beide Konten. Die Prüfung
+        steht in ``CustomUserCreationForm.clean_email`` (vorher hielt dieser
+        Test den Gegenteil als Ist-Zustand fest, 02.10.2026 umgedreht)."""
         with mock.patch(_MAIL) as versand:
             erzeuge_benutzer('erste', email='neu@example.invalid')
             versand.reset_mock()
             antwort = self.sende('/register/', dict(REGISTRIERUNG, username='zweite'))
 
-        self.assertEqual(antwort.status_code, 302)
-        self.assertTrue(User.objects.filter(username='zweite').exists())
-        self.assertEqual(User.objects.filter(email='neu@example.invalid').count(), 2)
-        self.assertEqual(versand.call_count, 1)
+        self.assertEqual(antwort.status_code, 200)
+        self.assertFalse(User.objects.filter(username='zweite').exists())
+        self.assertEqual(User.objects.filter(email='neu@example.invalid').count(), 1)
+        versand.assert_not_called()
+        self.assertIn('schon ein Konto', ''.join(str(m) for m in antwort.context['messages']))
+
+    def test_die_adresspruefung_ignoriert_gross_und_kleinschreibung_und_leerzeichen(self):
+        erzeuge_benutzer('erste', email='neu@example.invalid')
+        formular = forms.CustomUserCreationForm(dict(
+            REGISTRIERUNG, username='zweite', email='  Neu@Example.INVALID '))
+        self.assertFalse(formular.is_valid())
+        self.assertIn('email', formular.errors)
+
+    def test_eine_neue_adresse_wird_angenommen_und_bereinigt(self):
+        formular = forms.CustomUserCreationForm(dict(REGISTRIERUNG, email=' neu@example.invalid '))
+        self.assertTrue(formular.is_valid(), formular.errors)
+        self.assertEqual(formular.cleaned_data['email'], 'neu@example.invalid')
 
 
 class KontoBausteineTest(LuviqTestCase):
@@ -178,6 +186,28 @@ class KontoBausteineTest(LuviqTestCase):
         profil = UserProfile.objects.get(user=konto)
         self.assertEqual((profil.telefon, profil.stadt, profil.postleitzahl),
                          ('000 000', 'Alsfeld', '36304'))
+
+    def test_ein_leeres_land_wird_zur_vorgabe_deutschland(self):
+        """Verhindert ein leeres Land im Profil: ``.get('land', 'Deutschland')``
+        griff nur bei fehlendem Schlüssel, nicht bei einem leer gelassenen Feld."""
+        for nummer, roh in enumerate(('', None)):
+            with self.subTest(land=roh):
+                daten = dict(REGISTRIERUNG, username=f'landtest{nummer}',
+                             email=f'landtest{nummer}@example.invalid')
+                if roh is not None:
+                    daten['land'] = roh
+                formular = forms.CustomUserCreationForm(daten)
+                self.assertTrue(formular.is_valid(), formular.errors)
+                with mock.patch(_MAIL):
+                    konto = formular.save()
+                self.assertEqual(UserProfile.objects.get(user=konto).land, 'Deutschland')
+
+    def test_ein_eingetragenes_land_bleibt_erhalten(self):
+        formular = forms.CustomUserCreationForm(dict(REGISTRIERUNG, land='Österreich'))
+        self.assertTrue(formular.is_valid(), formular.errors)
+        with mock.patch(_MAIL):
+            konto = formular.save()
+        self.assertEqual(UserProfile.objects.get(user=konto).land, 'Österreich')
 
     def test_das_profilformular_schreibt_name_und_adresse_ins_benutzerkonto(self):
         """Name und E-Mail stehen im ``User``, nicht im Profil – ohne das
@@ -314,3 +344,21 @@ class AnmeldesperreTest(LuviqTestCase):
         for _ in range(settings.AXES_FAILURE_LIMIT - 1):
             self.assertEqual(self.anmelden('kundin', 'falsch').status_code, 200)
         self.assertEqual(self.anmelden('kundin', PASSWORT).status_code, 302)
+
+
+    def test_die_sperre_zaehlt_die_adresse_hinter_dem_proxy_nicht_die_des_proxys(self):
+        """Verhindert, dass hinter Railways Proxy (``REMOTE_ADDR`` ist immer
+        dessen Adresse) zehn Fehlversuche von irgendwoher einen Benutzernamen
+        für alle sperren. Gezählt wird der letzte ``X-Forwarded-For``-Eintrag
+        (``AXES_CLIENT_IP_CALLABLE``, EIG72)."""
+        self.assertEqual(settings.AXES_CLIENT_IP_CALLABLE, 'shop1.views._helpers._client_ip')
+        for _ in range(settings.AXES_FAILURE_LIMIT):
+            self.sende('/login/', {'username': 'kundin', 'password': 'falsch'},
+                       HTTP_X_FORWARDED_FOR='198.51.100.7')
+        gesperrt = self.sende('/login/', {'username': 'kundin', 'password': PASSWORT},
+                              HTTP_X_FORWARDED_FOR='198.51.100.7')
+        self.assertEqual(gesperrt.status_code, getattr(settings, 'AXES_HTTP_RESPONSE_CODE', 429))
+
+        andere = self.sende('/login/', {'username': 'kundin', 'password': PASSWORT},
+                            HTTP_X_FORWARDED_FOR='203.0.113.9')
+        self.assertEqual(andere.status_code, 302)

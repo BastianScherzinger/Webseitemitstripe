@@ -153,6 +153,11 @@ AXES_LOCKOUT_TEMPLATE = 'shop1/lockout.html'
 AXES_RESET_ON_SUCCESS = True
 # Sperre nur wenn GLEICHER Username + GLEICHE IP fehlschlägt (nicht nur IP)
 AXES_LOCKOUT_PARAMETERS = [['username', 'ip_address']]
+# Hinter Railways Proxy ist ``REMOTE_ADDR`` die Adresse des Proxys, nicht die
+# der Besucherin (EIG72): ohne diese Zeile sperrten zehn Fehlversuche von
+# irgendwoher den Benutzernamen für alle. Dieselbe Auflösung wie die Drosselung
+# der Formulare (letzter ``X-Forwarded-For``-Eintrag, vom Proxy selbst gesehen).
+AXES_CLIENT_IP_CALLABLE = 'shop1.views._helpers._client_ip'
 
 # ═══ URLS / TEMPLATES ═══
 

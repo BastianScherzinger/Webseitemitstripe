@@ -60,10 +60,13 @@ def _get_or_create_cart(user):
     return cart
 
 
-# offen-ok: keine View, keine URL – Hilfsfunktion, die login() erst nach
-# erfolgreicher Anmeldung mit dem bereits angemeldeten Benutzer aufruft.
+# Heute ohne Wirkung (EIG92, 02.10.2026): ``request.session['warenkorb']``
+# schreibt keine View mehr – der Warenkorb liegt in ``Cart``/``CartItem``. Die
+# Übernahme bleibt als Haken für einen späteren Gast-Warenkorb und ist
+# getestet (``test_warenkorb``); ``login()`` ruft sie auf, sie tut dann nichts.
+# offen-ok: keine View, keine URL – Hilfsfunktion, die login() erst nach der Anmeldung aufruft
 def _sync_session_to_db(request, user):
-    """Synct Session-Warenkorb in die Datenbank beim Login."""
+    """Übernimmt einen Sitzungs-Warenkorb ins Konto (heute leer, siehe oben)."""
     session_cart = request.session.get('warenkorb', {})
     if not session_cart:
         return
