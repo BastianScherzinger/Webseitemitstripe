@@ -53,7 +53,7 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 02.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-02e) — **Gesamtstand 96,5 von 100**, Reifegrad „Referenz“. 337 von 380 Regeln an 19 URLs und 202 Dateien (41.797 Zeilen) geprüft.
+**Messung vom 02.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-02e) — **Gesamtstand 96,5 von 100**, Reifegrad „Referenz“. 337 von 380 Regeln an 19 URLs und 202 Dateien (41.782 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
@@ -74,7 +74,7 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 
 Keine Sperre greift.
 
-Quelltext: 202 Dateien, **0 Befunde**, davon 0 kritisch und 0 wichtig.
+Quelltext: 202 Dateien, **1 Befunde**, davon 0 kritisch und 0 wichtig.
 
 Kritische Befunde:
 
