@@ -171,10 +171,6 @@ def doppelt_abgeschickt(email, betreff, nachricht):
     return not cache.add(_doppelt_schluessel(email, betreff, nachricht), 1, DOPPELT_FENSTER)
 
 
-class _MailObergrenze(Exception):
-    """Interner Abbruch: die Mail-Obergrenze ist erreicht, es wird nur gespeichert."""
-
-
 # offen-ok: das Kontaktformular richtet sich an Besucher ohne Konto. Geschrieben
 # wird nur eine KontaktAnfrage (MW18), und erst nach Drosselung je IP,
 # Feldprüfung (kontakt_fehler), Spamschutz und Doppelsperre.
@@ -193,104 +189,119 @@ def kontakt(request):
         # .strip(): ohne das zaehlt ein Feld, in dem nur ein Leerzeichen steht,
         # als ausgefuellt – der billigste Weg, das Formular mit Leermeldungen
         # zu fluten.
-        name = request.POST.get('name', '').strip()
-        email = request.POST.get('email', '').strip()
-        betreff = request.POST.get('betreff', '').strip()
-        nachricht = request.POST.get('nachricht', '').strip()
-        werte = {'name': name, 'email': email, 'betreff': betreff, 'nachricht': nachricht}
+        werte = {feld: request.POST.get(feld, '').strip()
+                 for feld in ('name', 'email', 'betreff', 'nachricht')}
 
         # Drosselung je IP-Adresse (FO09) vor jeder Prüfung: auch eine
         # Schleife ungültiger Anfragen kostet Rechenzeit.
         if zu_viele_anfragen(request, 'kontakt'):
-            return render(request, 'shop1/kontakt.html', {
-                'formzeit': spamschutz.zeitstempel(),
-                'feld_falle': spamschutz.FELD_FALLE,
-                'werte': werte,
-                'fehler': 'Du hast gerade mehrere Nachrichten geschickt. '
-                          'Bitte versuche es in einer Viertelstunde noch einmal.',
-            }, status=429)
+            return _kontakt_seite(request, werte,
+                                  'Du hast gerade mehrere Nachrichten geschickt. '
+                                  'Bitte versuche es in einer Viertelstunde noch einmal.',
+                                  status=429)
 
-        fehler = kontakt_fehler(name, email, betreff, nachricht)
+        fehler = kontakt_fehler(werte['name'], werte['email'], werte['betreff'], werte['nachricht'])
         if fehler is None:
-            # Bot-Spam still verwerfen: dieselbe Bestätigung, keine Mail
-            # (shop1/spamschutz.py, Anlass 16.09.2026).
-            punkte, gruende = spamschutz.bewerte(request.POST)
-            if punkte >= spamschutz.SCHWELLE:
-                _log.warning('Kontaktformular: Spam verworfen (%s: %s)',
-                             punkte, ','.join(gruende))
-                return redirect('kontakt_danke')
-            # Doppeltes Absenden (FO03): dieselbe Bestätigung, aber nur eine Mail.
-            if doppelt_abgeschickt(email, betreff, nachricht):
-                _log.info('Kontaktformular: doppelt abgeschickte Anfrage zusammengeführt')
-                return redirect('kontakt_danke')
-            safe_betreff = betreff.replace('\r', '').replace('\n', ' ')
-            safe_name = name.replace('\r', '').replace('\n', ' ')
-            safe_email = email.replace('\r', '').replace('\n', ' ')
-            subject = f"Kontaktformular: {safe_betreff}"
-            message = f"Neue Nachricht von {safe_name} ({safe_email}):\n\n{nachricht}"
-            recipient = os.getenv('ADMIN_EMAIL', settings.DEFAULT_FROM_EMAIL)
-            # Erst speichern, dann mailen (MW18): scheitert der Versand, steht
-            # die Anfrage trotzdem in der Verwaltung (Kontaktanfragen).
-            try:
-                with transaction.atomic():
-                    anfrage = KontaktAnfrage.objects.create(
-                        name=name, email=email, betreff=betreff, nachricht=nachricht)
-            except DatabaseError:
-                _log.exception('Kontaktformular: Anfrage nicht gespeichert')
-                anfrage = None
-            felder = [('Name', safe_name), ('E-Mail', safe_email, 'mail'), ('Betreff', safe_betreff)]
-            # Mail-Obergrenze je Stunde und Tag (Missbrauchsschutz): darüber steht
-            # die Anfrage gespeichert im Panel, nur die Mails entfallen.
-            mail_erlaubt = spamschutz.mail_budget_ok('kontakt')
-            try:
-                if not mail_erlaubt:
-                    raise _MailObergrenze()
-                # reply_to (MW21): „Antworten“ im Postfach der Betreiberin geht
-                # an den Anfragenden, nicht an die eigene Versandadresse.
-                # HTML-Teil gestaltet (26.09.2026), Textteil unverändert.
-                subject, html, message = mails.anfrage_an_luisa(
-                    art='Kontaktanfrage', betreff=subject, felder=felder, text=message,
-                    antwort_an=safe_email, langtext_titel='Nachricht', langtext=nachricht,
-                    objekt=anfrage)
-                send_brevo_email(subject, html, recipient, recipient_name="Shop Admin", text_content=message,
-                                 reply_to=safe_email,
-                                 danach=mail_ergebnis_vermerken(KontaktAnfrage, anfrage.pk if anfrage else None))
-            except _MailObergrenze:
-                gestartet = False
-            except Exception:
-                _log.exception('Kontaktformular: Mailversand nicht gestartet')
-                gestartet = False
-            else:
-                gestartet = True
-                if anfrage is not None:
-                    try:
-                        KontaktAnfrage.objects.filter(pk=anfrage.pk).update(mail_gestartet=True)
-                    except DatabaseError:
-                        _log.exception('Kontaktformular: Versandvermerk nicht gespeichert')
-            # Eigene Kopie an die Webagentur (26.09.2026) – wirft nie, ändert
-            # nichts an Speichern, Mail an Luisa oder Antwort an den Besucher.
-            if mail_erlaubt:
-                mails.betreiber_kopie(
-                    art='Kontaktanfrage', name=safe_name, felder=felder, antwort_an=safe_email,
-                    langtext_titel='Nachricht', langtext=nachricht, objekt=anfrage,
-                    gespeichert=anfrage is not None, admin_mail=gestartet, schon=[recipient])
-            if gestartet or anfrage is not None:
-                # Weiterleitung auf eine eigene Adresse statt einer Meldung auf
-                # derselben Seite (KV07): nur so ist ein abgeschicktes Formular
-                # als Seitenaufruf zählbar, und ein Neuladen schickt es nicht
-                # ein zweites Mal ab.
-                return redirect('kontakt_danke')
-            # Weder gespeichert noch versandt: nicht angenommen, ein erneuter
-            # Versuch darf nicht als Doppel gelten.
-            cache.delete(_doppelt_schluessel(email, betreff, nachricht))
+            antwort = _kontakt_annehmen(request, **werte)
+            if antwort is not None:
+                return antwort
             fehler = 'Entschuldigung, es gab ein Problem beim Senden deiner Nachricht.'
 
+    return _kontakt_seite(request, werte, fehler)
+
+
+def _kontakt_seite(request, werte, fehler, status=200):
+    """Die Kontaktseite mit Spamschutz-Feldern, dem Getippten und einem Fehlertext."""
     return render(request, 'shop1/kontakt.html', {
         'formzeit': spamschutz.zeitstempel(),
         'feld_falle': spamschutz.FELD_FALLE,
         'werte': werte,
         'fehler': fehler,
-    })
+    }, status=status)
+
+
+def _kontakt_annehmen(request, name, email, betreff, nachricht):
+    """Geprüfte Anfrage annehmen: Weiterleitung auf die Danke-Seite, oder ``None``,
+    wenn sie weder gespeichert noch versandt werden konnte."""
+    # Bot-Spam still verwerfen: dieselbe Bestätigung, keine Mail
+    # (shop1/spamschutz.py, Anlass 16.09.2026).
+    punkte, gruende = spamschutz.bewerte(request.POST)
+    if punkte >= spamschutz.SCHWELLE:
+        _log.warning('Kontaktformular: Spam verworfen (%s: %s)',
+                     punkte, ','.join(gruende))
+        return redirect('kontakt_danke')
+    # Doppeltes Absenden (FO03): dieselbe Bestätigung, aber nur eine Mail.
+    if doppelt_abgeschickt(email, betreff, nachricht):
+        _log.info('Kontaktformular: doppelt abgeschickte Anfrage zusammengeführt')
+        return redirect('kontakt_danke')
+    safe_betreff = betreff.replace('\r', '').replace('\n', ' ')
+    safe_name = name.replace('\r', '').replace('\n', ' ')
+    safe_email = email.replace('\r', '').replace('\n', ' ')
+    recipient = os.getenv('ADMIN_EMAIL', settings.DEFAULT_FROM_EMAIL)
+    # Erst speichern, dann mailen (MW18): scheitert der Versand, steht
+    # die Anfrage trotzdem in der Verwaltung (Kontaktanfragen).
+    anfrage = _kontakt_speichern(name, email, betreff, nachricht)
+    felder = [('Name', safe_name), ('E-Mail', safe_email, 'mail'), ('Betreff', safe_betreff)]
+    # Mail-Obergrenze je Stunde und Tag (Missbrauchsschutz): darüber steht
+    # die Anfrage gespeichert im Panel, nur die Mails entfallen.
+    mail_erlaubt = spamschutz.mail_budget_ok('kontakt')
+    gestartet = mail_erlaubt and _kontakt_mail(
+        anfrage, felder, recipient, safe_name, safe_email, safe_betreff, nachricht)
+    # Eigene Kopie an die Webagentur (26.09.2026) – wirft nie, ändert
+    # nichts an Speichern, Mail an Luisa oder Antwort an den Besucher.
+    if mail_erlaubt:
+        mails.betreiber_kopie(
+            art='Kontaktanfrage', name=safe_name, felder=felder, antwort_an=safe_email,
+            langtext_titel='Nachricht', langtext=nachricht, objekt=anfrage,
+            gespeichert=anfrage is not None, admin_mail=gestartet, schon=[recipient])
+    if gestartet or anfrage is not None:
+        # Weiterleitung auf eine eigene Adresse statt einer Meldung auf
+        # derselben Seite (KV07): nur so ist ein abgeschicktes Formular
+        # als Seitenaufruf zählbar, und ein Neuladen schickt es nicht
+        # ein zweites Mal ab.
+        return redirect('kontakt_danke')
+    # Weder gespeichert noch versandt: nicht angenommen, ein erneuter
+    # Versuch darf nicht als Doppel gelten.
+    cache.delete(_doppelt_schluessel(email, betreff, nachricht))
+    return None
+
+
+def _kontakt_speichern(name, email, betreff, nachricht):
+    """Die Anfrage als ``KontaktAnfrage`` speichern; ``None``, wenn die Datenbank scheitert."""
+    try:
+        with transaction.atomic():
+            return KontaktAnfrage.objects.create(
+                name=name, email=email, betreff=betreff, nachricht=nachricht)
+    except DatabaseError:
+        _log.exception('Kontaktformular: Anfrage nicht gespeichert')
+        return None
+
+
+def _kontakt_mail(anfrage, felder, recipient, safe_name, safe_email, safe_betreff, nachricht):
+    """Startet die Mail an Luisa; ``True``, wenn der Versand gestartet ist."""
+    subject = f"Kontaktformular: {safe_betreff}"
+    message = f"Neue Nachricht von {safe_name} ({safe_email}):\n\n{nachricht}"
+    try:
+        # reply_to (MW21): „Antworten“ im Postfach der Betreiberin geht
+        # an den Anfragenden, nicht an die eigene Versandadresse.
+        # HTML-Teil gestaltet (26.09.2026), Textteil unverändert.
+        subject, html, message = mails.anfrage_an_luisa(
+            art='Kontaktanfrage', betreff=subject, felder=felder, text=message,
+            antwort_an=safe_email, langtext_titel='Nachricht', langtext=nachricht,
+            objekt=anfrage)
+        send_brevo_email(subject, html, recipient, recipient_name="Shop Admin", text_content=message,
+                         reply_to=safe_email,
+                         danach=mail_ergebnis_vermerken(KontaktAnfrage,
+                                                        anfrage.pk if anfrage else None))
+    except Exception:
+        _log.exception('Kontaktformular: Mailversand nicht gestartet')
+        return False
+    if anfrage is not None:
+        try:
+            KontaktAnfrage.objects.filter(pk=anfrage.pk).update(mail_gestartet=True)
+        except DatabaseError:
+            _log.exception('Kontaktformular: Versandvermerk nicht gespeichert')
+    return True
 
 
 @never_cache
