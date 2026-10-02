@@ -1,11 +1,11 @@
 ---
 bereich: technik
 titel: Technik, Hosting und Aufbau
-stand: 2026-10-01
+stand: 2026-10-02
 status: teilweise
 fortschritt: 86
-zusammenfassung: Stand 01.10.2026: alle Zweige in main (36c0741, live); Django 5.2.17, Mail über Gmail-SMTP (seit 27.09.), Verkaufsschalter aus, Fehler-Monitoring per AdminEmailHandler (VL19), CSP scharf, Apex-301 aktiv; Missbrauchsschutz-Tabelle (§3a) und Offen-Liste gegen Code und Live-Seite erneuert.
-offen: 14
+zusammenfassung: Stand 02.10.2026: Sammelzweig fix/2026-10-02-luviq-fertig lokal fertig (nicht gepusht): Alpine.js entfernt, CSP ohne unsafe-eval, Permissions-Policy, /health/ und security.txt, Railway-Adresse per 301, Feld Produkt.vergeben und Bildmaße (Migrationen 0025–0027); Tests nach collectstatic und ohne DEBUG. Stand 01.10.2026: alle Zweige in main (36c0741, live); Django 5.2.17, Mail über Gmail-SMTP (seit 27.09.), Verkaufsschalter aus, Fehler-Monitoring per AdminEmailHandler (VL19), CSP scharf, Apex-301 aktiv; Missbrauchsschutz-Tabelle (§3a) und Offen-Liste gegen Code und Live-Seite erneuert.
+offen: 11
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, paypal_sandbox_tutorial.md, start.sh, Dockerfile, requirements.txt
 ---
 
@@ -32,7 +32,7 @@ Detailquelle bleibt [`../CLAUDE.md`](../CLAUDE.md) (Architektur, Fallstricke) un
 | Login-Schutz | django-axes: 10 Fehlversuche je Benutzername+IP, 1 h Sperre, eigenes Lockout-Template | `settings.py` (`AXES_*`) |
 | Zahlung | PayPal (JS-SDK in `payment.html`, Capture in `views/checkout.py`) und Vorab-Überweisung (`BANK_IBAN`, `BANK_INHABER`) | `DOCUMENTATION.md` §3 |
 | CSS | Tailwind-CLI aus `tailwind_input.css` nach `shop1/static/shop1/tailwind.css`; **kein `package.json`, kein npm-Build im Repo**; dazu `shop1/static/shop1/style.css` | `CLAUDE.md`, `tailwind.config.js` |
-| JS | **Stand 01.10.2026: GSAP und Three.js stehen in keiner Vorlage mehr (Umbau vom 19.09.2026); Alpine.js nur noch auf Seiten mit altem Markup (`{% block alpine %}`: Warenkorb, Konto, Gästebuch, Admin).** Frühere Fassung: Alpine.js 3.14.8 + `@alpinejs/intersect` (base.html), GSAP 3.12.5 (Startseite), Three.js 0.158.0 (nur Desktop, ohne `prefers-reduced-motion`, nachgeladen) — alle von `cdn.jsdelivr.net`, **Zweig SI17: alle vier mit `integrity` (SHA-256 aus der jsDelivr-Dateiauskunft) und `crossorigin="anonymous"`; wer eine Fassung hochzieht, muss den Hash mitziehen, sonst lädt das Skript nicht mehr**. Alpine (Standardfassung) braucht `'unsafe-eval'` in der CSP. **Zweig SI09:** eigene Inline-Skripte nur mit `nonce="{{ csp_nonce }}"`, keine `on…`-Attribute mehr — deren Aufgaben übernimmt ein Skript im `<head>` von `base.html` über `data-bestaetigen`, `data-bei-fehler-ausblenden`, `data-auto-absenden`, `data-schrift-nachladen`. **Fünftes Ersatzattribut seit dem 18.09.2026 (`RE17`, `d58a96c`): `data-src`** an den beiden Google-Maps-Rahmen in `_reviews_map.html` — ausgewertet nicht im `<head>`, sondern im Skript am Körperende von `base.html` (`:513` ff.), das den Platzhalterknopf „Karte laden" erzeugt und `src` erst im Klick setzt. Ein Test in `test_einstellungen` zählt die Ersatzattribute und verlangt jedes davon im Skripttext von `base.html`. **Selbst ausliefern (`PF31`) ist am 17.09.2026 als nicht möglich beendet** — die vier Dateien liegen nicht im Projekt, unter `shop1/static/` gibt es keine `.js`-Datei ([80-AUFGABEN.md](80-AUFGABEN.md), Bewertungsblock) | `templates/base.html`, `index.html` |
+| JS | **Stand 02.10.2026: kein Fremdskript mehr — Alpine.js ist entfernt (`3540c1a`), GSAP und Three.js seit dem Umbau vom 19.09.2026; Chart.js liegt für das Admin-Panel im Projekt (Hash-Test in `test_betrieb`).** Früher: Frühere Fassung: Alpine.js 3.14.8 + `@alpinejs/intersect` (base.html), GSAP 3.12.5 (Startseite), Three.js 0.158.0 (nur Desktop, ohne `prefers-reduced-motion`, nachgeladen) — alle von `cdn.jsdelivr.net`, **Zweig SI17: alle vier mit `integrity` (SHA-256 aus der jsDelivr-Dateiauskunft) und `crossorigin="anonymous"`; wer eine Fassung hochzieht, muss den Hash mitziehen, sonst lädt das Skript nicht mehr**. Alpine (Standardfassung) braucht `'unsafe-eval'` in der CSP. **Zweig SI09:** eigene Inline-Skripte nur mit `nonce="{{ csp_nonce }}"`, keine `on…`-Attribute mehr — deren Aufgaben übernimmt ein Skript im `<head>` von `base.html` über `data-bestaetigen`, `data-bei-fehler-ausblenden`, `data-auto-absenden`, `data-schrift-nachladen`. **Fünftes Ersatzattribut seit dem 18.09.2026 (`RE17`, `d58a96c`): `data-src`** an den beiden Google-Maps-Rahmen in `_reviews_map.html` — ausgewertet nicht im `<head>`, sondern im Skript am Körperende von `base.html` (`:513` ff.), das den Platzhalterknopf „Karte laden" erzeugt und `src` erst im Klick setzt. Ein Test in `test_einstellungen` zählt die Ersatzattribute und verlangt jedes davon im Skripttext von `base.html`. **Selbst ausliefern (`PF31`) ist am 17.09.2026 als nicht möglich beendet** — die vier Dateien liegen nicht im Projekt, unter `shop1/static/` gibt es keine `.js`-Datei ([80-AUFGABEN.md](80-AUFGABEN.md), Bewertungsblock) | `templates/base.html`, `index.html` |
 | Cache | `LocMemCache` (Zweig ausdrücklich: `LOCATION luviq`, `MAX_ENTRIES 300`); Werbeliste 60 s; Zweig: `sitemap.xml`/`llms.txt` 15 min | `settings.py`, `LOGBUCH.md` Schritt 33 |
 | Zeitzone / Sprache | `Europe/Berlin`, `USE_TZ=True`, `de-de` | `settings.py` |
 
@@ -370,7 +370,7 @@ WebseiteMAIN/
 │   ├── tests/          17 Module
 │   ├── templates/shop1/  Seiten, legal/, wissen/, admin/, teile/ (archiv_karte.html, wissen_article_ld.html)
 │   └── static/shop1/   style.css, tailwind.css, images/ (WebP in mehreren Breiten, luviq.css, fonts/)
-├── templates/base.html Navigation, Fusszeile, JSON-LD-Graph, Schriften, Alpine
+├── templates/base.html Navigation, Fusszeile, JSON-LD-Graph, Schriften
 ├── start.sh · Dockerfile · requirements.txt · requirements.lock · tailwind.config.js · tailwind_input.css
 ├── .github/workflows/pruefungen.yml   CI bei jedem Push und Pull Request (Python 3.12, collectstatic, manage.py test)
 ├── CLAUDE.md · DOCUMENTATION.md · GOOGLE_SEO_GUIDE.md · LOGBUCH.md · paypal_sandbox_tutorial.md
@@ -413,16 +413,15 @@ Code-Audit (Messung 02.09.2026, lokaler Ordner = Zweig): 114 Dateien, 23.859 Zei
 
 ## Offen
 
+**Stand 02.10.2026 (Sammelzweig `fix/2026-10-02-luviq-fertig`, lokal geprüft, nicht gepusht):** neu sind `/health/` (`views/betrieb.py`, 200 bzw. 503), `/.well-known/security.txt` (Ablauf aus `SECURITY_TXT_EXPIRES`), der 301 von `*.up.railway.app` auf den kanonischen Host, die `Permissions-Policy`, der Abmeldelink im Newsletter (`newsletter_abmelden`), das Feld `Produkt.vergeben` (Migrationen 0025/0026) und die Bildmaße (0027, Befehl `bildmasse_nachtragen`). `start.sh` fährt Migrationen und `collectstatic` beim Start. Die Testsuite läuft nur nach `collectstatic` und **ohne** `DEBUG=True` (`SECRET_KEY=lokal-nur-test python manage.py test shop1 --noinput`); neue Testdateien u. a. `test_betrieb`, `test_betriebsbefehle`, `test_barrierefreiheit`, `test_ladezeit`.
+
 Stand 01.10.2026, gegen Code und Live-Seite geprüft. Erledigte Merge-Aufgaben früherer Fassungen sind entfernt (alle Zweige sind in `main`); der Verlauf steht in [80-AUFGABEN.md](80-AUFGABEN.md) „Erledigt“ und im `LOGBUCH.md`.
 
 | Punkt | Beleg | Regel |
 |---|---|---|
-| Fremdskripte selbst ausliefern: Alpine.js und `@alpinejs/intersect` (nur auf Seiten mit altem Markup) und Chart.js im Admin-Panel kommen von `cdn.jsdelivr.net` (GSAP und Three.js sind seit dem Umbau vom 19.09.2026 nicht mehr eingebunden) | CSP-Kopfzeile live nennt `https://cdn.jsdelivr.net` (01.10.2026); `admin/werbung_list.html:365` lädt Chart.js ohne `integrity`; im Projekt liegt keine `.js`-Datei unter `shop1/static/` | PF31, SI17 |
-| `'unsafe-eval'` aus `script-src` (Alpine-CSP-Fassung) und `'unsafe-inline'` aus `style-src` | beides steht in der CSP-Kopfzeile live (01.10.2026); nur mit Browserprüfung machbar | SI09 |
-| `Permissions-Policy`-Kopfzeile fehlt | in den Antwortköpfen von `/` nicht vorhanden (01.10.2026) | SI07, VL04 |
-| Gemeinsamer Drosselzähler über alle Gunicorn-Worker (Redis oder Datenbank-Cache) und eine Mail-Obergrenze je Tag | Zähler und Merker liegen im `LocMemCache` je Prozess | FO09, FO03 |
+| `'unsafe-inline'` aus `style-src` (`'unsafe-eval'` ist seit `3540c1a` weg, Alpine.js entfernt) | steht in der CSP-Kopfzeile (`style="…"`-Attribute, `<style>`-Blöcke, PayPal-SDK) | SI09 |
+| Gemeinsamer Drosselzähler über alle Gunicorn-Worker (Redis oder Datenbank-Cache) (die Mail-Obergrenze je Stunde und Tag gibt es, aber ebenfalls je Prozess) | Zähler und Merker liegen im `LocMemCache` je Prozess | FO09, FO03 |
 | `INDEXNOW_KEY` in Railway setzen oder bewusst aus lassen | `/indexnow-schluessel.txt` antwortet live mit 404 (01.10.2026), also ist IndexNow aus | PJ13 |
-| `CustomUserCreationForm.save()` setzt `land` bei leerem Feld auf `''` statt „Deutschland“ | `shop1/forms.py:123` (`.get('land', 'Deutschland')` greift nur bei fehlendem Schlüssel) | — |
 | `STRIPE_*`-Variablen in Railway entfernen | Railway-Inventur 26.09.2026: vorhanden, kein Code liest sie; Namen nicht einzeln dokumentiert | — |
 | Eigene Datenbank für Luviq statt der geteilten Supabase-Datenbank „A“ | Railway-Inventur 26.09.2026, Befund K1 (hoch): dieselben Tabellen `auth_user`, `django_migrations`, `django_session` wie weitere betreute Seiten; Plan: `Webagentur Scherzinger\Betrieb-Railway\TRENNUNGSPLAN.md` | — |
 | Geteilte Zugangswerte (PayPal, SMTP-Zugang, Admin-Passwort) mit stillgelegten Diensten trennen | Railway-Inventur 26.09.2026, Befund K7 (hoch) | — |

@@ -1,15 +1,17 @@
 ---
 bereich: design
 titel: Design und Gestaltungslinie
-stand: 2026-10-01
+stand: 2026-10-02
 status: teilweise
 fortschritt: 91
-zusammenfassung: Stand 01.10.2026: Linie „Nachtausgabe“ (seit 19.09.2026, luviq.css, ein Akzent #C8763F, selbst gehostete Schriften, Radius 0) ist live; Seitenaufbau, Farben/Schriften und Offen-Liste gegen die Vorlagen und die Live-Seite erneuert, die frühere Dunkelbraun-Gold-Linie steht nur noch als Geschichte da.
+zusammenfassung: Stand 02.10.2026: Alpine.js entfernt (Menü als details-Element, Einblenden ohne x-intersect), vier Schriftdateien, Critical CSS über tools/kritisches_css.py, Überschriften als h2 mit unveränderter Optik; Stand 01.10.2026: Linie „Nachtausgabe“ (seit 19.09.2026, luviq.css, ein Akzent #C8763F, selbst gehostete Schriften, Radius 0) ist live; Seitenaufbau, Farben/Schriften und Offen-Liste gegen die Vorlagen und die Live-Seite erneuert, die frühere Dunkelbraun-Gold-Linie steht nur noch als Geschichte da.
 offen: 6
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, shop1/static/shop1/style.css, tailwind.config.js, templates/base.html
 ---
 
 # Design — Luviq Universe
+
+> **Stand 02.10.2026 (Sammelzweig `fix/2026-10-02-luviq-fertig`, lokal geprüft, nicht gepusht):** Alpine.js ist entfernt; wo hier noch `x-intersect` oder Alpine steht, ist das die Fassung vor dem 02.10.2026 — das Einblenden läuft über `shop1/static/shop1/luviq.js`, das Menü über `<details>`. Schriften: vier Dateien unter `shop1/static/shop1/fonts/` (Cormorant kursiv, JetBrains Mono, Schibsted latin und latin-ext). Nach jeder Änderung an `luviq.css` `python tools/kritisches_css.py` laufen lassen (Critical CSS). Die Designwache `shop1/tests/aufbau_referenz.json` wurde nur für die bewusst geänderten Seiten neu erzeugt.
 
 *Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Barrierefreiheit** des Laufs vom 02.09.2026 (Regelstand `2026-09-02a`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
 
@@ -116,7 +118,7 @@ bleibt damit offen ([80-AUFGABEN.md](80-AUFGABEN.md) → Offen Nr. 3). Fallback 
 ### Seitenaufbau der früheren Linie (bis 18.09.2026, nur Geschichte)
 
 **Rahmen (`templates/base.html`):** klebrige Glas-Navigation (`Home · Produkte · Gästebuch ·
-Kontakt · Über uns · Login · Registrieren`, mobil per Alpine-Menü), Fusszeile mit zwei Linkgruppen
+Kontakt · Über uns · Login · Registrieren`, mobil als `<details class="lv-menue">`, seit 02.10.2026 ohne Alpine), Fusszeile mit zwei Linkgruppen
 (`Produkte · Kontakt · Über uns · Liefergebiet` / `Datenschutz · Impressum · AGB`), zusätzlich eine
 **mobile Bottom-Navigation** (`aria-label="Mobile Navigation"`). Kein Link auf `/wissen/` (Plan
 des Laufs 4, bewusst verworfen). Keine Telefonnummer im Rahmen — es gibt keine belegte Nummer.

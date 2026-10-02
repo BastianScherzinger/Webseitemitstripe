@@ -1,16 +1,11 @@
 ---
 bereich: performance
 titel: Performance und Core Web Vitals
-stand: 2026-10-01
-stand: 2026-09-18
+stand: 2026-10-02
 status: teilweise
 fortschritt: 99
-zusammenfassung: Stand 01.10.2026: PageSpeed mobil 95–99, Desktop 100, Serverzeit 1,6 ms, CLS 0,00–0,05 (Messblock vom 01.10.2026); WebP, GZip, Cache, gthread und die Cloudinary-.webp-Endung sind in main und live. Offen sind Bildgrößen und -attribute, sechs statt vier Schriftdateien und die Fremdskripte (Alpine, Chart.js).
-offen: 8
-pagespeed_mobil: 98
-fortschritt: 70
-zusammenfassung: Der LCP der Produktseite ist der teuerste Posten der Seite (Cloudinary-Bilder ohne srcset). Paket 267 (18.09.2026, Zweig sofort/2026-09-18-kv11-und-2-weitere, 1737e74 und 5515bf3, nicht gemergt) bringt zwei Tempomassnahmen, beide anders eingebaut als geraten — PF15: der Filter cloud lässt jede Cloudinary-Adresse auf .webp enden, der Rückfall von f_auto ist damit WebP statt JPEG/PNG (kein picture-Element wegen der Designwache); PF26: start.sh packt die statischen Dateien nach collectstatic mit whitenoise.compress, sodass tailwind.css und style.css gzip-gepackt ausgehen (kein eingebettetes kritisches CSS). Ob der erste Inhalt mobil damit unter 1,8 s fällt, zeigt erst die Messung nach dem Deploy. PF31 (Skripte nicht von fremdem CDN) ist am 17.09.2026 in Paket 227 als nicht möglich beendet — Alpine, @alpinejs/intersect, GSAP und Three.js kommen weiter von cdn.jsdelivr.net, weil die Dateien nicht im Projekt liegen und der Lauf sie nicht holen konnte. Die gemessenen Werte stehen im erzeugten Block unter „Messwerte".
-offen: 9
+zusammenfassung: Stand 02.10.2026 (lokal, nicht gepusht): Produktbilder in mehreren Größen mit srcset, LCP-Bild mit fetchpriority und Vorladen, Bildmaße (Migration 0027), vier Schriftdateien, Critical CSS, Alpine.js entfernt. Stand 01.10.2026: PageSpeed mobil 95–99, Desktop 100, Serverzeit 1,6 ms, CLS 0,00–0,05 (Messblock vom 01.10.2026); WebP, GZip, Cache, gthread und die Cloudinary-.webp-Endung sind in main und live. Offen sind Bildgrößen und -attribute, sechs statt vier Schriftdateien und die Fremdskripte (Alpine, Chart.js).
+offen: 3
 pagespeed_mobil: 98
 pagespeed_desktop: 100
 antwortzeit_ms: 2
@@ -148,19 +143,17 @@ sind — die Zahlen dazu stehen im Block oben:
 | `PF26` (anders eingebaut) | `start.sh` packt die statischen Dateien nach `collectstatic` mit `python -m whitenoise.compress` (gzip). Vorher gingen `tailwind.css` und `style.css`, auf die der erste Inhalt wartet, ungepackt raus, weil `ManifestStaticFilesStorage` keine `.gz` anlegt und WhiteNoise nicht selbst packt. Gepackt sind beide laut Test kleiner als ein Drittel. **Anders als der Rat** (kritisches CSS einbetten): das hiesse Regeln aus den Stildateien in jede Seite zu verschieben, und die Stildateien stehen unter der Designwache des Tors. Tests: `StildateienGepacktTest` in `test_ladezeit`. **Nicht belegt:** ob der erste Inhalt mobil damit unter 1,8 s fällt — das zeigt erst die Messung nach dem Deploy | `5515bf3` |
 
 ## Offen
+
+**Stand 02.10.2026 (Sammelzweig `fix/2026-10-02-luviq-fertig`, lokal geprüft, nicht gepusht):** erledigt und aus der Liste unten entfernt sind `srcset` für Produktbilder, LCP-Bild mit `fetchpriority` und Vorladen, vier Schriftdateien und Alpine.js (entfernt, `3540c1a`) — Pakete L2-B1/L2-B2 (`9402995`). Die lokale Messung zeigt PF15/PF24/PF25/VL15 nur, weil lokal JPGs aus `media/` statt Cloudinary ausgeliefert werden; live erst nach dem Deploy nachmessen. Die zweite, ältere Tabelle weiter unten ist Verlauf.
 Was zu tun ist. Wie weit die genannten Regeln gerade sind und mit welchem Beleg, steht im erzeugten Block unter „Messwerte“ — hier steht keine Messzahl. Stand 01.10.2026; erledigt und entfernt sind die Merge-Aufgaben (Verbesserungslauf 4 und Paket 267 sind live).
 
 Was zu tun ist. Wie weit die genannten Regeln gerade sind und mit welchem Beleg, steht im
 erzeugten Block unter „Messwerte" — hier steht keine Messzahl.
 
 | Punkt | Regel |
-| Produktbilder aus Cloudinary mit `srcset` ausliefern (Cloudinary kann das über Transformationsparameter); das Format ist erledigt | PF16, PF24 |
-| LCP-Bild je Schlüsselseite vorladen und mit `fetchpriority="high"` auszeichnen; zwei von acht Seiten laden ihr erstes Bild lazy (`PF17`, darunter `/produkte/`) und zwei ohne `fetchpriority=high` (`PF18`, darunter `/produkte/` und `/gaestebuch/`) | PF17, PF18, PF19 |
-| Das eine Bild über 300 kB verkleinern (`IMG_4376_fupstq.webp`) und `width`/`height` an den fünf Bildern ohne Maße setzen | PF23, PF25 |
-| Höchstens vier Schriftdateien, die wichtigste vorgeladen — derzeit sechs (je zwei für Cormorant, JetBrains Mono, Schibsted) | PF27 |
-| Alpine.js und `@alpinejs/intersect` selbst ausliefern statt von `cdn.jsdelivr.net` (nur Seiten mit altem Markup: Kontakt, Datenschutz, Gästebuch, Liefergebiet); die vier Bibliotheksdateien liegen nicht im Projekt, am 17.09.2026 (Paket 227) als nicht möglich beendet | PF31 |
+| Das eine Bild über 300 kB verkleinern (`IMG_4376_fupstq.webp`) (`width`/`height` sind seit 02.10.2026 gesetzt, Migration 0027 und Befehl `bildmasse_nachtragen`) | PF23, PF25 |
 | `PageVisit`/`VisitorLog`-Schreibvorgänge aus dem Request nehmen — sie laufen synchron gegen zwei Datenbanken; nicht wegen `PF10`, sondern weil sie bei Last Antwortzeit kosten | — |
-| Critical CSS je Seitentyp inline, Hauptstilblatt asynchron (bewusst nicht gebaut — die Stildateien stehen unter der Designwache) | — |
+| ~~Critical CSS je Seitentyp inline~~ — seit 02.10.2026 gebaut: `tools/kritisches_css.py` erzeugt es aus `luviq.css`; nach jeder Änderung an `luviq.css` neu laufen lassen | PF26 |
 | Nach einer Änderung der Seitenart oder des Verkaufsschalters nachmessen: mit Verkauf kommen Warenkorb und Kasse als neue Seiten hinzu | — |
 |---|---|
 | Zweig nach `main` — WebP, GZip, Cache, gthread und die kleinere Startseite wirken erst dann | PF15, PF16 |

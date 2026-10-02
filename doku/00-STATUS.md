@@ -4,7 +4,7 @@ titel: Stand der Seite
 stand: 2026-10-01
 status: teilweise
 fortschritt: 85
-zusammenfassung: Stand 01.10.2026: main = origin/main = 36c0741 und live (Bild-Sitemap TS19 heute ausgeliefert), alle Arbeitszweige gemergt; Verkauf aus (Marke im Aufbau, kein Gewerbe angemeldet); Gesamtstand der letzten Messung 84,7 von 100. Offen sind Freigaben und Angaben der Betreiberin, kein Code-Rückstau.
+zusammenfassung: Stand 01.10.2026: main = origin/main = 36c0741 und live (Bild-Sitemap TS19 heute ausgeliefert), alle Arbeitszweige gemergt; Verkauf aus (Marke im Aufbau, kein Gewerbe angemeldet); Gesamtstand siehe Messblock weiter unten (vom Werkzeug geschrieben). Offen sind Freigaben und Angaben der Betreiberin, kein Code-Rückstau.
 offen: 4
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 ---
@@ -31,7 +31,7 @@ quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 | **Tests** | `shop1/tests/` mit siebzehn Modulen, 400 `def test_` im Code (gezählt 01.10.2026); Lauf zuletzt in Paket 544 am 28.09.2026: 399 Tests grün. CI: `.github/workflows/pruefungen.yml` |
 | **Zertifikat** | Let's Encrypt, gültig bis **30.11.2026** (geprüft 01.10.2026) |
 | **Verfügbarkeit** | nicht neu erhoben; Railway-Inventur 26.09.2026: 5xx-Quote 7 Tage 4 von 11.785 Anfragen, letzter Deploy SUCCESS. Letzte Uptime-Messung 02.09.2026: 24 h 100 % (1.670 Messungen), 7 Tage 99,92 % |
-| **Gesamtstand** | 84,7 von 100, „Solide“ (Messung 01.10.2026, siehe unten) |
+| **Gesamtstand** | siehe Messblock unten (vom Werkzeug geschrieben, nicht von Hand ändern) |
 
 ## Ampel je Bereich
 
