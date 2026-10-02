@@ -114,6 +114,8 @@
                                 Zahlungspflichtig bestellen
                             </button>
                         </div>
+                        {% comment %}Rechtslinks direkt am Abschluss (EIG117, § 312j Abs. 3 BGB): der Checkout erscheint nur bei aktivem Verkauf.{% endcomment %}
+                        <p class="text-[10px] text-white/40 leading-relaxed text-center">Mit deiner Bestellung gelten unsere <a href="{% url 'agb' %}" class="text-glow-orange hover:underline">AGB mit Widerrufsbelehrung (§ 5)</a> und die <a href="{% url 'datenschutz' %}" class="text-glow-orange hover:underline">Datenschutzerklärung</a>.</p>
                     </form>
                 </div>
             </div>
