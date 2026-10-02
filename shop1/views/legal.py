@@ -154,6 +154,14 @@ def wissen_routen_fuer_llms():
 AUSGABE_CACHE_SEKUNDEN = 60 * 15
 
 
+def _feed_zeile(basis):
+    """Die ``Feed:``-Zeile der llms.txt – leer, solange der Feed keinen Eintrag
+    hat (EIG128: der Feed war leer, die Datei bewarb ihn trotzdem)."""
+    if not freigegebene_beitraege():
+        return []
+    return [f"Feed: {basis}{reverse('wissen_feed')}"]
+
+
 @cache_page(AUSGABE_CACHE_SEKUNDEN)
 def llms_txt(request):
     """Kurzfassung der Seite für Antwortmaschinen (llmstxt.org).
@@ -270,8 +278,9 @@ def llms_txt(request):
         f"Sitemap: {basis}/sitemap.xml",
         # Der Feed (GE32) steht hier, weil llms.txt die Datei ist, die eine
         # Antwortmaschine zuerst liest: ueber ihn erfaehrt sie, was neu ist,
-        # ohne die ganze Seite noch einmal abzulaufen.
-        f"Feed: {basis}{reverse('wissen_feed')}",
+        # ohne die ganze Seite noch einmal abzulaufen. Nur mit mindestens einem
+        # freigegebenen Beitrag (EIG128): ein leerer Feed ist kein Wegweiser.
+        *_feed_zeile(basis),
         # Der Volltext (GE31): der Text der Seiten in einem Abruf.
         f"Volltext: {basis}{reverse('llms_full_txt')}",
     ]
@@ -363,7 +372,7 @@ def _llms_txt_ohne_verkauf(basis):
         f"- [Datenschutzerklaerung]({basis}{reverse('datenschutz')})",
         "",
         f"Sitemap: {basis}/sitemap.xml",
-        f"Feed: {basis}{reverse('wissen_feed')}",
+        *_feed_zeile(basis),
         f"Volltext: {basis}{reverse('llms_full_txt')}",
     ]
     return HttpResponse("\n".join(zeilen) + "\n",

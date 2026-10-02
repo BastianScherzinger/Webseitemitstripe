@@ -237,13 +237,17 @@ class WissenFeed(Feed):
     language = 'de'
 
     def description(self):
-        """Ohne Verkauf ohne Bestellablauf, Widerruf und Konto – diese
-        Beiträge stehen dann nicht im Feed (``freigegebene_beitraege``)."""
-        if verkauf_aktiv():
-            return ('Beiträge zu Bestellablauf, Widerruf, Konto und zur Pflege '
-                    'handbemalter Einzelstücke aus dem Wissensbereich von Luviq Universe.')
-        return ('Beiträge zu Pflege, Upcycling und Größen handbemalter Einzelstücke '
-                'aus dem Wissensbereich von Luviq Universe.')
+        """Nennt nur Beiträge, die der Feed auch führt (EIG128): vorher stand hier
+        „Pflege, Upcycling und Größen“, obwohl genau diese drei Beiträge nicht
+        freigegeben sind und der Feed leer war. Die Titel kommen aus dem Register
+        (``freigegebene_beitraege``), nicht aus einer zweiten Abschrift; ohne
+        freigegebenen Beitrag sagt die Beschreibung das ehrlich."""
+        titel = [b['titel'] for b in freigegebene_beitraege().values()]
+        if not titel:
+            return ('Wissensbereich von Luviq Universe: zurzeit sind keine '
+                    'Beiträge veröffentlicht.')
+        return ('Beiträge aus dem Wissensbereich von Luviq Universe: '
+                + '; '.join(titel) + '.')
 
     def link(self):
         return reverse('wissen')

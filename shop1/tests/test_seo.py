@@ -414,6 +414,32 @@ class FeedTest(LuviqTestCase):
         gehört der Weg hin, auf dem sie erfährt, was neu ist."""
         self.assertIn('/feed/', self.hole('/llms.txt').content.decode())
 
+    def test_die_feedbeschreibung_nennt_nur_beitraege_die_der_feed_fuehrt(self):
+        """EIG128: der Feed beschrieb „Pflege, Upcycling und Größen“, obwohl genau
+        diese Beiträge nicht freigegeben waren. Jetzt stehen die Titel der
+        freigegebenen Beiträge darin – und nur diese."""
+        from ..views.wissen import WISSEN_BEITRAEGE, freigegebene_beitraege
+
+        beschreibung = ElementTree.fromstring(self.antwort.content).find('channel').findtext('description')
+        for slug, beitrag in freigegebene_beitraege().items():
+            self.assertIn(beitrag['titel'], beschreibung)
+        for slug, beitrag in WISSEN_BEITRAEGE.items():
+            if slug not in freigegebene_beitraege():
+                self.assertNotIn(beitrag['titel'], beschreibung)
+
+    @override_settings(VERKAUF_AKTIV=False)
+    def test_ohne_freigegebenen_beitrag_bewirbt_llms_txt_keinen_feed(self):
+        """EIG128: ein leerer Feed ist kein Wegweiser. Ohne Verkauf ist kein Beitrag
+        freigegeben (die drei Kaufweg-Beiträge brauchen den Verkauf, die übrigen
+        die Bestätigung der Betreiberin)."""
+        from ..views.wissen import freigegebene_beitraege
+
+        self.assertEqual(freigegebene_beitraege(), {})
+        self.assertNotIn('Feed:', self.hole('/llms.txt').content.decode())
+        feed = ElementTree.fromstring(self.hole('/feed/').content)
+        self.assertEqual(list(feed.iter('item')), [])
+        self.assertIn('keine', feed.find('channel').findtext('description'))
+
     def test_jede_seite_verlinkt_den_feed_im_kopfbereich(self):
         """Ohne den Verweis im ``<head>`` findet ihn niemand, der ihn nicht
         schon kennt."""

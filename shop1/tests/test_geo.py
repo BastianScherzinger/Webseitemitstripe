@@ -472,6 +472,53 @@ class AntwortCrawlerTest(LuviqTestCase):
         self.assertIn('PayPal oder Vorab-Überweisung', agb)
 
 
+class SchemaBildAdressenTest(LuviqTestCase):
+    """EIG07: das Schema baut keine Bildadresse von Hand am Static-Manifest vorbei.
+
+    ``ManifestStaticFilesStorage`` hängt einen Inhalts-Hash an jede Datei
+    (``logo-luviq.<hash>.jpeg``). Eine von Hand getippte ``/static/…``-Adresse
+    zeigte nach dem nächsten Deploy ins Leere oder auf eine alte Fassung."""
+
+    def test_das_logo_im_schema_traegt_den_manifest_hash(self):
+        knoten = schema_knoten(self.hole('/').content.decode())
+        betrieb = next(k for k in knoten if k.get('@id', '').endswith('/#organization')
+                       and 'logo' in k)
+        for adresse in (betrieb['logo']['url'], betrieb['image']):
+            with self.subTest(adresse=adresse):
+                self.assertRegex(urlsplit(adresse).path,
+                                 r'^/static/shop1/images/logo-luviq\.[0-9a-f]{12}\.jpeg$')
+
+    def test_keine_vorlage_tippt_eine_static_adresse_ins_schema(self):
+        from pathlib import Path
+        from django.conf import settings
+
+        for vorlage in list(Path(settings.BASE_DIR, 'shop1', 'templates').rglob('*.html')) +                 [Path(settings.BASE_DIR, 'templates', 'base.html')]:
+            quelle = vorlage.read_text(encoding='utf-8')
+            for block in _JSONLD.findall(quelle):
+                with self.subTest(vorlage=vorlage.name):
+                    self.assertNotIn('"/static/', block)
+                    self.assertNotIn('/static/shop1/', block.replace("{% static 'shop1/", ''))
+
+
+class UnaufgeloestePlatzhalterTest(LuviqTestCase):
+    """EIG01: in llms.txt und llms-full.txt steht keine ungefüllte Vorlagenvariable
+    und kein Python-``None`` – in beiden Zuständen des Verkaufsschalters."""
+
+    def _pruefe(self):
+        erzeuge_produkt('Bemalter Hoodie')
+        for pfad in ('/llms.txt', '/llms-full.txt'):
+            text = self.hole(pfad).content.decode()
+            with self.subTest(pfad=pfad):
+                self.assertNotRegex(text, r'\{\{|\{%|%\(|None|True|False')
+
+    def test_ohne_verkauf(self):
+        self._pruefe()
+
+    @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
+    def test_mit_verkauf(self):
+        self._pruefe()
+
+
 class BelegteKleidungsartenTest(LuviqTestCase):
     """EIG79: Schema und llms.txt nennen nur Kleidungsarten, die es im Bestand gibt
     (Hoodies, Hose, Jacke) – keine Shirts."""
