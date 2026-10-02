@@ -9,7 +9,8 @@ import re
 from decimal import Decimal
 from html.parser import HTMLParser
 
-from django.test import override_settings
+from django.conf import settings
+from django.test import SimpleTestCase, override_settings
 from django.contrib.auth.models import User
 from django.urls import NoReverseMatch, URLPattern, URLResolver, get_resolver, resolve, reverse
 from django.urls.converters import (
@@ -375,3 +376,35 @@ class AttributSyntaxTest(LuviqTestCase):
             '/shop-admin/users/create/',
             f'/shop-admin/users/{self.besitzerin.id}/edit/',
         ])
+
+
+class DokuWegweiserTest(SimpleTestCase):
+    """``docs/00-INDEX.md`` und ``docs/FALLEN.md`` (VL20): jeder Verweis trifft eine Datei.
+
+    Ein Wegweiser, dessen Links ins Leere laufen, ist schlimmer als keiner. Geprüft
+    werden nur relative Markdown-Links auf Dateien im Projekt (ohne Ankerteil).
+    """
+
+    DATEIEN = ('00-INDEX.md', 'FALLEN.md')
+    LINK = re.compile(r'\]\(([^)#\s]+)(?:#[^)]*)?\)')
+
+    def test_beide_dateien_gibt_es(self):
+        for name in self.DATEIEN:
+            self.assertTrue((settings.BASE_DIR / 'docs' / name).is_file(), name)
+
+    def test_jeder_verweis_trifft_eine_datei(self):
+        docs = settings.BASE_DIR / 'docs'
+        for name in self.DATEIEN:
+            text = (docs / name).read_text(encoding='utf-8')
+            for ziel in self.LINK.findall(text):
+                if ziel.startswith(('http://', 'https://', 'mailto:')):
+                    continue
+                self.assertTrue((docs / ziel).resolve().exists(), f'{name}: {ziel}')
+
+    def test_fallen_tragen_datum_und_beleg(self):
+        text = (settings.BASE_DIR / 'docs' / 'FALLEN.md').read_text(encoding='utf-8')
+        zeilen = [z for z in text.splitlines() if re.match(r'\| 20\d\d-\d\d', z)]
+        self.assertGreaterEqual(len(zeilen), 5)
+        for zeile in zeilen:
+            self.assertEqual(zeile.count('|'), 4, zeile[:60])
+            self.assertIn('`', zeile.split('|')[3], zeile[:60])
