@@ -564,6 +564,14 @@ class KontaktSpamschutzTest(LuviqTestCase):
         versand.assert_not_called()
 
     def test_die_falle_verwirft_auch_eine_harmlose_nachricht(self):
+        from .. import spamschutz
+        with mock.patch(_MAIL) as versand:
+            self.sende('/kontakt/', dict(GUELTIGE_ANFRAGE, **{spamschutz.FELD_FALLE: 'https://x.example'}))
+        versand.assert_not_called()
+
+    def test_die_falle_mit_dem_alten_namen_gilt_weiter(self):
+        """Das Feld hiess bis 02.10.2026 ``webseite``; ein Formular, das noch im
+        Browser offen ist, darf die Falle nicht umgehen."""
         with mock.patch(_MAIL) as versand:
             self.sende('/kontakt/', dict(GUELTIGE_ANFRAGE, webseite='https://x.example'))
         versand.assert_not_called()
@@ -581,7 +589,7 @@ class KontaktSpamschutzTest(LuviqTestCase):
     def test_das_formular_traegt_zeitstempel_und_falle(self):
         inhalt = self.hole('/kontakt/').content.decode()
         self.assertIn('name="formzeit"', inhalt)
-        self.assertIn('name="webseite"', inhalt)
+        self.assertIn('name="website"', inhalt)
         self.assertIn('tabindex="-1"', inhalt)
 
     def test_das_fallenfeld_ist_an_sich_selbst_versteckt(self):

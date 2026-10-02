@@ -91,14 +91,13 @@
                 <div class="glass-card rounded-[3.5rem] p-10 md:p-16">
                     {# aria-live (BF24): Änderungen im Formular – aria-busy beim Absenden – werden angesagt #}
                     <form method="post" class="space-y-8" data-einmal-absenden aria-live="polite">
-                        {% comment %}Fehleransage (BF24, WCAG 3.3.1): Die Meldung des Servers steht IM Formular,
-                           wird mit role="alert" sofort vorgelesen und haengt ueber aria-describedby an
-                           jedem Pflichtfeld. Sie erscheint nur, wenn die View einen Fehler meldet – ein
-                           dauerhaft leerer Bereich waere ein Element mehr im sichtbaren Aufbau der Seite,
-                           und der darf sich nicht aendern (Designwache, test_aufbau). Der Verweis der
-                           Felder steht deshalb auch dann, wenn es (noch) nichts zu beschreiben gibt;
-                           ein Vorleseprogramm ueberliest ein Ziel, das es nicht gibt. Als {% comment %} statt {# #}: Django kennt {# #} nur einzeilig, mehrzeilig stand der Text bis 19.09.2026 sichtbar auf der Seite.{% endcomment %}
-                        {% if fehler %}<div id="kontakt-fehler" role="alert" class="glass rounded-2xl p-4 border-l-4 border-red-500 text-white/90 text-sm font-medium">{{ fehler }}</div>{% endif %}
+                        {% comment %}Fehleransage (BF24, WCAG 3.3.1): Der Bereich steht immer im Formular (leer und ohne Rahmen,
+                           solange nichts schiefging), damit ihn Screenreader schon vor dem Fehler als
+                           Live-Bereich kennen; die Meldung des Servers wird mit role="alert" sofort
+                           vorgelesen und haengt ueber aria-describedby an jedem Pflichtfeld (BF22: die
+                           Kennung existiert, der Verweis zeigt nie ins Leere).
+                           Nach einem Fehler bleiben die Eingaben stehen (EIG90). Als {% comment %} statt {# #}: Django kennt {# #} nur einzeilig, mehrzeilig stand der Text bis 19.09.2026 sichtbar auf der Seite.{% endcomment %}
+                        <div id="kontakt-fehler" role="alert"{% if fehler %} class="glass rounded-2xl p-4 border-l-4 border-red-500 text-white/90 text-sm font-medium"{% endif %}>{% if fehler %}{{ fehler }}{% endif %}</div>
                         {% csrf_token %}
                         {# Spamschutz (shop1/spamschutz.py): Zeitstempel und ein Feld, das nur Bots ausfüllen #}
                         <input type="hidden" name="formzeit" value="{{ formzeit }}">
@@ -113,28 +112,28 @@
                         {% endcomment %}
                         <div aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden">
                             <label for="kontakt-webseite">Webseite (bitte leer lassen)</label>
-                            <input type="text" id="kontakt-webseite" name="{{ feld_falle|default:'webseite' }}" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px">
+                            <input type="text" id="kontakt-webseite" name="{{ feld_falle|default:'website' }}" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px">
                         </div>
                         {# maxlength (FO07) = KONTAKT_LAENGEN in views/shop.py; test_formulare hält beides gleich #}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Dein Name *</label>
-                                <input type="text" name="name" aria-label="Dein Name (Pflichtfeld)" aria-describedby="kontakt-fehler" autocomplete="name" maxlength="100" placeholder="Eingabe..." class="w-full form-input rounded-2xl px-6 py-4" required>
+                                <input type="text" name="name" aria-label="Dein Name (Pflichtfeld)" aria-describedby="kontakt-fehler" autocomplete="name" maxlength="100" placeholder="Eingabe..." value="{{ werte.name|default:'' }}" class="w-full form-input rounded-2xl px-6 py-4" required>
                             </div>
                             <div>
                                 <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Deine E-Mail *</label>
-                                <input type="email" name="email" aria-label="Deine E-Mail-Adresse (Pflichtfeld)" aria-describedby="kontakt-fehler" autocomplete="email" maxlength="254" placeholder="Eingabe..." class="w-full form-input rounded-2xl px-6 py-4" required>
+                                <input type="email" name="email" aria-label="Deine E-Mail-Adresse (Pflichtfeld)" aria-describedby="kontakt-fehler" autocomplete="email" maxlength="254" placeholder="Eingabe..." value="{{ werte.email|default:'' }}" class="w-full form-input rounded-2xl px-6 py-4" required>
                             </div>
                         </div>
                         
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Betreff *</label>
-                            <input type="text" name="betreff" aria-label="Betreff deiner Nachricht (Pflichtfeld)" aria-describedby="kontakt-fehler" maxlength="150" placeholder="Worum geht es?" class="w-full form-input rounded-2xl px-6 py-4" required>
+                            <input type="text" name="betreff" aria-label="Betreff deiner Nachricht (Pflichtfeld)" aria-describedby="kontakt-fehler" maxlength="150" placeholder="Worum geht es?" value="{{ werte.betreff|default:'' }}" class="w-full form-input rounded-2xl px-6 py-4" required>
                         </div>
                         
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-glow-orange mb-4">Nachricht *</label>
-                            <textarea name="nachricht" rows="6" aria-label="Deine Nachricht (Pflichtfeld)" aria-describedby="kontakt-fehler" maxlength="5000" placeholder="Schreib uns..." class="w-full form-input rounded-2xl px-6 py-4 resize-none" required></textarea>
+                            <textarea name="nachricht" rows="6" aria-label="Deine Nachricht (Pflichtfeld)" aria-describedby="kontakt-fehler" maxlength="5000" placeholder="Schreib uns..." class="w-full form-input rounded-2xl px-6 py-4 resize-none" required>{{ werte.nachricht|default:'' }}</textarea>
                             {% comment %}Datenschutzhinweis am Formular (KV05, Art. 13 DSGVO).
                             Bewusst reiner Text ohne eigenes Element: ein Absatz mit Verweis waere
                             ein Absatzelement und ein Verweiselement mehr im sichtbaren Aufbau, und
@@ -164,7 +163,7 @@
             <div class="space-y-8 scroll-reveal" style="transition-delay: 0.2s;">
                 {# Das alte, freigestellte Foto von Luisa wird nicht mehr verwendet (Markenwissen § 9, 19.09.2026). #}
                 <div class="glass-card p-10 rounded-[3rem] border-white/5">
-                    <h4 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Zentrale</h4>
+                    <h2 class="lv-ueb-s text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Zentrale</h2>
                     <p class="text-white/60 leading-relaxed font-light">
                         <strong class="text-white">Luviq Universe – Luisa Brehler</strong><br>
                         Grünberger Str. 16<br>
@@ -173,7 +172,7 @@
                 </div>
 
                 <div class="glass-card p-10 rounded-[3rem] border-white/5">
-                    <h4 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Channels</h4>
+                    <h2 class="lv-ueb-s text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Channels</h2>
                     <div class="space-y-4">
                         {# Hier stand eine Platzhalter-Telefonnummer ("+49 (0) 30 123456"). Es gibt keine belegte Nummer im Projekt - auch das Impressum nennt keine -, und eine zu erfinden ist ausgeschlossen. Der Verweis fuehrt deshalb auf die Anbieterangaben. Sobald eine Nummer vorliegt, wird daraus wieder ein tel:-Link. #}
                         <a href="{% url 'impressum' %}" class="block text-white/60 hover:text-white transition-colors flex items-center group">
@@ -188,7 +187,7 @@
                 </div>
 
                 <div class="glass-card p-10 rounded-[3rem] border-white/5">
-                    <h4 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Status</h4>
+                    <h2 class="lv-ueb-s text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-6">Status</h2>
                     <div class="flex items-center space-x-2">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Anfragen jederzeit möglich</span>
@@ -199,29 +198,29 @@
 
         <!-- FAQ Section -->
         <div class="mt-32 scroll-reveal">
-            <h3 class="text-3xl font-black heading-font text-white uppercase tracking-tighter mb-12">Häufige Fragen</h3>
+            <h2 class="text-3xl font-black heading-font text-white uppercase tracking-tighter mb-12">Häufige Fragen</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="glass-card p-10 rounded-[2.5rem]">
-                    <h4 class="text-lg font-bold text-white mb-4">{% if verkauf_aktiv %}Wie lange dauert die Lieferung?{% else %}Kann ich schon bestellen?{% endif %}</h4>
+                    <h3 class="lv-ueb-m text-lg font-bold text-white mb-4">{% if verkauf_aktiv %}Wie lange dauert die Lieferung?{% else %}Kann ich schon bestellen?{% endif %}</h3>
                     <p class="text-white/40 leading-relaxed font-light">{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Innerhalb von Hessen ist ein Unikat meist nach 1-3 Werktagen im Briefkasten, versendet wird deutschlandweit.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten und bereits vergeben; Fragen dazu gehen über dieses Formular.{% endif %}</p>
                 </div>
                 <div class="glass-card p-10 rounded-[2.5rem]">
-                    <h4 class="text-lg font-bold text-white mb-4">{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h4>
+                    <h3 class="lv-ueb-m text-lg font-bold text-white mb-4">{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h3>
                     <p class="text-white/40 leading-relaxed font-light">{% if verkauf_aktiv %}Bezahlt wird per PayPal oder Vorab-Überweisung. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
                 </div>
             </div>
         </div>
         <!-- Feedback Section -->
         <div class="mt-32 scroll-reveal">
-            <h3 class="text-3xl font-black heading-font text-white uppercase tracking-tighter mb-12">Gästebuch</h3>
+            <h2 class="text-3xl font-black heading-font text-white uppercase tracking-tighter mb-12">Gästebuch</h2>
             
             <div class="glass-card p-10 md:p-16 rounded-[4rem] border-white/5 relative overflow-hidden group">
                 <div class="absolute -top-24 -right-24 w-64 h-64 bg-glow-orange/5 blur-[80px] rounded-full group-hover:bg-glow-orange/10 transition-all duration-1000"></div>
                 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div>
-                        <h4 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-6">Öffentliches Feedback</h4>
+                        <h3 class="lv-ueb-s text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-6">Öffentliches Feedback</h3>
                         <p class="text-white/40 leading-relaxed font-light mb-8">
                             Möchtest du einen öffentlichen Kommentar hinterlassen? Dein Feedback erscheint direkt in unserem <a href="{% url 'gaestebuch' %}" class="text-glow-orange hover:underline">Gästebuch</a>. Beiträge dort sind öffentlich sichtbar und stehen mit Benutzername und Zeitpunkt auf der Seite; schreiben kann sie, wer angemeldet ist.
                         </p>
@@ -233,7 +232,7 @@
                     {% if user.is_authenticated %}
                     <form action="{% url 'comment_add' %}" method="POST" class="space-y-6">
                         {% csrf_token %}
-                        <textarea name="text" rows="4" required aria-label="Dein Feedback fürs Gästebuch"
+                        <textarea name="text" rows="4" required maxlength="2000" aria-label="Dein Feedback fürs Gästebuch"
                             class="w-full bg-white/5 border border-white/10 rounded-3xl p-6 text-white focus:outline-none focus:border-glow-orange transition-all font-light text-sm"
                             placeholder="Schreib ein kurzes Feedback..."></textarea>
                         <button type="submit" class="w-full btn-glow py-4 rounded-2xl text-white font-black uppercase tracking-widest text-[10px]">

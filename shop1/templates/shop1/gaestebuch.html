@@ -48,7 +48,7 @@
             <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-10">Neuer Beitrag</h3>
             <form action="{% url 'comment_add' %}" method="POST">
                 {% csrf_token %}
-                <textarea name="text" rows="4" required aria-label="Dein Beitrag fürs Gästebuch"
+                <textarea name="text" rows="4" required maxlength="2000" aria-label="Dein Beitrag fürs Gästebuch"
                     class="w-full bg-white/5 border border-white/10 rounded-3xl p-8 text-white focus:outline-none focus:border-glow-orange transition-all font-light tracking-wide placeholder:text-white/10 mb-8"
                     placeholder="Wie gefällt dir dein Unikat?"></textarea>
                 
@@ -150,7 +150,7 @@
                         <form action="{% url 'comment_add' %}" method="POST" class="flex gap-4">
                             {% csrf_token %}
                             <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                            <input type="text" name="text" required aria-label="Deine Antwort auf diesen Beitrag"
+                            <input type="text" name="text" required maxlength="2000" aria-label="Deine Antwort auf diesen Beitrag"
                                 class="flex-grow bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-xs text-white focus:outline-none focus:border-glow-orange transition-all font-light"
                                 placeholder="Deine Antwort...">
                             <button type="submit" class="btn-glow px-6 py-4 rounded-2xl text-white font-black uppercase tracking-widest text-[8px]">Send</button>

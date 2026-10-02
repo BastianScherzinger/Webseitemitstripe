@@ -50,21 +50,21 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
             <p class="lv-fehler" id="anfrage-fehler" role="alert">{% if fehler %}{{ fehler }}{% endif %}</p>
 
             <fieldset>
-                <legend><span class="lv-nr">1</span>In welche Richtung?</legend>
+                <legend><span class="lv-nr">1</span>In welche Richtung? *</legend>
                 <div class="lv-wahlen">
                     {% for schluessel, name in richtungen %}<label class="lv-wahl"><input type="radio" name="richtung" value="{{ schluessel }}" required{% if werte.richtung == schluessel %} checked{% endif %}><span>{{ name }}</span></label>{% endfor %}
                 </div>
             </fieldset>
 
             <fieldset>
-                <legend><span class="lv-nr">2</span>Auf welches Teil?</legend>
+                <legend><span class="lv-nr">2</span>Auf welches Teil? *</legend>
                 <div class="lv-wahlen">
                     {% for schluessel, name in teile %}<label class="lv-wahl"><input type="radio" name="teil" value="{{ schluessel }}" required{% if werte.teil == schluessel %} checked{% endif %}><span>{{ name }}</span></label>{% endfor %}
                 </div>
             </fieldset>
 
             <fieldset>
-                <legend><span class="lv-nr">3</span>Wo soll es hin?</legend>
+                <legend><span class="lv-nr">3</span>Wo soll es hin? *</legend>
                 <div class="lv-wahlen">
                     {% for schluessel, name in platzierungen %}<label class="lv-wahl"><input type="radio" name="platzierung" value="{{ schluessel }}" required{% if werte.platzierung == schluessel %} checked{% endif %}><span>{{ name }}</span></label>{% endfor %}
                 </div>
@@ -85,12 +85,12 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
 
             {# Spamschutz: Falle und signierter Zeitpunkt. Das Fallenfeld trägt seine Kennzeichen selbst (KV06) – versteckt über die Klasse statt style="" (CSP). #}
             <div class="lv-falle" aria-hidden="true">
-                <label for="motiv-{{ feld_falle }}">Webseite (bitte leer lassen)</label>
-                <input class="lv-falle" id="motiv-{{ feld_falle }}" name="{{ feld_falle }}" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+                <label for="motiv-webseite">Webseite (bitte leer lassen)</label>
+                <input class="lv-falle" id="motiv-webseite" name="{{ feld_falle }}" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
             </div>
             <input type="hidden" name="formzeit" value="{{ formzeit }}">
 
-            <p class="lv-klein">Eins von beiden reicht. Deine Angaben speichere ich für die Antwort auf deine Anfrage; sie gehen als Mail an mich und in Kopie an die Webagentur, die diese Seite technisch betreut. Eine automatische Bestätigung schicke ich bewusst nicht, ich melde mich persönlich bei dir. <a href="{% url 'datenschutz' %}">Datenschutz</a></p>
+            <p class="lv-klein">Mit * markierte Angaben sind Pflicht, bei Instagram und E-Mail reicht eins von beiden. Deine Angaben speichere ich für die Antwort auf deine Anfrage; sie gehen als Mail an mich und in Kopie an die Webagentur, die diese Seite technisch betreut. Eine automatische Bestätigung schicke ich bewusst nicht, ich melde mich persönlich bei dir. <a href="{% url 'datenschutz' %}">Datenschutz</a></p>
             <button class="lv-knopf" type="submit">Anfrage schicken <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </form>
         {% endif %}
