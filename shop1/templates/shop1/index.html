@@ -9,19 +9,20 @@ Entstehung · Archiv · Luisa · Die nächste Ausgabe. Alle Texte aus
 shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
 {% endcomment %}
 
-{% block title %}Luviq Universe – Handbemalte Mode aus Alsfeld, Hessen{% endblock %}
+{% block title %}Was du willst, handbemalt: Mode aus Alsfeld – Luviq Universe{% endblock %}
 {% block meta_description %}Handbemalte Second-Hand-Mode aus Alsfeld: Luisa Brehler malt dein Motiv mit Bleiche und Pinsel auf ein Einzelstück. Kostenlos und unverbindlich Motiv anfragen.{% endblock %}
 {% block og_title %}Luviq Universe – Sag mir, was du willst, ich mal’s dir{% endblock %}
 {% block og_description %}Handbemalte Second-Hand-Teile aus Alsfeld. Du sagst Luisa, was drauf soll, sie schickt dir Vorschläge, und dann entsteht dein Stück. Jedes Motiv gibt es einmal.{% endblock %}
 {% block og_image_tag %}
-<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/luviq/hero-panorama-1600.webp' %}">
-<meta property="og:image:width" content="1600">
-<meta property="og:image:height" content="686">
+{% comment %}Vorschaubild 1200 × 630 als JPEG (IS39): aus dem Hero-Panorama zugeschnitten; WhatsApp, LinkedIn und Facebook lesen JPEG sicherer als WebP.{% endcomment %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/luviq/og-start-1200x630.jpg' %}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 {% endblock %}
 {% block twitter_title %}Luviq Universe – Handbemalte Mode aus Hessen{% endblock %}
 {% block twitter_description %}Handbemalte Second-Hand-Teile aus Alsfeld, Hessen. Motiv anfragen, Vorschläge bekommen, Einzelstück tragen.{% endblock %}
 {% block twitter_image_tag %}
-<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/luviq/hero-panorama-1600.webp' %}">
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/luviq/og-start-1200x630.jpg' %}">
 {% endblock %}
 
 {% block schema_ld %}

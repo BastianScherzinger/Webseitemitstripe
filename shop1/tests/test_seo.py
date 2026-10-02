@@ -20,6 +20,7 @@ from ..seiten_stand import SEITEN_STAND
 from ..views.wissen import WISSEN_BEITRAEGE
 from ._basis import (
     INHALTSSEITEN,
+    NICHT_INDEXIERBARE_SEITEN,
     OEFFENTLICHE_SEITEN,
     LuviqTestCase,
     erzeuge_produkt,
@@ -751,3 +752,159 @@ class ProduktMetaangabenTest(LuviqTestCase):
         self.assertEqual(_DESCRIPTION.findall(inhalt)[0].strip(), produkt.meta_description)
         self.assertLessEqual(len(_TITEL.findall(inhalt)[0].strip()), META_TITEL_MAX)
         self.assertLessEqual(len(_DESCRIPTION.findall(inhalt)[0].strip()), META_BESCHREIBUNG_MAX)
+
+
+_H1 = re.compile(r'<h1[^>]*>(.*?)</h1>', re.DOTALL)
+_TRENNER = re.compile(r'\s[|–—·•\-]\s')
+#: Die Seiten, die ein Messwerkzeug als rankfähig zählt: ohne ``noindex`` (Impressum, AGB
+#: ohne Verkauf, nicht freigegebene Wissensbeiträge).
+_RANKFAEHIG = [p for p in INHALTSSEITEN if p not in NICHT_INDEXIERBARE_SEITEN]
+
+
+def _text(html):
+    return re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', html)).strip()
+
+
+class KopfangabenUnterscheidbarTest(LuviqTestCase):
+    """IS03, IS06, IS07, IS09, IS10, IS11, IS13, IS36, BF21, VL06: die Kopfangaben
+    jeder Seite sind je Seite eigen, tragen die Marke am Ende und sagen etwas anderes
+    als die Überschrift. Gegengeprüft mit den Regelfunktionen des Overview
+    (``luviq_messen.py``); hier die Teile, die sich im Test festhalten lassen."""
+
+    def _kopf(self, pfad):
+        inhalt = self.hole(pfad).content.decode()
+        return (_TITEL.findall(inhalt)[0].strip(), _DESCRIPTION.findall(inhalt)[0].strip(),
+                _text(_H1.findall(inhalt)[0]))
+
+    def test_gleichnamige_stuecke_haben_verschiedene_titel_und_beschreibungen(self):
+        """Verhindert, dass zwei Stücke mit gleichem Namen (live: zweimal „Custom print
+        hoodie") denselben ``<title>`` und dieselbe Beschreibung tragen. Die
+        eindeutige Archivnummer unterscheidet sie, ohne etwas hinzuzuerfinden."""
+        erstes = erzeuge_produkt('Custom print hoodie', beschreibung='Hoodie mit backprint')
+        zweites = erzeuge_produkt('Custom print hoodie', beschreibung='Hoodie mit backprint')
+        self.assertNotEqual(erstes.meta_title, zweites.meta_title)
+        self.assertNotEqual(erstes.meta_description, zweites.meta_description)
+        self.assertIn(f'Nº {zweites.archiv_nummer}', zweites.meta_title)
+        self.assertIn(f'Nº {zweites.archiv_nummer}', zweites.meta_description)
+        titel = [self._kopf(p.get_absolute_url())[0] for p in (erstes, zweites)]
+        self.assertEqual(len(set(titel)), 2, titel)
+
+    def test_produktbeschreibung_ohne_verkauf_liegt_in_der_zielspanne_und_fordert_auf(self):
+        """Verhindert eine Produktbeschreibung unter 110 Zeichen oder ohne
+        Handlungsaufforderung (IS09, IS11), auch bei sehr kurzer Beschreibung."""
+        for beschreibung in ('Hoodie mit backprint', 'Pants with custom print', 'Jacke mit backprint'):
+            produkt = erzeuge_produkt('Custom Pants', beschreibung=beschreibung)
+            with self.subTest(beschreibung=beschreibung):
+                text = produkt.meta_description
+                self.assertTrue(BESCHREIBUNG_MIN <= len(text) <= 165, f'{len(text)}: {text}')
+                self.assertTrue(text.endswith('Jetzt Motiv anfragen.'), text)
+                self.assertNotIn('kaufen', text.lower())
+                self.assertNotIn('€', text)
+
+    def test_produkttitel_ohne_verkauf_endet_auf_die_marke(self):
+        """IS07: auch ein langer Name verliert die Marke am Ende nicht."""
+        for name in ('Custom Pants', 'Ein sehr langer Produktname mit vielen Wörtern und Motiv'):
+            titel = erzeuge_produkt(name).meta_title
+            with self.subTest(name=name):
+                self.assertLessEqual(len(titel), META_TITEL_MAX)
+                self.assertTrue(_TRENNER.split(titel)[-1].strip().startswith('Luviq Universe'), titel)
+
+    def test_titel_sagt_etwas_anderes_als_die_h1_und_teilt_ein_wort_mit_ihr(self):
+        """IS13 und IS36: der Titel ist nicht wortgleich mit der H1 (weder ganz noch
+        sein Teil vor dem Trennstrich), spricht aber vom selben Thema."""
+        stopp = {'und', 'oder', 'für', 'der', 'die', 'das', 'mit', 'aus', 'von', 'was', 'sag'}
+
+        def woerter(text):
+            return {w for w in re.findall(r'[A-Za-zÄÖÜäöüß]{4,}', text.lower()) if w not in stopp}
+
+        for pfad in _RANKFAEHIG:
+            titel, _beschreibung, h1 = self._kopf(pfad)
+            kopf = _TRENNER.split(titel)[0].strip()
+            with self.subTest(pfad=pfad):
+                self.assertNotEqual(h1.lower(), titel.lower())
+                self.assertNotEqual(h1.lower(), kopf.lower(), f'{pfad}: Titelkopf = H1')
+                if woerter(kopf) - {'luviq', 'universe'}:
+                    self.assertTrue(woerter(kopf) & woerter(h1),
+                                    f'{pfad}: Titel „{titel}" und H1 „{h1}" teilen kein Wort')
+
+    def test_jede_indexierbare_seite_endet_im_titel_auf_die_marke(self):
+        """IS07: ein einheitlicher Abschluss „– Luviq Universe" (mit oder ohne Ort)."""
+        for pfad in _RANKFAEHIG:
+            titel = self._kopf(pfad)[0]
+            with self.subTest(pfad=pfad):
+                self.assertTrue(_TRENNER.search(titel), titel)
+                letzter = _TRENNER.split(titel)[-1].lower()
+                self.assertTrue('luviq' in letzter or 'universe' in letzter, titel)
+
+    def test_beschreibungen_sind_auf_allen_inhaltsseiten_in_der_vl06_spanne(self):
+        """VL06 verlangt 70–165 Zeichen (strenger als IS09 mit 110–175)."""
+        for pfad in _RANKFAEHIG:
+            beschreibung = self._kopf(pfad)[1]
+            with self.subTest(pfad=pfad):
+                self.assertTrue(110 <= len(beschreibung) <= 165, f'{pfad}: {len(beschreibung)}')
+
+    def test_open_graph_und_twitter_titel_der_inhaltsseiten_sind_nicht_dieselben(self):
+        """EIG137: keine zwei Seiten teilen sich Open-Graph- oder Twitter-Titel."""
+        titel = {'og': {}, 'twitter': {}}
+        for pfad in _RANKFAEHIG:
+            inhalt = self.hole(pfad).content.decode()
+            og = re.search(r'property="og:title" content="([^"]*)"', inhalt).group(1)
+            tw = re.search(r'name="twitter:title" content="([^"]*)"', inhalt).group(1)
+            titel['og'].setdefault(og, []).append(pfad)
+            titel['twitter'].setdefault(tw, []).append(pfad)
+        for art, sammlung in titel.items():
+            for wert, pfade in sammlung.items():
+                with self.subTest(art=art, wert=wert):
+                    self.assertEqual(len(pfade), 1, f'{art}-Titel „{wert}" auf {pfade}')
+
+    def test_gaestebuch_hat_eine_zwischenueberschrift(self):
+        """IS16: die Seite hat über 300 Eigenwörter und braucht mindestens eine h2/h3;
+        sie steht nur für Leseprogramme sichtbar (``sr-only``), der Look bleibt."""
+        inhalt = self.hole('/gaestebuch/').content.decode()
+        self.assertRegex(inhalt, r'<h2 class="sr-only">Beiträge im Gästebuch</h2>')
+
+    @override_settings(VERKAUF_AKTIV=True)  # die Kaufweg-Beiträge leiten ohne Verkauf um
+    def test_wissensbeitraege_melden_og_type_article_wie_ihr_schema(self):
+        """EIG04: ein Beitrag, dessen Schema ``Article`` sagt, nennt sich im
+        Open-Graph-Kopf nicht ``website``."""
+        for slug in WISSEN_BEITRAEGE:
+            inhalt = self.hole(f'/wissen/{slug}/').content.decode()
+            with self.subTest(slug=slug):
+                self.assertIn('"@type": "Article"', inhalt)
+                self.assertIn('property="og:type" content="article"', inhalt)
+
+
+class VorschaubildTest(LuviqTestCase):
+    """IS39: das Vorschaubild für geteilte Links ist mindestens 1200 × 630."""
+
+    def test_startseite_nennt_ein_jpeg_in_1200_mal_630(self):
+        from pathlib import Path
+
+        from PIL import Image
+
+        inhalt = self.hole('/').content.decode()
+        url = re.search(r'property="og:image" content="([^"]+)"', inhalt).group(1)
+        self.assertRegex(url, r'og-start-1200x630(\.[0-9a-f]+)?\.jpg$')
+        self.assertIn('property="og:image:width" content="1200"', inhalt)
+        self.assertIn('property="og:image:height" content="630"', inhalt)
+        datei = Path(__file__).resolve().parent.parent / 'static/shop1/images/luviq/og-start-1200x630.jpg'
+        with Image.open(datei) as bild:
+            self.assertEqual((bild.format, bild.size), ('JPEG', (1200, 630)))
+
+    def test_cloudinary_vorschau_wird_zu_einem_jpeg_im_querformat(self):
+        from ..templatetags.custom_tags import cloud_vorschau
+
+        url = 'https://res.cloudinary.com/x/image/upload/v1/produkte/Photoroom_2026.png'
+        self.assertEqual(
+            cloud_vorschau(url),
+            'https://res.cloudinary.com/x/image/upload/f_jpg,q_auto,w_1200,h_630,c_pad,b_auto/v1/produkte/Photoroom_2026.jpg')
+        self.assertEqual(cloud_vorschau('/media/produkte/a.jpg'), '/media/produkte/a.jpg')
+        self.assertEqual(cloud_vorschau(None), '')
+
+    def test_produktseite_nennt_lokal_keine_masse_die_das_bild_nicht_hat(self):
+        """Lokal (``/media/``) ist das Bild nicht auf 1200 × 630 gebracht – die Seite
+        darf es dann nicht behaupten; bei Cloudinary ist es so (Filter oben)."""
+        produkt = erzeuge_produkt('Custom Pants', bild='produkte/x.jpg')
+        kopf = self.hole(produkt.get_absolute_url()).content.decode().split('</head>')[0]
+        self.assertIn('property="og:image" content="', kopf)
+        self.assertEqual(kopf.count('og:image:width'), 0, 'Maße ohne Cloudinary-Zuschnitt behauptet')

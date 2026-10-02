@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Gästebuch – Community bei Luviq Universe | Vintage Upcycling Mode{% endblock %}
+{% block title %}Gästebuch lesen und schreiben – Luviq Universe, Alsfeld{% endblock %}
 {% block meta_description %}{% if verkauf_aktiv %}Gästebuch von Luviq Universe aus Alsfeld: Rückmeldungen von Kundinnen und Kunden zu ihren handbemalten Einzelstücken. Jetzt lesen oder selbst einen Beitrag schreiben.{% else %}Gästebuch von Luviq Universe aus Alsfeld: Eindrücke, Fragen und Ideen aus der Community rund um die handbemalten Einzelstücke. Jetzt lesen oder selbst schreiben.{% endif %}{% endblock %}
 {% block og_title %}Gästebuch – Luviq Universe Community{% endblock %}
 {% block og_description %}{% if verkauf_aktiv %}Was unsere Kunden über handbemalte Upcycling-Mode von Luviq Universe sagen. Echte Erfahrungen mit nachhaltigem Second-Hand-Fashion aus Deutschland.{% else %}Was die Community über die handbemalte Upcycling-Mode von Luviq Universe aus Alsfeld sagt – Eindrücke, Fragen und Ideen.{% endif %}{% endblock %}
+{% block twitter_title %}Gästebuch lesen und schreiben – Luviq Universe{% endblock %}
+{% block twitter_description %}Eindrücke und Ideen rund um die handbemalten Einzelstücke von Luviq Universe aus Alsfeld. Jetzt lesen oder selbst schreiben.{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">
@@ -66,6 +68,9 @@
             </p>
         </div>
         {% endif %}
+
+        {% comment %}Zwischenüberschrift für Leseprogramme und Antwortmaschinen (IS16); nur für sie sichtbar, damit der Look unverändert bleibt. Steht bewusst vor, nicht in der Liste: sonst bekäme der erste Beitrag durch space-y-12 einen Abstand.{% endcomment %}
+        <h2 class="sr-only">Beiträge im Gästebuch</h2>
 
         <!-- Comments List -->
         <div class="space-y-12">
