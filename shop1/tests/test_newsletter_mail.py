@@ -35,7 +35,8 @@ class NewsletterHtmlTest(LuviqTestCase):
             html = self._html(produkt)
         self.assertIn('href="https://www.luviq-alsfeld.com' + produkt.get_absolute_url(), html)
         self.assertIn('Stück ansehen', html)
-        self.assertNotIn('{', html)       # keine liegengebliebene Platzhalter-Klammer
+        self.assertNotIn('{{', html)      # keine liegengebliebene Platzhalter-Klammer
+        self.assertNotIn('{%', html)
         self.assertNotIn('€', html)
 
     def test_jede_abonnentin_bekommt_genau_eine_mail_mit_demselben_text(self):
