@@ -22,7 +22,7 @@ SEITEN_STAND = {
     'produkte':     '2026-10-02',
     'gaestebuch':   '2026-10-02',
     'ueber_uns':    '2026-10-02',
-    'liefergebiet': '2026-09-18',
+    'liefergebiet': '2026-10-02',
     'kontakt':      '2026-10-02',
     'impressum':    '2026-09-18',
     'datenschutz':  '2026-10-02',
@@ -30,7 +30,7 @@ SEITEN_STAND = {
     # IS19 (27.09.2026): Erklärsätze der Stationen, Dauer, Bestätigungshinweis.
     # 02.10.2026 (L1-B1): Titel, Beschreibung, Vorschaubild und Twitter-Angaben neu
     # (IS03/06/07/09/10/11/13/36/39, EIG137) — home, produkte, gaestebuch, ueber_uns,
-    # kontakt, datenschutz und motiv_anfragen tragen deshalb dieses Datum.
+    # liefergebiet, kontakt, datenschutz und motiv_anfragen tragen deshalb dieses Datum.
     'motiv_anfragen': '2026-10-02',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
     'wissen':           '2026-09-27',

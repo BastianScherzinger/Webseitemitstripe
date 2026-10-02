@@ -863,6 +863,16 @@ class KopfangabenUnterscheidbarTest(LuviqTestCase):
         inhalt = self.hole('/gaestebuch/').content.decode()
         self.assertRegex(inhalt, r'<h2 class="sr-only">Beiträge im Gästebuch</h2>')
 
+    @override_settings(VERKAUF_AKTIV=True)  # die Kaufweg-Beiträge leiten ohne Verkauf um
+    def test_wissensbeitraege_melden_og_type_article_wie_ihr_schema(self):
+        """EIG04: ein Beitrag, dessen Schema ``Article`` sagt, nennt sich im
+        Open-Graph-Kopf nicht ``website``."""
+        for slug in WISSEN_BEITRAEGE:
+            inhalt = self.hole(f'/wissen/{slug}/').content.decode()
+            with self.subTest(slug=slug):
+                self.assertIn('"@type": "Article"', inhalt)
+                self.assertIn('property="og:type" content="article"', inhalt)
+
 
 class VorschaubildTest(LuviqTestCase):
     """IS39: das Vorschaubild für geteilte Links ist mindestens 1200 × 630."""
