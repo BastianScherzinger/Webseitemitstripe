@@ -311,7 +311,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-alt main .animate-pulse,.lv-alt main .animate-float{animation:none}
 .lv-alt main a:not([class]){color:var(--lv-text);text-decoration:underline;text-underline-offset:.2em}
 /* Links im Fließtext nie nur durch Farbe kenntlich (BF29, axe link-in-text-block). */
-.lv-alt main p a:not(.btn-glow):not(.lv-knopf){text-decoration:underline;text-underline-offset:.2em}
+.lv-alt main p a:not(.btn-glow):not(.lv-knopf),.lv-alt main li a:not(.btn-glow):not(.lv-knopf){text-decoration:underline;text-underline-offset:.2em}
 .lv-alt main .product-card{transform:none}
 .lv-alt main section{border-color:var(--lv-linie)}
 /* Gesperrte Großbuchstaben-Absätze waren kaum lesbar: Fließtext normal setzen. */
