@@ -88,8 +88,11 @@ class CanonicalHostMiddleware:
             # get_host() prüft gegen ALLOWED_HOSTS; DisallowedHost wird von
             # Django wie überall sonst zu 400.
             host = (urlsplit('//' + request.get_host()).hostname or '').lower()
-            umleiten = host == nebenvariante(ziel) or (
-                ist_railway_host(host) and request.path not in RAILWAY_AUSNAHMEN
+            # Die Gesundheitsadresse bleibt auf jedem Host ohne Weiterleitung
+            # (auch auf der Nebenvariante ohne www): ein Überwachungsdienst
+            # soll nie auf eine 301 treffen.
+            umleiten = request.path not in RAILWAY_AUSNAHMEN and (
+                host == nebenvariante(ziel) or ist_railway_host(host)
             )
             if umleiten:
                 sicher = request.is_secure() or getattr(settings, 'SECURE_SSL_REDIRECT', False)
