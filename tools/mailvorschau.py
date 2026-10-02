@@ -31,10 +31,8 @@ LANG = ('Hallo Luisa,\n\nich habe deine bemalten Jacken auf Instagram gesehen un
         'Viele Grüße\nJürgen Übermut <script>alert("x")</script>')
 
 
-def main(ziel):
-    """Schreibt alle Mail-Vorschauen mit Beispieldaten als HTML nach ``ziel``."""
-    ziel = Path(ziel)
-    ziel.mkdir(parents=True, exist_ok=True)
+def _mails_an_luisa(ziel):
+    """Die beiden gestalteten Mails an Luisa: Kontaktanfrage und Motivanfrage."""
     objekt = SimpleNamespace(pk=42, _meta=SimpleNamespace(app_label='shop1', model_name='kontaktanfrage'))
     kontakt = [('Name', 'Jürgen Übermut'), ('E-Mail', 'juergen@example.invalid', 'mail'),
                ('Betreff', 'Frage zur Fuchs-Jacke in Größe M')]
@@ -53,7 +51,11 @@ def main(ziel):
         antwort_an='erika@example.invalid', langtext_titel='Was es bedeuten soll', langtext=bedeutung,
         objekt=motiv_obj, hinweis='Alle Anfragen stehen im Admin-Panel unter „Motivanfragen".')
     (ziel / 'admin-motiv.html').write_text(html, encoding='utf-8')
+    return objekt, kontakt, motiv_obj, motiv, bedeutung
 
+
+def _kopien_an_die_webagentur(ziel, objekt, kontakt, motiv_obj, motiv, bedeutung):
+    """Die drei Kopien an die Webagentur; der Versandweg wird nur abgefangen."""
     gefangen = {}
     original = mails.send_brevo_email
     mails.send_brevo_email = lambda betreff, html, *a, **k: gefangen.setdefault('html', html)
@@ -79,6 +81,9 @@ def main(ziel):
     finally:
         mails.send_brevo_email = original
 
+
+def _mails_an_besucher(ziel):
+    """Die Bestätigungsmails an Besucherinnen: Konto und Newsletter."""
     link = mails.live_url() + '/verify/0f1e2d3c-beispiel/'
     (ziel / 'kunde.html').write_text(mails.rendern(
         'besucher.html', titel='Bitte bestätige deine E-Mail-Adresse', kopf_label='Konto',
@@ -95,6 +100,15 @@ def main(ziel):
         link=mails.live_url() + '/newsletter/bestaetigen/?t=beispiel', knopf='Anmeldung bestätigen',
         nachsatz='Warst du das nicht, ignoriere diese E-Mail einfach – ohne Bestätigung '
                  'schicken wir dir nichts.'), encoding='utf-8')
+
+
+def main(ziel):
+    """Schreibt alle Mail-Vorschauen mit Beispieldaten als HTML nach ``ziel``."""
+    ziel = Path(ziel)
+    ziel.mkdir(parents=True, exist_ok=True)
+    daten = _mails_an_luisa(ziel)
+    _kopien_an_die_webagentur(ziel, *daten)
+    _mails_an_besucher(ziel)
     print(f'Vorschau geschrieben nach {ziel}')
 
 

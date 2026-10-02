@@ -1,0 +1,65 @@
+"""Der HTML-Teil der Newsletter-Mail (``shop1/utils.py::_newsletter_html``).
+
+Der Test zum Link steht in ``test_seo``; hier geht es um das, was beim
+Umbau der langen Funktion nicht verloren gehen darf: Name maskiert, Bild nur
+wenn vorhanden, Knopf je nach Verkaufsschalter, jede Abonnentin eine Mail.
+"""
+
+from unittest import mock
+
+from django.test import override_settings
+
+from ..models import Subscriber
+from ..utils import _newsletter_html, send_newsletter_email
+from ._basis import LuviqTestCase, erzeuge_produkt
+
+
+class NewsletterHtmlTest(LuviqTestCase):
+
+    def test_der_name_steht_maskiert_im_html_und_im_alternativtext(self):
+        html = _newsletter_html('Jacke <b>"Fuchs"</b> & Co', 'https://x.invalid/p/', 'Stück ansehen',
+                                'https://x.invalid/b.jpg')
+        self.assertNotIn('<b>', html)
+        self.assertIn('Jacke &lt;b&gt;&quot;Fuchs&quot;&lt;/b&gt; &amp; Co', html)
+        self.assertIn("alt='Jacke &lt;b&gt;", html)
+
+    def test_ohne_bild_gibt_es_keine_bildzeile(self):
+        self.assertNotIn('<img', _newsletter_html('Jacke', 'https://x.invalid/p/', 'Knopf', ''))
+        self.assertIn("<img src='https://x.invalid/b.jpg'",
+                      _newsletter_html('Jacke', 'https://x.invalid/p/', 'Knopf', 'https://x.invalid/b.jpg'))
+
+    def test_link_knopf_und_domain_stehen_drin(self):
+        with override_settings(SITE_URL='https://www.luviq-alsfeld.com'):
+            html = _newsletter_html('Jacke', 'https://www.luviq-alsfeld.com/produkt/jacke/', 'Stück ansehen', '')
+        self.assertIn('href="https://www.luviq-alsfeld.com/produkt/jacke/"', html)
+        self.assertIn('Stück ansehen', html)
+        self.assertIn('© www.luviq-alsfeld.com //', html)
+        self.assertNotIn('{', html)       # keine liegengebliebene Platzhalter-Klammer
+        self.assertNotIn('€', html)
+
+    def test_jede_abonnentin_bekommt_genau_eine_mail_mit_demselben_text(self):
+        produkt = erzeuge_produkt('Bemalte Jacke')
+        abos = [Subscriber(email='a@example.invalid'), Subscriber(email='b@example.invalid')]
+        with mock.patch('shop1.utils.send_brevo_email') as versand:
+            send_newsletter_email(produkt, abos)
+        self.assertEqual([a.args[2] for a in versand.call_args_list], ['a@example.invalid', 'b@example.invalid'])
+        self.assertEqual(len({a.args[1] for a in versand.call_args_list}), 1)
+        self.assertIn('Bemalte Jacke', versand.call_args.args[0])
+
+    def test_ohne_abonnenten_geht_nichts_raus(self):
+        with mock.patch('shop1.utils.send_brevo_email') as versand:
+            send_newsletter_email(erzeuge_produkt('Jacke'), [])
+        versand.assert_not_called()
+
+    @override_settings(VERKAUF_AKTIV=False)
+    def test_der_knopf_nennt_ohne_verkauf_keinen_kauf(self):
+        with mock.patch('shop1.utils.send_brevo_email') as versand:
+            send_newsletter_email(erzeuge_produkt('Jacke'), [Subscriber(email='a@example.invalid')])
+        self.assertIn('Stück ansehen', versand.call_args.args[1])
+        self.assertNotIn('Sichern', versand.call_args.args[1])
+
+    @override_settings(VERKAUF_AKTIV=True)
+    def test_mit_verkauf_steht_der_kaufaufruf_im_knopf(self):
+        with mock.patch('shop1.utils.send_brevo_email') as versand:
+            send_newsletter_email(erzeuge_produkt('Jacke'), [Subscriber(email='a@example.invalid')])
+        self.assertIn('Jetzt Sichern', versand.call_args.args[1])

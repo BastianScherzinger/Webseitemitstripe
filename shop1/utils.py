@@ -1,11 +1,12 @@
 """Mailversand über die Brevo-API und der Newsletter-Text: ``send_brevo_email`` (asynchron),
-``send_newsletter_email`` (an bestätigte Abonnenten)."""
+``send_newsletter_email`` (an die übergebenen Abonnenten; die Auswahl der bestätigten trifft der Aufrufer)."""
 
 import os
 import logging
 import threading
 import requests
 import json
+from html import escape as html_escape
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
@@ -94,42 +95,75 @@ def send_newsletter_email(produkt, subscribers):
         image_url = f"{site_url}{produkt.bild.url}"
     else:
         image_url = ""
-    
+    html_content = _newsletter_html(produkt.name, produkt_url, knopf, image_url)
     for sub in subscribers:
-        html_content = f"""
+        send_brevo_email(subject, html_content, sub.email)
+
+
+#: Die Teile der Newsletter-Mail. Stile stehen inline, weil Mailprogramme
+#: kein Stylesheet laden; die Zeilen sind nur zum Lesen umgebrochen.
+_NL_KOERPER = ("margin: 0; padding: 0; background-color: #050816; color: #ffffff; "
+               "font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;")
+_NL_COPYRIGHT = ('font-size: 10px; color: rgba(255,255,255,0.2); text-transform: uppercase; '
+                 'letter-spacing: 2px; margin: 0;')
+_NL_TABELLE = ('background-color: #050816; padding: 40px 20px;')
+_NL_KARTE = ('background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); '
+             'border-radius: 40px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);')
+_NL_TITEL = ('color: #ff6a00; font-size: 32px; font-weight: 900; text-transform: uppercase; '
+             'letter-spacing: 4px; margin: 0 0 20px 0; text-shadow: 0 0 20px rgba(255,106,0,0.3);')
+_NL_KNOPF = ('display: inline-block; background-color: #ff6a00; color: #ffffff; padding: 18px 40px; '
+             'text-decoration: none; border-radius: 15px; font-weight: 900; text-transform: uppercase; '
+             'letter-spacing: 2px; font-size: 14px; box-shadow: 0 10px 30px rgba(255,106,0,0.3);')
+_NL_ABSATZ = ('font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.6); '
+              'margin-bottom: 40px; font-weight: 300;')
+_NL_FUSS = ('padding: 30px; background-color: rgba(255,255,255,0.03); text-align: center; '
+            'border-top: 1px solid rgba(255,255,255,0.05);')
+
+
+def _newsletter_html(produktname, produkt_url, knopf, image_url):
+    """Der HTML-Teil der Newsletter-Mail für ein Stück.
+
+    Der Name stammt aus dem Admin-Panel und steht maskiert im HTML; die
+    Adressen kommen aus der URLconf bzw. dem Bildspeicher."""
+    name = html_escape(produktname)
+    bild = (f"<tr><td><img src='{html_escape(image_url)}' width='600' "
+            f"style='width: 100%; height: auto; display: block;' alt='{name}'></td></tr>"
+            if image_url else "")
+    domain = settings.SITE_URL.replace('https://', '').replace('http://', '')
+    return f"""
         <html>
-            <body style="margin: 0; padding: 0; background-color: #050816; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #ffffff;">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #050816; padding: 40px 20px;">
+            <body style="{_NL_KOERPER}">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="{_NL_TABELLE}">
                     <tr>
                         <td align="center">
-                            <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+                            <table width="600" border="0" cellspacing="0" cellpadding="0" style="{_NL_KARTE}">
                                 <!-- Header Image -->
-                                {"<tr><td><img src='" + image_url + "' width='600' style='width: 100%; height: auto; display: block;' alt='" + produkt.name + "'></td></tr>" if image_url else ""}
-                                
+                                {bild}
+
                                 <!-- Content -->
                                 <tr>
                                     <td style="padding: 40px; text-align: center;">
-                                        <h1 style="color: #ff6a00; font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; margin: 0 0 20px 0; text-shadow: 0 0 20px rgba(255,106,0,0.3);">New Drop</h1>
-                                        <h2 style="font-size: 24px; font-weight: 300; margin: 0 0 30px 0; color: #f4f7fb;">"{produkt.name}"</h2>
-                                        
+                                        <h1 style="{_NL_TITEL}">New Drop</h1>
+                                        <h2 style="font-size: 24px; font-weight: 300; margin: 0 0 30px 0; color: #f4f7fb;">"{name}"</h2>
+
                                         <div style="height: 1px; width: 60px; background-color: #ff6a00; margin: 0 auto 30px auto;"></div>
-                                        
-                                        <p style="font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.6); margin-bottom: 40px; font-weight: 300;">
-                                            Ein neues handbemaltes Unikat aus dem Luviq-Orbit ist soeben gelandet. 
+
+                                        <p style="{_NL_ABSATZ}">
+                                            Ein neues handbemaltes Unikat aus dem Luviq-Orbit ist soeben gelandet.
                                             Jedes Teil ist ein 1-of-1 Statement gegen die Fast-Fashion Industrie.
                                         </p>
-                                        
-                                        <a href="{produkt_url}" style="display: inline-block; background-color: #ff6a00; color: #ffffff; padding: 18px 40px; text-decoration: none; border-radius: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 14px; box-shadow: 0 10px 30px rgba(255,106,0,0.3);">
+
+                                        <a href="{produkt_url}" style="{_NL_KNOPF}">
                                             {knopf}
                                         </a>
                                     </td>
                                 </tr>
-                                
+
                                 <!-- Footer -->
                                 <tr>
-                                    <td style="padding: 30px; background-color: rgba(255,255,255,0.03); text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
-                                        <p style="font-size: 10px; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 2px; margin: 0;">
-                                            © {settings.SITE_URL.replace('https://', '').replace('http://', '')} // Luviq Cinematic Branding
+                                    <td style="{_NL_FUSS}">
+                                        <p style="{_NL_COPYRIGHT}">
+                                            © {domain} // Luviq Cinematic Branding
                                         </p>
                                     </td>
                                 </tr>
@@ -140,4 +174,3 @@ def send_newsletter_email(produkt, subscribers):
             </body>
         </html>
         """
-        send_brevo_email(subject, html_content, sub.email)

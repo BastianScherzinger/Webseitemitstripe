@@ -141,33 +141,22 @@ def _upload_werbung_bild(file_obj):
 
 # ═══ WERBUNG ADMIN ═══
 
-@admin_required
-def admin_werbung_list(request):
-    """Werbungen verwalten – Budget, Klicks, Views + Charts (nur eigene Kampagnen)."""
+#: Farbe je Plattform im Balkendiagramm; unbekannte Seiten bekommen reihum eine Ersatzfarbe.
+SITE_COLORS = {
+    'luviq':       '#f97316',
+    'pystore':     '#38bdf8',
+    'tutorials':   '#4ade80',
+    'pixvault':    '#c084fc',
+    'familienzone':'#f43f5e',
+}
+FALLBACK_COLORS = ['#fbbf24', '#a78bfa', '#34d399', '#fb923c']
+
+
+def _plattform_reichweite(own_ids):
+    """Diagramm 1: Views und Klicks je Plattform (gesamt) für die eigenen Kampagnen."""
     from django.db.models import Sum
     from django.db.models.functions import Lower
 
-    site_name = os.getenv('SITE_NAME', 'luviq')
-
-    # Nur Kampagnen dieser Site zeigen (Link enthält SITE_NAME, z.B. 'luviq')
-    qs = Werbung.objects.order_by('-erstellt_am')
-    if site_name:
-        qs = qs.filter(link__icontains=site_name)
-    werbungen = list(qs)
-    aktiv_count = sum(1 for w in werbungen if w.ist_aktiv)
-
-    SITE_COLORS = {
-        'luviq':       '#f97316',
-        'pystore':     '#38bdf8',
-        'tutorials':   '#4ade80',
-        'pixvault':    '#c084fc',
-        'familienzone':'#f43f5e',
-    }
-    FALLBACK_COLORS = ['#fbbf24', '#a78bfa', '#34d399', '#fb923c']
-    own_ids = [w.id for w in werbungen]
-
-    # ── Chart 1: Reichweite nach Plattform (Balken, gesamt) ───────────────
-    site_breakdown = {'labels': [], 'views': [], 'klicks': [], 'colors': []}
     try:
         breakdown = list(
             WerbungStat.objects
@@ -181,7 +170,7 @@ def admin_werbung_list(request):
             SITE_COLORS.get(s['seite_norm'], FALLBACK_COLORS[i % len(FALLBACK_COLORS)])
             for i, s in enumerate(breakdown)
         ]
-        site_breakdown = {
+        return {
             'labels': [s['seite_norm'].capitalize() for s in breakdown],
             'views':  [s['total_v'] for s in breakdown],
             'klicks': [s['total_k'] for s in breakdown],
@@ -189,9 +178,13 @@ def admin_werbung_list(request):
         }
     except Exception as e:
         _log.error('site_breakdown error: %s', e)
+        return {'labels': [], 'views': [], 'klicks': [], 'colors': []}
 
-    # ── Chart 2: Tagesverlauf – Views & Klicks der letzten 30 Tage ───────
-    timeline = {'labels': [], 'views': [], 'klicks': []}
+
+def _tagesverlauf(own_ids):
+    """Diagramm 2: Views und Klicks der letzten 30 Tage, Tage ohne Eintrag als 0."""
+    from django.db.models import Sum
+
     try:
         today = timezone.localdate()
         start_date = today - timedelta(days=29)
@@ -210,21 +203,36 @@ def admin_werbung_list(request):
             day_views[lbl]  = day_views.get(lbl, 0)  + entry['v']
             day_klicks[lbl] = day_klicks.get(lbl, 0) + entry['k']
 
-        timeline = {
+        return {
             'labels': day_labels,
             'views':  [day_views.get(l, 0)  for l in day_labels],
             'klicks': [day_klicks.get(l, 0) for l in day_labels],
         }
     except Exception as e:
         _log.error('timeline error: %s', e)
+        return {'labels': [], 'views': [], 'klicks': []}
+
+
+@admin_required
+def admin_werbung_list(request):
+    """Werbungen verwalten – Budget, Klicks, Views + Charts (nur eigene Kampagnen)."""
+    site_name = os.getenv('SITE_NAME', 'luviq')
+
+    # Nur Kampagnen dieser Site zeigen (Link enthält SITE_NAME, z.B. 'luviq')
+    qs = Werbung.objects.order_by('-erstellt_am')
+    if site_name:
+        qs = qs.filter(link__icontains=site_name)
+    werbungen = list(qs)
+    aktiv_count = sum(1 for w in werbungen if w.ist_aktiv)
+    own_ids = [w.id for w in werbungen]
 
     context = {
         'werbungen': werbungen,
         'aktiv_count': aktiv_count,
         # Dicts, kein vorgefertigtes JSON: die Vorlage gibt sie über
         # ``json_script`` aus (maskiert ``<``, ``>``, ``&`` – V02).
-        'site_breakdown': site_breakdown,
-        'timeline': timeline,
+        'site_breakdown': _plattform_reichweite(own_ids),
+        'timeline': _tagesverlauf(own_ids),
         'is_admin': is_admin(request.user),
     }
     return render(request, 'shop1/admin/werbung_list.html', context)
@@ -336,71 +344,69 @@ def admin_werbung_edit(request, werbung_id):
     return redirect('admin_werbung_list')
 
 
-@admin_required
-def admin_stats(request):
-    """Statistik-Seite mit Benutzerverwaltung und Bestellungen"""
-    users = User.objects.select_related('profile').all().order_by('-date_joined')
-    
-    # --- CHART DATA: Besuche der letzten 30 Tage ---
+def _besuche_30_tage():
+    """Besuche der letzten 30 Tage als JSON für das Diagramm (Lücken = 0)."""
     try:
         today = timezone.localdate()
         start_date = today - timedelta(days=29)
-        
-        # Lade existierende Besuche aus der Datenbank
-        visits_qs = PageVisit.objects.filter(date__gte=start_date).order_by('date')
-        visits_dict = {v.date: v.visits for v in visits_qs}
-        
-        labels = []
-        data = []
-        
-        # Fülle Lücken für Tage ohne Besuche mit 0 auf
+        visits_dict = {v.date: v.visits
+                       for v in PageVisit.objects.filter(date__gte=start_date).order_by('date')}
+        labels, data = [], []
         for i in range(30):
             current_date = start_date + timedelta(days=i)
             labels.append(current_date.strftime("%d.%m."))
             data.append(visits_dict.get(current_date, 0))
-            
-        chart_data_json = json.dumps({'labels': labels, 'data': data})
+        return json.dumps({'labels': labels, 'data': data})
     except Exception as e:
         _log.error("Error in chart calculation: %s", e)
-        chart_data_json = json.dumps({'labels': [], 'data': []})
+        return json.dumps({'labels': [], 'data': []})
 
-    
-    # Order-Statistiken
-    orders = Order.objects.select_related('user').prefetch_related('items').all().order_by('-erstellt_am')
-    orders_paid = orders.filter(status='paid')
-    orders_pending = orders.filter(status='pending')
-    orders_failed = orders.filter(status='failed')
-    
-    # Umsatz & Rabatte berechnen
+
+def _umsatz_und_rabatte(orders_paid):
+    """``(Umsatz, Rabatte)`` der bezahlten Bestellungen; Rabatt = Postensumme minus Bezahltes."""
     total_revenue = 0
     total_discounts = 0
     try:
         for order in orders_paid:
             rev = float(order.gesamt_betrag or 0)
             total_revenue += rev
-            
-            # Berechne Rabatt basierend auf Item-Summe vs Bezahltem Betrag
-            items_sum = sum(float((item.produkt_preis or 0) * (item.menge or 1)) for item in order.items.all())
+            items_sum = sum(float((item.produkt_preis or 0) * (item.menge or 1))
+                            for item in order.items.all())
             if items_sum > rev:
                 total_discounts += (items_sum - rev)
     except Exception as e:
         _log.error("Error in revenue calculation: %s", e)
-    
-    recent_visitors = []
-    total_visitor_logs = 0
+    return total_revenue, total_discounts
+
+
+def _letzte_besucher():
+    """``(letzte 30 Besuche, Gesamtzahl)`` dieser Site; pystore zeigt alle Sites."""
     try:
         site_name = os.getenv('SITE_NAME', 'luviq')
-        # pystore zeigt alle Sites; andere Sites nur ihre eigenen Einträge
         if site_name == 'pystore':
             visitor_qs = VisitorLog.objects
         else:
             visitor_qs = VisitorLog.objects.filter(seite=site_name)
         visitors = list(visitor_qs.order_by('-timestamp')[:30])
         _log.debug('admin_stats: loaded %d visitor log entries (site=%s)', len(visitors), site_name)
-        recent_visitors = visitors
-        total_visitor_logs = visitor_qs.count()
+        return visitors, visitor_qs.count()
     except Exception as e:
         _log.error('admin_stats: visitor log error: %s', e)
+        return [], 0
+
+
+@admin_required
+def admin_stats(request):
+    """Statistik-Seite mit Benutzerverwaltung und Bestellungen"""
+    users = User.objects.select_related('profile').all().order_by('-date_joined')
+    chart_data_json = _besuche_30_tage()
+
+    orders = Order.objects.select_related('user').prefetch_related('items').all().order_by('-erstellt_am')
+    orders_paid = orders.filter(status='paid')
+    orders_pending = orders.filter(status='pending')
+    orders_failed = orders.filter(status='failed')
+    total_revenue, total_discounts = _umsatz_und_rabatte(orders_paid)
+    recent_visitors, total_visitor_logs = _letzte_besucher()
 
     context = {
         'users': users,
