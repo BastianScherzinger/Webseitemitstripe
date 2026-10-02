@@ -21,7 +21,7 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
     """
     def _send():
         api_key = os.getenv('BREVO_API_KEY')
-        sender_name = "Luviq-Shop"
+        sender_name = "Luviq Universe"
         sender_email = settings.DEFAULT_FROM_EMAIL
 
         if api_key:
@@ -73,17 +73,20 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
 
 
 def send_newsletter_email(produkt, subscribers):
-    """Sendet ein wunderschönes Newsletter-Update an alle Abonnenten."""
-    subject = f"✨ NEW DROP: {produkt.name} is online!"
+    """Sendet das Newsletter-Update zu einem neuen Stück an die Abonnenten.
+
+    Deutsch und im Look der übrigen Mails (``emails/newsletter.html``, EIG130);
+    Text- und HTML-Teil. Ohne Verkauf kein Kaufaufruf in der Mail."""
+    from .mails import KONTAKT_EMAIL, rendern
+    from .verkauf import verkauf_aktiv
+    subject = f"Neues Stück: {produkt.name}"
     site_url = settings.SITE_URL.rstrip('/')
     # Zieladresse aus der URLconf holen statt sie von Hand zusammenzusetzen.
     # Vorher stand hier f"{site_url}/produkte/{produkt.id}/" – diese Route gibt
     # es nicht (richtig waere "produkt/<int>/", siehe shop1/urls.py). Jeder
     # verschickte Newsletter fuehrte damit auf eine 404-Seite.
     produkt_url = f"{site_url}{produkt.get_absolute_url()}"
-    # Verkaufsschalter: ohne Verkauf kein Kaufaufruf in der Mail.
-    from .verkauf import verkauf_aktiv
-    knopf = 'Jetzt Sichern' if verkauf_aktiv() else 'Stück ansehen'
+    knopf = 'Jetzt sichern' if verkauf_aktiv() else 'Stück ansehen'
     # Wenn das Bild auf einem externen Speicher (Cloudinary) liegt, ist die URL bereits absolut
     if produkt.bild and (produkt.bild.url.startswith('http://') or produkt.bild.url.startswith('https://')):
         image_url = produkt.bild.url
@@ -91,50 +94,23 @@ def send_newsletter_email(produkt, subscribers):
         image_url = f"{site_url}{produkt.bild.url}"
     else:
         image_url = ""
-    
+
+    html_content = rendern(
+        'newsletter.html',
+        titel=subject,
+        preheader=f'Ein neues handbemaltes Stück bei Luviq Universe: {produkt.name}',
+        produkt_name=produkt.name,
+        bild_url=image_url,
+        link=produkt_url,
+        knopf=knopf,
+    )
+    text_content = (
+        'Hallo,\n\n'
+        f'ein neues Stück ist da: „{produkt.name}“. Handbemalt, ein Einzelstück.\n\n'
+        f'{knopf}: {produkt_url}\n\n'
+        'Viele Grüße\nLuisa\n\n'
+        'Du bekommst diese Mail, weil du dich für den Newsletter angemeldet und die Anmeldung '
+        f'bestätigt hast. Abmelden: schreib mir kurz an {KONTAKT_EMAIL}.'
+    )
     for sub in subscribers:
-        html_content = f"""
-        <html>
-            <body style="margin: 0; padding: 0; background-color: #050816; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #ffffff;">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #050816; padding: 40px 20px;">
-                    <tr>
-                        <td align="center">
-                            <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-                                <!-- Header Image -->
-                                {"<tr><td><img src='" + image_url + "' width='600' style='width: 100%; height: auto; display: block;' alt='" + produkt.name + "'></td></tr>" if image_url else ""}
-                                
-                                <!-- Content -->
-                                <tr>
-                                    <td style="padding: 40px; text-align: center;">
-                                        <h1 style="color: #ff6a00; font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; margin: 0 0 20px 0; text-shadow: 0 0 20px rgba(255,106,0,0.3);">New Drop</h1>
-                                        <h2 style="font-size: 24px; font-weight: 300; margin: 0 0 30px 0; color: #f4f7fb;">"{produkt.name}"</h2>
-                                        
-                                        <div style="height: 1px; width: 60px; background-color: #ff6a00; margin: 0 auto 30px auto;"></div>
-                                        
-                                        <p style="font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.6); margin-bottom: 40px; font-weight: 300;">
-                                            Ein neues handbemaltes Unikat aus dem Luviq-Orbit ist soeben gelandet. 
-                                            Jedes Teil ist ein 1-of-1 Statement gegen die Fast-Fashion Industrie.
-                                        </p>
-                                        
-                                        <a href="{produkt_url}" style="display: inline-block; background-color: #ff6a00; color: #ffffff; padding: 18px 40px; text-decoration: none; border-radius: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 14px; box-shadow: 0 10px 30px rgba(255,106,0,0.3);">
-                                            {knopf}
-                                        </a>
-                                    </td>
-                                </tr>
-                                
-                                <!-- Footer -->
-                                <tr>
-                                    <td style="padding: 30px; background-color: rgba(255,255,255,0.03); text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
-                                        <p style="font-size: 10px; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 2px; margin: 0;">
-                                            © {settings.SITE_URL.replace('https://', '').replace('http://', '')} // Luviq Cinematic Branding
-                                        </p>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </body>
-        </html>
-        """
-        send_brevo_email(subject, html_content, sub.email)
+        send_brevo_email(subject, html_content, sub.email, text_content=text_content)

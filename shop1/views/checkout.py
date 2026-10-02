@@ -284,7 +284,7 @@ def send_order_confirmation_email(order):
         <h4>Lieferadresse:</h4>
         <p>{order.adresse}<br>{order.postleitzahl} {order.stadt}<br>{order.land}</p>
         <p>Vielen Dank für deinen Einkauf!</p>
-        <p>Mit freundlichen Grüßen,<br>Dein Shop-Team</p>
+        <p>Herzliche Grüße,<br>Luisa Brehler</p>
     </body></html>
     """
     text_content = f"Bestellbestätigung #{order.id}\n\n{items_text}\n\nGesamt: {float(order.gesamt_betrag):.2f} €"
