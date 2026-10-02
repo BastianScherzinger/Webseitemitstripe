@@ -12,7 +12,7 @@
                 <div style="position:relative;padding-bottom:66%;overflow:hidden;">
                     {# RE17: kein src – die Karte lädt erst nach einem Klick, siehe base.html #}
                     <iframe
-                        data-src="https://maps.google.com/maps?q=Gr%C3%BCnberger+Str.+16%2C+36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=16"
+                        data-src="https://maps.google.com/maps?q=36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=12"
                         style="position:absolute;inset:0;width:100%;height:100%;border:0;"
                         allowfullscreen loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"
@@ -99,7 +99,7 @@
             <div style="position:relative;min-height:320px;">
                 {# RE17: kein src – die Karte lädt erst nach einem Klick, siehe base.html #}
                 <iframe
-                    data-src="https://maps.google.com/maps?q=Gr%C3%BCnberger+Str.+16%2C+36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=16"
+                    data-src="https://maps.google.com/maps?q=36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=12"
                     style="position:absolute;inset:0;width:100%;height:100%;border:0;"
                     allowfullscreen loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"
@@ -113,7 +113,7 @@
                     </div>
                     <div>
                         <p class="text-white font-black text-lg">Luviq Universe</p>
-                        <p class="text-white/30 text-xs uppercase tracking-widest">Grünberger Str. 16 · 36304 Alsfeld</p>
+                        <p class="text-white/30 text-xs uppercase tracking-widest">36304 Alsfeld · Hessen · ohne Ladengeschäft</p>
                     </div>
                 </div>
                 {# Hier stand fest eingetippt „5.0 ★★★★★" – eine Durchschnittsbewertung, die aus keiner Quelle kommt (UWG Anh. Nr. 23b/23c). Die echten Google-Bewertungen sind über die Knöpfe darunter erreichbar. Beide Elemente bleiben leer stehen, damit der Seitenaufbau (Designwache) gleich bleibt. #}
@@ -125,12 +125,13 @@
                     <a href="{{ GOOGLE_REVIEW_URL }}" target="_blank" rel="noopener"
                        class="flex items-center justify-center gap-2 btn-glow px-6 py-4 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] shadow-xl">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.545 10.239v3.821h5.445c-.712 2.315-2.647 3.972-5.445 3.972a6.033 6.033 0 1 1 0-12.064c1.498 0 2.866.549 3.921 1.453l2.814-2.814A9.969 9.969 0 0 0 12.545 2C7.021 2 2.543 6.477 2.543 12s4.478 10 10.002 10c8.396 0 10.249-7.85 9.426-11.748l-9.426-.013Z"/></svg>
-                        Jetzt bei Google bewerten
+                        {% if '/maps/search/' in GOOGLE_REVIEW_URL %}Luviq Universe auf Google Maps suchen{% else %}Jetzt bei Google bewerten{% endif %}
                     </a>
-                    <a href="https://www.google.com/maps/search/Luviq+Universe+Alsfeld" target="_blank" rel="noopener"
+                    {# EIG87: Ohne gesetztes GOOGLE_REVIEW_URL zeigt der erste Knopf nur auf eine Kartensuche, nicht auf ein Bewertungsformular – dann heißt er ehrlich „suchen“ und der zweite führt zu einem anderen Ziel (Rückmeldung per Formular), statt dasselbe Ziel zweimal zu beschriften. #}
+                    <a href="{% if '/maps/search/' in GOOGLE_REVIEW_URL %}{% url 'kontakt' %}{% else %}https://www.google.com/maps/search/Luviq+Universe+Alsfeld{% endif %}"{% if '/maps/search/' not in GOOGLE_REVIEW_URL %} target="_blank" rel="noopener"{% endif %}
                        class="flex items-center justify-center gap-2 glass px-6 py-4 rounded-2xl text-white/50 font-black uppercase tracking-widest text-[10px] hover:text-white transition-colors"
                        style="border-color:rgba(200,150,92,0.15)">
-                        Auf Google Maps ansehen →
+                        {% if '/maps/search/' in GOOGLE_REVIEW_URL %}Rückmeldung per Formular →{% else %}Auf Google Maps ansehen →{% endif %}
                     </a>
                 </div>
             </div>
