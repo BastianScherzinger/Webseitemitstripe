@@ -176,6 +176,7 @@ TEMPLATES = [
                 'shop1.context_processors.shop_owner_check',
                 'shop1.context_processors.csp_nonce',
                 'shop1.context_processors.oeffentliche_adresse',
+                'shop1.context_processors.feed_beworben',
                 'shop1.verkauf.verkauf_kontext',
                 'shop1.context_processors.luviq',
             ],
