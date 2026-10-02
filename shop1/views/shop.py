@@ -159,6 +159,7 @@ def doppelt_abgeschickt(email, betreff, nachricht):
 # wird nur eine KontaktAnfrage (MW18), und erst nach Drosselung je IP,
 # Feldprüfung (kontakt_fehler), Spamschutz und Doppelsperre.
 def kontakt(request):
+    """Kontaktformular: prüfen, speichern, mailen, dann 302 auf ``/kontakt/danke/``."""
     # ``fehler``: der Text, den das Formular selbst ansagt (BF24). Er geht seit
     # dem 17.09.2026 nicht mehr über ``messages`` an den Meldungsbereich der
     # Seite, sondern in den Block ``role="alert"`` innerhalb des Formulars –

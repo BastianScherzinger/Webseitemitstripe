@@ -38,6 +38,7 @@ sondern nur gezählt – sie stehen in ``KEINE_PRUEFUNG`` mit dem Grund.
     python manage.py pruefe_links --streng   # Warnungen zählen wie Fehler
 """
 
+import logging
 import os
 import re
 from unittest import mock
@@ -76,7 +77,12 @@ KEINE_PRUEFUNG = (
 )
 
 
+_log = logging.getLogger('shop1')
+
+
 class Command(BaseCommand):
+    """Prüfbefehl ``pruefe_links``: jeder Verweis jeder öffentlichen Seite."""
+
     help = ('Ruft jeden Verweis jeder öffentlichen Seite ab und meldet tote '
             'interne Links, Umwege über Weiterleitungen und fremde Ziele '
             'ohne TLS.')
@@ -135,6 +141,7 @@ class Command(BaseCommand):
                 transaction.set_rollback(True, using='default')
                 transaction.set_rollback(True, using='pystore')
         except Exception as fehler:
+            _log.exception('pruefe_links: Verweisprüfung abgebrochen')
             self.fehler.append(
                 f'Die Verweisprüfung ist abgebrochen: '
                 f'{type(fehler).__name__}: {fehler}'

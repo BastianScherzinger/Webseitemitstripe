@@ -85,6 +85,7 @@ def _doppelt_schluessel(werte):
 
 
 def empfaenger():
+    """Die Adresse, an die Motivanfragen gehen – nie die eingetippte."""
     return settings.MOTIV_EMPFAENGER or os.getenv('ADMIN_EMAIL', settings.DEFAULT_FROM_EMAIL)
 
 
@@ -145,6 +146,7 @@ def _seite(request, werte=None, fehler=None, status=200):
 # nur eine Motivanfrage, und erst nach Drosselung je IP, Feldprüfung,
 # Spamschutz und Doppelsperre.
 def motiv_anfragen(request):
+    """Formular „Motiv anfragen“: anzeigen, prüfen, speichern, mailen (nur an Luisa)."""
     if not settings.MOTIVANFRAGE_AKTIV:
         return render(request, 'shop1/motiv_anfragen.html', {'geschlossen': True})
     if request.method != 'POST':

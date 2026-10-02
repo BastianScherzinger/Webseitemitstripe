@@ -73,6 +73,7 @@ def _ersatzwerte() -> None:
 
 
 def main() -> int:
+    """Schneidet die sechs Schriftdateien zu, kopiert die Lizenzen, rechnet die Ersatzwerte."""
     from fontTools.ttLib import TTFont
     from fontTools.varLib import instancer
 

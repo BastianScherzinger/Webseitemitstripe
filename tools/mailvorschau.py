@@ -32,6 +32,7 @@ LANG = ('Hallo Luisa,\n\nich habe deine bemalten Jacken auf Instagram gesehen un
 
 
 def main(ziel):
+    """Schreibt alle Mail-Vorschauen mit Beispieldaten als HTML nach ``ziel``."""
     ziel = Path(ziel)
     ziel.mkdir(parents=True, exist_ok=True)
     objekt = SimpleNamespace(pk=42, _meta=SimpleNamespace(app_label='shop1', model_name='kontaktanfrage'))
