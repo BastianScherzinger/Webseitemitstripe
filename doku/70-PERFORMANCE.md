@@ -6,7 +6,7 @@ status: teilweise
 fortschritt: 99
 zusammenfassung: Stand 02.10.2026 (lokal, nicht gepusht): Produktbilder in mehreren Größen mit srcset, LCP-Bild mit fetchpriority und Vorladen, Bildmaße (Migration 0027), vier Schriftdateien, Critical CSS, Alpine.js entfernt. Stand 01.10.2026: PageSpeed mobil 95–99, Desktop 100, Serverzeit 1,6 ms, CLS 0,00–0,05 (Messblock vom 01.10.2026); WebP, GZip, Cache, gthread und die Cloudinary-.webp-Endung sind in main und live. Offen sind Bildgrößen und -attribute, sechs statt vier Schriftdateien und die Fremdskripte (Alpine, Chart.js).
 offen: 3
-pagespeed_mobil: 98
+pagespeed_mobil: 99
 pagespeed_desktop: 100
 antwortzeit_ms: 2
 quellen: DOCUMENTATION.md, LOGBUCH.md, start.sh
@@ -31,16 +31,16 @@ und live noch nicht wirksam.
 
 | Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
 |---|---|---:|---:|---:|---:|---:|
-| `/` | mobile | **90** | 3,61 s | 0,012 | 0 ms | 4 ms |
-| `/` | desktop | **100** | 0,65 s | 0,000 | 0 ms | 2 ms |
-| `/datenschutz/` | mobile | **100** | 1,50 s | 0,000 | 0 ms | 2 ms |
+| `/` | mobile | **95** | 2,95 s | 0,012 | 0 ms | 5 ms |
+| `/` | desktop | **100** | 0,65 s | 0,043 | 0 ms | 4 ms |
+| `/datenschutz/` | mobile | **100** | 1,65 s | 0,000 | 0 ms | 2 ms |
 | `/datenschutz/` | desktop | **100** | 0,36 s | 0,001 | 0 ms | 2 ms |
 | `/impressum/` | mobile | **100** | 1,65 s | 0,000 | 0 ms | 2 ms |
-| `/impressum/` | desktop | **100** | 0,36 s | 0,001 | 0 ms | 2 ms |
-| `/kontakt/` | mobile | **100** | 1,67 s | 0,000 | 0 ms | 2 ms |
-| `/kontakt/` | desktop | **100** | 0,37 s | 0,001 | 0 ms | 2 ms |
-| `/produkte/` | mobile | **99** | 1,96 s | 0,013 | 0 ms | 3 ms |
-| `/produkte/` | desktop | **100** | 0,56 s | 0,051 | 0 ms | 4 ms |
+| `/impressum/` | desktop | **100** | 0,38 s | 0,001 | 0 ms | 1 ms |
+| `/kontakt/` | mobile | **100** | 1,66 s | 0,000 | 0 ms | 2 ms |
+| `/kontakt/` | desktop | **100** | 0,38 s | 0,001 | 0 ms | 1 ms |
+| `/produkte/` | mobile | **99** | 2,04 s | 0,000 | 0 ms | 4 ms |
+| `/produkte/` | desktop | **100** | 0,49 s | 0,051 | 0 ms | 2 ms |
 
 10 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 

@@ -53,7 +53,7 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 01.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 02.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-02c) — **Gesamtstand 95,7 von 100**, Reifegrad „Referenz“. 332 von 374 Regeln an 19 URLs und 202 Dateien (41.618 Zeilen) geprüft.
+**Messung vom 02.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-02c) — **Gesamtstand 96,4 von 100**, Reifegrad „Referenz“. 332 von 374 Regeln an 19 URLs und 202 Dateien (41.724 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
@@ -61,14 +61,14 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 01.10.2026 gegen Code und Live
 | Substanz & Reichweite | **85** | Solide |
 | Konversion | **87** | Solide |
 | SEO — Inhalt | **94** | Referenz |
-| GEO — KI-Sichtbarkeit | **94** | Referenz |
+| Barrierefreiheit | **98** | Referenz |
 | SEO — Technik | **99** | Referenz |
 | Vorlagen-Konformität | **99** | Referenz |
+| GEO — KI-Sichtbarkeit | **100** | Referenz |
 | Code-Qualität & Projektreife | **100** | Referenz |
 | Sicherheit | **100** | Referenz |
 | Formulare & Preisrechner | **100** | Referenz |
 | Performance & Core Web Vitals | **100** | Referenz |
-| Barrierefreiheit | **100** | Referenz |
 | Recht & Vertrauen | **100** | Referenz |
 | Betrieb & Auslieferung | **100** | Referenz |
 
