@@ -197,8 +197,9 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-karte:hover img{transform:scale(1.03)}
 .lv-karte-kopf{display:flex;justify-content:space-between;gap:1em;margin-top:calc(var(--u)*.4);font:max(12px,calc(var(--u)*.85)) var(--lv-mono)}
 .lv-karte-kopf span{color:var(--lv-leise);letter-spacing:.08em;text-transform:uppercase}
-.lv-karte h3{font-size:max(19px,calc(var(--u)*1.7))}
-.lv-karte h3 a::after{content:"";position:absolute;inset:0}
+.lv-karte h2,.lv-karte h3{font-size:max(19px,calc(var(--u)*1.7))}
+.lv-karte h2 a,.lv-karte h3 a{display:inline-block;min-height:24px}
+.lv-karte h2 a::after,.lv-karte h3 a::after{content:"";position:absolute;inset:0}
 .lv-karte .lv-material{color:var(--lv-leise);font-size:max(13px,calc(var(--u)*.88))}
 .lv-karte .lv-preis{font:500 max(14px,calc(var(--u)*1)) var(--lv-mono)}
 .lv-leer{color:var(--lv-leise);padding:calc(var(--u)*3) 0}
@@ -213,9 +214,10 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-portraet{aspect-ratio:4/5;max-width:calc(var(--u)*22);overflow:hidden}
 
 /* Warteliste */
-.lv-warteliste{padding:calc(var(--u)*8) var(--rand);border-top:1px solid var(--lv-linie);display:grid;justify-items:center;text-align:center;gap:calc(var(--u)*1.8);background:var(--lv-grund-2)}
+.lv-warteliste{padding:calc(var(--u)*8) var(--rand);border-top:1px solid var(--lv-linie);display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;gap:calc(var(--u)*1.8);background:var(--lv-grund-2)}
 .lv-warteliste h2{font-size:calc(var(--u)*7.4)}
 .lv-warteliste p{color:var(--lv-leise);max-width:52ch}
+.lv-warteliste p a{text-decoration:underline;text-underline-offset:.2em}
 .lv-warteliste .lv-feldzeile{width:100%}
 
 /* ── Fuß ── */
@@ -294,6 +296,10 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-alt main .glass-card:hover{transform:none!important}
 .lv-alt main h1,.lv-alt main h2,.lv-alt main h3,.lv-alt main .heading-font{font-family:var(--lv-serif)!important;font-style:italic;font-weight:500!important;text-transform:none!important;letter-spacing:-.01em!important;line-height:1.02}
 .lv-alt main h4,.lv-alt main h5{font-family:var(--lv-sans);letter-spacing:.02em}
+/* Überschriften, die früher h4 waren und für die Gliederung (VL17) eine Stufe höher stehen: gleicher Auftritt wie zuvor (Sans, nicht kursiv). */
+.lv-alt main .lv-ueb-s,.lv-alt main .lv-ueb-m{font-family:var(--lv-sans)!important;font-style:normal!important;letter-spacing:.02em!important}
+.lv-alt main .lv-ueb-s{line-height:1.3333!important;font-weight:900!important;text-transform:uppercase!important}
+.lv-alt main .lv-ueb-m{line-height:1.5556!important;font-weight:700!important;text-transform:none!important}
 .lv-alt main .text-glow{color:var(--lv-text)!important;text-shadow:none!important;background:none!important;-webkit-text-fill-color:currentColor!important}
 .lv-alt main .text-glow-orange,.lv-alt main [class*="text-orange-"]{color:var(--lv-akzent)!important}
 .lv-alt main .btn-glow,.lv-alt main .bg-glow-orange,.lv-alt main button[type="submit"]:not(.lv-knopf){background:var(--lv-text)!important;color:var(--lv-grund)!important;border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;text-shadow:none!important}
@@ -305,6 +311,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-alt main .scroll-reveal,.lv-alt main .animate-reveal{opacity:1!important;transform:none!important;transition:none!important}
 .lv-alt main .animate-pulse,.lv-alt main .animate-float{animation:none!important}
 .lv-alt main a:not([class]){color:var(--lv-text);text-decoration:underline;text-underline-offset:.2em}
+/* Links im Fließtext nie nur durch Farbe kenntlich (BF29, axe link-in-text-block). */
+.lv-alt main p a:not(.btn-glow):not(.lv-knopf){text-decoration:underline;text-underline-offset:.2em}
 .lv-alt main .product-card{transform:none!important}
 .lv-alt main section{border-color:var(--lv-linie)}
 /* Gesperrte Großbuchstaben-Absätze waren kaum lesbar: Fließtext normal setzen. */
@@ -315,9 +323,9 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 /* ── Unter 1024 px: feste Werte aus dem Handy-Rahmen ── */
 @media (max-width:1023px){
   :root{--rand:16px}
-  body.lv{font-size:15px;padding-bottom:76px}
+  body.lv{font-size:16px;padding-bottom:76px}
   body.lv.ohne-leiste{padding-bottom:0}
-  .lv-band{font-size:10px;padding:6px 0}
+  .lv-band{font-size:12px;padding:6px 0}
   .lv-kopf{padding:10px var(--rand);gap:10px}
   .lv-wm{font-size:15px;letter-spacing:.45em}
   .lv-nav,.lv-kopf-rechts{display:none}
@@ -333,20 +341,20 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-menue nav .lv-nav-anfrage{color:var(--lv-akzent)}
   .lv-menue nav .lv-menue-klein{font-size:14px;color:var(--lv-leise)}
   .lv-hero{padding:12px var(--rand) 36px}
-  .lv-mast{font-size:10px;padding-bottom:6px}
+  .lv-mast{font-size:12px;padding-bottom:6px}
   .lv-mast span:nth-child(2){display:none}
   .lv-pano{margin-top:12px!important;gap:8px}
   .lv-pano picture{aspect-ratio:4/5}
-  .lv-pano figcaption{font-size:11px}
+  .lv-pano figcaption{font-size:12px}
   .lv-unterbild{grid-template-columns:minmax(0,1fr);gap:24px;margin-top:20px}
   .lv-satz{font-size:40px}
-  .lv-lead{font-size:15.5px}
+  .lv-lead{font-size:16px}
   .lv-unterbild .lv-knopf,.lv-knopf{padding:12px 18px;font-size:15px}
   .lv-unterbild .lv-knopf{margin-top:18px}
   .lv-dropkasten{padding:16px;gap:12px}
   .lv-uhr{gap:14px}
   .lv-uhr b{font-size:24px}
-  .lv-uhr small{font-size:9.5px}
+  .lv-uhr small{font-size:12px}
   .lv-feldzeile{max-width:none}
   .lv-feldzeile input{padding:12px}
   .lv-feldzeile button{font-size:14px;padding:0 14px;min-height:48px}
@@ -361,7 +369,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-abschnitt{padding:44px var(--rand)}
   .lv-abschnittskopf{grid-template-columns:minmax(0,1fr);gap:8px;margin-bottom:20px}
   .lv-abschnittskopf h1,.lv-abschnittskopf h2{font-size:36px}
-  .lv-abschnittskopf p{justify-self:start;font-size:14px}
+  .lv-abschnittskopf p{justify-self:start;font-size:16px}
   .lv-teaser{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .lv-teaser .gross{grid-column:1/-1}
   .lv-teaser .gross i{aspect-ratio:16/10}
@@ -370,20 +378,20 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-schritte::-webkit-scrollbar{display:none}
   .lv-schritt{flex:0 0 min(72%,300px);scroll-snap-align:start;gap:6px}
   .lv-schritt h3{font-size:22px}
-  .lv-schritt p:last-child{font-size:13.5px}
-  .lv-wischen{display:block;margin-top:12px;font:11px var(--lv-mono);color:var(--lv-leise);letter-spacing:.08em;text-transform:uppercase}
+  .lv-schritt p:last-child{font-size:16px}
+  .lv-wischen{display:block;margin-top:12px;font:12px var(--lv-mono);color:var(--lv-leise);letter-spacing:.08em;text-transform:uppercase}
   .lv-raster{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}
   .lv-raster>li:first-child{grid-column:1/-1}
-  .lv-karte h3{font-size:18px}
-  .lv-karte-kopf{font-size:11px}
+  .lv-karte h2,.lv-karte h3{font-size:18px}
+  .lv-karte-kopf{font-size:12px}
   .lv-karte .lv-material{font-size:12.5px}
   .lv-luisa{grid-template-columns:minmax(0,1fr);padding:48px var(--rand);gap:20px}
   .lv-luisa blockquote p{font-size:36px}
-  .lv-luisa blockquote footer{font-size:10.5px}
-  .lv-luisa-text{font-size:15px;gap:12px}
+  .lv-luisa blockquote footer{font-size:12px}
+  .lv-luisa-text{font-size:16px;gap:12px}
   .lv-warteliste{padding:48px var(--rand) 44px;gap:14px}
   .lv-warteliste h2{font-size:40px}
-  .lv-warteliste p{font-size:14.5px}
+  .lv-warteliste p{font-size:16px}
   .lv-fuss{padding:32px var(--rand) 28px;gap:16px}
   .lv-fuss-wm{font-size:clamp(44px,14vw,110px)}
   .lv-fuss nav{display:grid;grid-template-columns:1fr 1fr;gap:0;font-size:15px}
@@ -392,7 +400,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-recht{flex-direction:column;gap:6px;font-size:12px}
   .lv-leiste{display:grid;position:fixed;left:0;right:0;bottom:0;z-index:45;grid-template-columns:1fr auto;gap:10px;align-items:center;
     padding:10px var(--rand) calc(10px + env(safe-area-inset-bottom));background:var(--lv-grund);border-top:1px solid var(--lv-linie-2)}
-  .lv-leiste p{font:11.5px/1.3 var(--lv-mono);color:var(--lv-leise);margin:0}
+  .lv-leiste p{font:12px/1.3 var(--lv-mono);color:var(--lv-leise);margin:0}
   .lv-leiste b{display:block;color:var(--lv-text);font-size:12.5px}
   .lv-leiste a{min-height:48px;display:flex;align-items:center;padding:0 18px;background:var(--lv-akzent);color:var(--lv-grund)!important;font-weight:700;font-size:15px}
   .lv-anfrageseite{grid-template-columns:minmax(0,1fr);padding:24px var(--rand) 48px;gap:24px}
@@ -407,7 +415,12 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-danke{padding:40px var(--rand) 56px;gap:16px}
   .lv-stueck{grid-template-columns:minmax(0,1fr);padding:16px var(--rand) 48px;gap:24px}
   .lv-stueck-nummer{font-size:44px}
-  .lv-brotkrume{padding-top:16px;font-size:11px}
+  .lv-brotkrume{padding-top:16px;font-size:12px}
+  .lv-nr,.lv-daten dt{font-size:12px}
+  /* Kleinstes Tailwind-Maß der Altseiten (Kontakt, Gästebuch) ebenfalls auf 12 px (BF27). */
+  .lv-alt main [class*="text-[9px]"],.lv-alt main [class*="text-[10px]"],.lv-alt main [class*="text-[11px]"]{font-size:12px}
+  /* Absätze der Altseiten, die als Beschriftung gesetzt waren, sind Fließtext: mindestens 16 px (BF27). */
+  .lv-alt main p[class*="text-[9px]"],.lv-alt main p[class*="text-[10px]"],.lv-alt main p[class*="text-[11px]"],.lv-alt main p[class*="text-xs"],.lv-alt main p[class*="text-sm"]{font-size:16px}
 }
 @media (min-width:640px) and (max-width:1023px){
   .lv-unterbild{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px}

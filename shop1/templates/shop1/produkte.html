@@ -67,7 +67,7 @@
         </div>
         {% if produkte_liste %}
         <ol class="lv-raster">
-            {% for produkt in produkte_liste %}{% include 'shop1/teile/archiv_karte.html' %}{% endfor %}
+            {% for produkt in produkte_liste %}{% include 'shop1/teile/archiv_karte.html' with stufe=2 %}{% endfor %}
         </ol>
         {% else %}
         <p class="lv-leer">Das Archiv ist gerade leer. Die nächste Ausgabe ist in Arbeit.</p>
