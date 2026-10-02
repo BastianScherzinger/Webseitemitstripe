@@ -47,7 +47,7 @@
         <div class="glass-card p-10 md:p-16 rounded-[4rem] mb-24 border-white/5 relative overflow-hidden group">
             <div class="absolute -top-24 -right-24 w-64 h-64 bg-glow-orange/5 blur-[80px] rounded-full group-hover:bg-glow-orange/10 transition-all duration-1000"></div>
             
-            <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-10">Neuer Beitrag</h3>
+            <h2 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-10">Neuer Beitrag</h2>
             <form action="{% url 'comment_add' %}" method="POST">
                 {% csrf_token %}
                 <textarea name="text" rows="4" required maxlength="2000" aria-label="Dein Beitrag fürs Gästebuch"
@@ -98,7 +98,7 @@
                     <div class="flex items-center gap-5">
                         <div class="w-12 h-12 rounded-2xl glass flex items-center justify-center text-xl shadow-xl">👤</div>
                         <div>
-                            <h4 class="text-white font-black uppercase tracking-tighter">{{ comment.user.username }}</h4>
+                            <h3 class="lv-ueb-n text-white font-black uppercase tracking-tighter">{{ comment.user.username }}</h3>
                             <p class="text-[9px] text-white/20 uppercase tracking-widest">{{ comment.erstellt_am|date:"d.m.Y H:i" }}</p>
                         </div>
                     </div>
@@ -139,9 +139,9 @@
                                     {% if reply.is_admin_reply %}✨{% else %}👤{% endif %}
                                 </div>
                                 <div>
-                                    <h5 class="text-xs font-black uppercase tracking-widest {% if reply.is_admin_reply %}text-glow-orange{% else %}text-white/80{% endif %}">
+                                    <h4 class="text-xs font-black uppercase tracking-widest {% if reply.is_admin_reply %}text-glow-orange{% else %}text-white/80{% endif %}">
                                         {{ reply.user.username }} {% if reply.is_admin_reply %}<span class="text-[8px] opacity-50 ml-2">{% if verkauf_aktiv %}Shopbesitzer{% else %}Betreiberin{% endif %}</span>{% endif %}
-                                    </h5>
+                                    </h4>
                                 </div>
                             </div>
                             
