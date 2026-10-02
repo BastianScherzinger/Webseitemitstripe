@@ -34,7 +34,7 @@ SEITEN_STAND = {
     'motiv_anfragen': '2026-10-02',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
     'wissen':           '2026-10-02',
-    'wissen_pflege':    '2026-09-18',
+    'wissen_pflege':    '2026-10-02',
     'wissen_upcycling': '2026-10-02',
     'wissen_groesse':   '2026-10-02',
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).

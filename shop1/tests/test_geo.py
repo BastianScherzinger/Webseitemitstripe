@@ -31,6 +31,8 @@ _JSONLD = re.compile(
 #: auch dort, dass jede Frage sichtbar auf der Seite steht.
 FAQ_SEITEN = (
     '/kontakt/', '/liefergebiet/',
+    # Übersicht seit 02.10.2026 (GE17): Beitragstitel als Fragen, Kurztexte als Antworten.
+    '/wissen/',
     '/wissen/pflege-handbemalte-kleidung/',
     '/wissen/upcycling-mode-second-hand-vintage/',
     '/wissen/groesse-bei-einzelstuecken/',

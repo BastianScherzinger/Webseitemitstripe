@@ -10,6 +10,11 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 02.10.2026 — Wissensbeiträge nach der Freigabe nachgeschärft (Zweig `fix/2026-10-02-luviq-wissen`)
+
+**Was:** Mit der Freigabe sind `/wissen/` und drei Beiträge indexierbar und wurden erstmals gemessen (Lauf 1830). Behoben: Titel Pflege mit Zahl und Ort (IS06), Titel Größe auf 60 Zeichen (IS02/VL06), FAQPage auf `/wissen/` aus Titel und Kurztext der Beiträge (GE17), erster Absatz der Übersicht geteilt (GE23), je eine Liste in allen vier Seiten (GE27), je eine externe Quelle (GINETEX, EN 13402, § 355 BGB; GE43), Zeitangaben mit Einheit (GE25: „alle 2 bis 3 Monate“, „etwa 20 Jahre“, Antwortzeit aus `luviq_daten.ANTWORT`), Pflege und Größe verlinken den Upcycling-Beitrag (IS27). Aufbau-Referenz nur für die vier Wissensseiten nachgezogen.
+**Warum:** Neue Befunde aus Lauf 1830, alle an den frisch freigegebenen Seiten. Keine neuen Aussagen über Luviq: Listen fassen den freigegebenen Text zusammen, „etwa 20 Jahre“ stand schon im Upcycling-Beitrag.
+
 ## 02.10.2026 — Luisa-Punkte: Freigaben, Profile, Erreichbarkeit (Zweig `fix/2026-10-02-luviq-luisa`)
 
 **Was:** Die drei Wissensbeiträge Pflege, Upcycling und Grösse sind freigegeben (`freigegeben: True` in `shop1/views/wissen.py`, Pflege-Kurztext gekürzt auf die VL06-Spanne); damit sind `/wissen/` und die drei Beiträge indexierbar, der Feed hat drei Einträge und steht im Kopf und in `llms.txt`. Instagram heisst jetzt `luviq.archive` (das alte `luviq.universe` gibt es nicht mehr), dazu TikTok `@luviq.archive` und das Google-Unternehmensprofil „Luviq“ (`maps?cid=13899750731019902000`) — alle drei in `luviq_daten.PROFILE`, `sameAs` und beiden `llms`-Texten. Antwortzeit „innerhalb von 2 Stunden“ (`luviq_daten.ANTWORT`) im Fuss jeder Seite und auf `/kontakt/`, dort auch „eine Telefonnummer gibt es nicht“. `DROP_TERMIN_VORGABE` leer: kein Countdown, bis der Termin feststeht (Aufbau-Referenz für `/` nachgezogen, nur die Uhr fällt weg). `SECURITY_TXT_EXPIRES` auf 01.10.2027. Tests auf den freigegebenen Stand umgestellt (Feed, llms-full, EIG12, Wortschwelle `/wissen/` 540).
