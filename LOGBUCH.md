@@ -10,6 +10,11 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 02.10.2026 — Wissensbeiträge zeigen ihr Datum, Icons quadratisch (Zweig `fix/2026-10-02d-standard`)
+
+**Was:** Alle sechs Wissensbeiträge (sichtbar ohne Verkauf: Pflege, Upcycling, Größe) tragen unter der `h1` „Aktualisiert am …“ als `<time datetime>`. Quelle ist `SEITEN_STAND` (`seiten_stand.py`, neu: `stand_anzeige`) – dasselbe Register wie `dateModified` und `lastmod`; Test `WissensdatumTest`. Aufbau-Referenz nur für die sechs Beiträge nachgezogen (je ein `div` mehr). Dazu `TS37`: `apple-touch-icon` ist jetzt ein quadratisches 180-px-PNG, verkleinert aus `flavicon.jpeg` (1254 × 1254, Marke unverändert) statt des 1290 × 1346-JPEGs; `/apple-touch-icon.png` leitet dorthin; das Manifest nennt echte 192-/512-px-PNGs statt des JPEGs mit falscher Größenangabe; `<link rel="icon">` trägt `sizes="16x16 32x32 48x48"`.
+**Warum:** Regel `GE47` (Regelstand 2026-10-02d): datierte Ratgeber sind für Suchmaschinen und Antwortmaschinen belastbarer, und sichtbares Datum und Graph dürfen nicht auseinanderlaufen. Nebenprüfung `SI43`, `BF30`, `KV24`, `GE14`, `TS47` ohne Befund; `RE27` nur gemeldet (Rechtstext nicht angefasst). Verkauf bleibt aus. Nicht gepusht.
+
 ## 02.10.2026 — Wissensbeiträge nach der Freigabe nachgeschärft (Zweig `fix/2026-10-02-luviq-wissen`)
 
 **Was:** Mit der Freigabe sind `/wissen/` und drei Beiträge indexierbar und wurden erstmals gemessen (Lauf 1830). Behoben: Titel Pflege mit Zahl und Ort (IS06), Titel Größe auf 60 Zeichen (IS02/VL06), FAQPage auf `/wissen/` aus Titel und Kurztext der Beiträge (GE17), erster Absatz der Übersicht geteilt (GE23), je eine Liste in allen vier Seiten (GE27), je eine externe Quelle (GINETEX, EN 13402, § 355 BGB; GE43), Zeitangaben mit Einheit (GE25: „alle 2 bis 3 Monate“, „etwa 20 Jahre“, Antwortzeit aus `luviq_daten.ANTWORT`), Pflege und Größe verlinken den Upcycling-Beitrag (IS27). Aufbau-Referenz nur für die vier Wissensseiten nachgezogen. Nachtrag nach Lauf 1831: Links in Listen werden wie Links in Absätzen unterstrichen (`luviq.css`, BF29 link-in-text-block auf `/wissen/`).

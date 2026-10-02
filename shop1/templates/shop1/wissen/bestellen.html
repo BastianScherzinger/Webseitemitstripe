@@ -132,6 +132,7 @@
             <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
                 Wie bestelle und bezahle ich <span class="text-glow">bei Luviq Universe?</span>
             </h1>
+            {% if seite %}<div class="text-xs uppercase tracking-widest text-white/60 mb-6">Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time></div>{% endif %}
             <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
                 {% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Eine Bestellung bei Luviq Universe aus Alsfeld läuft in fünf Schritten: ein Stück auf seiner Detailseite aussuchen, anmelden oder registrieren, es in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und zwischen PayPal und Vorab-Überweisung wählen. Ein Konto ist dafür nötig – ohne Anmeldung führt die Detailseite zuerst zur Anmeldung. {% if verkauf_aktiv %}Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}; versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.
             </p>

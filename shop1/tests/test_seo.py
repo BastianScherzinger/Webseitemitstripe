@@ -377,6 +377,33 @@ class WissensfreigabeTest(LuviqTestCase):
                 self.assertNotIn(anderer, llms)
 
 
+class WissensdatumTest(LuviqTestCase):
+    """GE47: Jeder Wissensbeitrag zeigt sein Änderungsdatum sichtbar unter
+    der ``h1`` – als ``<time datetime>`` aus ``SEITEN_STAND``, derselben
+    Quelle wie ``dateModified`` im ``WebPage``-Knoten und ``lastmod`` der
+    Sitemap. Die Übersicht ``/wissen/`` braucht keins."""
+
+    def test_sichtbares_datum_gleich_date_modified(self):
+        for slug, beitrag in WISSEN_BEITRAEGE.items():
+            pfad = f'/wissen/{slug}/'
+            with self.subTest(pfad=pfad), override_settings(VERKAUF_AKTIV=True):
+                html = self.hole(pfad).content.decode()
+                nach_h1 = html[html.index('</h1>'):]
+                zeit = re.search(r'<time datetime="(\d{4}-\d{2}-\d{2})">([^<]+)</time>', nach_h1)
+                self.assertIsNotNone(zeit, f'{pfad}: kein sichtbares Datum unter der h1')
+                stand = SEITEN_STAND[beitrag['url_name']]
+                self.assertEqual(zeit.group(1), stand)
+                self.assertIn(f'"dateModified": "{stand}"', html)
+                self.assertLess(nach_h1.index('<time'), nach_h1.index('<p'),
+                                'das Datum steht nicht direkt unter der h1')
+                jahr, monat, tag = (int(t) for t in stand.split('-'))
+                self.assertTrue(zeit.group(2).startswith(f'{tag}. '), zeit.group(2))
+                self.assertTrue(zeit.group(2).endswith(str(jahr)), zeit.group(2))
+
+    def test_uebersicht_ohne_datum(self):
+        self.assertNotContains(self.hole('/wissen/'), 'Aktualisiert am')
+
+
 @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
 class FeedTest(LuviqTestCase):
     """``/feed/`` – der Weg, auf dem ein Aggregator fragt, was neu ist (GE32).

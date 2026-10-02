@@ -100,6 +100,7 @@
             <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
                 Wie pflege ich <span class="text-glow">handbemalte Kleidung?</span>
             </h1>
+            {% if seite %}<div class="text-xs uppercase tracking-widest text-white/60 mb-6">Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time></div>{% endif %}
             <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
                 {% if not verkauf_aktiv %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt; was hier zu Kauf, Versand oder Widerruf steht, gilt erst ab Eröffnung des Shops. {% endif %}Handbemalte Kleidung wäscht man auf links gedreht, kalt oder bei 30 °C im Schonprogramm, ohne Bleichmittel und ohne Weichspüler – und lässt sie an der Luft trocknen statt im Trockner. Gebügelt wird nur von links, nie direkt auf der Farbe. Gelagert wird das Stück trocken, ohne direktes Sonnenlicht und so, dass die bemalte Fläche nicht an anderen Stoffen reibt. Diese Regeln sind allgemeine Textilpflege für bemalte Stoffe aus Baumwolle und ähnlichen Fasern; sie gelten auch für die Einzelstücke von Luviq Universe aus Alsfeld, die Luisa Brehler mit Pinsel und Bleiche auf getragener Second-Hand-Kleidung bemalt.
             </p>

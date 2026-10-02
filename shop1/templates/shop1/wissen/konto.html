@@ -132,6 +132,7 @@
             <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
                 Was speichert der Shop – <span class="text-glow">und warum braucht der Kauf ein Konto?</span>
             </h1>
+            {% if seite %}<div class="text-xs uppercase tracking-widest text-white/60 mb-6">Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time></div>{% endif %}
             <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
                 {% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Wer bei Luviq Universe in 36304 Alsfeld etwas kaufen will, braucht ein Konto: Warenkorb, Bestellvorgang und Bestellübersicht sind an eine Anmeldung gebunden. Die Registrierung verlangt Benutzername, E-Mail-Adresse, Vorname, Nachname und ein Passwort; Anschrift und Telefonnummer sind dabei freiwillig und werden erst beim Bestellen gebraucht. Gespeichert werden außerdem Warenkorb und Anmeldestand in funktionalen Cookies sowie bei jedem Seitenaufruf Pfad, Zeitpunkt, IP-Adresse und Browserkennung. Wer alles nachlesen will, findet es in der Datenschutzerklärung.
             </p>
