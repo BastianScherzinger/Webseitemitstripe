@@ -84,16 +84,19 @@ def drop_nummer():
     return f'{hoechste + 1:03d}'
 
 
-#: Kopfzeile des Hero: „LUVIQ · Ausgabe 01 | Oktober 2026 | Alsfeld".
-AUSGABE = '01'
+#: Kopfzeile des Hero: „LUVIQ Universe | Oktober 2026 | Alsfeld". Eine eigene
+#: „Ausgabe 01" gibt es nicht mehr (EIG126): die Seite nennt sonst Nº 006 als
+#: nächste Ausgabe, und zwei Zählungen widersprachen sich.
 _MONATE = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August',
            'September', 'Oktober', 'November', 'Dezember')
 
-#: Das Stück im Panorama-Foto (static/shop1/images/luviq/hero-*). Die Nummer
-#: kommt aus dem Archiv (erster Name, der einen der ``suche``-Begriffe
-#: enthält), damit sie mit der Karte übereinstimmt; ohne Treffer steht nur der
-#: Name da. Live heißt die Spinnennetz-Jeans „Custom Pants" (Stand 19.09.2026).
-HERO_STUECK = {'name': 'Spinnennetz-Jeans', 'suche': ('spinnen', 'pants'),
+#: Das Stück im Panorama-Foto (static/shop1/images/luviq/hero-*). Nummer und
+#: Name kommen aus dem Archiv, damit die Bildunterschrift und die Karte
+#: dasselbe Stück gleich nennen (EIG134): zuerst über die Archivnummer
+#: ``nummer`` (übersteht eine Umbenennung), sonst über den ersten Namen, der
+#: einen der ``suche``-Begriffe enthält. Ohne Treffer steht nur die
+#: Beschreibung des Fotos da, kein erfundener Stückname und keine Nummer.
+HERO_STUECK = {'nummer': 5, 'name': 'Jeans mit Spinnennetz-Motiv', 'suche': ('spinnen', 'pants'),
                'alt': 'Handbemalte Jeans mit Spinnennetz-Motiv, draußen im Gras fotografiert'}
 
 #: Teaser vor dem Drop: (Datum, Titel, Bildadresse, Alternativtext). Leer ⇒
@@ -123,7 +126,6 @@ def drop_kontext(jetzt=None):
         rest = {'d': f'{sekunden // 86400:02d}', 'h': f'{sekunden % 86400 // 3600:02d}',
                 'm': f'{sekunden % 3600 // 60:02d}', 's': f'{sekunden % 60:02d}'}
     return {
-        'ausgabe': AUSGABE,
         'monat': f'{_MONATE[monat.month - 1]} {monat.year}',
         'rest': rest,
         'nummer': nummer,

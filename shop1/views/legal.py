@@ -466,7 +466,9 @@ def _seitenbilder(name: str, base_url: str) -> list[tuple[str, str]]:
                    for _titel, _text, bild, alt in luviq_daten.SCHRITTE]
         return bilder
     if name == 'produkte':
-        return [(absolut(p.bild.url), f'{p.name} – Luviq Universe')
+        # Mit Archivnummer: zwei Stücke heißen gleich („Custom print hoodie“),
+        # ihre Bildtitel dürfen es nicht tun (EIG103).
+        return [(absolut(p.bild.url), f'{p.name} (Nº {p.archiv_nummer}) – Luviq Universe')
                 for p in Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am')
                 if p.bild]
     return []
@@ -546,7 +548,7 @@ def sitemap_xml(request):
             name_esc = produkt.name.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
             xml += '    <image:image>\n'
             xml += f'      <image:loc>{escaped}</image:loc>\n'
-            xml += f'      <image:title>{name_esc} – Luviq Universe</image:title>\n'
+            xml += f'      <image:title>{name_esc} (Nº {produkt.archiv_nummer}) – Luviq Universe</image:title>\n'
             xml += f'      <image:caption>Handbemaltes 1-of-1 Upcycling-Unikat: {name_esc}</image:caption>\n'
             xml += '    </image:image>\n'
 
