@@ -187,6 +187,7 @@ EMAIL = 'brehlerluisa@gmail.com'
 PLATZHALTER = [
     'Musterstraße 123<', 'Mustermann', 'Musterfrau',
     '12345 Berlin', '+49 (0) 30 123456', 'info@luviq.universe',
+    # audit-ok P14: Suchbegriffe dieses Platzhaltertests, kein Merkzettel im Code
     'lorem ipsum', 'Lorem ipsum', 'TODO', 'FIXME',
 ]
 

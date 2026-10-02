@@ -16,5 +16,5 @@ Abmeldung: so, wie es die Datenschutzerklärung sagt – eine kurze Nachricht.
 </table>
 <p class="lv-leise" style="margin:0 0 16px;font-size:13px;color:#5E5850;">Falls der Knopf nicht geht, kopiere diesen Link in deinen Browser:<br><a href="{{ link }}" class="lv-link" style="color:#8A4A22;word-break:break-all;">{{ link }}</a></p>
 <p style="margin:24px 0 0;">Viele Grüße<br>Luisa</p>
-<p class="lv-leise" style="margin:22px 0 0;font-size:13px;color:#5E5850;">Du bekommst diese Mail, weil du dich für den Newsletter angemeldet und die Anmeldung bestätigt hast. {% if abmelde_url %}<a href="{{ abmelde_url }}" class="lv-link" style="color:#8A4A22;">Hier abmelden</a> – oder schreib mir kurz an{% else %}Abmelden: schreib mir kurz an{% endif %} <a href="mailto:{{ kontakt_email }}" class="lv-link" style="color:#8A4A22;">{{ kontakt_email }}</a>.</p>
+<p class="lv-leise" style="margin:22px 0 0;font-size:13px;color:#5E5850;">Du bekommst diese Mail, weil du dich für den Newsletter angemeldet und die Anmeldung bestätigt hast. {% if abmelde_url %}<a href="{{ abmelde_url }}" class="lv-link" style="color:#8A4A22;">Abmelden über diesen Link</a> – oder schreib mir kurz an{% else %}Abmelden: schreib mir kurz an{% endif %} <a href="mailto:{{ kontakt_email }}" class="lv-link" style="color:#8A4A22;">{{ kontakt_email }}</a>.</p>
 {% endblock %}

@@ -26,7 +26,7 @@ from django.test import RequestFactory, override_settings
 from django.utils import timezone
 
 from .. import luviq_daten, newsletter
-from ..models import (Cart, CartItem, Comment, Order, OrderItem, PageVisit, Produkt, Subscriber,
+from ..models import (Cart, CartItem, Order, OrderItem, PageVisit, Produkt, Subscriber,
                       VisitorLog, Werbung)
 from ..views._helpers import zu_viele_anfragen
 from ._basis import LuviqTestCase, erzeuge_benutzer, erzeuge_produkt
@@ -697,7 +697,7 @@ class NewsletterAbmeldenTest(LuviqTestCase):
 
         html = mail.call_args.args[1]
         self.assertIn('/newsletter/abmelden/?t=', html)
-        self.assertIn('Hier abmelden', html)
+        self.assertIn('Abmelden über diesen Link', html)
         self.assertNotIn('<b>Fett</b>', html)
         self.assertIn('/newsletter/abmelden/?t=', mail.call_args.kwargs['text_content'])
         token = html.split('/newsletter/abmelden/?t=')[1].split('"')[0].replace('&amp;', '&')

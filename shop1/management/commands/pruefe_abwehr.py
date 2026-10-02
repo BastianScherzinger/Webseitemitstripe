@@ -81,6 +81,7 @@ def faelle(jetzt=None):
 
 
 class Command(BaseCommand):
+    """``python manage.py pruefe_abwehr``: Fälle aus ``faelle()`` gegen ``spamschutz.bewerte``, dazu die Mail-Obergrenze."""
     help = 'Prüft die Spam-Abwehr der Formulare in beide Richtungen (Bots geblockt, Menschen nicht).'
 
     def handle(self, *args, **optionen):
