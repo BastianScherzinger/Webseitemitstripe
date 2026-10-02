@@ -52,9 +52,15 @@ def logout(request):
     return render(request, 'shop1/logout.html')
 
 
-# offen-ok: die Registrierung muss offen sein – wer sich anmelden soll, ist
-# noch nicht angemeldet. Geschrieben wird nur, was das geprüfte Formular
-# durchlässt (CustomUserCreationForm), und django-axes begrenzt die Versuche.
+# Warum ohne Anmeldeschutz: Wer sich registriert, ist noch nicht angemeldet.
+# Geschrieben wird nur, was das geprüfte Formular durchlässt
+# (CustomUserCreationForm: Pflichtfelder, Passwortregeln, eine Adresse nur je
+# Konto). Gebremst wird in der View selbst: je IP-Adresse höchstens
+# ANFRAGE_GRENZE Registrierungen im Zeitfenster (zu_viele_anfragen, 429).
+# django-axes zählt nur fehlgeschlagene Anmeldungen und begrenzt die
+# Registrierung NICHT. Die Drosselung liegt im LocMemCache je Gunicorn-Prozess:
+# eine Schleife bremst sie, mehr nicht.
+# offen-ok: bewusst öffentlich, Drosselung je IP in der View (nicht django-axes)
 @sensitive_post_parameters()
 def register(request):
     """Registrierung; die Bestätigungsmail verschickt das Signal in ``signals.py``."""
