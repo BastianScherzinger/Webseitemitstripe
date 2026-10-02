@@ -10,6 +10,11 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 02.10.2026 — Rest: Überschriften Gästebuch, Newsletter-Datenschutz, Code-Audit (Zweig `fix/2026-10-02-luviq-rest`)
+
+**Was:** /gaestebuch/ springt nicht mehr von h2 auf h4 (Neuer Beitrag h2, Name h3 mit Klasse `lv-ueb-n`, Antwort h4; Optik gleich). Beide Newsletter-Formulare der Startseite schliessen den Datenschutzhinweis ein (Formular als Hülle mit `display:contents`, Aufbau-Referenz nur für `/` nachgezogen; `/gaestebuch/` bleibt, weil die Testseite keine Beiträge hat). Code-Audit von 12 Dateien mit Befund auf 0: lange Funktionen in `utils.py`, `views/legal.py`, `views/checkout.py`, `views/motiv.py`, `views/shop.py`, `admin_views.py` zerlegt (Verhalten gleich), Inline-Skript der Werbungsübersicht nach `static/shop1/admin_werbung.js`, `!important` in `luviq.css` 64 → 15 und `style.css` → 7 (Spezifität statt Vorrang), Newsletter-Bild mit Höhe; ein Freibrief nur für das PayPal-SDK (PayPal veröffentlicht keinen Hash, `integrity` nicht möglich).
+**Warum:** Messpunkte IS14/BF15/VL17, KV05 und PJ07. Geprüft mit der vollen Testsuite und einem Playwright-Stilvergleich gegen `origin/main` (rund 50 Seiten × breit/schmal/ruhig): keine sichtbare Abweichung. SU10 bleibt beim Kunden (Wissensbeiträge warten auf Freigabe). Nicht gepusht.
+
 ## 02.10.2026 — Luviq fertig: Sammelzweig `fix/2026-10-02-luviq-fertig`
 
 **Was:** Zwei Leiterzweige zusammengeführt (`fix/2026-10-02-luviq-l1`: L1-B1 bis B4, `fix/2026-10-02-luviq-l2`: L2-B1 bis B8, beide mit `--no-ff`, Merge `945100e`), Konflikte nach dem Stand beider Seiten aufgelöst, `aufbau_referenz.json` nur für die bewusst geänderten Seiten neu erzeugt. Nacharbeit des Orchestrators: Sitemap übersteht fehlende Registereinträge (EIG25), CLAUDE.md-Testabschnitt und `docs/FALLEN.md` (EIG42), Gästebuch-Logo mit `fetchpriority` (PF17/PF18), „bei einer Bestellung“ im Datenschutz nur mit Verkauf, `test_betriebsbefehle.py` (PJ03) — `e1fad9c`; Impressum-Schema ohne LocalBusiness, Rabatttext auf jeden Zahlweg — `d893f43`; Abmeldetext ohne „mit einem Klick“ (EIG121) — `911d827`; Seitenstand — `f83fc77`; bezahltes Stück wird `vergeben` statt 404 (EIG57) — `d6a15bb`. Gegenprüfungen: L2-B3 `e44d804`, L2-B6 `d2c21eb`.
