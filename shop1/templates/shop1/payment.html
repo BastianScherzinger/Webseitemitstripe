@@ -103,8 +103,10 @@
      (developer.paypal.com/sdk/js/csp/): das SDK versieht damit, was es selbst
      in die Seite schreibt. -->
 {% if paypal_client_id and paypal_client_id != 'sb' %}
+    {# audit-ok V08: PayPal veröffentlicht für das JS-SDK keinen Hash (Inhalt wechselt je Client-ID und Fassung), integrity ist nicht möglich; defer bräche das Skript darunter, das window.paypal sofort braucht #}
     <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR&disable-funding=credit,card" nonce="{{ csp_nonce }}" data-csp-nonce="{{ csp_nonce }}"></script>
 {% else %}
+    {# audit-ok V08: PayPal veröffentlicht für das JS-SDK keinen Hash (Inhalt wechselt je Client-ID und Fassung), integrity ist nicht möglich; defer bräche das Skript darunter, das window.paypal sofort braucht #}
     <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR" nonce="{{ csp_nonce }}" data-csp-nonce="{{ csp_nonce }}"></script>
 {% endif %}
 
