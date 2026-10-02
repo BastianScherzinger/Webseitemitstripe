@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_page
 
 from .. import indexnow
+from ..middleware import oeffentliche_basis
 from ..models import Produkt, Subscriber
 # Das Register SEITEN_STAND (Routenname → Datum) liegt seit Schritt 16 in
 # ``shop1/seiten_stand.py``, weil auch der Kontextprozessor es liest. Hier
@@ -91,8 +92,8 @@ def robots_txt(request):
         lines.append("")
 
     lines += [
-        f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
-        f"# Kurzfassung fuer Antwortmaschinen: {request.build_absolute_uri('/llms.txt')}",
+        f"Sitemap: {oeffentliche_basis(request)}/sitemap.xml",
+        f"# Kurzfassung fuer Antwortmaschinen: {oeffentliche_basis(request)}/llms.txt",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
@@ -168,7 +169,7 @@ def llms_txt(request):
     belegten Versandzeiten – keine Zahl darin, die nicht auch auf
     ``/liefergebiet/`` oder im Impressum steht.
     """
-    basis = request.build_absolute_uri('/')[:-1]
+    basis = oeffentliche_basis(request)
     # Verkaufsschalter: ohne Verkauf keine Kauf-, Zahlungs-, Versand- oder
     # Steuerangaben, keine Preise und kein Verweis auf die AGB.
     if not verkauf_aktiv():
@@ -406,7 +407,7 @@ def _seitenbilder(name: str, base_url: str) -> list[tuple[str, str]]:
 @cache_page(AUSGABE_CACHE_SEKUNDEN)
 def sitemap_xml(request):
     """Erzeugt eine vollständige sitemap.xml mit lastmod und Bild-URLs."""
-    base_url = request.build_absolute_uri('/')[:-1]
+    base_url = oeffentliche_basis(request)
 
     # 'home' behält absichtlich den leeren Pfad: die Startseite steht seit
     # jeher ohne Schrägstrich am Ende in der Sitemap, und eine andere

@@ -63,7 +63,10 @@ if DEBUG:
     # audit-ok K02: '*' greift nur bei DEBUG=True, nie im ausgelieferten Stand
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.up.railway.app'] + _extra
+    # healthcheck.railway.app: Absender des Healthchecks der Plattform (nur
+    # /health/, siehe SECURE_REDIRECT_EXEMPT und CanonicalHostMiddleware).
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.up.railway.app',
+                     'healthcheck.railway.app'] + _extra
 
 # ═══ CSRF / PROXY ═══
 
@@ -167,6 +170,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'shop1.context_processors.shop_owner_check',
                 'shop1.context_processors.csp_nonce',
+                'shop1.context_processors.oeffentliche_adresse',
                 'shop1.verkauf.verkauf_kontext',
                 'shop1.context_processors.luviq',
             ],
@@ -295,9 +299,21 @@ else:
 # für die sich deshalb kein SPF/DKIM setzen lässt. Brevo signiert erst, wenn
 # luviq-alsfeld.com im Brevo-Konto als Absenderdomain bestätigt ist.
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@luviq-alsfeld.com')
-SITE_URL = os.getenv('SITE_URL', 'https://luviq-luisa-production.up.railway.app')
+# Vorgabe (EIG18): ohne eigene Angabe die kanonische Adresse, sonst die
+# Railway-Adresse des Dienstes. Bis 02.10.2026 stand hier ein Host, der mit 404
+# antwortete (luviq-luisa-production); Bestätigungs- und Newsletter-Links
+# gingen damit ins Leere, sobald SITE_URL fehlte.
+SITE_URL = os.getenv('SITE_URL', '').strip() or (
+    f'https://{CANONICAL_HOST}' if CANONICAL_HOST else 'https://luviq-luisa-shop.up.railway.app'
+)
 # IndexNow (shop1/indexnow.py): leer = aus. Gemeldet wird unter dem Host von SITE_URL.
 INDEXNOW_KEY = os.getenv('INDEXNOW_KEY', '').strip()
+
+# ═══ security.txt (SI25, EIG60) ═══
+# Festes Ablaufdatum nach RFC 9116 (höchstens ein Jahr voraus). Nicht je Abruf
+# berechnen: dann liefe die Datei nie ab und das Feld wäre wertlos. Vor dem
+# Ablauf von Hand um ein Jahr verlängern; pruefe_seite warnt 60 Tage vorher.
+SECURITY_TXT_EXPIRES = '2027-09-30T00:00:00.000Z'
 
 # ═══ SICHERHEITSEINSTELLUNGEN ═══
 
@@ -319,6 +335,10 @@ SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 # SSL/HSTS (nur in Production)
 SECURE_SSL_REDIRECT = not DEBUG
+# Die Gesundheitsadresse wird vom Healthcheck der Plattform und von
+# Überwachungsdiensten auch ohne HTTPS abgefragt; eine 301 darauf gälte als
+# Ausfall. Sie zeigt nur "ok" und ist deshalb ohne Verschlüsselung unbedenklich.
+SECURE_REDIRECT_EXEMPT = [r'^health/$']
 if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True

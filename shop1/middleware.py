@@ -37,15 +37,41 @@ def nebenvariante(host):
     return host[4:] if host.startswith('www.') else f'www.{host}'
 
 
-class CanonicalHostMiddleware:
-    """Leitet die www-/Nicht-www-Nebenvariante per 301 auf CANONICAL_HOST.
+#: Pfade, die auch auf der Railway-Adresse antworten müssen und nie umgeleitet
+#: werden: die Gesundheitsadresse für den Healthcheck der Plattform.
+RAILWAY_AUSNAHMEN = ('/health/', '/healthz/')
 
-    Bewusst eng: umgeleitet wird ausschliesslich der Host, der sich vom
-    kanonischen nur durch das ``www.`` unterscheidet. Die Railway-Adresse,
-    ``localhost`` und jeder andere erlaubte Host bleiben, wie sie sind – eine
-    breitere Regel könnte den Deploy-Zugang oder die Health-Checks treffen
-    und im schlimmsten Fall eine Endlosschleife bauen. Der kanonische Host
-    selbst wird nie umgeleitet, deshalb kann es keine Schleife geben.
+
+def ist_railway_host(host):
+    """True für die Plattformadresse ``*.up.railway.app`` (Deploy-Zugang)."""
+    return host.endswith('.up.railway.app')
+
+
+def oeffentliche_basis(request):
+    """Schema und Host, unter denen die Seite öffentlich steht, ohne Schrägstrich.
+
+    Ist ``CANONICAL_HOST`` gesetzt, ist das immer ``https://<kanonischer Host>``
+    – gleich, unter welcher Adresse die Anfrage ankam (so zeigen ``canonical``,
+    ``og:url`` und die Sitemap nie auf die Railway-Kopie). Ohne die Variable
+    gilt der Host der Anfrage, wie bisher.
+    """
+    ziel = kanonischer_host()
+    if ziel:
+        return f'https://{ziel}'
+    return f'{request.scheme}://{request.get_host()}'
+
+
+class CanonicalHostMiddleware:
+    """Leitet Nebenvariante und Railway-Adresse per 301 auf CANONICAL_HOST.
+
+    Umgeleitet werden genau zwei Gruppen: der Host, der sich vom kanonischen
+    nur durch das ``www.`` unterscheidet, und die Plattformadresse
+    ``*.up.railway.app`` (sonst stünde die Seite ein zweites Mal im Index;
+    Messpunkt „Offen“ Nr. 2). Ausgenommen bleiben die Gesundheitsadressen
+    (``RAILWAY_AUSNAHMEN``), damit ein Healthcheck der Plattform nie auf eine
+    Weiterleitung trifft, ``localhost`` und jeder andere erlaubte Host. Der
+    kanonische Host selbst wird nie umgeleitet, deshalb kann es keine
+    Schleife geben; ohne ``CANONICAL_HOST`` tut die Middleware nichts.
 
     Pfad und Query bleiben erhalten; das Schema ist ``https``, sobald die
     Anfrage sicher ist oder ``SECURE_SSL_REDIRECT`` gilt – so entsteht eine
@@ -61,7 +87,10 @@ class CanonicalHostMiddleware:
             # get_host() prüft gegen ALLOWED_HOSTS; DisallowedHost wird von
             # Django wie überall sonst zu 400.
             host = (urlsplit('//' + request.get_host()).hostname or '').lower()
-            if host == nebenvariante(ziel):
+            umleiten = host == nebenvariante(ziel) or (
+                ist_railway_host(host) and request.path not in RAILWAY_AUSNAHMEN
+            )
+            if umleiten:
                 sicher = request.is_secure() or getattr(settings, 'SECURE_SSL_REDIRECT', False)
                 schema = 'https' if sicher else 'http'
                 return HttpResponsePermanentRedirect(

@@ -123,3 +123,106 @@ class CsrfCookieTest(LuviqTestCase):
         self.assertIn("meta[name=\"csrf-token\"]", html)
 
 
+class GesundheitsadresseTest(LuviqTestCase):
+    """BT11: schlanke Gesundheitsadresse (die Regel fragt ``/health/``)."""
+
+    def test_health_antwortet_schlank_mit_200_auch_ohne_https(self):
+        for abruf in (self.hole, self.client.get):
+            antwort = abruf('/health/')
+            self.assertEqual(antwort.status_code, 200)
+            self.assertEqual(antwort.content, b'ok')
+            self.assertLess(len(antwort.content), 2000)
+            self.assertIn('no-cache', antwort['Cache-Control'])
+
+    def test_health_meldet_503_wenn_die_datenbank_fehlt(self):
+        with mock.patch('shop1.views.betrieb.connection.cursor', side_effect=DatabaseError('weg')):
+            antwort = self.hole('/health/')
+        self.assertEqual(antwort.status_code, 503)
+
+    def test_health_schreibt_kein_besuchsprotokoll(self):
+        from ..models import PageVisit
+
+        vorher = PageVisit.objects.count()
+        self.hole('/health/', HTTP_USER_AGENT='Mozilla/5.0 (X11) Chrome/120')
+        self.assertEqual(PageVisit.objects.count(), vorher)
+
+    def test_nur_lesende_methoden(self):
+        self.assertEqual(self.sende('/health/').status_code, 405)
+
+
+class SecurityTxtTest(LuviqTestCase):
+    """SI25 / EIG60: RFC 9116, fester Ablauf, Kontakt wie im Impressum."""
+
+    def test_security_txt_nennt_kontakt_ablauf_und_adresse(self):
+        antwort = self.hole('/.well-known/security.txt')
+        self.assertEqual(antwort.status_code, 200)
+        self.assertTrue(antwort['Content-Type'].startswith('text/plain'))
+        text = antwort.content.decode()
+        self.assertIn('Contact: mailto:brehlerluisa@gmail.com', text)
+        self.assertRegex(text, r'(?m)^Expires: \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}')
+        self.assertRegex(text, r'(?m)^Canonical: https?://[^/]+/\.well-known/security\.txt$')
+
+    def test_die_kontaktadresse_steht_im_impressum(self):
+        """Der Kontakt der security.txt ist die Adresse des Impressums, keine
+        zweite, erfundene."""
+        impressum = self.hole('/impressum/').content.decode()
+        self.assertIn('brehlerluisa@gmail.com', impressum)
+
+    def test_expires_ist_fest_und_wird_nicht_je_abruf_berechnet(self):
+        """EIG60: ein Ablaufdatum, das bei jedem Abruf neu entsteht, kann nie
+        ablaufen. Zwei Abrufe liefern denselben Wert, und er ist der Wert
+        aus den Einstellungen."""
+        erste = self.hole('/.well-known/security.txt').content.decode()
+        zweite = self.hole('/.well-known/security.txt').content.decode()
+        self.assertEqual(erste, zweite)
+        self.assertIn(f'Expires: {settings.SECURITY_TXT_EXPIRES}', erste)
+        with override_settings(SECURITY_TXT_EXPIRES='2031-01-01T00:00:00.000Z'):
+            self.assertIn('Expires: 2031-01-01T00:00:00.000Z',
+                          self.hole('/.well-known/security.txt').content.decode())
+
+    def test_pruefe_seite_warnt_vor_dem_ablauf(self):
+        from io import StringIO
+
+        from django.core.management import call_command
+
+        with override_settings(SECURITY_TXT_EXPIRES='2020-01-01T00:00:00.000Z'):
+            ausgabe = StringIO()
+            try:
+                call_command('pruefe_seite', stdout=ausgabe)
+            except SystemExit:
+                pass
+        self.assertIn('security.txt läuft am 01.01.2020 ab', ausgabe.getvalue())
+
+
+@override_settings(
+    CANONICAL_HOST='www.luviq-alsfeld.com',
+    ALLOWED_HOSTS=['www.luviq-alsfeld.com', 'luviq-alsfeld.com', '.up.railway.app',
+                   'localhost', 'testserver'],
+)
+class OeffentlicheAdresseTest(LuviqTestCase):
+    """„Offen“ Nr. 2: canonical, Sitemap und robots.txt aus dem kanonischen Host."""
+
+    def test_canonical_hreflang_und_og_url_nennen_den_kanonischen_host(self):
+        html = self.hole('/kontakt/?x=1', HTTP_HOST='www.luviq-alsfeld.com').content.decode()
+        ziel = 'https://www.luviq-alsfeld.com/kontakt/?x=1'
+        self.assertIn(f'<link rel="canonical" href="{ziel}">', html)
+        self.assertIn(f'hreflang="de" href="{ziel}"', html)
+        self.assertIn(f'<meta property="og:url" content="{ziel}">', html)
+
+    def test_sitemap_und_robots_nennen_den_kanonischen_host(self):
+        sitemap = self.hole('/sitemap.xml', HTTP_HOST='www.luviq-alsfeld.com').content.decode()
+        urls = re.findall(r'<loc>([^<]+)</loc>', sitemap)
+        self.assertTrue(urls)
+        for url in urls:
+            self.assertTrue(url.startswith('https://www.luviq-alsfeld.com'), url)
+        robots = self.hole('/robots.txt', HTTP_HOST='www.luviq-alsfeld.com').content.decode()
+        self.assertIn('Sitemap: https://www.luviq-alsfeld.com/sitemap.xml', robots)
+
+    def test_ohne_kanonischen_host_gilt_der_host_der_anfrage(self):
+        with self.settings(CANONICAL_HOST=''):
+            html = self.hole('/kontakt/', HTTP_HOST='localhost').content.decode()
+        self.assertIn('<link rel="canonical" href="https://localhost/kontakt/">', html)
+
+    def test_security_txt_nennt_die_kanonische_adresse(self):
+        text = self.hole('/.well-known/security.txt', HTTP_HOST='www.luviq-alsfeld.com').content.decode()
+        self.assertIn('Canonical: https://www.luviq-alsfeld.com/.well-known/security.txt', text)

@@ -71,6 +71,10 @@ urlpatterns = [
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
     path('llms.txt', views.llms_txt, name='llms_txt'),
+    # Betrieb und Sicherheit (02.10.2026): schlanke Gesundheitsadresse für die
+    # Überwachung (BT11) und die Meldeadresse für Schwachstellen (SI25, RFC 9116).
+    path('health/', views.gesundheit, name='gesundheit'),
+    path('.well-known/security.txt', views.security_txt, name='security_txt'),
     # Schluesseldatei fuer IndexNow (shop1/indexnow.py); 404, solange
     # INDEXNOW_KEY leer ist. Der Pfad steht auch in indexnow.SCHLUESSEL_PFAD.
     path('indexnow-schluessel.txt', views.indexnow_schluessel, name='indexnow_schluessel'),

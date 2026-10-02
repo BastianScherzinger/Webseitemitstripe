@@ -472,7 +472,7 @@ class EinbettungErstNachKlickTest(LuviqTestCase):
 @override_settings(
     CANONICAL_HOST='www.luviq-alsfeld.com',
     ALLOWED_HOSTS=['www.luviq-alsfeld.com', 'luviq-alsfeld.com',
-                   '.up.railway.app', 'localhost', 'testserver'],
+                   '.up.railway.app', 'healthcheck.railway.app', 'localhost', 'testserver'],
 )
 class KanonischerHostTest(LuviqTestCase):
     """Die Weiterleitung aus Schritt 37 – genau die vier Fälle des Plans."""
@@ -499,13 +499,25 @@ class KanonischerHostTest(LuviqTestCase):
         self.assertEqual(unsicher.status_code, 301)
         self.assertEqual(unsicher['Location'], 'https://www.luviq-alsfeld.com/kontakt/')
 
-    def test_die_railway_adresse_wird_nicht_umgeleitet(self):
-        """Verhindert, dass die Regel den Deploy-Zugang trifft: Railway
-        spricht die Anwendung unter ``*.up.railway.app`` an (Health-Check,
-        Vorschau). ``PREPEND_WWW`` hätte genau das kaputtgemacht."""
-        antwort = self.hole('/', HTTP_HOST='luviq-luisa-production.up.railway.app')
-        self.assertEqual(antwort.status_code, 200)
+    def test_die_railway_adresse_wird_per_301_auf_den_kanonischen_host_geleitet(self):
+        """Seit 02.10.2026 („Offen“ Nr. 2): ``*.up.railway.app`` war ein zweiter
+        indexierbarer Bestand (200, ``canonical`` auf sich selbst). Jetzt führt
+        jeder Pfad dieser Adresse mit Pfad und Query dauerhaft auf den
+        kanonischen Host. ``localhost`` bleibt unberührt (lokale Arbeit)."""
+        antwort = self.hole('/produkte/?seite=2', HTTP_HOST='luviq-luisa-shop.up.railway.app')
+        self.assertEqual(antwort.status_code, 301)
+        self.assertEqual(antwort['Location'], 'https://www.luviq-alsfeld.com/produkte/?seite=2')
         self.assertEqual(self.hole('/', HTTP_HOST='localhost').status_code, 200)
+
+    def test_die_gesundheitsadresse_bleibt_auf_der_railway_adresse_erreichbar(self):
+        """Verhindert, dass ein Healthcheck der Plattform auf eine
+        Weiterleitung trifft: ``/health/`` ist von der Umleitung und von der
+        HTTPS-Weiterleitung ausgenommen und antwortet auch ohne HTTPS mit 200."""
+        for host in ('luviq-luisa-shop.up.railway.app', 'healthcheck.railway.app'):
+            with self.subTest(host=host):
+                antwort = self.client.get('/health/', HTTP_HOST=host)
+                self.assertEqual(antwort.status_code, 200)
+                self.assertEqual(antwort.content, b'ok')
 
     def test_ohne_variable_wird_nichts_umgeleitet(self):
         """Verhindert, dass die Middleware ohne ``CANONICAL_HOST`` etwas
@@ -1191,3 +1203,26 @@ class DeployDateienTest(LuviqTestCase):
         zeilen = (self.WURZEL / 'requirements.txt').read_text(encoding='utf-8').splitlines()
         self.assertIn('--constraint requirements.lock', [z.strip() for z in zeilen])
         self.assertIn('requirements.lock', self._dockerfile())
+
+
+class SiteUrlVorgabeTest(LuviqTestCase):
+    """EIG18: die Vorgabe von ``SITE_URL`` zeigt auf einen lebenden Host.
+
+    Bis 02.10.2026 stand dort ``luviq-luisa-production.up.railway.app`` – ein
+    Host, der mit 404 antwortete; Bestätigungs- und Newsletter-Links gingen
+    ohne die Variable ins Leere.
+    """
+
+    def test_ohne_angabe_gilt_der_kanonische_host(self):
+        betrieb = lade_einstellungen(dict(BETRIEBSUMGEBUNG, SITE_URL='',
+                                          CANONICAL_HOST='www.luviq-alsfeld.com'))
+        self.assertEqual(betrieb.SITE_URL, 'https://www.luviq-alsfeld.com')
+
+    def test_ohne_beides_gilt_die_railway_adresse_des_dienstes(self):
+        betrieb = lade_einstellungen(dict(BETRIEBSUMGEBUNG, SITE_URL='', CANONICAL_HOST=''))
+        self.assertEqual(betrieb.SITE_URL, 'https://luviq-luisa-shop.up.railway.app')
+
+    def test_eine_eigene_angabe_gewinnt(self):
+        betrieb = lade_einstellungen(dict(BETRIEBSUMGEBUNG, SITE_URL='https://beispiel.invalid',
+                                          CANONICAL_HOST='www.luviq-alsfeld.com'))
+        self.assertEqual(betrieb.SITE_URL, 'https://beispiel.invalid')

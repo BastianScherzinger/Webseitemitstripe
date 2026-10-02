@@ -20,18 +20,18 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
 
     <!-- Canonical -->
-    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <link rel="canonical" href="{{ seiten_url }}">
 
     <!-- Hreflang -->
-    <link rel="alternate" hreflang="de" href="{{ request.build_absolute_uri }}">
-    <link rel="alternate" hreflang="x-default" href="{{ request.build_absolute_uri }}">
+    <link rel="alternate" hreflang="de" href="{{ seiten_url }}">
+    <link rel="alternate" hreflang="x-default" href="{{ seiten_url }}">
 
     <!-- Feed (GE32): neue Wissensbeitraege ohne Crawl der ganzen Seite -->
     <link rel="alternate" type="application/rss+xml" title="Luviq Universe – Wissen" href="{% url 'wissen_feed' %}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:url" content="{{ seiten_url }}">
     <meta property="og:title" content="{% block og_title %}Luviq Universe – Handbemalte Vintage Mode{% if verkauf_aktiv %} kaufen{% endif %}{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Entdecke handbemalte 1-of-1 Upcycling-Unikate bei Luviq Universe. Nachhaltige Vintage-Mode aus Deutschland – jedes Stück ein Kunstwerk.{% endblock %}">
     <meta property="og:locale" content="de_DE">
