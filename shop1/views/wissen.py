@@ -72,9 +72,12 @@ WISSEN_BEITRAEGE = {
         'url_name': 'wissen_pflege',
         'template': 'shop1/wissen/pflege.html',
         'titel': 'Wie pflege ich handbemalte Kleidung?',
-        'kurz': 'Waschen auf links bei 30 °C, Trocknen an der Luft, Bügeln nur von links, '
-                'Lagern ohne Druck auf die Bemalung – und was für ein einzelnes Stück '
-                'von Luviq Universe gilt.',
+        # Bewusst ohne die Pflegeangaben: ``kurz`` steht auf der indexierbaren
+        # Übersicht, und 30 °C, kein Trockner usw. sind nicht belegt (EIG12).
+        # Nach Luisas Freigabe darf hier wieder die Aufzählung stehen.
+        'kurz': 'Wie man ein handbemaltes Teil wäscht, trocknet, bügelt und lagert – '
+                'allgemeine Textilpflege; was für ein einzelnes Stück von Luviq '
+                'Universe gilt, beantwortet Luisa Brehler über das Kontaktformular.',
         # Offen: 30 °C, kein Trockner, kein Weichspüler, Bügeln nur von links.
         'freigegeben': False,
         'veroeffentlicht': '2026-09-01',
@@ -242,8 +245,10 @@ class WissenFeed(Feed):
         if verkauf_aktiv():
             return ('Beiträge zu Bestellablauf, Widerruf, Konto und zur Pflege '
                     'handbemalter Einzelstücke aus dem Wissensbereich von Luviq Universe.')
-        return ('Beiträge zu Pflege, Upcycling und Größen handbemalter Einzelstücke '
-                'aus dem Wissensbereich von Luviq Universe.')
+        # Neutral: die drei Beiträge zu Pflege, Upcycling und Größe sind noch
+        # nicht freigegeben, der Feed ist deshalb leer – seine Beschreibung
+        # darf sie nicht als Inhalt ausgeben (EIG128).
+        return 'Neue Beiträge aus dem Wissensbereich von Luviq Universe.'
 
     def link(self):
         return reverse('wissen')
