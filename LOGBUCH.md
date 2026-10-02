@@ -10,6 +10,11 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 03.10.2026 — PJ07: letzte Datei mit Befund beseitigt (Zweig `fix/2026-10-03-luviq-v101`)
+
+**Was:** `pruefe_mail._pruefe_einstellungen` (64 Zeilen, Richtwert 60, Befund P08) ist in vier kleine Prüfmethoden zerlegt; Reihenfolge und Wortlaut der Meldungen bleiben gleich. Doku-Köpfe nach der Regel „Status folgt Fortschritt“ angeglichen (Fortschritt ab 90 = vollständig, Rest steht in `offen`).
+**Warum:** Overview V1.0.1, Regel `PJ07` stand auf „teilweise“ wegen dieser einen Datei; der Richtwert wurde nicht angehoben.
+
 ## 02.10.2026 — Wissensbeiträge zeigen ihr Datum, Icons quadratisch (Zweig `fix/2026-10-02d-standard`)
 
 **Was:** Alle sechs Wissensbeiträge (sichtbar ohne Verkauf: Pflege, Upcycling, Größe) tragen unter der `h1` „Aktualisiert am …“ als `<time datetime>`. Quelle ist `SEITEN_STAND` (`seiten_stand.py`, neu: `stand_anzeige`) – dasselbe Register wie `dateModified` und `lastmod`; Test `WissensdatumTest`. Aufbau-Referenz nur für die sechs Beiträge nachgezogen (je ein `div` mehr). Dazu `TS37`: `apple-touch-icon` ist jetzt ein quadratisches 180-px-PNG, verkleinert aus `flavicon.jpeg` (1254 × 1254, Marke unverändert) statt des 1290 × 1346-JPEGs; `/apple-touch-icon.png` leitet dorthin; das Manifest nennt echte 192-/512-px-PNGs statt des JPEGs mit falscher Größenangabe; `<link rel="icon">` trägt `sizes="16x16 32x32 48x48"`.

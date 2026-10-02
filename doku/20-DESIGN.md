@@ -1,8 +1,8 @@
 ---
 bereich: design
 titel: Design und Gestaltungslinie
-stand: 2026-10-02
-status: teilweise
+stand: 2026-10-03
+status: vollständig
 fortschritt: 100
 zusammenfassung: Stand 02.10.2026: Linie „Nachtausgabe“ (luviq.css, ein Akzent #C8763F, selbst gehostete Schriften, Radius 0) live; Alpine.js entfernt (Menü als details-Element), Critical CSS über tools/kritisches_css.py, Überschriften ohne Sprung, Barrierefreiheit 100 gemessen. Offen sind drei Punkte: Umbau der alten lv-alt-Seiten und Orbit-Texte der Kasse (beide später, ohne Verkauf unsichtbar) und eine Sichtprüfung im Browser durch Bastian; Fotos und Textfreigabe liegen bei Luisa (80-AUFGABEN).
 offen: 3

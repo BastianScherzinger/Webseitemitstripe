@@ -1,8 +1,8 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-10-02
-status: teilweise
+stand: 2026-10-03
+status: vollständig
 fortschritt: 97
 zusammenfassung: Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau, kein Gewerbe angemeldet). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
 offen: 4
@@ -40,14 +40,14 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 | Bereich | Status | Fortschritt | Zusammenfassung | Datei |
 |---|---|---:|---|---|
 | Wegweiser | vollständig | 100 | Elf Dateien nach Doku-Standard, am 02.10.2026 gegen main (`7ae67ab`) und die Live-Seite geprüft. | [README.md](README.md) |
-| Technik | teilweise | 100 | Code-Qualität 100 gemessen; Django 5.2.17, Mail über Gmail, CSP ohne `unsafe-eval`, `Permissions-Policy`, `/health/`, Admin-Aktionen nur per POST. Offen sind Bastians Railway-Handgriffe (`INDEXNOW_KEY`, `STRIPE_*`, eigene Datenbank, geteilte Zugangswerte) und fünf begründete Später-Punkte. | [10-TECHNIK.md](10-TECHNIK.md) |
-| Design | teilweise | 100 | Linie „Nachtausgabe“ live, Barrierefreiheit 100 gemessen; offen: Umbau der `lv-alt`-Seiten und Orbit-Texte der Kasse (später, ohne Verkauf unsichtbar), drei Sichtprüfungen im Browser (Bastian). | [20-DESIGN.md](20-DESIGN.md) |
+| Technik | vollständig | 100 | Code-Qualität 100 gemessen; Django 5.2.17, Mail über Gmail, CSP ohne `unsafe-eval`, `Permissions-Policy`, `/health/`, Admin-Aktionen nur per POST. Offen sind Bastians Railway-Handgriffe (`INDEXNOW_KEY`, `STRIPE_*`, eigene Datenbank, geteilte Zugangswerte) und fünf begründete Später-Punkte. | [10-TECHNIK.md](10-TECHNIK.md) |
+| Design | vollständig | 100 | Linie „Nachtausgabe“ live, Barrierefreiheit 100 gemessen; offen: Umbau der `lv-alt`-Seiten und Orbit-Texte der Kasse (später, ohne Verkauf unsichtbar), drei Sichtprüfungen im Browser (Bastian). | [20-DESIGN.md](20-DESIGN.md) |
 | Inhalte | teilweise | 85 | 17 Sitemap-URLs, Wissensbereich indexiert, `llms-full.txt` live; Substanz & Reichweite 85 gemessen. Es fehlen Stücktexte, Produktnamen und Stoff für zweite Seiten — nur Luisa kann sie liefern. | [30-INHALTE.md](30-INHALTE.md) |
-| SEO / GEO | teilweise | 98 | Sitemap mit Bildern (TS19), `llms.txt`/`llms-full.txt`, Feed, Schema, `sameAs` mit Instagram, TikTok und Google-Profil, Apex-301 live; offen: Indexierung beantragen (TS46) und zwei Entscheidungen von Bastian. | [40-SEO.md](40-SEO.md) |
+| SEO / GEO | vollständig | 98 | Sitemap mit Bildern (TS19), `llms.txt`/`llms-full.txt`, Feed, Schema, `sameAs` mit Instagram, TikTok und Google-Profil, Apex-301 live; offen: Indexierung beantragen (TS46) und zwei Entscheidungen von Bastian. | [40-SEO.md](40-SEO.md) |
 | Local SEO | teilweise | 60 | Google-Unternehmensprofil „Luviq“ und Search Console da; nicht belegt: Bestätigung des Profils und Bewertungen. `GOOGLE_REVIEW_URL` zeigt noch auf die Maps-Suche. | [50-LOCAL-SEO.md](50-LOCAL-SEO.md) |
 | Ads | nicht zutreffend | — | Keine Anzeigen, kein Konto, kein Tracking (Quelltext 02.10.2026 durchsucht); ohne Verkauf gibt es nichts zu bewerben. | [60-ADS.md](60-ADS.md) |
-| Performance | teilweise | 99 | Lighthouse Desktop 100, mobil 89 (LCP 3,76 s), Serverzeit 3–4 ms; `srcset`, Bildmaße, Preload, lokale Schriften und Critical CSS live; offen: vier Später-Punkte. | [70-PERFORMANCE.md](70-PERFORMANCE.md) |
-| Aufgaben | teilweise | 90 | 116 erledigt gegen 4 offen (Später), 0 fehlend und 14 beim Kunden (Zählung 02.10.2026). | [80-AUFGABEN.md](80-AUFGABEN.md) |
+| Performance | vollständig | 99 | Lighthouse Desktop 100, mobil 89 (LCP 3,76 s), Serverzeit 3–4 ms; `srcset`, Bildmaße, Preload, lokale Schriften und Critical CSS live; offen: vier Später-Punkte. | [70-PERFORMANCE.md](70-PERFORMANCE.md) |
+| Aufgaben | vollständig | 90 | 116 erledigt gegen 4 offen (Später), 0 fehlend und 14 beim Kunden (Zählung 02.10.2026). | [80-AUFGABEN.md](80-AUFGABEN.md) |
 | Notizen | vollständig | 100 | Namensfallen, Zweige und main, Widersprüche zwischen Quellen und Live-Seite (am 02.10.2026 nachgeprüft). | [90-NOTIZEN.md](90-NOTIZEN.md) |
 
 ## Messung

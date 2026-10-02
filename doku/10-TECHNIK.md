@@ -1,8 +1,8 @@
 ---
 bereich: technik
 titel: Technik, Hosting und Aufbau
-stand: 2026-10-02
-status: teilweise
+stand: 2026-10-03
+status: vollständig
 fortschritt: 100
 zusammenfassung: Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün (Django 5.2.17); Code-Qualität 100 gemessen, 0 Befunde im Code-Audit; Alpine.js entfernt, CSP ohne unsafe-eval, Permissions-Policy, /health/, security.txt, Admin-Aktionen nur per POST, Mail über Gmail-SMTP, pruefe_mail ohne Brevo-Wortlaut. Offen sind Bastians Railway-Handgriffe (INDEXNOW_KEY, STRIPE-Variablen, eigene Datenbank K1, geteilte Zugangswerte K7, Healthcheck-Pfad, Livetest des Kontaktformulars) und fünf Später-Punkte mit Begründung.
 offen: 11
@@ -11,7 +11,7 @@ quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, paypal_sandbox_tutorial.md, st
 
 # Technik — Luviq Universe
 
-*Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Code-Qualität** des Laufs vom 02.10.2026 (Regelstand `2026-10-02e`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße. Die Betriebsbefunde K1 und K7 (eigene Datenbank, geteilte Zugangswerte, beide „Bei Bastian“) misst dieser Wert nicht — deshalb bleibt der Status „teilweise“.*
+*Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Code-Qualität** des Laufs vom 02.10.2026 (Regelstand `2026-10-02e`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße. Die Betriebsbefunde K1 und K7 (eigene Datenbank, geteilte Zugangswerte, beide „Bei Bastian“) misst dieser Wert nicht; sie stehen unter „Offen“ (Bei Bastian) und nehmen dem Bereich nichts weg, was auf unserer Seite zu tun wäre — deshalb gilt der Status „vollständig“ (Regel seit V1.0.1: Status folgt dem Fortschritt).*
 
 Detailquelle bleibt [`../CLAUDE.md`](../CLAUDE.md) (Architektur, Fallstricke) und
 [`../DOCUMENTATION.md`](../DOCUMENTATION.md) (Modelle, E-Mail-Flows, Admin, Sicherheit).

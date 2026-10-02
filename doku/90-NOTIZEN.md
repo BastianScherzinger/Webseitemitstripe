@@ -1,7 +1,7 @@
 ---
 bereich: notizen
 titel: Notizen, Fallen und Verweise
-stand: 2026-10-02
+stand: 2026-10-03
 status: vollständig
 fortschritt: 100
 zusammenfassung: Stand 02.10.2026: Vier Namen für ein Projekt, PayPal statt Stripe (Verkauf aus, kein Gewerbe), alle Zweige in main (7ae67ab), Mail über Gmail; die Widerspruchstabelle vom 02.09.2026 ist am 01.10.2026 gegen die Live-Seite nachgeprüft (sechs behoben, vier bleiben), der Stand von main und der Live-Seite am 02.10.2026 erneuert.

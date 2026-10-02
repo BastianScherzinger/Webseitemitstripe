@@ -1,8 +1,8 @@
 ---
 bereich: performance
 titel: Performance und Core Web Vitals
-stand: 2026-10-02
-status: teilweise
+stand: 2026-10-03
+status: vollständig
 fortschritt: 99
 zusammenfassung: Stand 02.10.2026 (live, main = 7ae67ab): Produktbilder in mehreren Größen mit srcset und Bildmaßen, LCP-Bild mit fetchpriority und Preload, vier eigene Schriftdateien, Critical CSS, gepackte Stildateien, kein Fremdskript; Lighthouse Desktop 100, mobil 89 (LCP 3,76 s), Serverzeit 3–4 ms. Offen sind vier Später-Punkte mit Begründung (Besuchsprotokoll im Request, ein großes Original-Bild, mobil ein Punkt unter dem Ziel, Nachmessung mit Verkauf).
 offen: 4

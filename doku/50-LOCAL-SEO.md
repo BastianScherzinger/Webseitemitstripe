@@ -1,7 +1,7 @@
 ---
 bereich: local-seo
 titel: Local SEO
-stand: 2026-10-02
+stand: 2026-10-03
 status: teilweise
 fortschritt: 60
 zusammenfassung: Stand 02.10.2026: Google-Unternehmensprofil „Luviq“ vorhanden und in sameAs und llms.txt verlinkt (Bestätigung durch Google nicht belegt), Search Console verbunden (Property sc-domain:luviq-alsfeld.com), NAP auf Impressum, Kontakt, Schema und llms.txt gleich, ohne Verkauf nur Organization-Schema. Offen: Bewertungen (keine dokumentiert, nur Luisa), GOOGLE_REVIEW_URL in Railway und Bestätigungsstatus des Profils (beide Bastian).

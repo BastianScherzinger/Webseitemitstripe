@@ -1,7 +1,7 @@
 ---
 bereich: inhalte
 titel: Inhalte und Seitenbestand
-stand: 2026-10-02
+stand: 2026-10-03
 status: teilweise
 fortschritt: 85
 zusammenfassung: Stand 02.10.2026: 17 Sitemap-URLs (Start, Archiv, Gästebuch, Luisa, Motiv anfragen, Herkunft, Kontakt, Datenschutz, Wissensbereich mit drei Beiträgen, fünf Archivstücke), llms-full.txt und Feed live, Archiv statt Shop; Substanz & Reichweite 85 gemessen (02.10.2026). Offen bei Luisa: Beschreibung je Stück, Produktnamen, Stoff für zweite Seiten, Textfreigabe; zwei Später-Punkte.

@@ -1,8 +1,8 @@
 ---
 bereich: seo
 titel: SEO und GEO
-stand: 2026-10-02
-status: teilweise
+stand: 2026-10-03
+status: vollständig
 fortschritt: 98
 zusammenfassung: Stand 02.10.2026: Wissensbereich frei und indexierbar (17 Sitemap-URLs), llms.txt und llms-full.txt, Feed, sameAs mit Instagram, TikTok und Google-Profil, @id-Schema mit speakable, Apex-301; gemessen SEO-Inhalt 94, SEO-Technik 99, GEO 100. Offen: Indexierung beantragen (Bastian, TS46), zwei Entscheidungen (Stückseiten noindex, Pfad /ueber_uns/) und die Alt-Texte je Stück (später).
 offen: 4

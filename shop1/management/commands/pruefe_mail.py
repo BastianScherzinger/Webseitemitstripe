@@ -153,42 +153,50 @@ class Command(BaseCommand):
         return settings.EMAIL_BACKEND.endswith('smtp.EmailBackend')
 
     def _pruefe_einstellungen(self):
-        api_schluessel = os.getenv('BREVO_API_KEY')
-
-        if not self._nutzt_smtp():
-            ziel = ('die Konsole' if 'console' in settings.EMAIL_BACKEND
-                    else settings.EMAIL_BACKEND.rsplit('.', 1)[-1])
-            meldung = (
-                f'Das Mail-Backend schreibt nach {ziel} – über SMTP verlässt '
-                f'keine Mail diesen Rechner. Betroffen ist vor allem die '
-                f'Passwort-vergessen-Mail, die Django selbst verschickt.'
-            )
-            # Im Entwicklungsmodus ist genau das gewollt (settings.py), im
-            # Betrieb wäre es ein Ausfall.
-            (self.warnungen if settings.DEBUG else self.fehler).append(meldung)
+        if self._nutzt_smtp():
+            self._pruefe_smtp_felder()
         else:
-            if not settings.EMAIL_HOST_USER:
-                self.fehler.append(
-                    f'EMAIL_HOST_USER ist leer – der SMTP-Server '
-                    f'{settings.EMAIL_HOST} weist jede Anmeldung ohne Benutzer '
-                    f'ab, die Passwort-vergessen-Mail geht dann nicht hinaus.'
-                )
-            if not settings.EMAIL_HOST_PASSWORD:
-                self.fehler.append(
-                    'EMAIL_HOST_PASSWORD ist leer – dasselbe: keine Anmeldung, '
-                    'keine Mail über SMTP.'
-                )
-            if settings.EMAIL_USE_TLS and settings.EMAIL_USE_SSL:
-                self.fehler.append(
-                    'EMAIL_USE_TLS und EMAIL_USE_SSL sind beide an; Django '
-                    'kann so keine Verbindung aufbauen.'
-                )
-            elif not (settings.EMAIL_USE_TLS or settings.EMAIL_USE_SSL):
-                self.warnungen.append(
-                    f'Weder STARTTLS noch SSL auf Port {settings.EMAIL_PORT} – '
-                    f'Anmeldedaten gingen im Klartext über die Leitung.'
-                )
+            self._pruefe_backend_ohne_smtp()
+        self._pruefe_brevo_schluessel()
+        self._pruefe_absender()
 
+    def _pruefe_backend_ohne_smtp(self):
+        ziel = ('die Konsole' if 'console' in settings.EMAIL_BACKEND
+                else settings.EMAIL_BACKEND.rsplit('.', 1)[-1])
+        meldung = (
+            f'Das Mail-Backend schreibt nach {ziel} – über SMTP verlässt '
+            f'keine Mail diesen Rechner. Betroffen ist vor allem die '
+            f'Passwort-vergessen-Mail, die Django selbst verschickt.'
+        )
+        # Im Entwicklungsmodus ist genau das gewollt (settings.py), im
+        # Betrieb wäre es ein Ausfall.
+        (self.warnungen if settings.DEBUG else self.fehler).append(meldung)
+
+    def _pruefe_smtp_felder(self):
+        if not settings.EMAIL_HOST_USER:
+            self.fehler.append(
+                f'EMAIL_HOST_USER ist leer – der SMTP-Server '
+                f'{settings.EMAIL_HOST} weist jede Anmeldung ohne Benutzer '
+                f'ab, die Passwort-vergessen-Mail geht dann nicht hinaus.'
+            )
+        if not settings.EMAIL_HOST_PASSWORD:
+            self.fehler.append(
+                'EMAIL_HOST_PASSWORD ist leer – dasselbe: keine Anmeldung, '
+                'keine Mail über SMTP.'
+            )
+        if settings.EMAIL_USE_TLS and settings.EMAIL_USE_SSL:
+            self.fehler.append(
+                'EMAIL_USE_TLS und EMAIL_USE_SSL sind beide an; Django '
+                'kann so keine Verbindung aufbauen.'
+            )
+        elif not (settings.EMAIL_USE_TLS or settings.EMAIL_USE_SSL):
+            self.warnungen.append(
+                f'Weder STARTTLS noch SSL auf Port {settings.EMAIL_PORT} – '
+                f'Anmeldedaten gingen im Klartext über die Leitung.'
+            )
+
+    def _pruefe_brevo_schluessel(self):
+        api_schluessel = os.getenv('BREVO_API_KEY')
         if not api_schluessel:
             if self._nutzt_smtp():
                 # Seit 27.09.2026 gewollt: aller Versand läuft über SMTP
@@ -204,6 +212,7 @@ class Command(BaseCommand):
                     'hier nicht eingerichtet.'
                 )
 
+    def _pruefe_absender(self):
         if settings.DEFAULT_FROM_EMAIL == STANDARD_ABSENDER:
             self.warnungen.append(
                 f'DEFAULT_FROM_EMAIL steht auf dem Vorgabewert '

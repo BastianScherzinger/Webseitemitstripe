@@ -1,7 +1,7 @@
 ---
 bereich: wegweiser
 titel: Wegweiser durch die Dokumentation
-stand: 2026-10-02
+stand: 2026-10-03
 status: vollständig
 fortschritt: 100
 zusammenfassung: Elf Dateien nach Doku-Standard, am 02.10.2026 gegen main (7ae67ab) und die Live-Seite geprüft; die Original-Doku im Projektstamm bleibt die Detailquelle.

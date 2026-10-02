@@ -1,7 +1,7 @@
 ---
 bereich: ads
 titel: Google Ads
-stand: 2026-10-02
+stand: 2026-10-03
 status: nicht zutreffend
 zusammenfassung: Keine Google-Ads-Kampagne, kein Konto, kein Tracking-Tag (Quelltext am 02.10.2026 erneut durchsucht, kein Treffer für gtag, Tag Manager, Analytics oder Pixel; nur ein dataLayer-Ereignis der Warteliste ohne Messskript); ohne Verkauf (kein Gewerbe) kommen Shopping-Anzeigen nicht in Frage, Voraussetzungen sind benannt. Nicht zutreffend, weil es nichts zu bewerben gibt.
 offen: 0
