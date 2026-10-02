@@ -31,74 +31,90 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
     def _send():
         ok = False
         try:
-            ok = _senden()
+            ok = _senden(subject, html_content, recipient_email, recipient_name,
+                         text_content, reply_to)
         finally:
             if danach is not None:
-                try:
-                    danach(ok)
-                except Exception:
-                    _log.exception("Nachbearbeitung nach dem Mailversand fehlgeschlagen")
-                finally:
-                    # Der Thread hat eine eigene Datenbankverbindung geöffnet; im
-                    # Hauptthread (Tests, die den Thread ersetzen) bleibt sie offen.
-                    if threading.current_thread() is not threading.main_thread():
-                        from django.db import connections
-                        connections.close_all()
-
-    def _senden():
-        api_key = os.getenv('BREVO_API_KEY')
-        sender_name = "Luviq Universe"
-        sender_email = settings.DEFAULT_FROM_EMAIL
-
-        if api_key:
-            url = "https://api.brevo.com/v3/smtp/email"
-            headers = {
-                "accept": "application/json",
-                "content-type": "application/json",
-                "api-key": api_key
-            }
-            final_recipient_name = recipient_name if recipient_name else "Nutzer"
-            payload = {
-                "sender": {"name": sender_name, "email": sender_email},
-                "to": [{"email": recipient_email, "name": final_recipient_name}],
-                "subject": subject,
-                "htmlContent": html_content,
-            }
-            if text_content:
-                payload["textContent"] = text_content
-            if reply_to:
-                payload["replyTo"] = {"email": reply_to}
-            try:
-                response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=10)
-                if response.status_code < 300:
-                    _log.info("E-Mail via Brevo API gesendet an %s", recipient_email)
-                    return True
-                _log.error("Brevo API Fehler (%s): %s", response.status_code, response.text)
-            except Exception as e:
-                _log.error("Brevo API Verbindungsfehler: %s", e)
-            return False
-        else:
-            try:
-                # EmailMultiAlternatives statt send_mail: nur so lässt sich
-                # die Antwortadresse (reply_to) mitgeben.
-                mail = EmailMultiAlternatives(
-                    subject,
-                    text_content or "Bitte HTML-Ansicht aktivieren",
-                    sender_email,
-                    [recipient_email],
-                    reply_to=[reply_to] if reply_to else None,
-                )
-                mail.attach_alternative(html_content, "text/html")
-                sent = mail.send(fail_silently=False)
-                if sent:
-                    _log.info("E-Mail via SMTP gesendet an %s", recipient_email)
-                return bool(sent)
-            except Exception as e:
-                _log.error("SMTP Fehler: %s", e)
-            return False
+                _nachbearbeiten(danach, ok)
 
     # Im Hintergrund senden
     threading.Thread(target=_send).start()
+
+
+def _nachbearbeiten(danach, ok):
+    """Ruft ``danach(ok)`` auf; ein Fehler dort wird protokolliert, nie geworfen."""
+    try:
+        danach(ok)
+    except Exception:
+        _log.exception("Nachbearbeitung nach dem Mailversand fehlgeschlagen")
+    finally:
+        # Der Thread hat eine eigene Datenbankverbindung geöffnet; im
+        # Hauptthread (Tests, die den Thread ersetzen) bleibt sie offen.
+        if threading.current_thread() is not threading.main_thread():
+            from django.db import connections
+            connections.close_all()
+
+
+def _senden(subject, html_content, recipient_email, recipient_name, text_content, reply_to):
+    """Ein Versandversuch: Brevo-API, wenn ``BREVO_API_KEY`` gesetzt ist, sonst SMTP.
+    ``True``, wenn die Gegenseite die Mail angenommen hat."""
+    api_key = os.getenv('BREVO_API_KEY')
+    if api_key:
+        return _ueber_brevo(api_key, subject, html_content, recipient_email, recipient_name,
+                            text_content, reply_to)
+    return _ueber_smtp(subject, html_content, recipient_email, text_content, reply_to)
+
+
+def _ueber_brevo(api_key, subject, html_content, recipient_email, recipient_name,
+                 text_content, reply_to):
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "content-type": "application/json",
+        "api-key": api_key
+    }
+    sender_name = "Luviq Universe"
+    final_recipient_name = recipient_name if recipient_name else "Nutzer"
+    payload = {
+        "sender": {"name": sender_name, "email": settings.DEFAULT_FROM_EMAIL},
+        "to": [{"email": recipient_email, "name": final_recipient_name}],
+        "subject": subject,
+        "htmlContent": html_content,
+    }
+    if text_content:
+        payload["textContent"] = text_content
+    if reply_to:
+        payload["replyTo"] = {"email": reply_to}
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=10)
+        if response.status_code < 300:
+            _log.info("E-Mail via Brevo API gesendet an %s", recipient_email)
+            return True
+        _log.error("Brevo API Fehler (%s): %s", response.status_code, response.text)
+    except Exception as e:
+        _log.error("Brevo API Verbindungsfehler: %s", e)
+    return False
+
+
+def _ueber_smtp(subject, html_content, recipient_email, text_content, reply_to):
+    try:
+        # EmailMultiAlternatives statt send_mail: nur so lässt sich
+        # die Antwortadresse (reply_to) mitgeben.
+        mail = EmailMultiAlternatives(
+            subject,
+            text_content or "Bitte HTML-Ansicht aktivieren",
+            settings.DEFAULT_FROM_EMAIL,
+            [recipient_email],
+            reply_to=[reply_to] if reply_to else None,
+        )
+        mail.attach_alternative(html_content, "text/html")
+        sent = mail.send(fail_silently=False)
+        if sent:
+            _log.info("E-Mail via SMTP gesendet an %s", recipient_email)
+        return bool(sent)
+    except Exception as e:
+        _log.error("SMTP Fehler: %s", e)
+    return False
 
 
 def send_newsletter_email(produkt, subscribers):
@@ -123,6 +139,11 @@ def send_newsletter_email(produkt, subscribers):
         image_url = f"{site_url}{produkt.bild.url}"
     else:
         image_url = ""
+    # Höhe zur festen Breite 528 der Mail, aus den gespeicherten Bildmaßen (V04);
+    # unbekannt → keine Höhe, dann hält height:auto das Seitenverhältnis.
+    bild_hoehe = None
+    if image_url and produkt.bild_breite and produkt.bild_hoehe:
+        bild_hoehe = round(528 * produkt.bild_hoehe / produkt.bild_breite)
 
     from .newsletter import abmelde_adresse
     for sub in subscribers:
@@ -134,6 +155,7 @@ def send_newsletter_email(produkt, subscribers):
             preheader=f'Ein neues handbemaltes Stück bei Luviq Universe: {produkt.name}',
             produkt_name=produkt.name,
             bild_url=image_url,
+            bild_hoehe=bild_hoehe,
             link=produkt_url,
             knopf=knopf,
             abmelde_url=abmelde_url,
