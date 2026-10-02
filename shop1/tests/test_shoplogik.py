@@ -13,6 +13,7 @@ PayPal wird nie angerufen (``requests`` im Modul ``checkout`` ist ersetzt).
 import importlib
 import json
 import os
+import re
 from datetime import timedelta
 from decimal import Decimal
 from io import StringIO
@@ -265,7 +266,9 @@ class BestellungTest(LuviqTestCase):
         self.legen(erzeuge_produkt('Bemalte Jacke'))
         seite = self.hole('/checkout/').content.decode()
         for feld, grenze in (('telefon', 20), ('postleitzahl', 10), ('adresse', 255)):
-            self.assertIn(f'name="{feld}" maxlength="{grenze}"', seite)
+            eingabe = re.search(rf'<input\b[^>]*\bname="{feld}"[^>]*>', seite)
+            self.assertIsNotNone(eingabe, feld)
+            self.assertRegex(eingabe.group(0), rf'\bmaxlength="{grenze}"')
 
     # ── Überweisung ──────────────────────────────────────────────────────
 

@@ -30,7 +30,7 @@ class MailvorschauTest(LuviqTestCase):
 
     ERWARTET = {'admin-kontakt.html', 'admin.html', 'admin-motiv.html', 'bastian.html',
                 'bastian-motiv.html', 'bastian-registrierung.html', 'kunde.html',
-                'kunde-newsletter.html'}
+                'kunde-newsletter.html', 'newsletter-neues-stueck.html'}
 
     @classmethod
     def setUpClass(cls):
@@ -79,30 +79,43 @@ class SchriftenZuschneidenTest(SimpleTestCase):
         cls.schriften = schriften_zuschneiden
 
     def test_jede_quelle_liegt_im_repository(self):
-        for name in self.schriften.AUFTRAG:
+        quellen = set(self.schriften.AUFTRAG)
+        for teile, _grenzen in self.schriften.ZUSAMMEN.values():
+            quellen.update(teile)
+        quellen.update(datei for datei, _grenzen in self.schriften.ZUGESCHNITTEN.values())
+        quellen.update(datei for datei, *_rest in self.schriften.ERSATZ.values())
+        for name in sorted(quellen):
             with self.subTest(quelle=name):
                 self.assertTrue((self.schriften.QUELLE / name).is_file())
-        for name, (datei, *_rest) in self.schriften.ERSATZ.items():
-            with self.subTest(ersatz=name):
-                self.assertIn(datei, self.schriften.AUFTRAG)
+
+    def _erzeugt(self):
+        """Namen aller Dateien, die das Skript schreibt (vier: Cormorant und
+        JetBrains Mono je eine, Schibsted Grotesk zwei)."""
+        return ({name.replace('-wght', '') for name in self.schriften.AUFTRAG}
+                | set(self.schriften.ZUSAMMEN) | set(self.schriften.ZUGESCHNITTEN))
 
     def test_die_ausgabedateien_sind_genau_die_der_stylesheet(self):
         """Verhindert eine Schrift, die das Skript erzeugt und kein CSS
         braucht – oder ein CSS, das auf eine nie erzeugte Datei zeigt."""
-        erzeugt = {name.replace('-wght', '') for name in self.schriften.AUFTRAG}
+        erzeugt = self._erzeugt()
+        self.assertLessEqual(len(erzeugt), 4)
         css = (WURZEL / 'shop1' / 'static' / 'shop1' / 'luviq.css').read_text(encoding='utf-8')
         genannt = set(re.findall(r'url\("fonts/([^"]+\.woff2)"\)', css))
         self.assertEqual(erzeugt, genannt)
         for name in erzeugt:
             self.assertTrue((self.schriften.ZIEL / name).is_file(), name)
 
-    def test_je_familie_entstehen_genau_zwei_teile(self):
-        """Das Skript soll je Familie genau zwei Teile (latin, latin-ext) erzeugen."""
-        familien = {}
-        for name in self.schriften.AUFTRAG:
-            familien.setdefault(name.split('-latin')[0], []).append(name)
-        self.assertEqual(len(familien), 3)
-        self.assertTrue(all(len(teile) == 2 for teile in familien.values()))
+    def test_nur_schibsted_bleibt_in_zwei_teilen_die_anderen_tragen_beide_bereiche(self):
+        """Cormorant (zusammengeführt) und JetBrains Mono (zugeschnitten) liegen je
+        in einer Datei, die latin und latin-ext zusammen trägt; Schibsted Grotesk
+        bleibt in latin und latin-ext getrennt (Messpunkte PF27/VL16)."""
+        self.assertEqual(set(self.schriften.ZUSAMMEN), {'cormorant-garamond-italic.woff2'})
+        for teile, _grenzen in self.schriften.ZUSAMMEN.values():
+            self.assertEqual(len(teile), 2)
+        self.assertEqual(set(self.schriften.ZUGESCHNITTEN), {'jetbrains-mono-normal.woff2'})
+        self.assertEqual(sorted(n.split('-wght')[0] for n in self.schriften.AUFTRAG),
+                         ['schibsted-grotesk-latin', 'schibsted-grotesk-latin-ext'])
+        self.assertEqual(len(self._erzeugt()), 4)
 
     def test_die_breite_summiert_die_vorschuebe_geteilt_durch_einheiten(self):
         font = mock.MagicMock()
@@ -126,7 +139,7 @@ class SchriftenZuschneidenTest(SimpleTestCase):
             self.assertEqual(self.schriften.main(), 0)
             ziel = Path(ordner) / 'fonts'
             erzeugt = {p.name for p in ziel.glob('*.woff2')}
-            self.assertEqual(erzeugt, {n.replace('-wght', '') for n in self.schriften.AUFTRAG})
+            self.assertEqual(erzeugt, self._erzeugt())
             self.assertTrue(all(p.stat().st_size > 1000 for p in ziel.glob('*.woff2')))
             self.assertEqual({p.name for p in ziel.glob('OFL-*.txt')},
                              {p.name for p in self.schriften.QUELLE.glob('OFL-*.txt')})
