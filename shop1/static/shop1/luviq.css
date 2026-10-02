@@ -417,6 +417,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-stueck-nummer{font-size:44px}
   .lv-brotkrume{padding-top:16px;font-size:12px}
   .lv-nr,.lv-daten dt{font-size:12px}
+  .lv-formular legend .lv-nr,.lv-feld .lv-nr{font-size:12px}
   /* Kleinstes Tailwind-Maß der Altseiten (Kontakt, Gästebuch) ebenfalls auf 12 px (BF27). */
   .lv-alt main [class*="text-[9px]"],.lv-alt main [class*="text-[10px]"],.lv-alt main [class*="text-[11px]"]{font-size:12px}
   /* Absätze der Altseiten, die als Beschriftung gesetzt waren, sind Fließtext: mindestens 16 px (BF27). */
