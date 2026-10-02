@@ -411,7 +411,9 @@ def bestellung_abschliessen(order, neuer_status='paid'):
             db_produkt = item.produkt()
             if db_produkt:
                 db_produkt.lagerbestand = max(0, db_produkt.lagerbestand - item.menge)
-                db_produkt.aktiv = False
+                # EIG57: das Stück bleibt als vergebenes Archivstück erreichbar, statt
+                # seine indexierte Seite in den 404 mitzunehmen; kaufbar ist es nicht mehr.
+                db_produkt.vergeben = True
                 db_produkt.save()
     return True
 

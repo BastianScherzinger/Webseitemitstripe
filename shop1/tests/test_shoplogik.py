@@ -326,7 +326,11 @@ class BestellungTest(LuviqTestCase):
         self.assertEqual(bestellung.status, 'paid')
         gekauft.refresh_from_db()
         anderes.refresh_from_db()
-        self.assertEqual((gekauft.aktiv, gekauft.lagerbestand), (False, 0))
+        self.assertEqual((gekauft.vergeben, gekauft.kaufbar, gekauft.lagerbestand), (True, False, 0))
+        # EIG57: die Seite des Stücks bleibt erreichbar, als vergebenes Archivstück.
+        seite = self.hole(f'/produkt/{gekauft.slug}/')
+        self.assertEqual(seite.status_code, 200)
+        self.assertIn('Bereits vergeben', seite.content.decode())
         self.assertEqual((anderes.aktiv, anderes.lagerbestand), (True, 1))
         self.kundin.profile.refresh_from_db()
         self.assertFalse(self.kundin.profile.has_welcome_discount)
@@ -499,7 +503,7 @@ class PayPalServerseitigTest(LuviqTestCase):
         self.bestellung.refresh_from_db()
         self.assertEqual((self.bestellung.status, self.bestellung.paypal_order_id), ('paid', 'PAYPAL-1'))
         self.produkt.refresh_from_db()
-        self.assertEqual((self.produkt.aktiv, self.produkt.lagerbestand), (False, 0))
+        self.assertEqual((self.produkt.vergeben, self.produkt.kaufbar, self.produkt.lagerbestand), (True, False, 0))
 
     def test_zwei_gleichzeitige_abschluesse_buchen_nur_einmal_ab(self):
         """Doppelklick oder zweiter Tab: beide Aufrufe haben die Bestellung noch als

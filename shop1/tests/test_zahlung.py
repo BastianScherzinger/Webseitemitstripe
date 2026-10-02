@@ -210,7 +210,7 @@ class ZahlungspfadTest(LuviqTestCase):
         self.assertEqual(antwort.json(), {'status': 'success', 'redirect': f'/payment/success/{bestellung.id}/'})
         self.assertEqual((bestellung.status, bestellung.paypal_order_id), ('paid', 'PAYPAL-1'))
         self.produkt.refresh_from_db()
-        self.assertEqual((self.produkt.lagerbestand, self.produkt.aktiv), (0, False))
+        self.assertEqual((self.produkt.lagerbestand, self.produkt.vergeben, self.produkt.kaufbar), (0, True, False))
 
         self.assertEqual(self.hole(f'/payment/success/{bestellung.id}/').status_code, 200)
         self.assertEqual(CartItem.objects.filter(cart__user=self.kundin).count(), 0)
