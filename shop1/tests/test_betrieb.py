@@ -108,6 +108,14 @@ class CsrfCookieTest(LuviqTestCase):
     def test_das_csrf_cookie_ist_httponly(self):
         self.assertTrue(settings.CSRF_COOKIE_HTTPONLY)
 
+    def test_das_csrf_cookie_traegt_secure_httponly_und_samesite(self):
+        """SI16 misst Secure, HttpOnly und SameSite an jedem gesetzten Cookie.
+        Lokal mit ``DEBUG=True`` fehlt Secure; der Test läuft im Betriebsmodus."""
+        cookie = self.hole('/').cookies['csrftoken']
+        self.assertTrue(cookie['httponly'])
+        self.assertTrue(cookie['secure'])
+        self.assertEqual(cookie['samesite'], 'Lax')
+
     def test_kein_skript_liest_das_token_aus_dem_cookie(self):
         """Verhindert, dass die Newsletter-Anmeldung der Startseite wieder
         ``document.cookie`` liest – bei HttpOnly bekäme sie ein leeres Token
