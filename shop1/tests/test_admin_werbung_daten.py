@@ -55,13 +55,21 @@ class WerbungDatenTest(LuviqTestCase):
     def test_das_skript_liest_die_bloecke_und_kein_safe_steht_mehr_dort(self):
         quelle = open(self._vorlage(), encoding='utf-8').read()
         self.assertNotIn('|safe', quelle)
-        self.assertIn("getElementById('werbung-timeline')", quelle)
-        self.assertIn("getElementById('werbung-plattformen')", quelle)
+        # Das Skript steht seit dem 02.10.2026 in einer eigenen Datei (V09).
+        self.assertIn("{% static 'shop1/admin_werbung.js' %}", quelle)
+        skript = open(self._skript(), encoding='utf-8').read()
+        self.assertIn("getElementById('werbung-timeline')", skript)
+        self.assertIn("getElementById('werbung-plattformen')", skript)
 
     @staticmethod
     def _vorlage():
         from pathlib import Path
         return str(Path(__file__).resolve().parent.parent / 'templates' / 'shop1' / 'admin' / 'werbung_list.html')
+
+    @staticmethod
+    def _skript():
+        from pathlib import Path
+        return str(Path(__file__).resolve().parent.parent / 'static' / 'shop1' / 'admin_werbung.js')
 
 
 class StatistikBausteineTest(LuviqTestCase):
