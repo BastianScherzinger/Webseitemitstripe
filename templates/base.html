@@ -185,9 +185,10 @@
 
     <!-- Favicon & PWA -->
     {# flavicon.ico (16/32/48 px, aus flavicon.jpeg erzeugt) statt des 1254-px-JPEGs: 7 KB statt 69 KB auf jeder Seite. #}
-    <link rel="icon" type="image/x-icon" href="{% static 'shop1/images/flavicon.ico' %}">
+    <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="{% static 'shop1/images/flavicon.ico' %}">
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'shop1/images/flavicon.ico' %}">
-    <link rel="apple-touch-icon" href="{% static 'shop1/images/logo-luviq.jpeg' %}">
+    {# TS37: quadratisches 180-px-PNG, verkleinert aus flavicon.jpeg (1254 x 1254) - statt des nicht quadratischen 1290 x 1346-JPEGs. #}
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'shop1/images/apple-touch-icon.png' %}">
     <link rel="manifest" href="{% static 'shop1/manifest.json' %}">
     <meta name="theme-color" content="#0A0A0A">
     <meta name="mobile-web-app-capable" content="yes">

@@ -108,6 +108,7 @@
             <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
                 Was ist Upcycling-Mode – <span class="text-glow">und was unterscheidet sie von Second Hand?</span>
             </h1>
+            {% if seite %}<div class="text-xs uppercase tracking-widest text-white/60 mb-6">Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time></div>{% endif %}
             <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
                 {% if not verkauf_aktiv %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt; was hier zu Kauf, Versand oder Widerruf steht, gilt erst ab Eröffnung des Shops. {% endif %}Upcycling-Mode ist Kleidung, die schon getragen wurde und durch eine handwerkliche Bearbeitung zu einem neuen, höherwertigen Stück wird – bei Luviq Universe aus Alsfeld durch Bemalung von Hand mit Pinsel und Bleiche. Second Hand ist dieselbe Kleidung ohne diese Bearbeitung: gebraucht, weiterverkauft, unverändert. Vintage bezeichnet Alter und Stil eines Stücks, nicht seinen Zustand; als Vintage gelten üblicherweise Stücke, die mindestens etwa 20 Jahre alt sind. Ein handbemaltes Upcycling-Stück gibt es genau einmal (1-of-1) – deshalb lässt es sich weder nachbestellen noch in einer zweiten Größe liefern.
             </p>

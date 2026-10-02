@@ -132,6 +132,7 @@
             <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
                 Widerruf und Rücksendung: <span class="text-glow">was gilt bei einem Einzelstück?</span>
             </h1>
+            {% if seite %}<div class="text-xs uppercase tracking-widest text-white/60 mb-6">Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time></div>{% endif %}
             <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
                 {% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Für eine Bestellung bei Luviq Universe in Alsfeld gilt das Widerrufsrecht von vierzehn Tagen ohne Angabe von Gründen, gerechnet ab dem Tag, an dem du die Ware in Besitz genommen hast (§ 5 der AGB). Für handbemalte Einzelstücke nennen die AGB keine Ausnahme. Erklärt wird der Widerruf gegenüber Luisa Brehler, Grünberger Str. 16, 36304 Alsfeld – über das Kontaktformular, per E-Mail oder per Brief. Was die Seite nicht regelt, etwa wer das Rückporto trägt, steht hier als offene Frage und wird vorab geklärt, nicht geraten.
             </p>

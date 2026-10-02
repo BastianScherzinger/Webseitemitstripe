@@ -118,10 +118,11 @@ urlpatterns = [
         url='/static/shop1/images/flavicon.ico', permanent=True)),
     path('favicon.png', RedirectView.as_view(
         url='/static/shop1/images/flavicon.jpeg', permanent=True)),
+    # TS37 (02.10.2026): quadratisches 180-px-PNG statt des 1290 x 1346-JPEGs.
     path('apple-touch-icon.png', RedirectView.as_view(
-        url='/static/shop1/images/logo-luviq.jpeg', permanent=True)),
+        url='/static/shop1/images/apple-touch-icon.png', permanent=True)),
     path('apple-touch-icon-precomposed.png', RedirectView.as_view(
-        url='/static/shop1/images/logo-luviq.jpeg', permanent=True)),
+        url='/static/shop1/images/apple-touch-icon.png', permanent=True)),
 
     # ═══ ADMIN ROUTES ═══
     path('shop-admin/dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),

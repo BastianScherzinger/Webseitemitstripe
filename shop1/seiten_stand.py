@@ -92,4 +92,18 @@ def seite_fuer(url_name):
     from django.conf import settings
     if not getattr(settings, 'VERKAUF_AKTIV', False):
         name = SEITEN_NAME_OHNE_VERKAUF.get(url_name, name)
-    return {'name': name, 'stand': SEITEN_STAND[url_name]}
+    stand = SEITEN_STAND[url_name]
+    return {'name': name, 'stand': stand, 'stand_anzeige': stand_anzeige(stand)}
+
+
+_MONATE = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli',
+           'August', 'September', 'Oktober', 'November', 'Dezember')
+
+
+def stand_anzeige(iso):
+    """``'2026-10-02'`` → ``'2. Oktober 2026'`` – das sichtbare Datum (GE47).
+
+    Eigene Monatsliste statt ``|date``: unabhängig von der aktiven Sprache,
+    und dieselbe Zeichenkette wie im ``dateModified`` bleibt die Quelle."""
+    jahr, monat, tag = (int(t) for t in iso.split('-'))
+    return f'{tag}. {_MONATE[monat - 1]} {jahr}'

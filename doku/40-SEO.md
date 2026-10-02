@@ -1,10 +1,10 @@
 ---
 bereich: seo
 titel: SEO und GEO
-stand: 2026-10-01
+stand: 2026-10-02
 status: teilweise
 fortschritt: 87
-zusammenfassung: Stand 01.10.2026: Bild-Sitemap TS19 live (36c0741), llms.txt, Feed, @id-Schema mit speakable und location/Place, Apex-301, noindex für Wissensbereich bis zur Freigabe; Messwerte SEO-Technik 98, SEO-Inhalt 83, GEO 79. Offen sind Freigaben und Profiladressen der Betreiberin sowie llms-full.txt und IndexNow.
+zusammenfassung: Stand 01.10.2026: Bild-Sitemap TS19 live (36c0741), llms.txt, Feed, @id-Schema mit speakable und location/Place, Apex-301, noindex für Wissensbereich bis zur Freigabe; Messwerte SEO-Technik 98, SEO-Inhalt 83, GEO 79. Offen sind Freigaben und Profiladressen der Betreiberin sowie llms-full.txt und IndexNow. Seit 02.10.2026 im Code (nicht ausgeliefert): sichtbares Änderungsdatum der Wissensbeiträge aus SEITEN_STAND (GE47).
 offen: 9
 quellen: GOOGLE_SEO_GUIDE.md, LOGBUCH.md, DOCUMENTATION.md, shop1/views/legal.py, shop1/seiten_stand.py, shop1/indexnow.py, templates/base.html
 ---
