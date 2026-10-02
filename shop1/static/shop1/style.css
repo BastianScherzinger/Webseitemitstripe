@@ -151,7 +151,7 @@ body {
 
 .product-card:hover {
     transform: translateY(-10px) scale(1.02);
-    border-color: rgba(200, 150, 92, 0.25) !important;
+    border-color: rgba(200, 150, 92, 0.25);
     box-shadow:
         0 30px 60px -12px rgba(0, 0, 0, 0.7),
         0 0 40px rgba(200, 150, 92, 0.10),
@@ -179,15 +179,18 @@ body {
     outline: none;
 }
 
-/* ── Spacing Fixes ── */
-section {
-    padding-top: 5rem !important;
-    padding-bottom: 5rem !important;
+/* ── Spacing Fixes ──
+   Ohne Vorrang-Markierung (S01, 02.10.2026): `section[class]` (0,1,1) schlägt jede einzelne
+   Tailwind-Klasse wie `.py-20` (0,1,0); die Abschnitte mit `py-32`/`py-48` stehen am
+   Ende der Datei, nach den Handy-Abständen, damit sie wie bisher auf allen Breiten
+   gewinnen. `.mb-20`/`.mb-16` gewinnen gegen Tailwind schon über die Ladereihenfolge
+   (style.css nach tailwind.css). */
+section, section[class] {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
 }
-.py-32 { padding-top: 6rem !important;  padding-bottom: 6rem !important; }
-.py-48 { padding-top: 8rem !important;  padding-bottom: 8rem !important; }
-.mb-20 { margin-bottom: 4rem !important; }
-.mb-16 { margin-bottom: 3rem !important; }
+.mb-20 { margin-bottom: 4rem; }
+.mb-16 { margin-bottom: 3rem; }
 
 /* ── Admin Tables ── */
 .admin-table-container {
@@ -414,11 +417,6 @@ nav .glass {
     .mobile-bottom-nav { display: flex; }
     body { padding-bottom: 64px; }
 
-    /* Hide the hamburger wrap — bottom nav replaces it */
-    #hamburger-wrap { display: none !important; }
-    /* Also hide the mobile dropdown */
-    .md\:hidden[x-show] { display: none !important; }
-
     .energy-nebula::after {
         animation: nebula-evolve 15s ease-in-out infinite alternate;
         filter: blur(60px);
@@ -434,19 +432,19 @@ nav .glass {
 
     .glass-card { border-color: rgba(200, 150, 92, 0.10); }
 
-    section {
-        padding-top: 3rem !important;
-        padding-bottom: 3rem !important;
+    section, section[class] {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
     }
 }
 
 @media (max-width: 640px) {
-    section {
-        padding-top: 2.5rem !important;
-        padding-bottom: 2.5rem !important;
+    section, section[class] {
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
     }
 
-    .glass-card { border-radius: 1.75rem !important; }
+    .glass-card { border-radius: 1.75rem; }
 
     .btn-glow { min-height: 48px; }
 
@@ -506,14 +504,23 @@ body :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible 
     }
 }
 
-/* iOS input zoom prevention */
+/* iOS input zoom prevention — ohne Vorrang-Markierung: `[type]` bzw. `[class]` hebt die
+   Regel über einzelne Tailwind-Klassen wie `.text-sm` (0,1,0). */
 @supports (-webkit-touch-callout: none) {
     input[type="text"],
     input[type="email"],
     input[type="password"],
     input[type="number"],
     select,
-    textarea {
-        font-size: 16px !important;
+    select[class],
+    textarea,
+    textarea[class] {
+        font-size: 16px;
     }
 }
+
+/* Abstände der großen Abschnitte (siehe „Spacing Fixes“ oben): am Dateiende, damit sie
+   wie früher mit Vorrang-Markierung auch die Handy-Abstände von `section` übertreffen. Auf
+   anderen Elementen als `section` gewinnen sie gegen Tailwind über die Ladereihenfolge. */
+.py-32, section.py-32 { padding-top: 6rem;  padding-bottom: 6rem; }
+.py-48, section.py-48 { padding-top: 8rem;  padding-bottom: 8rem; }
