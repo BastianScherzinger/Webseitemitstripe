@@ -4,10 +4,12 @@ Newsletter zu einem neuen Stück (utils.send_newsletter_email). Deutsch, im Look
 übrigen Mails (basis.html). Gesendet wird nur an bestätigte Adressen (Double-Opt-in).
 Ohne Verkauf (VERKAUF_AKTIV aus): kein Preis, kein Kaufaufruf, keine Bestell-Wörter.
 Abmeldung: so, wie es die Datenschutzerklärung sagt – eine kurze Nachricht.
+height nur, wenn die Bildmaße bekannt sind (Produkt.bild_breite/bild_hoehe, auf 528 px
+umgerechnet); sonst hält height:auto das Seitenverhältnis.
 {% endcomment %}
 {% block kopf_label %}Neues Stück{% endblock %}
 {% block inhalt %}
-{% if bild_url %}<img src="{{ bild_url }}" width="528" alt="{{ produkt_name }}" style="display:block;width:100%;max-width:528px;height:auto;margin:0 0 24px;border:0;">
+{% if bild_url %}<img src="{{ bild_url }}" width="528"{% if bild_hoehe %} height="{{ bild_hoehe }}"{% endif %} alt="{{ produkt_name }}" style="display:block;width:100%;max-width:528px;height:auto;margin:0 0 24px;border:0;">
 {% endif %}<h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-style:italic;font-size:26px;line-height:1.25;color:#0A0A0A;">{{ produkt_name }}</h1>
 <p style="margin:0 0 16px;">Hallo,</p>
 <p style="margin:0 0 16px;">ein neues Stück ist da: „{{ produkt_name }}“. Handbemalt, ein Einzelstück.</p>
