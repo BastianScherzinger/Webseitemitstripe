@@ -12,12 +12,13 @@ benutzt und ein Ausfall auf beiden still ist:
   Registrierung, Bestellbestätigung, Zahlungseingang, Kontaktanfrage an die
   Betreiberin, Newsletter. Der Versand läuft in einem eigenen Thread und
   protokolliert einen Fehlschlag nur ins Log; die Bestellung gilt trotzdem
-  als aufgegeben. Ein falscher Schlüssel fällt deshalb niemandem auf.
-* **SMTP über das Brevo-Relay** (Djangos ``send_mail``) – der Rückfall
-  derselben Funktion, wenn kein ``BREVO_API_KEY`` gesetzt ist, und der
+  als aufgegeben. Ein falscher Schlüssel fällt deshalb niemandem auf. Seit
+  dem 27.09.2026 ist kein ``BREVO_API_KEY`` mehr gesetzt: dieser Weg ruht.
+* **SMTP** (Djangos ``send_mail``) – seit dem 27.09.2026 der Weg für **alle**
+  Mails (Gmail-Postfach der Betreiberin, ``smtp.gmail.com:587``): der Rückfall
+  von ``send_brevo_email``, wenn kein ``BREVO_API_KEY`` gesetzt ist, und der
   einzige Weg für die Passwort-Vergessen-Mail, die Django selbst verschickt.
-  Railway blockt ausgehende SMTP-Ports; genau deswegen gibt es den ersten
-  Weg. Ein stiller SMTP-Weg heisst: niemand kann sein Passwort zurücksetzen.
+  Ein stiller SMTP-Weg heisst: niemand kann sein Passwort zurücksetzen.
 
 Der Befehl zeigt die Einstellungen beider Wege, versucht die Anmeldung
 (API-Schlüssel gegen ``/v3/account``, SMTP mit ``EHLO``/``STARTTLS``/Login)
@@ -168,9 +169,9 @@ class Command(BaseCommand):
         else:
             if not settings.EMAIL_HOST_USER:
                 self.fehler.append(
-                    'EMAIL_HOST_USER ist leer – das Brevo-Relay weist jede '
-                    'Anmeldung ohne Benutzer ab, die Passwort-vergessen-Mail '
-                    'geht dann nicht hinaus.'
+                    f'EMAIL_HOST_USER ist leer – der SMTP-Server '
+                    f'{settings.EMAIL_HOST} weist jede Anmeldung ohne Benutzer '
+                    f'ab, die Passwort-vergessen-Mail geht dann nicht hinaus.'
                 )
             if not settings.EMAIL_HOST_PASSWORD:
                 self.fehler.append(
@@ -189,18 +190,27 @@ class Command(BaseCommand):
                 )
 
         if not api_schluessel:
-            self.warnungen.append(
-                'BREVO_API_KEY ist nicht gesetzt – Bestell-, Kontakt- und '
-                'Bestätigungsmails fallen auf SMTP zurück, dessen Ports '
-                'Railway blockt (genau dafür gibt es den API-Weg).'
-            )
+            if self._nutzt_smtp():
+                # Seit 27.09.2026 gewollt: aller Versand läuft über SMTP
+                # (Gmail). Ein fehlender Schlüssel ist dann kein Mangel.
+                self.stdout.write(
+                    'Hinweis: BREVO_API_KEY ist nicht gesetzt – aller Versand '
+                    'läuft über SMTP (so seit dem 27.09.2026 gewollt).\n'
+                )
+            else:
+                self.warnungen.append(
+                    'BREVO_API_KEY ist nicht gesetzt – Bestell-, Kontakt- und '
+                    'Bestätigungsmails fallen auf SMTP zurück, und das ist '
+                    'hier nicht eingerichtet.'
+                )
 
         if settings.DEFAULT_FROM_EMAIL == STANDARD_ABSENDER:
             self.warnungen.append(
                 f'DEFAULT_FROM_EMAIL steht auf dem Vorgabewert '
-                f'„{STANDARD_ABSENDER}“. Brevo verschickt nur von einer im '
-                f'Konto verifizierten Absenderadresse; ist diese es nicht, '
-                f'lehnt die API jede Mail ab.'
+                f'„{STANDARD_ABSENDER}“. Ein Versandweg verschickt nur von '
+                f'einer Adresse, die er kennt: Gmail schreibt den Absender '
+                f'auf das angemeldete Konto um, Brevo lehnt eine nicht '
+                f'verifizierte Adresse ab.'
             )
         if not os.getenv('ADMIN_EMAIL'):
             self.warnungen.append(
@@ -257,7 +267,8 @@ class Command(BaseCommand):
             verbindung.open()
         except smtplib.SMTPAuthenticationError as ausnahme:
             self.fehler.append(
-                f'Das Brevo-Relay weist die SMTP-Anmeldung zurück: {ausnahme}. '
+                f'Der SMTP-Server {settings.EMAIL_HOST} weist die Anmeldung '
+                f'zurück: {ausnahme}. '
                 f'Benutzer und Passwort stammen aus EMAIL_HOST_USER und '
                 f'EMAIL_HOST_PASSWORD.'
             )
@@ -267,9 +278,8 @@ class Command(BaseCommand):
             self.fehler.append(
                 f'Keine SMTP-Verbindung zu {settings.EMAIL_HOST}:'
                 f'{settings.EMAIL_PORT} ({type(ausnahme).__name__}): '
-                f'{ausnahme}. Auf Railway sind ausgehende SMTP-Ports '
-                f'gesperrt – dort ist das der Normalfall und der Grund für '
-                f'den API-Weg.'
+                f'{ausnahme}. Ist der Port gesperrt oder erreicht der Dienst '
+                f'den Server nicht, kommt keine Mail hinaus.'
             )
             return
         try:

@@ -1173,6 +1173,35 @@ class MailPruefbefehlTest(LuviqTestCase):
         self.assertEqual(len(befehl.fehler), 1, befehl.fehler)
         self.assertIn('Connection timed out', befehl.fehler[0])
 
+    def test_ohne_api_schluessel_ist_mit_smtp_kein_mangel(self):
+        """Seit 27.09.2026 läuft aller Versand über SMTP (Gmail), ein
+        fehlender ``BREVO_API_KEY`` ist deshalb gewollt: ein Hinweis, keine
+        Warnung – sonst brächte ``--streng`` eine gesunde Seite zu Fall."""
+        with mock.patch.dict(os.environ, {'ADMIN_EMAIL': 'a@example.invalid'}, clear=True),                 self.settings(
+                    EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend',
+                    EMAIL_HOST='smtp.gmail.com', EMAIL_PORT=587,
+                    EMAIL_USE_TLS=True, EMAIL_USE_SSL=False,
+                    EMAIL_HOST_USER='luisa@example.invalid',
+                    EMAIL_HOST_PASSWORD='x' * 16,
+                    DEFAULT_FROM_EMAIL='luisa@example.invalid'):
+            code, text = self._laufe(streng=True)
+        self.assertEqual(code, 0, text)
+        self.assertIn('Hinweis: BREVO_API_KEY ist nicht gesetzt', text)
+        self.assertNotIn('WARNUNG', text)
+        self.assertNotIn('Brevo-Relay', text)
+
+    def test_die_meldungen_nennen_den_smtp_server_statt_brevo(self):
+        """Das SMTP-Relay ist seit 27.09.2026 Gmail, nicht mehr Brevo: ein
+        leerer Benutzer und eine abgewiesene Anmeldung nennen den Server."""
+        with self.settings(
+                EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend',
+                EMAIL_HOST='smtp.gmail.com', EMAIL_PORT=587,
+                EMAIL_USE_TLS=True, EMAIL_USE_SSL=False,
+                EMAIL_HOST_USER='', EMAIL_HOST_PASSWORD='x'):
+            _, text = self._laufe()
+        self.assertIn('smtp.gmail.com weist jede Anmeldung ohne Benutzer ab', text)
+        self.assertNotIn('Brevo-Relay', text)
+
     def test_vorgabeabsender_liegt_auf_der_eigenen_domain(self):
         """MW22: Ohne gesetzte Umgebungsvariable verschickte der Shop als
         ``noreply@luviq-shop.de`` – eine Domain, die es nicht gibt und für

@@ -49,7 +49,7 @@ def comment_add(request):
             parent=parent,
             is_admin_reply=is_admin_reply,
         )
-        messages.success(request, 'Dein Beitrag wurde im Orbit veröffentlicht!')
+        messages.success(request, 'Dein Beitrag wurde veröffentlicht.')
     return redirect('gaestebuch')
 
 

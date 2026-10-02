@@ -331,3 +331,20 @@ class ZustandsaenderungNurPerPostTest(LuviqTestCase):
         antwort = strenger.post(f'/comment/{kommentar.id}/delete/', secure=True)
         self.assertEqual(antwort.status_code, 403)
         self.assertTrue(Comment.objects.filter(pk=kommentar.pk).exists())
+
+
+class GaestebuchMeldungTest(LuviqTestCase):
+    """Die Erfolgsmeldung nach einem Beitrag ist öffentlich sichtbar. Sie trug
+    bis 02.10.2026 den Bildsprachen-Rest „im Orbit“ der früheren Linie."""
+
+    def test_die_meldung_nach_einem_beitrag_ist_klartext_ohne_orbit(self):
+        from django.contrib.messages import get_messages
+
+        kundin = erzeuge_benutzer('kundin')
+        self.client.force_login(kundin)
+        antwort = self.sende('/comment/add/', {'text': 'Schöne Stücke!'})
+        self.assertEqual(antwort.status_code, 302)
+        self.assertTrue(Comment.objects.filter(user=kundin, text='Schöne Stücke!').exists())
+        meldungen = [str(m) for m in get_messages(antwort.wsgi_request)]
+        self.assertEqual(meldungen, ['Dein Beitrag wurde veröffentlicht.'])
+        self.assertNotIn('Orbit', ' '.join(meldungen))

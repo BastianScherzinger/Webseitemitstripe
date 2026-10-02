@@ -94,7 +94,8 @@ class PruefeMailProtokollTest(SimpleTestCase):
         with mock.patch.object(pruefe_mail.Command, '_nutzt_smtp', return_value=True),\
                 mock.patch.object(pruefe_mail, 'get_connection', return_value=verbindung):
             befehl._pruefe_smtp_anmeldung()
-        self.assertIn('weist die SMTP-Anmeldung zurück', befehl.fehler[0])
+        self.assertIn('weist die Anmeldung zurück', befehl.fehler[0])
+        self.assertNotIn('Brevo', befehl.fehler[0])
 
     def test_eine_gescheiterte_testmail_steht_im_bericht_und_im_protokoll(self):
         befehl = _befehl(pruefe_mail.Command)
