@@ -1,4 +1,5 @@
-"""Eigene Vorlagenfilter: ``mul``, ``is_admin`` und ``cloud`` (Cloudinary-Transformationen)."""
+"""Eigene Vorlagenfilter: ``mul``, ``is_admin``, ``cloud`` (Cloudinary-Transformationen),
+``cloud_srcset`` (Breitenliste dazu)."""
 import re
 from urllib.parse import urlsplit, urlunsplit
 
@@ -58,3 +59,36 @@ def cloud(url, spec=''):
         pfad = _ALTFORMAT.sub('', teile.path) + '.webp'
         teile = teile._replace(path=pfad)
     return urlunsplit(teile)
+
+
+@register.filter
+def cloud_srcset(url, spec):
+    """Baut ein ``srcset`` aus mehreren Cloudinary-Breiten (PF16/PF24).
+
+    ``spec`` ist ``"breiten;beschnitt;verhaeltnis"``, die letzten beiden optional:
+
+        {{ bild.url|cloud_srcset:'300,450,600;c_fill;1.25' }}   # Karte 4:5, beschnitten
+        {{ bild.url|cloud_srcset:'600,900,1200' }}              # ganzes Bild, c_limit
+
+    Jede Breite wird eine eigene ``cloud``-Adresse (``w_<breite>`` plus bei einem
+    Verhältnis ``h_<breite*verhältnis>``) mit Beschreibung ``<breite>w``.
+    Keine Cloudinary-Adresse (lokales ``/media/`` im Entwicklungsmodus, es gibt nur
+    das eine Original): ein einziger Eintrag mit der größten Breite — gültig, nur
+    ohne Auswahl.
+    """
+    url = str(url or '')
+    teile = [t.strip() for t in str(spec).split(';')]
+    breiten = [int(b) for b in teile[0].split(',') if b.strip().isdigit()]
+    if not breiten:
+        return ''
+    beschnitt = teile[1] if len(teile) > 1 and teile[1] else 'c_limit'
+    verhaeltnis = float(teile[2]) if len(teile) > 2 and teile[2] else None
+    if '/image/upload/' not in url:
+        return f'{url} {max(breiten)}w'
+    eintraege = []
+    for breite in breiten:
+        angabe = f'w_{breite}'
+        if verhaeltnis:
+            angabe += f',h_{round(breite * verhaeltnis)}'
+        eintraege.append(f'{cloud(url, angabe + "," + beschnitt)} {breite}w')
+    return ', '.join(eintraege)

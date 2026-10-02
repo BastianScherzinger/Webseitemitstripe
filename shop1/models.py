@@ -110,6 +110,13 @@ class Produkt(models.Model):
         help_text='Meta-Description (max. 160 Zeichen). Leer = aus Beschreibung.')
     preis = models.DecimalField(max_digits=10, decimal_places=2)
     bild = models.ImageField(upload_to='produkte/', blank=True, null=True)
+    # Maße des Originalbilds (PF25): damit die Stückseite `width`/`height` am Bild
+    # nennen kann, ohne es bei jedem Aufruf zu laden. Kein ImageField-width_field:
+    # das öffnete bei jeder Instanz ohne Maße die Datei (bei Cloudinary ein Abruf).
+    # Gefüllt beim Hochladen (save) und für ältere Zeilen mit
+    # `manage.py bildmasse_nachtragen`.
+    bild_breite = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    bild_hoehe = models.PositiveIntegerField(null=True, blank=True, editable=False)
     aktiv = models.BooleanField(default=True)
     lagerbestand = models.PositiveIntegerField(default=1)
     newsletter_gesendet = models.BooleanField(default=False)
@@ -140,7 +147,36 @@ class Produkt(models.Model):
                 slug = f"{base}-{n}"
                 n += 1
             self.slug = slug
+        self._bildmasse_aus_upload()
         super().save(*args, **kwargs)
+
+    def _bildmasse_aus_upload(self):
+        """Merkt sich die Maße eines **neu hochgeladenen** Bilds (noch nicht
+        gespeichert, die Datei liegt im Speicher). Ein schon gespeichertes Bild
+        wird hier nicht angefasst – bei Cloudinary hieße das einen Abruf; dafür
+        gibt es ``bildmasse_nachtragen``."""
+        if not self.bild:
+            self.bild_breite = self.bild_hoehe = None
+            return
+        if getattr(self.bild, '_committed', True):
+            return
+        from django.core.files.images import get_image_dimensions
+        try:
+            breite, hoehe = get_image_dimensions(self.bild.file)
+            self.bild.file.seek(0)
+        except (OSError, ValueError, SyntaxError, AttributeError):  # kein lesbares Bild: Maße bleiben leer
+            breite = hoehe = None
+        self.bild_breite, self.bild_hoehe = breite, hoehe
+
+    @property
+    def bild_masse(self):
+        """``(Breite, Höhe)`` des Hauptbilds, wie Cloudinary es mit
+        ``w_1200,c_limit`` ausliefert (nie breiter als 1200, Seitenverhältnis
+        des Originals), oder ``None``, wenn die Maße unbekannt sind."""
+        if not (self.bild and self.bild_breite and self.bild_hoehe):
+            return None
+        faktor = min(1, 1200 / self.bild_breite)
+        return round(self.bild_breite * faktor), round(self.bild_hoehe * faktor)
 
     def get_absolute_url(self):
         from django.urls import reverse

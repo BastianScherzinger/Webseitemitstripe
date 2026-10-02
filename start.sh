@@ -34,6 +34,9 @@ python manage.py fix_pystore_schema
 # ═══ ALTE BESUCHEREINTRÄGE OHNE IP ═══
 python manage.py besucher_anonymisieren || echo "WARNING: besucher_anonymisieren failed"
 
+# ═══ BILDMASSE DER PRODUKTE NACHTRAGEN (PF25) ═══
+python manage.py bildmasse_nachtragen || echo "WARNING: bildmasse_nachtragen failed"
+
 # ═══ STATISCHE DATEIEN SAMMELN ═══
 echo "Collecting static files..."
 python manage.py collectstatic --noinput --clear || echo "WARNING: collectstatic failed"

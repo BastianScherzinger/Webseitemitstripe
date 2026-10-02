@@ -46,11 +46,13 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
 {% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='start' %}{% endblock %}
 
 {% block preload %}
-{# imagesrcset/imagesizes wörtlich wie <source>/<img> unten, sonst lädt der Browser zwei Fassungen. #}
+{# imagesrcset/imagesizes wörtlich wie Quelle und Bild unten, sonst lädt der Browser zwei Fassungen. href = Rückfall für Browser ohne imagesrcset (und von Prüfwerkzeugen gelesen). #}
 <link rel="preload" as="image" media="(min-width: 640px)" fetchpriority="high"
+      href="{% static 'shop1/images/luviq/hero-panorama-1600.webp' %}"
       imagesrcset="{% static 'shop1/images/luviq/hero-panorama-960.webp' %} 960w, {% static 'shop1/images/luviq/hero-panorama-1600.webp' %} 1600w"
       imagesizes="(min-width: 1440px) 1325px, 92vw">
 <link rel="preload" as="image" media="(max-width: 639px)" fetchpriority="high"
+      href="{% static 'shop1/images/luviq/hero-hoch-900.webp' %}"
       imagesrcset="{% static 'shop1/images/luviq/hero-hoch-480.webp' %} 480w, {% static 'shop1/images/luviq/hero-hoch-900.webp' %} 900w"
       imagesizes="100vw">
 {% endblock %}

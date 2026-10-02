@@ -205,7 +205,7 @@
         document.addEventListener('load', function (e) {
             if (attr(e.target, 'data-schrift-nachladen') !== null) { e.target.media = 'all'; }
         }, true);
-        // <img data-bei-fehler-ausblenden="kennung">: blendet bei einem Ladefehler
+        // Bild mit data-bei-fehler-ausblenden="kennung": blendet bei einem Ladefehler
         // das Element mit dieser Kennung aus, ohne Wert das Bild selbst.
         document.addEventListener('error', function (e) {
             var ziel = attr(e.target, 'data-bei-fehler-ausblenden');
