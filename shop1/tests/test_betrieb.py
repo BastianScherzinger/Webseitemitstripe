@@ -226,3 +226,15 @@ class OeffentlicheAdresseTest(LuviqTestCase):
     def test_security_txt_nennt_die_kanonische_adresse(self):
         text = self.hole('/.well-known/security.txt', HTTP_HOST='www.luviq-alsfeld.com').content.decode()
         self.assertIn('Canonical: https://www.luviq-alsfeld.com/.well-known/security.txt', text)
+
+
+class UrheberrechtTest(LuviqTestCase):
+    """RE13: die Urheberrechtsangabe im Fuß nennt das laufende Jahr."""
+
+    def test_jede_oeffentliche_seite_nennt_das_laufende_jahr(self):
+        jahr = date.today().year
+        for pfad in OEFFENTLICHE_SEITEN:
+            with self.subTest(pfad=pfad):
+                html = self.hole(pfad).content.decode()
+                fuss = html[html.index('class="lv-fuss"'):]
+                self.assertRegex(fuss, rf'©\s*{jahr}\s+Luviq Universe')
