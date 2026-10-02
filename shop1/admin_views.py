@@ -167,7 +167,7 @@ def admin_werbung_list(request):
     own_ids = [w.id for w in werbungen]
 
     # ── Chart 1: Reichweite nach Plattform (Balken, gesamt) ───────────────
-    site_breakdown_json = json.dumps({'labels': [], 'views': [], 'klicks': [], 'colors': []})
+    site_breakdown = {'labels': [], 'views': [], 'klicks': [], 'colors': []}
     try:
         breakdown = list(
             WerbungStat.objects
@@ -181,17 +181,17 @@ def admin_werbung_list(request):
             SITE_COLORS.get(s['seite_norm'], FALLBACK_COLORS[i % len(FALLBACK_COLORS)])
             for i, s in enumerate(breakdown)
         ]
-        site_breakdown_json = json.dumps({
+        site_breakdown = {
             'labels': [s['seite_norm'].capitalize() for s in breakdown],
             'views':  [s['total_v'] for s in breakdown],
             'klicks': [s['total_k'] for s in breakdown],
             'colors': colors,
-        })
+        }
     except Exception as e:
         _log.error('site_breakdown error: %s', e)
 
     # ── Chart 2: Tagesverlauf – Views & Klicks der letzten 30 Tage ───────
-    timeline_json = json.dumps({'labels': [], 'views': [], 'klicks': []})
+    timeline = {'labels': [], 'views': [], 'klicks': []}
     try:
         today = timezone.localdate()
         start_date = today - timedelta(days=29)
@@ -210,19 +210,21 @@ def admin_werbung_list(request):
             day_views[lbl]  = day_views.get(lbl, 0)  + entry['v']
             day_klicks[lbl] = day_klicks.get(lbl, 0) + entry['k']
 
-        timeline_json = json.dumps({
+        timeline = {
             'labels': day_labels,
             'views':  [day_views.get(l, 0)  for l in day_labels],
             'klicks': [day_klicks.get(l, 0) for l in day_labels],
-        })
+        }
     except Exception as e:
         _log.error('timeline error: %s', e)
 
     context = {
         'werbungen': werbungen,
         'aktiv_count': aktiv_count,
-        'site_breakdown_json': site_breakdown_json,
-        'timeline_json': timeline_json,
+        # Dicts, kein vorgefertigtes JSON: die Vorlage gibt sie über
+        # ``json_script`` aus (maskiert ``<``, ``>``, ``&`` – V02).
+        'site_breakdown': site_breakdown,
+        'timeline': timeline,
         'is_admin': is_admin(request.user),
     }
     return render(request, 'shop1/admin/werbung_list.html', context)
