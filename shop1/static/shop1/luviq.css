@@ -57,7 +57,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-klein{font-size:max(12px,calc(var(--u)*.85));color:var(--lv-leise)}
 .lv-klein a{text-decoration:underline;text-underline-offset:.2em}
 .sr-only,.lv-versteckt{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
-.lv-sprung{position:absolute;left:8px;top:-60px;z-index:100;min-height:44px;display:inline-flex;align-items:center;padding:10px 14px;background:var(--lv-text);color:var(--lv-grund)!important;font-weight:700}
+.lv-sprung{position:absolute;left:8px;top:-60px;z-index:100;min-height:44px;display:inline-flex;align-items:center;padding:10px 14px;background:var(--lv-text);color:var(--lv-grund);font-weight:700}
 .lv-sprung:focus{top:8px}
 
 /* Fokus: sichtbar auf allem, stärker als outline:none aus Alt-CSS und Tailwind. */
@@ -66,8 +66,10 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 
 /* ── Knöpfe und Links ── */
 .lv-knopf{display:inline-flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*1.6);min-height:44px;
-  padding:calc(var(--u)*1.1) calc(var(--u)*1.6);background:var(--lv-text);color:var(--lv-grund)!important;border:0;border-radius:0;
+  padding:calc(var(--u)*1.1) calc(var(--u)*1.6);background:var(--lv-text);color:var(--lv-grund);border:0;border-radius:0;
   font:700 max(14px,calc(var(--u)*1.1)) var(--lv-sans);letter-spacing:.02em;cursor:pointer;text-decoration:none}
+/* Farbe der Knöpfe: stärker als die Linkfarbe der Rahmen (.lv-seite a usw.). */
+.lv .lv-knopf,.lv .lv-sprung{color:var(--lv-grund)}
 .lv-knopf svg{width:1.1em;height:1.1em}
 .lv-knopf:hover{background:var(--lv-akzent)}
 .lv-knopf[disabled]{opacity:.6;cursor:wait}
@@ -108,13 +110,13 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-hero{padding:calc(var(--u)*2) var(--rand) calc(var(--u)*6)}
 .lv-mast{display:flex;justify-content:space-between;gap:1em;border-bottom:1px solid var(--lv-linie-2);padding-bottom:calc(var(--u)*1);
   font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.06em;text-transform:uppercase}
-.lv-pano{margin-top:calc(var(--u)*1.6)!important;display:grid;gap:calc(var(--u)*1)}
+.lv .lv-pano{margin-top:calc(var(--u)*1.6);display:grid;gap:calc(var(--u)*1)}
 .lv-pano picture{display:block;aspect-ratio:21/9;overflow:hidden;background:var(--lv-grund-2)}
 .lv-pano img{filter:saturate(.8)}
 .lv-pano figcaption{display:flex;justify-content:space-between;gap:1em;font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise)}
 .lv-unterbild{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:calc(var(--u)*5);margin-top:calc(var(--u)*3.4);align-items:start}
 .lv-satz{font-size:calc(var(--u)*6)}
-.lv-lead{margin-top:calc(var(--u)*1.8)!important;max-width:62ch}
+.lv .lv-lead{margin-top:calc(var(--u)*1.8);max-width:62ch}
 .lv-unterbild .lv-knopf{margin-top:calc(var(--u)*2.2)}
 .lv-unterbild>*{min-width:0}
 .lv-dropkasten{border:1px solid var(--lv-linie-2);padding:calc(var(--u)*2);display:grid;grid-template-columns:minmax(0,1fr);gap:calc(var(--u)*1.4)}
@@ -129,6 +131,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-feldzeile button{background:var(--lv-text);color:var(--lv-grund);border:0;border-radius:0;font:700 max(14px,calc(var(--u)*1.05)) var(--lv-sans);padding:0 calc(var(--u)*1.8);min-height:44px;cursor:pointer}
 .lv-feldzeile button:hover{background:var(--lv-akzent)}
 .lv-dropkasten .lv-feldzeile{max-width:none}
+.lv-formhuelle{display:contents}
 .lv-antwort{font-size:14px;min-height:0}
 .lv-antwort.gut{color:#9FD4A8}.lv-antwort.schlecht{color:var(--lv-fehler)}
 .lv-antwort:empty{display:none}
@@ -136,7 +139,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 /* ── Motiv anfragen (Startseite) ── */
 .lv-anfragen{padding:calc(var(--u)*6) var(--rand);border-top:1px solid var(--lv-linie);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:calc(var(--u)*6);align-items:start}
 .lv-anfragen h2{font-size:calc(var(--u)*4.6);line-height:1;margin-top:calc(var(--u)*1)}
-.lv-ablauf{list-style:none;margin:calc(var(--u)*2.6) 0 0!important;padding:0;counter-reset:s;border-top:1px solid var(--lv-linie-2)}
+.lv .lv-ablauf{list-style:none;margin:calc(var(--u)*2.6) 0 0;padding:0;counter-reset:s;border-top:1px solid var(--lv-linie-2)}
 .lv-ablauf li{counter-increment:s;display:grid;grid-template-columns:calc(var(--u)*3.4) minmax(0,1fr);gap:calc(var(--u)*.2) calc(var(--u)*1);padding:calc(var(--u)*1.2) 0;border-bottom:1px solid var(--lv-linie)}
 .lv-ablauf li::before{content:counter(s,decimal-leading-zero);grid-row:span 2;font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-akzent);padding-top:.35em}
 .lv-ablauf b{font-weight:600}
@@ -229,7 +232,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-anfrageseite{padding:calc(var(--u)*4) var(--rand) calc(var(--u)*7);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:calc(var(--u)*6);align-items:start}
 .lv-anfrageseite .lv-satz{font-size:calc(var(--u)*5.2);margin-top:calc(var(--u)*1)}
 .lv-anfrageseite .lv-lead{color:var(--lv-leise)}
-.lv-stationen{display:flex;list-style:none;padding:0;margin-top:calc(var(--u)*2.6)!important}
+.lv .lv-stationen{display:flex;list-style:none;padding:0;margin-top:calc(var(--u)*2.6)}
 .lv-stationen li{flex:1;padding:calc(var(--u)*1) calc(var(--u)*1) 0 0;border-top:1px solid var(--lv-linie-2);font-weight:600}
 .lv-stationen .lv-nr{display:block;margin-bottom:calc(var(--u)*.4)}
 .lv-formular{display:grid;gap:calc(var(--u)*2.2);border:1px solid var(--lv-linie-2);padding:calc(var(--u)*2.6);background:var(--lv-grund-2)}
@@ -284,33 +287,35 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
    Schatten, kein Glas, keine Glüh- und Einblendeffekte, Überschriften in
    Cormorant kursiv, Knöpfe hell auf dunkel. Das Admin-Panel bleibt außen vor. */
 .lv-alt main{padding-bottom:calc(var(--u)*6)}
-.lv-alt main [class*="rounded"]{border-radius:0!important}
-.lv-alt main [class*="shadow"]{box-shadow:none!important}
-.lv-alt main .glass,.lv-alt main .glass-card{background:var(--lv-grund-2)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:1px solid var(--lv-linie)!important;box-shadow:none!important}
-.lv-alt main .glass-card:hover{transform:none!important}
-.lv-alt main h1,.lv-alt main h2,.lv-alt main h3,.lv-alt main .heading-font{font-family:var(--lv-serif)!important;font-style:italic;font-weight:500!important;text-transform:none!important;letter-spacing:-.01em!important;line-height:1.02}
+.lv-alt main [class*="rounded"]{border-radius:0}
+.lv-alt main [class*="shadow"]{box-shadow:none}
+.lv-alt main .glass,.lv-alt main .glass-card{background:var(--lv-grund-2);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid var(--lv-linie)!important;box-shadow:none}
+.lv-alt main .glass-card:hover{transform:none}
+.lv-alt main h1,.lv-alt main h2,.lv-alt main h3,.lv-alt main .heading-font{font-family:var(--lv-serif);font-style:italic;font-weight:500;text-transform:none;letter-spacing:-.01em;line-height:1.02}
 .lv-alt main h4,.lv-alt main h5{font-family:var(--lv-sans);letter-spacing:.02em}
-/* Überschriften, die früher h4 waren und für die Gliederung (VL17) eine Stufe höher stehen: gleicher Auftritt wie zuvor (Sans, nicht kursiv). */
-.lv-alt main .lv-ueb-s,.lv-alt main .lv-ueb-m{font-family:var(--lv-sans)!important;font-style:normal!important;letter-spacing:.02em!important}
-.lv-alt main .lv-ueb-s{line-height:1.3333!important;font-weight:900!important;text-transform:uppercase!important}
-.lv-alt main .lv-ueb-m{line-height:1.5556!important;font-weight:700!important;text-transform:none!important}
-.lv-alt main .text-glow{color:var(--lv-text)!important;text-shadow:none!important;background:none!important;-webkit-text-fill-color:currentColor!important}
-.lv-alt main .text-glow-orange,.lv-alt main [class*="text-orange-"]{color:var(--lv-akzent)!important}
-.lv-alt main .btn-glow,.lv-alt main .bg-glow-orange,.lv-alt main button[type="submit"]:not(.lv-knopf){background:var(--lv-text)!important;color:var(--lv-grund)!important;border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;text-shadow:none!important}
+/* Überschriften, die früher h4 waren und für die Gliederung (VL17) eine Stufe höher stehen: gleicher Auftritt wie zuvor (Sans, nicht kursiv). lv-ueb-n: ohne eigene Schriftgröße, Zeilenhöhe geerbt wie beim früheren h4 (Gästebuch). */
+.lv-alt main .lv-ueb-s,.lv-alt main .lv-ueb-m,.lv-alt main .lv-ueb-n{font-family:var(--lv-sans);font-style:normal;letter-spacing:.02em}
+.lv-alt main .lv-ueb-s,.lv-alt main .lv-ueb-n{font-weight:900;text-transform:uppercase}
+.lv-alt main .lv-ueb-s{line-height:1.3333}
+.lv-alt main .lv-ueb-n{line-height:inherit}
+.lv-alt main .lv-ueb-m{line-height:1.5556;font-weight:700;text-transform:none}
+.lv-alt main .text-glow{color:var(--lv-text);text-shadow:none;background:none;-webkit-text-fill-color:currentColor}
+.lv-alt main .text-glow-orange,.lv-alt main [class*="text-orange-"]{color:var(--lv-akzent)}
+.lv-alt main .btn-glow,.lv-alt main .bg-glow-orange,.lv-alt main button[type="submit"]:not(.lv-knopf){background:var(--lv-text);color:var(--lv-grund);border:0!important;border-radius:0;box-shadow:none;transform:none;text-shadow:none}
 .lv-alt main .btn-glow::before{display:none}
-.lv-alt main .btn-glow:hover,.lv-alt main .bg-glow-orange:hover,.lv-alt main button[type="submit"]:not(.lv-knopf):hover{background:var(--lv-akzent)!important}
+.lv-alt main .btn-glow:hover,.lv-alt main .bg-glow-orange:hover,.lv-alt main button[type="submit"]:not(.lv-knopf):hover{background:var(--lv-akzent)}
 .lv-alt main input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),.lv-alt main textarea,.lv-alt main select,.lv-alt main .form-input{background:transparent!important;border:1px solid var(--lv-linie-2)!important;border-radius:0!important;color:var(--lv-text)!important;box-shadow:none!important}
 .lv-alt main label{font-family:var(--lv-mono);letter-spacing:.06em}
-.lv-alt main .energy-nebula,.lv-alt main [class*="blur-["],.lv-alt .ambient-glow{display:none!important}
-.lv-alt main .scroll-reveal,.lv-alt main .animate-reveal{opacity:1!important;transform:none!important;transition:none!important}
-.lv-alt main .animate-pulse,.lv-alt main .animate-float{animation:none!important}
+.lv-alt main .energy-nebula,.lv-alt main [class*="blur-["],.lv-alt .ambient-glow{display:none}
+.lv-alt main .scroll-reveal,.lv-alt main .animate-reveal{opacity:1;transform:none;transition:none;animation:none}
+.lv-alt main .animate-pulse,.lv-alt main .animate-float{animation:none}
 .lv-alt main a:not([class]){color:var(--lv-text);text-decoration:underline;text-underline-offset:.2em}
 /* Links im Fließtext nie nur durch Farbe kenntlich (BF29, axe link-in-text-block). */
 .lv-alt main p a:not(.btn-glow):not(.lv-knopf){text-decoration:underline;text-underline-offset:.2em}
-.lv-alt main .product-card{transform:none!important}
+.lv-alt main .product-card{transform:none}
 .lv-alt main section{border-color:var(--lv-linie)}
 /* Gesperrte Großbuchstaben-Absätze waren kaum lesbar: Fließtext normal setzen. */
-.lv-alt main p{text-transform:none!important;letter-spacing:normal!important}
+.lv-alt main p{text-transform:none;letter-spacing:normal}
 /* Sehr blasses Weiß (text-white/10 … /40) unter 4.5:1 auf das leise Grau heben. */
 .lv-alt main [class*="text-white/1"],.lv-alt main [class*="text-white/2"],.lv-alt main [class*="text-white/3"],.lv-alt main [class*="text-white/4"]{color:var(--lv-leise)!important}
 
@@ -337,7 +342,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-hero{padding:12px var(--rand) 36px}
   .lv-mast{font-size:12px;padding-bottom:6px}
   .lv-mast span:nth-child(2){display:none}
-  .lv-pano{margin-top:12px!important;gap:8px}
+  .lv .lv-pano{margin-top:12px;gap:8px}
   .lv-pano picture{aspect-ratio:4/5}
   .lv-pano figcaption{font-size:12px}
   .lv-unterbild{grid-template-columns:minmax(0,1fr);gap:24px;margin-top:20px}
@@ -355,7 +360,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-klein{font-size:12px}
   .lv-anfragen{grid-template-columns:minmax(0,1fr);padding:44px var(--rand);gap:24px}
   .lv-anfragen h2{font-size:34px}
-  .lv-ablauf{margin-top:18px!important}
+  .lv .lv-ablauf{margin-top:18px}
   .lv-ablauf li{grid-template-columns:32px minmax(0,1fr);padding:10px 0}
   .lv-ablauf span{font-size:13.5px}
   .lv-anfragekasten{padding:16px;gap:12px}
@@ -396,7 +401,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
     padding:10px var(--rand) calc(10px + env(safe-area-inset-bottom));background:var(--lv-grund);border-top:1px solid var(--lv-linie-2)}
   .lv-leiste p{font:12px/1.3 var(--lv-mono);color:var(--lv-leise);margin:0}
   .lv-leiste b{display:block;color:var(--lv-text);font-size:12.5px}
-  .lv-leiste a{min-height:48px;display:flex;align-items:center;padding:0 18px;background:var(--lv-akzent);color:var(--lv-grund)!important;font-weight:700;font-size:15px}
+  .lv-leiste a{min-height:48px;display:flex;align-items:center;padding:0 18px;background:var(--lv-akzent);color:var(--lv-grund);font-weight:700;font-size:15px}
   .lv-anfrageseite{grid-template-columns:minmax(0,1fr);padding:24px var(--rand) 48px;gap:24px}
   .lv-anfrageseite .lv-satz{font-size:36px}
   .lv-stationen{flex-wrap:wrap;gap:12px 0}
