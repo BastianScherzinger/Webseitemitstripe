@@ -20,7 +20,8 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
+  {% comment %}Verkaufsschalter wie in base.html: ohne Verkauf keine Geschaeftsbehauptung (LocalBusiness), geo haengt dann am Place unter location.{% endcomment %}
+  "@type": {% if verkauf_aktiv %}"LocalBusiness"{% else %}"Organization"{% endif %},
   "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
   "name": "Luviq Universe",
   "legalName": "Luisa Brehler – Luviq Universe",
@@ -32,7 +33,7 @@
     "addressRegion": "Hessen",
     "addressCountry": "DE"
   },
-  "geo": {"@type": "GeoCoordinates", "latitude": 50.7517, "longitude": 9.2685},
+  {% if verkauf_aktiv %}"geo": {"@type": "GeoCoordinates", "latitude": 50.7517, "longitude": 9.2685},{% else %}"location": {"@type": "Place", "geo": {"@type": "GeoCoordinates", "latitude": 50.7517, "longitude": 9.2685}},{% endif %}
   "email": "brehlerluisa@gmail.com",
   "url": "{{ request.scheme }}://{{ request.get_host }}/"
 }

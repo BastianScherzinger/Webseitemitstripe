@@ -704,7 +704,9 @@ class Widersprueche02102026Test(LuviqTestCase):
     # EIG133 -------------------------------------------------------------
     def test_die_motivanfrage_verschweigt_die_speicherung_nicht(self):
         text = self._text('/motiv-anfragen/')
-        self.assertIn('nur für die Antwort auf deine Anfrage und speichere sie dafür', text)
+        # Speicherung und Kopie an die Webagentur stehen beide da (Texte L1/L2 zusammengeführt).
+        self.assertIn('speichere ich für die Antwort auf deine Anfrage', text)
+        self.assertIn('in Kopie an die Webagentur', text)
 
     # EIG84 --------------------------------------------------------------
     @override_settings(VERKAUF_AKTIV=True)

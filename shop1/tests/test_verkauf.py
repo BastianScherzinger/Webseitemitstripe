@@ -135,7 +135,7 @@ class OhneVerkaufTest(_Grundlage):
         self.assertFalse(antwort.json()['verkauf_aktiv'])
 
     def test_kein_angebot_im_schema(self):
-        for pfad in ('/', '/produkte/', self.produktseite):
+        for pfad in ('/', '/produkte/', self.produktseite, '/impressum/'):
             with self.subTest(pfad=pfad):
                 ld = _json_ld(self.hole(pfad).content.decode())
                 for wort in ('"Offer"', 'OfferCatalog', '"price"', 'availability', 'priceRange',
