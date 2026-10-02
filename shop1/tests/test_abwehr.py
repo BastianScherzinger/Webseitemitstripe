@@ -231,7 +231,8 @@ class NewsletterOhneSkriptTest(LuviqTestCase):
         jeder Newsletter-Mail (``newsletter_abmelden``, ``utils.send_newsletter_email``)
         und die Nachricht an die Impressums-Adresse."""
         html = self.hole('/').content.decode()
-        self.assertIn('mit einem Klick über den Link in jeder Mail', html)
+        self.assertIn('über den Link in jeder Mail', html)
+        self.assertNotIn('mit einem Klick', html)  # der Link führt auf eine Seite mit Bestätigungsknopf
         self.assertIn('brehlerluisa@gmail.com', html)
         # ohne gültiges Token führt der Link zurück zur Startseite – es gibt ihn aber
         self.assertEqual(self.hole('/newsletter/abmelden/').status_code, 302)

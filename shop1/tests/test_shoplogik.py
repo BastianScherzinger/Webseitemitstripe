@@ -693,7 +693,7 @@ class NewsletterAbmeldenTest(LuviqTestCase):
 
         html = mail.call_args.args[1]
         self.assertIn('/newsletter/abmelden/?t=', html)
-        self.assertIn('Abmelden mit einem Klick', html)
+        self.assertIn('Hier abmelden', html)
         self.assertNotIn('<b>Fett</b>', html)
         self.assertIn('/newsletter/abmelden/?t=', mail.call_args.kwargs['text_content'])
         token = html.split('/newsletter/abmelden/?t=')[1].split('"')[0].replace('&amp;', '&')

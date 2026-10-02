@@ -144,6 +144,6 @@ def send_newsletter_email(produkt, subscribers):
             f'{knopf}: {produkt_url}\n\n'
             'Viele Grüße\nLuisa\n\n'
             'Du bekommst diese Mail, weil du dich für den Newsletter angemeldet und die Anmeldung '
-            f'bestätigt hast. Abmelden mit einem Klick: {abmelde_url} - oder schreib mir kurz an {KONTAKT_EMAIL}.'
+            f'bestätigt hast. Hier abmelden: {abmelde_url} - oder schreib mir kurz an {KONTAKT_EMAIL}.'
         )
         send_brevo_email(subject, html_content, sub.email, text_content=text_content)
