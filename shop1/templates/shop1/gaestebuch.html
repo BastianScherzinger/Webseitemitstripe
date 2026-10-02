@@ -82,7 +82,7 @@
         {% endif %}
 
         <!-- Comments List -->
-        <div class="space-y-12">
+        <section class="space-y-12" aria-label="Beiträge im Gästebuch">
             {% for comment in comments %}
             <div class="scroll-reveal glass-card p-10 md:p-12 rounded-[3.5rem] border-white/5 relative" 
                  x-data="{ shown: false, showReply: false }"
@@ -169,7 +169,7 @@
                 <p class="text-white/10 italic font-light tracking-[0.5em] uppercase text-xs">Noch keine Beiträge.</p>
             </div>
             {% endfor %}
-        </div>
+        </section>
     </div>
 </div>
 {% endblock %}

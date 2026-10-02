@@ -542,3 +542,18 @@ class AntwortAbsatzUndListenTest(LuviqTestCase):
         html = self.hole('/liefergebiet/').content.decode()
         liste = re.search(r'<ul class="grid[^>]*>(.*?)</ul>', html, re.DOTALL).group(1)
         self.assertEqual(liste.count('<li '), 16)
+
+    def test_kontakt_und_gaestebuch_haben_ein_section_im_inhalt(self):
+        """GE28: ``<main>`` allein genügt nicht; ein ``section`` oder ``article`` im
+        Inhalt sagt der Maschine, welcher Teil der Seite der Inhalt ist."""
+        for pfad in ('/kontakt/', '/gaestebuch/'):
+            with self.subTest(pfad=pfad):
+                haupt = self.hole(pfad).content.decode().split('<main', 1)[1]
+                self.assertIn('<section', haupt)
+
+    def test_die_kontaktwege_sind_eine_liste(self):
+        """GE27: Impressum und E-Mail-Adresse stehen als Listenpunkte da."""
+        html = self.hole('/kontakt/').content.decode()
+        liste = re.search(r'<ul class="space-y-4">(.*?)</ul>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<li>'), 2)
+        self.assertIn('mailto:brehlerluisa@gmail.com', liste)

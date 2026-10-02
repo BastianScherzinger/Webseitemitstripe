@@ -472,6 +472,19 @@ class AntwortCrawlerTest(LuviqTestCase):
         self.assertIn('PayPal oder Vorab-Überweisung', agb)
 
 
+class BelegteKleidungsartenTest(LuviqTestCase):
+    """EIG79: Schema und llms.txt nennen nur Kleidungsarten, die es im Bestand gibt
+    (Hoodies, Hose, Jacke) – keine Shirts."""
+
+    @override_settings(VERKAUF_AKTIV=True)  # Katalog und Fließtext stehen nur mit Verkauf
+    def test_weder_schema_noch_llms_txt_versprechen_shirts(self):
+        erzeuge_produkt('Bemalter Hoodie')
+        self.assertNotIn('Shirts', self.hole('/llms.txt').content.decode())
+        self.assertNotIn('Shirts', self.hole('/llms-full.txt').content.decode().split('## Volltext', 1)[0])
+        self.assertNotIn('Vintage-Shirts', self.hole('/').content.decode())
+        self.assertIn('Vintage-Hoodies', self.hole('/').content.decode())
+
+
 class ArchivSchemaTest(LuviqTestCase):
     """Die Stücke stehen auf ``/produkte/`` als Knoten der obersten Ebene (GE13).
 
