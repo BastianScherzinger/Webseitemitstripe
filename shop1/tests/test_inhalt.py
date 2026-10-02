@@ -500,3 +500,45 @@ class AnfrageBausteinTest(LuviqTestCase):
         for verboten in ('€', 'preis', 'kaufen', 'warenkorb', 'bestell'):
             with self.subTest(verboten=verboten):
                 self.assertNotIn(verboten, quelle.split('{% endcomment %}', 1)[1])
+
+
+class AntwortAbsatzUndListenTest(LuviqTestCase):
+    """GE23, GE25, GE26, GE27: ein zitierfähiger Absatz, eine belegte Zahl, eine
+    gegliederte Seite – ohne etwas zu erfinden. Die Zahl ist Luisas Erfahrungswert
+    aus ``luviq_daten.DAUER``; sie steht nur, wo die Motivanfrage aktiv ist."""
+
+    def test_kontakt_gaestebuch_und_herkunft_nennen_die_belegte_dauer(self):
+        for pfad in ('/kontakt/', '/gaestebuch/', '/liefergebiet/'):
+            with self.subTest(pfad=pfad):
+                text = sichtbarer_text(self.hole(pfad).content.decode())
+                self.assertIn('dauert es meistens 2 bis 5 Tage, je nach Motiv', text)
+
+    def test_die_dauer_steht_nicht_da_wo_die_motivanfrage_aus_ist(self):
+        with override_settings(MOTIVANFRAGE_AKTIV=False):
+            for pfad in ('/kontakt/', '/gaestebuch/', '/liefergebiet/'):
+                with self.subTest(pfad=pfad):
+                    text = sichtbarer_text(self.hole(pfad).content.decode())
+                    self.assertNotIn('dauert es meistens', text)
+
+    def test_das_gaestebuch_beginnt_im_inhalt_mit_einem_kurzen_antwortabsatz(self):
+        """Ein Absatz von 15 bis 90 Wörtern, der sagt, was das Gästebuch ist –
+        ausserhalb des ``<header>``, den das Messwerkzeug aus dem Inhalt streicht."""
+        haupt = self.hole('/gaestebuch/').content.decode().split('<main', 1)[1]
+        haupt = re.sub(r'<header.*?</header>', '', haupt, flags=re.DOTALL)
+        absaetze = [' '.join(re.sub(r'<[^>]+>', ' ', a).split())
+                    for a in re.findall(r'<p[^>]*>(.*?)</p>', haupt, re.DOTALL)]
+        lange = [a for a in absaetze if len(a.split()) >= 15]
+        erster = lange[0]
+        self.assertLessEqual(len(erster.split()), 90, erster)
+        self.assertIn('Das Gästebuch ist die öffentliche Rückmeldeseite', erster)
+
+    def test_der_ablauf_im_gaestebuch_ist_eine_nummerierte_liste(self):
+        html = self.hole('/gaestebuch/').content.decode()
+        liste = re.search(r'<ol[^>]*>(.*?)</ol>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<li>'), 6)
+        self.assertIn('Ein Beitrag darf höchstens 2.000 Zeichen lang sein', liste)
+
+    def test_die_orte_auf_der_herkunftsseite_sind_eine_liste(self):
+        html = self.hole('/liefergebiet/').content.decode()
+        liste = re.search(r'<ul class="grid[^>]*>(.*?)</ul>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<li '), 16)

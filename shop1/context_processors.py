@@ -100,4 +100,7 @@ def luviq(request):
         'motivanfrage_aktiv': settings.MOTIVANFRAGE_AKTIV,
         'instagram_url': luviq_daten.INSTAGRAM,
         'instagram_name': luviq_daten.INSTAGRAM_NAME,
+        # Luisas Erfahrungswert „2 bis 5 Tage“ (nie als Zusage): jede Seite, die ihn
+        # nennt, liest ihn von hier, nicht aus eigener Abschrift.
+        'dauer': luviq_daten.DAUER,
     }
