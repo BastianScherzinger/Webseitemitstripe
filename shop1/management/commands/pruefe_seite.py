@@ -90,6 +90,7 @@ class Command(BaseCommand):
         self._pruefe_geheimnisse()
         self._pruefe_betriebsmodus()
         self._pruefe_hosts()
+        self._pruefe_security_txt()
         self._pruefe_datenbanken()
         self._pruefe_statische_dateien()
         self._pruefe_dienste()
@@ -168,6 +169,21 @@ class Command(BaseCommand):
             self.warnungen.append(
                 'ADMIN_URL steht auf dem Standardpfad /admin/. Scanner-Bots '
                 'probieren genau den zuerst.'
+            )
+
+    def _pruefe_security_txt(self):
+        """Warnt, wenn das feste Ablaufdatum der security.txt naht (EIG60)."""
+        from datetime import datetime, timedelta, timezone as tz
+        roh = str(getattr(settings, 'SECURITY_TXT_EXPIRES', '') or '')
+        try:
+            ablauf = datetime.fromisoformat(roh.replace('Z', '+00:00'))
+        except ValueError:
+            self.fehler.append(f'SECURITY_TXT_EXPIRES "{roh}" ist kein Zeitstempel (RFC 3339).')
+            return
+        if ablauf < datetime.now(tz.utc) + timedelta(days=60):
+            self.warnungen.append(
+                f'security.txt läuft am {ablauf:%d.%m.%Y} ab (SECURITY_TXT_EXPIRES in '
+                f'mainweb/settings.py): um ein Jahr verlängern.'
             )
 
     def _pruefe_datenbanken(self):

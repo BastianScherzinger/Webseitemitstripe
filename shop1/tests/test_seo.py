@@ -498,7 +498,8 @@ class VerweiseTest(LuviqTestCase):
         der beiden Dateien existiert, jeder Browser holte sich eine 404."""
         from django.contrib.staticfiles import finders
 
-        for pfad in ('/favicon.ico', '/favicon.png'):
+        for pfad in ('/favicon.ico', '/favicon.png', '/apple-touch-icon.png',
+                     '/apple-touch-icon-precomposed.png'):
             with self.subTest(pfad=pfad):
                 antwort = self.hole(pfad)
                 self.assertEqual(antwort.status_code, 301)

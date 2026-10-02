@@ -8,6 +8,7 @@ import os
 from django.conf import settings
 from django.core.cache import cache
 
+from .middleware import oeffentliche_basis
 from .seiten_stand import seite_fuer
 
 _log = logging.getLogger('shop1')
@@ -22,6 +23,16 @@ def csp_nonce(request):
     Wert leer; dann gibt es auch keine Richtlinie, die etwas blockiert.
     """
     return {'csp_nonce': getattr(request, 'csp_nonce', '')}
+
+
+def oeffentliche_adresse(request):
+    """Die öffentliche Adresse dieser Seite für canonical, hreflang und og:url.
+
+    Mit gesetztem CANONICAL_HOST immer unter diesem Host (siehe
+    middleware.oeffentliche_basis), sonst wie bisher unter dem Host der
+    Anfrage. Pfad und Query bleiben erhalten.
+    """
+    return {'seiten_url': oeffentliche_basis(request) + request.get_full_path()}
 
 
 def shop_owner_check(request):

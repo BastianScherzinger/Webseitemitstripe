@@ -71,9 +71,9 @@
         <div class="space-y-12">
             {% for comment in comments %}
             <div class="scroll-reveal glass-card p-10 md:p-12 rounded-[3.5rem] border-white/5 relative" 
-                 x-data="{ shown: false, showReply: false }"
-                 x-init="setTimeout(() => { if(!$el.isConnected) return; }, 100)"
-                 x-intersect.once="shown = true" :class="{ 'visible': shown }">
+
+
+>
                 
                 <div class="flex justify-between items-start mb-8">
                     <div class="flex items-center gap-5">
@@ -133,11 +133,11 @@
                 <!-- Reply Form (Toggle) -->
                 {% if user.is_authenticated %}
                 <div class="mt-10 pt-8 border-t border-white/5">
-                    <button type="button" @click="showReply = !showReply" aria-label="Antwortfeld ein- oder ausblenden" :aria-expanded="showReply ? 'true' : 'false'" class="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-glow-orange transition-all">
+                    <button type="button" data-antwort-schalter aria-label="Antwortfeld ein- oder ausblenden" aria-expanded="false" class="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-glow-orange transition-all">
                         ← Antworten
                     </button>
                     
-                    <div x-show="showReply" x-collapse class="mt-6">
+                    <div data-antwort class="mt-6">
                         <form action="{% url 'comment_add' %}" method="POST" class="flex gap-4">
                             {% csrf_token %}
                             <input type="hidden" name="parent_id" value="{{ comment.id }}">

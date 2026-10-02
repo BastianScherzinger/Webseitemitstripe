@@ -362,7 +362,7 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{% static 'shop1/chart-4.4.0.umd.js' %}"></script>
 <script nonce="{{ csp_nonce }}">
 function toggleEdit(id) {
     document.getElementById('edit-' + id).classList.toggle('hidden');

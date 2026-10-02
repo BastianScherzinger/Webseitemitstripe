@@ -29,7 +29,7 @@
         </div>
 
         <!-- Header -->
-        <div class="mb-12 flex flex-col md:flex-row justify-between items-end gap-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+        <div class="mb-12 flex flex-col md:flex-row justify-between items-end gap-8 scroll-reveal">
             <div>
                 <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                     Inventory <span class="text-glow">Control</span>
@@ -43,7 +43,7 @@
         </div>
 
         <!-- Inventory Table -->
-        <form method="POST" class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+        <form method="POST" class="scroll-reveal">
             {% csrf_token %}
             <div class="glass-card rounded-[3.5rem] overflow-hidden shadow-2xl">
                 <!-- Bulk Actions -->
@@ -64,7 +64,7 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th class="w-12"><input type="checkbox" aria-label="Alle Produkte auswählen" @change="$el.closest('table').querySelectorAll('input[name=selected_produkte]').forEach(cb => cb.checked = $el.checked)" class="glass"></th>
+                                <th class="w-12"><input type="checkbox" aria-label="Alle Produkte auswählen" data-alle-auswaehlen="selected_produkte" class="glass"></th>
                                 <th>Visual</th>
                                 <th>Product Name</th>
                                 <th>Price</th>

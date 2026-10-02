@@ -81,7 +81,7 @@
         </div>
 
         <!-- Story -->
-        <section class="scroll-reveal glass-card p-10 md:p-16 rounded-[3.5rem] mb-24 max-w-4xl mx-auto" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+        <section class="scroll-reveal glass-card p-10 md:p-16 rounded-[3.5rem] mb-24 max-w-4xl mx-auto">
             <p class="text-white/60 text-lg leading-relaxed font-light">
                 Luisa Brehler bemalt jedes Unikat mit der Hand in ihrem Atelier in Alsfeld, mitten im Vogelsbergkreis – genau zwischen Fulda und Gießen. {% if verkauf_aktiv %}Einen Ladenverkauf gibt es bewusst nicht: Luviq Universe ist ein reiner Online-Shop. Dafür kommt der Versand aus Hessen heraus besonders schnell bei dir an, egal ob du eher Richtung Fulda oder Richtung Gießen wohnst. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet –, und für jede Bestellung gilt das Widerrufsrecht von 14 Tagen (§ 5 der AGB).{% else %}Einen Laden gibt es bewusst nicht: Luviq Universe ist eine Marke im Aufbau, und der erste Drop kommt online. Wer ihn nicht verpassen will, egal ob eher Richtung Fulda oder Richtung Gießen, trägt sich auf der Startseite in die Warteliste ein. Bis dahin ist Luviq Universe auf Instagram unter @luviq.universe zu finden; Fragen zu einem Stück beantwortet Luisa Brehler über das Kontaktformular.{% endif %}
             </p>
@@ -97,7 +97,7 @@
             </p>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
                 {% for ort in orte %}
-                <div class="scroll-reveal glass rounded-2xl px-4 py-5 text-center border-white/5" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <div class="scroll-reveal glass rounded-2xl px-4 py-5 text-center border-white/5">
                     <span class="text-white/70 text-sm font-semibold">{{ ort }}</span>
                 </div>
                 {% endfor %}
@@ -113,15 +113,15 @@
                 Fragen zu <span class="text-glow">{% if verkauf_aktiv %}Versand{% else %}Herkunft{% endif %} &amp; Region</span>
             </h2>
             <div class="space-y-6">
-                <div class="scroll-reveal glass-card p-8 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <div class="scroll-reveal glass-card p-8 rounded-[2rem]">
                     <h3 class="text-white font-bold mb-3">Gibt es einen Luviq-Laden in Fulda oder Gießen?</h3>
                     <p class="text-white/50 font-light leading-relaxed">{% if verkauf_aktiv %}Nein. Luviq Universe ist ein reiner Online-Shop mit Sitz in Alsfeld. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – auch nach Fulda und Gießen gibt es also keinen Laden zum Reinschauen, aber sehr wohl schnellen Versand.{% else %}Nein. Luviq Universe ist eine Marke im Aufbau mit Sitz in Alsfeld. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Fulda noch in Gießen.{% endif %}</p>
                 </div>
-                <div class="scroll-reveal glass-card p-8 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
+                <div class="scroll-reveal glass-card p-8 rounded-[2rem]" style="transition-delay: 0.1s;">
                     <h3 class="text-white font-bold mb-3">{% if verkauf_aktiv %}Wie schnell kommt eine Bestellung in der Region an?{% else %}Kann ich aus der Region schon bestellen?{% endif %}</h3>
                     <p class="text-white/50 font-light leading-relaxed">{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Innerhalb von Hessen – etwa nach Fulda, Gießen, Lauterbach oder Grünberg – ist ein Unikat meist schon nach 1-3 Werktagen im Briefkasten.{% else %}Noch nicht – weder aus Fulda, Gießen, Lauterbach oder Grünberg noch von anderswo. Verkauft wird erst mit dem ersten Drop; wer dabei sein will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}</p>
                 </div>
-                <div class="scroll-reveal glass-card p-8 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+                <div class="scroll-reveal glass-card p-8 rounded-[2rem]" style="transition-delay: 0.2s;">
                     <h3 class="text-white font-bold mb-3">{% if verkauf_aktiv %}Welche Region beliefert Luviq besonders oft?{% else %}Woher kommt die Luviq-Community?{% endif %}</h3>
                     <p class="text-white/50 font-light leading-relaxed">{% if verkauf_aktiv %}Ein Großteil unserer Community kommt aus dem Vogelsbergkreis und der weiteren Umgebung zwischen Fulda und Gießen. Versendet wird aber deutschlandweit – egal wo du wohnst.{% else %}Ein Großteil unserer Community kommt aus dem Vogelsbergkreis und der weiteren Umgebung zwischen Fulda und Gießen.{% endif %}</p>
                 </div>

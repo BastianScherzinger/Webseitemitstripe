@@ -71,6 +71,10 @@ urlpatterns = [
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
     path('llms.txt', views.llms_txt, name='llms_txt'),
+    # Betrieb und Sicherheit (02.10.2026): schlanke Gesundheitsadresse für die
+    # Überwachung (BT11) und die Meldeadresse für Schwachstellen (SI25, RFC 9116).
+    path('health/', views.gesundheit, name='gesundheit'),
+    path('.well-known/security.txt', views.security_txt, name='security_txt'),
     # Schluesseldatei fuer IndexNow (shop1/indexnow.py); 404, solange
     # INDEXNOW_KEY leer ist. Der Pfad steht auch in indexnow.SCHLUESSEL_PFAD.
     path('indexnow-schluessel.txt', views.indexnow_schluessel, name='indexnow_schluessel'),
@@ -101,10 +105,18 @@ urlpatterns = [
     # shop1/images/flavicon.jpeg; collectstatic legt es unter diesem Namen
     # zusaetzlich zur inhaltsgehashten Fassung ab, der Pfad traegt also auch
     # mit ManifestStaticFilesStorage.
+    # /favicon.ico zeigt seit 02.10.2026 (EIG32) auf die echte .ico-Datei
+    # (16/32/48 px, 7 KB) statt auf das 1254-px-JPEG, das <link rel="icon">
+    # im Kopf ohnehin nicht mehr benutzt. iOS fragt /apple-touch-icon.png
+    # (und die -precomposed-Fassung) ohne Rücksicht auf den <link> an.
     path('favicon.ico', RedirectView.as_view(
-        url='/static/shop1/images/flavicon.jpeg', permanent=True)),
+        url='/static/shop1/images/flavicon.ico', permanent=True)),
     path('favicon.png', RedirectView.as_view(
         url='/static/shop1/images/flavicon.jpeg', permanent=True)),
+    path('apple-touch-icon.png', RedirectView.as_view(
+        url='/static/shop1/images/logo-luviq.jpeg', permanent=True)),
+    path('apple-touch-icon-precomposed.png', RedirectView.as_view(
+        url='/static/shop1/images/logo-luviq.jpeg', permanent=True)),
 
     # ═══ ADMIN ROUTES ═══
     path('shop-admin/dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),

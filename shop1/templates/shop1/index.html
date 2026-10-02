@@ -235,8 +235,9 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
             knopf.disabled = true;
             form.setAttribute('aria-busy', 'true');
             try {
-                var csrfToken = (document.cookie.split(';').map(function (c) { return c.trim(); })
-                    .find(function (c) { return c.indexOf('csrftoken=') === 0; }) || '').split('=')[1] || '';
+                // Token aus dem <meta> von base.html, nicht aus dem Cookie: das
+                // CSRF-Cookie ist HttpOnly (SI16) und für Skripte unsichtbar.
+                var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
                 var response = await fetch('/newsletter/subscribe/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
