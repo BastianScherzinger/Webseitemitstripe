@@ -492,7 +492,9 @@ class SchemaBildAdressenTest(LuviqTestCase):
         from pathlib import Path
         from django.conf import settings
 
-        for vorlage in list(Path(settings.BASE_DIR, 'shop1', 'templates').rglob('*.html')) +                 [Path(settings.BASE_DIR, 'templates', 'base.html')]:
+        vorlagen = list(Path(settings.BASE_DIR, 'shop1', 'templates').rglob('*.html'))
+        vorlagen.append(Path(settings.BASE_DIR, 'templates', 'base.html'))
+        for vorlage in vorlagen:
             quelle = vorlage.read_text(encoding='utf-8')
             for block in _JSONLD.findall(quelle):
                 with self.subTest(vorlage=vorlage.name):
@@ -666,7 +668,8 @@ class LlmsVolltextTest(LuviqTestCase):
         """Fällt eine View aus, fehlt nur ihr Abschnitt."""
         from unittest import mock
 
-        with mock.patch('shop1.views.shop.ueber_uns', side_effect=RuntimeError('kaputt')),                 self.assertLogs('shop1', level='ERROR'):
+        with mock.patch('shop1.views.shop.ueber_uns', side_effect=RuntimeError('kaputt')), \
+                self.assertLogs('shop1', level='ERROR'):
             antwort = self.hole('/llms-full.txt')
         self.assertEqual(antwort.status_code, 200)
         text = antwort.content.decode()
