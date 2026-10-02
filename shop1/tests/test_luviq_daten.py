@@ -79,10 +79,21 @@ class DropNummerTest(LuviqTestCase):
         with mock.patch.dict('os.environ', {'DROP_NUMMER': '7'}):
             self.assertEqual(luviq_daten.drop_nummer(), '007')
 
-    def test_ohne_feste_nummer_kommt_die_naechste_freie_archivnummer(self):
+    def test_das_vorab_angelegte_drop_stueck_nennt_seine_eigene_nummer(self):
+        """EIG123: Der Countdown nennt die Nummer des hochgeladenen Drop-Stücks
+        (kleinste Nummer über dem Archiv), nicht die übernächste."""
+        erzeuge_produkt('Eins', vergeben=True)
+        zwei = erzeuge_produkt('Zwei', vergeben=True)
+        drop = erzeuge_produkt('Drop')
+        erzeuge_produkt('Danach')
+        with mock.patch.dict('os.environ', {'DROP_NUMMER': ''}):
+            self.assertEqual(luviq_daten.drop_nummer(), f'{drop.nummer:03d}')
+        self.assertEqual(drop.nummer, zwei.nummer + 1)
+
+    def test_ohne_drop_stueck_kommt_die_naechste_freie_archivnummer(self):
         """Verhindert, dass der Drop eine Nummer bekommt, die im Archiv schon vergeben ist."""
-        erzeuge_produkt('Eins')
-        zwei = erzeuge_produkt('Zwei')
+        erzeuge_produkt('Eins', vergeben=True)
+        zwei = erzeuge_produkt('Zwei', vergeben=True)
         with mock.patch.dict('os.environ', {'DROP_NUMMER': ''}):
             self.assertEqual(luviq_daten.drop_nummer(), f'{zwei.nummer + 1:03d}')
 
@@ -96,14 +107,14 @@ class DropNummerTest(LuviqTestCase):
         with mock.patch.dict('os.environ', {'DROP_NUMMER': ''}), \
                 mock.patch('shop1.models.Produkt.objects') as objekte, \
                 self.assertLogs('shop1', level='WARNING') as protokoll:
-            objekte.aggregate.side_effect = DatabaseError('kaputt')
+            objekte.filter.side_effect = DatabaseError('kaputt')
             self.assertEqual(luviq_daten.drop_nummer(), '001')
         self.assertIn('Archivnummern nicht lesbar', protokoll.output[0])
 
     def test_ein_anderer_fehler_wird_nicht_verschluckt(self):
         with mock.patch.dict('os.environ', {'DROP_NUMMER': ''}), \
                 mock.patch('shop1.models.Produkt.objects') as objekte:
-            objekte.aggregate.side_effect = RuntimeError('Programmfehler')
+            objekte.filter.side_effect = RuntimeError('Programmfehler')
             with self.assertRaises(RuntimeError):
                 luviq_daten.drop_nummer()
 
