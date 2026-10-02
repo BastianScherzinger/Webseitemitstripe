@@ -386,25 +386,33 @@ def bestellung_abschliessen(order, neuer_status='paid'):
     Übergang **in** einen bezahlten Zustand, ein erneutes „bezahlt" bucht nichts
     ein zweites Mal ab. Die Stücke werden über ihre Kennung gefunden, nicht über
     den Namen (EIG08). Gibt ``True`` zurück, wenn dieser Übergang stattfand."""
-    war_bezahlt = order.status in BEZAHLT_STATI
-    if not war_bezahlt:
-        order.status = neuer_status
-    order.save()
-    if war_bezahlt:
-        return False
+    # Eine Sperre auf die Bestellzeile: zwei gleichzeitige Abschlüsse (Doppelklick,
+    # zweiter Tab) buchen Bestand und Rabatt nur einmal ab; der zweite sieht den
+    # schon bezahlten Zustand und meldet ``False``. (SQLite kennt die Sperre nicht,
+    # PostgreSQL schon.)
+    with transaction.atomic():
+        in_db = Order.objects.select_for_update().values_list('status', flat=True).get(pk=order.pk)
+        war_bezahlt = in_db in BEZAHLT_STATI or order.status in BEZAHLT_STATI
+        if in_db in BEZAHLT_STATI:
+            order.status = in_db
+        elif not war_bezahlt:
+            order.status = neuer_status
+        order.save()
+        if war_bezahlt:
+            return False
 
-    # EIG15: der Rabatt verfällt mit der ersten bezahlten Bestellung – gleich,
-    # wie bezahlt wurde (vorher nur bei PayPal).
-    if order.user_id and order.rabatt_betrag > 0 and hasattr(order.user, 'profile'):
-        order.user.profile.has_welcome_discount = False
-        order.user.profile.save()
+        # EIG15: der Rabatt verfällt mit der ersten bezahlten Bestellung – gleich,
+        # wie bezahlt wurde (vorher nur bei PayPal).
+        if order.user_id and order.rabatt_betrag > 0 and hasattr(order.user, 'profile'):
+            order.user.profile.has_welcome_discount = False
+            order.user.profile.save()
 
-    for item in order.items.all():
-        db_produkt = item.produkt()
-        if db_produkt:
-            db_produkt.lagerbestand = max(0, db_produkt.lagerbestand - item.menge)
-            db_produkt.aktiv = False
-            db_produkt.save()
+        for item in order.items.all():
+            db_produkt = item.produkt()
+            if db_produkt:
+                db_produkt.lagerbestand = max(0, db_produkt.lagerbestand - item.menge)
+                db_produkt.aktiv = False
+                db_produkt.save()
     return True
 
 
@@ -445,15 +453,18 @@ def paypal_capture(request, order_id):
             }, status=400)
 
         order.paypal_order_id = paypal_order_id
-        bestellung_abschliessen(order)
+        neu_bezahlt = bestellung_abschliessen(order)
         # Bezahlt: der Warenkorb ist erledigt (EIG113 – nicht erst auf der
         # Erfolgsseite, die nur noch anzeigt).
         _get_or_create_cart(request.user).items.all().delete()
 
-        try:
-            send_order_confirmation_email(order)
-        except Exception:
-            _log.exception('Bestellbestätigung konnte nicht versendet werden (Bestellung %s)', order.id)
+        # Nur wer den Übergang in „bezahlt" ausgelöst hat, schickt die Bestätigung –
+        # ein gleichzeitiger zweiter Aufruf verschickt sie nicht noch einmal.
+        if neu_bezahlt:
+            try:
+                send_order_confirmation_email(order)
+            except Exception:
+                _log.exception('Bestellbestätigung konnte nicht versendet werden (Bestellung %s)', order.id)
 
         return JsonResponse({'status': 'success', 'redirect': f'/payment/success/{order.id}/'})
 

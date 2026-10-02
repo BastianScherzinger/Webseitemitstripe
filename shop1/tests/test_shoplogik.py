@@ -498,6 +498,25 @@ class PayPalServerseitigTest(LuviqTestCase):
         self.produkt.refresh_from_db()
         self.assertEqual((self.produkt.aktiv, self.produkt.lagerbestand), (False, 0))
 
+    def test_zwei_gleichzeitige_abschluesse_buchen_nur_einmal_ab(self):
+        """Doppelklick oder zweiter Tab: beide Aufrufe haben die Bestellung noch als
+        „offen" geladen. Der zweite sieht in der Datenbank den bezahlten Zustand,
+        bucht weder Bestand noch Rabatt ein zweites Mal und meldet ``False`` –
+        dann verschickt ``paypal_capture`` auch keine zweite Bestätigung."""
+        from ..views.checkout import bestellung_abschliessen
+        self.produkt.lagerbestand = 3
+        self.produkt.save()
+        OrderItem.objects.filter(order=self.bestellung).update(menge=2)
+        erster = Order.objects.get(pk=self.bestellung.pk)
+        zweiter = Order.objects.get(pk=self.bestellung.pk)
+
+        self.assertTrue(bestellung_abschliessen(erster))
+        self.assertFalse(bestellung_abschliessen(zweiter))
+
+        self.produkt.refresh_from_db()
+        self.assertEqual(self.produkt.lagerbestand, 1, 'zwei Stück einmal abgebucht, nicht viermal')
+        self.assertEqual(Order.objects.get(pk=self.bestellung.pk).status, 'paid')
+
     def test_ein_abgelehnter_einzug_laesst_die_bestellung_offen(self):
         with mock.patch(_ANFRAGEN) as anfragen, mock.patch(_MAIL):
             def antwort_post(adresse, **kwargs):
