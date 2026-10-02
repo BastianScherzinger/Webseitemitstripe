@@ -1068,7 +1068,7 @@
  },
  "/kontakt/": {
   "anzahl": {
-   "a": 34,
+   "a": 35,
    "button": 1,
    "form": 1,
    "iframe": 0,
@@ -1104,6 +1104,7 @@
    "mb-20 scroll-reveal",
    "text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4",
    "text-white/40 text-lg md:text-xl font-light tracking-widest uppercase",
+   "text-glow-orange hover:underline",
    "h-1 w-32 bg-glow-orange mt-8 rounded-full",
    "grid grid-cols-1 lg:grid-cols-3 gap-16",
    "lg:col-span-2 scroll-reveal",
@@ -1212,6 +1213,7 @@
    "div",
    "h1",
    "p",
+   "a",
    "div",
    "div",
    "div",
@@ -1706,7 +1708,7 @@
   "ueberschriften": [
    "h3: Herkunft & Region",
    "h1: Von Alsfeld bis Fulda & Gießen",
-   "h2: Beliebt in deiner Nähe",
+   "h2: Orte in deiner Nähe",
    "h2: Fragen zu Herkunft & Region",
    "h3: Gibt es einen Luviq-Laden in Fulda oder Gießen?",
    "h3: Kann ich aus der Region schon bestellen?",
@@ -2665,7 +2667,7 @@
  },
  "/produkte/": {
   "anzahl": {
-   "a": 32,
+   "a": 33,
    "button": 0,
    "form": 0,
    "iframe": 0,
@@ -2783,6 +2785,7 @@
    "p",
    "p",
    "p",
+   "a",
    "p",
    "a",
    "footer",
