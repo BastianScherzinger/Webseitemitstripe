@@ -205,7 +205,7 @@
         document.addEventListener('load', function (e) {
             if (attr(e.target, 'data-schrift-nachladen') !== null) { e.target.media = 'all'; }
         }, true);
-        // <img data-bei-fehler-ausblenden="kennung">: blendet bei einem Ladefehler
+        // Bild mit data-bei-fehler-ausblenden="kennung": blendet bei einem Ladefehler
         // das Element mit dieser Kennung aus, ohne Wert das Bild selbst.
         document.addEventListener('error', function (e) {
             var ziel = attr(e.target, 'data-bei-fehler-ausblenden');
@@ -268,7 +268,7 @@
     <!-- Schriften selbst gehostet (19.09.2026): kein Abruf bei Google, kein
          fremder Server im ersten Bildschirm. Vorab geladen werden nur die zwei
          Schnitte, die über dem Falz stehen. -->
-    <link rel="preload" href="{% static 'shop1/fonts/cormorant-garamond-latin-italic.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{% static 'shop1/fonts/cormorant-garamond-italic.woff2' %}" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="{% static 'shop1/fonts/schibsted-grotesk-latin-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
 
     {% comment %}Alte Stildateien (Tailwind + style.css) nur noch für Seiten, deren Markup sie trägt: Konto, Kasse, Gästebuch, Wissen, Rechtstexte und das Admin-Panel. Die neu gebauten Seiten (Start, Motiv anfragen, Archiv, Stück, Luisa) leeren den Block und laden nur luviq.css.{% endcomment %}
@@ -276,7 +276,8 @@
     <link rel="stylesheet" href="{% static 'shop1/tailwind.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'shop1/style.css' %}?v=5">
     {% endblock %}
-    <link rel="stylesheet" href="{% static 'shop1/luviq.css' %}">
+    {% comment %}Neue Seiten (lv-seite) setzen den Block mit shop1/teile/stil_kritisch.html: kritisches CSS inline, luviq.css ohne Blockierung.{% endcomment %}
+    {% block hauptstil %}<link rel="stylesheet" href="{% static 'shop1/luviq.css' %}">{% endblock %}
 
     {% comment %}Seit 02.10.2026 (PF31, SI09) keine Bibliothek mehr: Alpine.js (Fremdabruf bei einem CDN und 'unsafe-eval' in der CSP) ist durch luviq.js ersetzt - Einblenden beim Scrollen, Antwortfeld im Gästebuch, "Alle auswählen" im Panel. Die Datei liegt auf der eigenen Adresse und läuft nach dem Aufbau der Seite.{% endcomment %}
     <script defer src="{% static 'shop1/luviq.js' %}"></script>

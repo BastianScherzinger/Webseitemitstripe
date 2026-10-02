@@ -55,6 +55,13 @@
 {% block alte_stile %}{% endblock %}
 {% block alpine %}{% endblock %}
 {% block seitenart %}lv-seite{% endblock %}
+{% block preload %}{% with erste=produkte_liste.0 %}{% if erste.bild %}
+{# Das erste Bild im Hauptbereich ist das LCP-Bild: Vorladen wörtlich wie srcset/sizes der ersten Karte (teile/archiv_karte.html). #}
+<link rel="preload" as="image" fetchpriority="high" href="{{ erste.bild.url|cloud:'w_600,h_750,c_fill' }}"
+      imagesrcset="{{ erste.bild.url|cloud_srcset:'300,450,600;c_fill;1.25' }}"
+      imagesizes="(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 92vw">
+{% endif %}{% endwith %}{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='archiv' %}{% endblock %}
 
 {% block content %}
 {% comment %}„Das Archiv" im Look „Nachtausgabe" (19.09.2026, Bauplan § 4): Raster wie auf der Startseite, nach Nummer sortiert. Der erklärende Text steht unter dem Raster, inhaltlich wie bisher.{% endcomment %}
@@ -67,7 +74,7 @@
         </div>
         {% if produkte_liste %}
         <ol class="lv-raster">
-            {% for produkt in produkte_liste %}{% include 'shop1/teile/archiv_karte.html' with stufe=2 %}{% endfor %}
+            {% for produkt in produkte_liste %}{% include 'shop1/teile/archiv_karte.html' with stufe=2 erstes=forloop.first %}{% endfor %}
         </ol>
         {% else %}
         <p class="lv-leer">Das Archiv ist gerade leer. Die nächste Ausgabe ist in Arbeit.</p>
