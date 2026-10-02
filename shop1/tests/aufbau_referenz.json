@@ -412,10 +412,6 @@
    "text-[10px] font-black uppercase tracking-[0.5em] text-white/20",
    "space-y-16 text-white/60 leading-relaxed font-light",
    "text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5",
-   "text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5",
-   "text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5",
-   "text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5",
-   "text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5",
    "mt-24 pt-12 border-t border-white/5 text-center",
    "text-[9px] text-white/10 uppercase tracking-[0.4em]",
    "lv-fuss",
@@ -480,19 +476,6 @@
    "section",
    "h2",
    "p",
-   "strong",
-   "section",
-   "h2",
-   "p",
-   "section",
-   "h2",
-   "p",
-   "section",
-   "h2",
-   "p",
-   "section",
-   "h2",
-   "p",
    "div",
    "p",
    "footer",
@@ -524,11 +507,7 @@
   ],
   "ueberschriften": [
    "h1: Allgemeine Geschäftsbedingungen",
-   "h2: § 1 Geltungsbereich",
-   "h2: § 2 Vertragsschluss",
-   "h2: § 3 Beschaffenheit der Unikate",
-   "h2: § 4 Preise und Zahlung",
-   "h2: § 5 Widerrufsrecht"
+   "h2: Derzeit kein Verkauf"
   ]
  },
  "/datenschutz/": {
@@ -718,7 +697,7 @@
    "h1: Datenschutz",
    "h2: 1. Datenschutz auf einen Blick",
    "h2: 2. Hosting & Infrastruktur",
-   "h2: 3. Datenerfassung im Shop",
+   "h2: 3. Datenerfassung bei Konto, Anfrage und Newsletter",
    "h2: 4. Ihre Rechte"
   ]
  },

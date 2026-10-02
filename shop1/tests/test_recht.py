@@ -169,3 +169,98 @@ class AbsenderTest(LuviqTestCase):
         nach = quelle[knopf:]
         self.assertIn("{% url 'agb' %}", nach)
         self.assertIn("{% url 'datenschutz' %}", nach)
+
+
+class RechtstexteOhneVerkaufTest(LuviqTestCase):
+    """Bastians Auftrag vom 02.10.2026: Ohne Verkauf (kein Gewerbe angemeldet)
+    darf kein Rechtstext und keine öffentliche Seite nach Verkauf, Bestellung,
+    Zahlung oder Unternehmensangabe klingen. Mit ``VERKAUF_AKTIV=1`` kommt der
+    bisherige Wortlaut unverändert zurück."""
+
+    def setUp(self):
+        self.produkt = erzeuge_produkt('Rechtsstueck')
+
+    def _seiten(self):
+        from ._basis import OEFFENTLICHE_SEITEN
+        return list(OEFFENTLICHE_SEITEN) + [self.produkt.get_absolute_url()]
+
+    def test_agb_zeigen_ohne_verkauf_keine_paragraphen(self):
+        html = self.hole('/agb/').content.decode()
+        text = _text(html)
+        self.assertIn('Derzeit kein Verkauf', text)
+        self.assertIn('gelten erst ab Eröffnung des Shops', text)
+        for satz in ('§ 2 Vertragsschluss', 'Zahlungspflichtig bestellen', 'PayPal',
+                     'Vorab-Überweisung', 'versendet', 'Online-Shop', 'Vor dem Kauf nachlesen'):
+            with self.subTest(satz=satz):
+                self.assertNotIn(satz, html)
+
+    @override_settings(VERKAUF_AKTIV=True)
+    def test_agb_mit_verkauf_unveraendert(self):
+        text = _text(self.hole('/agb/').content.decode())
+        self.assertIn('§ 2 Vertragsschluss', text)
+        self.assertIn('§ 5 Widerrufsrecht', text)
+        self.assertIn('PayPal oder Vorab-Überweisung', text)
+        self.assertNotIn('Derzeit kein Verkauf', text)
+
+    def test_datenschutz_ohne_shop_und_bestellung(self):
+        html = self.hole('/datenschutz/').content.decode()
+        for satz in ('Datenerfassung im Shop', 'Besuch, Bestellung und Newsletter',
+                     'könnte der Shop nicht', 'Missions'):
+            with self.subTest(satz=satz):
+                self.assertNotIn(satz, html)
+        text = _text(html)
+        # Tatsachen aus forms.py / settings.py / utils.py
+        for satz in ('Telefonnummer und Anschrift', 'Geburtsdatum', 'CSRF', 'Abmeldelink'):
+            with self.subTest(satz=satz):
+                self.assertIn(satz, text)
+
+    @override_settings(VERKAUF_AKTIV=True)
+    def test_datenschutz_mit_verkauf_nennt_den_shop(self):
+        text = _text(self.hole('/datenschutz/').content.decode())
+        self.assertIn('Datenerfassung im Shop', text)
+        self.assertIn('Bei Zahlungen über PayPal', text)
+
+    def test_impressum_schema_ohne_gewerbebezeichnung(self):
+        self.assertNotIn('legalName', self.hole('/impressum/').content.decode())
+
+    @override_settings(VERKAUF_AKTIV=True)
+    def test_impressum_schema_mit_verkauf_mit_legalname(self):
+        self.assertIn('"legalName"', self.hole('/impressum/').content.decode())
+
+    def test_stueckseite_ist_kein_produkt_im_open_graph(self):
+        html = self.hole(self.produkt.get_absolute_url()).content.decode()
+        self.assertIn('property="og:type" content="website"', html)
+        with override_settings(VERKAUF_AKTIV=True):
+            html = self.hole(self.produkt.get_absolute_url()).content.decode()
+        self.assertIn('property="og:type" content="product"', html)
+
+    def test_keine_oeffentliche_seite_verlinkt_die_agb(self):
+        for pfad in self._seiten():
+            if pfad == '/agb/':
+                continue
+            with self.subTest(pfad=pfad):
+                self.assertNotIn('href="/agb/"', self.hole(pfad).content.decode())
+
+    def test_keine_seite_nennt_gewerbe_oder_kaufvertrag(self):
+        """Wörter, die eine gewerbliche Tätigkeit oder einen Kaufweg behaupten."""
+        verboten = ('Online-Shop', 'Zahlungspflichtig', 'Kleinunternehm', 'USt-Id',
+                    'Umsatzsteuer-Id', 'Handelsregister', 'Inhaberin', 'Inhaber:',
+                    'Bestellungen und Lieferdaten', 'aus dem Shop nennen', 'Versandkosten')
+        for pfad in self._seiten():
+            with self.subTest(pfad=pfad):
+                html = self.hole(pfad).content.decode()
+                for wort in verboten:
+                    self.assertNotIn(wort, html, f'{pfad}: {wort}')
+
+    def test_motivanfrage_ist_unverbindlich(self):
+        text = _text(self.hole('/motiv-anfragen/').content.decode())
+        self.assertIn('Luviq Universe verkauft derzeit nichts; deine Anfrage ist unverbindlich.', text)
+        with override_settings(VERKAUF_AKTIV=True):
+            text = _text(self.hole('/motiv-anfragen/').content.decode())
+        self.assertNotIn('verkauft derzeit nichts', text)
+
+    def test_passwort_mail_betreff_ohne_shop(self):
+        from django.template.loader import render_to_string
+        betreff = render_to_string('shop1/password_reset_subject.txt')
+        self.assertNotIn('Shop', betreff)
+        self.assertIn('Luviq Universe', betreff)

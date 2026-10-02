@@ -26,7 +26,7 @@ SEITEN_STAND = {
     'kontakt':      '2026-10-02',
     'impressum':    '2026-10-02',
     'datenschutz':  '2026-10-02',
-    'agb':          '2026-09-18',
+    'agb':          '2026-10-02',  # Rechtstexte ohne Verkauf: Hinweis statt Paragraphen
     # IS19 (27.09.2026): Erklärsätze der Stationen, Dauer, Bestätigungshinweis.
     # 02.10.2026 (L1-B1): Titel, Beschreibung, Vorschaubild und Twitter-Angaben neu
     # (IS03/06/07/09/10/11/13/36/39, EIG137) — home, produkte, gaestebuch, ueber_uns,
@@ -35,8 +35,8 @@ SEITEN_STAND = {
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
     'wissen':           '2026-09-27',
     'wissen_pflege':    '2026-09-18',
-    'wissen_upcycling': '2026-09-18',
-    'wissen_groesse':   '2026-09-18',
+    'wissen_upcycling': '2026-10-02',
+    'wissen_groesse':   '2026-10-02',
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
     'wissen_bestellen': '2026-10-02',

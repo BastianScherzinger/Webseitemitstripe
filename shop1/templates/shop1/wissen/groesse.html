@@ -72,7 +72,7 @@
       "name": "Wie frage ich vorab nach den Maßen?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Über das Kontaktformular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Am besten den Namen des Stücks aus dem Shop nennen und die Maße, die fehlen – zum Beispiel Brustweite und Länge flach gemessen. So lässt sich vor dem Kauf klären, ob das Einzelstück passt, ohne es anprobieren zu können."
+        "text": "Über das Kontaktformular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Am besten den Namen des Stücks aus dem {% if verkauf_aktiv %}Shop{% else %}Archiv{% endif %} nennen und die Maße, die fehlen – zum Beispiel Brustweite und Länge flach gemessen. So lässt sich vor dem Kauf klären, ob das Einzelstück passt, ohne es anprobieren zu können."
       }
     },
     {
@@ -133,7 +133,7 @@
 
             <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]">
                 <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie frage ich vorab nach den Maßen?</h2>
-                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Über das Kontaktformular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Am besten den Namen des Stücks aus dem Shop nennen und die Maße, die fehlen – zum Beispiel Brustweite und Länge flach gemessen. So lässt sich vor dem Kauf klären, ob das Einzelstück passt, ohne es anprobieren zu können.</p>
+                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Über das Kontaktformular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Am besten den Namen des Stücks aus dem {% if verkauf_aktiv %}Shop{% else %}Archiv{% endif %} nennen und die Maße, die fehlen – zum Beispiel Brustweite und Länge flach gemessen. So lässt sich vor dem Kauf klären, ob das Einzelstück passt, ohne es anprobieren zu können.</p>
                 <p class="text-white/50 leading-relaxed font-light">Das <a href="{% url 'kontakt' %}" class="text-glow-orange hover:underline">Kontaktformular</a> fragt nach Name, E-Mail-Adresse, Betreff und Nachricht. Wer die eigenen Vergleichswerte gleich mitschickt, spart eine Rückfrage. {% if verkauf_aktiv %}Ein Ladengeschäft zum Anprobieren gibt es nicht; Luviq Universe verkauft ausschließlich über diese Seite und versendet deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.{% else %}Ein Ladengeschäft zum Anprobieren gibt es nicht.{% endif %}</p>
             </section>
 
