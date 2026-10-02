@@ -29,7 +29,7 @@
         </div>
 
         <!-- Quick Stats Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-12 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.1s;">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-12 scroll-reveal" style="transition-delay: 0.1s;">
             <div class="glass-card p-8 rounded-[2rem] border-white/5">
                 <p class="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Total Orders</p>
                 <h4 class="text-3xl font-black text-white">{{ total_orders }}</h4>
@@ -53,7 +53,7 @@
         </div>
 
         <!-- User Management -->
-        <div class="scroll-reveal mb-12" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+        <div class="scroll-reveal mb-12" style="transition-delay: 0.2s;">
             <div class="glass-card rounded-[3rem] overflow-hidden">
                 <div class="px-10 py-8 border-b border-white/5 flex justify-between items-center">
                     <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Member Directory</h3>
@@ -110,7 +110,7 @@
         <!-- Orders & Chart Section -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Recent Orders -->
-            <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+            <div class="scroll-reveal">
                 <div class="glass-card rounded-[3rem] overflow-hidden h-full">
                     <div class="px-10 py-8 border-b border-white/5 flex justify-between items-center">
                         <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Recent Orders</h3>
@@ -152,7 +152,7 @@
             </div>
 
             <!-- Visits Chart -->
-            <div class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
+            <div class="scroll-reveal" style="transition-delay: 0.2s;">
                 <div class="glass-card p-10 rounded-[3rem] h-full">
                     <div class="flex justify-between items-center mb-10">
                         <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange">Visit Activity</h3>
@@ -169,7 +169,7 @@
         </div>
 
         <!-- Visitor Log Table -->
-        <div class="scroll-reveal mt-10" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.3s;">
+        <div class="scroll-reveal mt-10" style="transition-delay: 0.3s;">
             <div class="glass-card rounded-[3rem] overflow-hidden">
                 <div class="px-10 py-8 border-b border-white/5 flex justify-between items-center flex-wrap gap-3">
                     <div>
@@ -243,7 +243,7 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'shop1/chart-4.4.0.umd.js' %}"></script>
 <script nonce="{{ csp_nonce }}">
     document.addEventListener("DOMContentLoaded", function() {
         const rawData = '{{ chart_data_json|escapejs }}';

@@ -4,11 +4,12 @@ from .shop import (startseite, werbung_klick, kontakt, kontakt_danke, kontakte, 
                    produkte, produkt_detail_slug, produkt_detail_redirect)
 from .auth import login, logout, register, verify_email, resend_verification, delete_account, profil, change_password
 from .cart import warenkorb, add_to_cart, remove_from_cart, update_cart
-from .checkout import checkout, payment, paypal_capture, payment_success, payment_cancel
+from .checkout import checkout, payment, paypal_create, paypal_capture, payment_success, payment_cancel
 from .legal import (impressum, datenschutz, agb, robots_txt, sitemap_xml, llms_txt, llms_full_txt, newsletter_subscribe,
-                    newsletter_bestaetigen, produkt_uebersicht_redirect, indexnow_schluessel)
+                    newsletter_bestaetigen, newsletter_abmelden, produkt_uebersicht_redirect, indexnow_schluessel)
 from .gaestebuch import gaestebuch, comment_add, comment_like, comment_delete
 from .motiv import motiv_anfragen, motiv_danke
+from .betrieb import gesundheit, security_txt
 from .wissen import wissen, wissen_beitrag, WissenFeed, WISSEN_BEITRAEGE, freigegebene_beitraege, uebersicht_indexierbar
 
 __all__ = [
@@ -20,12 +21,14 @@ __all__ = [
     # cart
     'warenkorb', 'add_to_cart', 'remove_from_cart', 'update_cart',
     # checkout
-    'checkout', 'payment', 'paypal_capture', 'payment_success', 'payment_cancel',
+    'checkout', 'payment', 'paypal_create', 'paypal_capture', 'payment_success', 'payment_cancel',
     # legal
     'impressum', 'datenschutz', 'agb', 'robots_txt', 'sitemap_xml', 'llms_txt', 'llms_full_txt', 'newsletter_subscribe',
-    'newsletter_bestaetigen', 'produkt_uebersicht_redirect', 'indexnow_schluessel',
+    'newsletter_bestaetigen', 'newsletter_abmelden', 'produkt_uebersicht_redirect', 'indexnow_schluessel',
     # motiv (Umbau „Nachtausgabe“, 19.09.2026)
     'motiv_anfragen', 'motiv_danke',
+    # betrieb (Gesundheitsadresse, security.txt)
+    'gesundheit', 'security_txt',
     # gaestebuch
     'gaestebuch', 'comment_add', 'comment_like', 'comment_delete',
     # wissen (WISSEN_BEITRAEGE: Register, aus dem urls.py die Beitragsrouten baut;

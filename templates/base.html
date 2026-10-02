@@ -20,26 +20,29 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
 
     <!-- Canonical -->
-    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <link rel="canonical" href="{{ seiten_url }}">
 
     <!-- Hreflang -->
-    <link rel="alternate" hreflang="de" href="{{ request.build_absolute_uri }}">
-    <link rel="alternate" hreflang="x-default" href="{{ request.build_absolute_uri }}">
+    <link rel="alternate" hreflang="de" href="{{ seiten_url }}">
+    <link rel="alternate" hreflang="x-default" href="{{ seiten_url }}">
 
     <!-- Feed (GE32): neue Wissensbeitraege ohne Crawl der ganzen Seite -->
+    {% if feed_beworben %}
     <link rel="alternate" type="application/rss+xml" title="Luviq Universe – Wissen" href="{% url 'wissen_feed' %}">
+    {% endif %}
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:url" content="{{ seiten_url }}">
     <meta property="og:title" content="{% block og_title %}Luviq Universe – Handbemalte Vintage Mode{% if verkauf_aktiv %} kaufen{% endif %}{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Entdecke handbemalte 1-of-1 Upcycling-Unikate bei Luviq Universe. Nachhaltige Vintage-Mode aus Deutschland – jedes Stück ein Kunstwerk.{% endblock %}">
     <meta property="og:locale" content="de_DE">
     <meta property="og:site_name" content="Luviq Universe">
     {% block og_image_tag %}
     <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}">
-    <meta property="og:image:width" content="800">
-    <meta property="og:image:height" content="800">
+    <meta property="og:image:width" content="1290">
+    <meta property="og:image:height" content="1346">
+    <meta property="og:image:alt" content="Luviq Universe – Logo">
     {% endblock %}
 
     <!-- Twitter Card -->
@@ -205,7 +208,7 @@
         document.addEventListener('load', function (e) {
             if (attr(e.target, 'data-schrift-nachladen') !== null) { e.target.media = 'all'; }
         }, true);
-        // <img data-bei-fehler-ausblenden="kennung">: blendet bei einem Ladefehler
+        // Bild mit data-bei-fehler-ausblenden="kennung": blendet bei einem Ladefehler
         // das Element mit dieser Kennung aus, ohne Wert das Bild selbst.
         document.addEventListener('error', function (e) {
             var ziel = attr(e.target, 'data-bei-fehler-ausblenden');
@@ -268,7 +271,7 @@
     <!-- Schriften selbst gehostet (19.09.2026): kein Abruf bei Google, kein
          fremder Server im ersten Bildschirm. Vorab geladen werden nur die zwei
          Schnitte, die über dem Falz stehen. -->
-    <link rel="preload" href="{% static 'shop1/fonts/cormorant-garamond-latin-italic.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{% static 'shop1/fonts/cormorant-garamond-italic.woff2' %}" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="{% static 'shop1/fonts/schibsted-grotesk-latin-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
 
     {% comment %}Alte Stildateien (Tailwind + style.css) nur noch für Seiten, deren Markup sie trägt: Konto, Kasse, Gästebuch, Wissen, Rechtstexte und das Admin-Panel. Die neu gebauten Seiten (Start, Motiv anfragen, Archiv, Stück, Luisa) leeren den Block und laden nur luviq.css.{% endcomment %}
@@ -276,18 +279,11 @@
     <link rel="stylesheet" href="{% static 'shop1/tailwind.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'shop1/style.css' %}?v=5">
     {% endblock %}
-    <link rel="stylesheet" href="{% static 'shop1/luviq.css' %}">
+    {% comment %}Neue Seiten (lv-seite) setzen den Block mit shop1/teile/stil_kritisch.html: kritisches CSS inline, luviq.css ohne Blockierung.{% endcomment %}
+    {% block hauptstil %}<link rel="stylesheet" href="{% static 'shop1/luviq.css' %}">{% endblock %}
 
-    {% comment %}Alpine.js nur dort, wo es Funktion trägt (Warenkorb, Konto, Gästebuch, Admin). Die neuen Seiten leeren den Block.{% endcomment %}
-    {% block alpine %}
-    <!-- integrity + crossorigin (SI17): der Browser fuehrt die Datei nur aus,
-         wenn ihr SHA-256 zum Wert passt. Wer die Version aendert, zieht den
-         Hash mit (jsDelivr-Dateiauskunft, "hash" = SHA-256, base64). -->
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.14.8/dist/cdn.min.js"
-            integrity="sha256-sav73qRAT3EB3ibvbi5l9O+uc757MwIUHuzyfe9oVg4=" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"
-            integrity="sha256-tgDjY9mdlURNtUrL+y3v/smueSqpmgkim82geOW1VkM=" crossorigin="anonymous"></script>
-    {% endblock %}
+    {% comment %}Seit 02.10.2026 (PF31, SI09) keine Bibliothek mehr: Alpine.js (Fremdabruf bei einem CDN und 'unsafe-eval' in der CSP) ist durch luviq.js ersetzt - Einblenden beim Scrollen, Antwortfeld im Gästebuch, "Alle auswählen" im Panel. Die Datei liegt auf der eigenen Adresse und läuft nach dem Aufbau der Seite.{% endcomment %}
+    <script defer src="{% static 'shop1/luviq.js' %}"></script>
 
     {% comment %}Vorabladen des groessten Bildes im ersten Bildschirm: der Browser findet es sonst erst beim Uebersetzen des Seitenkoerpers. Jede Seite fuellt den Block selbst, leer bleibt er ohne Wirkung.{% endcomment %}
     {% block preload %}{% endblock %}
@@ -375,7 +371,7 @@
             <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.universe/' }}" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg>{{ instagram_name|default:'luviq.universe' }}</a>
         </nav>
         {% comment %}Verkaufsschalter: die AGB gelten erst ab Eröffnung des Shops und sind ohne Verkauf nicht verlinkt (die Seite bleibt erreichbar).{% endcomment %}
-        <p class="lv-recht"><span>Marke im Aufbau · Alsfeld, Hessen</span><span><a href="{% url 'impressum' %}">Impressum</a> · <a href="{% url 'datenschutz' %}">Datenschutz</a>{% if verkauf_aktiv %} · <a href="{% url 'agb' %}">AGB</a>{% endif %}</span></p>
+        <p class="lv-recht"><span>© {% now "Y" %} Luviq Universe · Marke im Aufbau · Alsfeld, Hessen</span><span><a href="{% url 'impressum' %}">Impressum</a> · <a href="{% url 'datenschutz' %}">Datenschutz</a>{% if verkauf_aktiv %} · <a href="{% url 'agb' %}">AGB</a>{% endif %}</span></p>
     </footer>
 
     {% if motivanfrage_aktiv and ist_panel != '/shop-admin/' and seitenname != 'motiv_anfragen' %}

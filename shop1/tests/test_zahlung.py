@@ -75,6 +75,8 @@ class ZahlungspfadTest(LuviqTestCase):
     def setUp(self):
         self.kundin = erzeuge_benutzer('kundin')
         self.kundin.profile.has_welcome_discount = False
+        # Bestellen verlangt eine bestätigte E-Mail-Adresse (EIG56).
+        self.kundin.profile.email_verified = True
         self.kundin.profile.save()
         self.produkt = erzeuge_produkt('Bemalte Jacke', preis=Decimal('80.00'), lagerbestand=1)
         self.client.force_login(self.kundin)

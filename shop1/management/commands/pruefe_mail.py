@@ -35,6 +35,7 @@ Ausgabe darf in einem Container-Log landen.
 """
 
 import json
+import logging
 import os
 import smtplib
 
@@ -68,7 +69,12 @@ def maskiert(wert):
     return f'gesetzt ({len(wert)} Zeichen)'
 
 
+_log = logging.getLogger('shop1')
+
+
 class Command(BaseCommand):
+    """Prüfbefehl ``pruefe_mail``: beide Mailwege, auf Wunsch eine Testmail."""
+
     help = ('Prüft den Mailweg: Einstellungen beider Wege (Brevo-API und '
             'SMTP-Relay), die Anmeldung an beiden und auf Wunsch eine '
             'Testmail.')
@@ -257,6 +263,7 @@ class Command(BaseCommand):
             )
             return
         except Exception as ausnahme:
+            _log.warning('pruefe_mail: keine SMTP-Verbindung', exc_info=True)
             self.fehler.append(
                 f'Keine SMTP-Verbindung zu {settings.EMAIL_HOST}:'
                 f'{settings.EMAIL_PORT} ({type(ausnahme).__name__}): '
@@ -290,7 +297,7 @@ class Command(BaseCommand):
 
         if schluessel:
             nutzlast = {
-                'sender': {'name': 'Luviq-Shop',
+                'sender': {'name': 'Luviq Universe',
                            'email': settings.DEFAULT_FROM_EMAIL},
                 'to': [{'email': adresse}],
                 'subject': betreff,
@@ -326,6 +333,7 @@ class Command(BaseCommand):
         try:
             nachricht.send(fail_silently=False)
         except Exception as ausnahme:
+            _log.warning('pruefe_mail: Testmail über SMTP gescheitert', exc_info=True)
             self.fehler.append(
                 f'Testmail über SMTP gescheitert ({type(ausnahme).__name__}): '
                 f'{ausnahme}'

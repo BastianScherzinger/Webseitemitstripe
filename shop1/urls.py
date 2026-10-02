@@ -12,6 +12,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', views.startseite, name='home'),
     path('werbung/klick/<int:werbung_id>/', views.werbung_klick, name='werbung_klick'),
+    path('paypal/create/<int:order_id>/', views.paypal_create, name='paypal_create'),
     path('paypal/capture/<int:order_id>/', views.paypal_capture, name='paypal_capture'),
     path('produkte/', views.produkte, name='produkte'),
     # Muss vor produkt/<slug:slug>/ stehen: /produkt/ ohne Kennung -> 301 auf die Uebersicht.
@@ -31,8 +32,9 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('warenkorb/', views.warenkorb, name='warenkorb'),
     path('warenkorb/add/<int:produkt_id>/', views.add_to_cart, name='add_to_cart'),
-    path('warenkorb/remove/<str:produkt_name>/', views.remove_from_cart, name='remove_from_cart'),
-    path('warenkorb/update/<str:produkt_name>/', views.update_cart, name='update_cart'),
+    # Posten über ihre Kennung, nicht über den Namen (EIG46, EIG76, EIG112).
+    path('warenkorb/remove/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('warenkorb/update/<int:item_id>/', views.update_cart, name='update_cart'),
     path('checkout/', views.checkout, name='checkout'),
     path('payment/<int:order_id>/', views.payment, name='payment'),
     path('payment/success/<int:order_id>/', views.payment_success, name='payment_success'),
@@ -66,6 +68,7 @@ urlpatterns = [
     path('agb/', views.agb, name='agb'),
     path('newsletter/subscribe/', views.newsletter_subscribe, name='newsletter_subscribe'),
     path('newsletter/bestaetigen/', views.newsletter_bestaetigen, name='newsletter_bestaetigen'),
+    path('newsletter/abmelden/', views.newsletter_abmelden, name='newsletter_abmelden'),
     
     # ═══ SEO ═══
     path('robots.txt', views.robots_txt, name='robots_txt'),
@@ -73,6 +76,10 @@ urlpatterns = [
     path('llms.txt', views.llms_txt, name='llms_txt'),
     # Volltext der Seiten fuer Antwortmaschinen (GE31/VL08), siehe views/legal.py.
     path('llms-full.txt', views.llms_full_txt, name='llms_full_txt'),
+    # Betrieb und Sicherheit (02.10.2026): schlanke Gesundheitsadresse für die
+    # Überwachung (BT11) und die Meldeadresse für Schwachstellen (SI25, RFC 9116).
+    path('health/', views.gesundheit, name='gesundheit'),
+    path('.well-known/security.txt', views.security_txt, name='security_txt'),
     # Schluesseldatei fuer IndexNow (shop1/indexnow.py); 404, solange
     # INDEXNOW_KEY leer ist. Der Pfad steht auch in indexnow.SCHLUESSEL_PFAD.
     path('indexnow-schluessel.txt', views.indexnow_schluessel, name='indexnow_schluessel'),
@@ -103,10 +110,18 @@ urlpatterns = [
     # shop1/images/flavicon.jpeg; collectstatic legt es unter diesem Namen
     # zusaetzlich zur inhaltsgehashten Fassung ab, der Pfad traegt also auch
     # mit ManifestStaticFilesStorage.
+    # /favicon.ico zeigt seit 02.10.2026 (EIG32) auf die echte .ico-Datei
+    # (16/32/48 px, 7 KB) statt auf das 1254-px-JPEG, das <link rel="icon">
+    # im Kopf ohnehin nicht mehr benutzt. iOS fragt /apple-touch-icon.png
+    # (und die -precomposed-Fassung) ohne Rücksicht auf den <link> an.
     path('favicon.ico', RedirectView.as_view(
-        url='/static/shop1/images/flavicon.jpeg', permanent=True)),
+        url='/static/shop1/images/flavicon.ico', permanent=True)),
     path('favicon.png', RedirectView.as_view(
         url='/static/shop1/images/flavicon.jpeg', permanent=True)),
+    path('apple-touch-icon.png', RedirectView.as_view(
+        url='/static/shop1/images/logo-luviq.jpeg', permanent=True)),
+    path('apple-touch-icon-precomposed.png', RedirectView.as_view(
+        url='/static/shop1/images/logo-luviq.jpeg', permanent=True)),
 
     # ═══ ADMIN ROUTES ═══
     path('shop-admin/dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),

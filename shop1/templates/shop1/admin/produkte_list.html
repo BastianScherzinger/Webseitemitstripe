@@ -29,7 +29,7 @@
         </div>
 
         <!-- Header -->
-        <div class="mb-12 flex flex-col md:flex-row justify-between items-end gap-8 scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+        <div class="mb-12 flex flex-col md:flex-row justify-between items-end gap-8 scroll-reveal">
             <div>
                 <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                     Inventory <span class="text-glow">Control</span>
@@ -43,7 +43,7 @@
         </div>
 
         <!-- Inventory Table -->
-        <form method="POST" class="scroll-reveal" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+        <form method="POST" class="scroll-reveal">
             {% csrf_token %}
             <div class="glass-card rounded-[3.5rem] overflow-hidden shadow-2xl">
                 <!-- Bulk Actions -->
@@ -64,7 +64,7 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th class="w-12"><input type="checkbox" aria-label="Alle Produkte auswählen" @change="$el.closest('table').querySelectorAll('input[name=selected_produkte]').forEach(cb => cb.checked = $el.checked)" class="glass"></th>
+                                <th class="w-12"><input type="checkbox" aria-label="Alle Produkte auswählen" data-alle-auswaehlen="selected_produkte" class="glass"></th>
                                 <th>Visual</th>
                                 <th>Product Name</th>
                                 <th>Price</th>
@@ -81,7 +81,7 @@
                                 <td>
                                     <div class="w-16 h-16 rounded-xl overflow-hidden glass border-white/5">
                                         {% if produkt.bild %}
-                                            <img src="{{ produkt.bild.url }}" alt="Produktbild: {{ produkt.name }}" loading="lazy" decoding="async" class="w-full h-full object-cover">
+                                            <img src="{{ produkt.bild.url }}" alt="Produktbild: {{ produkt.name }}" width="64" height="64" loading="lazy" decoding="async" class="w-full h-full object-cover">
                                         {% else %}
                                             <div class="w-full h-full flex items-center justify-center text-white/10 text-xs">NO IMG</div>
                                         {% endif %}
@@ -132,18 +132,27 @@
                                         
                                         <!-- Newsletter (Always) -->
                                         <div class="flex flex-col gap-1">
-                                            <a href="{% url 'admin_resend_newsletter' produkt.id %}" class="w-9 h-9 glass rounded-lg flex items-center justify-center hover:bg-glow-orange/20 transition-all {% if not produkt.newsletter_gesendet %}opacity-40{% endif %}" title="Send/Resend Newsletter">
-                                                📧
-                                            </a>
+                                            <form method="post" action="{% url 'admin_resend_newsletter' produkt.id %}">
+                                                {% csrf_token %}
+                                                <button class="w-9 h-9 glass rounded-lg flex items-center justify-center hover:bg-glow-orange/20 transition-all {% if not produkt.newsletter_gesendet %}opacity-40{% endif %}" title="Send/Resend Newsletter" aria-label="Newsletter senden">
+                                                    📧
+                                                </button>
+                                            </form>
                                             {% if produkt.newsletter_gesendet %}
-                                            <a href="{% url 'admin_newsletter_reset' produkt.id %}" class="text-[7px] text-white/20 uppercase font-bold hover:text-red-400 transition-colors text-center">Reset</a>
+                                            <form method="post" action="{% url 'admin_newsletter_reset' produkt.id %}">
+                                                {% csrf_token %}
+                                                <button class="text-[7px] text-white/20 uppercase font-bold hover:text-red-400 transition-colors text-center w-full">Reset</button>
+                                            </form>
                                             {% endif %}
                                         </div>
 
                                         <!-- Toggle Status -->
-                                        <a href="{% url 'admin_produkt_toggle' produkt.id %}" class="w-9 h-9 glass rounded-lg flex items-center justify-center transition-all {% if produkt.aktiv %}hover:bg-red-500/20 text-red-400{% else %}hover:bg-emerald-500/20 text-emerald-400{% endif %}" title="{% if produkt.aktiv %}Deaktivieren{% else %}Aktivieren{% endif %}">
-                                            {% if produkt.aktiv %}🚫{% else %}👁️{% endif %}
-                                        </a>
+                                        <form method="post" action="{% url 'admin_produkt_toggle' produkt.id %}">
+                                            {% csrf_token %}
+                                            <button class="w-9 h-9 glass rounded-lg flex items-center justify-center transition-all {% if produkt.aktiv %}hover:bg-red-500/20 text-red-400{% else %}hover:bg-emerald-500/20 text-emerald-400{% endif %}" title="{% if produkt.aktiv %}Deaktivieren{% else %}Aktivieren{% endif %}" aria-label="{% if produkt.aktiv %}Deaktivieren{% else %}Aktivieren{% endif %}">
+                                                {% if produkt.aktiv %}🚫{% else %}👁️{% endif %}
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

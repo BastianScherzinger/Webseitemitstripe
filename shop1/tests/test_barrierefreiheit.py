@@ -325,13 +325,30 @@ class FehleransageTest(LuviqTestCase):
 
     def test_jedes_pflichtfeld_verweist_auf_die_fehlermeldung(self):
         """``aria-describedby`` bindet die Meldung an das Feld – ohne diese
-        Bindung muss man sie suchen, statt sie vorgelesen zu bekommen."""
-        html = self.hole('/kontakt/').content.decode()
+        Bindung muss man sie suchen, statt sie vorgelesen zu bekommen. Der
+        Verweis steht nur, wenn die Meldung da ist (BF22): ein Verweis auf eine
+        Kennung, die es nicht gibt, ist falsch ausgezeichnet."""
+        html = self.sende('/kontakt/', {}).content.decode()
         for feld in self.PFLICHTFELDER:
             with self.subTest(feld=feld):
                 treffer = re.search(rf'<(?:input|textarea)[^>]*\bname="{feld}"[^>]*>', html)
                 self.assertIsNotNone(treffer, f'Feld {feld} nicht gefunden')
                 self.assertIn('aria-describedby="kontakt-fehler"', treffer.group(0))
+
+    def test_der_fehlerbereich_steht_auch_ohne_fehler_als_leerer_live_bereich(self):
+        """BF22/BF24: ``#kontakt-fehler`` gibt es immer (leer), jedes Feld zeigt auf ihn."""
+        html = self.hole('/kontakt/').content.decode()
+        self.assertIn('id="kontakt-fehler" role="alert">', html)
+        self.assertEqual(html.count('aria-describedby="kontakt-fehler"'), 4)
+
+    def test_eingaben_bleiben_nach_einem_fehler_stehen(self):
+        """EIG90: eine lange Nachricht ist nach einer Fehlermeldung nicht weg."""
+        html = self.sende('/kontakt/', {'name': 'Lena', 'email': 'keine-adresse',
+                                        'betreff': 'Frage', 'nachricht': 'Meine ganze Nachricht'}
+                          ).content.decode()
+        self.assertIn('value="Lena"', html)
+        self.assertIn('value="Frage"', html)
+        self.assertIn('>Meine ganze Nachricht</textarea>', html)
 
     def test_das_kontaktformular_ist_ein_ansagebereich(self):
         html = self.hole('/kontakt/').content.decode()
@@ -350,6 +367,9 @@ class AngemeldeteBedienungTest(LuviqTestCase):
     def setUp(self):
         erzeuge_produkt('Bemalte Bomberjacke')
         self.kundin = erzeuge_benutzer('kundin')
+        # Der Checkout verlangt eine bestätigte E-Mail-Adresse (EIG56).
+        self.kundin.profile.email_verified = True
+        self.kundin.profile.save()
         Comment.objects.create(user=self.kundin, text='Mein Unikat ist angekommen.')
         korb = Cart.objects.create(user=self.kundin)
         CartItem.objects.create(cart=korb, produkt_name='Bemalte Bomberjacke',

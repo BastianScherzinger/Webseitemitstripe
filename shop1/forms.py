@@ -12,9 +12,11 @@ class CustomUserCreationForm(UserCreationForm):
     # User-Felder
     email = forms.EmailField(
         required=True,
+        max_length=254,
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': 'E-Mail-Adresse'
+            'placeholder': 'E-Mail-Adresse',
+            'autocomplete': 'email',
         })
     )
     first_name = forms.CharField(
@@ -23,7 +25,8 @@ class CustomUserCreationForm(UserCreationForm):
         label="Vorname",
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Vorname'
+            'placeholder': 'Vorname',
+            'autocomplete': 'given-name',
         })
     )
     last_name = forms.CharField(
@@ -32,7 +35,8 @@ class CustomUserCreationForm(UserCreationForm):
         label="Nachname",
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Nachname'
+            'placeholder': 'Nachname',
+            'autocomplete': 'family-name',
         })
     )
     
@@ -94,17 +98,36 @@ class CustomUserCreationForm(UserCreationForm):
         # Styling für Standard-Felder
         self.fields['username'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Benutzername'
+            'placeholder': 'Benutzername',
+            'autocomplete': 'username',
         })
         self.fields['password1'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Passwort'
+            'placeholder': 'Passwort',
+            'autocomplete': 'new-password',
         })
         self.fields['password2'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Passwort wiederholen'
+            'placeholder': 'Passwort wiederholen',
+            'autocomplete': 'new-password',
         })
+        # Pflichtfelder tragen den Stern in der Beschriftung (FO04); die Erklärung
+        # steht im Einleitungssatz der Seite.
+        for name in ('username', 'email', 'first_name', 'last_name', 'password1', 'password2'):
+            self.fields[name].label_suffix = ' *'
     
+    def clean_email(self):
+        """Eine Adresse gehört zu genau einem Konto (Groß-/Kleinschreibung egal).
+
+        Ohne diese Prüfung legte jede zweite Registrierung mit derselben
+        Adresse ein weiteres Konto und eine weitere Bestätigungsmail an."""
+        adresse = self.cleaned_data['email'].strip()
+        if User.objects.filter(email__iexact=adresse).exists():
+            raise forms.ValidationError(
+                'Zu dieser E-Mail-Adresse gibt es schon ein Konto. '
+                'Bitte melde dich an oder nimm eine andere Adresse.')
+        return adresse
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
@@ -120,7 +143,9 @@ class CustomUserCreationForm(UserCreationForm):
             profile.adresse = self.cleaned_data.get('adresse', '')
             profile.postleitzahl = self.cleaned_data.get('postleitzahl', '')
             profile.stadt = self.cleaned_data.get('stadt', '')
-            profile.land = self.cleaned_data.get('land', 'Deutschland')
+            # Leer gelassen (oder geleert) heißt Vorgabe – ``.get(..., 'Deutschland')``
+            # griff nur bei fehlendem Schlüssel, nicht bei ``''``.
+            profile.land = self.cleaned_data.get('land') or 'Deutschland'
             profile.save()
         
         return user
@@ -187,6 +212,16 @@ class UserProfileForm(forms.ModelForm):
             self.fields['last_name'].initial = self.instance.user.last_name
             self.fields['email'].initial = self.instance.user.email
     
+    def clean_email(self):
+        """Wie bei der Registrierung: keine Adresse, die ein anderes Konto trägt."""
+        email = self.cleaned_data['email'].strip()
+        andere = User.objects.filter(email__iexact=email)
+        if self.instance.user_id:
+            andere = andere.exclude(pk=self.instance.user_id)
+        if andere.exists():
+            raise forms.ValidationError('Diese E-Mail-Adresse gehört schon zu einem anderen Konto.')
+        return email
+
     def save(self, commit=True):
         profile = super().save(commit=False)
         

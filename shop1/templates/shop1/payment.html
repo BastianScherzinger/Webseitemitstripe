@@ -122,47 +122,51 @@
         label: 'paypal'
       },
 
-      createOrder: function(data, actions) {
-        return actions.order.create({
-          purchase_units: [{
-            amount: {
-              value: '{{ order.gesamt_betrag|floatformat:"2u" }}',
-              currency_code: 'EUR'
-            },
-            description: 'Luviq Mission #{{ order.id }}'
-          }]
-        }).catch(err => {
+      // EIG63: Anlegen und Einziehen der Zahlung macht der Server – der Betrag
+      // kommt aus der Bestellung in der Datenbank, und es wird erst abgebucht,
+      // wenn der Server selbst eingezogen und geprüft hat.
+      createOrder: function() {
+        return fetch('/paypal/create/{{ order.id }}/', {
+          method: 'POST',
+          headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        })
+        .then(response => response.json())
+        .then(result => {
+          if (!result.id) { throw new Error(result.error || 'PayPal-Bestellung nicht angelegt'); }
+          return result.id;
+        })
+        .catch(err => {
             console.error("PayPal CreateOrder Error:", err);
-            document.getElementById('payment-errors').textContent = 'PayPal Fehler: ' + err;
+            document.getElementById('payment-errors').textContent = 'PayPal Fehler: ' + err.message;
             document.getElementById('payment-errors').style.display = 'block';
+            throw err;
         });
       },
 
-      onApprove: function(data, actions) {
+      onApprove: function(data) {
         document.getElementById('loading').style.display = 'block';
-        
-        return actions.order.capture().then(function(details) {
-          return fetch('/paypal/capture/{{ order.id }}/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({
-              paypal_order_id: data.orderID
-            })
+
+        return fetch('/paypal/capture/{{ order.id }}/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({
+            paypal_order_id: data.orderID
           })
-          .then(response => response.json())
-          .then(result => {
-            if (result.status === 'success') {
-              window.location.href = result.redirect;
-            } else {
-              throw new Error(result.error || 'Server Sync failed');
-            }
-          });
-        }).catch(error => {
+        })
+        .then(response => response.json())
+        .then(result => {
+          if (result.status === 'success') {
+            window.location.href = result.redirect;
+          } else {
+            throw new Error(result.error || 'Server Sync failed');
+          }
+        })
+        .catch(error => {
             console.error("PayPal Capture/Sync Error:", error);
-            document.getElementById('payment-errors').innerHTML = '❌ Zahlung fehlgeschlagen: ' + error + '<br><small>Hinweis: Im Sandbox-Modus funktionieren keine echten Karten!</small>';
+            document.getElementById('payment-errors').textContent = '❌ Zahlung konnte nicht abgeschlossen werden: ' + error.message;
             document.getElementById('payment-errors').style.display = 'block';
             document.getElementById('loading').style.display = 'none';
         });
@@ -170,7 +174,10 @@
 
       onError: function(err) {
         console.error("PayPal Global Error:", err);
-        document.getElementById('payment-errors').innerHTML = '🚨 PayPal Gateway Fehler!<br>Stelle sicher, dass du im Sandbox-Modus einen <b>Sandbox-Account</b> nutzt und KEINE echten Karten.';
+        // Eine genauere Meldung aus createOrder/onApprove bleibt stehen.
+        if (!document.getElementById('payment-errors').textContent) {
+          document.getElementById('payment-errors').textContent = '🚨 PayPal Gateway Fehler. Bitte versuche es erneut; deine Bestellung #{{ order.id }} bleibt offen.';
+        }
         document.getElementById('payment-errors').style.display = 'block';
       },
 

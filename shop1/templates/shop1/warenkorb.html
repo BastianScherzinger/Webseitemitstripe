@@ -52,7 +52,7 @@
                                         </div>
                                     </td>
                                     <td class="px-8 py-8">
-                                        <form method="post" action="{% url 'update_cart' item.name %}" class="flex items-center justify-center space-x-3">
+                                        <form method="post" action="{% url 'update_cart' item.id %}" class="flex items-center justify-center space-x-3">
                                             {% csrf_token %}
                                             <input type="number" name="menge" value="{{ item.menge }}" min="1" max="99" aria-label="Menge für {{ item.name }}"
                                                    class="w-16 bg-white/5 border border-white/10 rounded-xl px-2 py-2 text-center text-white text-sm focus:outline-none focus:border-glow-orange">
@@ -65,11 +65,14 @@
                                         <span class="text-xl font-black text-glow">{{ item.gesamt|floatformat:2 }} €</span>
                                     </td>
                                     <td class="px-8 py-8 text-center">
-                                        <a href="{% url 'remove_from_cart' item.name %}" aria-label="{{ item.name }} aus dem Warenkorb entfernen" class="text-white/30 hover:text-red-400 transition-colors" title="Entfernen">
-                                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </a>
+                                        <form method="post" action="{% url 'remove_from_cart' item.id %}">
+                                            {% csrf_token %}
+                                            <button aria-label="{{ item.name }} aus dem Warenkorb entfernen" class="text-white/30 hover:text-red-400 transition-colors" title="Entfernen">
+                                                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             {% endfor %}

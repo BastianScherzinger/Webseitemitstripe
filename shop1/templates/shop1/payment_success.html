@@ -36,6 +36,13 @@
                         für die Zahlungsdaten. Sobald das Signal (Geld) eingeht, <br>
                         startet der Versand.
                     </p>
+                    {% if bank %}
+                    <p class="text-white/60 text-sm font-light tracking-[0.1em] leading-relaxed">
+                        Inhaber: {{ bank.inhaber }}<br>
+                        IBAN: {{ bank.iban }}<br>
+                        Verwendungszweck: {{ bank.zweck }}
+                    </p>
+                    {% endif %}
                 {% else %}
                     <p class="text-xl font-bold text-white uppercase tracking-tight">Transfer erfolgreich verarbeitet.</p>
                     <p class="text-white/40 text-sm font-light tracking-[0.1em] leading-relaxed">

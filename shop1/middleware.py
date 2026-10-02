@@ -1,8 +1,8 @@
-"""Eigene Middleware: kanonischer Host, Content-Security-Policy, Besuchsprotokoll.
+"""Eigene Middleware: kanonischer Host, Content-Security-Policy, Permissions-Policy, Besuchsprotokoll.
 
 Reihenfolge in ``settings.MIDDLEWARE``: ``CanonicalHostMiddleware`` ganz vorn,
-``ContentSecurityPolicyMiddleware`` nach WhiteNoise, ``PageVisitMiddleware``
-zuletzt.
+``ContentSecurityPolicyMiddleware`` und ``PermissionsPolicyMiddleware`` nach
+WhiteNoise, ``PageVisitMiddleware`` zuletzt.
 """
 import hashlib
 import hmac
@@ -16,6 +16,7 @@ from django.http import HttpResponsePermanentRedirect
 from django.utils import timezone
 from django.db import IntegrityError
 from django.db.models import F
+from .clientip import client_ip
 from .models import PageVisit, TagesBesucher, VisitorLog
 
 _log = logging.getLogger('shop1')
@@ -37,15 +38,41 @@ def nebenvariante(host):
     return host[4:] if host.startswith('www.') else f'www.{host}'
 
 
-class CanonicalHostMiddleware:
-    """Leitet die www-/Nicht-www-Nebenvariante per 301 auf CANONICAL_HOST.
+#: Pfade, die auch auf der Railway-Adresse antworten müssen und nie umgeleitet
+#: werden: die Gesundheitsadresse für den Healthcheck der Plattform.
+RAILWAY_AUSNAHMEN = ('/health/', '/healthz/')
 
-    Bewusst eng: umgeleitet wird ausschliesslich der Host, der sich vom
-    kanonischen nur durch das ``www.`` unterscheidet. Die Railway-Adresse,
-    ``localhost`` und jeder andere erlaubte Host bleiben, wie sie sind – eine
-    breitere Regel könnte den Deploy-Zugang oder die Health-Checks treffen
-    und im schlimmsten Fall eine Endlosschleife bauen. Der kanonische Host
-    selbst wird nie umgeleitet, deshalb kann es keine Schleife geben.
+
+def ist_railway_host(host):
+    """True für die Plattformadresse ``*.up.railway.app`` (Deploy-Zugang)."""
+    return host.endswith('.up.railway.app')
+
+
+def oeffentliche_basis(request):
+    """Schema und Host, unter denen die Seite öffentlich steht, ohne Schrägstrich.
+
+    Ist ``CANONICAL_HOST`` gesetzt, ist das immer ``https://<kanonischer Host>``
+    – gleich, unter welcher Adresse die Anfrage ankam (so zeigen ``canonical``,
+    ``og:url`` und die Sitemap nie auf die Railway-Kopie). Ohne die Variable
+    gilt der Host der Anfrage, wie bisher.
+    """
+    ziel = kanonischer_host()
+    if ziel:
+        return f'https://{ziel}'
+    return f'{request.scheme}://{request.get_host()}'
+
+
+class CanonicalHostMiddleware:
+    """Leitet Nebenvariante und Railway-Adresse per 301 auf CANONICAL_HOST.
+
+    Umgeleitet werden genau zwei Gruppen: der Host, der sich vom kanonischen
+    nur durch das ``www.`` unterscheidet, und die Plattformadresse
+    ``*.up.railway.app`` (sonst stünde die Seite ein zweites Mal im Index;
+    Messpunkt „Offen“ Nr. 2). Ausgenommen bleiben die Gesundheitsadressen
+    (``RAILWAY_AUSNAHMEN``), damit ein Healthcheck der Plattform nie auf eine
+    Weiterleitung trifft, ``localhost`` und jeder andere erlaubte Host. Der
+    kanonische Host selbst wird nie umgeleitet, deshalb kann es keine
+    Schleife geben; ohne ``CANONICAL_HOST`` tut die Middleware nichts.
 
     Pfad und Query bleiben erhalten; das Schema ist ``https``, sobald die
     Anfrage sicher ist oder ``SECURE_SSL_REDIRECT`` gilt – so entsteht eine
@@ -61,7 +88,13 @@ class CanonicalHostMiddleware:
             # get_host() prüft gegen ALLOWED_HOSTS; DisallowedHost wird von
             # Django wie überall sonst zu 400.
             host = (urlsplit('//' + request.get_host()).hostname or '').lower()
-            if host == nebenvariante(ziel):
+            # Die Gesundheitsadresse bleibt auf jedem Host ohne Weiterleitung
+            # (auch auf der Nebenvariante ohne www): ein Überwachungsdienst
+            # soll nie auf eine 301 treffen.
+            umleiten = request.path not in RAILWAY_AUSNAHMEN and (
+                host == nebenvariante(ziel) or ist_railway_host(host)
+            )
+            if umleiten:
                 sicher = request.is_secure() or getattr(settings, 'SECURE_SSL_REDIRECT', False)
                 schema = 'https' if sicher else 'http'
                 return HttpResponsePermanentRedirect(
@@ -145,6 +178,38 @@ class ContentSecurityPolicyMiddleware:
         kopf = csp_kopfname()
         if kopf and not any(response.has_header(k) for k in CSP_KOPF.values()):
             response[kopf] = csp_wert(nonce=request.csp_nonce)
+        return response
+
+
+# ═══ PERMISSIONS-POLICY ════════════════════════════════════════════════════
+
+def permissions_policy_wert():
+    """Die Richtlinie als Kopfzeilenwert aus ``settings.PERMISSIONS_POLICY``.
+
+    ``{'camera': [], 'payment': ["'self'"]}`` wird zu
+    ``camera=(), payment=(self)``; Quellen mit Anführungszeichen für Hosts
+    stehen im Wert bereits so, wie der Kopf sie verlangt.
+    """
+    teile = []
+    for merkmal, quellen in settings.PERMISSIONS_POLICY.items():
+        liste = ' '.join(quellen)
+        teile.append(f'{merkmal}=({liste})')
+    return ', '.join(teile)
+
+
+class PermissionsPolicyMiddleware:
+    """Setzt ``Permissions-Policy`` (SI07, VL04): Geräterechte aus, die die Seite nie braucht.
+
+    Eine Kopfzeile, die eine View selbst gesetzt hat, bleibt unangetastet.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if not response.has_header('Permissions-Policy'):
+            response['Permissions-Policy'] = permissions_policy_wert()
         return response
 
 
@@ -295,7 +360,6 @@ class PageVisitMiddleware:
 
     @staticmethod
     def _get_ip(request):
-        xff = request.META.get('HTTP_X_FORWARDED_FOR')
-        if xff:
-            return xff.split(',')[0].strip()
-        return request.META.get('REMOTE_ADDR')
+        # Letzter Eintrag von X-Forwarded-For = der Besucher, wie ihn der Proxy
+        # sah (EIG105); der erste Eintrag ist vom Absender frei wählbar.
+        return client_ip(request)

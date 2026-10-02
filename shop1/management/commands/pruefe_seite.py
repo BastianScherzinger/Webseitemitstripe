@@ -19,6 +19,7 @@ keine Sitzung, keinen Besuchseintrag, keine Werbe-Impression.
 """
 
 import json
+import logging
 import os
 import re
 from collections import Counter
@@ -72,7 +73,12 @@ def pruefhost():
     return 'localhost'
 
 
+_log = logging.getLogger('shop1')
+
+
 class Command(BaseCommand):
+    """Prüfbefehl ``pruefe_seite``: Umgebung, Datenbanken, Sitemap-Seiten, Kopfangaben."""
+
     help = ('Prüft die laufende Umgebung (Variablen, Datenbanken, statische '
             'Dateien) und die ausgelieferte Seite (Sitemap, Kopfangaben, '
             'JSON-LD, Schutzkopfzeilen, Produkte).')
@@ -90,6 +96,7 @@ class Command(BaseCommand):
         self._pruefe_geheimnisse()
         self._pruefe_betriebsmodus()
         self._pruefe_hosts()
+        self._pruefe_security_txt()
         self._pruefe_datenbanken()
         self._pruefe_statische_dateien()
         self._pruefe_dienste()
@@ -170,11 +177,27 @@ class Command(BaseCommand):
                 'probieren genau den zuerst.'
             )
 
+    def _pruefe_security_txt(self):
+        """Warnt, wenn das feste Ablaufdatum der security.txt naht (EIG60)."""
+        from datetime import datetime, timedelta, timezone as tz
+        roh = str(getattr(settings, 'SECURITY_TXT_EXPIRES', '') or '')
+        try:
+            ablauf = datetime.fromisoformat(roh.replace('Z', '+00:00'))
+        except ValueError:
+            self.fehler.append(f'SECURITY_TXT_EXPIRES "{roh}" ist kein Zeitstempel (RFC 3339).')
+            return
+        if ablauf < datetime.now(tz.utc) + timedelta(days=60):
+            self.warnungen.append(
+                f'security.txt läuft am {ablauf:%d.%m.%Y} ab (SECURITY_TXT_EXPIRES in '
+                f'mainweb/settings.py): um ein Jahr verlängern.'
+            )
+
     def _pruefe_datenbanken(self):
         for alias in ('default', 'pystore'):
             try:
                 connections[alias].cursor().close()
             except Exception as fehler:
+                _log.warning('pruefe_seite: Datenbank %s nicht erreichbar', alias, exc_info=True)
                 self.fehler.append(f'Datenbank "{alias}" nicht erreichbar: {fehler}')
 
         if settings.PYSTORE_IS_EXTERNAL:
@@ -195,6 +218,7 @@ class Command(BaseCommand):
         try:
             vorhanden = set(connections[alias].introspection.table_names())
         except Exception:
+            _log.warning('pruefe_seite: Tabellen von %s nicht lesbar', alias, exc_info=True)
             return []
         return [t for t in ('shop1_werbung', 'shop1_werbungstat', 'shop1_visitorlog')
                 if t not in vorhanden]
@@ -253,6 +277,7 @@ class Command(BaseCommand):
             aktive = list(Produkt.objects.filter(aktiv=True)
                           .values('id', 'name', 'slug', 'preis', 'beschreibung', 'bild'))
         except Exception as fehler:
+            _log.warning('pruefe_seite: Produkte nicht lesbar', exc_info=True)
             self.fehler.append(f'Produkte nicht lesbar: {fehler}')
             return
 
@@ -299,6 +324,7 @@ class Command(BaseCommand):
                 transaction.set_rollback(True, using='default')
                 transaction.set_rollback(True, using='pystore')
         except Exception as fehler:
+            _log.exception('pruefe_seite: Prüfung der ausgelieferten Seite abgebrochen')
             self.fehler.append(
                 f'Die Prüfung der ausgelieferten Seite ist abgebrochen: '
                 f'{type(fehler).__name__}: {fehler}'

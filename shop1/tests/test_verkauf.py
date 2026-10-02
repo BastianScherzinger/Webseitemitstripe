@@ -28,8 +28,8 @@ PREIS = Decimal('87.50')
 KAUFWEGE = [
     '/warenkorb/',
     '/warenkorb/add/{pid}/',
-    '/warenkorb/remove/Stueck/',
-    '/warenkorb/update/Stueck/',
+    '/warenkorb/remove/1/',    # Kennung des Postens (EIG76)
+    '/warenkorb/update/1/',
     '/checkout/',
     '/payment/{oid}/',
     '/payment/success/{oid}/',
@@ -129,6 +129,10 @@ class OhneVerkaufTest(_Grundlage):
         self.assertFalse(antwort.json()['verkauf_aktiv'])
         self.bestellung.refresh_from_db()
         self.assertEqual(self.bestellung.status, 'pending')
+        # Auch das Anlegen der PayPal-Bestellung (EIG63) antwortet mit JSON.
+        antwort = self.sende(f'/paypal/create/{self.bestellung.id}/')
+        self.assertEqual(antwort.status_code, 409)
+        self.assertFalse(antwort.json()['verkauf_aktiv'])
 
     def test_kein_angebot_im_schema(self):
         for pfad in ('/', '/produkte/', self.produktseite):
@@ -266,7 +270,7 @@ class MitVerkaufTest(_Grundlage):
         self.client.force_login(self.kundin)
         self.assertContains(self.hole(self.produktseite), f'/warenkorb/add/{self.produkt.id}/')
         self.assertEqual(self.hole('/warenkorb/').status_code, 200)
-        self.hole(f'/warenkorb/add/{self.produkt.id}/')
+        self.sende(f'/warenkorb/add/{self.produkt.id}/')   # seit EIG85 nur per POST
         self.assertEqual(self.kundin.cart.items.count(), 1)
 
     def test_angebot_im_schema_und_agb_im_fuss(self):

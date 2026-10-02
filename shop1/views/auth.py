@@ -8,6 +8,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.debug import sensitive_post_parameters
 
 from .. import mails
@@ -16,6 +17,20 @@ from ..models import UserProfile, Order
 from ._helpers import _is_admin, _sync_session_to_db, zu_viele_anfragen
 
 _log = logging.getLogger('shop1')
+
+
+def _sicheres_ziel(request):
+    """Das ``next``-Ziel der Anmeldung, wenn es auf diese Seite zeigt (EIG70).
+
+    ``@login_required`` hängt ``?next=…`` an die Anmelde-Adresse; das Formular
+    schickt es mit zurück, weil es ohne ``action`` an die aktuelle Adresse
+    (samt Anfrageteil) sendet. Fremde Hosts und ``javascript:``-Ziele fallen
+    heraus – sonst wäre die Anmeldung eine offene Weiterleitung."""
+    ziel = request.POST.get('next') or request.GET.get('next') or ''
+    if ziel and url_has_allowed_host_and_scheme(
+            ziel, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        return ziel
+    return None
 
 
 @sensitive_post_parameters()
@@ -39,7 +54,7 @@ def login(request):
                     messages.success(request, f'Willkommen zurück, {user.first_name or user.username}!')
             except UserProfile.DoesNotExist:
                 messages.success(request, f'Willkommen zurück, {user.first_name or user.username}!')
-            return redirect('home')
+            return redirect(_sicheres_ziel(request) or 'home')
         else:
             messages.error(request, 'Ungültige Anmeldedaten')
             return render(request, 'shop1/login.html', {'error': 'Ungültige Anmeldedaten'})
@@ -52,9 +67,15 @@ def logout(request):
     return render(request, 'shop1/logout.html')
 
 
-# offen-ok: die Registrierung muss offen sein – wer sich anmelden soll, ist
-# noch nicht angemeldet. Geschrieben wird nur, was das geprüfte Formular
-# durchlässt (CustomUserCreationForm), und django-axes begrenzt die Versuche.
+# Warum ohne Anmeldeschutz: Wer sich registriert, ist noch nicht angemeldet.
+# Geschrieben wird nur, was das geprüfte Formular durchlässt
+# (CustomUserCreationForm: Pflichtfelder, Passwortregeln, eine Adresse nur je
+# Konto). Gebremst wird in der View selbst: je IP-Adresse höchstens
+# ANFRAGE_GRENZE Registrierungen im Zeitfenster (zu_viele_anfragen, 429).
+# django-axes zählt nur fehlgeschlagene Anmeldungen und begrenzt die
+# Registrierung NICHT. Die Drosselung liegt im LocMemCache je Gunicorn-Prozess:
+# eine Schleife bremst sie, mehr nicht.
+# offen-ok: bewusst öffentlich, Drosselung je IP in der View (nicht django-axes)
 @sensitive_post_parameters()
 def register(request):
     """Registrierung; die Bestätigungsmail verschickt das Signal in ``signals.py``."""
@@ -80,8 +101,9 @@ def register(request):
                 messages.success(
                     request,
                     f'Account erfolgreich erstellt! '
-                    f'Eine Bestätigungs-E-Mail wurde an {user.email} gesendet. '
-                    f'Prüfe dein Postfach (auch Spam-Ordner).',
+                    f'Die Bestätigungs-E-Mail an {user.email} ist unterwegs – prüfe dein '
+                    f'Postfach (auch den Spam-Ordner). Kommt nichts an, kannst du sie nach '
+                    f'der Anmeldung im Profil erneut anfordern.',
                 )
             except Exception:
                 _log.exception('Erfolgsmeldung der Registrierung nicht setzbar (Benutzer %s)', user.pk)
@@ -139,8 +161,15 @@ def delete_account(request):
         if _is_admin(user):
             messages.error(request, '⛔ Der Shopbesitzer-Account kann nicht gelöscht werden.')
             return redirect('profil')
+        hatte_bestellungen = user.orders.exists()
+        # Bestellungen bleiben erhalten (EIG45): ``Order.user`` ist SET_NULL,
+        # Belege unterliegen Aufbewahrungsfristen (§ 257 HGB, § 147 AO).
         user.delete()
-        messages.success(request, 'Dein Account und alle dazugehörigen Daten wurden erfolgreich gelöscht.')
+        if hatte_bestellungen:
+            messages.success(request, 'Dein Konto wurde gelöscht. Bestellungen bleiben, soweit das Gesetz '
+                                      'es für Belege verlangt, ohne Verbindung zu einem Konto gespeichert.')
+        else:
+            messages.success(request, 'Dein Account und alle dazugehörigen Daten wurden erfolgreich gelöscht.')
         return redirect('home')
     return redirect('profil')
 

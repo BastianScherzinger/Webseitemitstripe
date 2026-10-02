@@ -43,43 +43,43 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Vorname *</label>
-                                <input type="text" name="vorname" aria-label="Vorname" value="{{ profile_data.vorname }}" required>
+                                <input type="text" name="vorname" aria-label="Vorname" maxlength="{{ laengen.vorname }}" autocomplete="given-name" value="{{ profile_data.vorname }}" required>
                             </div>
                             <div>
                                 <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Nachname *</label>
-                                <input type="text" name="nachname" aria-label="Nachname" value="{{ profile_data.nachname }}" required>
+                                <input type="text" name="nachname" aria-label="Nachname" maxlength="{{ laengen.nachname }}" autocomplete="family-name" value="{{ profile_data.nachname }}" required>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">E-Mail Address *</label>
-                            <input type="email" name="email" aria-label="E-Mail-Adresse" value="{{ profile_data.email }}" required>
+                            <input type="email" name="email" aria-label="E-Mail-Adresse" maxlength="{{ laengen.email }}" autocomplete="email" value="{{ profile_data.email }}" required>
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Phone Link</label>
-                            <input type="tel" name="telefon" aria-label="Telefonnummer (optional)" value="{{ profile_data.telefon }}">
+                            <input type="tel" name="telefon" aria-label="Telefonnummer (optional)" maxlength="{{ laengen.telefon }}" autocomplete="tel" value="{{ profile_data.telefon }}">
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Straße & Hausnummer *</label>
-                            <input type="text" name="adresse" aria-label="Straße und Hausnummer" value="{{ profile_data.adresse }}" required>
+                            <input type="text" name="adresse" aria-label="Straße und Hausnummer" maxlength="{{ laengen.adresse }}" autocomplete="street-address" value="{{ profile_data.adresse }}" required>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <div>
                                 <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">PLZ *</label>
-                                <input type="text" name="postleitzahl" aria-label="Postleitzahl" value="{{ profile_data.postleitzahl }}" required>
+                                <input type="text" name="postleitzahl" aria-label="Postleitzahl" maxlength="{{ laengen.postleitzahl }}" autocomplete="postal-code" value="{{ profile_data.postleitzahl }}" required>
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Stadt *</label>
-                                <input type="text" name="stadt" aria-label="Stadt" value="{{ profile_data.stadt }}" required>
+                                <input type="text" name="stadt" aria-label="Stadt" maxlength="{{ laengen.stadt }}" autocomplete="address-level2" value="{{ profile_data.stadt }}" required>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Land *</label>
-                            <input type="text" name="land" aria-label="Land" value="{{ profile_data.land }}" required>
+                            <input type="text" name="land" aria-label="Land" maxlength="{{ laengen.land }}" autocomplete="country-name" value="{{ profile_data.land }}" required>
                         </div>
 
                         <!-- Payment Method Selection -->
@@ -95,6 +95,7 @@
                                     </div>
                                 </label>
 
+                                {% if bank_moeglich %}
                                 <label class="relative cursor-pointer group">
                                     <input type="radio" name="payment_method" value="bank_transfer" class="peer hidden">
                                     <div class="p-6 rounded-2xl glass border-white/10 peer-checked:border-glow-orange peer-checked:bg-glow-orange/5 hover:bg-white/5 transition-all h-full flex flex-col items-center justify-center text-center gap-3">
@@ -103,6 +104,7 @@
                                         <p class="text-[8px] text-white/40 uppercase leading-tight">Direct Transfer</p>
                                     </div>
                                 </label>
+                                {% endif %}
                             </div>
                         </div>
 
@@ -114,6 +116,8 @@
                                 Zahlungspflichtig bestellen
                             </button>
                         </div>
+                        {% comment %}Rechtslinks direkt am Abschluss (EIG117, § 312j Abs. 3 BGB): der Checkout erscheint nur bei aktivem Verkauf.{% endcomment %}
+                        <p class="text-[10px] text-white/40 leading-relaxed text-center">Mit deiner Bestellung gelten unsere <a href="{% url 'agb' %}" class="text-glow-orange hover:underline">AGB mit Widerrufsbelehrung (§ 5)</a> und die <a href="{% url 'datenschutz' %}" class="text-glow-orange hover:underline">Datenschutzerklärung</a>.</p>
                     </form>
                 </div>
             </div>

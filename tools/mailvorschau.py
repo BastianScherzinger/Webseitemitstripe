@@ -5,7 +5,8 @@
 Schreibt ``admin-kontakt.html``, ``admin-motiv.html`` (Mails an Luisa),
 ``bastian.html`` (Kopie an die Webagentur, Kontaktanfrage),
 ``bastian-motiv.html``, ``bastian-registrierung.html`` und
-``kunde.html`` / ``kunde-newsletter.html`` (Konto bzw. Newsletter bestätigen)
+``kunde.html`` / ``kunde-newsletter.html`` (Konto bzw. Newsletter bestätigen),
+``newsletter-neues-stueck.html`` (Newsletter zu einem neuen Stück)
 – ``admin.html`` ist eine Kopie von ``admin-kontakt.html``.
 Braucht eine ``.env`` wie jeder ``manage.py``-Befehl.
 """
@@ -31,9 +32,8 @@ LANG = ('Hallo Luisa,\n\nich habe deine bemalten Jacken auf Instagram gesehen un
         'Viele Grüße\nJürgen Übermut <script>alert("x")</script>')
 
 
-def main(ziel):
-    ziel = Path(ziel)
-    ziel.mkdir(parents=True, exist_ok=True)
+def _mails_an_luisa(ziel):
+    """Die beiden gestalteten Mails an Luisa: Kontaktanfrage und Motivanfrage."""
     objekt = SimpleNamespace(pk=42, _meta=SimpleNamespace(app_label='shop1', model_name='kontaktanfrage'))
     kontakt = [('Name', 'Jürgen Übermut'), ('E-Mail', 'juergen@example.invalid', 'mail'),
                ('Betreff', 'Frage zur Fuchs-Jacke in Größe M')]
@@ -52,7 +52,11 @@ def main(ziel):
         antwort_an='erika@example.invalid', langtext_titel='Was es bedeuten soll', langtext=bedeutung,
         objekt=motiv_obj, hinweis='Alle Anfragen stehen im Admin-Panel unter „Motivanfragen".')
     (ziel / 'admin-motiv.html').write_text(html, encoding='utf-8')
+    return objekt, kontakt, motiv_obj, motiv, bedeutung
 
+
+def _kopien_an_die_webagentur(ziel, objekt, kontakt, motiv_obj, motiv, bedeutung):
+    """Die drei Kopien an die Webagentur; der Versandweg wird nur abgefangen."""
     gefangen = {}
     original = mails.send_brevo_email
     mails.send_brevo_email = lambda betreff, html, *a, **k: gefangen.setdefault('html', html)
@@ -78,6 +82,9 @@ def main(ziel):
     finally:
         mails.send_brevo_email = original
 
+
+def _mails_an_besucher(ziel):
+    """Die Bestätigungsmails an Besucherinnen: Konto und Newsletter."""
     link = mails.live_url() + '/verify/0f1e2d3c-beispiel/'
     (ziel / 'kunde.html').write_text(mails.rendern(
         'besucher.html', titel='Bitte bestätige deine E-Mail-Adresse', kopf_label='Konto',
@@ -94,6 +101,32 @@ def main(ziel):
         link=mails.live_url() + '/newsletter/bestaetigen/?t=beispiel', knopf='Anmeldung bestätigen',
         nachsatz='Warst du das nicht, ignoriere diese E-Mail einfach – ohne Bestätigung '
                  'schicken wir dir nichts.'), encoding='utf-8')
+
+
+def _newsletter_zu_neuem_stueck(ziel):
+    """Newsletter zu einem neuen Stück; der Versand wird nur abgefangen."""
+    # Newsletter zu einem neuen Stück (utils.send_newsletter_email) – der Versand wird abgefangen.
+    from shop1 import utils
+    produkt = SimpleNamespace(name='Fuchs auf Jeansjacke', bild=None,
+                              get_absolute_url=lambda: '/produkt/fuchs-auf-jeansjacke/')
+    gefangen = {}
+    original = utils.send_brevo_email
+    utils.send_brevo_email = lambda betreff, html, *a, **k: gefangen.setdefault('newsletter', html)
+    try:
+        utils.send_newsletter_email(produkt, [SimpleNamespace(email='leserin@example.invalid')])
+    finally:
+        utils.send_brevo_email = original
+    (ziel / 'newsletter-neues-stueck.html').write_text(gefangen['newsletter'], encoding='utf-8')
+
+
+def main(ziel):
+    """Schreibt alle Mail-Vorschauen mit Beispieldaten als HTML nach ``ziel``."""
+    ziel = Path(ziel)
+    ziel.mkdir(parents=True, exist_ok=True)
+    daten = _mails_an_luisa(ziel)
+    _kopien_an_die_webagentur(ziel, *daten)
+    _mails_an_besucher(ziel)
+    _newsletter_zu_neuem_stueck(ziel)
     print(f'Vorschau geschrieben nach {ziel}')
 
 

@@ -174,7 +174,7 @@
                     {% if w.bild_src %}
                     <div class="w-full md:w-28 md:flex-shrink-0 bg-black/30 flex items-center justify-center overflow-hidden" id="imgwrap-{{ w.id }}" style="min-height:112px;max-height:160px;">
                         <img src="{{ w.bild_src }}" alt="Werbebild der Kampagne „{{ w.titel }}“"
-                             class="w-full h-full object-cover"
+                             width="112" height="112" class="w-full h-full object-cover"
                              data-bei-fehler-ausblenden="imgwrap-{{ w.id }}">
                     </div>
                     {% endif %}
@@ -282,7 +282,7 @@
                             <div>
                                 <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-1">Neues Bild hochladen</label>
                                 {% if w.bild_src %}
-                                <img src="{{ w.bild_src }}" alt="Bisheriges Werbebild der Kampagne „{{ w.titel }}“ (Vorschau)" style="width:40px;height:40px;object-fit:cover;border-radius:8px;margin-bottom:6px;"
+                                <img src="{{ w.bild_src }}" alt="Bisheriges Werbebild der Kampagne „{{ w.titel }}“ (Vorschau)" width="40" height="40" style="width:40px;height:40px;object-fit:cover;border-radius:8px;margin-bottom:6px;"
                                      data-bei-fehler-ausblenden>
                                 {% endif %}
                                 <input type="file" name="bild_file" accept="image/*" aria-label="Neues Bild für die Kampagne „{{ w.titel }}“ hochladen"
@@ -360,9 +360,10 @@
         {% endif %}
 
     </div>
+    {% if werbungen %}{{ timeline|json_script:"werbung-timeline" }}{{ site_breakdown|json_script:"werbung-plattformen" }}{% endif %}
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{% static 'shop1/chart-4.4.0.umd.js' %}"></script>
 <script nonce="{{ csp_nonce }}">
 function toggleEdit(id) {
     document.getElementById('edit-' + id).classList.toggle('hidden');
@@ -396,7 +397,7 @@ Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
 
 {% if werbungen %}
 // ── KPI totals aus Timeline ───────────────────────────────────────────────
-const TIMELINE = {{ timeline_json|safe }};
+const TIMELINE = JSON.parse(document.getElementById('werbung-timeline').textContent);
 const totalViews30  = TIMELINE.views.reduce((s, v) => s + v, 0);
 const totalKlicks30 = TIMELINE.klicks.reduce((s, v) => s + v, 0);
 document.getElementById('kpi-views').textContent  = totalViews30.toLocaleString('de-DE');
@@ -404,7 +405,7 @@ document.getElementById('kpi-klicks').textContent = totalKlicks30.toLocaleString
 
 // ── Chart 1: Reichweite nach Plattform (Balken) ──────────────────────────
 (function() {
-    const BD = {{ site_breakdown_json|safe }};
+    const BD = JSON.parse(document.getElementById('werbung-plattformen').textContent);
     const canvas = document.getElementById('siteChart');
     const noData = document.getElementById('site-no-data');
     if (!canvas) return;

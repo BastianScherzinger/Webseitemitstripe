@@ -18,7 +18,7 @@
             <h1 class="text-4xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                 Anmelden
             </h1>
-            <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Willkommen zurück.</p>
+            <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Willkommen zurück. Mit * markierte Felder sind Pflicht.</p>
         </div>
 
         <div class="glass-card p-8 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl relative">
@@ -26,12 +26,12 @@
                 {% csrf_token %}
                 
                 <div>
-                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange mb-4">Identity</label>
-                    <input type="text" name="username" aria-label="Benutzername" autocomplete="username" placeholder="BENUTZERNAME" class="w-full form-input rounded-2xl px-6 py-4 text-sm" required>
+                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange mb-4">Identity *</label>
+                    <input type="text" name="username" aria-label="Benutzername" autocomplete="username" maxlength="150" placeholder="BENUTZERNAME" class="w-full form-input rounded-2xl px-6 py-4 text-sm" required>
                 </div>
                 
                 <div>
-                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange mb-4">Security Key</label>
+                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange mb-4">Security Key *</label>
                     <input type="password" name="password" aria-label="Passwort" autocomplete="current-password" placeholder="PASSWORT" class="w-full form-input rounded-2xl px-6 py-4 text-sm" required>
                 </div>
 

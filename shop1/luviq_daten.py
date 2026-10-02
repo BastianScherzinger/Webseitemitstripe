@@ -9,10 +9,14 @@ Luisas Satz. Quelle der Wortlaute: ``Design/luviq/MARKENWISSEN-luisa.md`` und
 Kein Datum und kein Satz davon steht in einer Vorlage.
 """
 
+import logging
 import os
 from datetime import datetime
 
+from django.db import DatabaseError
 from django.utils import timezone
+
+_log = logging.getLogger('shop1')
 
 #: Luisas Markensatz, von ihr gewählt am 19.09.2026. Gesprochen, nicht gesetzt.
 MARKENSATZ = 'Sag mir, was du willst — ich mal’s dir.'
@@ -69,17 +73,31 @@ def termin_text(termin):
 
 
 def drop_nummer():
-    """Nummer der nächsten Ausgabe, dreistellig: ``DROP_NUMMER`` oder die
-    nächste freie Archivnummer. So bekommt der Drop nie eine Nummer, die im
-    Archiv schon vergeben ist."""
+    """Nummer der nächsten Ausgabe, dreistellig: ``DROP_NUMMER``, sonst die
+    Nummer des vorab angelegten Drop-Stücks, sonst die nächste freie.
+
+    Lädt Luisa das Drop-Stück vor dem Termin hoch, bekommt es beim ersten
+    Speichern die nächste freie Archivnummer (``Produkt.save``). Der Countdown
+    muss diese Nummer nennen und darf nicht auf die übernächste springen
+    (EIG123): Drop-Stück = das Stück mit der kleinsten Nummer über dem
+    Archiv (``Produkt.vergeben``). Ohne so ein Stück gilt höchste Nummer + 1 –
+    der Drop bekommt nie eine Nummer, die im Archiv schon vergeben ist."""
     fest = os.getenv('DROP_NUMMER', '').strip()
     if fest.isdigit():
         return f'{int(fest):03d}'
     from django.db.models import Max
     from .models import Produkt
     try:
+        archiv = Produkt.objects.filter(vergeben=True).aggregate(m=Max('nummer'))['m'] or 0
+        vorab = (Produkt.objects.filter(vergeben=False, nummer__gt=archiv)
+                 .order_by('nummer').values_list('nummer', flat=True).first())
+        if vorab:
+            return f'{vorab:03d}'
         hoechste = Produkt.objects.aggregate(m=Max('nummer'))['m'] or 0
-    except Exception:
+    except DatabaseError:
+        # Die Seite muss auch ohne lesbare Tabelle rendern (frische Datenbank,
+        # Migration läuft): dann beginnt die Zählung bei Nº 001.
+        _log.warning('drop_nummer: Archivnummern nicht lesbar, Nº 001 angenommen', exc_info=True)
         hoechste = 0
     return f'{hoechste + 1:03d}'
 
@@ -105,6 +123,7 @@ TEASER = []
 
 
 def laufband(nummer, termin):
+    """Die drei Teile des Laufbands; mit Termin nennt der mittlere die Ausgabe."""
     teile = ['Motiv anfragen, ohne Kosten']
     if termin:
         teile.append(f'Nº {nummer} erscheint {termin_text(termin)}')

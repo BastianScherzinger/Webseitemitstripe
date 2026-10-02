@@ -3,10 +3,15 @@ Karte eines Stücks im Archiv (Startseite und /produkte/), Look „Nachtausgabe"
 seit 19.09.2026. Freisteller liegen auf der hellen Kachel (multiply). Ohne
 Verkauf: Nummer + „vergeben", mit Verkauf: Nummer + Preis. Die ganze Karte
 ist über den Namen verlinkt (ein Link, kein zweiter Pfeil-Knopf).
-`produkt` und `forloop` kommen aus der umgebenden Schleife.
+`produkt` und `forloop` kommen aus der umgebenden Schleife. `stufe` setzt die
+Überschriftsebene des Namens (Vorgabe 3: unter einer Abschnittsüberschrift auf der
+Startseite; `/produkte/` setzt 2, dort folgen die Karten direkt auf die h1, VL17).
+`erstes` (nur im Archiv gesetzt: das erste Bild im Hauptbereich ist das LCP-Bild) lädt
+sofort und mit Vorrang, alle anderen lazy. `srcset`/`sizes` der ersten Karte müssen zum
+Preload in produkte.html passen.
 {% endcomment %}<li class="lv-karte">
-    <figure>{% if produkt.bild %}<img src="{{ produkt.bild.url|cloud:'w_600,h_750,c_fill' }}" alt="Foto: {{ produkt.name }}, handbemaltes Einzelstück von Luviq Universe" width="600" height="750" loading="lazy" decoding="async">{% endif %}</figure>
+    <figure>{% if produkt.bild %}<img src="{{ produkt.bild.url|cloud:'w_600,h_750,c_fill' }}" srcset="{{ produkt.bild.url|cloud_srcset:'300,450,600;c_fill;1.25' }}" sizes="{% if erstes %}(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 92vw{% else %}(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 46vw{% endif %}" alt="Foto: {{ produkt.name }}, handbemaltes Einzelstück von Luviq Universe" width="600" height="750"{% if erstes %} loading="eager" fetchpriority="high"{% else %} loading="lazy"{% endif %} decoding="async">{% endif %}</figure>
     <p class="lv-karte-kopf"><b>Nº {{ produkt.archiv_nummer }}</b>{% if verkauf_aktiv %}<span class="lv-preis">{{ produkt.preis }} €</span>{% else %}<span>vergeben</span>{% endif %}</p>
-    <h3 class="lv-serif"><a href="{{ produkt.get_absolute_url }}">{{ produkt.name }}</a></h3>
+    <h{{ stufe|default:"3" }} class="lv-serif"><a href="{{ produkt.get_absolute_url }}">{{ produkt.name }}</a></h{{ stufe|default:"3" }}>
     {% if produkt.material or produkt.technik %}<p class="lv-material">{{ produkt.material }}{% if produkt.material and produkt.technik %} · {% endif %}{{ produkt.technik }}</p>{% endif %}
 </li>

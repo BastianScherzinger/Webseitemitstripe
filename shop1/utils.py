@@ -1,3 +1,6 @@
+"""Mailversand über die Brevo-API und der Newsletter-Text: ``send_brevo_email`` (asynchron),
+``send_newsletter_email`` (an die übergebenen Abonnenten; die Auswahl der bestätigten trifft der Aufrufer)."""
+
 import os
 import logging
 import threading
@@ -10,7 +13,7 @@ _log = logging.getLogger('shop1')
 
 
 def send_brevo_email(subject, html_content, recipient_email, recipient_name="", text_content="",
-                     reply_to=""):
+                     reply_to="", danach=None):
     """
     Zentrale Funktion zum Versenden von Emails via Brevo API (asynchron).
     Bypass für Railway SMTP-Port-Sperren.
@@ -18,10 +21,33 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
     ``reply_to`` (MW21): die Adresse, an die „Antworten“ im Postfach geht.
     Ohne sie ginge die Antwort auf eine Kontaktanfrage an die eigene
     Versandadresse statt an den Anfragenden. Beide Wege setzen sie.
+
+    ``danach`` (EIG10): ein Aufruf ``danach(ok)`` am Ende des Hintergrund-Threads, ``ok``
+    ist ``True``, wenn Brevo bzw. der SMTP-Server die Mail angenommen hat. Damit kann
+    der Aufrufer ein Scheitern festhalten, das sonst nur im Protokoll stünde. Das
+    Ergebnis erreicht den Besucher nicht mehr — die Antwortseite ist da längst
+    ausgeliefert —, aber die gespeicherte Anfrage (Panel) trägt es.
     """
     def _send():
+        ok = False
+        try:
+            ok = _senden()
+        finally:
+            if danach is not None:
+                try:
+                    danach(ok)
+                except Exception:
+                    _log.exception("Nachbearbeitung nach dem Mailversand fehlgeschlagen")
+                finally:
+                    # Der Thread hat eine eigene Datenbankverbindung geöffnet; im
+                    # Hauptthread (Tests, die den Thread ersetzen) bleibt sie offen.
+                    if threading.current_thread() is not threading.main_thread():
+                        from django.db import connections
+                        connections.close_all()
+
+    def _senden():
         api_key = os.getenv('BREVO_API_KEY')
-        sender_name = "Luviq-Shop"
+        sender_name = "Luviq Universe"
         sender_email = settings.DEFAULT_FROM_EMAIL
 
         if api_key:
@@ -46,10 +72,11 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
                 response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=10)
                 if response.status_code < 300:
                     _log.info("E-Mail via Brevo API gesendet an %s", recipient_email)
-                else:
-                    _log.error("Brevo API Fehler (%s): %s", response.status_code, response.text)
+                    return True
+                _log.error("Brevo API Fehler (%s): %s", response.status_code, response.text)
             except Exception as e:
                 _log.error("Brevo API Verbindungsfehler: %s", e)
+            return False
         else:
             try:
                 # EmailMultiAlternatives statt send_mail: nur so lässt sich
@@ -65,25 +92,30 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
                 sent = mail.send(fail_silently=False)
                 if sent:
                     _log.info("E-Mail via SMTP gesendet an %s", recipient_email)
+                return bool(sent)
             except Exception as e:
                 _log.error("SMTP Fehler: %s", e)
+            return False
 
     # Im Hintergrund senden
     threading.Thread(target=_send).start()
 
 
 def send_newsletter_email(produkt, subscribers):
-    """Sendet ein wunderschönes Newsletter-Update an alle Abonnenten."""
-    subject = f"✨ NEW DROP: {produkt.name} is online!"
+    """Sendet das Newsletter-Update zu einem neuen Stück an die Abonnenten.
+
+    Deutsch und im Look der übrigen Mails (``emails/newsletter.html``, EIG130);
+    Text- und HTML-Teil. Ohne Verkauf kein Kaufaufruf in der Mail."""
+    from .mails import KONTAKT_EMAIL, rendern
+    from .verkauf import verkauf_aktiv
+    subject = f"Neues Stück: {produkt.name}"
     site_url = settings.SITE_URL.rstrip('/')
     # Zieladresse aus der URLconf holen statt sie von Hand zusammenzusetzen.
     # Vorher stand hier f"{site_url}/produkte/{produkt.id}/" – diese Route gibt
     # es nicht (richtig waere "produkt/<int>/", siehe shop1/urls.py). Jeder
     # verschickte Newsletter fuehrte damit auf eine 404-Seite.
     produkt_url = f"{site_url}{produkt.get_absolute_url()}"
-    # Verkaufsschalter: ohne Verkauf kein Kaufaufruf in der Mail.
-    from .verkauf import verkauf_aktiv
-    knopf = 'Jetzt Sichern' if verkauf_aktiv() else 'Stück ansehen'
+    knopf = 'Jetzt sichern' if verkauf_aktiv() else 'Stück ansehen'
     # Wenn das Bild auf einem externen Speicher (Cloudinary) liegt, ist die URL bereits absolut
     if produkt.bild and (produkt.bild.url.startswith('http://') or produkt.bild.url.startswith('https://')):
         image_url = produkt.bild.url
@@ -91,50 +123,27 @@ def send_newsletter_email(produkt, subscribers):
         image_url = f"{site_url}{produkt.bild.url}"
     else:
         image_url = ""
-    
+
+    from .newsletter import abmelde_adresse
     for sub in subscribers:
-        html_content = f"""
-        <html>
-            <body style="margin: 0; padding: 0; background-color: #050816; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #ffffff;">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #050816; padding: 40px 20px;">
-                    <tr>
-                        <td align="center">
-                            <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-                                <!-- Header Image -->
-                                {"<tr><td><img src='" + image_url + "' width='600' style='width: 100%; height: auto; display: block;' alt='" + produkt.name + "'></td></tr>" if image_url else ""}
-                                
-                                <!-- Content -->
-                                <tr>
-                                    <td style="padding: 40px; text-align: center;">
-                                        <h1 style="color: #ff6a00; font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; margin: 0 0 20px 0; text-shadow: 0 0 20px rgba(255,106,0,0.3);">New Drop</h1>
-                                        <h2 style="font-size: 24px; font-weight: 300; margin: 0 0 30px 0; color: #f4f7fb;">"{produkt.name}"</h2>
-                                        
-                                        <div style="height: 1px; width: 60px; background-color: #ff6a00; margin: 0 auto 30px auto;"></div>
-                                        
-                                        <p style="font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.6); margin-bottom: 40px; font-weight: 300;">
-                                            Ein neues handbemaltes Unikat aus dem Luviq-Orbit ist soeben gelandet. 
-                                            Jedes Teil ist ein 1-of-1 Statement gegen die Fast-Fashion Industrie.
-                                        </p>
-                                        
-                                        <a href="{produkt_url}" style="display: inline-block; background-color: #ff6a00; color: #ffffff; padding: 18px 40px; text-decoration: none; border-radius: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 14px; box-shadow: 0 10px 30px rgba(255,106,0,0.3);">
-                                            {knopf}
-                                        </a>
-                                    </td>
-                                </tr>
-                                
-                                <!-- Footer -->
-                                <tr>
-                                    <td style="padding: 30px; background-color: rgba(255,255,255,0.03); text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
-                                        <p style="font-size: 10px; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 2px; margin: 0;">
-                                            © {settings.SITE_URL.replace('https://', '').replace('http://', '')} // Luviq Cinematic Branding
-                                        </p>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </body>
-        </html>
-        """
-        send_brevo_email(subject, html_content, sub.email)
+        # Abmeldelink in jeder Mail (EIG17), je Adresse signiert; im Text und im HTML.
+        abmelde_url = abmelde_adresse(sub.email)
+        html_content = rendern(
+            'newsletter.html',
+            titel=subject,
+            preheader=f'Ein neues handbemaltes Stück bei Luviq Universe: {produkt.name}',
+            produkt_name=produkt.name,
+            bild_url=image_url,
+            link=produkt_url,
+            knopf=knopf,
+            abmelde_url=abmelde_url,
+        )
+        text_content = (
+            'Hallo,\n\n'
+            f'ein neues Stück ist da: „{produkt.name}“. Handbemalt, ein Einzelstück.\n\n'
+            f'{knopf}: {produkt_url}\n\n'
+            'Viele Grüße\nLuisa\n\n'
+            'Du bekommst diese Mail, weil du dich für den Newsletter angemeldet und die Anmeldung '
+            f'bestätigt hast. Abmelden mit einem Klick: {abmelde_url} - oder schreib mir kurz an {KONTAKT_EMAIL}.'
+        )
+        send_brevo_email(subject, html_content, sub.email, text_content=text_content)

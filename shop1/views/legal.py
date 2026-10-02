@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_page
 
 from .. import indexnow
+from ..middleware import oeffentliche_basis
 from ..models import Produkt, Subscriber
 # Das Register SEITEN_STAND (Routenname → Datum) liegt seit Schritt 16 in
 # ``shop1/seiten_stand.py``, weil auch der Kontextprozessor es liest. Hier
@@ -26,6 +27,7 @@ from ..seiten_stand import SEITEN_STAND  # noqa: F401 – Re-Export
 # llms.txt nennen nur bestätigte Beiträge, siehe Docstring in views/wissen.py.
 from .wissen import freigegebene_beitraege, uebersicht_indexierbar
 from ._helpers import zu_viele_anfragen
+from .. import spamschutz
 from ..verkauf import verkauf_aktiv
 
 _log = logging.getLogger('shop1')
@@ -91,9 +93,9 @@ def robots_txt(request):
         lines.append("")
 
     lines += [
-        f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
-        f"# Kurzfassung fuer Antwortmaschinen: {request.build_absolute_uri('/llms.txt')}",
-        f"# Volltext fuer Antwortmaschinen: {request.build_absolute_uri('/llms-full.txt')}",
+        f"Sitemap: {oeffentliche_basis(request)}/sitemap.xml",
+        f"# Kurzfassung fuer Antwortmaschinen: {oeffentliche_basis(request)}/llms.txt",
+        f"# Volltext fuer Antwortmaschinen: {oeffentliche_basis(request)}/llms-full.txt",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
@@ -177,7 +179,7 @@ def llms_txt(request):
     belegten Versandzeiten – keine Zahl darin, die nicht auch auf
     ``/liefergebiet/`` oder im Impressum steht.
     """
-    basis = request.build_absolute_uri('/')[:-1]
+    basis = oeffentliche_basis(request)
     # Verkaufsschalter: ohne Verkauf keine Kauf-, Zahlungs-, Versand- oder
     # Steuerangaben, keine Preise und kein Verweis auf die AGB.
     if not verkauf_aktiv():
@@ -394,7 +396,7 @@ def llms_full_txt(request):
     from . import motiv, shop
     from .wissen import WISSEN_BEITRAEGE, wissen as wissen_uebersicht, wissen_beitrag
 
-    basis = request.build_absolute_uri('/')[:-1]
+    basis = oeffentliche_basis(request)
     kurz = llms_txt.__wrapped__(request).content.decode('utf-8').rstrip('\n')
 
     verkauf = verkauf_aktiv()
@@ -477,7 +479,7 @@ def _seitenbilder(name: str, base_url: str) -> list[tuple[str, str]]:
 @cache_page(AUSGABE_CACHE_SEKUNDEN)
 def sitemap_xml(request):
     """Erzeugt eine vollständige sitemap.xml mit lastmod und Bild-URLs."""
-    base_url = request.build_absolute_uri('/')[:-1]
+    base_url = oeffentliche_basis(request)
 
     # 'home' behält absichtlich den leeren Pfad: die Startseite steht seit
     # jeher ohne Schrägstrich am Ende in der Sitemap, und eine andere
@@ -624,26 +626,63 @@ def newsletter_bestaetigen(request):
     return redirect('/')
 
 
+# offen-ok: der Abmeldelink steht in jeder Newsletter-Mail und richtet sich an
+# Empfänger ohne Konto. Er trägt eine Signatur; gelöscht wird nur die Adresse
+# aus dem Token, und nur per POST.
+def newsletter_abmelden(request):
+    """Newsletter abbestellen: GET zeigt die Seite, POST löscht die Adresse (EIG17)."""
+    from ..newsletter import email_aus_token
+    token = request.POST.get('t') or request.GET.get('t', '')
+    email = email_aus_token(token)
+    if email is None:
+        messages.error(request, 'Der Abmeldelink ist ungültig. Schreib uns kurz über das Kontaktformular, '
+                                'dann nehmen wir dich aus dem Verteiler.')
+        return redirect('/')
+    if request.method == 'POST':
+        Subscriber.objects.filter(email=email).delete()
+        messages.success(request, 'Du bist abgemeldet. Es kommt keine Newsletter-Post mehr an diese Adresse.')
+        return redirect('/')
+    return render(request, 'shop1/newsletter_abmelden.html', {'token': token})
+
+
 # offen-ok: die Newsletter-Anmeldung steht auf der Startseite und richtet sich
 # an Besucher ohne Konto. Geschrieben wird eine einzelne E-Mail-Adresse, und
 # das unique-Feld verhindert Mehrfacheinträge derselben Adresse.
 def newsletter_subscribe(request):
-    """Abonniert den Newsletter."""
+    """Abonniert den Newsletter.
+
+    Zwei Wege in dieselbe Prüfung: das Skript der Startseite schickt JSON und liest die
+    JSON-Antwort; ein Formular ohne JavaScript (EIG89, EIG129) schickt klassisch per POST
+    und bekommt eine Weiterleitung auf die Warteliste mit einer Meldung. Erkannt wird der
+    zweite Weg am ``Accept``-Kopf des Browsers (``text/html``) – Skriptaufrufe und Tests
+    schicken ihn nicht."""
     if request.method == 'POST':
+        klassisch = 'text/html' in request.headers.get('Accept', '')
+
+        def antwort_fehler(text, status):
+            if klassisch:
+                messages.error(request, text)
+                return redirect(reverse('home') + '#warteliste')
+            return JsonResponse({'error': text}, status=status)
+
         # Drosselung je IP-Adresse (FO09): ohne sie füllt eine Schleife die
         # Abonnentenliste mit fremden Adressen.
         if zu_viele_anfragen(request, 'newsletter'):
-            return JsonResponse({'error': 'Zu viele Anmeldungen in kurzer Zeit. '
-                                          'Bitte versuche es später noch einmal.'}, status=429)
+            return antwort_fehler('Zu viele Anmeldungen in kurzer Zeit. '
+                                  'Bitte versuche es später noch einmal.', 429)
 
         try:
             data = json.loads(request.body)
             email = data.get('email', '').strip()
+            falle = {k: data.get(k, '') for k in (spamschutz.FELD_FALLE, spamschutz.FELD_FALLE_ALT,
+                                                  spamschutz.FELD_ZEIT)}
         except (ValueError, AttributeError):
             # Kein JSON (ValueError, auch UnicodeDecodeError) oder JSON ohne
             # Objekt bzw. ohne Text unter "email" (AttributeError): dann kam
             # das Formular klassisch als POST-Felder.
             email = request.POST.get('email', '').strip()
+            falle = {k: request.POST.get(k, '') for k in (spamschutz.FELD_FALLE, spamschutz.FELD_FALLE_ALT,
+                                                          spamschutz.FELD_ZEIT)}
 
         # Serverseitige Prüfung (FO06): ``type="email"`` im Formular umgeht
         # jeder Abruf ohne Browser. 254 Zeichen ist die Länge des Modellfelds
@@ -653,15 +692,32 @@ def newsletter_subscribe(request):
                 raise ValidationError('zu lang')
             validate_email(email)
         except ValidationError:
-            return JsonResponse({'error': 'Bitte gib eine gültige Email an.'}, status=400)
+            return antwort_fehler('Bitte gib eine gültige Email an.', 400)
+
+        # Der Antworttext ist für neue, offene und bestätigte Adressen – und für
+        # verworfene Bots – derselbe: sonst verrät er, wer schon Abonnent ist.
+        text_ok = ('Fast geschafft! Bitte bestätige deine Anmeldung '
+                   'über den Link in der E-Mail, die wir dir geschickt haben.')
+
+        # Bot-Spam still verwerfen (Honigtopf, Zeitfalle, Markennachahmung in der
+        # Adresse): dieselbe Antwort, kein Eintrag, keine Mail.
+        punkte, gruende = spamschutz.bewerte(dict(falle, email=email))
+        if punkte >= spamschutz.SCHWELLE:
+            _log.warning('Newsletter: Spam verworfen (%s: %s)', punkte, ','.join(gruende))
+            if klassisch:
+                messages.success(request, text_ok)
+                return redirect(reverse('home') + '#warteliste')
+            return JsonResponse({'message': text_ok}, status=200)
 
         # Double-Opt-in (17.09.2026). Die Antwort ist fuer neue, offene und
         # bestaetigte Adressen dieselbe - sonst verraet sie, wer schon Abonnent ist.
         abo, neu = Subscriber.objects.get_or_create(email=email)
-        if not abo.bestaetigt:
+        if not abo.bestaetigt and spamschutz.mail_budget_ok('newsletter', stunde=30, tag=150):
             _bestaetigung_senden(request, abo)
-        antwort = {'message': 'Fast geschafft! Bitte bestätige deine Anmeldung '
-                              'über den Link in der E-Mail, die wir dir geschickt haben.'}
+        if klassisch:
+            messages.success(request, text_ok)
+            return redirect(reverse('home') + '#warteliste')
+        antwort = {'message': text_ok}
         if neu:
             # ``neu`` sagt dem Skript der Startseite, dass diese Anmeldung als
             # Abschluss zählt (FO08); eine Wiederholung zählt nicht.

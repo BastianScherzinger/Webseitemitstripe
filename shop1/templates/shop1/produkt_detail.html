@@ -3,7 +3,7 @@
 
 {% block title %}{{ produkt.meta_title }}{% endblock %}
 {% block meta_description %}{{ produkt.meta_description }}{% endblock %}
-{% block preload %}{% if produkt.bild %}<link rel="preload" as="image" href="{{ produkt.bild.url|cloud:'w_1200,c_limit' }}" imagesrcset="{{ produkt.bild.url|cloud:'w_600,c_limit' }} 600w, {{ produkt.bild.url|cloud:'w_900,c_limit' }} 900w, {{ produkt.bild.url|cloud:'w_1200,c_limit' }} 1200w" imagesizes="(min-width: 1024px) 50vw, 100vw" fetchpriority="high">{% endif %}{% endblock %}
+{% block preload %}{% if produkt.bild %}<link rel="preload" as="image" href="{{ produkt.bild.url|cloud:'w_900,c_limit' }}" imagesrcset="{{ produkt.bild.url|cloud_srcset:'600,900,1200' }}" imagesizes="(min-width: 1024px) 50vw, 100vw" fetchpriority="high">{% endif %}{% endblock %}
 {% block og_type %}product{% endblock %}
 {% block og_title %}{{ produkt.meta_title }}{% endblock %}
 {% block og_description %}{{ produkt.meta_description }}{% endblock %}
@@ -65,6 +65,7 @@
 {% block alte_stile %}{% endblock %}
 {% block alpine %}{% endblock %}
 {% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='stueck' %}{% endblock %}
 
 {% block content %}
 {% comment %}„Stück" im Look „Nachtausgabe" (19.09.2026, Bauplan § 4): Nummer groß (Mono), Name kursiv, Datenliste aus den Feldern material/technik/masse (leer = Zeile entfällt), beide Zustände des Verkaufsschalters. Der Antwortsatz (GE23) und der statische Teil stehen unverändert im ersten Absatz nach der Überschrift.{% endcomment %}
@@ -74,11 +75,13 @@
         <figure class="lv-stueck-bild">
             {% if produkt.bild %}
             {# c_limit statt c_fill: das Hauptbild darf nicht beschnitten werden. #}
-            <img class="produkt_detail" src="{{ produkt.bild.url|cloud:'w_1200,c_limit' }}"
-                 srcset="{{ produkt.bild.url|cloud:'w_600,c_limit' }} 600w, {{ produkt.bild.url|cloud:'w_900,c_limit' }} 900w, {{ produkt.bild.url|cloud:'w_1200,c_limit' }} 1200w"
-                 sizes="(min-width: 1024px) 50vw, 100vw"
+            {# src = mittlere Breite (PF23: die Rückfalladresse bleibt unter 300 kB); width/height = Maße des Originals auf höchstens 1200 px, damit der Platz vor dem Laden stimmt (PF25, Produkt.bild_masse). #}
+            {% with masse=produkt.bild_masse %}<img class="produkt_detail" src="{{ produkt.bild.url|cloud:'w_900,c_limit' }}"
+                 srcset="{{ produkt.bild.url|cloud_srcset:'600,900,1200' }}"
+                 sizes="(min-width: 1024px) 50vw, 100vw"{% if masse %}
+                 width="{{ masse.0 }}" height="{{ masse.1 }}"{% endif %}
                  alt="{{ produkt.name }} – handbemaltes Upcycling-Unikat von Luviq Universe"
-                 loading="eager" fetchpriority="high" decoding="async">
+                 loading="eager" fetchpriority="high" decoding="async">{% endwith %}
             {% endif %}
         </figure>
         <div class="lv-stueck-text">
@@ -94,8 +97,8 @@
                 {% if produkt.masse %}<dt>Maße</dt><dd>{{ produkt.masse }}</dd>{% endif %}
                 <dt>Stück</dt><dd>Second Hand, von Hand bemalt, 1-of-1</dd>
             </dl>
-            {% comment %}EIG84: Preis und Kaufweg nur für ein Stück, das noch da ist (lagerbestand > 0); sonst derselbe „vergeben“-Zustand wie ohne Verkauf, statt eines Knopfes, der auf der Startseite endet.{% endcomment %}
-            {% if verkauf_aktiv and produkt.lagerbestand > 0 %}
+            {% comment %}EIG84: Preis und Kaufweg nur für ein Stück, das noch da ist (`Produkt.kaufbar`: aktiv, nicht vergeben, vorrätig); sonst derselbe „vergeben“-Zustand wie ohne Verkauf, statt eines Knopfes, der auf der Startseite endet.{% endcomment %}
+            {% if verkauf_aktiv and produkt.kaufbar %}
             <p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} €</p>
             <p class="lv-klein">Endpreis nach § 19 UStG · PayPal oder Vorab-Überweisung · Versand deutschlandweit, in der Regel 1-2 Werktage</p>
             {% else %}
@@ -103,17 +106,19 @@
             {% endif %}
             <p class="lv-stueck-knoepfe">
                 {% comment %}Verkaufsschalter: ohne Verkauf kein Warenkorb-Knopf, sondern die Warteliste (Newsletter mit Double-Opt-in auf der Startseite) und die Frage zum Stück.{% endcomment %}
-                {% if not verkauf_aktiv or produkt.lagerbestand < 1 %}
+                {% if not verkauf_aktiv or not produkt.kaufbar %}
                 <a class="lv-knopf" href="{% url 'home' %}#newsletter-form">Auf die Warteliste <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
                 <a class="lv-link" href="{% url 'kontakt' %}">Frage zum Stück</a>
                 {% elif user.is_authenticated %}
-                <a class="lv-knopf" href="{% url 'add_to_cart' produkt.id %}?next=warenkorb">In den Warenkorb <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                {% comment %}„In den Warenkorb" ändert den Korb und läuft deshalb per POST (EIG85). Das Formular steht außerhalb des Absatzes (ein Formular im <p> ist kein gültiges HTML); der Knopf gehört über form="…" dazu.{% endcomment %}
+                <button class="lv-knopf" type="submit" form="lv-in-den-warenkorb">In den Warenkorb <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
                 <a class="lv-link" href="{% url 'kontakt' %}">Frage zum Stück</a>
                 {% else %}
-                <a class="lv-knopf" href="{% url 'login' %}">Anmelden und kaufen</a>
+                <a class="lv-knopf" href="{% url 'login' %}?next={{ request.path|urlencode }}">Anmelden und kaufen</a>
                 <a class="lv-link" href="{% url 'register' %}">Konto anlegen</a>
                 {% endif %}
             </p>
+            {% if verkauf_aktiv and produkt.kaufbar and user.is_authenticated %}<form id="lv-in-den-warenkorb" method="post" action="{% url 'add_to_cart' produkt.id %}?next=warenkorb" hidden>{% csrf_token %}</form>{% endif %}
             {% if motivanfrage_aktiv %}{% include 'shop1/teile/motivanfrage.html' with klasse='lv-klein' frage='So eins, aber mit deinem Motiv?' %}{% endif %}
         </div>
     </article>

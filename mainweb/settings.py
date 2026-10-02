@@ -63,7 +63,10 @@ if DEBUG:
     # audit-ok K02: '*' greift nur bei DEBUG=True, nie im ausgelieferten Stand
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.up.railway.app'] + _extra
+    # healthcheck.railway.app: Absender des Healthchecks der Plattform (nur
+    # /health/, siehe SECURE_REDIRECT_EXEMPT und CanonicalHostMiddleware).
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.up.railway.app',
+                     'healthcheck.railway.app'] + _extra
 
 # ═══ CSRF / PROXY ═══
 
@@ -78,7 +81,9 @@ CSRF_TRUSTED_ORIGINS = [
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 CSRF_USE_SESSIONS = False
-CSRF_COOKIE_HTTPONLY = False      # False = HTMX/JS kann CSRF-Token lesen
+# HttpOnly (SI16): Skripte lesen das Token aus <meta name="csrf-token"> in base.html,
+# nicht aus dem Cookie.
+CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SECURE = not DEBUG
 
@@ -111,6 +116,9 @@ MIDDLEWARE = [
     # statische Dateien die Kopfzeile nicht tragen – sie brauchen keine.
     # Betriebsart und Positivliste: CSP_MODUS / CSP_QUELLEN weiter unten.
     'shop1.middleware.ContentSecurityPolicyMiddleware',
+    # Permissions-Policy (SI07, VL04): Geräterechte aus, die die Seite nie
+    # braucht. Werte: PERMISSIONS_POLICY weiter unten.
+    'shop1.middleware.PermissionsPolicyMiddleware',
     # GZip für alle dynamischen Antworten (HTML, sitemap.xml, llms.txt).
     # Steht bewusst NACH WhiteNoise: statische Dateien liefert WhiteNoise
     # vorher aus und sie sollen nicht bei jedem Abruf neu gepackt werden.
@@ -145,6 +153,11 @@ AXES_LOCKOUT_TEMPLATE = 'shop1/lockout.html'
 AXES_RESET_ON_SUCCESS = True
 # Sperre nur wenn GLEICHER Username + GLEICHE IP fehlschlägt (nicht nur IP)
 AXES_LOCKOUT_PARAMETERS = [['username', 'ip_address']]
+# Hinter Railways Proxy ist ``REMOTE_ADDR`` die Adresse des Proxys, nicht die
+# der Besucherin (EIG72): ohne diese Zeile sperrten zehn Fehlversuche von
+# irgendwoher den Benutzernamen für alle. Dieselbe Auflösung wie die Drosselung
+# der Formulare (letzter ``X-Forwarded-For``-Eintrag, vom Proxy selbst gesehen).
+AXES_CLIENT_IP_CALLABLE = 'shop1.views._helpers._client_ip'
 
 # ═══ URLS / TEMPLATES ═══
 
@@ -162,6 +175,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'shop1.context_processors.shop_owner_check',
                 'shop1.context_processors.csp_nonce',
+                'shop1.context_processors.oeffentliche_adresse',
+                'shop1.context_processors.feed_beworben',
                 'shop1.verkauf.verkauf_kontext',
                 'shop1.context_processors.luviq',
             ],
@@ -287,12 +302,27 @@ else:
 
 # Vorgabeabsender auf der eigenen Domain (MW22). Bis zum 18.09.2026 stand hier
 # noreply@luviq-shop.de – eine Domain, die es nicht gibt (DNS: NXDOMAIN) und
-# für die sich deshalb kein SPF/DKIM setzen lässt. Brevo signiert erst, wenn
-# luviq-alsfeld.com im Brevo-Konto als Absenderdomain bestätigt ist.
+# für die sich deshalb kein SPF/DKIM setzen lässt. Stand 02.10.2026: luviq-alsfeld.com
+# hat keinen MX-Eintrag und kein Postfach; über Gmail-SMTP schreibt Google den
+# Absender ohnehin auf das angemeldete Konto um, die Vorgabe ist nur der Rückfall.
+# Eine echte Absenderadresse auf der Domain setzt erst ein Postfach dort voraus
+# (doku/80-AUFGABEN.md, „Beim Kunden“ Nr. 20).
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@luviq-alsfeld.com')
-SITE_URL = os.getenv('SITE_URL', 'https://luviq-luisa-production.up.railway.app')
+# Vorgabe (EIG18): ohne eigene Angabe die kanonische Adresse, sonst die
+# Railway-Adresse des Dienstes. Bis 02.10.2026 stand hier ein Host, der mit 404
+# antwortete (luviq-luisa-production); Bestätigungs- und Newsletter-Links
+# gingen damit ins Leere, sobald SITE_URL fehlte.
+SITE_URL = os.getenv('SITE_URL', '').strip() or (
+    f'https://{CANONICAL_HOST}' if CANONICAL_HOST else 'https://luviq-luisa-shop.up.railway.app'
+)
 # IndexNow (shop1/indexnow.py): leer = aus. Gemeldet wird unter dem Host von SITE_URL.
 INDEXNOW_KEY = os.getenv('INDEXNOW_KEY', '').strip()
+
+# ═══ security.txt (SI25, EIG60) ═══
+# Festes Ablaufdatum nach RFC 9116 (höchstens ein Jahr voraus). Nicht je Abruf
+# berechnen: dann liefe die Datei nie ab und das Feld wäre wertlos. Vor dem
+# Ablauf von Hand um ein Jahr verlängern; pruefe_seite warnt 60 Tage vorher.
+SECURITY_TXT_EXPIRES = '2027-09-30T00:00:00.000Z'
 
 # ═══ SICHERHEITSEINSTELLUNGEN ═══
 
@@ -314,6 +344,10 @@ SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 # SSL/HSTS (nur in Production)
 SECURE_SSL_REDIRECT = not DEBUG
+# Die Gesundheitsadresse wird vom Healthcheck der Plattform und von
+# Überwachungsdiensten auch ohne HTTPS abgefragt; eine 301 darauf gälte als
+# Ausfall. Sie zeigt nur "ok" und ist deshalb ohne Verschlüsselung unbedenklich.
+SECURE_REDIRECT_EXEMPT = [r'^health/$']
 if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -334,13 +368,11 @@ APPEND_SLASH = True
 # einziges Skript im <head> von base.html auswertet – eine Nonce deckt
 # Handler-Attribute nicht, sie blieben sonst wirkungslos.
 #
+# 'unsafe-eval' steht seit dem 02.10.2026 nirgends mehr (SI09): Alpine.js, das
+# jeden Ausdruck mit new Function auswertete, ist entfernt; seine drei Aufgaben
+# (Einblenden, Antwortfeld, Alle auswählen) erledigt shop1/static/shop1/luviq.js.
+#
 # Weiter offen, bewusst:
-#   'unsafe-eval' in script-src   Alpine.js (Standardfassung) wertet jeden
-#                      x-data-/@click-/x-intersect-Ausdruck mit new Function
-#                      aus; ohne das Schlüsselwort stünde jeder dieser
-#                      Bausteine in den Vorlagen still. Die CSP-Fassung von
-#                      Alpine wäre ein anderes Paket und verlangte jeden
-#                      Ausdruck als registrierte Komponente neu geschrieben.
 #   'unsafe-inline' in style-src  style="…"-Attribute und <style>-Blöcke in
 #                      den Vorlagen; das PayPal-SDK setzt eigene Stile.
 # Scharf sind dazu frame-ancestors (niemand darf die Seite einbetten),
@@ -348,8 +380,8 @@ APPEND_SLASH = True
 # object-src.
 #
 # Positivliste der Fremdquellen, belegt durch die Templates:
-#   cdn.jsdelivr.net   Alpine.js (base.html, nur alte Seiten und Admin),
-#                      Chart.js (admin/stats.html, admin/werbung_list.html)
+#   (kein Fremdhost mehr in script-src: Chart.js liegt seit 02.10.2026 als
+#   shop1/static/shop1/chart-4.4.0.umd.js im Projekt, Alpine.js ist entfernt)
 #   Seit dem Umbau „Nachtausgabe" (19.09.2026) sind GSAP, Three.js und Google
 #   Fonts entfernt: die Schriften liegen unter shop1/static/shop1/fonts/.
 #   *.paypal.com / *.paypalobjects.com / *.venmo.com   PayPal-SDK, seine
@@ -391,7 +423,9 @@ _PAYPAL = ['https://*.paypal.com', 'https://*.paypalobjects.com', 'https://*.ven
 CSP_QUELLEN = {
     'default-src': ["'self'"],
     # Kein 'unsafe-inline': die Nonce der Anfrage hängt die Middleware an.
-    'script-src': ["'self'", "'unsafe-eval'", 'https://cdn.jsdelivr.net'] + _PAYPAL,
+    # Seit 02.10.2026 weder 'unsafe-eval' noch ein Fremdhost: Alpine.js (das
+    # eval brauchte) ist entfernt, Chart.js liegt unter static/. Nur PayPal.
+    'script-src': ["'self'"] + _PAYPAL,
     'style-src': ["'self'", "'unsafe-inline'"] + _PAYPAL,
     'font-src': ["'self'", 'data:'],
     'img-src': ["'self'", 'data:', 'blob:', 'https:'],
@@ -406,6 +440,29 @@ CSP_QUELLEN = {
     # des SDKs, bräche der Kauf erst beim zahlenden Kunden.
     'form-action': ["'self'", 'https://*.paypal.com'],
     'object-src': ["'none'"],
+}
+
+# ═══ PERMISSIONS-POLICY (SI07, VL04) ═══
+# Kopfzeile Permissions-Policy, gesetzt von PermissionsPolicyMiddleware.
+# Leere Liste = für niemanden erlaubt, auch nicht für die eigene Seite. Die
+# Seite braucht weder Kamera noch Mikrofon noch Standort, USB, Sensoren oder
+# Bluetooth. payment bleibt für die eigene Seite und PayPal offen, damit
+# die Kasse nach dem Einschalten des Verkaufs nicht an einer Sperre bricht
+# (Zahlungsfenster des PayPal-SDKs); browsing-topics ist Googles
+# Interessenerhebung und gehört nicht auf diese Seite.
+PERMISSIONS_POLICY = {
+    'geolocation': [],
+    'camera': [],
+    'microphone': [],
+    'usb': [],
+    'bluetooth': [],
+    'serial': [],
+    'hid': [],
+    'accelerometer': [],
+    'gyroscope': [],
+    'magnetometer': [],
+    'browsing-topics': [],
+    'payment': ["self", '"https://*.paypal.com"'],
 }
 
 # ═══ VERKAUF ═══

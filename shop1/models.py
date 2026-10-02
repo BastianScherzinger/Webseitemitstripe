@@ -120,6 +120,13 @@ class Produkt(models.Model):
         help_text='Meta-Description (max. 160 Zeichen). Leer = aus Beschreibung.')
     preis = models.DecimalField(max_digits=10, decimal_places=2)
     bild = models.ImageField(upload_to='produkte/', blank=True, null=True)
+    # Maße des Originalbilds (PF25): damit die Stückseite `width`/`height` am Bild
+    # nennen kann, ohne es bei jedem Aufruf zu laden. Kein ImageField-width_field:
+    # das öffnete bei jeder Instanz ohne Maße die Datei (bei Cloudinary ein Abruf).
+    # Gefüllt beim Hochladen (save) und für ältere Zeilen mit
+    # `manage.py bildmasse_nachtragen`.
+    bild_breite = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    bild_hoehe = models.PositiveIntegerField(null=True, blank=True, editable=False)
     aktiv = models.BooleanField(default=True)
     lagerbestand = models.PositiveIntegerField(default=1)
     newsletter_gesendet = models.BooleanField(default=False)
@@ -137,6 +144,19 @@ class Produkt(models.Model):
     material = models.CharField(max_length=80, blank=True, help_text='z. B. „Sweat, Baumwolle". Leer = nicht angezeigt.')
     technik = models.CharField(max_length=80, blank=True, help_text='z. B. „Bleiche" oder „Textilfarbe". Leer = nicht angezeigt.')
     masse = models.CharField('Maße', max_length=120, blank=True, help_text='z. B. „Größe M, Brustweite 56 cm". Leer = nicht angezeigt.')
+    # Archivstück (EIG115): schon vergeben, nie kaufbar – auch nicht, wenn es
+    # aktiv ist und der Verkauf läuft. Ohne dieses Feld hätte der Verkaufsstart
+    # (``VERKAUF_AKTIV=1``) jedes aktive Stück wieder kaufbar gemacht; die
+    # Checkliste verlangte, sie vorher von Hand zu deaktivieren. Migration 0026
+    # setzt es für Nº 001–005.
+    vergeben = models.BooleanField(
+        'Archiv (vergeben)', default=False,
+        help_text='Schon vergeben: wird gezeigt, ist aber nie kaufbar – auch nicht bei laufendem Verkauf.')
+
+    @property
+    def kaufbar(self):
+        """Darf in den Warenkorb und in eine Bestellung: aktiv, nicht vergeben, vorrätig."""
+        return self.aktiv and not self.vergeben and self.lagerbestand >= 1
 
     def save(self, *args, **kwargs):
         if self.nummer is None:
@@ -150,7 +170,36 @@ class Produkt(models.Model):
                 slug = f"{base}-{n}"
                 n += 1
             self.slug = slug
+        self._bildmasse_aus_upload()
         super().save(*args, **kwargs)
+
+    def _bildmasse_aus_upload(self):
+        """Merkt sich die Maße eines **neu hochgeladenen** Bilds (noch nicht
+        gespeichert, die Datei liegt im Speicher). Ein schon gespeichertes Bild
+        wird hier nicht angefasst – bei Cloudinary hieße das einen Abruf; dafür
+        gibt es ``bildmasse_nachtragen``."""
+        if not self.bild:
+            self.bild_breite = self.bild_hoehe = None
+            return
+        if getattr(self.bild, '_committed', True):
+            return
+        from django.core.files.images import get_image_dimensions
+        try:
+            breite, hoehe = get_image_dimensions(self.bild.file)
+            self.bild.file.seek(0)
+        except (OSError, ValueError, SyntaxError, AttributeError):  # kein lesbares Bild: Maße bleiben leer
+            breite = hoehe = None
+        self.bild_breite, self.bild_hoehe = breite, hoehe
+
+    @property
+    def bild_masse(self):
+        """``(Breite, Höhe)`` des Hauptbilds, wie Cloudinary es mit
+        ``w_1200,c_limit`` ausliefert (nie breiter als 1200, Seitenverhältnis
+        des Originals), oder ``None``, wenn die Maße unbekannt sind."""
+        if not (self.bild and self.bild_breite and self.bild_hoehe):
+            return None
+        faktor = min(1, 1200 / self.bild_breite)
+        return round(self.bild_breite * faktor), round(self.bild_hoehe * faktor)
 
     def get_absolute_url(self):
         from django.urls import reverse
@@ -232,6 +281,25 @@ class Produkt(models.Model):
         ordering = ['-erstellt_am']
 
 
+def produkt_zu_posten(posten):
+    """Das ``Produkt`` zu einem Warenkorb- oder Bestellposten (EIG08, EIG112).
+
+    ``CartItem`` und ``OrderItem`` speichern Name und Preis als eigene Werte
+    (Denormalisierung, siehe CLAUDE.md) und **dazu** die Kennung des Stücks
+    als blosse Zahl ``produkt_ref`` – kein Fremdschlüssel, ein gelöschtes oder
+    umbenanntes Produkt verändert den Posten nicht. Zwei Stücke mit gleichem
+    Namen bleiben so unterscheidbar. Posten aus der Zeit vor der Kennung
+    (``produkt_ref`` leer) werden nur über den Namen gefunden, und nur, wenn
+    er eindeutig ist; sonst ``None`` – lieber kein Treffer als das falsche
+    Stück abzubuchen.
+    """
+    ref = getattr(posten, 'produkt_ref', None)
+    if ref:
+        return Produkt.objects.filter(pk=ref).first()
+    treffer = list(Produkt.objects.filter(name=posten.produkt_name)[:2])
+    return treffer[0] if len(treffer) == 1 else None
+
+
 class Cart(models.Model):
     """Warenkorb – wird in der Datenbank persistiert"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
@@ -260,6 +328,9 @@ class CartItem(models.Model):
     produkt_name = models.CharField(max_length=200)
     produkt_preis = models.DecimalField(max_digits=10, decimal_places=2)
     produkt_bild = models.CharField(max_length=255, blank=True, default='')
+    # Kennung des Stücks (``Produkt.pk``) als Zahl, kein Fremdschlüssel – siehe
+    # ``produkt_zu_posten``. Leer bei Posten aus der Zeit davor.
+    produkt_ref = models.PositiveIntegerField(null=True, blank=True)
     menge = models.PositiveIntegerField(default=1)
     hinzugefuegt_am = models.DateTimeField(auto_now_add=True)
     
@@ -269,7 +340,10 @@ class CartItem(models.Model):
     @property
     def gesamt_preis(self):
         return self.produkt_preis * self.menge
-    
+
+    def produkt(self):
+        return produkt_zu_posten(self)
+
     class Meta:
         verbose_name = "Warenkorb-Artikel"
         verbose_name_plural = "Warenkorb-Artikel"
@@ -293,7 +367,10 @@ class Order(models.Model):
         ('pickup', 'Abholung (Lokal)'),
     ]
     
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    # SET_NULL statt CASCADE (EIG45): löscht jemand sein Konto, bleibt die
+    # Bestellung mit ihren Posten erhalten (Aufbewahrungspflichten für Belege,
+    # § 257 HGB, § 147 AO) – nur die Verknüpfung zum Konto entfällt.
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     paypal_order_id = models.CharField(max_length=255, unique=True, blank=True, null=True)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS, default='paypal')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
@@ -310,13 +387,17 @@ class Order(models.Model):
     
     # Gesamtbetrag
     gesamt_betrag = models.DecimalField(max_digits=10, decimal_places=2)
+    # Willkommensrabatt, der im Gesamtbetrag schon abgezogen ist (EIG16, EIG88):
+    # Zwischensumme = gesamt_betrag + rabatt_betrag. 0 = kein Rabatt.
+    rabatt_betrag = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
     # Zeitstempel
     erstellt_am = models.DateTimeField(auto_now_add=True)
     aktualisiert_am = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"Bestellung #{self.id} - {self.user.username}"
+        wer = self.user.username if self.user_id else f'{self.vorname} (Konto gelöscht)'
+        return f"Bestellung #{self.id} - {wer}"
     
     class Meta:
         verbose_name = "Bestellung"
@@ -329,6 +410,8 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     produkt_name = models.CharField(max_length=200)
     produkt_preis = models.DecimalField(max_digits=10, decimal_places=2)
+    # Kennung des Stücks, siehe ``produkt_zu_posten``.
+    produkt_ref = models.PositiveIntegerField(null=True, blank=True)
     menge = models.PositiveIntegerField(default=1)
     
     def __str__(self):
@@ -337,6 +420,9 @@ class OrderItem(models.Model):
     @property
     def gesamt_preis(self):
         return self.produkt_preis * self.menge
+
+    def produkt(self):
+        return produkt_zu_posten(self)
     
     class Meta:
         verbose_name = "Bestellungs-Artikel"

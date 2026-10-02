@@ -7,7 +7,11 @@
 # sind schlechter als eine.
 #
 # Von den hinterlegten Prüfbefehlen wurde hier ausgelassen:
-#   * nichts — es läuft genau das, was hinterlegt ist
+#   * nichts — hinterlegt ist `python manage.py test` (siehe `sites.json` des
+#     Werkzeugs), und genau das läuft im letzten Schritt „test": die volle
+#     Testsuite `shop1/tests/`. Dazu kommen `migrate`, `collectstatic` und
+#     `check` als Vorbereitung. `pruefe_seite`/`pruefe_links`/`pruefe_mail`
+#     laufen hier **nicht** — sie brauchen echte Umgebung und Datenbanken.
 #
 # Grün heisst wie überall nur, dass die Prüfungen nichts gefunden haben.
 
@@ -70,7 +74,10 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          # Wie der Container (`Dockerfile`: python:3.11-slim) und `runtime.txt`
+          # (python-3.11). Vorher stand hier 3.12: der Lauf prüfte eine andere
+          # Python-Fassung als die, die live läuft (EIG62, 02.10.2026).
+          python-version: "3.11"
           cache: pip
           cache-dependency-path: requirements.txt
 

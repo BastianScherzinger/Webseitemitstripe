@@ -50,7 +50,7 @@
             <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-10">Neuer Beitrag</h3>
             <form action="{% url 'comment_add' %}" method="POST">
                 {% csrf_token %}
-                <textarea name="text" rows="4" required aria-label="Dein Beitrag fürs Gästebuch"
+                <textarea name="text" rows="4" required maxlength="2000" aria-label="Dein Beitrag fürs Gästebuch"
                     class="w-full bg-white/5 border border-white/10 rounded-3xl p-8 text-white focus:outline-none focus:border-glow-orange transition-all font-light tracking-wide placeholder:text-white/10 mb-8"
                     placeholder="Wie gefällt dir dein Unikat?"></textarea>
                 
@@ -90,9 +90,9 @@
         <section class="space-y-12" aria-label="Beiträge im Gästebuch">
             {% for comment in comments %}
             <div class="scroll-reveal glass-card p-10 md:p-12 rounded-[3.5rem] border-white/5 relative" 
-                 x-data="{ shown: false, showReply: false }"
-                 x-init="setTimeout(() => { if(!$el.isConnected) return; }, 100)"
-                 x-intersect.once="shown = true" :class="{ 'visible': shown }">
+
+
+>
                 
                 <div class="flex justify-between items-start mb-8">
                     <div class="flex items-center gap-5">
@@ -105,15 +105,21 @@
                     
                     <div class="flex items-center gap-4">
                         <!-- Likes -->
-                        <a href="{% url 'comment_like' comment.id %}" class="flex items-center gap-2 glass px-4 py-2 rounded-full text-[10px] font-black transition-all {% if user in comment.likes.all %}text-glow-orange border-glow-orange/30 bg-glow-orange/5{% else %}text-white/30 border-white/5 hover:text-white{% endif %}">
-                            <span>🔥</span> {{ comment.total_likes }}
-                        </a>
+                        <form method="post" action="{% url 'comment_like' comment.id %}">
+                            {% csrf_token %}
+                            <button class="flex items-center gap-2 glass px-4 py-2 rounded-full text-[10px] font-black transition-all {% if user in comment.likes.all %}text-glow-orange border-glow-orange/30 bg-glow-orange/5{% else %}text-white/30 border-white/5 hover:text-white{% endif %}">
+                                <span>🔥</span> {{ comment.total_likes }}
+                            </button>
+                        </form>
                         
                         <!-- Admin Delete -->
                         {% if is_shop_owner or comment.user == user %}
-                        <a href="{% url 'comment_delete' comment.id %}" class="w-10 h-10 glass rounded-xl flex items-center justify-center text-xs hover:bg-red-500/20 hover:text-red-400 border-white/5 transition-all" title="Löschen">
-                            🗑️
-                        </a>
+                        <form method="post" action="{% url 'comment_delete' comment.id %}">
+                            {% csrf_token %}
+                            <button class="w-10 h-10 glass rounded-xl flex items-center justify-center text-xs hover:bg-red-500/20 hover:text-red-400 border-white/5 transition-all" title="Löschen" aria-label="Beitrag löschen">
+                                🗑️
+                            </button>
+                        </form>
                         {% endif %}
                     </div>
                 </div>
@@ -140,7 +146,10 @@
                             </div>
                             
                             {% if is_shop_owner or reply.user == user %}
-                            <a href="{% url 'comment_delete' reply.id %}" class="text-[10px] text-white/10 hover:text-red-400 transition-colors">Löschen</a>
+                            <form method="post" action="{% url 'comment_delete' reply.id %}">
+                                {% csrf_token %}
+                                <button class="text-[10px] text-white/10 hover:text-red-400 transition-colors">Löschen</button>
+                            </form>
                             {% endif %}
                         </div>
                         <p class="text-white/40 text-xs leading-relaxed font-light">{{ reply.text }}</p>
@@ -152,15 +161,15 @@
                 <!-- Reply Form (Toggle) -->
                 {% if user.is_authenticated %}
                 <div class="mt-10 pt-8 border-t border-white/5">
-                    <button type="button" @click="showReply = !showReply" aria-label="Antwortfeld ein- oder ausblenden" :aria-expanded="showReply ? 'true' : 'false'" class="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-glow-orange transition-all">
+                    <button type="button" data-antwort-schalter aria-label="Antwortfeld ein- oder ausblenden" aria-expanded="false" class="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-glow-orange transition-all">
                         ← Antworten
                     </button>
                     
-                    <div x-show="showReply" x-collapse class="mt-6">
+                    <div data-antwort class="mt-6">
                         <form action="{% url 'comment_add' %}" method="POST" class="flex gap-4">
                             {% csrf_token %}
                             <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                            <input type="text" name="text" required aria-label="Deine Antwort auf diesen Beitrag"
+                            <input type="text" name="text" required maxlength="2000" aria-label="Deine Antwort auf diesen Beitrag"
                                 class="flex-grow bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-xs text-white focus:outline-none focus:border-glow-orange transition-all font-light"
                                 placeholder="Deine Antwort...">
                             <button type="submit" class="btn-glow px-6 py-4 rounded-2xl text-white font-black uppercase tracking-widest text-[8px]">Send</button>
