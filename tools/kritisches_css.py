@@ -44,7 +44,7 @@ PROFILE = {
     # Startseite: Hero H4, Drop-Kasten mit Uhr und Eintragsfeld; darunter der Abschnitt
     # „Motiv anfragen“ (auf hohen Tablets noch im ersten Bildschirm).
     "start": {"lv-hero", "lv-mast", "lv-pano", "lv-unterbild", "lv-satz", "lv-lead",
-              "lv-dropkasten", "lv-dl", "lv-uhr", "lv-feldzeile", "lv-antwort", "lv-anfragen",
+              "lv-dropkasten", "lv-dl", "lv-uhr", "lv-formhuelle", "lv-feldzeile", "lv-antwort", "lv-anfragen",
               "lv-ablauf", "lv-anfragekasten", "lv-frage", "lv-chips", "lv-chip"},
     # Archiv: Raster aus Karten.
     "archiv": {"lv-raster", "lv-karte", "lv-karte-kopf", "lv-material", "lv-preis", "lv-leer"},
