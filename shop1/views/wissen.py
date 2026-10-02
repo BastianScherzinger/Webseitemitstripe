@@ -72,9 +72,12 @@ WISSEN_BEITRAEGE = {
         'url_name': 'wissen_pflege',
         'template': 'shop1/wissen/pflege.html',
         'titel': 'Wie pflege ich handbemalte Kleidung?',
-        'kurz': 'Waschen auf links bei 30 °C, Trocknen an der Luft, Bügeln nur von links, '
-                'Lagern ohne Druck auf die Bemalung – und was für ein einzelnes Stück '
-                'von Luviq Universe gilt.',
+        # Bewusst ohne die Pflegeangaben: ``kurz`` steht auf der indexierbaren
+        # Übersicht, und 30 °C, kein Trockner usw. sind nicht belegt (EIG12).
+        # Nach Luisas Freigabe darf hier wieder die Aufzählung stehen.
+        'kurz': 'Wie man ein handbemaltes Teil wäscht, trocknet, bügelt und lagert – '
+                'allgemeine Textilpflege; was für ein einzelnes Stück von Luviq '
+                'Universe gilt, beantwortet Luisa Brehler über das Kontaktformular.',
         # Offen: 30 °C, kein Trockner, kein Weichspüler, Bügeln nur von links.
         'freigegeben': False,
         'veroeffentlicht': '2026-09-01',
@@ -237,13 +240,17 @@ class WissenFeed(Feed):
     language = 'de'
 
     def description(self):
-        """Ohne Verkauf ohne Bestellablauf, Widerruf und Konto – diese
-        Beiträge stehen dann nicht im Feed (``freigegebene_beitraege``)."""
-        if verkauf_aktiv():
-            return ('Beiträge zu Bestellablauf, Widerruf, Konto und zur Pflege '
-                    'handbemalter Einzelstücke aus dem Wissensbereich von Luviq Universe.')
-        return ('Beiträge zu Pflege, Upcycling und Größen handbemalter Einzelstücke '
-                'aus dem Wissensbereich von Luviq Universe.')
+        """Nennt nur Beiträge, die der Feed auch führt (EIG128): vorher stand hier
+        „Pflege, Upcycling und Größen“, obwohl genau diese drei Beiträge nicht
+        freigegeben sind und der Feed leer war. Die Titel kommen aus dem Register
+        (``freigegebene_beitraege``), nicht aus einer zweiten Abschrift; ohne
+        freigegebenen Beitrag sagt die Beschreibung das ehrlich."""
+        titel = [b['titel'] for b in freigegebene_beitraege().values()]
+        if not titel:
+            return ('Wissensbereich von Luviq Universe: zurzeit sind keine '
+                    'Beiträge veröffentlicht.')
+        return ('Beiträge aus dem Wissensbereich von Luviq Universe: '
+                + '; '.join(titel) + '.')
 
     def link(self):
         return reverse('wissen')

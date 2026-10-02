@@ -29,7 +29,17 @@ META_BESCHREIBUNG_ZUSATZ = ' – Einzigartiges 1-of-1 Upcycling-Unikat bei Luviq
 #: Dieselben Zusätze ohne Verkauf (``VERKAUF_AKTIV`` aus): kein „kaufen",
 #: das Stück steht im Archiv der bisherigen Stücke (siehe ``shop1/verkauf.py``).
 META_TITEL_ZUSAETZE_OHNE_VERKAUF = (' – Luviq Universe, Alsfeld', ' – Luviq Universe')
-META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF = ' – Handbemaltes 1-of-1 Unikat aus dem Archiv von Luviq Universe.'
+META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF = (
+    ' – Nº {nr}, handbemaltes 1-of-1 Unikat aus dem Archiv von Luviq Universe in Alsfeld.'
+    ' Jetzt Motiv anfragen.')
+#: Ohne Verkauf trägt jeder Titel die Archivnummer vorn (``Produkt.nummer``,
+#: eindeutig je Stück): zwei Stücke mit gleichem Namen bekommen so zwei
+#: verschiedene ``<title>`` (IS03, BF21), ohne dass etwas hinzuerfunden wird.
+META_TITEL_VORSATZ_OHNE_VERKAUF = 'Archiv Nº {nr}: '
+#: Ist die Motivanfrage abgeschaltet, endet die Beschreibung auf die Warteliste.
+META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF_OHNE_ANFRAGE = (
+    ' – Nº {nr}, handbemaltes 1-of-1 Unikat aus dem Archiv von Luviq Universe in Alsfeld.'
+    ' Jetzt auf die Warteliste.')
 
 
 def _kuerze_an_wortgrenze(text, maximum):
@@ -160,11 +170,26 @@ class Produkt(models.Model):
             return self.seo_titel
         from .verkauf import verkauf_aktiv
         name = ' '.join(self.name.split())
-        zusaetze = META_TITEL_ZUSAETZE if verkauf_aktiv() else META_TITEL_ZUSAETZE_OHNE_VERKAUF
-        for zusatz in zusaetze:
+        if not verkauf_aktiv():
+            return self._meta_title_archiv(name)
+        for zusatz in META_TITEL_ZUSAETZE:
             if len(name) + len(zusatz) <= META_TITEL_MAX:
                 return f"{name}{zusatz}"
         return _kuerze_an_wortgrenze(name, META_TITEL_MAX)
+
+    def _meta_title_archiv(self, name):
+        """Titel ohne Verkauf: ``Archiv Nº 003: <Name> – Luviq Universe, Alsfeld``.
+
+        Die Marke bleibt immer am Ende (hinter dem Trennstrich); passt der Ort
+        nicht mehr in die Grenze, entfällt er, zuletzt wird der Name an einer
+        Wortgrenze gekürzt."""
+        vorsatz = META_TITEL_VORSATZ_OHNE_VERKAUF.format(nr=self.archiv_nummer)
+        for zusatz in META_TITEL_ZUSAETZE_OHNE_VERKAUF:
+            if len(vorsatz) + len(name) + len(zusatz) <= META_TITEL_MAX:
+                return f"{vorsatz}{name}{zusatz}"
+        zusatz = META_TITEL_ZUSAETZE_OHNE_VERKAUF[-1]
+        platz = META_TITEL_MAX - len(vorsatz) - len(zusatz)
+        return f"{vorsatz}{_kuerze_an_wortgrenze(name, platz)}{zusatz}"
 
     @property
     def meta_description(self):
@@ -178,8 +203,14 @@ class Produkt(models.Model):
         der Name vor dem Nachsatz, damit kein Text mit „–" beginnt."""
         if self.seo_beschreibung:
             return self.seo_beschreibung
+        from django.conf import settings
         from .verkauf import verkauf_aktiv
-        zusatz = META_BESCHREIBUNG_ZUSATZ if verkauf_aktiv() else META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF
+        if verkauf_aktiv():
+            zusatz = META_BESCHREIBUNG_ZUSATZ
+        elif getattr(settings, 'MOTIVANFRAGE_AKTIV', True):
+            zusatz = META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF.format(nr=self.archiv_nummer)
+        else:
+            zusatz = META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF_OHNE_ANFRAGE.format(nr=self.archiv_nummer)
         platz = META_BESCHREIBUNG_MAX - len(zusatz)
         kern = _kuerze_an_wortgrenze(self.beschreibung or self.name, platz)
         return f"{kern}{zusatz}"

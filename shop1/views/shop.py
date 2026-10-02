@@ -65,13 +65,18 @@ def startseite(request):
         _log.exception('Werbe-Impressionen auf der Startseite konnten nicht gezählt werden')
 
     hero = dict(luviq_daten.HERO_STUECK)
-    treffer = None
-    for begriff in hero['suche']:
-        treffer = (Produkt.objects.filter(aktiv=True, name__icontains=begriff)
-                   .order_by('nummer').first())
-        if treffer:
-            break
+    treffer = Produkt.objects.filter(aktiv=True, nummer=hero['nummer']).first()
+    if not treffer:
+        for begriff in hero['suche']:
+            treffer = (Produkt.objects.filter(aktiv=True, name__icontains=begriff)
+                       .order_by('nummer').first())
+            if treffer:
+                break
+    # Name und Nummer aus dem Archiv, damit Hero und Karte dasselbe Stück
+    # gleich nennen (EIG134); ohne Treffer bleibt die Beschreibung des Fotos.
     hero['nummer'] = treffer.archiv_nummer if treffer else ''
+    if treffer:
+        hero['name'] = treffer.name
 
     return render(request, 'shop1/index.html', {
         'titel': 'Luviq-Shop',

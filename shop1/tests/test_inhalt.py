@@ -450,3 +450,273 @@ class UmfangTest(LuviqTestCase):
                     f'{pfad}: im ersten Drittel des Inhalts steht keine Zahl: '
                     f'"{drittel[:200]}…"',
                 )
+
+
+class AnfrageBausteinTest(LuviqTestCase):
+    """Der Anfrage-Absatz liegt als eigener Baustein vor (VL21) und führt zum
+    nächsten Schritt (KV12): ``teile/motivanfrage.html``, eingebunden auf der
+    Archivübersicht und auf jeder Stückseite."""
+
+    BAUSTEIN = 'shop1/templates/shop1/teile/motivanfrage.html'
+
+    def _quelle(self, pfad):
+        from pathlib import Path
+        from django.conf import settings
+
+        return (Path(settings.BASE_DIR) / pfad).read_text(encoding='utf-8')
+
+    def test_der_baustein_liegt_im_teile_ordner_und_wird_eingebunden(self):
+        self.assertIn("{% url 'motiv_anfragen' %}", self._quelle(self.BAUSTEIN))
+        for vorlage in ('produkte.html', 'produkt_detail.html'):
+            with self.subTest(vorlage=vorlage):
+                self.assertIn("shop1/teile/motivanfrage.html",
+                              self._quelle(f'shop1/templates/shop1/{vorlage}'))
+
+    def test_der_absatz_steht_nicht_mehr_je_vorlage_ausgeschrieben(self):
+        """Ein Absatz, der in jeder Vorlage noch einmal steht, ist nach der
+        dritten Änderung dreimal verschieden."""
+        for vorlage in ('produkte.html', 'produkt_detail.html'):
+            with self.subTest(vorlage=vorlage):
+                self.assertNotIn('>Motiv anfragen</a>',
+                                 self._quelle(f'shop1/templates/shop1/{vorlage}'))
+
+    def test_uebersicht_und_stueck_fuehren_zur_anfrage_mit_der_belegten_dauer(self):
+        stueck = erzeuge_produkt('Bemalte Bomberjacke')
+        for pfad in ('/produkte/', stueck.get_absolute_url()):
+            with self.subTest(pfad=pfad):
+                html = self.hole(pfad).content.decode()
+                self.assertIn('href="/motiv-anfragen/"', html)
+                text = sichtbarer_text(html)
+                self.assertIn('dauert es meistens 2 bis 5 Tage, je nach Motiv', text)
+
+    def test_die_uebersicht_verweist_im_inhalt_auf_das_kontaktformular(self):
+        """KV12: eine Leistungsseite ohne nächsten Schritt ist eine Sackgasse.
+        Gezählt wird nur, was in ``<main>`` steht."""
+        haupt = self.hole('/produkte/').content.decode().split('<main', 1)[1]
+        self.assertIn('href="/kontakt/"', haupt)
+
+    def test_der_baustein_nennt_weder_preis_noch_kaufweg(self):
+        quelle = self._quelle(self.BAUSTEIN).lower()
+        for verboten in ('€', 'preis', 'kaufen', 'warenkorb', 'bestell'):
+            with self.subTest(verboten=verboten):
+                self.assertNotIn(verboten, quelle.split('{% endcomment %}', 1)[1])
+
+
+class AntwortAbsatzUndListenTest(LuviqTestCase):
+    """GE23, GE25, GE26, GE27: ein zitierfähiger Absatz, eine belegte Zahl, eine
+    gegliederte Seite – ohne etwas zu erfinden. Die Zahl ist Luisas Erfahrungswert
+    aus ``luviq_daten.DAUER``; sie steht nur, wo die Motivanfrage aktiv ist."""
+
+    def test_kontakt_gaestebuch_und_herkunft_nennen_die_belegte_dauer(self):
+        for pfad in ('/kontakt/', '/gaestebuch/', '/liefergebiet/'):
+            with self.subTest(pfad=pfad):
+                text = sichtbarer_text(self.hole(pfad).content.decode())
+                self.assertIn('dauert es meistens 2 bis 5 Tage, je nach Motiv', text)
+
+    def test_die_dauer_steht_nicht_da_wo_die_motivanfrage_aus_ist(self):
+        with override_settings(MOTIVANFRAGE_AKTIV=False):
+            for pfad in ('/kontakt/', '/gaestebuch/', '/liefergebiet/'):
+                with self.subTest(pfad=pfad):
+                    text = sichtbarer_text(self.hole(pfad).content.decode())
+                    self.assertNotIn('dauert es meistens', text)
+
+    def test_das_gaestebuch_beginnt_im_inhalt_mit_einem_kurzen_antwortabsatz(self):
+        """Ein Absatz von 15 bis 90 Wörtern, der sagt, was das Gästebuch ist –
+        ausserhalb des ``<header>``, den das Messwerkzeug aus dem Inhalt streicht."""
+        haupt = self.hole('/gaestebuch/').content.decode().split('<main', 1)[1]
+        haupt = re.sub(r'<header.*?</header>', '', haupt, flags=re.DOTALL)
+        absaetze = [' '.join(re.sub(r'<[^>]+>', ' ', a).split())
+                    for a in re.findall(r'<p[^>]*>(.*?)</p>', haupt, re.DOTALL)]
+        lange = [a for a in absaetze if len(a.split()) >= 15]
+        erster = lange[0]
+        self.assertLessEqual(len(erster.split()), 90, erster)
+        self.assertIn('Das Gästebuch ist die öffentliche Rückmeldeseite', erster)
+
+    def test_der_ablauf_im_gaestebuch_ist_eine_nummerierte_liste(self):
+        html = self.hole('/gaestebuch/').content.decode()
+        liste = re.search(r'<ol[^>]*>(.*?)</ol>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<li>'), 6)
+        self.assertIn('Ein Beitrag darf höchstens 2.000 Zeichen lang sein', liste)
+
+    def test_die_orte_auf_der_herkunftsseite_sind_eine_liste(self):
+        html = self.hole('/liefergebiet/').content.decode()
+        liste = re.search(r'<ul class="grid[^>]*>(.*?)</ul>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<li '), 16)
+
+    def test_kontakt_und_gaestebuch_haben_ein_section_im_inhalt(self):
+        """GE28: ``<main>`` allein genügt nicht; ein ``section`` oder ``article`` im
+        Inhalt sagt der Maschine, welcher Teil der Seite der Inhalt ist."""
+        for pfad in ('/kontakt/', '/gaestebuch/'):
+            with self.subTest(pfad=pfad):
+                haupt = self.hole(pfad).content.decode().split('<main', 1)[1]
+                self.assertIn('<section', haupt)
+
+    def test_die_kontaktwege_sind_eine_liste(self):
+        """GE27: Impressum und E-Mail-Adresse stehen als Listenpunkte da."""
+        html = self.hole('/kontakt/').content.decode()
+        liste = re.search(r'<ul class="space-y-4">(.*?)</ul>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<li>'), 2)
+        self.assertIn('mailto:brehlerluisa@gmail.com', liste)
+
+
+class Widersprueche02102026Test(LuviqTestCase):
+    """Widersprüche auf der Seite (Tiefenanalyse-Funde, Auftrag „Luviq fertig“).
+
+    Regel: wo zwei Aussagen einander widersprechen, weicht die nicht belegte –
+    belegt sind Bleiche und Pinsel, Textilfarbe steht bei Luisa nur als „bald“,
+    und es gibt eine einzige Zählung der Ausgaben (Nº 006 als nächste).
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.hose = erzeuge_produkt('Custom Pants', slug='custom-pants', nummer=5,
+                                    beschreibung='Pants with custom print')
+        self.hoodie_a = erzeuge_produkt('Custom print hoodie', slug='hoodie-a', nummer=1,
+                                        beschreibung='Hoodie mit backprint')
+        self.hoodie_b = erzeuge_produkt('Custom print hoodie', slug='hoodie-b', nummer=3,
+                                        beschreibung='Hoodie mit backprint')
+
+    def _text(self, pfad):
+        return sichtbarer_text(self.hole(pfad).content.decode())
+
+    # EIG126 -------------------------------------------------------------
+    def test_der_hero_nennt_keine_zweite_ausgabenzaehlung(self):
+        """„Ausgabe 01“ im Hero und „Nº 006“ im Drop-Kasten waren zwei
+        Zählungen derselben Sache (EIG126)."""
+        text = self._text('/')
+        self.assertNotIn('Ausgabe 01', text)
+        self.assertIn('LUVIQ Universe', text)
+
+    # EIG134 -------------------------------------------------------------
+    def test_hero_und_archivkarte_nennen_das_stueck_gleich(self):
+        text = self._text('/')
+        self.assertIn('Nº 005 · Custom Pants', text)
+        self.assertNotIn('Spinnennetz-Jeans', text)
+
+    def test_hero_behaelt_seine_nummer_nach_einer_umbenennung(self):
+        """Die Nummer hängt an der Archivnummer, nicht am Namen (EIG134)."""
+        self.hose.name = 'Jeans Spinnennetz'
+        self.hose.save()
+        self.assertIn('Nº 005 · Jeans Spinnennetz', self._text('/'))
+
+    def test_ohne_treffer_steht_kein_erfundener_stueckname_da(self):
+        self.hose.delete()
+        text = self._text('/')
+        self.assertNotIn('Spinnennetz-Jeans', text)
+        self.assertNotIn('Nº 005 ·', text)
+
+    # EIG124 / EIG125 / EIG67 --------------------------------------------
+    def test_eine_technik_ueberall_bleiche_und_pinsel(self):
+        """Drei Maltechniken auf einer Seite (EIG124) und „keine Drucke“
+        neben Stücken namens „print“ (EIG67, EIG125): belegt ist Bleiche mit
+        Pinsel; Textilfarbe nennt nur Luisa selbst als „bald“."""
+        for pfad in ['/produkte/', '/wissen/', '/wissen/pflege-handbemalte-kleidung/',
+                     '/wissen/upcycling-mode-second-hand-vintage/',
+                     '/wissen/groesse-bei-einzelstuecken/', '/produkt/custom-pants/']:
+            with self.subTest(pfad=pfad):
+                text = self._text(pfad)
+                self.assertNotIn('Pinsel und Textilfarbe', text)
+                self.assertNotIn('Bleiche oder Textilfarbe', text)
+                self.assertNotIn('keine Drucke', text)
+                self.assertNotIn('Textilfarbe auf', text)
+
+    def test_nur_luisas_eigene_worte_nennen_textilfarbe_als_spaeter(self):
+        """Startseite und Luisa-Seite: Textilfarbe nur als „bald“/„später“."""
+        self.assertIn('bald auch mit Textilfarbe', self._text('/'))
+        self.assertIn('Später kommen Textilfarben dazu', self._text('/ueber_uns/'))
+
+    # EIG12 / EIG128 -----------------------------------------------------
+    def test_die_wissensuebersicht_nennt_keine_unbelegten_pflegeangaben(self):
+        """Die Übersicht ist ohne Verkauf noindex, aber öffentlich; der Kurztext
+        des nicht freigegebenen Pflegebeitrags nannte 30 °C und die Bügelregel
+        (EIG12)."""
+        text = self._text('/wissen/')
+        for angabe in ('30 °C', 'Bügeln nur von links', 'Trocknen an der Luft'):
+            self.assertNotIn(angabe, text)
+
+    def test_der_leere_feed_beschreibt_keine_beitraege(self):
+        """Ohne freigegebenen Beitrag hat der Feed keine Einträge; seine
+        Beschreibung darf dann nicht drei Beiträge ankündigen (EIG128)."""
+        xml = self.hole('/feed/').content.decode()
+        self.assertNotIn('<item>', xml)
+        self.assertNotIn('Pflege, Upcycling und Größen', xml)
+
+    # EIG78 --------------------------------------------------------------
+    def test_das_liefergebiet_behauptet_keine_kundenverteilung(self):
+        text = self._text('/liefergebiet/')
+        for satz in ('Großteil unserer Community', 'Auszug aus unserer Community',
+                     'Beliebt in deiner Nähe'):
+            self.assertNotIn(satz, text)
+        self.assertIn('Orte in deiner Nähe', text)
+
+    # EIG103 -------------------------------------------------------------
+    def test_gleichnamige_stuecke_haben_verschiedene_bildtitel_in_der_sitemap(self):
+        """Zwei Stücke heißen „Custom print hoodie“ – ihre Bildtitel in der
+        Sitemap unterscheiden sich über die Archivnummer (EIG103)."""
+        for stueck in (self.hoodie_a, self.hoodie_b):
+            stueck.bild = f'produkte/{stueck.slug}.jpg'
+            stueck.save()
+        xml = self.hole('/sitemap.xml').content.decode()
+        self.assertIn('Custom print hoodie (Nº 001) – Luviq Universe', xml)
+        self.assertIn('Custom print hoodie (Nº 003) – Luviq Universe', xml)
+
+    # EIG53 / EIG87 / EIG131 ---------------------------------------------
+    def test_die_karte_im_gaestebuch_nennt_keine_privatanschrift(self):
+        html = self.hole('/gaestebuch/').content.decode()
+        self.assertNotIn('Gr%C3%BCnberger', html)
+        self.assertNotIn('Grünberger', sichtbarer_text(html))
+        self.assertIn('data-src="https://maps.google.com/maps?q=36304+Alsfeld', html)
+
+    def test_ohne_bewertungsformular_heisst_der_knopf_nicht_bewerten(self):
+        """Der Standardwert von ``GOOGLE_REVIEW_URL`` ist eine Kartensuche;
+        „Jetzt bei Google bewerten“ und „Auf Google Maps ansehen“ führten auf
+        dasselbe Ziel (EIG87)."""
+        text = self._text('/gaestebuch/')
+        self.assertNotIn('Jetzt bei Google bewerten', text)
+        self.assertIn('Luviq Universe auf Google Maps suchen', text)
+        self.assertIn('Rückmeldung per Formular', text)
+
+    @override_settings(GOOGLE_REVIEW_URL='https://g.page/r/beispiel/review')
+    def test_mit_echter_bewertungsadresse_bleibt_der_aufruf(self):
+        html = self.hole('/gaestebuch/').content.decode()
+        self.assertIn('Jetzt bei Google bewerten', sichtbarer_text(html))
+        self.assertIn('href="https://g.page/r/beispiel/review"', html)
+        self.assertNotIn('Rückmeldung per Formular', sichtbarer_text(html))
+
+    # EIG21 / EIG68 ------------------------------------------------------
+    def test_kontakt_beantwortet_die_frage_nach_oeffnungszeiten(self):
+        """Suchanfrage „second hand alsfeld öffnungszeiten“ (EIG21): die Seite
+        sagt, dass es keine gibt – weil es kein Ladengeschäft gibt."""
+        text = self._text('/kontakt/')
+        self.assertIn('Ein Ladengeschäft gibt es nicht, deshalb auch keine Öffnungszeiten', text)
+
+    def test_kontakt_und_archiv_verlinken_den_wissensbereich(self):
+        """Zwei Texte verwiesen auf den Wissensbereich, ohne ihn zu verlinken
+        (EIG68)."""
+        for pfad in ('/kontakt/', '/produkte/'):
+            with self.subTest(pfad=pfad):
+                html = self.hole(pfad).content.decode()
+                self.assertRegex(html, r'<a href="/wissen/"[^>]*>Wissensbereich</a>')
+
+    # EIG133 -------------------------------------------------------------
+    def test_die_motivanfrage_verschweigt_die_speicherung_nicht(self):
+        text = self._text('/motiv-anfragen/')
+        self.assertIn('nur für die Antwort auf deine Anfrage und speichere sie dafür', text)
+
+    # EIG84 --------------------------------------------------------------
+    @override_settings(VERKAUF_AKTIV=True)
+    def test_ein_ausverkauftes_stueck_hat_keinen_kaufweg(self):
+        """Mit Verkauf zeigte die Stückseite den Kaufknopf auch bei
+        ``lagerbestand`` 0; der Klick endete auf der Startseite (EIG84)."""
+        self.hose.lagerbestand = 0
+        self.hose.save()
+        text = self._text('/produkt/custom-pants/')
+        self.assertNotIn('In den Warenkorb', text)
+        self.assertNotIn('Anmelden und kaufen', text)
+        self.assertIn('Bereits vergeben', text)
+
+    @override_settings(VERKAUF_AKTIV=True)
+    def test_ein_vorhandenes_stueck_behaelt_seinen_kaufweg(self):
+        text = self._text('/produkt/custom-pants/')
+        self.assertIn('Anmelden und kaufen', text)
+        self.assertNotIn('Bereits vergeben', text)

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}{% if verkauf_aktiv %}Liefergebiet Fulda bis Gießen – Luviq Universe, Alsfeld{% else %}Herkunft zwischen Fulda und Gießen – Luviq Universe, Alsfeld{% endif %}{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Alsfeld versendet handbemalte Vintage-Unikate von Fulda bis Gießen und deutschlandweit – in Hessen meist in 1–3 Werktagen zugestellt. Jetzt nachlesen.{% else %}Luviq Universe kommt aus Alsfeld im Vogelsberg, zwischen Fulda und Gießen: handbemalte Vintage-Unikate von Luisa Brehler. Marke im Aufbau – jetzt nachlesen.{% endif %}{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Alsfeld versendet handbemalte Vintage-Unikate von Fulda bis Gießen und deutschlandweit – in Hessen meist in 1–3 Werktagen zugestellt. Jetzt nachlesen.{% else %}Luviq Universe kommt aus Alsfeld, zwischen Fulda und Gießen: handbemalte Vintage-Unikate von Luisa Brehler. Marke im Aufbau, kein Ladengeschäft. Jetzt nachlesen.{% endif %}{% endblock %}
 {% block og_title %}{% if verkauf_aktiv %}Liefergebiet Fulda – Gießen | Luviq Universe{% else %}Herkunft Fulda – Gießen | Luviq Universe{% endif %}{% endblock %}
 {% block og_description %}{% if verkauf_aktiv %}Handbemalte Vintage-Unikate aus Alsfeld – beliebt in der ganzen Region zwischen Fulda und Gießen. Deutschlandweiter Versand.{% else %}Handbemalte Vintage-Unikate aus Alsfeld, mitten in der Region zwischen Fulda und Gießen.{% endif %}{% endblock %}
 {% block twitter_title %}{% if verkauf_aktiv %}Liefergebiet Fulda – Gießen | Luviq Universe{% else %}Herkunft Fulda – Gießen | Luviq Universe{% endif %}{% endblock %}
@@ -52,7 +52,7 @@
           "name": "{% if verkauf_aktiv %}Welche Region beliefert Luviq besonders oft?{% else %}Woher kommt die Luviq-Community?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Ein Großteil unserer Community kommt aus dem Vogelsbergkreis und der weiteren Umgebung zwischen Fulda und Gießen. Versendet wird aber deutschlandweit – egal wo du wohnst.{% else %}Ein Großteil unserer Community kommt aus dem Vogelsbergkreis und der weiteren Umgebung zwischen Fulda und Gießen.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Versendet wird deutschlandweit – egal wo du wohnst. Welche Region am häufigsten bestellt, wertet diese Seite nicht aus.{% else %}Luviq Universe sitzt in Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen. Wie sich die Community zusammensetzt, wertet diese Seite nicht aus; die Warteliste steht allen offen.{% endif %}"
           }
         }
       ]
@@ -90,20 +90,21 @@
         <!-- Region Grid -->
         <section class="mb-28">
             <h2 class="text-2xl md:text-4xl font-black heading-font text-white uppercase tracking-tighter mb-4 text-center">
-                Beliebt in <span class="text-glow">deiner Nähe</span>
+                Orte in <span class="text-glow">deiner Nähe</span>
             </h2>
             <p class="text-white/30 text-xs sm:text-sm text-center max-w-2xl mx-auto mb-14 uppercase tracking-widest">
-                Ein Auszug aus unserer Community: {{ orte|length }} Orte entlang der Strecke Fulda – Alsfeld – Gießen
+                {{ orte|length }} Orte entlang der Strecke Fulda – Alsfeld – Gießen
             </p>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {% comment %}Die Orte sind eine Liste und stehen jetzt als solche da (GE27): ul/li statt div, gleiche Klassen, gleiches Aussehen (Tailwind setzt Listen ohne Punkt und Einzug zurück).{% endcomment %}
+            <ul class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
                 {% for ort in orte %}
-                <div class="scroll-reveal glass rounded-2xl px-4 py-5 text-center border-white/5" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
+                <li class="scroll-reveal glass rounded-2xl px-4 py-5 text-center border-white/5" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }">
                     <span class="text-white/70 text-sm font-semibold">{{ ort }}</span>
-                </div>
+                </li>
                 {% endfor %}
-            </div>
+            </ul>
             <p class="text-white/20 text-xs text-center mt-10 max-w-xl mx-auto leading-relaxed">
-                {% if verkauf_aktiv %}Du wohnst woanders? Kein Problem – wir versenden jedes Unikat deutschlandweit.{% else %}Du wohnst woanders? Die Warteliste steht allen offen.{% endif %}
+                {% if verkauf_aktiv %}Du wohnst woanders? Kein Problem – wir versenden jedes Unikat deutschlandweit.{% else %}Du wohnst woanders? Die Warteliste steht allen offen.{% if motivanfrage_aktiv %} Ein eigenes Motiv lässt sich schon jetzt anfragen; von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.{% endif %}{% endif %}
             </p>
         </section>
 
@@ -123,7 +124,7 @@
                 </div>
                 <div class="scroll-reveal glass-card p-8 rounded-[2rem]" x-data="{ shown: false }" x-intersect.once="shown = true" :class="{ 'visible': shown }" style="transition-delay: 0.2s;">
                     <h3 class="text-white font-bold mb-3">{% if verkauf_aktiv %}Welche Region beliefert Luviq besonders oft?{% else %}Woher kommt die Luviq-Community?{% endif %}</h3>
-                    <p class="text-white/50 font-light leading-relaxed">{% if verkauf_aktiv %}Ein Großteil unserer Community kommt aus dem Vogelsbergkreis und der weiteren Umgebung zwischen Fulda und Gießen. Versendet wird aber deutschlandweit – egal wo du wohnst.{% else %}Ein Großteil unserer Community kommt aus dem Vogelsbergkreis und der weiteren Umgebung zwischen Fulda und Gießen.{% endif %}</p>
+                    <p class="text-white/50 font-light leading-relaxed">{% if verkauf_aktiv %}Versendet wird deutschlandweit – egal wo du wohnst. Welche Region am häufigsten bestellt, wertet diese Seite nicht aus.{% else %}Luviq Universe sitzt in Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen. Wie sich die Community zusammensetzt, wertet diese Seite nicht aus; die Warteliste steht allen offen.{% endif %}</p>
                 </div>
             </div>
         </section>

@@ -1,0 +1,8 @@
+{% comment %}
+Der Anfrage-Baustein (VL21, KV14): der eine Absatz, der auf der Archivübersicht und auf jeder Stückseite zur Motivanfrage führt. Vorher stand er zweimal, mit
+leicht anderem Wortlaut, in produkte.html und produkt_detail.html – jede Änderung hätte beide Stellen treffen müssen. Jetzt gibt es eine Stelle.
+
+Parameter (alle optional): klasse = CSS-Klasse des Absatzes, frage = Satz vor dem Verweis, zusatz = Satz hinter dem Verweis. Ist `dauer` im Kontext (Luisas Erfahrungswert aus
+shop1/luviq_daten.py, nie als Zusage), folgt der Satz dazu: er ist die einzige belegte Zeitangabe der Seite. Keine Preise, kein Kaufweg: die Anfrage kostet nichts und ist keine Bestellung.
+{% endcomment %}
+<p{% if klasse %} class="{{ klasse }}"{% endif %}>{{ frage }} <a href="{% url 'motiv_anfragen' %}">Motiv anfragen</a>{% if zusatz %} {{ zusatz }}{% endif %}{% if dauer %} Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.{% endif %}</p>
