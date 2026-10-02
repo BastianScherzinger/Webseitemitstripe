@@ -53,17 +53,17 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 01.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 02.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-02c) — **Gesamtstand 92,9 von 100**, Reifegrad „Referenz“. 328 von 374 Regeln an 15 URLs und 202 Dateien (41.497 Zeilen) geprüft.
+**Messung vom 02.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-02c) — **Gesamtstand 95,7 von 100**, Reifegrad „Referenz“. 332 von 374 Regeln an 19 URLs und 202 Dateien (41.618 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Substanz & Reichweite | **54** | Lückenhaft |
-| Konversion | **73** | Brauchbar |
 | Erreichbarkeit & Postfach | **77** | Solide |
-| GEO — KI-Sichtbarkeit | **92** | Referenz |
+| Substanz & Reichweite | **85** | Solide |
+| Konversion | **87** | Solide |
 | SEO — Inhalt | **94** | Referenz |
-| Vorlagen-Konformität | **98** | Referenz |
+| GEO — KI-Sichtbarkeit | **94** | Referenz |
 | SEO — Technik | **99** | Referenz |
+| Vorlagen-Konformität | **99** | Referenz |
 | Code-Qualität & Projektreife | **100** | Referenz |
 | Sicherheit | **100** | Referenz |
 | Formulare & Preisrechner | **100** | Referenz |
@@ -79,12 +79,8 @@ Quelltext: 202 Dateien, **0 Befunde**, davon 0 kritisch und 0 wichtig.
 Kritische Befunde:
 
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
-- **Wissensinhalte vorhanden** (`SU04`) — 0 Wissensseiten, Zielgröße 3 — es gibt keinen einzigen Ratgeberbereich
-- **Die Telefonnummer ist anklickbar und steht auf jeder Seite** (`KV01`) — 0 von 13 Seiten mit tel:-Link (Startseite: nein) — ohne: /, /produkte/, /ueber_uns/, /kontakt/, /datenschutz/ … (+8)
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
-- **Genug eigener Inhalt insgesamt** (`SU02`) — 4.469 Eigenwörter über 13 Seiten, Zielgröße 12.000 (von 6.331 Wörtern Gesamttext); die umfangreichsten Seiten: /datenschutz/ (813 W), /produkte/ (432 W), /gaestebuch/ (381 W)
-- **Genug rankfähige Seiten für das Geschäft** (`SU01`) — 13 rankfähige Seiten, Zielgröße für diese Geschäftsart 30 (Beispiele: /, /produkte/, /ueber_uns/)
 <!-- messung:ende -->
 
 Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen
