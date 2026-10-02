@@ -71,11 +71,12 @@ class ProduktAdmin(admin.ModelAdmin):
     """Stücke. ``nummer`` (Nº 001 …) ist direkt in der Liste änderbar – so
     legt Luisa die Reihenfolge des Archivs fest. Material, Technik und Maße
     erscheinen als Datenliste auf der Stückseite, leer entfällt die Zeile."""
-    list_display = ('nummer', 'name', 'preis', 'aktiv', 'ersteller', 'erstellt_am')
+    list_display = ('nummer', 'name', 'preis', 'aktiv', 'vergeben', 'ersteller', 'erstellt_am')
     list_display_links = ('name',)
-    list_editable = ('nummer',)
+    # ``vergeben`` = Archiv: wird gezeigt, ist aber nie kaufbar (EIG115).
+    list_editable = ('nummer', 'vergeben')
     search_fields = ('name', 'beschreibung')
-    list_filter = ('aktiv', 'erstellt_am')
+    list_filter = ('aktiv', 'vergeben', 'erstellt_am')
     ordering = ('nummer',)
     readonly_fields = ('erstellt_am', 'aktualisiert_am')
 
@@ -118,7 +119,7 @@ class OrderAdmin(admin.ModelAdmin):
             'fields': ('vorname', 'nachname', 'email', 'adresse', 'postleitzahl', 'stadt', 'land', 'telefon')
         }),
         ('Zahlung', {
-            'fields': ('gesamt_betrag',)
+            'fields': ('gesamt_betrag', 'rabatt_betrag')
         }),
         ('Zeitstempel', {
             'fields': ('erstellt_am', 'aktualisiert_am'),

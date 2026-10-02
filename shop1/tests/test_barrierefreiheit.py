@@ -350,6 +350,9 @@ class AngemeldeteBedienungTest(LuviqTestCase):
     def setUp(self):
         erzeuge_produkt('Bemalte Bomberjacke')
         self.kundin = erzeuge_benutzer('kundin')
+        # Der Checkout verlangt eine bestätigte E-Mail-Adresse (EIG56).
+        self.kundin.profile.email_verified = True
+        self.kundin.profile.save()
         Comment.objects.create(user=self.kundin, text='Mein Unikat ist angekommen.')
         korb = Cart.objects.create(user=self.kundin)
         CartItem.objects.create(cart=korb, produkt_name='Bemalte Bomberjacke',

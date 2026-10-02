@@ -43,43 +43,43 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Vorname *</label>
-                                <input type="text" name="vorname" aria-label="Vorname" value="{{ profile_data.vorname }}" required>
+                                <input type="text" name="vorname" maxlength="{{ laengen.vorname }}" aria-label="Vorname" value="{{ profile_data.vorname }}" required>
                             </div>
                             <div>
                                 <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Nachname *</label>
-                                <input type="text" name="nachname" aria-label="Nachname" value="{{ profile_data.nachname }}" required>
+                                <input type="text" name="nachname" maxlength="{{ laengen.nachname }}" aria-label="Nachname" value="{{ profile_data.nachname }}" required>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">E-Mail Address *</label>
-                            <input type="email" name="email" aria-label="E-Mail-Adresse" value="{{ profile_data.email }}" required>
+                            <input type="email" name="email" maxlength="{{ laengen.email }}" aria-label="E-Mail-Adresse" value="{{ profile_data.email }}" required>
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Phone Link</label>
-                            <input type="tel" name="telefon" aria-label="Telefonnummer (optional)" value="{{ profile_data.telefon }}">
+                            <input type="tel" name="telefon" maxlength="{{ laengen.telefon }}" aria-label="Telefonnummer (optional)" value="{{ profile_data.telefon }}">
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Straße & Hausnummer *</label>
-                            <input type="text" name="adresse" aria-label="Straße und Hausnummer" value="{{ profile_data.adresse }}" required>
+                            <input type="text" name="adresse" maxlength="{{ laengen.adresse }}" aria-label="Straße und Hausnummer" value="{{ profile_data.adresse }}" required>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <div>
                                 <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">PLZ *</label>
-                                <input type="text" name="postleitzahl" aria-label="Postleitzahl" value="{{ profile_data.postleitzahl }}" required>
+                                <input type="text" name="postleitzahl" maxlength="{{ laengen.postleitzahl }}" aria-label="Postleitzahl" value="{{ profile_data.postleitzahl }}" required>
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Stadt *</label>
-                                <input type="text" name="stadt" aria-label="Stadt" value="{{ profile_data.stadt }}" required>
+                                <input type="text" name="stadt" maxlength="{{ laengen.stadt }}" aria-label="Stadt" value="{{ profile_data.stadt }}" required>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Land *</label>
-                            <input type="text" name="land" aria-label="Land" value="{{ profile_data.land }}" required>
+                            <input type="text" name="land" maxlength="{{ laengen.land }}" aria-label="Land" value="{{ profile_data.land }}" required>
                         </div>
 
                         <!-- Payment Method Selection -->
@@ -95,6 +95,7 @@
                                     </div>
                                 </label>
 
+                                {% if bank_moeglich %}
                                 <label class="relative cursor-pointer group">
                                     <input type="radio" name="payment_method" value="bank_transfer" class="peer hidden">
                                     <div class="p-6 rounded-2xl glass border-white/10 peer-checked:border-glow-orange peer-checked:bg-glow-orange/5 hover:bg-white/5 transition-all h-full flex flex-col items-center justify-center text-center gap-3">
@@ -103,6 +104,7 @@
                                         <p class="text-[8px] text-white/40 uppercase leading-tight">Direct Transfer</p>
                                     </div>
                                 </label>
+                                {% endif %}
                             </div>
                         </div>
 

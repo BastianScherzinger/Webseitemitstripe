@@ -8,8 +8,6 @@ das Template aufruft.
 """
 
 from decimal import Decimal
-from urllib.parse import quote
-
 from django.test import override_settings
 from django.test import Client
 
@@ -29,10 +27,12 @@ class WarenkorbTest(LuviqTestCase):
         self.client.force_login(self.kundin)
 
     def hinzufuegen(self, produkt):
-        return self.hole(f'/warenkorb/add/{produkt.id}/')
+        # Seit EIG85 nur per POST (mit CSRF-Prüfung des Formulars).
+        return self.sende(f'/warenkorb/add/{produkt.id}/')
 
     def entfernen(self, name):
-        return self.hole(f'/warenkorb/remove/{quote(name)}/')
+        posten = self.posten().get(produkt_name=name)
+        return self.sende(f'/warenkorb/remove/{posten.id}/')
 
     def posten(self):
         return CartItem.objects.filter(cart__user=self.kundin)
@@ -165,6 +165,7 @@ class WarenkorbTest(LuviqTestCase):
         self.assertNotContains(antwort, 'Bemalte Jacke')
         self.assertEqual(antwort.context['gesamt'], 0)
 
-        browser.get(f'/warenkorb/remove/{quote("Bemalte Jacke")}/', secure=True)
+        eigener_posten = self.posten().get()
+        browser.post(f'/warenkorb/remove/{eigener_posten.id}/', secure=True)
         self.assertEqual(self.posten().count(), 1)
         self.assertEqual(CartItem.objects.filter(cart__user=nachbarin).count(), 0)

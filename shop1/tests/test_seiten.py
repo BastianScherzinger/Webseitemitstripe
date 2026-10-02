@@ -248,7 +248,7 @@ class RoutenzuordnungTest(LuviqTestCase):
         ('verify_email', ('abc',), verify_email),
         ('warenkorb', (), warenkorb),
         ('add_to_cart', (1,), add_to_cart),
-        ('update_cart', ('stueck',), update_cart),
+        ('update_cart', (1,), update_cart),   # Kennung des Postens, nicht der Name (EIG76)
         ('checkout', (), checkout),
         ('payment', (1,), payment),
         ('paypal_capture', (1,), paypal_capture),
@@ -315,6 +315,9 @@ class AttributSyntaxTest(LuviqTestCase):
     def setUp(self):
         self.produkt = erzeuge_produkt('Bemalte Bomberjacke')
         self.kundin = erzeuge_benutzer('kundin')
+        # Der Checkout verlangt eine bestätigte E-Mail-Adresse (EIG56).
+        self.kundin.profile.email_verified = True
+        self.kundin.profile.save()
         Comment.objects.create(user=self.kundin, text='Mein Unikat ist angekommen.')
         korb = Cart.objects.create(user=self.kundin)
         CartItem.objects.create(cart=korb, produkt_name='Bemalte Bomberjacke',
