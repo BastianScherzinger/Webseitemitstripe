@@ -472,6 +472,130 @@ class AntwortCrawlerTest(LuviqTestCase):
         self.assertIn('PayPal oder Vorab-Überweisung', agb)
 
 
+class LlmsVolltextTest(LuviqTestCase):
+    """``/llms-full.txt`` (GE31, VL08): die Kurzfassung plus der Text der Seiten.
+
+    Der Volltext darf nichts sagen, was die Seite nicht sagt – er wird deshalb
+    aus den ausgelieferten Seiten gelesen, nicht noch einmal getippt."""
+
+    def test_der_volltext_wird_als_text_ausgeliefert(self):
+        antwort = self.hole('/llms-full.txt')
+        self.assertEqual(antwort.status_code, 200)
+        self.assertTrue(antwort['Content-Type'].startswith('text/plain'))
+
+    def test_der_volltext_beginnt_mit_der_kurzfassung(self):
+        """Dieselbe Quelle wie ``llms.txt``: wer eine ändert, ändert beide."""
+        kurz = self.hole('/llms.txt').content.decode().rstrip('\n')
+        voll = self.hole('/llms-full.txt').content.decode()
+        self.assertTrue(voll.startswith(kurz))
+        self.assertIn('## Volltext der Seiten', voll)
+
+    def test_der_volltext_ist_ein_volltext(self):
+        """GE31 verlangt mehr als 500 Wörter, sonst gilt er als zu knapp."""
+        erzeuge_produkt('Bemalte Bomberjacke')
+        voll = self.hole('/llms-full.txt').content.decode()
+        self.assertGreater(len(voll.split()), 500)
+
+    def test_der_volltext_enthaelt_den_text_der_seiten_wortgleich(self):
+        """Ein Satz aus ``/ueber_uns/`` und einer aus dem Archiv stehen
+        unverändert im Volltext."""
+        erzeuge_produkt('Bemalte Bomberjacke')
+        voll = self.hole('/llms-full.txt').content.decode()
+        for pfad in ('/ueber_uns/', '/produkte/'):
+            haupt = self.hole(pfad).content.decode().split('<main', 1)[1]
+            erster = next(
+                a for a in re.findall(r'<p[^>]*>(.*?)</p>', haupt, re.DOTALL)
+                if len(re.sub(r'<[^>]+>', '', a).split()) >= 15
+            )
+            satz = ' '.join(re.sub(r'<[^>]+>', ' ', erster).split())[:80]
+            with self.subTest(pfad=pfad):
+                self.assertIn(satz, voll)
+            self.assertIn(f'Adresse: https://testserver{pfad}', voll)
+
+    def test_der_volltext_fuehrt_nur_aktive_stuecke(self):
+        aktiv = erzeuge_produkt('Bemalte Bomberjacke')
+        weg = erzeuge_produkt('Bereits verkauftes Teil', aktiv=False)
+        voll = self.hole('/llms-full.txt').content.decode()
+        self.assertIn(aktiv.get_absolute_url(), voll)
+        self.assertNotIn(weg.get_absolute_url(), voll)
+        self.assertIn('Bemalte Bomberjacke', voll)
+
+    def test_der_volltext_nennt_ohne_verkauf_keine_preise_und_keine_kaufwege(self):
+        """Verkaufsschalter aus: dieselbe Zurückhaltung wie in ``llms.txt``."""
+        erzeuge_produkt('Bemalte Bomberjacke')
+        voll = self.hole('/llms-full.txt').content.decode()
+        for verboten in (' EUR', '€', 'UStG', 'PayPal', 'Vorab-Überweisung', '/agb/',
+                         '/warenkorb/', '/checkout/'):
+            with self.subTest(verboten=verboten):
+                self.assertNotIn(verboten, voll)
+
+    def test_der_volltext_laesst_noindex_seiten_aus(self):
+        """Nicht freigegebene Wissensbeiträge und Rechtstexte gehören weder in
+        die Sitemap noch hierher."""
+        voll = self.hole('/llms-full.txt').content.decode()
+        for pfad in ('/wissen/pflege-handbemalte-kleidung/', '/wissen/groesse-bei-einzelstuecken/',
+                     '/kontakt/danke/', '/login/', '/register/'):
+            with self.subTest(pfad=pfad):
+                self.assertNotIn(pfad, voll)
+        self.assertNotIn('Waschen auf links', voll)
+
+    def test_der_volltext_enthaelt_kein_formular_und_keine_navigation(self):
+        voll = self.hole('/llms-full.txt').content.decode()
+        for fremd in ('<form', '<input', '<script', 'csrfmiddlewaretoken', 'Zum Inhalt springen'):
+            with self.subTest(fremd=fremd):
+                self.assertNotIn(fremd, voll)
+
+    def test_robots_und_kurzfassung_verweisen_auf_den_volltext(self):
+        self.assertIn('/llms-full.txt', self.hole('/robots.txt').content.decode())
+        self.assertIn('Volltext: https://testserver/llms-full.txt',
+                      self.hole('/llms.txt').content.decode())
+
+    def test_eine_nicht_lesbare_seite_kippt_die_datei_nicht(self):
+        """Fällt eine View aus, fehlt nur ihr Abschnitt."""
+        from unittest import mock
+
+        with mock.patch('shop1.views.shop.ueber_uns', side_effect=RuntimeError('kaputt')),                 self.assertLogs('shop1', level='ERROR'):
+            antwort = self.hole('/llms-full.txt')
+        self.assertEqual(antwort.status_code, 200)
+        text = antwort.content.decode()
+        self.assertNotIn('/ueber_uns/', text.split('## Volltext der Seiten', 1)[1])
+        self.assertIn('### Archiv', text)
+
+    @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
+    def test_mit_verkauf_folgt_der_volltext_der_kurzfassung(self):
+        erzeuge_produkt('Bemalte Bomberjacke')
+        kurz = self.hole('/llms.txt').content.decode().rstrip('\n')
+        voll = self.hole('/llms-full.txt').content.decode()
+        self.assertTrue(voll.startswith(kurz))
+        self.assertIn('### Alle Unikate', voll)
+
+
+class VolltextLeserTest(LuviqTestCase):
+    """Der Leser hinter ``llms-full.txt`` (``shop1/llms_volltext.py``)."""
+
+    def test_nur_der_inhalt_von_main_zaehlt(self):
+        from ..llms_volltext import haupttext
+
+        html = (
+            '<html><body><nav><a href="/">Start</a></nav>'
+            '<main><h1>Titel</h1><p>Erster Absatz.</p>'
+            '<form><label>Name</label><input name="x"></form>'
+            '<script>var x = 1;</script>'
+            '<p aria-hidden="true">versteckt</p>'
+            '<ul><li>eins</li><li>zwei</li></ul>'
+            '<p><span>Nº 001</span><span>vergeben</span></p>'
+            '</main><footer>Fuß</footer></body></html>'
+        )
+        zeilen = haupttext(html)
+        self.assertEqual(zeilen, ['#### Titel', 'Erster Absatz.', '- eins', '- zwei',
+                                  'Nº 001 vergeben'])
+
+    def test_ohne_main_kommt_nichts(self):
+        from ..llms_volltext import haupttext
+
+        self.assertEqual(haupttext('<html><body><p>Text</p></body></html>'), [])
+
+
 class RatgeberSchemaTest(LuviqTestCase):
     """``Article`` auf den Wissensbeiträgen (GE15).
 
