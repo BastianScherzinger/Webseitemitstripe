@@ -237,103 +237,126 @@ def checkout(request):
             messages.error(request, meldung)
         return redirect('warenkorb')
 
-    gesamt_betrag_original = sum((item.produkt_preis * item.menge for item in posten), Decimal('0'))
-
-    hat_rabatt = False
-    rabatt_wert = Decimal('0')
-    if hasattr(request.user, 'profile') and request.user.profile.has_welcome_discount:
-        hat_rabatt = True
-        rabatt_wert = _rund(gesamt_betrag_original * Decimal('0.10'))
-
-    gesamt_betrag = gesamt_betrag_original - rabatt_wert
+    betraege = _betraege(request.user, posten)
 
     if request.method == 'POST':
-        felder = {
-            'vorname': request.POST.get('vorname', '').strip(),
-            'nachname': request.POST.get('nachname', '').strip(),
-            'email': request.POST.get('email', '').strip(),
-            'adresse': request.POST.get('adresse', '').strip(),
-            'stadt': request.POST.get('stadt', '').strip(),
-            'postleitzahl': request.POST.get('postleitzahl', '').strip(),
-            'land': request.POST.get('land', 'Deutschland').strip(),
-            'telefon': request.POST.get('telefon', '').strip(),
-        }
-
-        fehler = _eingaben_pruefen(felder)
-        if fehler:
-            messages.error(request, fehler)
-            return redirect('checkout')
-
-        payment_method = request.POST.get('payment_method', 'paypal')
-        if payment_method not in ZAHLARTEN:
-            messages.error(request, 'Bitte wähle eine Zahlungsart.')
-            return redirect('checkout')
-        if payment_method == 'bank_transfer' and not _bank_konfiguriert():
-            messages.error(request, 'Die Überweisung ist gerade nicht möglich. Bitte zahle mit PayPal.')
-            return redirect('checkout')
-
-        try:
-            with transaction.atomic():
-                order = Order.objects.create(
-                    user=request.user,
-                    status='pending',
-                    payment_method=payment_method,
-                    gesamt_betrag=gesamt_betrag,
-                    rabatt_betrag=rabatt_wert,   # EIG16/EIG88: der Rabatt steht in der Bestellung
-                    **felder,
-                )
-                for item in posten:
-                    OrderItem.objects.create(
-                        order=order,
-                        produkt_name=item.produkt_name,
-                        produkt_preis=item.produkt_preis,
-                        produkt_ref=item.produkt_ref,   # EIG112: das Stück, nicht nur sein Name
-                        menge=item.menge,
-                    )
-
-            if payment_method == 'bank_transfer':
-                try:
-                    send_bank_details_email(order)
-                except Exception as e:
-                    _log.error("Bank-details email error: %s", e)
-                # Die Bestellung ist angelegt und in ``OrderItem`` festgehalten –
-                # der Warenkorb hat seine Aufgabe erfüllt (EIG23). Die Bankdaten
-                # stehen zusätzlich auf der Seite, falls die Mail nicht ankommt
-                # (EIG114).
-                cart.items.all().delete()
-                messages.info(request, '🏛️ Mission gestartet! Bitte schließe die Überweisung ab.')
-                return redirect('payment_success', order_id=order.id)
-
-            return redirect('payment', order_id=order.id)
-
-        except Exception:
-            _log.exception('Bestellung konnte nicht angelegt werden (Benutzer %s)', request.user.pk)
-            messages.error(request, 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.')
-            return redirect('checkout')
-
-    profile_data = {}
-    if hasattr(request.user, 'profile'):
-        profile = request.user.profile
-        profile_data = {
-            'vorname': request.user.first_name or '',
-            'nachname': request.user.last_name or '',
-            'email': request.user.email,
-            'adresse': profile.adresse or '',
-            'stadt': profile.stadt or '',
-            'postleitzahl': profile.postleitzahl or '',
-            'land': profile.land or 'Deutschland',
-            'telefon': profile.telefon or '',
-        }
+        return _bestellung_absenden(request, cart, posten, betraege)
 
     return render(request, 'shop1/checkout.html', {
-        'gesamt_betrag': gesamt_betrag,
-        'gesamt_betrag_original': gesamt_betrag_original,
-        'hat_rabatt': hat_rabatt,
-        'rabatt_wert': rabatt_wert,
-        'profile_data': profile_data,
+        'gesamt_betrag': betraege['gesamt_betrag'],
+        'gesamt_betrag_original': betraege['gesamt_betrag_original'],
+        'hat_rabatt': betraege['hat_rabatt'],
+        'rabatt_wert': betraege['rabatt_wert'],
+        'profile_data': _profil_vorbelegung(request.user),
         'laengen': BESTELL_LAENGEN,
         'bank_moeglich': _bank_konfiguriert(),
     })
+
+
+def _betraege(user, posten):
+    """Summe der Posten, Willkommensrabatt (10 %) und zu zahlender Betrag."""
+    gesamt_betrag_original = sum((item.produkt_preis * item.menge for item in posten), Decimal('0'))
+    hat_rabatt = False
+    rabatt_wert = Decimal('0')
+    if hasattr(user, 'profile') and user.profile.has_welcome_discount:
+        hat_rabatt = True
+        rabatt_wert = _rund(gesamt_betrag_original * Decimal('0.10'))
+    return {
+        'gesamt_betrag_original': gesamt_betrag_original,
+        'hat_rabatt': hat_rabatt,
+        'rabatt_wert': rabatt_wert,
+        'gesamt_betrag': gesamt_betrag_original - rabatt_wert,
+    }
+
+
+def _bestell_felder(post):
+    """Die Adressfelder des Checkout-Formulars, getrimmt."""
+    felder = {name: post.get(name, '').strip()
+              for name in ('vorname', 'nachname', 'email', 'adresse', 'stadt', 'postleitzahl')}
+    felder['land'] = post.get('land', 'Deutschland').strip()
+    felder['telefon'] = post.get('telefon', '').strip()
+    return felder
+
+
+def _zahlart_fehler(payment_method):
+    """Fehlermeldung zur gewählten Zahlungsart oder ``None``."""
+    if payment_method not in ZAHLARTEN:
+        return 'Bitte wähle eine Zahlungsart.'
+    if payment_method == 'bank_transfer' and not _bank_konfiguriert():
+        return 'Die Überweisung ist gerade nicht möglich. Bitte zahle mit PayPal.'
+    return None
+
+
+def _bestellung_absenden(request, cart, posten, betraege):
+    """POST des Checkouts: prüfen, Bestellung anlegen, weiter zur Zahlung."""
+    felder = _bestell_felder(request.POST)
+    payment_method = request.POST.get('payment_method', 'paypal')
+    fehler = _eingaben_pruefen(felder) or _zahlart_fehler(payment_method)
+    if fehler:
+        messages.error(request, fehler)
+        return redirect('checkout')
+
+    try:
+        order = _bestellung_anlegen(request.user, felder, payment_method, posten, betraege)
+
+        if payment_method == 'bank_transfer':
+            try:
+                send_bank_details_email(order)
+            except Exception as e:
+                _log.error("Bank-details email error: %s", e)
+            # Die Bestellung ist angelegt und in ``OrderItem`` festgehalten –
+            # der Warenkorb hat seine Aufgabe erfüllt (EIG23). Die Bankdaten
+            # stehen zusätzlich auf der Seite, falls die Mail nicht ankommt
+            # (EIG114).
+            cart.items.all().delete()
+            messages.info(request, '🏛️ Mission gestartet! Bitte schließe die Überweisung ab.')
+            return redirect('payment_success', order_id=order.id)
+
+        return redirect('payment', order_id=order.id)
+
+    except Exception:
+        _log.exception('Bestellung konnte nicht angelegt werden (Benutzer %s)', request.user.pk)
+        messages.error(request, 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.')
+        return redirect('checkout')
+
+
+def _bestellung_anlegen(user, felder, payment_method, posten, betraege):
+    """Bestellung samt Posten in einer Transaktion anlegen."""
+    with transaction.atomic():
+        order = Order.objects.create(
+            user=user,
+            status='pending',
+            payment_method=payment_method,
+            gesamt_betrag=betraege['gesamt_betrag'],
+            rabatt_betrag=betraege['rabatt_wert'],   # EIG16/EIG88: der Rabatt steht in der Bestellung
+            **felder,
+        )
+        for item in posten:
+            OrderItem.objects.create(
+                order=order,
+                produkt_name=item.produkt_name,
+                produkt_preis=item.produkt_preis,
+                produkt_ref=item.produkt_ref,   # EIG112: das Stück, nicht nur sein Name
+                menge=item.menge,
+            )
+    return order
+
+
+def _profil_vorbelegung(user):
+    """Vorbelegung des Formulars aus dem Profil – leer ohne Profil."""
+    if not hasattr(user, 'profile'):
+        return {}
+    profile = user.profile
+    return {
+        'vorname': user.first_name or '',
+        'nachname': user.last_name or '',
+        'email': user.email,
+        'adresse': profile.adresse or '',
+        'stadt': profile.stadt or '',
+        'postleitzahl': profile.postleitzahl or '',
+        'land': profile.land or 'Deutschland',
+        'telefon': profile.telefon or '',
+    }
 
 
 @login_required(login_url='login')
@@ -554,14 +577,28 @@ def send_order_confirmation_email(order):
 def send_bank_details_email(order):
     """Sendet Bankverbindung & PayPal Option bei Wahl von Überweisung."""
     subject = f'Zahlungsinformationen für deine Mission #{order.id}'
+    html_content = _bank_html(order, _bank_artikel_html(order), _bank_paypal_block())
+    send_brevo_email(subject, html_content, order.email,
+                     recipient_name=f"{order.vorname} {order.nachname}")
 
-    bank_items = list(order.items.all())
+
+#: Wiederkehrende Stile der Bankdaten-Mail (nur, damit die Zeilen lesbar bleiben).
+_STIL_KASTENTITEL = "margin-top:0;font-size:14px;text-transform:uppercase;letter-spacing:1px;"
+_STIL_RAHMEN = ("max-width:600px;margin:0 auto;background:#fff;border-radius:30px;overflow:hidden;"
+                "box-shadow:0 20px 50px rgba(0,0,0,.05);border:1px solid #eee;")
+_STIL_UNTERZEILE = ("color:#ff6a00;margin-top:10px;font-size:12px;font-weight:bold;"
+                    "text-transform:uppercase;letter-spacing:2px;")
+
+
+def _bank_artikel_html(order):
+    """Die bestellten Stücke (mit Bild, wenn vorhanden) und ein etwaiger Rabatt."""
     items_html = ""
-    for item in bank_items:
+    for item in order.items.all():
         db_produkt = item.produkt()
         bild_html = ""
         if db_produkt and db_produkt.bild:
-            bild_html = f'<img src="{escape(db_produkt.bild.url)}" width="80" style="border-radius: 10px; margin-right: 15px;">'
+            bild_html = (f'<img src="{escape(db_produkt.bild.url)}" width="80" '
+                         'style="border-radius: 10px; margin-right: 15px;">')
         items_html += f"""
         <div style="display:flex;align-items:center;padding:15px 0;border-bottom:1px solid #eee;">
             {bild_html}
@@ -573,35 +610,44 @@ def send_bank_details_email(order):
     if order.rabatt_betrag and order.rabatt_betrag > 0:
         items_html += f"""
         <p style="margin:15px 0 0;color:#888;font-size:12px;">Willkommensrabatt: -{float(order.rabatt_betrag):.2f} €</p>"""
+    return items_html
 
-    # Option B nur, wenn eine PayPal-Adresse hinterlegt ist – sonst stünde ein
-    # leeres Feld in der Mail (EIG114).
+
+def _bank_paypal_block():
+    """Option B nur, wenn eine PayPal-Adresse hinterlegt ist – sonst stünde ein
+    leeres Feld in der Mail (EIG114)."""
     paypal_adresse = os.getenv('PAYPAL_EMAIL', '').strip()
-    paypal_block = ''
-    if paypal_adresse:
-        paypal_block = f"""
+    if not paypal_adresse:
+        return ''
+    return f"""
                 <div style="margin:30px 0;padding:30px;background:#eff6ff;border-radius:20px;border-left:5px solid #2563eb;">
-                    <h3 style="margin-top:0;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#2563eb;">Zahlungsoption B: PayPal</h3>
+                    <h3 style="{_STIL_KASTENTITEL}color:#2563eb;">Zahlungsoption B: PayPal</h3>
                     <p style="margin:15px 0;font-size:13px;">Sende das Geld an:</p>
                     <p style="margin:5px 0;font-size:16px;font-weight:bold;color:#2563eb;">{escape(paypal_adresse)}</p>
                 </div>"""
 
-    html_content = f"""
+
+def _bank_html(order, items_html, paypal_block):
+    """Das HTML der Bankdaten-Mail."""
+    inhaber = escape(os.getenv('BANK_INHABER', 'Luisa Brehler'))
+    iban = escape(os.getenv('BANK_IBAN', ''))
+    betrag = f'<span style="font-size:18px;font-weight:900;">{float(order.gesamt_betrag):.2f} €</span>'
+    return f"""
     <html><body style="font-family:'Inter',Arial,sans-serif;background:#f9fafb;color:#111827;margin:0;padding:40px;">
-        <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:30px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.05);border:1px solid #eee;">
+        <div style="{_STIL_RAHMEN}">
             <div style="background:#050816;padding:40px;text-align:center;">
                 <h1 style="color:#fff;margin:0;font-size:24px;text-transform:uppercase;letter-spacing:5px;">Luviq</h1>
-                <p style="color:#ff6a00;margin-top:10px;font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:2px;">Mission: Payment Pending</p>
+                <p style="{_STIL_UNTERZEILE}">Mission: Payment Pending</p>
             </div>
             <div style="padding:40px;">
                 <h2 style="font-size:20px;font-weight:900;margin-bottom:20px;">Hallo {escape(order.vorname)},</h2>
                 <p style="line-height:1.6;color:#4b5563;">vielen Dank für deine Bestellung! Bitte begleiche den Betrag zeitnah.</p>
                 <div style="margin:30px 0;padding:30px;background:#fdf2f2;border-radius:20px;border-left:5px solid #ff6a00;">
-                    <h3 style="margin-top:0;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#ff6a00;">Zahlungsoption A: Überweisung</h3>
-                    <p style="margin:15px 0 5px;font-size:13px;"><strong>Inhaber:</strong> {escape(os.getenv('BANK_INHABER','Luisa Brehler'))}</p>
-                    <p style="margin:5px 0;font-size:13px;"><strong>IBAN:</strong> {escape(os.getenv('BANK_IBAN',''))}</p>
+                    <h3 style="{_STIL_KASTENTITEL}color:#ff6a00;">Zahlungsoption A: Überweisung</h3>
+                    <p style="margin:15px 0 5px;font-size:13px;"><strong>Inhaber:</strong> {inhaber}</p>
+                    <p style="margin:5px 0;font-size:13px;"><strong>IBAN:</strong> {iban}</p>
                     <p style="margin:5px 0;font-size:13px;"><strong>Verwendungszweck:</strong> Mission #{order.id}</p>
-                    <p style="margin:5px 0;font-size:13px;"><strong>Betrag:</strong> <span style="font-size:18px;font-weight:900;">{float(order.gesamt_betrag):.2f} €</span></p>
+                    <p style="margin:5px 0;font-size:13px;"><strong>Betrag:</strong> {betrag}</p>
                 </div>
                 {paypal_block}
                 <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;">Deine Auswahl:</h3>
@@ -617,4 +663,3 @@ def send_bank_details_email(order):
         </div>
     </body></html>
     """
-    send_brevo_email(subject, html_content, order.email, recipient_name=f"{order.vorname} {order.nachname}")
