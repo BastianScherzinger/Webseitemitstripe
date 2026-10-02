@@ -201,6 +201,16 @@ class UserProfileForm(forms.ModelForm):
             self.fields['last_name'].initial = self.instance.user.last_name
             self.fields['email'].initial = self.instance.user.email
     
+    def clean_email(self):
+        """Wie bei der Registrierung: keine Adresse, die ein anderes Konto trägt."""
+        email = self.cleaned_data['email'].strip()
+        andere = User.objects.filter(email__iexact=email)
+        if self.instance.user_id:
+            andere = andere.exclude(pk=self.instance.user_id)
+        if andere.exists():
+            raise forms.ValidationError('Diese E-Mail-Adresse gehört schon zu einem anderen Konto.')
+        return email
+
     def save(self, commit=True):
         profile = super().save(commit=False)
         

@@ -214,20 +214,17 @@ class AdminRoutenTest(LuviqTestCase):
             self.assertEqual(self.hole('/shop-admin/stats/').status_code, 302)
 
 
-class GetLueckeHeutigerStandTest(LuviqTestCase):
-    """Hält die GET-Lücke aus ``01-BEFUND.md`` 6.1 (2) im **heutigen** Zustand
-    fest – dokumentiert, nicht gebilligt.
+class ZustandsaenderungNurPerPostTest(LuviqTestCase):
+    """Zustandsändernde Adressen reagieren nur auf POST (Beim Kunden Nr. 10, EIG85).
 
-    Zustandsändernde Aufrufe laufen heute per GET: ein Kommentar wird durch
+    Früher hielt diese Klasse die GET-Lücke aus ``01-BEFUND.md`` 6.1 (2) als
+    Ist-Zustand fest („``GetLueckeHeutigerStandTest``“): ein Kommentar wurde durch
     den blossen Aufruf seiner Lösch-Adresse gelöscht, ein Produkt durch den
-    Aufruf der Toggle-Adresse umgeschaltet, ein Newsletter an alle
-    Abonnenten durch den Aufruf der Resend-Adresse verschickt. GET ist von
-    der CSRF-Prüfung ausgenommen; ein ``<img src="…/delete/">`` auf einer
-    fremden Seite genügt, wenn die Betreiberin angemeldet ist. Die
-    Behebung (POST-Pflicht plus ``<form>`` statt ``<a>``) ändert sichtbare
-    Elemente und braucht die Freigabe des Kunden (Plan, Verworfen Zeile 8,
-    offene Frage 10). Kommt sie, werden diese Tests rot und sind bewusst
-    umzudrehen: dann muss GET **nichts** verändern.
+    Aufruf der Toggle-Adresse umgeschaltet, ein Newsletter durch den Aufruf der
+    Resend-Adresse verschickt. GET ist von der CSRF-Prüfung ausgenommen; ein
+    ``<img src="…/delete/">`` auf einer fremden Seite genügte. Seit der Umstellung
+    (POST-Pflicht, ``<form>`` mit CSRF-Token statt ``<a>``) ist das Soll
+    festgehalten: GET verändert **nichts**, POST tut es.
     """
 
     def setUp(self):
@@ -236,32 +233,31 @@ class GetLueckeHeutigerStandTest(LuviqTestCase):
         )
         self.produkt = erzeuge_produkt('Bemalte Jacke')
 
-    def test_ein_get_aufruf_loescht_heute_einen_kommentar(self):
-        """Heutiger Stand (siehe Klassendokumentation): der Aufruf der
-        Lösch-Adresse per GET löscht den eigenen Kommentar."""
+    def test_ein_get_aufruf_loescht_keinen_kommentar_ein_post_schon(self):
         kundin = erzeuge_benutzer('kundin')
         kommentar = Comment.objects.create(user=kundin, text='Tolle Jacke!')
         self.client.force_login(kundin)
 
         antwort = self.hole(f'/comment/{kommentar.id}/delete/')
+        self.assertEqual(antwort.status_code, 302)
+        self.assertTrue(Comment.objects.filter(pk=kommentar.pk).exists())
 
+        antwort = self.sende(f'/comment/{kommentar.id}/delete/')
         self.assertEqual(antwort.status_code, 302)
         self.assertFalse(Comment.objects.filter(pk=kommentar.pk).exists())
 
-    def test_ein_get_aufruf_schaltet_heute_ein_produkt_um(self):
-        """Heutiger Stand (siehe Klassendokumentation): der Aufruf der
-        Toggle-Adresse per GET nimmt ein Produkt aus dem Shop."""
+    def test_ein_get_aufruf_schaltet_kein_produkt_um_ein_post_schon(self):
         self.client.force_login(self.besitzerin)
 
         self.hole(f'/shop-admin/produkte/{self.produkt.id}/toggle/')
+        self.produkt.refresh_from_db()
+        self.assertTrue(self.produkt.aktiv)
 
+        self.sende(f'/shop-admin/produkte/{self.produkt.id}/toggle/')
         self.produkt.refresh_from_db()
         self.assertFalse(self.produkt.aktiv)
 
-    def test_ein_get_aufruf_verschickt_heute_den_newsletter_an_alle(self):
-        """Heutiger Stand (siehe Klassendokumentation): der Aufruf der
-        Resend-Adresse per GET verschickt den Newsletter an alle Abonnenten –
-        beliebig oft."""
+    def test_ein_get_aufruf_verschickt_keinen_newsletter_und_setzt_nichts_zurueck(self):
         Subscriber.objects.create(email='abo@example.invalid', bestaetigt=True)
         # Unbestaetigte Adressen bekommen nichts (Double-Opt-in, 17.09.2026).
         Subscriber.objects.create(email='offen@example.invalid')
@@ -270,9 +266,68 @@ class GetLueckeHeutigerStandTest(LuviqTestCase):
         with mock.patch(_NEWSLETTER) as newsletter:
             self.hole(f'/shop-admin/produkte/{self.produkt.id}/resend-newsletter/')
             self.hole(f'/shop-admin/produkte/{self.produkt.id}/resend-newsletter/')
+        newsletter.assert_not_called()
+        self.produkt.refresh_from_db()
+        self.assertFalse(self.produkt.newsletter_gesendet)
 
+        with mock.patch(_NEWSLETTER) as newsletter:
+            self.sende(f'/shop-admin/produkte/{self.produkt.id}/resend-newsletter/')
+            self.sende(f'/shop-admin/produkte/{self.produkt.id}/resend-newsletter/')
         self.assertEqual(newsletter.call_count, 2)
         empfaenger = [s.email for s in newsletter.call_args.args[1]]
         self.assertEqual(empfaenger, ['abo@example.invalid'])
         self.produkt.refresh_from_db()
         self.assertTrue(self.produkt.newsletter_gesendet)
+
+        # Zurücksetzen: ebenfalls nur per POST.
+        self.hole(f'/shop-admin/produkte/{self.produkt.id}/reset-newsletter/')
+        self.produkt.refresh_from_db()
+        self.assertTrue(self.produkt.newsletter_gesendet)
+        self.sende(f'/shop-admin/produkte/{self.produkt.id}/reset-newsletter/')
+        self.produkt.refresh_from_db()
+        self.assertFalse(self.produkt.newsletter_gesendet)
+
+    def test_ein_get_aufruf_veraendert_keinen_gaestebuch_like_ein_post_schon(self):
+        kundin = erzeuge_benutzer('kundin')
+        kommentar = Comment.objects.create(user=kundin, text='Tolle Jacke!')
+        self.client.force_login(kundin)
+
+        self.hole(f'/comment/{kommentar.id}/like/')
+        self.assertEqual(kommentar.likes.count(), 0)
+
+        self.sende(f'/comment/{kommentar.id}/like/')
+        self.assertEqual(kommentar.likes.count(), 1)
+
+    def test_die_seiten_bieten_formulare_mit_csrf_token_statt_links_an(self):
+        """Verhindert, dass ein Template wieder einen ``<a href>`` auf eine
+        zustandsändernde Adresse setzt – dann liefe der Knopf ins Leere (GET
+        verändert nichts mehr) oder jemand baut die Lücke wieder ein."""
+        kundin = erzeuge_benutzer('kundin')
+        kommentar = Comment.objects.create(user=kundin, text='Tolle Jacke!')
+        self.client.force_login(kundin)
+        seite = self.hole('/gaestebuch/').content.decode()
+        self.assertNotIn(f'href="/comment/{kommentar.id}/like/"', seite)
+        self.assertNotIn(f'href="/comment/{kommentar.id}/delete/"', seite)
+        self.assertIn(f'action="/comment/{kommentar.id}/like/"', seite)
+        self.assertIn(f'action="/comment/{kommentar.id}/delete/"', seite)
+        self.assertIn('csrfmiddlewaretoken', seite)
+
+        self.client.force_login(self.besitzerin)
+        seite = self.hole('/shop-admin/produkte/').content.decode()
+        for name in ('toggle', 'resend-newsletter'):
+            adresse = f'/shop-admin/produkte/{self.produkt.id}/{name}/'
+            self.assertNotIn(f'href="{adresse}"', seite)
+            self.assertIn(f'action="{adresse}"', seite)
+
+    def test_ein_post_ohne_csrf_token_wird_abgewiesen(self):
+        """Gegenprobe zur Umstellung: der POST ist nur dann ein Schutz, wenn
+        Django das Token auch prüft. Ein Client, der die Prüfung nicht
+        umgeht, bekommt 403."""
+        from django.test import Client
+        kundin = erzeuge_benutzer('kundin')
+        kommentar = Comment.objects.create(user=kundin, text='Tolle Jacke!')
+        strenger = Client(enforce_csrf_checks=True)
+        strenger.force_login(kundin)
+        antwort = strenger.post(f'/comment/{kommentar.id}/delete/', secure=True)
+        self.assertEqual(antwort.status_code, 403)
+        self.assertTrue(Comment.objects.filter(pk=kommentar.pk).exists())

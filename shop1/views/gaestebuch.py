@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from ..models import Comment
+from ..postpflicht import nur_post
 from ._helpers import _is_admin
 
 
@@ -53,6 +54,7 @@ def comment_add(request):
 
 
 @login_required(login_url='login')
+@nur_post('gaestebuch')
 def comment_like(request, comment_id):
     """Liked oder ent-liked einen Kommentar."""
     comment = get_object_or_404(Comment, id=comment_id)
@@ -64,6 +66,7 @@ def comment_like(request, comment_id):
 
 
 @login_required(login_url='login')
+@nur_post('gaestebuch')
 def comment_delete(request, comment_id):
     """Löscht einen Kommentar (nur Admin oder Ersteller)."""
     comment = get_object_or_404(Comment, id=comment_id)

@@ -134,7 +134,8 @@ class RegistrierungTest(LuviqTestCase):
         with mock.patch(_MAIL) as versand:
             erzeuge_benutzer('erste', email='neu@example.invalid')
             versand.reset_mock()
-            antwort = self.sende('/register/', dict(REGISTRIERUNG, username='zweite'))
+            antwort = self.sende('/register/', dict(REGISTRIERUNG, username='zweite',
+                                                    email='Neu@Example.Invalid'))
 
         self.assertEqual(antwort.status_code, 200)
         self.assertFalse(User.objects.filter(username='zweite').exists())
@@ -221,6 +222,21 @@ class KontoBausteineTest(LuviqTestCase):
         konto.refresh_from_db()
         self.assertEqual((konto.first_name, konto.last_name, konto.email),
                          ('Erika', 'Musterfrau', 'erika@example.invalid'))
+
+    def test_das_profilformular_nimmt_keine_adresse_eines_anderen_kontos_an(self):
+        """Gegenstück zur Registrierung: auch über das Profil lässt sich keine
+        Adresse eintragen, die schon ein anderes Konto trägt – die eigene
+        Adresse bleibt dagegen frei änderbar (und unverändert speicherbar)."""
+        erzeuge_benutzer('erste', email='besetzt@example.invalid')
+        konto = erzeuge_benutzer('kundin', email='eigene@example.invalid')
+        daten = {'first_name': 'Erika', 'last_name': 'Musterfrau',
+                 'email': 'Besetzt@Example.Invalid', 'land': 'Deutschland'}
+        formular = forms.UserProfileForm(daten, instance=konto.profile)
+        self.assertFalse(formular.is_valid())
+        self.assertIn('email', formular.errors)
+
+        daten['email'] = 'eigene@example.invalid'
+        self.assertTrue(forms.UserProfileForm(daten, instance=konto.profile).is_valid())
 
 
 @SCHNELLER_HASHER

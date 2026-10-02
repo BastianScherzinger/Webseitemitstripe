@@ -44,7 +44,7 @@ KAUFROUTEN = frozenset({
 #: Routen, die per ``fetch`` aufgerufen werden und JSON erwarten. Eine
 #: Weiterleitung auf eine HTML-Seite wäre für das aufrufende Skript ein
 #: unlesbarer Fehler; sie bekommen eine JSON-Antwort mit Status 409.
-KAUFROUTEN_JSON = frozenset({'paypal_capture'})
+KAUFROUTEN_JSON = frozenset({'paypal_create', 'paypal_capture'})
 
 #: Ziel für „Auf die Warteliste": die vorhandene Newsletter-Anmeldung mit
 #: Double-Opt-in auf der Startseite (Formular ``#newsletter-form``).

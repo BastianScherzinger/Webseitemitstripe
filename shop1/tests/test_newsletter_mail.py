@@ -39,13 +39,14 @@ class NewsletterHtmlTest(LuviqTestCase):
         self.assertNotIn('{%', html)
         self.assertNotIn('€', html)
 
-    def test_jede_abonnentin_bekommt_genau_eine_mail_mit_demselben_text(self):
+    def test_jede_abonnentin_bekommt_genau_eine_mail_mit_eigenem_abmeldelink(self):
         produkt = erzeuge_produkt('Bemalte Jacke')
         abos = [Subscriber(email='a@example.invalid'), Subscriber(email='b@example.invalid')]
         with mock.patch('shop1.utils.send_brevo_email') as versand:
             send_newsletter_email(produkt, abos)
         self.assertEqual([a.args[2] for a in versand.call_args_list], ['a@example.invalid', 'b@example.invalid'])
-        self.assertEqual(len({a.args[1] for a in versand.call_args_list}), 1)
+        # derselbe Betreff; der HTML-Teil unterscheidet sich nur im Abmeldelink je Adresse
+        self.assertEqual(len({a.args[0] for a in versand.call_args_list}), 1)
         self.assertIn('Bemalte Jacke', versand.call_args.args[0])
 
     def test_ohne_abonnenten_geht_nichts_raus(self):

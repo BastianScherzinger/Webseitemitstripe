@@ -98,22 +98,26 @@ def send_newsletter_email(produkt, subscribers):
     else:
         image_url = ""
 
-    html_content = rendern(
-        'newsletter.html',
-        titel=subject,
-        preheader=f'Ein neues handbemaltes Stück bei Luviq Universe: {produkt.name}',
-        produkt_name=produkt.name,
-        bild_url=image_url,
-        link=produkt_url,
-        knopf=knopf,
-    )
-    text_content = (
-        'Hallo,\n\n'
-        f'ein neues Stück ist da: „{produkt.name}“. Handbemalt, ein Einzelstück.\n\n'
-        f'{knopf}: {produkt_url}\n\n'
-        'Viele Grüße\nLuisa\n\n'
-        'Du bekommst diese Mail, weil du dich für den Newsletter angemeldet und die Anmeldung '
-        f'bestätigt hast. Abmelden: schreib mir kurz an {KONTAKT_EMAIL}.'
-    )
+    from .newsletter import abmelde_adresse
     for sub in subscribers:
+        # Abmeldelink in jeder Mail (EIG17), je Adresse signiert; im Text und im HTML.
+        abmelde_url = abmelde_adresse(sub.email)
+        html_content = rendern(
+            'newsletter.html',
+            titel=subject,
+            preheader=f'Ein neues handbemaltes Stück bei Luviq Universe: {produkt.name}',
+            produkt_name=produkt.name,
+            bild_url=image_url,
+            link=produkt_url,
+            knopf=knopf,
+            abmelde_url=abmelde_url,
+        )
+        text_content = (
+            'Hallo,\n\n'
+            f'ein neues Stück ist da: „{produkt.name}“. Handbemalt, ein Einzelstück.\n\n'
+            f'{knopf}: {produkt_url}\n\n'
+            'Viele Grüße\nLuisa\n\n'
+            'Du bekommst diese Mail, weil du dich für den Newsletter angemeldet und die Anmeldung '
+            f'bestätigt hast. Abmelden mit einem Klick: {abmelde_url} - oder schreib mir kurz an {KONTAKT_EMAIL}.'
+        )
         send_brevo_email(subject, html_content, sub.email, text_content=text_content)

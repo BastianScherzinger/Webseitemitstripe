@@ -86,15 +86,21 @@
                     
                     <div class="flex items-center gap-4">
                         <!-- Likes -->
-                        <a href="{% url 'comment_like' comment.id %}" class="flex items-center gap-2 glass px-4 py-2 rounded-full text-[10px] font-black transition-all {% if user in comment.likes.all %}text-glow-orange border-glow-orange/30 bg-glow-orange/5{% else %}text-white/30 border-white/5 hover:text-white{% endif %}">
-                            <span>🔥</span> {{ comment.total_likes }}
-                        </a>
+                        <form method="post" action="{% url 'comment_like' comment.id %}">
+                            {% csrf_token %}
+                            <button class="flex items-center gap-2 glass px-4 py-2 rounded-full text-[10px] font-black transition-all {% if user in comment.likes.all %}text-glow-orange border-glow-orange/30 bg-glow-orange/5{% else %}text-white/30 border-white/5 hover:text-white{% endif %}">
+                                <span>🔥</span> {{ comment.total_likes }}
+                            </button>
+                        </form>
                         
                         <!-- Admin Delete -->
                         {% if is_shop_owner or comment.user == user %}
-                        <a href="{% url 'comment_delete' comment.id %}" class="w-10 h-10 glass rounded-xl flex items-center justify-center text-xs hover:bg-red-500/20 hover:text-red-400 border-white/5 transition-all" title="Löschen">
-                            🗑️
-                        </a>
+                        <form method="post" action="{% url 'comment_delete' comment.id %}">
+                            {% csrf_token %}
+                            <button class="w-10 h-10 glass rounded-xl flex items-center justify-center text-xs hover:bg-red-500/20 hover:text-red-400 border-white/5 transition-all" title="Löschen" aria-label="Beitrag löschen">
+                                🗑️
+                            </button>
+                        </form>
                         {% endif %}
                     </div>
                 </div>
@@ -121,7 +127,10 @@
                             </div>
                             
                             {% if is_shop_owner or reply.user == user %}
-                            <a href="{% url 'comment_delete' reply.id %}" class="text-[10px] text-white/10 hover:text-red-400 transition-colors">Löschen</a>
+                            <form method="post" action="{% url 'comment_delete' reply.id %}">
+                                {% csrf_token %}
+                                <button class="text-[10px] text-white/10 hover:text-red-400 transition-colors">Löschen</button>
+                            </form>
                             {% endif %}
                         </div>
                         <p class="text-white/40 text-xs leading-relaxed font-light">{{ reply.text }}</p>

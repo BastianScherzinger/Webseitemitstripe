@@ -73,15 +73,26 @@ def termin_text(termin):
 
 
 def drop_nummer():
-    """Nummer der nächsten Ausgabe, dreistellig: ``DROP_NUMMER`` oder die
-    nächste freie Archivnummer. So bekommt der Drop nie eine Nummer, die im
-    Archiv schon vergeben ist."""
+    """Nummer der nächsten Ausgabe, dreistellig: ``DROP_NUMMER``, sonst die
+    Nummer des vorab angelegten Drop-Stücks, sonst die nächste freie.
+
+    Lädt Luisa das Drop-Stück vor dem Termin hoch, bekommt es beim ersten
+    Speichern die nächste freie Archivnummer (``Produkt.save``). Der Countdown
+    muss diese Nummer nennen und darf nicht auf die übernächste springen
+    (EIG123): Drop-Stück = das Stück mit der kleinsten Nummer über dem
+    Archiv (``Produkt.vergeben``). Ohne so ein Stück gilt höchste Nummer + 1 –
+    der Drop bekommt nie eine Nummer, die im Archiv schon vergeben ist."""
     fest = os.getenv('DROP_NUMMER', '').strip()
     if fest.isdigit():
         return f'{int(fest):03d}'
     from django.db.models import Max
     from .models import Produkt
     try:
+        archiv = Produkt.objects.filter(vergeben=True).aggregate(m=Max('nummer'))['m'] or 0
+        vorab = (Produkt.objects.filter(vergeben=False, nummer__gt=archiv)
+                 .order_by('nummer').values_list('nummer', flat=True).first())
+        if vorab:
+            return f'{vorab:03d}'
         hoechste = Produkt.objects.aggregate(m=Max('nummer'))['m'] or 0
     except DatabaseError:
         # Die Seite muss auch ohne lesbare Tabelle rendern (frische Datenbank,

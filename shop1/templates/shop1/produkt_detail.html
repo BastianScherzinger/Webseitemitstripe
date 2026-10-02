@@ -94,7 +94,7 @@
                 {% if produkt.masse %}<dt>Maße</dt><dd>{{ produkt.masse }}</dd>{% endif %}
                 <dt>Stück</dt><dd>Second Hand, von Hand bemalt, 1-of-1</dd>
             </dl>
-            {% if verkauf_aktiv %}
+            {% if verkauf_aktiv and not produkt.vergeben %}
             <p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} €</p>
             <p class="lv-klein">Endpreis nach § 19 UStG · PayPal oder Vorab-Überweisung · Versand deutschlandweit, in der Regel 1-2 Werktage</p>
             {% else %}
@@ -102,17 +102,19 @@
             {% endif %}
             <p class="lv-stueck-knoepfe">
                 {% comment %}Verkaufsschalter: ohne Verkauf kein Warenkorb-Knopf, sondern die Warteliste (Newsletter mit Double-Opt-in auf der Startseite) und die Frage zum Stück.{% endcomment %}
-                {% if not verkauf_aktiv %}
+                {% if not verkauf_aktiv or produkt.vergeben %}
                 <a class="lv-knopf" href="{% url 'home' %}#newsletter-form">Auf die Warteliste <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
                 <a class="lv-link" href="{% url 'kontakt' %}">Frage zum Stück</a>
                 {% elif user.is_authenticated %}
-                <a class="lv-knopf" href="{% url 'add_to_cart' produkt.id %}?next=warenkorb">In den Warenkorb <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                {% comment %}„In den Warenkorb" ändert den Korb und läuft deshalb per POST (EIG85). Das Formular steht außerhalb des Absatzes (ein Formular im <p> ist kein gültiges HTML); der Knopf gehört über form="…" dazu.{% endcomment %}
+                <button class="lv-knopf" type="submit" form="lv-in-den-warenkorb">In den Warenkorb <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
                 <a class="lv-link" href="{% url 'kontakt' %}">Frage zum Stück</a>
                 {% else %}
-                <a class="lv-knopf" href="{% url 'login' %}">Anmelden und kaufen</a>
+                <a class="lv-knopf" href="{% url 'login' %}?next={{ request.path|urlencode }}">Anmelden und kaufen</a>
                 <a class="lv-link" href="{% url 'register' %}">Konto anlegen</a>
                 {% endif %}
             </p>
+            {% if verkauf_aktiv and not produkt.vergeben and user.is_authenticated %}<form id="lv-in-den-warenkorb" method="post" action="{% url 'add_to_cart' produkt.id %}?next=warenkorb" hidden>{% csrf_token %}</form>{% endif %}
             {% if motivanfrage_aktiv %}<p class="lv-klein">So eins, aber mit deinem Motiv? <a href="{% url 'motiv_anfragen' %}">Motiv anfragen</a></p>{% endif %}
         </div>
     </article>
