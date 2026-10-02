@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-10-01
+stand: 2026-10-02
 status: teilweise
 fortschritt: 85
 zusammenfassung: Stand 01.10.2026: main = origin/main = 36c0741 und live (Bild-Sitemap TS19 heute ausgeliefert), alle Arbeitszweige gemergt; Verkauf aus (Marke im Aufbau, kein Gewerbe angemeldet); Gesamtstand siehe Messblock weiter unten (vom Werkzeug geschrieben). Offen sind Freigaben und Angaben der Betreiberin, kein Code-Rückstau.
@@ -53,7 +53,7 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 01.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 01.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-02a) — **Gesamtstand 85,5 von 100**, Reifegrad „Solide“. 333 von 374 Regeln an 15 URLs und 166 Dateien (34.509 Zeilen) geprüft.
+**Messung vom 02.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-02a) — **Gesamtstand 85,5 von 100**, Reifegrad „Solide“. 333 von 374 Regeln an 15 URLs und 166 Dateien (34.509 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
