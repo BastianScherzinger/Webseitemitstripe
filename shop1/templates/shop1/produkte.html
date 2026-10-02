@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 {% load static custom_tags %}
 
-{% block title %}{% if verkauf_aktiv %}Second Hand & Vintage Mode kaufen | Luviq Universe – Alsfeld, Hessen{% else %}Archiv: handbemalte Vintage-Unikate | Luviq Universe{% endif %}{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Alle handbemalten 1-of-1 Vintage-Unikate von Luviq Universe aus Alsfeld, Hessen: nachhaltige Second-Hand-Mode, jedes Stück nur einmal zu haben. Jetzt bestellen.{% else %}Archiv von Luviq Universe aus Alsfeld, Hessen: bisherige handbemalte 1-of-1 Vintage-Unikate, bereits vergeben. Für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}
+{% block title %}{% if verkauf_aktiv %}Second Hand & Vintage Mode kaufen | Luviq Universe – Alsfeld, Hessen{% else %}Archiv: handbemalte Unikate aus Alsfeld – Luviq Universe{% endif %}{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Alle handbemalten 1-of-1 Vintage-Unikate von Luviq Universe aus Alsfeld, Hessen: nachhaltige Second-Hand-Mode, jedes Stück nur einmal zu haben. Jetzt bestellen.{% else %}Archiv von Luviq Universe aus Alsfeld, Hessen: bisherige handbemalte 1-of-1 Vintage-Unikate, bereits vergeben. Jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}
 {% block og_title %}Second Hand & Vintage Mode | Luviq Universe Alsfeld{% endblock %}
 {% block og_description %}Handbemalte Vintage-Unikate aus Alsfeld, Hessen. 1-of-1 Second-Hand-Mode – nachhaltig und einzigartig. Jetzt bei Luviq Universe entdecken.{% endblock %}
+{% block twitter_title %}{% if verkauf_aktiv %}Handbemalte Vintage-Unikate – Luviq Universe{% else %}Archiv: handbemalte Unikate – Luviq Universe{% endif %}{% endblock %}
+{% block twitter_description %}{% if verkauf_aktiv %}Handbemalte 1-of-1 Vintage-Unikate aus Alsfeld, Hessen, jedes Stück nur einmal.{% else %}Bisherige handbemalte 1-of-1 Unikate aus Alsfeld, bereits vergeben. Neue Stücke gibt es mit dem ersten Drop.{% endif %}{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">

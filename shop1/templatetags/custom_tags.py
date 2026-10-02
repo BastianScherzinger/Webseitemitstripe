@@ -58,3 +58,22 @@ def cloud(url, spec=''):
         pfad = _ALTFORMAT.sub('', teile.path) + '.webp'
         teile = teile._replace(path=pfad)
     return urlunsplit(teile)
+
+
+@register.filter
+def cloud_vorschau(url):
+    """Vorschaubild für geteilte Links (``og:image``): 1200 × 630, JPEG.
+
+    Cloudinary füllt das Querformat mit ``c_pad,b_auto`` auf, statt ein
+    hochkantes Foto zu beschneiden (IS39: ein Hochformat wie 1107 × 2400 ist als
+    Vorschau zu schmal). JPEG statt WebP, weil die Vorschau-Abrufer von
+    WhatsApp, LinkedIn und Facebook dieses Format am sichersten lesen.
+    Nicht-Cloudinary-URLs (lokales ``/media/``) bleiben unverändert.
+    """
+    url = str(url or '')
+    marker = '/image/upload/'
+    if marker not in url:
+        return url
+    teile = urlsplit(url.replace(marker, marker + 'f_jpg,q_auto,w_1200,h_630,c_pad,b_auto/', 1))
+    pfad = re.sub(r'\.[A-Za-z0-9]{2,5}$', '', teile.path) + '.jpg'
+    return urlunsplit(teile._replace(path=pfad))

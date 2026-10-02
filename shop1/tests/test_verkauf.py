@@ -484,19 +484,27 @@ class VerkaufsvermerkMigrationTest(LuviqTestCase):
 
 
 class ArchivMetaangabenTest(LuviqTestCase):
-    """Ohne Verkauf: Titel ohne „kaufen", Beschreibung mit Archiv-Zusatz –
-    in denselben Grenzen wie mit Verkauf (``test_seo.ProduktMetaangabenTest``)."""
+    """Ohne Verkauf: Titel ohne „kaufen" mit Archivnummer vorn, Beschreibung mit
+    Archiv-Zusatz und Handlungsaufforderung – in denselben Grenzen wie mit Verkauf
+    (``test_seo.ProduktMetaangabenTest``)."""
 
     def test_titel_und_beschreibung_in_den_grenzen(self):
         from ..models import (META_BESCHREIBUNG_MAX, META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF,
-                              META_TITEL_MAX, META_TITEL_ZUSAETZE_OHNE_VERKAUF)
+                              META_TITEL_MAX, META_TITEL_VORSATZ_OHNE_VERKAUF,
+                              META_TITEL_ZUSAETZE_OHNE_VERKAUF)
 
         kurz = erzeuge_produkt('Bemalte Jacke', beschreibung='Handbemalt.')
-        self.assertEqual(kurz.meta_title, 'Bemalte Jacke' + META_TITEL_ZUSAETZE_OHNE_VERKAUF[0])
-        self.assertEqual(kurz.meta_description, 'Handbemalt.' + META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF)
+        vorsatz = META_TITEL_VORSATZ_OHNE_VERKAUF.format(nr=kurz.archiv_nummer)
+        self.assertEqual(kurz.meta_title,
+                         vorsatz + 'Bemalte Jacke' + META_TITEL_ZUSAETZE_OHNE_VERKAUF[0])
+        self.assertEqual(
+            kurz.meta_description,
+            'Handbemalt.' + META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF.format(nr=kurz.archiv_nummer))
         lang = erzeuge_produkt('Handbemalte Vintage Jeansjacke mit dem Sonnenblumenmotiv und Ranken',
                                beschreibung='Wort ' * 100)
         self.assertLessEqual(len(lang.meta_title), META_TITEL_MAX)
         self.assertNotIn('kaufen', lang.meta_title)
+        self.assertTrue(lang.meta_title.endswith('Luviq Universe'), lang.meta_title)
         self.assertLessEqual(len(lang.meta_description), META_BESCHREIBUNG_MAX)
-        self.assertTrue(lang.meta_description.endswith(META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF))
+        self.assertTrue(lang.meta_description.endswith(
+            META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF.format(nr=lang.archiv_nummer)))

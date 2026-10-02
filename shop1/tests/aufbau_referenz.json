@@ -747,6 +747,7 @@
    "glass-card p-10 text-center rounded-[3rem] mb-24 border-white/5",
    "text-white/30 text-xs uppercase tracking-widest",
    "text-glow-orange hover:underline",
+   "sr-only",
    "space-y-12",
    "text-center py-24",
    "text-white/10 italic font-light tracking-[0.5em] uppercase text-xs",
@@ -829,6 +830,7 @@
    "div",
    "p",
    "a",
+   "h2",
    "div",
    "div",
    "p",
@@ -860,7 +862,8 @@
    "a"
   ],
   "ueberschriften": [
-   "h1: Gästebuch"
+   "h1: Gästebuch",
+   "h2: Beiträge im Gästebuch"
   ]
  },
  "/impressum/": {
