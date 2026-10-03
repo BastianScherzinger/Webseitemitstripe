@@ -7,6 +7,7 @@ fortschritt: 85
 zusammenfassung: Stand 02.10.2026: 17 Sitemap-URLs (Start, Archiv, Gästebuch, Luisa, Motiv anfragen, Herkunft, Kontakt, Datenschutz, Wissensbereich mit drei Beiträgen, fünf Archivstücke), llms-full.txt und Feed live, Archiv statt Shop; Substanz & Reichweite 85 gemessen (02.10.2026). Offen bei Luisa: Beschreibung je Stück, Produktnamen, Stoff für zweite Seiten, Textfreigabe; zwei Später-Punkte.
 offen: 2
 quellen: LOGBUCH.md, shop1/seiten_stand.py, shop1/views/wissen.py, shop1/views/legal.py, shop1/tests/test_inhalt.py
+rest_bei: kunde, spaeter
 ---
 
 # Inhalte — Luviq Universe

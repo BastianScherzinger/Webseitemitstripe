@@ -15,6 +15,7 @@ bewertungen_anzahl: nicht dokumentiert
 quellen: GOOGLE_SEO_GUIDE.md, templates/base.html, shop1/templates/shop1/_reviews_map.html, shop1/templates/shop1/legal/impressum.html
 profil_bestaetigt: unbekannt
 profil_link: https://www.google.com/maps?cid=13899750731019902000
+rest_bei: bastian, kunde
 ---
 
 # Local SEO — Luviq Universe
