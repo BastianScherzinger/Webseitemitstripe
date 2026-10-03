@@ -27,16 +27,16 @@ Gemessen wird die **Live-Seite**, also der Stand `main`. Seit dem 02.10.2026 ist
 
 | Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
 |---|---|---:|---:|---:|---:|---:|
-| `/` | mobile | **95** | 2,85 s | 0,012 | 0 ms | 4 ms |
-| `/` | desktop | **100** | 0,62 s | 0,000 | 0 ms | 2 ms |
+| `/` | mobile | **95** | 2,85 s | 0,000 | 0 ms | 4 ms |
+| `/` | desktop | **100** | 0,65 s | 0,043 | 0 ms | 2 ms |
 | `/datenschutz/` | mobile | **100** | 1,50 s | 0,000 | 0 ms | 2 ms |
-| `/datenschutz/` | desktop | **100** | 0,36 s | 0,001 | 0 ms | 2 ms |
-| `/impressum/` | mobile | **100** | 1,50 s | 0,000 | 0 ms | 2 ms |
+| `/datenschutz/` | desktop | **100** | 0,37 s | 0,001 | 0 ms | 2 ms |
+| `/impressum/` | mobile | **100** | 1,50 s | 0,000 | 0 ms | 1 ms |
 | `/impressum/` | desktop | **100** | 0,36 s | 0,001 | 0 ms | 2 ms |
 | `/kontakt/` | mobile | **100** | 1,65 s | 0,000 | 0 ms | 2 ms |
-| `/kontakt/` | desktop | **100** | 0,37 s | 0,001 | 0 ms | 1 ms |
-| `/produkte/` | mobile | **99** | 2,04 s | 0,013 | 0 ms | 3 ms |
-| `/produkte/` | desktop | **100** | 0,48 s | 0,051 | 0 ms | 2 ms |
+| `/kontakt/` | desktop | **100** | 0,38 s | 0,001 | 0 ms | 2 ms |
+| `/produkte/` | mobile | **99** | 1,98 s | 0,013 | 0 ms | 3 ms |
+| `/produkte/` | desktop | **100** | 0,50 s | 0,000 | 0 ms | 2 ms |
 
 10 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 
