@@ -18,6 +18,11 @@ from django.utils import timezone
 
 from ._basis import INDEXIERBARE_SEITEN, INHALTSSEITEN, LuviqTestCase, erzeuge_produkt, ohne_kaufweg
 
+# Ein Stück ist mit Verkauf ``Product`` (mit ``offers``), ohne Verkauf
+# ``VisualArtwork``: Google wertet ein ``Product`` ohne ``offers``, ``review``
+# oder ``aggregateRating`` als ungültiges Produkt-Snippet (Search Console, 07.10.2026).
+STUECK_TYPEN = {'Product', 'VisualArtwork'}
+
 _JSONLD = re.compile(
     r'<script[^>]+type="application/ld\+json"[^>]*>(.*?)</script>', re.DOTALL
 )
@@ -242,7 +247,7 @@ class StrukturierteDatenTest(LuviqTestCase):
         täglich zwischen 22:00 und 24:00 UTC rot, weil in Berlin schon der
         nächste Tag angebrochen war."""
         inhalt = self.hole(self.produkt.get_absolute_url()).content.decode()
-        produktknoten = [k for k in schema_knoten(inhalt) if k.get('@type') == 'Product']
+        produktknoten = [k for k in schema_knoten(inhalt) if str(k.get('@type')) in STUECK_TYPEN]
         self.assertEqual(len(produktknoten), 1)
         self.assertEqual(
             produktknoten[0]['dateModified'][:10],
@@ -550,7 +555,7 @@ class ArchivSchemaTest(LuviqTestCase):
         return schema_knoten(self.hole('/produkte/').content.decode())
 
     def test_jedes_stueck_ist_ein_product_knoten_der_obersten_ebene(self):
-        produkte = [k for k in self._knoten() if k.get('@type') == 'Product']
+        produkte = [k for k in self._knoten() if str(k.get('@type')) in STUECK_TYPEN]
         self.assertEqual(len(produkte), len(self.stuecke))
         pfade = [urlsplit(k['url']).path for k in produkte]
         for stueck in self.stuecke:
@@ -570,10 +575,17 @@ class ArchivSchemaTest(LuviqTestCase):
     def test_die_ids_stimmen_mit_denen_der_stueckseiten_ueberein(self):
         """Gleiche @id wie auf der Stückseite: JSON-LD führt beide zusammen."""
         stueck = self.stuecke[0]
-        auf_uebersicht = {k['@id'] for k in self._knoten() if k.get('@type') == 'Product'}
+        auf_uebersicht = {k['@id'] for k in self._knoten() if str(k.get('@type')) in STUECK_TYPEN}
         auf_stueckseite = {k['@id'] for k in schema_knoten(
-            self.hole(stueck.get_absolute_url()).content.decode()) if k.get('@type') == 'Product'}
+            self.hole(stueck.get_absolute_url()).content.decode()) if str(k.get('@type')) in STUECK_TYPEN}
         self.assertTrue(auf_stueckseite <= auf_uebersicht)
+
+    def test_ohne_verkauf_ist_kein_stueck_ein_product(self):
+        """Ein ``Product`` ohne Angebot meldet die Search Console als ungültig."""
+        for k in self._knoten() + schema_knoten(
+                self.hole(self.stuecke[0].get_absolute_url()).content.decode()):
+            with self.subTest(knoten=k.get('@id')):
+                self.assertNotEqual(k.get('@type'), 'Product')
 
     def test_ohne_verkauf_traegt_kein_stueck_ein_angebot(self):
         for k in self._knoten():
@@ -583,7 +595,7 @@ class ArchivSchemaTest(LuviqTestCase):
     @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
     def test_mit_verkauf_tragen_die_stuecke_ein_angebot(self):
         for k in self._knoten():
-            if k.get('@type') == 'Product':
+            if str(k.get('@type')) in STUECK_TYPEN:
                 with self.subTest(knoten=k['@id']):
                     self.assertEqual(k['offers']['@type'], 'Offer')
 

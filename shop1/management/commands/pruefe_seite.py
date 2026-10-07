@@ -434,7 +434,12 @@ class Command(BaseCommand):
             typen.update(typ if isinstance(typ, list) else [typ])
 
         erwartet = {'Organization'}
-        erwartet.add('Product' if ist_produkt else 'WebPage')
+        if not ist_produkt:
+            erwartet.add('WebPage')
+        elif not typen & {'Product', 'VisualArtwork'}:
+            # Ohne Verkauf ist ein Stück ``VisualArtwork``: ein ``Product`` ohne
+            # ``offers`` wertet Google als ungültiges Produkt-Snippet.
+            self.fehler.append(f'{pfad}: im JSON-LD fehlt der Knoten des Stücks (Product/VisualArtwork).')
         if pfad != '/':
             erwartet.add('BreadcrumbList')
         fehlend = sorted(erwartet - typen)

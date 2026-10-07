@@ -10,6 +10,11 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 07.10.2026 — Stücke ohne Verkauf als `VisualArtwork` statt `Product` (Zweig `main`)
+
+**Was:** Auf `/produkte/` und den Stückseiten ist jeder Stück-Knoten bei ausgeschaltetem Verkauf `VisualArtwork` mit `creator` (statt `Product` mit `brand`/`sku`); mit `VERKAUF_AKTIV` bleibt es `Product` mit `offers`. `@id` (`#product`) unverändert. `pruefe_seite` akzeptiert beide Typen; neuer Test `test_ohne_verkauf_ist_kein_stueck_ein_product`.
+**Warum:** Search Console (07.10.) meldete „Produkt-Snippets: 1 ungültiges Element“ — ein `Product` ohne `offers`, `review` oder `aggregateRating` ist für Google ungültig, und ein Angebot darf ohne Verkauf nicht im Schema stehen. Gleichzeitig wählte Google für fünf Seiten noch die Apex-Adresse ohne `www` als kanonisch (Seite selbst sauber, 301 korrekt) → Indexierung der `www`-Adressen beantragt.
+
 ## 03.10.2026 — PJ07: letzte Datei mit Befund beseitigt (Zweig `fix/2026-10-03-luviq-v101`)
 
 **Was:** `pruefe_mail._pruefe_einstellungen` (64 Zeilen, Richtwert 60, Befund P08) ist in vier kleine Prüfmethoden zerlegt; Reihenfolge und Wortlaut der Meldungen bleiben gleich. Doku-Köpfe nach der Regel „Status folgt Fortschritt“ angeglichen (Fortschritt ab 90 = vollständig, Rest steht in `offen`).

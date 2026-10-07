@@ -39,13 +39,13 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Product",
+  "@type": "{% if verkauf_aktiv %}Product{% else %}VisualArtwork{% endif %}",
   "@id": "{{ request.build_absolute_uri }}#product",
   "name": "{{ produkt.name|escapejs }}",
   "description": "{{ produkt.beschreibung|escapejs }}",{% if produkt.bild %}
   "image": "{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}",{% endif %}
-  "brand": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
-  "sku": "LUVIQ-{{ produkt.id }}",
+  {% if verkauf_aktiv %}"brand": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
+  "sku": "LUVIQ-{{ produkt.id }}",{% else %}"creator": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},{% endif %}
   "dateModified": "{{ produkt.aktualisiert_am|date:'c' }}",
   "datePublished": "{{ produkt.erstellt_am|date:'c' }}"{% if verkauf_aktiv %},
   "offers": {
