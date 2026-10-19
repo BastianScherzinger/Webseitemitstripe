@@ -6,9 +6,9 @@ status: vollständig
 fortschritt: 99
 zusammenfassung: Stand 02.10.2026 (live, main = 7ae67ab): Produktbilder in mehreren Größen mit srcset und Bildmaßen, LCP-Bild mit fetchpriority und Preload, vier eigene Schriftdateien, Critical CSS, gepackte Stildateien, kein Fremdskript; Lighthouse Desktop 100, mobil 89 (LCP 3,76 s), Serverzeit 3–4 ms. Offen sind vier Später-Punkte mit Begründung (Besuchsprotokoll im Request, ein großes Original-Bild, mobil ein Punkt unter dem Ziel, Nachmessung mit Verkauf).
 offen: 4
-pagespeed_mobil: 99
+pagespeed_mobil: 98
 pagespeed_desktop: 100
-antwortzeit_ms: 3
+antwortzeit_ms: 4
 quellen: DOCUMENTATION.md, LOGBUCH.md, start.sh
 antwortzeit_quelle: PageSpeed server-response-time
 ---
@@ -21,26 +21,26 @@ Gemessen wird die **Live-Seite**, also der Stand `main`. Seit dem 02.10.2026 ist
 ## Messwerte
 
 <!-- tempo:anfang -->
-**Messung vom 18.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-18b). Bereich „Performance & Core Web Vitals“: **100,0 von 100**, Reifegrad „Referenz“.
+**Messung vom 19.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-18b). Bereich „Performance & Core Web Vitals“: **100,0 von 100**, Reifegrad „Referenz“.
 
 ### Lighthouse je Seite
 
 | Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
 |---|---|---:|---:|---:|---:|---:|
-| `/` | mobile | **95** | 2,95 s | 0,012 | 0 ms | 3 ms |
-| `/` | desktop | **100** | 0,62 s | 0,043 | 0 ms | 7 ms |
-| `/datenschutz/` | mobile | **100** | 1,52 s | 0,000 | 0 ms | 2 ms |
-| `/datenschutz/` | desktop | **100** | 0,32 s | 0,001 | 0 ms | 2 ms |
-| `/impressum/` | mobile | **100** | 1,66 s | 0,001 | 0 ms | 2 ms |
-| `/impressum/` | desktop | **100** | 0,37 s | 0,000 | 0 ms | 2 ms |
-| `/kontakt/` | mobile | **100** | 1,66 s | 0,000 | 0 ms | 2 ms |
-| `/kontakt/` | desktop | **100** | 0,38 s | 0,001 | 0 ms | 2 ms |
-| `/produkte/` | mobile | **99** | 2,05 s | 0,013 | 0 ms | 3 ms |
-| `/produkte/` | desktop | **100** | 0,45 s | 0,000 | 0 ms | 4 ms |
+| `/` | mobile | **92** | 3,38 s | 0,000 | 0 ms | 3 ms |
+| `/` | desktop | **100** | 0,68 s | 0,000 | 26 ms | 3 ms |
+| `/datenschutz/` | mobile | **100** | 1,58 s | 0,011 | 0 ms | 1 ms |
+| `/datenschutz/` | desktop | **100** | 0,37 s | 0,001 | 0 ms | 2 ms |
+| `/impressum/` | mobile | **100** | 1,66 s | 0,000 | 0 ms | 22 ms |
+| `/impressum/` | desktop | **100** | 0,36 s | 0,001 | 0 ms | 2 ms |
+| `/kontakt/` | mobile | **100** | 1,65 s | 0,000 | 0 ms | 1 ms |
+| `/kontakt/` | desktop | **100** | 0,36 s | 0,001 | 0 ms | 2 ms |
+| `/produkte/` | mobile | **100** | 1,82 s | 0,013 | 0 ms | 4 ms |
+| `/produkte/` | desktop | **100** | 0,51 s | 0,051 | 0 ms | 2 ms |
 
 10 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 
-**Serverzeit (`server-response-time` aus PageSpeed): 2,9 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
+**Serverzeit (`server-response-time` aus PageSpeed): 4,2 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
 
 ### Tempo-Regeln, die offen sind
 
