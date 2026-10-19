@@ -491,4 +491,5 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 | EIG141 | RE12 (Erklärung zur Barrierefreiheit, BFSG) steht als „wichtig“ offen, obwohl RE09/RE10 selbst feststellen, dass es hier kein Onlinegeschäft gibt | status | erledigt 02.10.2026 (Bewertungsblock) | RE12 steht im Bewertungsblock als nicht anwendbar mit Begründung (kein Verkauf, VERKAUF_AKTIV aus); der Punkt läuft nicht mehr als offen-wichtig. | 2026-09-27 |
 | EIG142 | Der Honigtopf lässt jede Eingabe durch, die den eigenen Hostnamen enthält | technik | offen | bei einer anderen betreuten Seite aufgefallen am 18.10.2026. **An dieser Seite noch nicht geprüft.** | 2026-10-18 |
 | EIG143 | Eine erfolgreiche Anfrage meldet dem Besucher „angekommen“, auch wenn der Mailversand scheitert | technik | offen | bei einer anderen betreuten Seite aufgefallen am 18.10.2026. **An dieser Seite noch nicht geprüft.** | 2026-10-18 |
+| EIG144 | Die Doku hängt dem Live-Stand um mehrere Tage hinterher und widerspricht sich selbst | status | offen | bei einer anderen betreuten Seite aufgefallen am 19.10.2026. **An dieser Seite noch nicht geprüft.** | 2026-10-19 |
 <!-- eigenepunkte:ende -->
