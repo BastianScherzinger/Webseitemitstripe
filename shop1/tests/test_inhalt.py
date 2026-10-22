@@ -554,8 +554,8 @@ class AntwortAbsatzUndListenTest(LuviqTestCase):
 
     def test_die_orte_auf_der_herkunftsseite_sind_eine_liste(self):
         html = self.hole('/liefergebiet/').content.decode()
-        liste = re.search(r'<ul class="grid[^>]*>(.*?)</ul>', html, re.DOTALL).group(1)
-        self.assertEqual(liste.count('<li '), 16)
+        liste = re.search(r'<ul class="lv-orte">(.*?)</ul>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<li>'), 16)
 
     def test_kontakt_und_gaestebuch_haben_ein_section_im_inhalt(self):
         """GE28: ``<main>`` allein genügt nicht; ein ``section`` oder ``article`` im
@@ -566,11 +566,12 @@ class AntwortAbsatzUndListenTest(LuviqTestCase):
                 self.assertIn('<section', haupt)
 
     def test_die_kontaktwege_sind_eine_liste(self):
-        """GE27: Impressum und E-Mail-Adresse stehen als Listenpunkte da."""
+        """GE27: Anschrift, Impressum und E-Mail-Adresse stehen seit 23.10.2026 als Datenliste (dl) da."""
         html = self.hole('/kontakt/').content.decode()
-        liste = re.search(r'<ul class="space-y-4">(.*?)</ul>', html, re.DOTALL).group(1)
-        self.assertEqual(liste.count('<li>'), 2)
+        liste = re.search(r'<dl class="lv-daten lv-kontaktdaten">(.*?)</dl>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<dt>'), 4)
         self.assertIn('mailto:brehlerluisa@gmail.com', liste)
+        self.assertIn('/impressum/', liste)
 
 
 class Widersprueche02102026Test(LuviqTestCase):
