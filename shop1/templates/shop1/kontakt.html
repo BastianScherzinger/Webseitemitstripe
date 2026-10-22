@@ -13,7 +13,7 @@
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+  "@id": "{{ seiten_url }}#breadcrumb",
   "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
     {"@type": "ListItem", "position": 2, "name": "Kontakt", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'kontakt' %}"}
@@ -89,7 +89,7 @@
             <p class="lv-lead">Über das Formular gehen Fragen zu einem einzelnen Stück – Maße, Material, Zustand –, zum ersten Drop oder zur Löschung eines Kontos. Geantwortet wird per E-Mail an die Adresse, die im Formular steht, in der Regel {{ antwort }}; eine Telefonnummer gibt es nicht. {% if motivanfrage_aktiv %}Wer ein eigenes Motiv möchte, fragt es über die Motivanfrage an; von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv. {% endif %}Wer zuerst nachlesen möchte: Hintergrund zu Upcycling, Second Hand und Vintage steht im <a href="{% url 'wissen' %}">Wissensbereich</a>. Im Formular sind alle vier Felder Pflichtfelder und mit einem Stern (*) gekennzeichnet.</p>{% endif %}
 
             <dl class="lv-daten lv-kontaktdaten">
-                <dt>Zentrale</dt><dd>Luviq Universe – Luisa Brehler<br>Grünberger Str. 16<br>36304 Alsfeld, Hessen, DE</dd>
+                <dt>Anschrift</dt><dd>Luviq Universe – Luisa Brehler<br>Grünberger Str. 16<br>36304 Alsfeld, Hessen, DE</dd>
                 {# Hier stand eine Platzhalter-Telefonnummer. Es gibt keine belegte Nummer im Projekt - auch das Impressum nennt keine -, und eine zu erfinden ist ausgeschlossen. Der Verweis fuehrt auf die Anbieterangaben; sobald eine Nummer vorliegt, wird daraus wieder ein tel:-Link. #}
                 <dt>E-Mail</dt><dd><a href="mailto:brehlerluisa@gmail.com">brehlerluisa@gmail.com</a></dd>
                 <dt>Anbieter</dt><dd><a href="{% url 'impressum' %}">Anbieterangaben im Impressum</a></dd>

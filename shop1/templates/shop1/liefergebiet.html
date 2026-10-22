@@ -13,7 +13,7 @@
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+  "@id": "{{ seiten_url }}#breadcrumb",
   "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
     {"@type": "ListItem", "position": 2, "name": "{% if verkauf_aktiv %}Liefergebiet{% else %}Herkunft{% endif %}", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'liefergebiet' %}"}
@@ -79,7 +79,7 @@
 
     <section class="lv-abschnitt" aria-label="Wo Luviq entsteht">
         <div class="lv-prosa">
-            <p>Luisa Brehler bemalt jedes Unikat mit der Hand in ihrem Atelier in Alsfeld, mitten im Vogelsbergkreis – genau zwischen Fulda und Gießen. {% if verkauf_aktiv %}Einen Ladenverkauf gibt es bewusst nicht: Luviq Universe ist ein reiner Online-Shop. Dafür kommt der Versand aus Hessen heraus besonders schnell bei dir an, egal ob du eher Richtung Fulda oder Richtung Gießen wohnst. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet –, und für jede Bestellung gilt das Widerrufsrecht von 14 Tagen (§ 5 der AGB).{% else %}Einen Laden gibt es bewusst nicht: Luviq Universe ist eine Marke im Aufbau, und der erste Drop kommt online. Wer ihn nicht verpassen will, egal ob eher Richtung Fulda oder Richtung Gießen, trägt sich auf der Startseite in die Warteliste ein. Bis dahin ist Luviq Universe auf Instagram unter @luviq.universe zu finden; Fragen zu einem Stück beantwortet Luisa Brehler über das Kontaktformular.{% endif %}</p>
+            <p>Luisa Brehler bemalt jedes Unikat mit der Hand in ihrem Atelier in Alsfeld, mitten im Vogelsbergkreis – genau zwischen Fulda und Gießen. {% if verkauf_aktiv %}Einen Ladenverkauf gibt es bewusst nicht: Luviq Universe ist ein reiner Online-Shop. Dafür kommt der Versand aus Hessen heraus besonders schnell bei dir an, egal ob du eher Richtung Fulda oder Richtung Gießen wohnst. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet –, und für jede Bestellung gilt das Widerrufsrecht von 14 Tagen (§ 5 der AGB).{% else %}Einen Laden gibt es bewusst nicht: Luviq Universe ist eine Marke im Aufbau, und der erste Drop kommt online. Wer ihn nicht verpassen will, egal ob eher Richtung Fulda oder Richtung Gießen, trägt sich auf der Startseite in die Warteliste ein. Bis dahin ist Luviq Universe auf Instagram unter @luviq.archive zu finden; Fragen zu einem Stück beantwortet Luisa Brehler über das Kontaktformular.{% endif %}</p>
         </div>
     </section>
 
