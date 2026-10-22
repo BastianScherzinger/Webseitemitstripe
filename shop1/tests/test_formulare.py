@@ -605,7 +605,8 @@ class KontaktSpamschutzTest(LuviqTestCase):
         self.assertIn('aria-hidden="true"', feld)
         self.assertIn('tabindex="-1"', feld)
         self.assertIn('autocomplete="off"', feld)
-        self.assertRegex(feld, r'style="[^"]*left:-10000px')
+        # Aus dem Bild schiebt die Klasse lv-falle (luviq.css, seit 23.10.2026 statt style="").
+        self.assertIn('class="lv-falle"', feld)
         # Sichtbar ist nur, was ein Bot fuer ein echtes Feld halten soll:
         # ein unverfaenglicher Name, kein „honeypot“ oder „hp“ im Markup.
         self.assertNotIn('honey', inhalt.lower())
