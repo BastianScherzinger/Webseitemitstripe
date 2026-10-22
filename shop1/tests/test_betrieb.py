@@ -211,8 +211,10 @@ class OeffentlicheAdresseTest(LuviqTestCase):
     """„Offen“ Nr. 2: canonical, Sitemap und robots.txt aus dem kanonischen Host."""
 
     def test_canonical_hreflang_und_og_url_nennen_den_kanonischen_host(self):
+        # Seit 23.10.2026 ohne Query: keine öffentliche Seite zeigt je Query
+        # anderen Inhalt (siehe context_processors.oeffentliche_adresse).
         html = self.hole('/kontakt/?x=1', HTTP_HOST='www.luviq-alsfeld.com').content.decode()
-        ziel = 'https://www.luviq-alsfeld.com/kontakt/?x=1'
+        ziel = 'https://www.luviq-alsfeld.com/kontakt/'
         self.assertIn(f'<link rel="canonical" href="{ziel}">', html)
         self.assertIn(f'hreflang="de" href="{ziel}"', html)
         self.assertIn(f'<meta property="og:url" content="{ziel}">', html)

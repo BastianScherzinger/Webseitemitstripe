@@ -30,9 +30,13 @@ def oeffentliche_adresse(request):
 
     Mit gesetztem CANONICAL_HOST immer unter diesem Host (siehe
     middleware.oeffentliche_basis), sonst wie bisher unter dem Host der
-    Anfrage. Pfad und Query bleiben erhalten.
+    Anfrage. Nur der Pfad, **ohne Query** (seit 23.10.2026): keine öffentliche
+    Seite zeigt je Query einen anderen Inhalt – die Query belegt höchstens ein
+    Formular vor (``/motiv-anfragen/?richtung=tier``). Mit Query im canonical
+    standen die sechs Vorbelegungen der Motivanfrage als eigene, fast gleiche
+    Seiten im Index (Website-Check 22.10.2026: doppelte Titel, doppelter Text).
     """
-    return {'seiten_url': oeffentliche_basis(request) + request.get_full_path()}
+    return {'seiten_url': oeffentliche_basis(request) + request.path}
 
 
 def feed_beworben(request):

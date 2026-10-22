@@ -25,7 +25,7 @@ Aufbau.{% endcomment %}
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "@id": "{{ request.build_absolute_uri }}#article",
+  "@id": "{{ seiten_url }}#article",
   "headline": "{{ beitrag.titel|escapejs }}",
   "description": "{{ beitrag.kurz|escapejs }}",
   "datePublished": "{{ beitrag.veroeffentlicht }}",{% if seite %}
@@ -34,6 +34,6 @@ Aufbau.{% endcomment %}
   "author": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
   "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
   "isPartOf": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#website"},
-  "mainEntityOfPage": {"@id": "{{ request.build_absolute_uri }}#webpage"}
+  "mainEntityOfPage": {"@id": "{{ seiten_url }}#webpage"}
 }
 </script>

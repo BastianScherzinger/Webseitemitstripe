@@ -163,8 +163,8 @@
         {
           {% comment %}name und dateModified kommen aus dem gepflegten Register shop1/seiten_stand.py (ueber den Kontextprozessor als "seite"). Dasselbe Register speist das lastmod der Sitemap - beide koennen so nicht auseinanderlaufen. Auf Seiten ohne Registereintrag (Produkt, Konto) fehlen die beiden Angaben, statt erfunden zu werden.{% endcomment %}
           "@type": "WebPage",
-          "@id": "{{ request.build_absolute_uri }}#webpage",
-          "url": "{{ request.build_absolute_uri }}",{% if seite %}
+          "@id": "{{ seiten_url }}#webpage",
+          "url": "{{ seiten_url }}",{% if seite %}
           "name": "{{ seite.name|escapejs }}",
           "dateModified": "{{ seite.stand }}",{% endif %}
           {% comment %}speakable (PJ13): Titel und Meta-Beschreibung als die Teile, die ein Sprachassistent vorlesen soll - beide stehen auf jeder Seite genau einmal (pruefe_seite, test_seo), und beide sind knapp und in ganzen Saetzen. XPath statt CSS-Selektor, weil kein sichtbares Element eine Klasse dafuer bekommen darf (Designwache).{% endcomment %}

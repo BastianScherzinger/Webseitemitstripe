@@ -44,6 +44,15 @@ class AnzeigeTest(LuviqTestCase):
         self.assertRegex(html, r'value="himmel" required checked')
         self.assertNotRegex(html, r'value="tier" required checked')
 
+    def test_die_vorbelegung_ist_keine_eigene_seite_fuer_suchmaschinen(self):
+        """canonical, og:url und hreflang zeigen ohne Query auf die eine Seite
+        (Website-Check 22.10.2026: sechs Vorbelegungen standen als fast gleiche
+        Seiten mit gleichem Titel im Index)."""
+        html = self.hole('/motiv-anfragen/?richtung=himmel').content.decode()
+        self.assertRegex(html, r'<link rel="canonical" href="[^"?]*/motiv-anfragen/">')
+        self.assertRegex(html, r'<meta property="og:url" content="[^"?]*/motiv-anfragen/">')
+        self.assertNotIn('?richtung=himmel"', html.split('</head>')[0])
+
     def test_eine_unbekannte_vorbelegung_wird_ignoriert(self):
         html = self.hole('/motiv-anfragen/?richtung=<script>').content.decode()
         self.assertNotIn(' checked', html)
