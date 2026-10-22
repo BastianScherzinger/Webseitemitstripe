@@ -50,12 +50,17 @@ PROFILE = {
     "archiv": {"lv-raster", "lv-karte", "lv-karte-kopf", "lv-material", "lv-preis", "lv-leer"},
     # Stückseite: Bild, Nummer, Datenliste, Knöpfe.
     "stueck": {"lv-stueck", "lv-stueck-bild", "lv-stueck-nummer", "lv-stueck-text",
-               "lv-stueck-preis", "lv-status", "lv-daten", "lv-stueck-knoepfe"},
+               "lv-stueck-preis", "lv-status", "lv-daten", "lv-stueck-knoepfe",
+               "lv-stueck-lead", "lv-stueck-beschreibung", "lv-stueck-hinweis"},
     # Luisa (Über uns): Fließtext, Zitat, Ablauf.
     "luisa": {"lv-luisa", "lv-luisa-text", "lv-ablauf", "lv-prosa"},
     # Motiv anfragen: Formular mit Auswahl und Stationen.
     "anfrage": {"lv-anfrageseite", "lv-satz", "lv-lead", "lv-stationen", "lv-formular", "lv-feld",
                 "lv-feld2", "lv-wahl", "lv-wahlen", "lv-fehler", "lv-falle"},
+    # Kontakt und Herkunft (Textseiten, 23.10.2026): Kopf, Datenliste, Formular, Fließtext.
+    "textseite": {"lv-kontaktseite", "lv-kontakt-text", "lv-seitenkopf", "lv-satz", "lv-lead", "lv-daten",
+                  "lv-kontaktdaten", "lv-formular", "lv-feld", "lv-feld2", "lv-fehler", "lv-falle", "lv-prosa",
+                  "lv-abschnittstitel"},
     # Danke-Seite: so kurz, dass der Fuß schon im ersten Bildschirm steht.
     "danke": {"lv-danke", "lv-fuss", "lv-fuss-wm", "lv-recht"},
 }
