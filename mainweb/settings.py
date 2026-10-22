@@ -50,6 +50,22 @@ if CANONICAL_HOST:
     # Weiterleitung überhaupt erreicht statt mit 400 abgewiesen zu werden.
     _extra_raw.append(CANONICAL_HOST)
 
+# ═══ WEITERE DOMAINS, DIE UMGELEITET WERDEN (23.10.2026) ═══
+# Komma-Liste ganzer Domains, die per 301 (Pfad + Query) auf CANONICAL_HOST
+# zeigen sollen, jeweils samt www-/Nicht-www-Variante – z. B. heute
+# „luviq-luebeck.com“ (antwortete am 22.10.2026 mit 200 als Kopie der Seite)
+# oder nach einem Domainumzug „luviq-alsfeld.com“. Leer = aus. Wirkt nur mit
+# gesetztem CANONICAL_HOST; der kanonische Host selbst wird nie umgeleitet.
+UMLEITEN_HOSTS = []
+for _h in os.getenv('UMLEITEN_HOSTS', '').split(','):
+    _h = _h.strip().lower().removeprefix('https://').removeprefix('http://').split('/')[0]
+    if _h:
+        _basis = _h[4:] if _h.startswith('www.') else _h
+        UMLEITEN_HOSTS += [_basis, f'www.{_basis}']
+UMLEITEN_HOSTS = sorted(set(UMLEITEN_HOSTS) - {CANONICAL_HOST})
+if CANONICAL_HOST:
+    _extra_raw += UMLEITEN_HOSTS
+
 _extra = set(_extra_raw)
 for _h in _extra_raw:
     _extra.add(_h[4:] if _h.startswith('www.') else f'www.{_h}')

@@ -65,10 +65,11 @@ def oeffentliche_basis(request):
 class CanonicalHostMiddleware:
     """Leitet Nebenvariante und Railway-Adresse per 301 auf CANONICAL_HOST.
 
-    Umgeleitet werden genau zwei Gruppen: der Host, der sich vom kanonischen
-    nur durch das ``www.`` unterscheidet, und die Plattformadresse
+    Umgeleitet werden genau drei Gruppen: der Host, der sich vom kanonischen
+    nur durch das ``www.`` unterscheidet, die Plattformadresse
     ``*.up.railway.app`` (sonst stünde die Seite ein zweites Mal im Index;
-    Messpunkt „Offen“ Nr. 2). Ausgenommen bleiben die Gesundheitsadressen
+    Messpunkt „Offen“ Nr. 2) und jede Domain aus ``settings.UMLEITEN_HOSTS``
+    (zweite Domain oder alte Domain nach einem Umzug, seit 23.10.2026). Ausgenommen bleiben die Gesundheitsadressen
     (``RAILWAY_AUSNAHMEN``), damit ein Healthcheck der Plattform nie auf eine
     Weiterleitung trifft, ``localhost`` und jeder andere erlaubte Host. Der
     kanonische Host selbst wird nie umgeleitet, deshalb kann es keine
@@ -91,8 +92,9 @@ class CanonicalHostMiddleware:
             # Die Gesundheitsadresse bleibt auf jedem Host ohne Weiterleitung
             # (auch auf der Nebenvariante ohne www): ein Überwachungsdienst
             # soll nie auf eine 301 treffen.
-            umleiten = request.path not in RAILWAY_AUSNAHMEN and (
+            umleiten = request.path not in RAILWAY_AUSNAHMEN and host != ziel and (
                 host == nebenvariante(ziel) or ist_railway_host(host)
+                or host in getattr(settings, 'UMLEITEN_HOSTS', ())
             )
             if umleiten:
                 sicher = request.is_secure() or getattr(settings, 'SECURE_SSL_REDIRECT', False)
