@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}Die richtige Größe bei Vintage-Einzelstücken | Luviq Alsfeld{% endblock %}
-{% block meta_description %}Wie man bei einem Einzelstück ohne Anprobe die passende Größe findet: Maße mit eigener Kleidung vergleichen, Vintage-Schnitte einordnen, vorab bei Luviq anfragen.{% endblock %}
+{% block meta_description %}Die passende Größe bei Einzelstücken ohne Anprobe finden: Maße mit eigener Kleidung vergleichen, Vintage-Schnitte einordnen, vorab bei Luviq anfragen.{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_title %}Wie finde ich bei Einzelstücken die richtige Größe? – Luviq Universe{% endblock %}
 {% block og_description %}Kein zweites Exemplar, keine zweite Größe: wie man Maße mit der eigenen Kleidung vergleicht, Vintage-Schnitte einordnet und vorab nachfragt.{% endblock %}
@@ -88,75 +88,86 @@
 </script>
 {% endblock %}
 
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='wissen' %}{% endblock %}
+
 {% block content %}
-<div class="relative min-h-screen pt-20 pb-32">
-    <!-- Nebula Background Layer -->
-    <div class="energy-nebula"></div>
+<div class="lv-seite lv-wissen">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Start</a></li><li><a href="{% url 'wissen' %}">Wissen</a></li><li aria-current="page">Die richtige Größe</li></ol></nav>
 
-    <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <!-- Kopf: Antwort zuerst -->
-        <div class="mb-20 animate-reveal text-center">
-            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-glow-orange mb-6"><a href="{% url 'wissen' %}" class="hover:text-white transition-colors">Wissen</a></p>
-            <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
-                Wie finde ich bei Einzelstücken <span class="text-glow">die richtige Größe?</span>
-            </h1>
-            {% if seite %}<div class="text-xs uppercase tracking-widest text-white/60 mb-6">Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time></div>{% endif %}
-            <p class="text-white/60 text-lg font-light max-w-3xl mx-auto leading-relaxed">
-                {% if not verkauf_aktiv %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt; was hier zu Kauf, Versand oder Widerruf steht, gilt erst ab Eröffnung des Shops. {% endif %}Bei einem Einzelstück gibt es keine zweite Größe – deshalb entscheidet der Vergleich mit der eigenen Kleidung: ein gut passendes Teil derselben Art flach hinlegen, Brustweite, Länge und Ärmellänge messen und mit den Maßen des gewünschten Stücks vergleichen. Das ist zuverlässiger als das Größenetikett, weil Vintage-Schnitte und ältere Konfektionsgrößen von heutigen Größen abweichen. {% if verkauf_aktiv %}Luviq Universe aus 36304 Alsfeld verkauft handbemalte Second-Hand- und Vintage-Kleidung, jedes Stück genau einmal (1-of-1); die Maße eines bestimmten Teils lassen sich vor dem Kauf über das Kontaktformular erfragen.{% else %}Luviq Universe aus 36304 Alsfeld ist eine Marke für handbemalte Second-Hand- und Vintage-Kleidung, jedes Stück genau einmal (1-of-1); die Maße eines bestimmten Teils lassen sich über das Kontaktformular erfragen.{% endif %} Eine Größentabelle mit Zentimeterwerten gibt es auf dieser Seite bewusst nicht – sie würde Stücke beschreiben, die es so nur einmal gibt.
-            </p>
-            <div class="h-px w-32 bg-glow-orange mt-16 rounded-full mx-auto"></div>
-        </div>
+    <header class="lv-wissen-kopf">
+        <h1 class="lv-serif">Wie finde ich bei Einzelstücken die richtige Größe?</h1>
+        <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
+        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt; was hier zu Kauf, Versand oder Widerruf steht, gilt erst ab Eröffnung des Shops. {% endif %}Bei einem Einzelstück gibt es keine zweite Größe – deshalb entscheidet der Vergleich mit der eigenen Kleidung: ein gut passendes Teil derselben Art flach hinlegen, Brustweite, Länge und Ärmellänge messen und mit den Maßen des gewünschten Stücks vergleichen. Das ist zuverlässiger als das Größenetikett, weil Vintage-Schnitte und ältere Konfektionsgrößen von heutigen Größen abweichen. {% if verkauf_aktiv %}Luviq Universe aus 36304 Alsfeld verkauft handbemalte Second-Hand- und Vintage-Kleidung, jedes Stück genau einmal (1-of-1); die Maße eines bestimmten Teils lassen sich vor dem Kauf über das Kontaktformular erfragen.{% else %}Luviq Universe aus 36304 Alsfeld ist eine Marke für handbemalte Second-Hand- und Vintage-Kleidung, jedes Stück genau einmal (1-of-1); die Maße eines bestimmten Teils lassen sich über das Kontaktformular erfragen.{% endif %} Eine Größentabelle mit Zentimeterwerten gibt es auf dieser Seite bewusst nicht – sie würde Stücke beschreiben, die es so nur einmal gibt.</p>
+    </header>
 
-        <div class="max-w-4xl mx-auto space-y-6">
-            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]">
-                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Warum gibt es das Stück nur in einer Größe?</h2>
-                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Weil jedes Stück von Luviq Universe ein handbemaltes Einzelstück auf einem bestimmten getragenen Kleidungsstück ist. Das Basisteil hat die Größe, die es hat; das Motiv wird von Hand für genau dieses Teil gemalt und nicht wiederholt. Eine zweite Größe hieße ein zweites Basisteil und ein zweites Motiv – also ein anderes Stück, nicht dasselbe.</p>
-                <p class="text-white/50 leading-relaxed font-light">Das ist der Unterschied zu Kleidung aus der Serie, bei der dasselbe Modell in mehreren Größen produziert wird. {% if verkauf_aktiv %}Wer ein bestimmtes Stück unter <a href="{% url 'produkte' %}" class="text-glow-orange hover:underline">Alle Unikate</a> möchte, kauft genau dieses Stück in genau dieser Größe.{% else %}Jedes Stück im <a href="{% url 'produkte' %}" class="text-glow-orange hover:underline">Archiv</a> gibt es genau in der einen Größe seines Basisteils.{% endif %} Umso wichtiger ist es, die Größe vor dem Kauf zu klären – und dafür reicht ein Maßband und ein Teil aus dem eigenen Schrank.</p>
-            </section>
+    <div class="lv-wissen-liste">
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Warum gibt es das Stück nur in einer Größe?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Weil jedes Stück von Luviq Universe ein handbemaltes Einzelstück auf einem bestimmten getragenen Kleidungsstück ist. Das Basisteil hat die Größe, die es hat; das Motiv wird von Hand für genau dieses Teil gemalt und nicht wiederholt. Eine zweite Größe hieße ein zweites Basisteil und ein zweites Motiv – also ein anderes Stück, nicht dasselbe.</p>
+                <p>Das ist der Unterschied zu Kleidung aus der Serie, bei der dasselbe Modell in mehreren Größen produziert wird. {% if verkauf_aktiv %}Wer ein bestimmtes Stück unter <a href="{% url 'produkte' %}">Alle Unikate</a> möchte, kauft genau dieses Stück in genau dieser Größe.{% else %}Jedes Stück im <a href="{% url 'produkte' %}">Archiv</a> gibt es genau in der einen Größe seines Basisteils.{% endif %} Umso wichtiger ist es, die Größe vor dem Kauf zu klären – und dafür reicht ein Maßband und ein Teil aus dem eigenen Schrank.</p>
+            
+            </div>
+        </section>
 
-            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]">
-                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie vergleiche ich die Maße mit meiner eigenen Kleidung?</h2>
-                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Ein Teil aus dem eigenen Schrank nehmen, das gut passt und von derselben Art ist – Jacke mit Jacke, Shirt mit Shirt –, es zugeknöpft flach auf den Tisch legen und mit dem Maßband messen: Brustweite von Achsel zu Achsel, Länge von der höchsten Stelle der Schulter bis zum Saum, Ärmellänge von der Schulternaht bis zum Ärmelende, Schulterbreite von Naht zu Naht. Diese Werte mit den Maßen des gewünschten Stücks vergleichen.</p>
-                <p class="text-white/50 leading-relaxed font-light">Flach gemessen heißt: Der Stoff liegt glatt, wird aber nicht gedehnt. Die Brustweite flach gemessen entspricht dem halben Brustumfang; wer sie verdoppelt, erhält den Umfang. Beim Vergleich immer gleich messen – flach mit flach, Umfang mit Umfang. Ein Unterschied von ein bis zwei Zentimetern fällt beim Tragen kaum auf, fünf Zentimeter Unterschied in der Brustweite sind eine ganze Größe. Bei Jacken zählt auch, was darunter getragen werden soll: Über einem Pullover braucht die Brustweite mehr Spielraum als über einem T-Shirt.</p>
-            </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Wie vergleiche ich die Maße mit meiner eigenen Kleidung?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Ein Teil aus dem eigenen Schrank nehmen, das gut passt und von derselben Art ist – Jacke mit Jacke, Shirt mit Shirt –, es zugeknöpft flach auf den Tisch legen und mit dem Maßband messen: Brustweite von Achsel zu Achsel, Länge von der höchsten Stelle der Schulter bis zum Saum, Ärmellänge von der Schulternaht bis zum Ärmelende, Schulterbreite von Naht zu Naht. Diese Werte mit den Maßen des gewünschten Stücks vergleichen.</p>
+                <p>Flach gemessen heißt: Der Stoff liegt glatt, wird aber nicht gedehnt. Die Brustweite flach gemessen entspricht dem halben Brustumfang; wer sie verdoppelt, erhält den Umfang. Beim Vergleich immer gleich messen – flach mit flach, Umfang mit Umfang. Ein Unterschied von ein bis zwei Zentimetern fällt beim Tragen kaum auf, fünf Zentimeter Unterschied in der Brustweite sind eine ganze Größe. Bei Jacken zählt auch, was darunter getragen werden soll: Über einem Pullover braucht die Brustweite mehr Spielraum als über einem T-Shirt.</p>
+            
+            </div>
+        </section>
 
-            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]">
-                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Warum weichen Vintage-Schnitte von heutigen Konfektionsgrößen ab?</h2>
-                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Weil Konfektionsgrößen keine festen Maße sind, sondern Konventionen, die sich über die Jahrzehnte und zwischen Herstellern und Ländern verschoben haben. Ein Etikett aus den achtziger oder neunziger Jahren fällt häufig kleiner aus als dieselbe Größe heute, manche Schnitte dieser Zeit sind dagegen bewusst weit und kastig geschnitten. Dazu kommen Herren- und Damengrößen, die nicht vergleichbar sind, und Baumwolle, die nach vielen Wäschen eingelaufen sein kann.</p>
-                <p class="text-white/50 leading-relaxed font-light">Als Vintage gelten üblicherweise Stücke, die mindestens etwa 20 Jahre alt sind (mehr dazu im Beitrag <a href="{% url 'wissen_upcycling' %}" class="text-glow-orange hover:underline">Was ist Upcycling-Mode?</a>); ihre Etiketten sind entsprechend alt. Erst seit den 2000er-Jahren beschreibt die europäische Norm <a href="https://de.wikipedia.org/wiki/EN_13402" class="text-glow-orange hover:underline" target="_blank" rel="noopener">EN 13402</a> Größen über Körpermaße in Zentimetern, und auch heute folgen ihr längst nicht alle Hersteller. Deshalb sagt ein „M" auf einem Vintage-Etikett wenig darüber, ob das Stück wie ein heutiges „M" sitzt. Auch die Proportionen sind andere: Ältere Jacken haben oft kürzere Ärmel bei gleicher Brustweite, Shirts aus dieser Zeit sind häufig länger geschnitten. Wer sich am Etikett orientiert, kauft eine Erwartung; wer Maße vergleicht, kauft das Stück, das da ist. Bei Second-Hand-Kleidung fehlt das Etikett zudem manchmal ganz oder ist nicht mehr lesbar.</p>
-            </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Warum weichen Vintage-Schnitte von heutigen Konfektionsgrößen ab?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Weil Konfektionsgrößen keine festen Maße sind, sondern Konventionen, die sich über die Jahrzehnte und zwischen Herstellern und Ländern verschoben haben. Ein Etikett aus den achtziger oder neunziger Jahren fällt häufig kleiner aus als dieselbe Größe heute, manche Schnitte dieser Zeit sind dagegen bewusst weit und kastig geschnitten. Dazu kommen Herren- und Damengrößen, die nicht vergleichbar sind, und Baumwolle, die nach vielen Wäschen eingelaufen sein kann.</p>
+                <p>Als Vintage gelten üblicherweise Stücke, die mindestens etwa 20 Jahre alt sind (mehr dazu im Beitrag <a href="{% url 'wissen_upcycling' %}">Was ist Upcycling-Mode?</a>); ihre Etiketten sind entsprechend alt. Erst seit den 2000er-Jahren beschreibt die europäische Norm <a href="https://de.wikipedia.org/wiki/EN_13402" target="_blank" rel="noopener">EN 13402</a> Größen über Körpermaße in Zentimetern, und auch heute folgen ihr längst nicht alle Hersteller. Deshalb sagt ein „M" auf einem Vintage-Etikett wenig darüber, ob das Stück wie ein heutiges „M" sitzt. Auch die Proportionen sind andere: Ältere Jacken haben oft kürzere Ärmel bei gleicher Brustweite, Shirts aus dieser Zeit sind häufig länger geschnitten. Wer sich am Etikett orientiert, kauft eine Erwartung; wer Maße vergleicht, kauft das Stück, das da ist. Bei Second-Hand-Kleidung fehlt das Etikett zudem manchmal ganz oder ist nicht mehr lesbar.</p>
+            
+            </div>
+        </section>
 
-            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]">
-                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Welche Maße sollte ich vor dem Kauf kennen?</h2>
-                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Bei Jacken und Shirts genügen vier Werte: Brustweite, Gesamtlänge, Ärmellänge und Schulterbreite. Wer weiß, ob das Stück eng anliegen oder locker fallen soll, rechnet bei der Brustweite ein bis zwei Zentimeter Spielraum in die gewünschte Richtung. Das Größenetikett ist nur ein Hinweis; bei Second-Hand-Kleidung fehlt es manchmal ganz.</p>
-                <ul class="text-white/50 leading-relaxed font-light space-y-2 mb-6">
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Welche Maße sollte ich vor dem Kauf kennen?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Bei Jacken und Shirts genügen vier Werte: Brustweite, Gesamtlänge, Ärmellänge und Schulterbreite. Wer weiß, ob das Stück eng anliegen oder locker fallen soll, rechnet bei der Brustweite ein bis zwei Zentimeter Spielraum in die gewünschte Richtung. Das Größenetikett ist nur ein Hinweis; bei Second-Hand-Kleidung fehlt es manchmal ganz.</p>
+                <ul>
                     <li><strong>Brustweite:</strong> flach gemessen von Achsel zu Achsel.</li>
                     <li><strong>Gesamtlänge:</strong> von der höchsten Stelle der Schulter bis zum Saum.</li>
                     <li><strong>Ärmellänge:</strong> von der Schulternaht bis zum Ärmelende.</li>
                     <li><strong>Schulterbreite:</strong> von Naht zu Naht.</li>
                 </ul>
-                <p class="text-white/50 leading-relaxed font-light">Die Schulterbreite ist der Wert, der sich am wenigsten verzeihen lässt: Sitzt die Schulternaht deutlich zu weit innen oder außen, wirkt das ganze Stück falsch, auch wenn Brustweite und Länge stimmen. Bei bewusst weiten Schnitten ist die Naht dagegen oft absichtlich auf dem Oberarm – dann zählt eher, ob die Gesamtlänge zur eigenen Körpergröße passt. Eine Tabelle, die Etikettgrößen in Zentimeter übersetzt, steht hier absichtlich nicht: Sie würde allgemeine Werte für Stücke behaupten, die einzeln und unterschiedlich sind.</p>
-            </section>
+                <p>Die Schulterbreite ist der Wert, der sich am wenigsten verzeihen lässt: Sitzt die Schulternaht deutlich zu weit innen oder außen, wirkt das ganze Stück falsch, auch wenn Brustweite und Länge stimmen. Bei bewusst weiten Schnitten ist die Naht dagegen oft absichtlich auf dem Oberarm – dann zählt eher, ob die Gesamtlänge zur eigenen Körpergröße passt. Eine Tabelle, die Etikettgrößen in Zentimeter übersetzt, steht hier absichtlich nicht: Sie würde allgemeine Werte für Stücke behaupten, die einzeln und unterschiedlich sind.</p>
+            
+            </div>
+        </section>
 
-            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]">
-                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Wie frage ich vorab nach den Maßen?</h2>
-                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Über das Kontaktformular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Am besten den Namen des Stücks aus dem {% if verkauf_aktiv %}Shop{% else %}Archiv{% endif %} nennen und die Maße, die fehlen – zum Beispiel Brustweite und Länge flach gemessen. So lässt sich vor dem Kauf klären, ob das Einzelstück passt, ohne es anprobieren zu können.</p>
-                <p class="text-white/50 leading-relaxed font-light">Das <a href="{% url 'kontakt' %}" class="text-glow-orange hover:underline">Kontaktformular</a> fragt nach Name, E-Mail-Adresse, Betreff und Nachricht. Wer die eigenen Vergleichswerte gleich mitschickt, spart eine Rückfrage. {% if verkauf_aktiv %}Ein Ladengeschäft zum Anprobieren gibt es nicht; Luviq Universe verkauft ausschließlich über diese Seite und versendet deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.{% else %}Ein Ladengeschäft zum Anprobieren gibt es nicht.{% endif %}</p>
-            </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Wie frage ich vorab nach den Maßen?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Über das Kontaktformular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Am besten den Namen des Stücks aus dem {% if verkauf_aktiv %}Shop{% else %}Archiv{% endif %} nennen und die Maße, die fehlen – zum Beispiel Brustweite und Länge flach gemessen. So lässt sich vor dem Kauf klären, ob das Einzelstück passt, ohne es anprobieren zu können.</p>
+                <p>Das <a href="{% url 'kontakt' %}">Kontaktformular</a> fragt nach Name, E-Mail-Adresse, Betreff und Nachricht. Wer die eigenen Vergleichswerte gleich mitschickt, spart eine Rückfrage. {% if verkauf_aktiv %}Ein Ladengeschäft zum Anprobieren gibt es nicht; Luviq Universe verkauft ausschließlich über diese Seite und versendet deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.{% else %}Ein Ladengeschäft zum Anprobieren gibt es nicht.{% endif %}</p>
+            
+            </div>
+        </section>
 
-            <section class="scroll-reveal glass-card p-8 md:p-16 rounded-[2rem]">
-                <h2 class="text-xl md:text-2xl font-bold heading-font text-white mb-4">Was passiert, wenn das Stück doch nicht passt?</h2>
-                <p class="text-white/60 text-lg leading-relaxed font-light mb-6">Ein Umtausch in eine andere Größe ist bei einem Einzelstück nicht möglich, weil es keine andere Größe gibt. {% if verkauf_aktiv %}Es gilt aber das gesetzliche Widerrufsrecht: Der Vertrag kann binnen vierzehn Tagen ohne Angabe von Gründen widerrufen werden, die Frist beginnt mit dem Tag, an dem die Ware in Besitz genommen wurde. Die Einzelheiten stehen in den AGB.{% else %}Deshalb lohnt es sich, vorher zu messen und nachzufragen. Bei einem Kauf im Fernabsatz gilt allgemein ein gesetzliches Widerrufsrecht von vierzehn Tagen; die Bedingungen von Luviq Universe folgen mit dem ersten Drop.{% endif %}</p>
-                <p class="text-white/50 leading-relaxed font-light">{% if verkauf_aktiv %}Den vollständigen Wortlaut des Widerrufsrechts und die weiteren Bedingungen enthalten die <a href="{% url 'agb' %}" class="text-glow-orange hover:underline">AGB</a>. Wer vorher misst und nachfragt, braucht diesen Weg in den meisten Fällen nicht – und ein Einzelstück, das einmal hin- und zurückgeschickt wurde, sollte auf dem Weg so behandelt werden wie beim Tragen: nicht geknickt auf der Bemalung, trocken verpackt. Wie handbemalte Kleidung sonst gepflegt wird, steht im Beitrag zur Pflege in diesem Wissensbereich.{% else %}Wer vorher misst und nachfragt, erlebt diese Überraschung in den meisten Fällen nicht. Wie handbemalte Kleidung gepflegt wird – nicht geknickt auf der Bemalung, trocken aufbewahrt –, steht im <a href="{% url 'wissen_pflege' %}" class="text-glow-orange hover:underline">Beitrag zur Pflege</a> in diesem Wissensbereich.{% endif %}</p>
-            </section>
-        </div>
-
-        <!-- Weiterlesen -->
-        <div class="text-center mt-16">
-            <a href="{% url 'wissen' %}" class="inline-block px-12 py-5 rounded-full bg-glow-orange text-white text-sm font-black uppercase tracking-widest hover:shadow-[0_0_30px_rgba(200,150,92,0.5)] transition-all transform hover:scale-105 active:scale-95">
-                Alle Wissensbeiträge
-            </a>
-        </div>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Was passiert, wenn das Stück doch nicht passt?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Ein Umtausch in eine andere Größe ist bei einem Einzelstück nicht möglich, weil es keine andere Größe gibt. {% if verkauf_aktiv %}Es gilt aber das gesetzliche Widerrufsrecht: Der Vertrag kann binnen vierzehn Tagen ohne Angabe von Gründen widerrufen werden, die Frist beginnt mit dem Tag, an dem die Ware in Besitz genommen wurde. Die Einzelheiten stehen in den AGB.{% else %}Deshalb lohnt es sich, vorher zu messen und nachzufragen. Bei einem Kauf im Fernabsatz gilt allgemein ein gesetzliches Widerrufsrecht von vierzehn Tagen; die Bedingungen von Luviq Universe folgen mit dem ersten Drop.{% endif %}</p>
+                <p>{% if verkauf_aktiv %}Den vollständigen Wortlaut des Widerrufsrechts und die weiteren Bedingungen enthalten die <a href="{% url 'agb' %}">AGB</a>. Wer vorher misst und nachfragt, braucht diesen Weg in den meisten Fällen nicht – und ein Einzelstück, das einmal hin- und zurückgeschickt wurde, sollte auf dem Weg so behandelt werden wie beim Tragen: nicht geknickt auf der Bemalung, trocken verpackt. Wie handbemalte Kleidung sonst gepflegt wird, steht im Beitrag zur Pflege in diesem Wissensbereich.{% else %}Wer vorher misst und nachfragt, erlebt diese Überraschung in den meisten Fällen nicht. Wie handbemalte Kleidung gepflegt wird – nicht geknickt auf der Bemalung, trocken aufbewahrt –, steht im <a href="{% url 'wissen_pflege' %}">Beitrag zur Pflege</a> in diesem Wissensbereich.{% endif %}</p>
+            
+            </div>
+        </section>
     </div>
+
+    <nav class="lv-wissen-ende" aria-label="Weiterlesen">
+        <a class="lv-link" href="{% url 'wissen' %}">Alle Wissensbeiträge <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        {% if motivanfrage_aktiv %}<a class="lv-link" href="{% url 'motiv_anfragen' %}">Motiv anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endif %}
+    </nav>
 </div>
 {% endblock %}

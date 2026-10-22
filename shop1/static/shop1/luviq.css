@@ -441,3 +441,46 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 
 /* Rechtstexte: Aufzählung der Betroffenenrechte (Datenschutz) */
 .lv-recht-liste{list-style:disc;padding-left:1.25rem}
+
+/* ═══ Wissen (23.10.2026) ═══ */
+.lv-wissen{padding-bottom:calc(var(--u)*4)}
+.lv-wissen-kopf{display:grid;justify-items:start;gap:calc(var(--u)*1.6);padding:calc(var(--u)*4.5) var(--rand) calc(var(--u)*5)}
+.lv-wissen-meta{font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.12em;text-transform:uppercase}
+.lv-wissen-kopf h1{font-size:max(44px,calc(var(--u)*5));max-width:22ch}
+.lv-wissen-lead{max-width:64ch;font-size:max(17px,calc(var(--u)*1.3));line-height:1.6;color:var(--lv-text)}
+.lv-wissen-lead.lv-wissen-leise{font-size:max(15px,calc(var(--u)*1.1));color:var(--lv-leise)}
+.lv-wissen-frage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.2fr);gap:calc(var(--u)*4);padding:calc(var(--u)*3.4) var(--rand) calc(var(--u)*3.6);border-top:1px solid var(--lv-linie)}
+.lv-wissen-frage h2{font-size:max(24px,calc(var(--u)*2.3));line-height:1.12;max-width:20ch}
+.lv-wissen-antwort{display:grid;gap:1em;max-width:70ch;align-content:start;color:var(--lv-leise)}
+.lv-wissen-antwort .lv-wissen-erst{color:var(--lv-text);font-size:max(16px,calc(var(--u)*1.2))}
+.lv-wissen-antwort strong{color:var(--lv-text);font-weight:600}
+.lv-wissen-antwort a{color:var(--lv-text);text-decoration:underline;text-decoration-color:var(--lv-linie-2);text-underline-offset:.2em}
+.lv-wissen-antwort a:hover{text-decoration-color:var(--lv-akzent)}
+.lv-wissen-antwort ul{list-style:none;padding:0;border-top:1px solid var(--lv-linie)}
+.lv-wissen-antwort ul li{padding:.6em 0;border-bottom:1px solid var(--lv-linie)}
+.lv-wissen-beitraege{list-style:none;padding:0;counter-reset:b;border-top:1px solid var(--lv-linie-2)}
+.lv-wissen-beitraege li{position:relative;counter-increment:b;display:grid;grid-template-columns:calc(var(--u)*3.4) minmax(0,1fr) auto;gap:calc(var(--u)*.4) calc(var(--u)*1);align-items:baseline;padding:calc(var(--u)*1.6) 0;border-bottom:1px solid var(--lv-linie)}
+.lv-wissen-beitraege li::before{content:counter(b,decimal-leading-zero);grid-row:span 2;font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-akzent)}
+.lv-wissen-beitraege li::after{content:"→";grid-column:3;grid-row:1/span 2;align-self:center;font:max(14px,calc(var(--u)*1.1)) var(--lv-mono);color:var(--lv-leise)}
+.lv-wissen-beitraege h3{grid-column:2;font-size:max(24px,calc(var(--u)*2.4));line-height:1.1}
+.lv-wissen-beitraege h3 a{text-decoration:none;color:var(--lv-text)}
+.lv-wissen-beitraege h3 a::after{content:"";position:absolute;inset:0}
+.lv-wissen-beitraege p{grid-column:2;color:var(--lv-leise);font-size:max(14px,calc(var(--u)*1))}
+.lv-wissen-beitraege li:hover::after,.lv-wissen-beitraege li:hover h3 a{color:var(--lv-akzent)}
+.lv-wissen-beitraege .lv-wissen-leer{display:block}
+.lv-wissen-beitraege .lv-wissen-leer::before,.lv-wissen-beitraege .lv-wissen-leer::after{content:none}
+.lv-wissen-ende{display:flex;flex-wrap:wrap;gap:calc(var(--u)*1.6) calc(var(--u)*3);padding:calc(var(--u)*3) var(--rand) 0;border-top:1px solid var(--lv-linie)}
+@media (max-width:1023px){
+  .lv-wissen{padding-bottom:20px}
+  .lv-wissen-kopf{gap:14px;padding:28px var(--rand) 32px}
+  .lv-wissen-kopf h1{font-size:38px}
+  .lv-wissen-lead{font-size:17px}
+  .lv-wissen-lead.lv-wissen-leise{font-size:15px}
+  .lv-wissen-frage{grid-template-columns:minmax(0,1fr);gap:14px;padding:26px var(--rand) 30px}
+  .lv-wissen-frage h2{font-size:26px;max-width:none}
+  .lv-wissen-antwort .lv-wissen-erst{font-size:16px}
+  .lv-wissen-beitraege li{grid-template-columns:32px minmax(0,1fr) auto;padding:16px 0}
+  .lv-wissen-beitraege h3{font-size:24px}
+  .lv-wissen-beitraege p{font-size:14px}
+  .lv-wissen-ende{gap:4px 24px;padding:20px var(--rand) 0}
+}

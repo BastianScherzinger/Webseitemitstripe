@@ -53,6 +53,10 @@ PROFILE = {
                "lv-stueck-preis", "lv-status", "lv-daten", "lv-stueck-knoepfe"},
     # Luisa (Über uns): Fließtext, Zitat, Ablauf.
     "luisa": {"lv-luisa", "lv-luisa-text", "lv-ablauf", "lv-prosa"},
+    # Wissen (Übersicht und Beiträge): Kopf, Fragen als Abschnitte, nummerierte Beitragsliste.
+    "wissen": {"lv-wissen", "lv-wissen-kopf", "lv-wissen-meta", "lv-wissen-lead", "lv-wissen-leise",
+               "lv-wissen-frage", "lv-wissen-antwort", "lv-wissen-erst", "lv-wissen-beitraege",
+               "lv-wissen-leer", "lv-wissen-ende"},
     # Motiv anfragen: Formular mit Auswahl und Stationen.
     "anfrage": {"lv-anfrageseite", "lv-satz", "lv-lead", "lv-stationen", "lv-formular", "lv-feld",
                 "lv-feld2", "lv-wahl", "lv-wahlen", "lv-fehler", "lv-falle"},
