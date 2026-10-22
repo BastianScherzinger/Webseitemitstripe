@@ -53,7 +53,7 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 22.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 95,6 von 100**, Reifegrad „Referenz“. 348 von 410 Regeln an 19 URLs und 202 Dateien (41.824 Zeilen) geprüft.
+**Messung vom 22.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 95,6 von 100**, Reifegrad „Referenz“. 348 von 410 Regeln an 19 URLs und 202 Dateien (41.825 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|

@@ -8,7 +8,7 @@ zusammenfassung: Stand 02.10.2026 (live, main = 7ae67ab): Produktbilder in mehre
 offen: 4
 pagespeed_mobil: 98
 pagespeed_desktop: 100
-antwortzeit_ms: 3
+antwortzeit_ms: 2
 quellen: DOCUMENTATION.md, LOGBUCH.md, start.sh
 antwortzeit_quelle: PageSpeed server-response-time
 ---
@@ -27,20 +27,20 @@ Gemessen wird die **Live-Seite**, also der Stand `main`. Seit dem 02.10.2026 ist
 
 | Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
 |---|---|---:|---:|---:|---:|---:|
-| `/` | mobile | **92** | 3,30 s | 0,012 | 0 ms | 7 ms |
-| `/` | desktop | **100** | 0,57 s | 0,043 | 0 ms | 3 ms |
+| `/` | mobile | **93** | 3,15 s | 0,000 | 0 ms | 3 ms |
+| `/` | desktop | **100** | 0,65 s | 0,043 | 0 ms | 5 ms |
 | `/datenschutz/` | mobile | **100** | 1,50 s | 0,000 | 0 ms | 1 ms |
-| `/datenschutz/` | desktop | **100** | 0,36 s | 0,001 | 0 ms | 2 ms |
-| `/impressum/` | mobile | **100** | 1,65 s | 0,000 | 0 ms | 2 ms |
-| `/impressum/` | desktop | **100** | 0,36 s | 0,001 | 0 ms | 3 ms |
-| `/kontakt/` | mobile | **100** | 1,35 s | 0,000 | 0 ms | 1 ms |
-| `/kontakt/` | desktop | **100** | 0,37 s | 0,001 | 0 ms | 3 ms |
-| `/produkte/` | mobile | **99** | 2,04 s | 0,013 | 0 ms | 5 ms |
-| `/produkte/` | desktop | **100** | 0,48 s | 0,051 | 0 ms | 3 ms |
+| `/datenschutz/` | desktop | **100** | 0,33 s | 0,001 | 0 ms | 1 ms |
+| `/impressum/` | mobile | **100** | 1,67 s | 0,000 | 0 ms | 2 ms |
+| `/impressum/` | desktop | **100** | 0,36 s | 0,001 | 0 ms | 2 ms |
+| `/kontakt/` | mobile | **100** | 1,65 s | 0,000 | 0 ms | 2 ms |
+| `/kontakt/` | desktop | **100** | 0,36 s | 0,001 | 0 ms | 2 ms |
+| `/produkte/` | mobile | **99** | 2,06 s | 0,000 | 0 ms | 3 ms |
+| `/produkte/` | desktop | **100** | 0,49 s | 0,051 | 0 ms | 4 ms |
 
 10 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 
-**Serverzeit (`server-response-time` aus PageSpeed): 3,0 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
+**Serverzeit (`server-response-time` aus PageSpeed): 2,5 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
 
 ### Tempo-Regeln, die offen sind
 
