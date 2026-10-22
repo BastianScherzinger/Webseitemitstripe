@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-10-19
+stand: 2026-10-23
 status: vollständig
 fortschritt: 97
 zusammenfassung: Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau, kein Gewerbe angemeldet). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
@@ -86,6 +86,16 @@ Kritische Befunde:
 Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen
 Ordner (Zweig)** — die Zahl mischt also zwei Stände, siehe
 [90-NOTIZEN.md](90-NOTIZEN.md).
+
+## Upgrade 23.10.2026 (Zweig, nicht live)
+
+Zweig **`seo/2026-10-23-luviq-upgrade`** (Worktree `webseiten buisnes\luviq-wt-seo-2026-10-23`), baut auf `design/2026-10-22-startbild` (neues Startbild, ebenfalls nicht gemergt) auf. Nicht gepusht, nicht deployt. 742 Tests grün.
+
+- **SEO/Technik:** canonical/og:url/Schema-`@id` ohne Query (die Vorbelegungen `/motiv-anfragen/?richtung=…` waren eigene Seiten im Index); Railway-Variable `UMLEITEN_HOSTS` für zweite Domains (`luviq-luebeck.com` antwortete am 22.10. mit 200 als Kopie); llms.txt mit zwei belegten Fragen; Titel ≤ 60, Beschreibungen ≤ 160 Zeichen.
+- **Design (B3 „Nachtausgabe“):** Wissen, Kontakt und Herkunft von `lv-alt` auf `lv-seite`; Stücktext in drei Absätzen statt einem.
+- **Inhalt:** `/liefergebiet/` nannte das gelöschte Instagram `@luviq.universe` → `@luviq.archive`.
+- **Google-Profil/Domain:** Entscheidungsvorlage [2026-10-23_GOOGLE-PROFIL-ENTSCHEIDUNG.md](2026-10-23_GOOGLE-PROFIL-ENTSCHEIDUNG.md) – kein zweites Profil, eine Domain, Umzug auf Lübeck zusammen mit dem Impressum.
+- **Nicht gemacht:** Texte „aus Alsfeld“ → Lübeck (erst mit dem Impressum aus dem Generator), keine Railway-/Google-Änderung. Einzelheiten `LOGBUCH.md` (23.10.2026), Screenshots `doku/screens/2026-10-23/`.
 
 ## Die wichtigsten offenen Punkte
 

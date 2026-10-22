@@ -1,7 +1,7 @@
 ---
 bereich: seo
 titel: SEO und GEO
-stand: 2026-10-03
+stand: 2026-10-23
 status: vollständig
 fortschritt: 98
 zusammenfassung: Stand 02.10.2026: Wissensbereich frei und indexierbar (17 Sitemap-URLs), llms.txt und llms-full.txt, Feed, sameAs mit Instagram, TikTok und Google-Profil, @id-Schema mit speakable, Apex-301; gemessen SEO-Inhalt 94, SEO-Technik 99, GEO 100. Offen: Indexierung beantragen (Bastian, TS46), zwei Entscheidungen (Stückseiten noindex, Pfad /ueber_uns/) und die Alt-Texte je Stück (später).
@@ -136,6 +136,7 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 
 | Datum | Was | Beleg |
 |---|---|---|
+| 23.10.2026 | **Zweig `seo/2026-10-23-luviq-upgrade`, nicht gemergt, nicht live.** Befunde aus Website-Check (lokal, 22.10.2026) und Live-Abruf: canonical/og:url/hreflang und Schema-`@id` ohne Query (die sechs Vorbelegungen `/motiv-anfragen/?richtung=…` standen als eigene Seiten mit gleichem Titel im Index); `UMLEITEN_HOSTS` für zweite Domains (`luviq-luebeck.com` lieferte 200 als Kopie); llms.txt mit „Womit malt Luisa Brehler?“ und „Wie bekomme ich ein eigenes Motiv?“, Wissenszeile berichtigt; Titel ≤ 60 (Wissen, Pflege, Upcycling) und Beschreibungen ≤ 160 Zeichen (Archiv, Gästebuch, Pflege, Upcycling, Größe, Herkunft). Google-Profil/Domain: [2026-10-23_GOOGLE-PROFIL-ENTSCHEIDUNG.md](2026-10-23_GOOGLE-PROFIL-ENTSCHEIDUNG.md) | `12cc89e`, `62147a0`, `78822a0`, `189152e`, `287ed36` |
 | 02.10.2026 | **Wissensbereich frei und live:** Pflege, Upcycling und Größe `index, follow`, in Sitemap (17 URLs), `llms.txt` und Feed; Titel, FAQPage, Quellen nachgeschärft; sichtbares Datum „Aktualisiert am …“ (`GE47`) | `3073388`, `c943006`, `f03bf61` (live 02.10.2026 abgerufen) |
 | 02.10.2026 | **`sameAs` erweitert** (GE11, GE46): Instagram `luviq.archive`, TikTok `@luviq.archive`, Google-Unternehmensprofil „Luviq“ in `sameAs` und `llms.txt` | `3073388` (live `llms.txt` abgerufen) |
 | 02.10.2026 | **`llms-full.txt`** (GE31, VL09): 200, 44 KB; von `robots.txt` und `llms.txt` genannt | `bf8882e` |

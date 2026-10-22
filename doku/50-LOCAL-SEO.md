@@ -1,7 +1,7 @@
 ---
 bereich: local-seo
 titel: Local SEO
-stand: 2026-10-03
+stand: 2026-10-23
 status: teilweise
 fortschritt: 60
 zusammenfassung: Stand 02.10.2026: Google-Unternehmensprofil „Luviq“ vorhanden und in sameAs und llms.txt verlinkt (Bestätigung durch Google nicht belegt), Search Console verbunden (Property sc-domain:luviq-alsfeld.com), NAP auf Impressum, Kontakt, Schema und llms.txt gleich, ohne Verkauf nur Organization-Schema. Offen: Bewertungen (keine dokumentiert, nur Luisa), GOOGLE_REVIEW_URL in Railway und Bestätigungsstatus des Profils (beide Bastian).
@@ -31,6 +31,8 @@ leisten kann, ist Markenpflege („Luviq Universe" als Entität) und der Ortsbez
 kein Laufkundschafts-Ranking.
 
 ## Google-Unternehmensprofil
+
+> **23.10.2026 – Entscheidungsvorlage:** [2026-10-23_GOOGLE-PROFIL-ENTSCHEIDUNG.md](2026-10-23_GOOGLE-PROFIL-ENTSCHEIDUNG.md). Kurz: kein zweites Profil (ein Profil je Unternehmen; reine Online-Labels sind laut Google nicht berechtigt). Das bestehende Profil nur behalten und auf Lübeck (Servicegebiet, Adresse ausgeblendet, Name „Luviq“) umstellen, wenn Luisa ab 01.11.2026 persönlichen Kundenkontakt anbietet; sonst nicht ausbauen, nach Verkaufsstart Merchant Center. Eine Domain: Umzug auf `www.luviq-luebeck.com` zusammen mit dem Impressum aus dem Generator. Nichts in Google geändert.
 
 Seit dem 02.10.2026 gibt es ein **Google-Unternehmensprofil „Luviq“** (Angabe Bastians für Luisa im Commit `3073388`); es ist in `sameAs`, in `llms.txt` und im Schema verlinkt:
 `https://www.google.com/maps?cid=13899750731019902000` (live in `llms.txt` abgerufen am 02.10.2026). **Nicht belegt** ist, ob Google das Profil bestätigt hat (`profil_bestaetigt: unbekannt`) — das sieht nur, wer im Profil angemeldet ist.
