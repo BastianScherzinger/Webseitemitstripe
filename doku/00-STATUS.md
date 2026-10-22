@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-10-19
+stand: 2026-10-22
 status: vollständig
 fortschritt: 97
 zusammenfassung: Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau, kein Gewerbe angemeldet). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
@@ -53,19 +53,19 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 19.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-18b) — **Gesamtstand 95,9 von 100**, Reifegrad „Referenz“. 354 von 410 Regeln an 19 URLs und 202 Dateien (41.824 Zeilen) geprüft.
+**Messung vom 22.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 95,6 von 100**, Reifegrad „Referenz“. 348 von 410 Regeln an 19 URLs und 202 Dateien (41.824 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Erreichbarkeit & Postfach | **74** | Brauchbar |
+| Erreichbarkeit & Postfach | **77** | Solide |
 | Substanz & Reichweite | **86** | Solide |
 | Konversion | **88** | Solide |
 | Code-Qualität & Projektreife | **94** | Referenz |
 | SEO — Inhalt | **95** | Referenz |
+| Sicherheit | **97** | Referenz |
 | GEO — KI-Sichtbarkeit | **97** | Referenz |
 | Vorlagen-Konformität | **99** | Referenz |
 | SEO — Technik | **100** | Referenz |
-| Sicherheit | **100** | Referenz |
 | Formulare & Preisrechner | **100** | Referenz |
 | Performance & Core Web Vitals | **100** | Referenz |
 | Barrierefreiheit | **100** | Referenz |
@@ -81,6 +81,7 @@ Kritische Befunde:
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
+- **Keine Python-Abhängigkeit hat eine bekannte Lücke** (`SI40`) — 1 Pakete mit 8 bekannten Lücken: pillow==12.3.0 (GHSA-22hg-r758-rrw9, GHSA-24rc-8hj2-v98c … (+6))
 <!-- messung:ende -->
 
 Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen
