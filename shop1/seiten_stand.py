@@ -18,7 +18,7 @@ Modul wird bei jedem Request aus dem Kontextprozessor gelesen.
 
 #: Routenname → Datum der letzten inhaltlichen Änderung (ISO 8601).
 SEITEN_STAND = {
-    'home':         '2026-10-02',
+    'home':         '2026-10-22',
     'produkte':     '2026-10-02',
     'gaestebuch':   '2026-10-02',
     'ueber_uns':    '2026-10-02',

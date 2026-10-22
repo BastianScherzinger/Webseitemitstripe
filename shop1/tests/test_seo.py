@@ -172,7 +172,7 @@ class SitemapTest(LuviqTestCase):
         for eintrag in wurzel.findall('sm:url', ns):
             pfad = eintrag.find('sm:loc', ns).text.split('testserver', 1)[-1] or '/'
             bilder[pfad.rstrip('/') or '/'] = [b.text for b in eintrag.findall('image:image/image:loc', ns)]
-        self.assertTrue(any('hero-panorama' in b for b in bilder['/']), bilder['/'])
+        self.assertTrue(any('hero-dornen' in b for b in bilder['/']), bilder['/'])
         self.assertGreaterEqual(len(bilder['/']), 6)
         self.assertTrue(any('probe' in b for b in bilder['/produkte']), bilder['/produkte'])
         self.assertEqual(bilder['/datenschutz'], [])

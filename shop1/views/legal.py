@@ -487,7 +487,7 @@ def _seitenbilder(name: str, base_url: str) -> list[tuple[str, str]]:
         return adresse if adresse.startswith('http') else f"{base_url}{adresse}"
 
     if name == 'home':
-        bilder = [(absolut(static('shop1/images/luviq/hero-panorama-1600.webp')),
+        bilder = [(absolut(static('shop1/images/luviq/hero-dornen-quer-1036.webp')),
                    luviq_daten.HERO_STUECK['alt'])]
         bilder += [(absolut(static(f'shop1/images/luviq/{bild}-720.webp')), alt)
                    for _titel, _text, bild, alt in luviq_daten.SCHRITTE]

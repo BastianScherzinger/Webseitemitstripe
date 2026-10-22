@@ -111,8 +111,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-mast{display:flex;justify-content:space-between;gap:1em;border-bottom:1px solid var(--lv-linie-2);padding-bottom:calc(var(--u)*1);
   font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.06em;text-transform:uppercase}
 .lv .lv-pano{margin-top:calc(var(--u)*1.6);display:grid;gap:calc(var(--u)*1)}
-.lv-pano picture{display:block;aspect-ratio:21/9;overflow:hidden;background:var(--lv-grund-2)}
-.lv-pano img{filter:saturate(.8)}
+.lv-pano picture{display:block;width:100%;aspect-ratio:16/9;max-height:76vh;overflow:hidden;background:var(--lv-grund-2)}
+.lv-pano img{filter:saturate(.8);object-position:50% 45%}
 .lv-pano figcaption{display:flex;justify-content:space-between;gap:1em;font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise)}
 .lv-unterbild{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:calc(var(--u)*5);margin-top:calc(var(--u)*3.4);align-items:start}
 .lv-satz{font-size:calc(var(--u)*6)}

@@ -134,8 +134,8 @@ _MONATE = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August
 #: ``nummer`` (übersteht eine Umbenennung), sonst über den ersten Namen, der
 #: einen der ``suche``-Begriffe enthält. Ohne Treffer steht nur die
 #: Beschreibung des Fotos da, kein erfundener Stückname und keine Nummer.
-HERO_STUECK = {'nummer': 5, 'name': 'Jeans mit Spinnennetz-Motiv', 'suche': ('spinnen', 'pants'),
-               'alt': 'Handbemalte Jeans mit Spinnennetz-Motiv, draußen im Gras fotografiert'}
+HERO_STUECK = {'nummer': 2, 'name': 'Hoodie mit Dornen-Augen-Motiv', 'suche': ('dornen',),
+               'alt': 'Rückenansicht eines dunklen Hoodies mit handgebleichtem Rankenmotiv aus Dornen und Augen, draußen vor Herbstbäumen fotografiert'}
 
 #: Teaser vor dem Drop: (Datum, Titel, Bildadresse, Alternativtext). Leer ⇒
 #: der Abschnitt „Nº …, in Teilen" entfällt ganz – keine leeren Kacheln.

@@ -10,6 +10,11 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 22.10.2026 — Neues Startbild: Luisas Hoodie mit Dornen-Augen (Zweig `design/2026-10-22-startbild`, nicht gemergt)
+
+**Was:** Das Panorama-Foto der Jeans (Nº 005) ist durch Luisas neues Foto des Hoodies Nº 002 ersetzt (`hero-dornen-quer-480/768/1036.webp` 16:9, `hero-dornen-hoch-400/548.webp` 4:5 fürs Handy, `og-start-1200x630.jpg` neu zugeschnitten). Zuschnitt ohne Hände und Hose, Rückenmotiv mittig, kein Text auf dem Bild. Bildrahmen am Computer 16:9 statt 21:9 (höchstens 76vh hoch), Critical CSS neu erzeugt; `HERO_STUECK` zeigt auf Archivnummer 2 mit neuem Alt-Text; Sitemap-Bild, Tests (`test_inhalt` EIG134, `test_seo` Bild-Sitemap) und `seiten_stand['home']` nachgezogen. Alte `hero-panorama-*`/`hero-hoch-*`-Dateien bleiben liegen, bis der Zweig gemergt ist.
+**Warum:** Luisa wollte dieses Bild auf der Startseite, „so, dass das Design gut erkennbar ist“ (22.10.2026). Das Foto ist 1036 px breit; in 21:9 hätte das Rückenmotiv nicht ganz hineingepasst.
+
 ## 07.10.2026 — Stücke ohne Verkauf als `VisualArtwork` statt `Product` (Zweig `main`)
 
 **Was:** Auf `/produkte/` und den Stückseiten ist jeder Stück-Knoten bei ausgeschaltetem Verkauf `VisualArtwork` mit `creator` (statt `Product` mit `brand`/`sku`); mit `VERKAUF_AKTIV` bleibt es `Product` mit `offers`. `@id` (`#product`) unverändert. `pruefe_seite` akzeptiert beide Typen; neuer Test `test_ohne_verkauf_ist_kein_stueck_ein_product`.

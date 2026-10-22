@@ -589,6 +589,9 @@ class Widersprueche02102026Test(LuviqTestCase):
                                         beschreibung='Hoodie mit backprint')
         self.hoodie_b = erzeuge_produkt('Custom print hoodie', slug='hoodie-b', nummer=3,
                                         beschreibung='Hoodie mit backprint')
+        # Das Stück im Startbild seit 22.10.2026 (Hoodie mit Dornen-Augen, Archiv Nº 002).
+        self.dornen = erzeuge_produkt('Custom print jacke', slug='custom-print-jacke', nummer=2,
+                                      beschreibung='Hoodie mit backprint')
 
     def _text(self, pfad):
         return sichtbarer_text(self.hole(pfad).content.decode())
@@ -604,20 +607,20 @@ class Widersprueche02102026Test(LuviqTestCase):
     # EIG134 -------------------------------------------------------------
     def test_hero_und_archivkarte_nennen_das_stueck_gleich(self):
         text = self._text('/')
-        self.assertIn('Nº 005 · Custom Pants', text)
-        self.assertNotIn('Spinnennetz-Jeans', text)
+        self.assertIn('Nº 002 · Custom print jacke', text)
+        self.assertNotIn('Nº 005 · Custom Pants', text)
 
     def test_hero_behaelt_seine_nummer_nach_einer_umbenennung(self):
         """Die Nummer hängt an der Archivnummer, nicht am Namen (EIG134)."""
-        self.hose.name = 'Jeans Spinnennetz'
-        self.hose.save()
-        self.assertIn('Nº 005 · Jeans Spinnennetz', self._text('/'))
+        self.dornen.name = 'Hoodie Dornenaugen'
+        self.dornen.save()
+        self.assertIn('Nº 002 · Hoodie Dornenaugen', self._text('/'))
 
     def test_ohne_treffer_steht_kein_erfundener_stueckname_da(self):
-        self.hose.delete()
+        self.dornen.delete()
         text = self._text('/')
-        self.assertNotIn('Spinnennetz-Jeans', text)
-        self.assertNotIn('Nº 005 ·', text)
+        self.assertNotIn('Nº 002 ·', text)
+        self.assertNotIn('Custom print jacke', text)
 
     # EIG124 / EIG125 / EIG67 --------------------------------------------
     def test_eine_technik_ueberall_bleiche_und_pinsel(self):
