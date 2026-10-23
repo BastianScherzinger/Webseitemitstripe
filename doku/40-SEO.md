@@ -163,6 +163,10 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 | 28.09.2026 (Zweig `sofort/2026-09-27-pj05-und-2-weitere`, nicht gemergt, Nachbesserung) | GE22 berichtigt: Die Fassung aus `89643e2` (`geo` ausserhalb des `verkauf_aktiv`-Blocks, aber weiter direkt am `Organization`/`ClothingStore`-Knoten) war von der Gegenprüfung zu Recht abgelehnt — `geo` ist nach schema.org nur an `Place` und dessen Untertypen gültig, und ohne `VERKAUF_AKTIV` gibt der Knoten nur `"Organization"` aus. Statt dessen trägt der Organization-Knoten jetzt einen eigenen `location`-Knoten vom Typ `Place` mit eigener `PostalAddress` und `GeoCoordinates` (`templates/base.html:80-93`), unabhängig vom Verkaufsschalter gültig; `address` bleibt zusätzlich am Organization-Knoten stehen. Kein Element, keine Klasse, keine Kennung im sichtbaren Aufbau geändert, `test_aufbau` unverändert | *(dieser Zweig)* |
 | 01.10.2026 | **TS19** — Bild-Auszeichnung in der Sitemap: Startseite (Titelbild, fünf Entstehungsbilder aus `luviq_daten`) und `/produkte/` (Bilder der aktiven Stücke); kein Logo als Platzhalter an Seiten ohne Inhaltsbild. Live bestätigt (Sitemap abgerufen 01.10.2026) | `36c0741` |
 
+## Schub 23.10.2026 (Zweig, nicht live)
+
+Sitz Lübeck, Herkunft Alsfeld in Titeln, Schema und Stückbeschreibungen; `sameAs` aus `luviq_daten.PROFILE`; fünf Motiv-Fragen (`luviq_daten.FAQ_MOTIV`) sichtbar auf `/motiv-anfragen/`, `FAQPage` erst mit Verkauf; `llms.txt` führt sie in beiden Fassungen. Keine Lübecker Ortsseite, solange Luisas persönlicher Kontakt in Lübeck ungeklärt ist (`80-AUFGABEN.md`).
+
 ## Offen
 
 Stand 02.10.2026, gegen `origin/main` und die Live-Seite geprüft. Erledigt und entfernt: Freigabe der Wissensbeiträge, `sameAs`, `llms-full.txt`, Überschriftensprünge und Merges der Arbeitszweige (siehe „Erledigt“ oben); `INDEXNOW_KEY` steht als Bastian-Zeile in [10-TECHNIK.md](10-TECHNIK.md), Produktnamen, Beschreibung je Stück und eine belegte Bewertungszahl (`AggregateRating`, KV09) unter „Beim Kunden“ in [80-AUFGABEN.md](80-AUFGABEN.md) — dort stehen sie nur einmal.

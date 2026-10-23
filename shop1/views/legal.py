@@ -283,6 +283,25 @@ def _llms_kopf_mit_verkauf(basis):
     ]
 
 
+def _ascii(text):
+    """llms.txt bleibt reines ASCII (wie der Rest der Datei): Umlaute und Grad aufloesen."""
+    for alt, neu in (('ä', 'ae'), ('ö', 'oe'), ('ü', 'ue'), ('Ä', 'Ae'), ('Ö', 'Oe'),
+                     ('Ü', 'Ue'), ('ß', 'ss'), ('°C', 'Grad C'), ('–', '-'), ('—', '-'),
+                     ('’', "'"), ('„', ''), ('“', '')):
+        text = text.replace(alt, neu)
+    return text
+
+
+def _llms_motiv_fragen():
+    """Fragen zur Motivanfrage, wortgleich mit ``/motiv-anfragen/`` (``luviq_daten.FAQ_MOTIV``)."""
+    import textwrap
+    from .. import luviq_daten
+    zeilen = []
+    for frage, antwort in luviq_daten.FAQ_MOTIV:
+        zeilen += [f"### {_ascii(frage)}", *textwrap.wrap(_ascii(antwort), 78), ""]
+    return zeilen
+
+
 def _llms_fragen_mit_verkauf(basis):
     """Häufige Fragen, Rechtliches und Verweise der llms.txt bei eingeschaltetem Verkauf."""
     return [
@@ -317,6 +336,7 @@ def _llms_fragen_mit_verkauf(basis):
         "Statt neue Kleidung zu produzieren, wird vorhandene Vintage-Kleidung",
         "weiterverwendet und von Hand bemalt.",
         "",
+        *_llms_motiv_fragen(),
         "## Rechtliches",
         "",
         f"- [Impressum]({basis}{reverse('impressum')})",
@@ -417,6 +437,7 @@ def _llms_fragen_ohne_verkauf(basis):
         "E-Mail, dann wird gemeinsam entschieden. Die Anfrage kostet nichts und ist",
         "keine Bestellung.",
         "",
+        *_llms_motiv_fragen(),
         "## Rechtliches",
         "",
         f"- [Impressum]({basis}{reverse('impressum')})",

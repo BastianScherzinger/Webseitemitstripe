@@ -137,6 +137,7 @@ def _seite(request, werte=None, fehler=None, status=200):
         'teile': luviq_daten.TEILE,
         'platzierungen': luviq_daten.PLATZIERUNGEN,
         'stationen': luviq_daten.ANFRAGE_STATIONEN,
+        'faq': luviq_daten.FAQ_MOTIV,
         'dauer': luviq_daten.DAUER,
         'laengen': LAENGEN,
     }, status=status)

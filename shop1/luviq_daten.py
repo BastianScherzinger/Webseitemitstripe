@@ -77,6 +77,30 @@ GOOGLE_PROFIL = 'https://www.google.com/maps?cid=13899750731019902000'
 #: Belegte Profiladressen für ``sameAs`` (Schema) und ``llms.txt``.
 PROFILE = (INSTAGRAM, TIKTOK, GOOGLE_PROFIL)
 
+#: Häufige Fragen rund um die Motivanfrage (Bestellung nach Wunsch), wortgleich als
+#: Text auf ``/motiv-anfragen/`` und – erst mit Verkauf – als ``FAQPage``. Nur, was
+#: auf der Seite und in den Wissensbeiträgen schon belegt ist: kein Preis, keine
+#: Zusage, keine Lieferzeit, kein Verkaufsversprechen.
+FAQ_MOTIV = [
+    ('Ist eine Motivanfrage schon eine Bestellung?',
+     'Nein. Die Anfrage kostet nichts und verpflichtet zu nichts: Es gibt dabei keinen '
+     'Preis, keine Zahlung und keine Zusage. Du beschreibst, was dir vorschwebt, und Luisa '
+     'schickt dir Vorschläge.'),
+    ('Was passiert nach meiner Anfrage?',
+     'Luisa meldet sich bei dir, per Instagram oder E-Mail, je nachdem, was du angegeben '
+     'hast. Sie schickt dir ein paar Vorschläge, und ihr entscheidet zusammen. Erst wenn das '
+     'Motiv passt, entsteht das Stück.'),
+    ('Wie lange dauert es von der Anfrage bis zum fertigen Stück?',
+     f'Meistens {DAUER}, je nach Motiv. Das ist ein Erfahrungswert und keine feste Zusage.'),
+    ('Bekomme ich dasselbe Motiv zweimal?',
+     'Nein. Jedes Stück ist ein handbemaltes Einzelstück, und weil jedes Motiv frei von Hand '
+     'gemalt wird, entsteht kein zweites genauso. Ein Strich mit der Bleiche lässt sich '
+     'außerdem nicht zurücknehmen.'),
+    ('Wie pflege ich ein handbemaltes Stück?',
+     'Auf links bei 30 °C waschen, nicht in den Trockner, keinen Weichspüler nehmen und nur '
+     'von links bügeln. So bleibt die Bemalung lange schön.'),
+]
+
 #: Antwortzeit auf Anfragen, von Bastian für Luisa am 02.10.2026 bestätigt.
 #: Eine Erreichbarkeit, keine Öffnungszeit (kein Ladengeschäft, GE20).
 ANTWORT = 'innerhalb von 2 Stunden'

@@ -10,6 +10,14 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 23.10.2026 (Abend) — Schub 2: Archivkarte, Sitz Lübeck im Schema, Motiv-FAQ, llms.txt (Zweig `seo/2026-10-23-luviq-upgrade`, nicht gepusht)
+
+**Was (Archivkarte):** Ein Stück ohne Foto zeigte auf Start und `/produkte/` eine leere helle Kachel (`archiv_karte.html`: `{% if produkt.bild %}` ohne Gegenstück; lokal hat „Custom print hoodie“ kein Bild, Lazy Loading oder Cloudinary waren nicht die Ursache). Jetzt trägt die Kachel `data-ohne-foto` und zeigt per CSS „Foto folgt“ – ohne neues Element, die Designwache dieser Seiten bleibt unverändert. Wenn auf der Live-Seite dasselbe auftaucht, hat das Stück dort kein Bild im Django-Admin hinterlegt.
+**Was (Sitz):** Die Stückbeschreibungen nannten Alsfeld als Sitz („Archiv von Luviq Universe in Alsfeld“), jetzt Lübeck. `sameAs` im Schema liest `luviq_daten.PROFILE` statt einer zweiten Abschrift (gleiche drei Profile, kein neues).
+**Was (Motiv-FAQ):** Fünf Fragen aus `luviq_daten.FAQ_MOTIV` stehen sichtbar auf `/motiv-anfragen/` (Bestellung nach Wunsch, Dauer, Einzelstück, Pflege) und mit Link auf die Wissensbeiträge Pflege und Größe; `FAQPage`-Schema erst mit `VERKAUF_AKTIV`. Aufbau-Referenz nur für diese Seite ergänzt. `llms.txt` führt dieselben Fragen in beiden Fassungen (reines ASCII).
+**Befund `94764de`:** Der Commit hat nicht nur Daten zentralisiert, sondern Rechtstext-Inhalt geändert: Impressum (Anschrift, Meta-Beschreibung, neuer Satz „Geschäftsbezeichnung: Luviq …“, `legalName`-Kommentar), Datenschutz (Verantwortliche Stelle in Kopf und Abschnitt 1, Titel) und AGB-Kopf nennen jetzt Lübeck; außerdem Kontakt, Schema und Mailfuß. Das sind Rechtstext-Änderungen ohne Generator und ohne Luisas Freigabe (Agenturregel 3). Zurückgenommen wurde nichts: Alsfeld stünde nach der Gewerbeanmeldung falsch da. Sie bleiben Entwurf, bis der Generatortext vorliegt; die Eingaben stehen in `doku/80-AUFGABEN.md`.
+**Bewusst nicht gebaut:** Ortsseite Lübeck – ob Luisa dort persönlichen Kontakt anbietet, ist offen; ohne ihn wäre die Seite eine Doorway-Seite, und `/liefergebiet/` („Von Alsfeld nach Lübeck“) deckt den Ort ab.
+
 ## 23.10.2026 (Tag) — Gewerbe Lübeck: Anbieterin, Ortsbezug Lübeck + Alsfeld, Overview-Regeln (Zweig `seo/2026-10-23-luviq-upgrade`, nicht gemergt)
 
 **Was (Recht, `94764de`):** Neue zentrale Angaben `luviq_daten.ANBIETERIN` (Luisa Brehler, Geschäftsbezeichnung „Luviq“, Mühlenkamp 5, 23569 Lübeck) und `HERKUNFT` (Alsfeld), Kontextprozessor `anbieterin`. Impressum, Datenschutz, AGB-Kopf, Kontakt, Schema-Adresse, llms.txt und die Mailfußzeile lesen nur noch von dort. Keine Koordinaten mehr im Schema, Alsfeld als `foundingLocation`.

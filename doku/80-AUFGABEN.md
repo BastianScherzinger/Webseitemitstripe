@@ -76,6 +76,29 @@ umgelegt, wenn alles darüber erledigt ist — in dieser Reihenfolge:
 - [ ] `VERKAUF_AKTIV=1` in Railway setzen (Dienst `Luviq-Luisa`, Umgebung `shop`), danach `/`, `/produkte/`, eine Produktseite, `/warenkorb/`, `/agb/`, `/sitemap.xml` und `/llms.txt` ansehen und `/payment/<id>/` mit offener Browserkonsole prüfen.
 - [ ] Nach dem Einschalten Designwache prüfen: die Referenz friert den Zustand **ohne** Verkauf ein; mit Verkauf ändern sich `/`, `/produkte/`, `/kontakt/`, `/liefergebiet/`, `/impressum/`, `/wissen/` und `/wissen/upcycling-mode-second-hand-vintage/` in Überschriften oder Elementzahl (die drei Kaufweg-Beiträge erfasst die Wache schon mit Verkauf) — beim Umstellen der Vorgabe die Referenz gezielt für diese Seiten nachziehen.
 
+## Rechtstexte für Lübeck: Eingaben für den Generator (Stand 23.10.2026)
+
+Rechtstexte kommen nur aus dem Generator und mit Luisas Freigabe (Agenturregel 3); nichts davon wird von Hand geschrieben. Der Entwurf im Zweig `seo/2026-10-23-luviq-upgrade` (`94764de`) hat die Anschrift schon ausgetauscht, das ersetzt die Freigabe nicht: er ist ein Zwischenstand, bis der Generatortext vorliegt (Befund in `LOGBUCH.md`, 23.10.2026, Nachtrag).
+
+Für Impressum, Datenschutz und AGB braucht der Generator:
+
+- [ ] **Anbieterin:** Luisa Brehler, Einzelunternehmerin im Nebenerwerb, Geschäftsbezeichnung „Luviq“, Beginn 01.11.2026 (Gewerbeanmeldung 22.10.2026, Hansestadt Lübeck).
+- [ ] **Anschrift:** Mühlenkamp 5, 23569 Lübeck (laut Gewerbeanmeldung Wohnung und Betriebsstätte). **Luisa bestätigen lassen, dass sie öffentlich im Impressum stehen darf** (Pflicht, ladungsfähig); die Alsfelder Anschrift entfällt dort.
+- [ ] **Kontakt:** E-Mail brehlerluisa@gmail.com plus Kontaktformular; keine Telefonnummer (Luisas Entscheidung, Frage F12; Pflicht ist sie nicht). Antwortzeit „in der Regel innerhalb von 2 Stunden“.
+- [ ] **Steuer:** Kleinunternehmerin nach § 19 UStG, keine USt-IdNr.; ob eine Wirtschafts-Identifikationsnummer genannt werden soll (Generator fragt).
+- [ ] **Streitbeilegung:** bereit oder nicht bereit zur Verbraucherschlichtung; der OS-Satz entfällt (Plattform seit 20.07.2025 abgeschaltet).
+- [ ] **Verantwortlich nach § 18 Abs. 2 MStV:** Luisa Brehler, gleiche Anschrift.
+- [ ] **Datenschutz, Dienste:** Hosting Railway, Bilder Cloudinary, Mail über Gmail-SMTP, Besucherzählung ohne Cookie und ohne IP, Newsletter mit Double-Opt-in, Motivanfrage (Speicherung plus Kopie an die Webagentur), Gästebuch und Konto, Google Maps erst nach Klick, Instagram/TikTok nur als Link; ab Verkauf PayPal.
+- [ ] **Löschfristen** für Kontakt- und Motivanfragen (seit „Beim Kunden“ Nr. 17 offen): Luisa nennt die Frist, der Generator setzt sie ein.
+- [ ] **AGB ab Verkaufsstart:** Zahlungsarten (PayPal, Vorabüberweisung), Versandkosten und Lieferzeit, Widerrufsbelehrung; für nach Wunsch bemalte Stücke die Frage nach dem Ausschluss des Widerrufs bei Anfertigung nach Kundenwunsch (§ 312g Abs. 2 Nr. 1 BGB) – ob der Generator das abdeckt und ob es für Luviq gilt, entscheidet die Prüfung, nicht dieser Eintrag.
+- [ ] **Danach:** die generierten Texte ersetzen die Entwurfstexte; `luviq_daten.ANBIETERIN` bleibt die einzige Quelle der Anschrift; `seiten_stand.py` nachziehen.
+
+Weitere Lübeck-Punkte (23.10.2026, Schub 2):
+
+- [ ] **Persönlicher Kontakt in Lübeck** (Übergabe, Abholung, Anprobe)? Davon hängt ab, ob das Google-Profil umgestellt wird und ob eine Lübecker Ortsseite Nutzen hat. Bis zur Antwort: keine Ortsseite (wäre eine Doorway-Seite, `/liefergebiet/` trägt Herkunft und Sitz bereits), Profil nicht ändern.
+- [ ] `sameAs` zeigt weiter auf das Alsfelder Google-Profil (`luviq_daten.GOOGLE_PROFIL`), weil es das einzige existierende ist; es folgt der Entscheidung zum Profil, ein zweites Profil gibt es nicht. Eine Zeile in `luviq_daten.PROFILE`.
+- [ ] Ab 01.11.: `VERKAUF_AKTIV=1` schaltet den `FAQPage`-Knoten auf `/motiv-anfragen/` frei (fünf Fragen aus `luviq_daten.FAQ_MOTIV`); der Text steht schon vorher sichtbar da. Designwache dann mit Verkauf prüfen (Punkt oben).
+
 ## Offen
 
 Stand 02.10.2026, geprüft gegen `origin/main` (`7ae67ab`) und die Live-Seite. Was nur Luisa liefern kann, steht unter „Beim Kunden“. Die Entscheidungen und Railway-Handgriffe für Bastian stehen bei ihrem Bereich, damit keine Zeile zweimal zählt: [10-TECHNIK.md](10-TECHNIK.md) (`INDEXNOW_KEY`, `STRIPE_*`-Variablen, eigene Datenbank, geteilte Zugangswerte, Healthcheck-Pfad, Livetest des Kontaktformulars), [40-SEO.md](40-SEO.md) (Stückseiten `noindex`?, `/ueber_uns/` umziehen?, Indexierung beantragen TS46) und [50-LOCAL-SEO.md](50-LOCAL-SEO.md) (`GOOGLE_REVIEW_URL`, Profil prüfen). Fremde Zweige gibt es nicht mehr: `git log origin/main..<zweig>` ist für alle `fix/2026-10-02-*` leer, `git branch -r --no-merged origin/main` ist leer — es gibt also keine Zeile „Push/Merge von …“.
