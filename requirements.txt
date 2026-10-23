@@ -20,10 +20,15 @@
 # bekannte Luecken, darunter GHSA-45hq-cxwh-f6vc und GHSA-4x4j-2g7c-83w6 -
 # laut GitHub-Advisory betroffen < 12.3.0, behoben in 12.3.0. 12.3.0 verlangt
 # laut PyPI Python >= 3.10. Der Code nutzt Pillow nur ueber Djangos ImageField.
+#
+# pillow 13.0.0 statt 12.3.0 (Messpunkt SI40, 23.10.2026): laut OSV hat 12.3.0
+# 39 bekannte Luecken (u. a. GHSA-22hg-r758-rrw9, GHSA-w889-685w-c8fh), alle
+# behoben in 13.0.0. 13.0.0 verlangt Python >= 3.11 - der Container nutzt
+# python:3.11-slim. Testsuite lokal mit 13.0.0 gruen.
 --constraint requirements.lock
 Django==5.2.17
 python-dotenv==1.2.2
-pillow==12.3.0
+pillow==13.0.0
 django-axes==8.3.1
 gunicorn==26.0.0
 whitenoise==6.12.0

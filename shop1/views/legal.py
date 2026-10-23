@@ -671,6 +671,9 @@ def _bestaetigung_senden(request, abo):
     )
 
 
+# offen-ok: der Bestätigungslink steht in der Double-Opt-in-Mail und richtet
+# sich an Empfänger ohne Konto. Geschrieben wird nur „bestätigt“ der Adresse
+# aus dem signierten Token (signing.loads mit eigenem Salt), sonst nichts.
 def newsletter_bestaetigen(request):
     """Schritt 2 des Double-Opt-in: der signierte Link aus der Mail."""
     try:

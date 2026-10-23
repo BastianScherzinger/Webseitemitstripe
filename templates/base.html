@@ -107,7 +107,22 @@
             "https://www.tiktok.com/@luviq.archive",
             "https://www.google.com/maps?cid=13899750731019902000"
           ]
-        },
+        },{% if motivanfrage_aktiv %}
+        {
+          {% comment %}GE13 (23.10.2026): die eine Leistung, die es ohne Verkauf gibt, ist die Motivanfrage. Als Service mit provider und areaServed, bewusst ohne offers: es gibt keinen Preis, und eine Preisspanne zu nennen hiesse, einen Verkauf vorzutaeuschen. Mit Verkauf kommt der Preis ueber die Product-Knoten der Stueckseiten.{% endcomment %}
+          "@type": "Service",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#motivanfrage",
+          "name": "Motiv anfragen: Handbemalung nach Wunsch",
+          "serviceType": "Handbemalung von Second-Hand-Kleidung nach Motivwunsch",
+          "description": "Du beschreibst ein Motiv, Luisa Brehler schickt Vorschläge, dann wird gemeinsam entschieden. Die Anfrage kostet nichts und ist keine Bestellung.{% if not verkauf_aktiv %} Derzeit findet kein Verkauf statt.{% endif %}",
+          "provider": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
+          "areaServed": [
+            {"@type": "City", "name": "{{ anbieterin.ort }}"},
+            {"@type": "City", "name": "{{ herkunft.ort }}"},
+            {"@type": "Country", "name": "Deutschland"}
+          ],
+          "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'motiv_anfragen' %}"
+        },{% endif %}
         {
           "@type": "WebSite",
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
