@@ -31,6 +31,7 @@ from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
 from django.utils.html import escape
 
+from .luviq_daten import ANBIETERIN
 from .utils import send_brevo_email
 
 _log = logging.getLogger('shop1')
@@ -41,7 +42,8 @@ BETREIBER_VORGABE = 'bastian.scherzinger05@gmail.com'
 KONTAKT_EMAIL = 'brehlerluisa@gmail.com'
 INSTAGRAM_NAME = 'luviq.archive'
 INSTAGRAM_URL = 'https://www.instagram.com/luviq.archive/'
-IMPRESSUM_ZEILE = 'Luisa Brehler · Grünberger Str. 16 · 36304 Alsfeld'
+#: Aus der Gewerbeanmeldung (luviq_daten.ANBIETERIN), nicht hier abtippen.
+IMPRESSUM_ZEILE = '{name} · {strasse} · {plz} {ort}'.format(**ANBIETERIN)
 
 
 def live_url():

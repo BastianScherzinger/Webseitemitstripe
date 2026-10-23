@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-{% block title %}AGB & Widerrufsrecht – Luviq Universe, Alsfeld{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Allgemeine Geschäftsbedingungen von Luviq Universe aus Alsfeld: Vertragsschluss, Preise, Zahlungsarten, Lieferung und Widerrufsrecht. Vor dem Kauf nachlesen.{% else %}Luviq Universe aus Alsfeld verkauft derzeit nichts, AGB gibt es deshalb noch nicht. Den Hinweis dazu hier nachlesen.{% endif %}{% endblock %}
+{% block title %}AGB & Widerrufsrecht – Luviq Universe, Lübeck{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Allgemeine Geschäftsbedingungen von Luviq Universe aus Lübeck: Vertragsschluss, Preise, Zahlungsarten, Lieferung und Widerrufsrecht. Vor dem Kauf nachlesen.{% else %}Luviq Universe aus Lübeck verkauft derzeit nichts, AGB gibt es deshalb noch nicht. Den Hinweis dazu hier nachlesen.{% endif %}{% endblock %}
 {% comment %}Verkaufsschalter: ohne Verkauf gelten die AGB noch nicht - Seite bleibt erreichbar, aber noindex, nicht im Fuss verlinkt und nicht in Sitemap und llms.txt.{% endcomment %}
 {% block meta_robots %}{% if verkauf_aktiv %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
 {% block brotkrume_ld %}
@@ -31,7 +31,7 @@
                 <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                     Allgemeine Geschäftsbedingungen
                 </h1>
-                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Allgemeine Geschäftsbedingungen – diese AGB von Luviq Universe, Luisa Brehler aus 36304 Alsfeld, {% if verkauf_aktiv %}regeln in fünf Paragraphen den Vertragsschluss, die Beschaffenheit der handbemalten Unikate, Preise und Zahlung sowie das Widerrufsrecht von 14 Tagen. Maßgeblich ist der Wortlaut der Paragraphen darunter.{% else %}gelten erst ab Eröffnung des Shops. Derzeit findet kein Verkauf statt, deshalb gibt es noch keine Geschäftsbedingungen.{% endif %}</p>
+                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Allgemeine Geschäftsbedingungen – diese AGB von Luviq Universe, {{ anbieterin.name }} aus {{ anbieterin.plz }} {{ anbieterin.ort }}, {% if verkauf_aktiv %}regeln in fünf Paragraphen den Vertragsschluss, die Beschaffenheit der handbemalten Unikate, Preise und Zahlung sowie das Widerrufsrecht von 14 Tagen. Maßgeblich ist der Wortlaut der Paragraphen darunter.{% else %}gelten erst ab Eröffnung des Shops. Derzeit findet kein Verkauf statt, deshalb gibt es noch keine Geschäftsbedingungen.{% endif %}</p>
             </header>
 
             <div class="space-y-16 text-white/60 leading-relaxed font-light">

@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
 
-from .. import indexnow
+from .. import indexnow, luviq_daten
 from ..middleware import oeffentliche_basis
 from ..models import Produkt, Subscriber
 # Das Register SEITEN_STAND (Routenname → Datum) liegt seit Schritt 16 in
@@ -256,7 +256,7 @@ def _llms_kopf_mit_verkauf(basis):
         "",
         "## Eckdaten",
         "",
-        "- Betreiberin: Luisa Brehler, Gruenberger Str. 16, 36304 Alsfeld, Deutschland",
+        _betreiber_zeile("Betreiberin"),
         "- E-Mail: brehlerluisa@gmail.com",
         "- Instagram: https://www.instagram.com/luviq.archive/",
         "- TikTok: https://www.tiktok.com/@luviq.archive",
@@ -334,6 +334,15 @@ def _llms_fragen_mit_verkauf(basis):
     ]
 
 
+def _betreiber_zeile(rolle):
+    """Eckdaten-Zeile mit der Anschrift aus der Gewerbeanmeldung (``ANBIETERIN``).
+
+    llms.txt bleibt ASCII wie bisher (Umlaute umschrieben)."""
+    a = luviq_daten.ANBIETERIN
+    zeile = f"- {rolle}: {a['name']}, {a['strasse']}, {a['plz']} {a['ort']}, {a['land_name']}"
+    return zeile.translate(str.maketrans({'ü': 'ue', 'ö': 'oe', 'ä': 'ae', 'ß': 'ss', 'Ü': 'Ue'}))
+
+
 def _llms_kopf_ohne_verkauf(basis):
     """Kopf, Eckdaten und Seitenliste der llms.txt ohne Verkauf (Marke im Aufbau)."""
     return [
@@ -348,7 +357,7 @@ def _llms_kopf_ohne_verkauf(basis):
         "",
         "## Eckdaten",
         "",
-        "- Verantwortlich: Luisa Brehler, Gruenberger Str. 16, 36304 Alsfeld, Deutschland",
+        _betreiber_zeile("Verantwortlich"),
         "- E-Mail: brehlerluisa@gmail.com",
         "- Instagram: https://www.instagram.com/luviq.archive/",
         "- TikTok: https://www.tiktok.com/@luviq.archive",

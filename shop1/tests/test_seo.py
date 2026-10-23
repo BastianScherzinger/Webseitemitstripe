@@ -53,7 +53,7 @@ HANDLUNGSVERBEN = {
 #: konkurriert: den Ort (belegt durch das Impressum und die
 #: Liefergebietsseite) oder den Nutzen, der die Seite von anderen abhebt.
 ORT_ODER_NUTZEN = (
-    'alsfeld', 'hessen', 'fulda', 'gießen',
+    'lübeck', 'alsfeld', 'hessen', 'fulda', 'gießen',
     'handbemalt', 'vintage', 'unikat', 'upcycling', 'second hand', 'second-hand',
 )
 
@@ -746,7 +746,7 @@ class SeitenkopfTest(LuviqTestCase):
     def test_jeder_titel_nennt_ort_oder_nutzen(self):
         """Verhindert einen Titel wie „AGB – Luviq Universe", der mit jedem
         Shop im Land konkurriert: jede Inhaltsseite nennt im ``<title>`` den
-        Ort (Alsfeld, Hessen, Fulda, Gießen) oder den Nutzen (handbemalt,
+        Ort (Lübeck, Alsfeld, Hessen, Fulda, Gießen) oder den Nutzen (handbemalt,
         Vintage, Unikat, Upcycling, Second Hand)."""
         for pfad in INHALTSSEITEN:
             with self.subTest(pfad=pfad):

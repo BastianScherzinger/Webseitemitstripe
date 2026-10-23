@@ -72,31 +72,16 @@
           "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}",
           "founder": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
           "description": "{% if verkauf_aktiv %}Luviq Universe ist ein nachhaltiger Second-Hand-Shop aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Versand deutschlandweit.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Derzeit findet kein Verkauf statt.{% endif %}",
+          {% comment %}Anschrift aus der Gewerbeanmeldung vom 22.10.2026 (luviq_daten.ANBIETERIN). Keine Koordinaten mehr: die Anschrift ist eine Wohnung, kein Laden; die Alsfelder Koordinaten stimmen seit dem Umzug nicht mehr. Alsfeld bleibt als Herkunft (foundingLocation).{% endcomment %}
           "address": {
             "@type": "PostalAddress",
-            "streetAddress": "Grünberger Str. 16",
-            "addressLocality": "Alsfeld",
-            "postalCode": "36304",
-            "addressRegion": "Hessen",
-            "addressCountry": "DE"
+            "streetAddress": "{{ anbieterin.strasse }}",
+            "addressLocality": "{{ anbieterin.ort }}",
+            "postalCode": "{{ anbieterin.plz }}",
+            "addressRegion": "{{ anbieterin.region }}",
+            "addressCountry": "{{ anbieterin.land }}"
           },
-          {% comment %}geo gehoert nach schema.org nicht direkt an Organization, sondern an einen Place-Knoten - deshalb ueber location eingehaengt, unabhaengig vom Verkaufsschalter gueltig.{% endcomment %}
-          "location": {
-            "@type": "Place",
-            "address": {
-              "@type": "PostalAddress",
-              "streetAddress": "Grünberger Str. 16",
-              "addressLocality": "Alsfeld",
-              "postalCode": "36304",
-              "addressRegion": "Hessen",
-              "addressCountry": "DE"
-            },
-            "geo": {
-              "@type": "GeoCoordinates",
-              "latitude": 50.7517,
-              "longitude": 9.2685
-            }
-          },
+          "foundingLocation": {"@type": "Place", "name": "{{ herkunft.ort }}, {{ herkunft.region }}"},
 {% if verkauf_aktiv %}
           "areaServed": [
             {"@type": "City", "name": "Alsfeld"},
@@ -122,7 +107,7 @@
             {"@type": "Country", "name": "Deutschland"}
           ],
 {% endif %}
-          "email": "brehlerluisa@gmail.com",
+          "email": "{{ anbieterin.email }}",
 {% if verkauf_aktiv %}
           "priceRange": "€€",
           "currenciesAccepted": "EUR",

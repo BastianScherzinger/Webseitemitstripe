@@ -185,7 +185,7 @@ class OhneVerkaufTest(_Grundlage):
         self.assertNotIn('§ 5 TMG', html)
         self.assertNotIn('ec.europa.eu/consumers/odr', html)
         self.assertIn('Marke im Aufbau. Derzeit findet kein Verkauf statt.', html)
-        self.assertIn('Grünberger Str. 16', html)
+        self.assertIn('Mühlenkamp 5', html)
         self.assertIn('brehlerluisa@gmail.com', html)
 
     def test_die_warteliste_ist_das_ziel(self):

@@ -18,6 +18,32 @@ from django.utils import timezone
 
 _log = logging.getLogger('shop1')
 
+#: Anbieterin laut Gewerbeanmeldung (GewA 1 vom 22.10.2026, Ordnungsamt der
+#: Hansestadt Lübeck; Unterlagen ``Buero\luisa\arbeitsplatz\recht\gewerbe``):
+#: Feld 3 Geschäftsbezeichnung „LUVIQ", Feld 4/5 Name, Feld 15 Betriebsstätte,
+#: Feld 20 Beginn 01.11.2026 im Nebenerwerb. Impressum, Datenschutz, Kontakt,
+#: Schema, llms.txt und die Mailfußzeile lesen **nur** von hier. Die
+#: Telefonnummer aus Feld 15 steht bewusst nicht hier: ob sie öffentlich
+#: werden soll, entscheidet Luisa (Frage F12); Pflicht ist sie nicht.
+ANBIETERIN = {
+    'name': 'Luisa Brehler',
+    'geschaeft': 'Luviq',
+    'strasse': 'Mühlenkamp 5',
+    'plz': '23569',
+    'ort': 'Lübeck',
+    'region': 'Schleswig-Holstein',
+    'land': 'DE',
+    'land_name': 'Deutschland',
+    'email': 'brehlerluisa@gmail.com',
+    'gewerbe_beginn': '01.11.2026',
+}
+
+#: Wo Luviq angefangen hat: die ersten Stücke (Nº 001–005), die Domain
+#: luviq-alsfeld.com und das Google-Profil stammen aus Alsfeld. Seit Oktober
+#: 2026 malt Luisa in Lübeck (Gewerbeanmeldung) – Alsfeld bleibt Herkunft,
+#: kein Sitz mehr.
+HERKUNFT = {'ort': 'Alsfeld', 'region': 'Hessen', 'kreis': 'Vogelsbergkreis'}
+
 #: Luisas Markensatz, von ihr gewählt am 19.09.2026. Gesprochen, nicht gesetzt.
 MARKENSATZ = 'Sag mir, was du willst — ich mal’s dir.'
 

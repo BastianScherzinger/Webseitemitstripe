@@ -109,6 +109,14 @@ def shop_owner_check(request):
     }
 
 
+def anbieterin(request):
+    """Anbieterin und Herkunft für Impressum, Kontakt, Schema (``luviq_daten``).
+
+    Reine Konstanten, keine Abfrage – deshalb auf jeder Seite, auch im Panel."""
+    from . import luviq_daten
+    return {'anbieterin': luviq_daten.ANBIETERIN, 'herkunft': luviq_daten.HERKUNFT}
+
+
 def luviq(request):
     """Laufband, Drop-Kasten und Schalter des Looks „Nachtausgabe".
 

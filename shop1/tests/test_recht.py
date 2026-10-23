@@ -27,7 +27,10 @@ class ImpressumTest(LuviqTestCase):
         text = _text(self.hole('/impressum/').content.decode())
         self.assertIn('Anbieterin: Luisa Brehler', text)
         self.assertIn('Verantwortlich für den Inhalt: Luisa Brehler', text)
-        self.assertIn('Grünberger Str. 16', text)
+        self.assertIn('Mühlenkamp 5', text)
+        self.assertIn('23569 Lübeck', text)
+        self.assertIn('Geschäftsbezeichnung: Luviq', text)
+        self.assertNotIn('Grünberger', text)
 
     def test_keine_aufgehobenen_normen_und_keine_os_plattform(self):
         html = self.hole('/impressum/').content.decode()

@@ -186,8 +186,9 @@ if not settings.VERKAUF_AKTIV:
 #: Seite ihren zitierfähigen Einstieg.
 OHNE_ZAHL_IM_ERSTEN_DRITTEL = set()
 
-#: Belegt im Impressum (impressum.html) und im seitenweiten JSON-LD.
-ANSCHRIFT = ['Grünberger Str. 16', '36304', 'Alsfeld']
+#: Belegt im Impressum (impressum.html) und im seitenweiten JSON-LD; Quelle
+#: ist die Gewerbeanmeldung vom 22.10.2026 (``luviq_daten.ANBIETERIN``).
+ANSCHRIFT = ['Mühlenkamp 5', '23569', 'Lübeck']
 EMAIL = 'brehlerluisa@gmail.com'
 
 #: Muster, die im sichtbaren Text auf Platzhalter oder Blindtext hindeuten.
