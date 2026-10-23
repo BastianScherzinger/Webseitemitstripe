@@ -30,7 +30,7 @@ META_BESCHREIBUNG_ZUSATZ = ' – Einzigartiges 1-of-1 Upcycling-Unikat bei Luviq
 #: das Stück steht im Archiv der bisherigen Stücke (siehe ``shop1/verkauf.py``).
 META_TITEL_ZUSAETZE_OHNE_VERKAUF = (' – Luviq Universe, Lübeck', ' – Luviq Universe')
 META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF = (
-    ' – Nº {nr}, handbemaltes 1-of-1 Unikat aus dem Archiv von Luviq Universe in Alsfeld.'
+    ' – Nº {nr}, handbemaltes 1-of-1 Unikat aus dem Archiv von Luviq Universe in Lübeck.'
     ' Jetzt Motiv anfragen.')
 #: Ohne Verkauf trägt jeder Titel die Archivnummer vorn (``Produkt.nummer``,
 #: eindeutig je Stück): zwei Stücke mit gleichem Namen bekommen so zwei
@@ -38,7 +38,7 @@ META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF = (
 META_TITEL_VORSATZ_OHNE_VERKAUF = 'Archiv Nº {nr}: '
 #: Ist die Motivanfrage abgeschaltet, endet die Beschreibung auf die Warteliste.
 META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF_OHNE_ANFRAGE = (
-    ' – Nº {nr}, handbemaltes 1-of-1 Unikat aus dem Archiv von Luviq Universe in Alsfeld.'
+    ' – Nº {nr}, handbemaltes 1-of-1 Unikat aus dem Archiv von Luviq Universe in Lübeck.'
     ' Jetzt auf die Warteliste.')
 
 

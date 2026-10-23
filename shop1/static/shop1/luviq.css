@@ -190,6 +190,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-raster{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(var(--u)*2.4) calc(var(--u)*1.4);list-style:none;padding:0}
 .lv-karte{display:grid;gap:calc(var(--u)*.6);align-content:start;position:relative}
 .lv-karte figure{aspect-ratio:4/5;overflow:hidden;background:var(--lv-kachel)}
+.lv-karte .lv-ohne-bild{display:grid;place-items:center;height:100%;color:#5a5148;font:max(12px,calc(var(--u)*.85)) var(--lv-mono);letter-spacing:.08em;text-transform:uppercase}
 .lv-karte img{mix-blend-mode:multiply;filter:saturate(.9);transition:transform .6s ease}
 .lv-karte:hover img{transform:scale(1.03)}
 .lv-karte-kopf{display:flex;justify-content:space-between;gap:1em;margin-top:calc(var(--u)*.4);font:max(12px,calc(var(--u)*.85)) var(--lv-mono)}

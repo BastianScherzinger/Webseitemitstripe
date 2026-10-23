@@ -123,7 +123,8 @@ def luviq(request):
     Werte aus ``shop1/luviq_daten.py``, nie aus einer Vorlage. Eine
     Datenbankabfrage (nächste freie Archivnummer), nur für öffentliche Seiten."""
     if request.path.startswith(('/shop-admin/', '/admin/', '/static/', '/media/')):
-        return {'motivanfrage_aktiv': settings.MOTIVANFRAGE_AKTIV}
+        from . import luviq_daten
+        return {'motivanfrage_aktiv': settings.MOTIVANFRAGE_AKTIV, 'profile_urls': luviq_daten.PROFILE}
     from . import luviq_daten
     try:
         drop = luviq_daten.drop_kontext()
@@ -135,6 +136,8 @@ def luviq(request):
         'motivanfrage_aktiv': settings.MOTIVANFRAGE_AKTIV,
         'instagram_url': luviq_daten.INSTAGRAM,
         'instagram_name': luviq_daten.INSTAGRAM_NAME,
+        # sameAs des Schemas: nur belegte Profile, eine Quelle (luviq_daten.PROFILE).
+        'profile_urls': luviq_daten.PROFILE,
         # Luisas Erfahrungswert „2 bis 5 Tage“ (nie als Zusage): jede Seite, die ihn
         # nennt, liest ihn von hier, nicht aus eigener Abschrift.
         'dauer': luviq_daten.DAUER,

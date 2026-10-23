@@ -102,10 +102,8 @@
             ]
           },
 {% endif %}
-          "sameAs": [
-            "https://www.instagram.com/luviq.archive/",
-            "https://www.tiktok.com/@luviq.archive",
-            "https://www.google.com/maps?cid=13899750731019902000"
+          "sameAs": [{% for url in profile_urls %}
+            "{{ url }}"{% if not forloop.last %},{% endif %}{% endfor %}
           ]
         },{% if motivanfrage_aktiv %}
         {
