@@ -393,9 +393,9 @@ class ArchivMitVerkaufTest(_Grundlage):
 
     def test_titel_mit_kaufen_und_antwortsatz_mit_preis(self):
         html = self.hole(self.produktseite).content.decode()
-        self.assertIn('Schalterstueck kaufen – Luviq Universe, Alsfeld', html)
+        self.assertIn('Schalterstueck kaufen – Luviq Universe, Lübeck', html)
         self.assertIn('Schalterstueck ist ein handbemaltes 1-of-1 Unikat von Luisa Brehler aus '
-                      '36304 Alsfeld in Hessen und kostet 87,50 €', html)
+                      'Lübeck und kostet 87,50 €', html)
         self.assertNotIn('Archiv', self.produkt.meta_description)
 
     def test_gaestebuch_wie_bisher(self):

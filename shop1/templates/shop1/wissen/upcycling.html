@@ -4,7 +4,7 @@
 {% block title %}Was ist Upcycling-Mode? Unterschied zu Second Hand – Luviq{% endblock %}
 {% block meta_description %}Upcycling-Mode, Second Hand, Vintage: was die Begriffe bedeuten, wie sie sich unterscheiden und warum Einzelstücke nicht nachbestellbar sind. Jetzt erfahren.{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_title %}Was ist Upcycling-Mode? – Luviq Universe, Alsfeld{% endblock %}
+{% block og_title %}Was ist Upcycling-Mode? – Luviq Universe, Lübeck{% endblock %}
 {% block og_description %}Upcycling, Second Hand, Vintage: Begriffsklärung und Abgrenzung – und warum ein handbemaltes Einzelstück genau einmal existiert.{% endblock %}
 {% block twitter_title %}Was ist Upcycling-Mode? – Luviq Universe{% endblock %}
 {% block twitter_description %}Begriffsklärung Upcycling, Second Hand und Vintage; warum ein 1-of-1 nicht nachbestellbar ist.{% endblock %}
@@ -108,7 +108,7 @@
     <header class="lv-wissen-kopf">
         <h1 class="lv-serif">Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?</h1>
         <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
-        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt; was hier zu Kauf, Versand oder Widerruf steht, gilt erst ab Eröffnung des Shops. {% endif %}Upcycling-Mode ist Kleidung, die schon getragen wurde und durch eine handwerkliche Bearbeitung zu einem neuen, höherwertigen Stück wird – bei Luviq Universe aus Alsfeld durch Bemalung von Hand mit Pinsel und Bleiche. Second Hand ist dieselbe Kleidung ohne diese Bearbeitung: gebraucht, weiterverkauft, unverändert. Vintage bezeichnet Alter und Stil eines Stücks, nicht seinen Zustand; als Vintage gelten üblicherweise Stücke, die mindestens etwa 20 Jahre alt sind. Ein handbemaltes Upcycling-Stück gibt es genau einmal (1-of-1) – deshalb lässt es sich weder nachbestellen noch in einer zweiten Größe liefern.</p>
+        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt; was hier zu Kauf, Versand oder Widerruf steht, gilt erst ab Eröffnung des Shops. {% endif %}Upcycling-Mode ist Kleidung, die schon getragen wurde und durch eine handwerkliche Bearbeitung zu einem neuen, höherwertigen Stück wird – bei Luviq Universe aus Lübeck durch Bemalung von Hand mit Pinsel und Bleiche. Second Hand ist dieselbe Kleidung ohne diese Bearbeitung: gebraucht, weiterverkauft, unverändert. Vintage bezeichnet Alter und Stil eines Stücks, nicht seinen Zustand; als Vintage gelten üblicherweise Stücke, die mindestens etwa 20 Jahre alt sind. Ein handbemaltes Upcycling-Stück gibt es genau einmal (1-of-1) – deshalb lässt es sich weder nachbestellen noch in einer zweiten Größe liefern.</p>
     </header>
 
     <div class="lv-wissen-liste">
@@ -175,7 +175,7 @@
             <h2 class="lv-serif">{% if verkauf_aktiv %}Wie kaufe ich ein Upcycling-Einzelstück bei Luviq Universe?{% else %}Gibt es die Stücke von Luviq Universe zu kaufen?{% endif %}</h2>
             <div class="lv-wissen-antwort">
                 <p class="lv-wissen-erst">{% if verkauf_aktiv %}Über diese Seite: Das Stück unter Alle Unikate aussuchen, nach der Anmeldung in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder Vorab-Überweisung; {% if verkauf_aktiv %}alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen. Ein Ladengeschäft gibt es nicht.{% else %}Noch nicht. Die bisherigen Stücke sind bereits vergeben und stehen im Archiv; neue Stücke gibt es mit dem ersten Drop. Wer davon erfahren will, trägt sich auf der Startseite in die Warteliste ein. Ein Ladengeschäft gibt es nicht.{% endif %}</p>
-                <p>{% if verkauf_aktiv %}Die verfügbaren Stücke stehen unter <a href="{% url 'produkte' %}">Alle Unikate</a>. Innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt; Einzelheiten zum Versandgebiet stehen unter <a href="{% url 'liefergebiet' %}">Liefergebiet</a>.{% else %}Die bisherigen Stücke stehen im <a href="{% url 'produkte' %}">Archiv</a>, jeweils mit Foto und Beschreibung. Woher die Stücke kommen, steht unter <a href="{% url 'liefergebiet' %}">Herkunft</a>.{% endif %} Luviq Universe sitzt in 36304 Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen.</p>
+                <p>{% if verkauf_aktiv %}Die verfügbaren Stücke stehen unter <a href="{% url 'produkte' %}">Alle Unikate</a>. Einzelheiten zum Versandgebiet stehen unter <a href="{% url 'liefergebiet' %}">Liefergebiet</a>.{% else %}Die bisherigen Stücke stehen im <a href="{% url 'produkte' %}">Archiv</a>, jeweils mit Foto und Beschreibung. Woher die Stücke kommen, steht unter <a href="{% url 'liefergebiet' %}">Herkunft</a>.{% endif %} Luviq Universe sitzt in Lübeck; angefangen hat sie in Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen.</p>
             
             </div>
         </section>

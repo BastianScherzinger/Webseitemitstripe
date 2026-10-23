@@ -18,30 +18,32 @@ Modul wird bei jedem Request aus dem Kontextprozessor gelesen.
 
 #: Routenname → Datum der letzten inhaltlichen Änderung (ISO 8601).
 SEITEN_STAND = {
-    'home':         '2026-10-22',
-    'produkte':     '2026-10-02',
-    'gaestebuch':   '2026-10-02',
-    'ueber_uns':    '2026-10-02',
-    'liefergebiet': '2026-10-22',
-    'kontakt':      '2026-10-02',
-    'impressum':    '2026-10-02',
-    'datenschutz':  '2026-10-02',
-    'agb':          '2026-10-02',  # Rechtstexte ohne Verkauf: Hinweis statt Paragraphen
+    # 23.10.2026: Sitz Lübeck laut Gewerbeanmeldung, Alsfeld als Herkunft – Titel,
+    # Beschreibungen und Texte aller Seiten; deshalb tragen alle dieses Datum.
+    'home':         '2026-10-23',
+    'produkte':     '2026-10-23',
+    'gaestebuch':   '2026-10-23',
+    'ueber_uns':    '2026-10-23',
+    'liefergebiet': '2026-10-23',
+    'kontakt':      '2026-10-23',
+    'impressum':    '2026-10-23',
+    'datenschutz':  '2026-10-23',
+    'agb':          '2026-10-23',  # Rechtstexte ohne Verkauf: Hinweis statt Paragraphen
     # IS19 (27.09.2026): Erklärsätze der Stationen, Dauer, Bestätigungshinweis.
     # 02.10.2026 (L1-B1): Titel, Beschreibung, Vorschaubild und Twitter-Angaben neu
     # (IS03/06/07/09/10/11/13/36/39, EIG137) — home, produkte, gaestebuch, ueber_uns,
     # liefergebiet, kontakt, datenschutz und motiv_anfragen tragen deshalb dieses Datum.
-    'motiv_anfragen': '2026-10-02',
+    'motiv_anfragen': '2026-10-23',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
-    'wissen':           '2026-10-02',
-    'wissen_pflege':    '2026-10-02',
-    'wissen_upcycling': '2026-10-02',
-    'wissen_groesse':   '2026-10-02',
+    'wissen':           '2026-10-23',
+    'wissen_pflege':    '2026-10-23',
+    'wissen_upcycling': '2026-10-23',
+    'wissen_groesse':   '2026-10-23',
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
-    'wissen_bestellen': '2026-10-02',
-    'wissen_widerruf':  '2026-09-17',
-    'wissen_konto':     '2026-09-27',
+    'wissen_bestellen': '2026-10-23',
+    'wissen_widerruf':  '2026-10-23',
+    'wissen_konto':     '2026-10-23',
 }
 
 #: Routenname → Bezeichnung der Seite, wörtlich so, wie sie in der Navigation

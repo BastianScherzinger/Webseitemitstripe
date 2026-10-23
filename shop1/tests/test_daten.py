@@ -301,7 +301,7 @@ class ProduktInvariantenTest(LuviqTestCase):
             titel = [p.meta_title for p in self.aktive()]
             return sorted({t for t in titel if titel.count(t) > 1})
 
-        self.assertEqual(doppelte(), ['Bemalte Jacke kaufen – Luviq Universe, Alsfeld'])
+        self.assertEqual(doppelte(), ['Bemalte Jacke kaufen – Luviq Universe, Lübeck'])
 
         namensvetter.seo_titel = 'Bemalte Jeansjacke Blau – Luviq Universe'
         namensvetter.save()

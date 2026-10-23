@@ -53,7 +53,7 @@ class DatenschutzTatsachenTest(LuviqTestCase):
 
     def test_rechte_nennen_widerspruch_und_beschwerde(self):
         for teil in ('Widerspruch', 'Art. 21 DSGVO', 'Aufsichtsbehörde',
-                     'Hessische Beauftragte für Datenschutz', 'Einwilligung'):
+                     'Unabhängige Landeszentrum für Datenschutz Schleswig-Holstein', 'Einwilligung'):
             with self.subTest(teil=teil):
                 self.assertIn(teil, self.text)
 

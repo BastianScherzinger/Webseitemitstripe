@@ -812,10 +812,10 @@ class ProduktMetaangabenTest(LuviqTestCase):
 
     def test_kurzer_name_erhaelt_den_ortsbezug_im_titel(self):
         """Verhindert, dass der automatische Titel den Ort verliert (Schritt 12):
-        ein Name, der samt Zusatz in ``META_TITEL_MAX`` passt, trägt „Alsfeld"."""
+        ein Name, der samt Zusatz in ``META_TITEL_MAX`` passt, trägt „Lübeck"."""
         produkt = erzeuge_produkt('Bemalte Jacke')
         self.assertEqual(produkt.meta_title, 'Bemalte Jacke' + META_TITEL_ZUSAETZE[0])
-        self.assertIn('Alsfeld', produkt.meta_title)
+        self.assertIn('Lübeck', produkt.meta_title)
         self.assertLessEqual(len(produkt.meta_title), META_TITEL_MAX)
 
     def test_langer_name_sprengt_den_titel_nicht(self):

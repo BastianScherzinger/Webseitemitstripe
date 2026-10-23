@@ -5,9 +5,9 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
 <fieldset>/<legend>. Honeypot und Zeitfalle wie beim Kontaktformular.
 {% endcomment %}
 
-{% block title %}Motiv anfragen: sag, was du willst – Luviq Universe, Alsfeld{% endblock %}
-{% block meta_description %}Sag Luisa Brehler aus Alsfeld, welches Motiv du willst: Richtung, Teil, Bedeutung. Du bekommst Vorschläge, kostenlos und ohne Bestellung. Jetzt anfragen.{% endblock %}
-{% block og_title %}Motiv anfragen – Luviq Universe aus Alsfeld{% endblock %}
+{% block title %}Motiv anfragen: sag, was du willst – Luviq Universe, Lübeck{% endblock %}
+{% block meta_description %}Sag Luisa Brehler aus Lübeck, welches Motiv du willst: Richtung, Teil, Bedeutung. Du bekommst Vorschläge, kostenlos und ohne Bestellung. Jetzt anfragen.{% endblock %}
+{% block og_title %}Motiv anfragen – Luviq Universe aus Lübeck{% endblock %}
 {% block og_description %}Beschreib dein Motiv, Luisa schickt dir Vorschläge, und ihr entscheidet zusammen. Kostet nichts und ist keine Bestellung.{% endblock %}
 {% block twitter_title %}Motiv anfragen – Luviq Universe{% endblock %}
 {% block twitter_description %}Sag Luisa Brehler, welches Motiv du willst. Du bekommst Vorschläge, kostenlos und ohne Bestellung.{% endblock %}
@@ -37,10 +37,10 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
             <p class="lv-nr">Motiv anfragen</p>
             <h1 class="lv-serif lv-satz" id="anfrage-titel">Sag mir, was du willst — ich mal’s dir.</h1>
             {% if geschlossen %}
-            <p class="lv-lead">Gerade nehme ich in Alsfeld keine neuen Motivanfragen an. Trag dich auf der Startseite in die Warteliste ein, dann erfährst du als Erstes, wann es wieder geht.</p>
+            <p class="lv-lead">Gerade nehme ich keine neuen Motivanfragen an. Trag dich auf der Startseite in die Warteliste ein, dann erfährst du als Erstes, wann es wieder geht.</p>
             <p><a class="lv-knopf" href="{% url 'home' %}#warteliste">Zur Warteliste</a></p>
             {% else %}
-            <p class="lv-lead">Beschreib mir kurz, was dir vorschwebt. Ich bin Luisa aus Alsfeld, ich schick dir Vorschläge, und wir entscheiden zusammen. Das kostet nichts und ist keine Bestellung. Jedes Stück ist ein handbemaltes Einzelstück, kein zweites entsteht genauso. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.</p>
+            <p class="lv-lead">Beschreib mir kurz, was dir vorschwebt. Ich bin Luisa aus Lübeck, ich schick dir Vorschläge, und wir entscheiden zusammen. Das kostet nichts und ist keine Bestellung. Jedes Stück ist ein handbemaltes Einzelstück, kein zweites entsteht genauso. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.</p>
             <ol class="lv-stationen" aria-label="So geht es weiter">
                 {% for titel, beschreibung in stationen %}<li><span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span>{{ titel }} — {{ beschreibung }}</li>{% endfor %}
             </ol>

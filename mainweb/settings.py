@@ -517,7 +517,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # in luviq_daten.GOOGLE_PROFIL und sameAs) ist ein Kartenlink, kein
 # Bewertungsformular – dann hiesse der Knopf zu Unrecht „bewerten“ (EIG87).
 # Den echten Bewertungslink (g.page/r/…/review) als Railway-Variable setzen.
-GOOGLE_REVIEW_URL = os.getenv('GOOGLE_REVIEW_URL', 'https://www.google.com/maps/search/Luviq+Universe+Alsfeld')
+GOOGLE_REVIEW_URL = os.getenv('GOOGLE_REVIEW_URL', 'https://www.google.com/maps/search/Luviq+Universe')
 
 # ═══ FEHLER-MONITORING (VL19) ═══
 # Kein Sentry o.ä. (neue Abhaengigkeit, in diesem Lauf verboten) - stattdessen

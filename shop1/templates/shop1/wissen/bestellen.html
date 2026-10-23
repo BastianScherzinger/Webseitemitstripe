@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Bestellen und bezahlen im Unikat-Shop | Luviq Alsfeld{% endblock %}
-{% block meta_description %}Wie eine Bestellung bei Luviq Universe in Alsfeld abläuft: Konto, Warenkorb, Pflichtangaben, PayPal oder Vorab-Überweisung und Versand. Jetzt nachlesen.{% endblock %}
+{% block title %}Bestellen und bezahlen im Unikat-Shop | Luviq Lübeck{% endblock %}
+{% block meta_description %}Wie eine Bestellung bei Luviq Universe in Lübeck abläuft: Konto, Warenkorb, Pflichtangaben, PayPal oder Vorab-Überweisung und Versand. Jetzt nachlesen.{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_title %}Bestellen und bezahlen bei Luviq Universe, Alsfeld{% endblock %}
+{% block og_title %}Bestellen und bezahlen bei Luviq Universe, Lübeck{% endblock %}
 {% block og_description %}Vom Warenkorb bis zur Bestätigung: Konto, Pflichtangaben, PayPal oder Vorab-Überweisung, Versand deutschlandweit.{% endblock %}
 {% block twitter_title %}Bestellen und bezahlen bei Luviq Universe{% endblock %}
 {% block twitter_description %}Ablauf einer Bestellung: Konto, Warenkorb, Adressdaten, PayPal oder Vorab-Überweisung, Versand.{% endblock %}
@@ -96,7 +96,7 @@
       "name": "Wie lange dauert der Versand?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet; innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt. Versendet wird deutschlandweit. Einen Laden, in dem man ein Stück abholen oder anprobieren könnte, gibt es nicht: Luviq Universe ist ein reiner Online-Shop mit Sitz in Alsfeld."
+        "text": "Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Versendet wird deutschlandweit. Einen Laden, in dem man ein Stück abholen oder anprobieren könnte, gibt es nicht: Luviq Universe ist ein reiner Online-Shop mit Sitz in Lübeck."
       }
     },
     {
@@ -132,7 +132,7 @@
     <header class="lv-wissen-kopf">
         <h1 class="lv-serif">Wie bestelle und bezahle ich bei Luviq Universe?</h1>
         <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
-        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Eine Bestellung bei Luviq Universe aus Alsfeld läuft in fünf Schritten: ein Stück auf seiner Detailseite aussuchen, anmelden oder registrieren, es in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und zwischen PayPal und Vorab-Überweisung wählen. Ein Konto ist dafür nötig – ohne Anmeldung führt die Detailseite zuerst zur Anmeldung. {% if verkauf_aktiv %}Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}; versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.</p>
+        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Eine Bestellung bei Luviq Universe aus Lübeck läuft in fünf Schritten: ein Stück auf seiner Detailseite aussuchen, anmelden oder registrieren, es in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und zwischen PayPal und Vorab-Überweisung wählen. Ein Konto ist dafür nötig – ohne Anmeldung führt die Detailseite zuerst zur Anmeldung. {% if verkauf_aktiv %}Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}; versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.</p>
     </header>
 
     <div class="lv-wissen-liste">
@@ -202,8 +202,8 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Wie lange dauert der Versand?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet; innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt. Versendet wird deutschlandweit. Einen Laden, in dem man ein Stück abholen oder anprobieren könnte, gibt es nicht: Luviq Universe ist ein reiner Online-Shop mit Sitz in Alsfeld.</p>
-                <p>Welche Orte besonders oft beliefert werden und wie der Weg von Alsfeld aus in die Region zwischen Fulda und Gießen läuft, steht unter <a href="{% url 'liefergebiet' %}">Liefergebiet</a>. Der Bestellvorgang schlägt auf den Warenwert keinen Versandbetrag auf: Der Gesamtbetrag ist die Summe der Artikelpreise, {% if verkauf_aktiv %}abzüglich eines eventuellen Rabatts.{% else %}ohne weitere Abzüge.{% endif %}</p>
+                <p class="lv-wissen-erst">Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Versendet wird deutschlandweit. Einen Laden, in dem man ein Stück abholen oder anprobieren könnte, gibt es nicht: Luviq Universe ist ein reiner Online-Shop mit Sitz in Lübeck.</p>
+                <p>Woher Luviq kommt und wo die Stücke heute entstehen, steht unter <a href="{% url 'liefergebiet' %}">Liefergebiet</a>. Der Bestellvorgang schlägt auf den Warenwert keinen Versandbetrag auf: Der Gesamtbetrag ist die Summe der Artikelpreise, {% if verkauf_aktiv %}abzüglich eines eventuellen Rabatts.{% else %}ohne weitere Abzüge.{% endif %}</p>
             
             </div>
         </section>

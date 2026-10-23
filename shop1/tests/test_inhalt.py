@@ -310,12 +310,15 @@ class AngabenTest(LuviqTestCase):
     def test_die_lieferzeit_stimmt_auf_beiden_seiten_ueberein(self):
         """Verhindert zwei verschiedene Lieferversprechen. Vorher sagte die
         Kontaktseite '2-3 Werktage', die Liefergebietsseite '1-2 Werktage
-        Versand, 1-3 Werktage Zustellung'."""
+        Versand, 1-3 Werktage Zustellung'. Seit dem Umzug nach Lübeck
+        (Gewerbeanmeldung 22.10.2026) entfällt die Zustellzeit „innerhalb
+        Hessens“ – sie galt nur für den Versand aus Alsfeld."""
         for pfad in ('/kontakt/', '/liefergebiet/'):
             with self.subTest(pfad=pfad):
                 text = sichtbarer_text(self.hole(pfad).content.decode())
                 self.assertIn('1-2 Werktagen versendet', text)
-                self.assertIn('1-3 Werktagen', text)
+                self.assertNotIn('1-3 Werktagen', text)
+                self.assertNotIn('Hessens', text)
 
 
 class DatenschutzTest(LuviqTestCase):
@@ -380,7 +383,7 @@ class AntwortZuerstTest(LuviqTestCase):
                     f'{pfad}: erster Absatz nur {len(absatz)} Zeichen: "{absatz}"',
                 )
                 self.assertTrue(
-                    re.search(r'Luviq|Alsfeld|Luisa Brehler', absatz),
+                    re.search(r'Luviq|Lübeck|Alsfeld|Luisa Brehler', absatz),
                     f'{pfad}: erster Absatz nennt weder Anbieter noch Ort: "{absatz}"',
                 )
 
@@ -667,7 +670,7 @@ class Widersprueche02102026Test(LuviqTestCase):
         for satz in ('Großteil unserer Community', 'Auszug aus unserer Community',
                      'Beliebt in deiner Nähe'):
             self.assertNotIn(satz, text)
-        self.assertIn('Orte in deiner Nähe', text)
+        self.assertIn('Wo Luviq angefangen hat', text)
 
     # EIG103 -------------------------------------------------------------
     def test_gleichnamige_stuecke_haben_verschiedene_bildtitel_in_der_sitemap(self):
@@ -685,7 +688,8 @@ class Widersprueche02102026Test(LuviqTestCase):
         html = self.hole('/gaestebuch/').content.decode()
         self.assertNotIn('Gr%C3%BCnberger', html)
         self.assertNotIn('Grünberger', sichtbarer_text(html))
-        self.assertIn('data-src="https://maps.google.com/maps?q=36304+Alsfeld', html)
+        self.assertIn('data-src="https://maps.google.com/maps?q=L%C3%BCbeck&', html)
+        self.assertNotIn('M%C3%BChlenkamp', html)
 
     def test_ohne_bewertungsformular_heisst_der_knopf_nicht_bewerten(self):
         """Der Standardwert von ``GOOGLE_REVIEW_URL`` ist eine Kartensuche;

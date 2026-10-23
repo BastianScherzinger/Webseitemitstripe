@@ -8,12 +8,12 @@ das alte freigestellte Bild wird nicht mehr verwendet (Markenwissen § 9).
 Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
 {% endcomment %}
 
-{% block title %}Luisa Brehler: handbemalte Mode aus Alsfeld – Luviq Universe{% endblock %}
-{% block meta_description %}Luisa Brehler bemalt in Alsfeld Second-Hand-Teile von Hand, mit Bleiche und Pinsel. Wie Luviq angefangen hat und wie ein Stück entsteht: jetzt kennenlernen.{% endblock %}
-{% block og_title %}Luisa Brehler – Luviq Universe aus Alsfeld{% endblock %}
-{% block og_description %}Wie Luviq angefangen hat und wie ein Stück entsteht, in fünf Schritten. Handbemalte Second-Hand-Teile aus Alsfeld, jedes Motiv genau einmal.{% endblock %}
+{% block title %}Luisa Brehler: handbemalte Mode aus Lübeck – Luviq Universe{% endblock %}
+{% block meta_description %}Luisa Brehler bemalt in Lübeck Second-Hand-Teile von Hand, mit Bleiche und Pinsel. Wie Luviq angefangen hat und wie ein Stück entsteht: jetzt kennenlernen.{% endblock %}
+{% block og_title %}Luisa Brehler – Luviq Universe aus Lübeck{% endblock %}
+{% block og_description %}Wie Luviq angefangen hat und wie ein Stück entsteht, in fünf Schritten. Handbemalte Second-Hand-Teile aus Lübeck, jedes Motiv genau einmal.{% endblock %}
 {% block twitter_title %}Luisa Brehler – Luviq Universe{% endblock %}
-{% block twitter_description %}Luisa Brehler bemalt in Alsfeld Second-Hand-Teile von Hand, mit Bleiche und Pinsel. Wie ein Stück entsteht.{% endblock %}
+{% block twitter_description %}Luisa Brehler bemalt in Lübeck Second-Hand-Teile von Hand, mit Bleiche und Pinsel. Wie ein Stück entsteht.{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">
@@ -38,7 +38,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
       "@type": "AboutPage",
       "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}#aboutpage",
       "name": "Luisa Brehler – Luviq Universe",
-      "description": "Luisa Brehler bemalt in Alsfeld Second-Hand-Kleidung von Hand, mit Bleiche und Pinsel; jedes Motiv gibt es genau einmal.",
+      "description": "Luisa Brehler bemalt in Lübeck Second-Hand-Kleidung von Hand, mit Bleiche und Pinsel; jedes Motiv gibt es genau einmal.",
       "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}",
       "mainEntity": {
         "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
@@ -49,7 +49,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
       "@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa",
       "name": "Luisa Brehler",
       "jobTitle": "Gründerin & Creative Director",
-      "description": "Luisa Brehler ist die Gründerin von Luviq Universe in Alsfeld. Sie bemalt Second-Hand-Kleidung von Hand, mit Bleiche und Pinsel, oft nach dem Motivwunsch der Person, die das Stück später trägt.",
+      "description": "Luisa Brehler hat Luviq Universe in Lübeck angefangen und malt heute in Lübeck. Sie bemalt Second-Hand-Kleidung von Hand, mit Bleiche und Pinsel, oft nach dem Motivwunsch der Person, die das Stück später trägt.",
       "worksFor": {
         "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
       },
@@ -76,7 +76,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
     <section class="lv-abschnitt lv-ohne-linie" aria-labelledby="luisa-titel">
         <div class="lv-abschnittskopf">
             <h1 class="lv-serif" id="luisa-titel">Luisa</h1>
-            <p>{% if verkauf_aktiv %}Luviq Universe ist der Online-Shop von Luisa Brehler aus 36304 Alsfeld in Hessen für handbemalte Second-Hand-Kleidung. Sie bemalt getragene Teile von Hand, mit Bleiche und Pinsel, und jedes Motiv gibt es genau einmal. Verkauft wird ausschließlich online, ein Ladengeschäft gibt es nicht.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus 36304 Alsfeld in Hessen für handbemalte Second-Hand-Kleidung. Sie bemalt getragene Teile von Hand, mit Bleiche und Pinsel, und jedes Motiv gibt es genau einmal. Die Marke ist im Aufbau, ein Ladengeschäft gibt es nicht.{% endif %}</p>
+            <p>{% if verkauf_aktiv %}Luviq Universe ist der Online-Shop von Luisa Brehler aus {{ anbieterin.plz }} Lübeck für handbemalte Second-Hand-Kleidung. Sie bemalt getragene Teile von Hand, mit Bleiche und Pinsel, und jedes Motiv gibt es genau einmal. Verkauft wird ausschließlich online, ein Ladengeschäft gibt es nicht.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus {{ anbieterin.plz }} Lübeck für handbemalte Second-Hand-Kleidung. Sie bemalt getragene Teile von Hand, mit Bleiche und Pinsel, und jedes Motiv gibt es genau einmal. Die Marke ist im Aufbau, ein Ladengeschäft gibt es nicht.{% endif %}</p>
         </div>
     </section>
 

@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Widerruf und Rücksendung beim Unikat | Luviq Alsfeld{% endblock %}
-{% block meta_description %}Widerruf bei Luviq Universe in Alsfeld: vierzehn Tage Frist, wohin eine Rücksendung geht, was bei Farb- und Gebrauchsspuren gilt. Jetzt nachlesen.{% endblock %}
+{% block title %}Widerruf und Rücksendung beim Unikat | Luviq Lübeck{% endblock %}
+{% block meta_description %}Widerruf bei Luviq Universe in Lübeck: vierzehn Tage Frist, wohin eine Rücksendung geht, was bei Farb- und Gebrauchsspuren gilt. Jetzt nachlesen.{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_title %}Widerruf und Rücksendung – Luviq Universe, Alsfeld{% endblock %}
+{% block og_title %}Widerruf und Rücksendung – Luviq Universe, Lübeck{% endblock %}
 {% block og_description %}Vierzehn Tage Widerrufsrecht, auch für handbemalte Einzelstücke: Frist, Anschrift, Reklamation und was vorab zu klären ist.{% endblock %}
 {% block twitter_title %}Widerruf und Rücksendung – Luviq Universe{% endblock %}
 {% block twitter_description %}Vierzehn Tage Frist, Anschrift für die Rücksendung, Unregelmäßigkeiten der Bemalung und echte Mängel.{% endblock %}
@@ -64,7 +64,7 @@
       "name": "Wohin schicke ich ein Stück zurück?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "An die Anschrift der Anbieterin: Luisa Brehler, Grünberger Str. 16, 36304 Alsfeld. Einen Laden, in dem sich ein Stück abgeben ließe, gibt es nicht – Luviq Universe ist ein reiner Online-Shop. Sinnvoll ist, die Rücksendung vorher kurz anzukündigen, damit sie zugeordnet werden kann."
+        "text": "An die Anschrift der Anbieterin: Luisa Brehler, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}. Einen Laden, in dem sich ein Stück abgeben ließe, gibt es nicht – Luviq Universe ist ein reiner Online-Shop. Sinnvoll ist, die Rücksendung vorher kurz anzukündigen, damit sie zugeordnet werden kann."
       }
     },
     {
@@ -132,7 +132,7 @@
     <header class="lv-wissen-kopf">
         <h1 class="lv-serif">Widerruf und Rücksendung: was gilt bei einem Einzelstück?</h1>
         <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
-        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Für eine Bestellung bei Luviq Universe in Alsfeld gilt das Widerrufsrecht von vierzehn Tagen ohne Angabe von Gründen, gerechnet ab dem Tag, an dem du die Ware in Besitz genommen hast (§ 5 der AGB). Für handbemalte Einzelstücke nennen die AGB keine Ausnahme. Erklärt wird der Widerruf gegenüber Luisa Brehler, Grünberger Str. 16, 36304 Alsfeld – über das Kontaktformular, per E-Mail oder per Brief. Was die Seite nicht regelt, etwa wer das Rückporto trägt, steht hier als offene Frage und wird vorab geklärt, nicht geraten.</p>
+        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Für eine Bestellung bei Luviq Universe in Lübeck gilt das Widerrufsrecht von vierzehn Tagen ohne Angabe von Gründen, gerechnet ab dem Tag, an dem du die Ware in Besitz genommen hast (§ 5 der AGB). Für handbemalte Einzelstücke nennen die AGB keine Ausnahme. Erklärt wird der Widerruf gegenüber Luisa Brehler, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }} – über das Kontaktformular, per E-Mail oder per Brief. Was die Seite nicht regelt, etwa wer das Rückporto trägt, steht hier als offene Frage und wird vorab geklärt, nicht geraten.</p>
     </header>
 
     <div class="lv-wissen-liste">
@@ -166,7 +166,7 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Wohin schicke ich ein Stück zurück?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">An die Anschrift der Anbieterin: Luisa Brehler, Grünberger Str. 16, 36304 Alsfeld. Einen Laden, in dem sich ein Stück abgeben ließe, gibt es nicht – Luviq Universe ist ein reiner Online-Shop. Sinnvoll ist, die Rücksendung vorher kurz anzukündigen, damit sie zugeordnet werden kann.</p>
+                <p class="lv-wissen-erst">An die Anschrift der Anbieterin: Luisa Brehler, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}. Einen Laden, in dem sich ein Stück abgeben ließe, gibt es nicht – Luviq Universe ist ein reiner Online-Shop. Sinnvoll ist, die Rücksendung vorher kurz anzukündigen, damit sie zugeordnet werden kann.</p>
                 <p>Für den Rückweg gilt, was für den Hinweg gilt: Ein handbemaltes Teil verträgt keinen Druck auf die Bemalung. Also flach zusammenlegen statt eng rollen, und die bemalte Seite nach innen. Wie ein solches Stück auf Dauer behandelt wird, steht im Beitrag zur Pflege in diesem Wissensbereich.</p>
             
             </div>

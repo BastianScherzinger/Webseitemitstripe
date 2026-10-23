@@ -23,12 +23,12 @@ META_BESCHREIBUNG_MAX = 160
 #: Zusätze der Ersatzfassung. Der Titel-Zusatz wird in dieser Reihenfolge
 #: probiert und entfällt, wenn er nicht mehr in die Grenze passt – er wird
 #: nie mitten im Wort abgeschnitten.
-META_TITEL_ZUSAETZE = (' kaufen – Luviq Universe, Alsfeld', ' – Luviq Universe')
+META_TITEL_ZUSAETZE = (' kaufen – Luviq Universe, Lübeck', ' – Luviq Universe')
 META_BESCHREIBUNG_ZUSATZ = ' – Einzigartiges 1-of-1 Upcycling-Unikat bei Luviq Universe.'
 
 #: Dieselben Zusätze ohne Verkauf (``VERKAUF_AKTIV`` aus): kein „kaufen",
 #: das Stück steht im Archiv der bisherigen Stücke (siehe ``shop1/verkauf.py``).
-META_TITEL_ZUSAETZE_OHNE_VERKAUF = (' – Luviq Universe, Alsfeld', ' – Luviq Universe')
+META_TITEL_ZUSAETZE_OHNE_VERKAUF = (' – Luviq Universe, Lübeck', ' – Luviq Universe')
 META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF = (
     ' – Nº {nr}, handbemaltes 1-of-1 Unikat aus dem Archiv von Luviq Universe in Alsfeld.'
     ' Jetzt Motiv anfragen.')
@@ -227,7 +227,7 @@ class Produkt(models.Model):
         return _kuerze_an_wortgrenze(name, META_TITEL_MAX)
 
     def _meta_title_archiv(self, name):
-        """Titel ohne Verkauf: ``Archiv Nº 003: <Name> – Luviq Universe, Alsfeld``.
+        """Titel ohne Verkauf: ``Archiv Nº 003: <Name> – Luviq Universe, Lübeck``.
 
         Die Marke bleibt immer am Ende (hinter dem Trennstrich); passt der Ort
         nicht mehr in die Grenze, entfällt er, zuletzt wird der Name an einer

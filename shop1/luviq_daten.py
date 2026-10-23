@@ -49,7 +49,7 @@ MARKENSATZ = 'Sag mir, was du willst — ich mal’s dir.'
 
 #: Erster Absatz nach der Überschrift. Nennt den Ort, weil Antwortmaschinen
 #: den ersten Absatz zitieren (test_inhalt: Anbieter oder Ort im ersten Absatz).
-LEAD = ('Ich bemale in Alsfeld Second-Hand-Teile von Hand, mit Bleiche und Pinsel, meist '
+LEAD = ('Ich bemale in Lübeck Second-Hand-Teile von Hand, mit Bleiche und Pinsel, meist '
         'in 2 bis 5 Tagen. Du sagst mir, was drauf soll, ich schick dir Vorschläge, und '
         'dann entsteht dein Stück. Jedes Motiv gibt es genau einmal.')
 
@@ -148,7 +148,7 @@ def drop_nummer():
     return f'{hoechste + 1:03d}'
 
 
-#: Kopfzeile des Hero: „LUVIQ Universe | Oktober 2026 | Alsfeld". Eine eigene
+#: Kopfzeile des Hero: „LUVIQ Universe | Oktober 2026 | Lübeck". Eine eigene
 #: „Ausgabe 01" gibt es nicht mehr (EIG126): die Seite nennt sonst Nº 006 als
 #: nächste Ausgabe, und zwei Zählungen widersprachen sich.
 _MONATE = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August',
@@ -175,7 +175,7 @@ def laufband(nummer, termin):
         teile.append(f'Nº {nummer} erscheint {termin_text(termin)}')
     else:
         teile.append('Die nächste Ausgabe ist in Arbeit')
-    teile.append('Handbemalt in Alsfeld')
+    teile.append('Handbemalt in Lübeck')
     return teile
 
 

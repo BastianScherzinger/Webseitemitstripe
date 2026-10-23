@@ -5,16 +5,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Luviq Universe – Handbemalte Second Hand Mode aus Alsfeld | Hessen{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Alsfeld (Hessen): Handbemalte 1-of-1 Vintage-Unikate. Nachhaltige Second-Hand-Mode – deutschlandweit bestellen. Gießen, Fulda, Frankfurt &amp; mehr.{% else %}Luviq Universe aus Alsfeld (Hessen): handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler. Marke im Aufbau – jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}">
-    <meta name="keywords" content="Luviq, Luviq Universe, Second Hand Mode Alsfeld, Vintage Mode Hessen, handbemalte Kleidung{% if verkauf_aktiv %} kaufen{% endif %}, Upcycling Mode Deutschland, 1 of 1 Unikate, Second Hand Gießen, Vintage Fulda, nachhaltige Mode Hessen">
+    <title>{% block title %}Luviq Universe – Handbemalte Second Hand Mode aus Lübeck{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Lübeck: Handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler, angefangen in Alsfeld. Second-Hand-Mode – deutschlandweit bestellen.{% else %}Luviq Universe aus Lübeck: handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler, angefangen in Alsfeld. Marke im Aufbau – jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}">
+    <meta name="keywords" content="Luviq, Luviq Universe, Second Hand Mode Lübeck, Second Hand Mode Alsfeld, Vintage Mode Lübeck, handbemalte Kleidung{% if verkauf_aktiv %} kaufen{% endif %}, Upcycling Mode Deutschland, 1 of 1 Unikate, handbemalte Hoodies Lübeck, Upcycling Lübeck">
     <meta name="author" content="Luisa Brehler">
 
     <!-- Geo / Local SEO -->
-    <meta name="geo.region" content="DE-HE">
-    <meta name="geo.placename" content="Alsfeld, Hessen">
-    <meta name="geo.position" content="50.7517;9.2685">
-    <meta name="ICBM" content="50.7517, 9.2685">
+    <meta name="geo.region" content="DE-SH">
+    <meta name="geo.placename" content="Lübeck">
     <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
     <meta name="google-site-verification" content="wxLpa8ANLiSPL7mfpSwUxEPl8-H3yyCsiUzHu4lMxsM" />
     <meta name="csrf-token" content="{{ csrf_token }}">
@@ -63,7 +61,7 @@
           "@type": {% if verkauf_aktiv %}["Organization", "ClothingStore", "LocalBusiness"]{% else %}"Organization"{% endif %},
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
           "name": "Luviq Universe",
-          "alternateName": ["Luviq", "Luviq Mode", "Luviq Alsfeld"],
+          "alternateName": ["Luviq", "Luviq Mode", "Luviq Lübeck", "Luviq Alsfeld"],
           "url": "{{ request.scheme }}://{{ request.get_host }}/",
           "logo": {
             "@type": "ImageObject",
@@ -71,7 +69,7 @@
           },
           "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}",
           "founder": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
-          "description": "{% if verkauf_aktiv %}Luviq Universe ist ein nachhaltiger Second-Hand-Shop aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Versand deutschlandweit.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Derzeit findet kein Verkauf statt.{% endif %}",
+          "description": "{% if verkauf_aktiv %}Luviq Universe ist ein Second-Hand-Shop aus Lübeck, angefangen in Alsfeld (Hessen). Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Versand deutschlandweit.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus Lübeck, angefangen in Alsfeld (Hessen). Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Derzeit findet kein Verkauf statt.{% endif %}",
           {% comment %}Anschrift aus der Gewerbeanmeldung vom 22.10.2026 (luviq_daten.ANBIETERIN). Keine Koordinaten mehr: die Anschrift ist eine Wohnung, kein Laden; die Alsfelder Koordinaten stimmen seit dem Umzug nicht mehr. Alsfeld bleibt als Herkunft (foundingLocation).{% endcomment %}
           "address": {
             "@type": "PostalAddress",
@@ -84,26 +82,8 @@
           "foundingLocation": {"@type": "Place", "name": "{{ herkunft.ort }}, {{ herkunft.region }}"},
 {% if verkauf_aktiv %}
           "areaServed": [
+            {"@type": "City", "name": "Lübeck"},
             {"@type": "City", "name": "Alsfeld"},
-            {"@type": "City", "name": "Gießen"},
-            {"@type": "City", "name": "Fulda"},
-            {"@type": "City", "name": "Lauterbach"},
-            {"@type": "City", "name": "Herbstein"},
-            {"@type": "City", "name": "Grebenau"},
-            {"@type": "City", "name": "Romrod"},
-            {"@type": "City", "name": "Antrifttal"},
-            {"@type": "City", "name": "Kirtorf"},
-            {"@type": "City", "name": "Homberg (Efze)"},
-            {"@type": "City", "name": "Neustadt (Hessen)"},
-            {"@type": "City", "name": "Schwalmstadt"},
-            {"@type": "City", "name": "Ulrichstein"},
-            {"@type": "City", "name": "Mücke"},
-            {"@type": "City", "name": "Grünberg"},
-            {"@type": "City", "name": "Laubach"},
-            {"@type": "City", "name": "Frankfurt am Main"},
-            {"@type": "City", "name": "Marburg"},
-            {"@type": "City", "name": "Kassel"},
-            {"@type": "State", "name": "Hessen"},
             {"@type": "Country", "name": "Deutschland"}
           ],
 {% endif %}
@@ -133,7 +113,7 @@
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
           "url": "{{ request.scheme }}://{{ request.get_host }}/",
           "name": "Luviq Universe",
-          "description": "Handbemalte Second Hand Mode und Vintage-Unikate aus Alsfeld, Hessen{% if verkauf_aktiv %} – deutschlandweit bestellen{% endif %}.",
+          "description": "Handbemalte Second Hand Mode und Vintage-Unikate aus Lübeck{% if verkauf_aktiv %} – deutschlandweit bestellen{% endif %}.",
           "inLanguage": "de-DE",
           "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
         },
@@ -359,7 +339,7 @@
             <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg>{{ instagram_name|default:'luviq.archive' }}</a>
         </nav>
         {% comment %}Verkaufsschalter: die AGB gelten erst ab Eröffnung des Shops und sind ohne Verkauf nicht verlinkt (die Seite bleibt erreichbar).{% endcomment %}
-        <p class="lv-recht"><span>© {% now "Y" %} Luviq Universe · Marke im Aufbau · Alsfeld, Hessen · Antwort auf Nachrichten {{ antwort|default:"innerhalb von 2 Stunden" }}</span><span><a href="{% url 'impressum' %}">Impressum</a> · <a href="{% url 'datenschutz' %}">Datenschutz</a>{% if verkauf_aktiv %} · <a href="{% url 'agb' %}">AGB</a>{% endif %}</span></p>
+        <p class="lv-recht"><span>© {% now "Y" %} Luviq Universe · Marke im Aufbau · Lübeck · angefangen in Alsfeld · Antwort auf Nachrichten {{ antwort|default:"innerhalb von 2 Stunden" }}</span><span><a href="{% url 'impressum' %}">Impressum</a> · <a href="{% url 'datenschutz' %}">Datenschutz</a>{% if verkauf_aktiv %} · <a href="{% url 'agb' %}">AGB</a>{% endif %}</span></p>
     </footer>
 
     {% if motivanfrage_aktiv and ist_panel != '/shop-admin/' and seitenname != 'motiv_anfragen' %}

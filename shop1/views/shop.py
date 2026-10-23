@@ -329,7 +329,7 @@ def ueber_uns(request):
 
 
 def liefergebiet(request):
-    """SEO/GEO-Landingpage: Herkunft Alsfeld + Liefergebiet zwischen Fulda und Gießen."""
+    """SEO/GEO-Landingpage: Herkunft Alsfeld (Orte rundherum) und Sitz heute in Lübeck."""
     orte = [
         'Fulda', 'Herbstein', 'Lauterbach', 'Grebenau', 'Ulrichstein',
         'Alsfeld', 'Romrod', 'Antrifttal', 'Kirtorf', 'Homberg (Efze)',
