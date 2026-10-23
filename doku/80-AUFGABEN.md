@@ -76,6 +76,10 @@ umgelegt, wenn alles darüber erledigt ist — in dieser Reihenfolge:
 - [ ] `VERKAUF_AKTIV=1` in Railway setzen (Dienst `Luviq-Luisa`, Umgebung `shop`), danach `/`, `/produkte/`, eine Produktseite, `/warenkorb/`, `/agb/`, `/sitemap.xml` und `/llms.txt` ansehen und `/payment/<id>/` mit offener Browserkonsole prüfen.
 - [ ] Nach dem Einschalten Designwache prüfen: die Referenz friert den Zustand **ohne** Verkauf ein; mit Verkauf ändern sich `/`, `/produkte/`, `/kontakt/`, `/liefergebiet/`, `/impressum/`, `/wissen/` und `/wissen/upcycling-mode-second-hand-vintage/` in Überschriften oder Elementzahl (die drei Kaufweg-Beiträge erfasst die Wache schon mit Verkauf) — beim Umstellen der Vorgabe die Referenz gezielt für diese Seiten nachziehen.
 
+## Freigabe durch Luisa: Wissensbeitrag „So entsteht dein Motiv“ (Entwurf 23.10.2026)
+
+- [ ] Text von `/wissen/so-entsteht-dein-motiv/` lesen (erreichbar, noindex). Stimmen Ablauf, die Richtungen und „meistens 2 bis 5 Tage“? Danach in `views/wissen.py` `freigegeben` auf `True`; Sitemap, llms.txt, Feed, Übersicht und die Weiterlesen-Links folgen von selbst, `MINDESTWOERTER` und Tests ebenso. Messen nach vier Wochen (Search Console, Seite × Anfrage).
+
 ## Rechtstexte für Lübeck: Eingaben für den Generator (Stand 23.10.2026)
 
 Rechtstexte kommen nur aus dem Generator und mit Luisas Freigabe (Agenturregel 3); nichts davon wird von Hand geschrieben. Der Entwurf im Zweig `seo/2026-10-23-luviq-upgrade` (`94764de`) hat die Anschrift schon ausgetauscht, das ersetzt die Freigabe nicht: er ist ein Zwischenstand, bis der Generatortext vorliegt (Befund in `LOGBUCH.md`, 23.10.2026, Nachtrag).

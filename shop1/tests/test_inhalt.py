@@ -165,6 +165,7 @@ MINDESTWOERTER = {
     '/wissen/pflege-handbemalte-kleidung/': 800,
     '/wissen/upcycling-mode-second-hand-vintage/': 920,
     '/wissen/groesse-bei-einzelstuecken/': 855,
+    '/wissen/so-entsteht-dein-motiv/': 380,  # Entwurf; gemessen siehe Logbuch
     '/wissen/bestellen-und-bezahlen/': 1110,
     '/wissen/widerruf-und-ruecksendung/': 1015,
     '/wissen/konto-und-daten/': 980,

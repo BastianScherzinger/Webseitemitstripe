@@ -39,6 +39,7 @@ SEITEN_STAND = {
     'wissen_pflege':    '2026-10-23',
     'wissen_upcycling': '2026-10-23',
     'wissen_groesse':   '2026-10-23',
+    'wissen_motiv':     '2026-10-23',  # Entwurf, noindex
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
     'wissen_bestellen': '2026-10-23',
@@ -67,6 +68,7 @@ SEITEN_NAME = {
     'wissen_pflege':    'Wie pflege ich handbemalte Kleidung?',
     'wissen_upcycling': 'Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?',
     'wissen_groesse':   'Wie finde ich bei Einzelstücken die richtige Größe?',
+    'wissen_motiv':     'Wie entsteht aus meiner Idee ein handbemaltes Stück?',
     'wissen_bestellen': 'Wie bestelle und bezahle ich bei Luviq Universe?',
     'wissen_widerruf':  'Widerruf und Rücksendung: was gilt bei einem Einzelstück?',
     'wissen_konto':     'Was speichert der Shop – und warum braucht der Kauf ein Konto?',

@@ -100,6 +100,19 @@ WISSEN_BEITRAEGE = {
         'freigegeben': True,
         'veroeffentlicht': '2026-09-01',
     },
+    # ENTWURF (23.10.2026): Ablauf von der Motivanfrage bis zum Stück. Nur aus
+    # Belegtem (luviq_daten.FAQ_MOTIV/SCHRITTE/DAUER, Markenwissen); Luisa gibt frei.
+    # Solange ``freigegeben`` False ist: erreichbar, noindex, nicht in Sitemap,
+    # llms.txt, Feed und Übersicht, und kein anderer Beitrag verlinkt darauf.
+    'so-entsteht-dein-motiv': {
+        'url_name': 'wissen_motiv',
+        'template': 'shop1/wissen/motiv.html',
+        'titel': 'Wie entsteht aus meiner Idee ein handbemaltes Stück?',
+        'kurz': 'Von der Richtung über die Vorschläge bis zur Bleiche mit dem Pinsel: '
+                'was nach einer Motivanfrage in welcher Reihenfolge passiert.',
+        'freigegeben': False,
+        'veroeffentlicht': '2026-10-23',
+    },
     # Ab hier: Beiträge, die ausschliesslich aus dem Projekt belegte Angaben
     # wiedergeben (AGB, Datenschutzerklärung, Impressum, Liefergebiet und der
     # Code von Warenkorb, Bestellvorgang und Anmeldung). Sie brauchen keine
@@ -185,12 +198,29 @@ def nur_mit_verkauf_ausgeblendet(beitrag):
     return bool(beitrag.get('nur_mit_verkauf')) and not verkauf_aktiv()
 
 
+def weiterlesen(slug, anzahl=2):
+    """Die nächsten freigegebenen Beiträge nach ``slug`` für den Fuß eines Beitrags.
+
+    Reihenfolge des Registers, rundherum (nach dem letzten kommt der erste), ohne
+    den Beitrag selbst und ohne Entwürfe oder ausgeblendete Kaufweg-Beiträge:
+    ein Link, den die Seite selbst nicht indexieren lässt, wäre ein Versprechen
+    ohne Seite dahinter. So bekommt jeder Beitrag Textlinks zu den anderen
+    (Suchbegriff als Ankertext = der Titel), statt dass nur die Übersicht sie
+    kennt."""
+    sichtbar = [(s, b) for s, b in WISSEN_BEITRAEGE.items() if _sichtbar(b)]
+    namen = [s for s, _ in sichtbar]
+    start = namen.index(slug) + 1 if slug in namen else 0
+    reihe = sichtbar[start:] + sichtbar[:start]
+    return [{'slug': s, **b} for s, b in reihe if s != slug][:anzahl]
+
+
 def wissen(request):
-    """Übersicht des Wissensbereichs mit allen angemeldeten Beiträgen –
-    ohne Verkauf ohne die Beiträge zum Kaufweg (``nur_mit_verkauf``)."""
+    """Übersicht des Wissensbereichs mit den freigegebenen Beiträgen – ohne
+    Verkauf ohne die Beiträge zum Kaufweg (``nur_mit_verkauf``), und Entwürfe
+    (``freigegeben=False``) stehen nie in der Liste, bis Luisa sie freigibt."""
     beitraege = [{'slug': slug, **beitrag, 'freigegeben': _sichtbar(beitrag)}
                  for slug, beitrag in WISSEN_BEITRAEGE.items()
-                 if not nur_mit_verkauf_ausgeblendet(beitrag)]
+                 if _sichtbar(beitrag)]
     return render(request, 'shop1/wissen/uebersicht.html', {
         'beitraege': beitraege,
         'indexierbar': uebersicht_indexierbar(),
@@ -211,7 +241,8 @@ def wissen_beitrag(request, slug):
     # ``freigegeben`` im Kontext ist die wirksame Freigabe (samt
     # Verkaufsschalter); die Vorlagen setzen danach ``noindex``.
     beitrag = {**beitrag, 'freigegeben': _sichtbar(beitrag)}
-    return render(request, beitrag['template'], {'beitrag': beitrag, 'slug': slug})
+    return render(request, beitrag['template'], {
+        'beitrag': beitrag, 'slug': slug, 'weiter': weiterlesen(slug)})
 
 
 class WissenFeed(Feed):

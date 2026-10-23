@@ -10,6 +10,15 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 23.10.2026 (Nacht) — Schub 3: Weiterlesen-Links, Öffnungszeiten-Antwort, Entwurf „So entsteht dein Motiv“ (Zweig `seo/2026-10-23-luviq-upgrade`, nicht gepusht)
+
+**Grundlage:** Search Console (cockpit.db, Stichtag 23.10.2026, 28 Tage): 1.492 Impressionen, 52 Klicks, fast alles auf der Startseite mit „second hand alsfeld“; daneben „geschäfte“ (78 Impr.), „second hand alsfeld öffnungszeiten“ (61) und `/liefergebiet/` mit 80 Impressionen, 0 Klicks. Die Wissensbeiträge haben 7–22 Impressionen je Seite, Position 3–11,5.
+**Was (Verlinkung):** Jeder freigegebene Wissensbeitrag verlinkt am Fuß die zwei nächsten freigegebenen Beiträge mit dem Titel als Ankertext (`weiterlesen()` in `views/wissen.py`, Kontext `weiter`). Vorher kannte nur die Übersicht die Beiträge untereinander; Entwürfe und ausgeblendete Kaufweg-Beiträge werden nie verlinkt.
+**Was (echte Suchanfrage):** Die erste Frage auf `/liefergebiet/` heißt jetzt „… mit Öffnungszeiten?“ und antwortet ehrlich: kein Laden, damit keine Öffnungszeiten, Luisa per Formular oder E-Mail erreichbar (HTML und FAQ-Schema wortgleich). Die Seite hat für genau diese Suchen Impressionen, aber keinen Klick, weil die Antwort fehlte. Kein neues Versprechen.
+**Was (Entwurf):** Neuer Wissensbeitrag `/wissen/so-entsteht-dein-motiv/` (Route `wissen_motiv`), `freigegeben=False`: noindex, nicht in Sitemap, llms.txt, Feed, Übersicht. Sechs Fragen aus Belegtem (`FAQ_MOTIV`, `SCHRITTE`, `DAUER`, Markenwissen), kein Preis, keine Zusage. Die Übersicht `/wissen/` listet jetzt grundsätzlich nur freigegebene Beiträge (vorher hätte der Entwurf dort gestanden).
+**Wache/Tests:** Aufbau-Referenz nur für die acht betroffenen Seiten nachgezogen (Links am Fuß, FAQ-Überschrift, neue Seite); `seiten_stand`, `WISSEN_SEITEN`, `_basis`, `FAQ_SEITEN`, `MINDESTWOERTER` für den Entwurf ergänzt; drei neue Tests in `test_schub_2026_10_23`.
+**Bewusst nicht:** Titel der Startseite nicht auf „Second Hand Alsfeld“ getrimmt – die Suchenden wollen einen Laden in Alsfeld, Luviq sitzt in Lübeck.
+
 ## 23.10.2026 (Abend) — Schub 2: Archivkarte, Sitz Lübeck im Schema, Motiv-FAQ, llms.txt (Zweig `seo/2026-10-23-luviq-upgrade`, nicht gepusht)
 
 **Was (Archivkarte):** Ein Stück ohne Foto zeigte auf Start und `/produkte/` eine leere helle Kachel (`archiv_karte.html`: `{% if produkt.bild %}` ohne Gegenstück; lokal hat „Custom print hoodie“ kein Bild, Lazy Loading oder Cloudinary waren nicht die Ursache). Jetzt trägt die Kachel `data-ohne-foto` und zeigt per CSS „Foto folgt“ – ohne neues Element, die Designwache dieser Seiten bleibt unverändert. Wenn auf der Live-Seite dasselbe auftaucht, hat das Stück dort kein Bild im Django-Admin hinterlegt.

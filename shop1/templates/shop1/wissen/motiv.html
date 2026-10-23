@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% comment %}ENTWURF (freigegeben=False in views/wissen.py): erreichbar, aber noindex, weder in Sitemap noch llms.txt noch Übersicht, bis Luisa den Text freigibt. Nur Belegtes: Ablauf und Fakten aus luviq_daten (FAQ_MOTIV, SCHRITTE, DAUER) und dem Markenwissen; kein Preis, keine Zusage, keine Lieferzeit.{% endcomment %}
+{% block title %}So entsteht dein handbemaltes Motiv | Luviq Lübeck{% endblock %}
+{% block meta_description %}Wie aus einer Idee ein handbemaltes Stück wird: Richtung nennen, Vorschläge bekommen, gemeinsam entscheiden, Bleiche mit dem Pinsel. Jetzt nachlesen.{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}Wie entsteht aus meiner Idee ein handbemaltes Stück? – Luviq Universe{% endblock %}
+{% block og_description %}Von der Richtung über die Vorschläge bis zur Bleiche mit dem Pinsel: so entsteht dein Motiv auf einem Einzelstück.{% endblock %}
+{% block twitter_title %}So entsteht dein Motiv – Luviq Universe{% endblock %}
+{% block twitter_description %}Anfrage, Vorschläge, Entscheidung, Bleiche mit dem Pinsel: der Weg zu deinem handbemalten Stück.{% endblock %}
+{% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "@id": "{{ seiten_url }}#breadcrumb",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Wissen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen' %}"},
+    {"@type": "ListItem", "position": 3, "name": "Wie entsteht aus meiner Idee ein handbemaltes Stück?", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen_motiv' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block schema_ld %}
+{% include 'shop1/teile/wissen_article_ld.html' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "{{ seiten_url }}#faq",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Muss ich schon ein genaues Motiv haben?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nein. Auf der Seite Motiv anfragen gibst du nur eine Richtung an – Tier, Symbol oder Zeichen, Pflanze oder Ranke, Mond und Sterne, Abstrakt oder „Weiß ich noch nicht“ –, dazu das Teil, das bemalt werden soll, und wo das Motiv sitzen soll: groß auf dem Rücken oder kleiner vorne. Was dir dabei wichtig ist, schreibst du in deinen eigenen Worten dazu."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was passiert nach meiner Anfrage?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Luisa meldet sich bei dir, per Instagram oder E-Mail, je nachdem, was du angegeben hast. Sie schickt dir ein paar Vorschläge, und ihr entscheidet zusammen. Erst wenn das Motiv passt, fängt sie an."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Ist eine Motivanfrage schon eine Bestellung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nein. Die Anfrage kostet nichts und verpflichtet zu nichts: Du zahlst dabei nichts und bekommst keine Zusage. Du beschreibst, was dir vorschwebt, und schaust dir an, was Luisa dazu vorschlägt."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie wird das Motiv auf das Stück gemalt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In fünf Schritten: Erst wird die Richtung geklärt und das Design gefunden, dann entsteht das Motiv als Skizze auf Papier, mit Bleistift. Danach zeichnet Luisa es direkt auf dein Teil vor, trägt die Bleiche mit dem Pinsel auf – sie zieht die Farbe aus dem Stoff –, wäscht das Stück und fotografiert es."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie lange dauert es von der Anfrage bis zum fertigen Stück?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Meistens 2 bis 5 Tage, je nach Motiv. Das ist ein Erfahrungswert und keine feste Zusage."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Bekomme ich dasselbe Motiv zweimal?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nein. Jedes Stück ist ein handbemaltes Einzelstück, und weil jedes Motiv frei von Hand gemalt wird, entsteht kein zweites genauso."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='wissen' %}{% endblock %}
+
+{% block content %}
+<div class="lv-seite lv-wissen">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Start</a></li><li><a href="{% url 'wissen' %}">Wissen</a></li><li aria-current="page">So entsteht dein Motiv</li></ol></nav>
+
+    <header class="lv-wissen-kopf">
+        <h1 class="lv-serif">Wie entsteht aus meiner Idee ein handbemaltes Stück?</h1>
+        <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
+        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Du sagst Luisa, was du willst, sie schickt dir Vorschläge, ihr entscheidet zusammen – und erst dann malt sie dein Motiv mit Bleiche und Pinsel auf ein Einzelstück. Hier steht, was dabei in welcher Reihenfolge passiert.</p>
+    </header>
+
+    <div class="lv-wissen-liste">
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Muss ich schon ein genaues Motiv haben?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Nein. Auf der Seite Motiv anfragen gibst du nur eine Richtung an – Tier, Symbol oder Zeichen, Pflanze oder Ranke, Mond und Sterne, Abstrakt oder „Weiß ich noch nicht“ –, dazu das Teil, das bemalt werden soll, und wo das Motiv sitzen soll: groß auf dem Rücken oder kleiner vorne. Was dir dabei wichtig ist, schreibst du in deinen eigenen Worten dazu.</p>
+                <p>Die Richtung ist die erste Frage, die Luisa jedem stellt. Aus deiner Antwort entstehen die Vorschläge; ein fertiges Bild im Kopf ist dafür nicht nötig.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Was passiert nach meiner Anfrage?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Luisa meldet sich bei dir, per Instagram oder E-Mail, je nachdem, was du angegeben hast. Sie schickt dir ein paar Vorschläge, und ihr entscheidet zusammen. Erst wenn das Motiv passt, fängt sie an.</p>
+                <p>Die Antwort kommt persönlich von ihr, nicht automatisch. {% if motivanfrage_aktiv %}Die Anfrage selbst findest du unter <a href="{% url "motiv_anfragen" %}">Motiv anfragen</a>.{% endif %}</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Ist eine Motivanfrage schon eine Bestellung?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Nein. Die Anfrage kostet nichts und verpflichtet zu nichts: Du zahlst dabei nichts und bekommst keine Zusage. Du beschreibst, was dir vorschwebt, und schaust dir an, was Luisa dazu vorschlägt.</p>
+                <p>Wer die Vorschläge nicht passend findet, lässt es einfach dabei – es ist nichts entstanden, was jemand abnehmen müsste.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Wie wird das Motiv auf das Stück gemalt?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">In fünf Schritten: Erst wird die Richtung geklärt und das Design gefunden, dann entsteht das Motiv als Skizze auf Papier, mit Bleistift. Danach zeichnet Luisa es direkt auf dein Teil vor, trägt die Bleiche mit dem Pinsel auf – sie zieht die Farbe aus dem Stoff –, wäscht das Stück und fotografiert es.</p>
+                <p>Dunkle Stücke bekommen so helle Linien; das liegt an der Technik. Ein Strich mit der Bleiche lässt sich nicht zurücknehmen, deshalb wird das Motiv vorher auf Papier und auf dem Teil festgelegt, nicht beim Malen.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Wie lange dauert es von der Anfrage bis zum fertigen Stück?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Meistens 2 bis 5 Tage, je nach Motiv. Das ist ein Erfahrungswert und keine feste Zusage.</p>
+                <p>Wie lange das Aussuchen der Vorschläge dauert, hängt davon ab, wie schnell ihr euch einig seid.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Bekomme ich dasselbe Motiv zweimal?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Nein. Jedes Stück ist ein handbemaltes Einzelstück, und weil jedes Motiv frei von Hand gemalt wird, entsteht kein zweites genauso.</p>
+                <p>Was ein Einzelstück von Kleidung aus der Serie unterscheidet, steht im Beitrag <a href="{% url "wissen_upcycling" %}">Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?</a>; wie das fertige Stück gepflegt wird, im Beitrag <a href="{% url "wissen_pflege" %}">Wie pflege ich handbemalte Kleidung?</a>.</p>
+            </div>
+        </section>
+    </div>
+
+    <nav class="lv-wissen-ende" aria-label="Weiterlesen">
+        <a class="lv-link" href="{% url 'wissen' %}">Alle Wissensbeiträge <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        {% for w in weiter %}<a class="lv-link" href="{% url w.url_name %}">{{ w.titel }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endfor %}
+        {% if motivanfrage_aktiv %}<a class="lv-link" href="{% url 'motiv_anfragen' %}">Motiv anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endif %}
+    </nav>
+</div>
+{% endblock %}

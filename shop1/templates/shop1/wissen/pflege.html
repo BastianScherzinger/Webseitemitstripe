@@ -167,6 +167,7 @@
 
     <nav class="lv-wissen-ende" aria-label="Weiterlesen">
         <a class="lv-link" href="{% url 'wissen' %}">Alle Wissensbeiträge <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        {% for w in weiter %}<a class="lv-link" href="{% url w.url_name %}">{{ w.titel }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endfor %}
         {% if motivanfrage_aktiv %}<a class="lv-link" href="{% url 'motiv_anfragen' %}">Motiv anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endif %}
     </nav>
 </div>

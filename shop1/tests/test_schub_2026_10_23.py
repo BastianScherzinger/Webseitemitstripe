@@ -96,3 +96,30 @@ class FotoHinweisStilTest(LuviqTestCase):
         from django.conf import settings
         css = (settings.BASE_DIR / 'shop1' / 'static' / 'shop1' / 'luviq.css').read_text(encoding='utf-8')
         self.assertIn('figure[data-ohne-foto]::after{content:"Foto folgt"', css)
+
+
+class WissenVerlinkungUndEntwurfTest(LuviqTestCase):
+
+    def test_jeder_freigegebene_beitrag_verlinkt_zwei_andere(self):
+        from ..views.wissen import freigegebene_beitraege
+        from django.urls import reverse
+        sichtbar = freigegebene_beitraege()
+        for slug, b in sichtbar.items():
+            html = self.hole(reverse(b['url_name'])).content.decode()
+            fuss = html[html.index('aria-label="Weiterlesen"'):]
+            andere = [x for s, x in sichtbar.items() if s != slug]
+            for x in andere[:2]:
+                self.assertIn(f'href="{reverse(x["url_name"])}"', fuss)
+            self.assertNotIn(f'href="{reverse(b["url_name"])}"', fuss)
+
+    def test_entwurf_ist_noindex_und_nirgends_verlinkt(self):
+        pfad = '/wissen/so-entsteht-dein-motiv/'
+        html = self.hole(pfad).content.decode()
+        self.assertIn('noindex', html)
+        for andere in ('/wissen/', '/wissen/pflege-handbemalte-kleidung/', '/sitemap.xml', '/llms.txt', '/feed/'):
+            self.assertNotIn('so-entsteht-dein-motiv', self.hole(andere).content.decode(), andere)
+
+    def test_liefergebiet_antwortet_auf_oeffnungszeiten(self):
+        html = self.hole('/liefergebiet/').content.decode()
+        self.assertIn('keine Öffnungszeiten', html)
+        self.assertIn('mit Öffnungszeiten?', html)

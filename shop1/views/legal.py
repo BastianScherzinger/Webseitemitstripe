@@ -125,6 +125,8 @@ WISSEN_SEITEN = [
      'nicht nachbestellbar ist; Handbemalung von Druck unterscheiden'),
     ('wissen_groesse', 'Wie finde ich bei Einzelstuecken die richtige Groesse?',
      'Masse mit eigener Kleidung vergleichen statt Etikett, warum Vintage-Schnitte abweichen, vorab nachfragen, Widerruf'),
+    ('wissen_motiv', 'Wie entsteht aus meiner Idee ein handbemaltes Stueck?',
+     'Richtung nennen, Vorschlaege bekommen, gemeinsam entscheiden, Bleiche mit dem Pinsel; Dauer meist 2 bis 5 Tage'),
     ('wissen_bestellen', 'Wie bestelle und bezahle ich bei Luviq Universe?',
      'Anmeldepflicht, Weg in den Warenkorb, Pflichtangaben, PayPal oder '
      'Vorab-Ueberweisung, Pruefung der Zahlung, Bestaetigung, Versand in 1-2 Werktagen'),
