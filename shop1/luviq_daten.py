@@ -83,8 +83,8 @@ PROFILE = (INSTAGRAM, TIKTOK, GOOGLE_PROFIL)
 #: Zusage, keine Lieferzeit, kein Verkaufsversprechen.
 FAQ_MOTIV = [
     ('Ist eine Motivanfrage schon eine Bestellung?',
-     'Nein. Die Anfrage kostet nichts und verpflichtet zu nichts: Es gibt dabei keinen '
-     'Preis, keine Zahlung und keine Zusage. Du beschreibst, was dir vorschwebt, und Luisa '
+     'Nein. Die Anfrage kostet nichts und verpflichtet zu nichts: Du zahlst dabei '
+     'nichts und bekommst keine Zusage. Du beschreibst, was dir vorschwebt, und Luisa '
      'schickt dir Vorschläge.'),
     ('Was passiert nach meiner Anfrage?',
      'Luisa meldet sich bei dir, per Instagram oder E-Mail, je nachdem, was du angegeben '

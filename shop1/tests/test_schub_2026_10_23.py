@@ -73,7 +73,8 @@ class MotivFaqTest(LuviqTestCase):
             for text in (frage, antwort):
                 self.assertNotIn('"', text)
                 self.assertNotIn('\\', text)
-                self.assertNotIn('€', text)
+                for wort in ('€', 'Preis', 'kaufen', 'garantiert', 'Lieferzeit'):
+                    self.assertNotIn(wort, text)
 
 
 class LlmsMotivFragenTest(LuviqTestCase):
