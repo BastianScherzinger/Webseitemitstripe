@@ -1,7 +1,7 @@
 # Wegweiser — Luviq Universe
 
 Django-Projekt „Luviq Universe“ (Marke und Shop-Code von Luisa Brehler, Alsfeld), Domain `www.luviq-alsfeld.com`.
-**Der Verkauf ist aus** (`VERKAUF_AKTIV`, `mainweb/settings.py`), es ist kein Gewerbe angemeldet; die Live-Seite zeigt
+**Der Verkauf ist aus** (`VERKAUF_AKTIV`, `mainweb/settings.py`); das Gewerbe ist seit 22.10.2026 in Lübeck angemeldet (Beginn 01.11.2026), verkauft wird erst nach den Rechtstexten; die Live-Seite zeigt
 Archiv, Motivanfrage und Warteliste. Dieser Wegweiser kopiert nichts: er sagt, in welcher Datei die Antwort steht.
 Die Pflege liegt dort, nicht hier.
 

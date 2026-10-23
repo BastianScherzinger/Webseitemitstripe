@@ -63,7 +63,7 @@ Seit dem Zweig `recht/2026-09-18-marke-im-aufbau` (`9b12276`) steht der Shop hin
 aus, siehe [10-TECHNIK.md](10-TECHNIK.md) Falle 22). Der Schalter wird erst
 umgelegt, wenn alles darüber erledigt ist — in dieser Reihenfolge:
 
-- [ ] Gewerbe anmelden (Gewerbeamt Alsfeld), Gewerbeschein liegt vor.
+- [x] Gewerbe anmelden — **22.10.2026 online bei der Hansestadt Lübeck** (nicht Alsfeld: Betriebsstätte Mühlenkamp 5, 23569 Lübeck), Beginn 01.11.2026, Nebenerwerb, Geschäftsbezeichnung „Luviq“; Antrag und Zahlungsnachweis in `Buero\luisa\arbeitsplatz\recht\gewerbe`. Empfangsbescheinigung des Ordnungsamts steht noch aus. Die Seite nennt die Lübecker Anschrift seit dem Zweig `seo/2026-10-23-luviq-upgrade` (nicht live).
 - [ ] Fragebogen zur steuerlichen Erfassung beim Finanzamt abgeben, Steuernummer liegt vor.
 - [ ] Mit Steuerberatung/Finanzamt klären, ob die Kleinunternehmerregelung (§ 19 UStG) gewählt wird und zutrifft — erst dann dürfen die Sätze „Endpreise, nach § 19 UStG keine Umsatzsteuer" zurück (sie kommen mit dem Schalter automatisch wieder).
 - [ ] AGB, Widerrufsbelehrung (samt Muster-Widerrufsformular) und Datenschutzerklärung von einer Anwältin oder einem Rechtstext-Dienst durchsehen lassen; Impressum um Angaben ergänzen, die dann nötig werden (z. B. USt-IdNr., falls vorhanden).

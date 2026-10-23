@@ -10,6 +10,19 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 23.10.2026 (Tag) — Gewerbe Lübeck: Anbieterin, Ortsbezug Lübeck + Alsfeld, Overview-Regeln (Zweig `seo/2026-10-23-luviq-upgrade`, nicht gemergt)
+
+**Was (Recht, `94764de`):** Neue zentrale Angaben `luviq_daten.ANBIETERIN` (Luisa Brehler, Geschäftsbezeichnung „Luviq“, Mühlenkamp 5, 23569 Lübeck) und `HERKUNFT` (Alsfeld), Kontextprozessor `anbieterin`. Impressum, Datenschutz, AGB-Kopf, Kontakt, Schema-Adresse, llms.txt und die Mailfußzeile lesen nur noch von dort. Keine Koordinaten mehr im Schema, Alsfeld als `foundingLocation`.
+**Warum:** Gewerbeanmeldung vom 22.10.2026 (Ordnungsamt Hansestadt Lübeck, Beginn 01.11.2026, Nebenerwerb; Antrag in `Buero\luisa\arbeitsplatz\recht\gewerbe`) nennt Wohnung und Betriebsstätte in Lübeck. Die Seite nannte noch die Alsfelder Anschrift – ein Impressum muss immer stimmen. Telefonnummer bewusst nicht übernommen (Luisas Entscheidung, keine Pflicht).
+
+**Was (SEO/GEO, `4d40a9a`):** Titel, Beschreibungen, Lead, Laufband, Kopfzeile und Fuß nennen Lübeck; Alsfeld steht als Herkunft („angefangen in Alsfeld“). `/liefergebiet/` heißt „Von Alsfeld nach Lübeck“ (Ortsliste rund um Alsfeld bleibt, Designwache nur dort nachgezogen: vier Überschriften). `areaServed` (nur mit Verkauf) Lübeck, Alsfeld, Deutschland; Karte im Gästebuch auf Lübeck (Stadt, keine Anschrift); Aufsichtsbehörde ULD Schleswig-Holstein; Zustellzeit „innerhalb Hessens“ entfernt; `seiten_stand` 23.10.2026.
+**Warum:** Bastian (22.10.): „komplett SEO-Push, aber für Lübeck und Alsfeld“ – ehrlich heißt: Sitz Lübeck, Herkunft Alsfeld, keine erfundenen Kunden- oder Liefergebiete.
+
+**Was (Overview, `56258a7`):** `GE13` – Service-Knoten „Motiv anfragen“ mit `provider` und `areaServed`, bewusst **ohne** `offers`/Preis (es gibt keinen Verkauf). `PJ05`/`PJ07` – begründete `offen-ok`-Vermerke über `produkt_detail_redirect` und `newsletter_bestaetigen`. `SI40` – `pillow` 12.3.0 → 13.0.0 (OSV 23.10.2026: 39 Lücken in 12.3.0, alle in 13.0.0 behoben; Python ≥ 3.11 = Container).
+**Warum:** offene Regeln der Messung vom 23.10.2026 (Lauf 1988, Note 95,6).
+
+**Prüfung:** volle Suite 742 Tests grün (lokal, ohne DEBUG; mit Pillow 13.0.0). Screenshots 390/1440 px lokal in `doku/screens/2026-10-23-gewerbe/`. Nicht gepusht, nicht deployt.
+
 ## 23.10.2026 — SEO/GEO und Nachtausgabe für Wissen, Kontakt, Herkunft, Stücktext (Zweig `seo/2026-10-23-luviq-upgrade`, baut auf `design/2026-10-22-startbild` auf, nicht gemergt)
 
 **Was (SEO/Technik):** `seiten_url` (canonical, og:url, hreflang) und alle Schema-`@id`s nennen nur noch den Pfad unter dem kanonischen Host, ohne Query (`12cc89e`, `287ed36`). Neue Umgebungsvariable `UMLEITEN_HOSTS`: ganze Domains samt www-Variante per 301 mit Pfad auf `CANONICAL_HOST`, automatisch erlaubt, kanonischer Host nie umgeleitet (`62147a0`). `llms.txt` ohne Verkauf mit zwei belegten Fragen (Womit malt Luisa, wie bekomme ich ein eigenes Motiv), Wissenszeile nennt nur noch freigegebene Themen; Beschreibungen `/produkte/` und `/gaestebuch/` unter 160 Zeichen (`78822a0`).

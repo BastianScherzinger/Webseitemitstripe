@@ -55,7 +55,7 @@ status: Vorlage – Entscheidung bei Bastian und Luisa
 - Neue Railway-Variable **`UMLEITEN_HOSTS`** (Komma-Liste): diese Domains leiten per 301 mit Pfad auf `CANONICAL_HOST`. Leer = aus.
 - **Jetzt nicht** `UMLEITEN_HOSTS=luviq-luebeck.com` setzen, wenn der Umzug in den nächsten Wochen kommt: Browser merken sich 301 sehr lange, eine spätere Gegenrichtung (Alsfeld → Lübeck) liefe bei Testgeräten im Kreis. Bis zum Umzug genügt das canonical.
 - **Am Umzugstag:** `CANONICAL_HOST=www.luviq-luebeck.com`, `UMLEITEN_HOSTS=luviq-alsfeld.com` (deckt `www.` mit ab). Wird der Umzug verworfen: `UMLEITEN_HOSTS=luviq-luebeck.com`.
-- Die Texte „aus Alsfeld“ (rund 150 Stellen in Vorlagen, Schema, llms.txt) sind **nicht** umgestellt – das ist ein eigener Schritt zusammen mit dem Impressum (Liste: `Buero\luisa\planung\DOMAIN-LUEBECK-PLAN.md`).
+- **Nachtrag 23.10.2026 (Tag):** Impressum, Datenschutz und alle Texte sind im selben Zweig auf Lübeck umgestellt (Sitz Lübeck, Herkunft Alsfeld), unabhängig von der Domain. `canonical` bleibt auf `CANONICAL_HOST`; das Schema verweist per `sameAs` weiter auf das Alsfelder Google-Profil, bis Luisa entschieden hat.
 
 ## Was freigegeben werden muss
 
