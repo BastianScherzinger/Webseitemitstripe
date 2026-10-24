@@ -69,7 +69,7 @@
 
 {% block content %}
 <div class="lv-seite">
-    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Start</a></li><li aria-current="page">{% if verkauf_aktiv %}Liefergebiet{% else %}Herkunft{% endif %}</li></ol></nav>
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">{% if verkauf_aktiv %}Liefergebiet{% else %}Herkunft{% endif %}</li></ol></nav>
 
     <section class="lv-seitenkopf" aria-labelledby="herkunft-titel">
         <p class="lv-nr">Herkunft{% if verkauf_aktiv %} &amp; Liefergebiet{% else %} &amp; Region{% endif %}</p>
