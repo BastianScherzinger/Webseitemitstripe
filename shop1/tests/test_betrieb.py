@@ -211,11 +211,26 @@ class OeffentlicheAdresseTest(LuviqTestCase):
     """„Offen“ Nr. 2: canonical, Sitemap und robots.txt aus dem kanonischen Host."""
 
     def test_canonical_hreflang_und_og_url_nennen_den_kanonischen_host(self):
+        # Prüfstand 24.10.2026: Die Query (z. B. ?utm_source=…) gehört nicht
+        # in canonical, hreflang und og:url.
         html = self.hole('/kontakt/?x=1', HTTP_HOST='www.luviq-alsfeld.com').content.decode()
-        ziel = 'https://www.luviq-alsfeld.com/kontakt/?x=1'
+        ziel = 'https://www.luviq-alsfeld.com/kontakt/'
         self.assertIn(f'<link rel="canonical" href="{ziel}">', html)
         self.assertIn(f'hreflang="de" href="{ziel}"', html)
         self.assertIn(f'<meta property="og:url" content="{ziel}">', html)
+
+    def test_startseite_canonical_ohne_utm_query(self):
+        html = self.hole('/?utm_source=test', HTTP_HOST='www.luviq-alsfeld.com').content.decode()
+        self.assertIn('<link rel="canonical" href="https://www.luviq-alsfeld.com/">', html)
+        self.assertNotIn('utm_source', re.search(r'<link rel="canonical"[^>]*>', html).group(0))
+
+    def test_erste_brotkrume_heisst_startseite(self):
+        """Lighthouse „Linktext“ bemängelt „Start“; Schema und Sicht bleiben gleich."""
+        for pfad in ('/kontakt/', '/ueber_uns/'):
+            html = self.hole(pfad, HTTP_HOST='www.luviq-alsfeld.com').content.decode()
+            self.assertIn('"name": "Startseite"', html, pfad)
+            self.assertNotIn('"name": "Start"', html, pfad)
+            self.assertNotIn('>Start</a>', html, pfad)
 
     def test_sitemap_und_robots_nennen_den_kanonischen_host(self):
         sitemap = self.hole('/sitemap.xml', HTTP_HOST='www.luviq-alsfeld.com').content.decode()
