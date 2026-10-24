@@ -10,6 +10,12 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 25.10.2026 — Technischer SEO/GEO-Check (Zweig `seo/2026-10-25-check`)
+
+**Was:** Live-Crawl der 17 Sitemap-Seiten: keine kaputten Links/Bilder, Titel/Meta/H1/canonical in Ordnung, Apex → www per 301. `<link rel="icon">` sowie `og:image`/`twitter:image` (Basis und Startseite) zeigen jetzt auf die feste, hash-freie Adresse unter `/static/shop1/images/…` statt auf die inhaltsgehashte Fassung.
+**Warum:** Die Hash-Adresse ändert sich bei jedem Neubau; Google und Vorschauen zeigten dann wochenlang das alte Bild (Regel 8, LEHREN-KUNDENSEITEN). Die unveränderten Dateien werden von collectstatic ohnehin zusätzlich abgelegt.
+**Bewusst nicht:** Bilder im JSON-LD behalten den Manifest-Hash (Test `test_geo` verlangt es). Kein LocalBusiness-Knoten – Marke ohne Laden.
+
 ## 23.10.2026 (Nacht) — Schub 3: Weiterlesen-Links, Öffnungszeiten-Antwort, Entwurf „So entsteht dein Motiv“ (Zweig `seo/2026-10-23-luviq-upgrade`, nicht gepusht)
 
 **Grundlage:** Search Console (cockpit.db, Stichtag 23.10.2026, 28 Tage): 1.492 Impressionen, 52 Klicks, fast alles auf der Startseite mit „second hand alsfeld“; daneben „geschäfte“ (78 Impr.), „second hand alsfeld öffnungszeiten“ (61) und `/liefergebiet/` mit 80 Impressionen, 0 Klicks. Die Wissensbeiträge haben 7–22 Impressionen je Seite, Position 3–11,5.

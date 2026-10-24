@@ -37,7 +37,7 @@
     <meta property="og:locale" content="de_DE">
     <meta property="og:site_name" content="Luviq Universe">
     {% block og_image_tag %}
-    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/logo-luviq.jpeg">
     <meta property="og:image:width" content="1290">
     <meta property="og:image:height" content="1346">
     <meta property="og:image:alt" content="Luviq Universe – Logo">
@@ -48,7 +48,7 @@
     <meta name="twitter:title" content="{% block twitter_title %}Luviq Universe – Handbemalte Vintage Mode{% endblock %}">
     <meta name="twitter:description" content="{% block twitter_description %}Handbemalte 1-of-1 Upcycling-Unikate aus Deutschland.{% endblock %}">
     {% block twitter_image_tag %}
-    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}">
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/logo-luviq.jpeg">
     {% endblock %}
 
     <!-- Schema.org Sitewide JSON-LD -->
@@ -163,8 +163,8 @@
 
     <!-- Favicon & PWA -->
     {# flavicon.ico (16/32/48 px, aus flavicon.jpeg erzeugt) statt des 1254-px-JPEGs: 7 KB statt 69 KB auf jeder Seite. #}
-    <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="{% static 'shop1/images/flavicon.ico' %}">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'shop1/images/flavicon.ico' %}">
+    <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="/static/shop1/images/flavicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/static/shop1/images/flavicon.ico">
     {# TS37: quadratisches 180-px-PNG, verkleinert aus flavicon.jpeg (1254 x 1254) - statt des nicht quadratischen 1290 x 1346-JPEGs. #}
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'shop1/images/apple-touch-icon.png' %}">
     <link rel="manifest" href="{% static 'shop1/manifest.json' %}">
