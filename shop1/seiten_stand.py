@@ -54,7 +54,7 @@ SEITEN_STAND = {
 #: keinem Menü; ihr Name ist der Text ihrer ``h1`` (die Übersicht: die
 #: Bereichsbezeichnung „Wissen", die dort als Kicker über der ``h1`` steht).
 SEITEN_NAME = {
-    'home':         'Start',
+    'home':         'Startseite',
     'produkte':     'Archiv',
     'gaestebuch':   'Gästebuch',
     'ueber_uns':    'Luisa',
