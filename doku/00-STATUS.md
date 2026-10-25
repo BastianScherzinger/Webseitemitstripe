@@ -1,8 +1,8 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-10-23
-stand: 2026-10-24
+stand: 2026-10-25
+stand: 2026-10-25
 status: vollständig
 fortschritt: 97
 zusammenfassung: Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau, kein Gewerbe angemeldet). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
@@ -55,35 +55,34 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 24.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 95,4 von 100**, Reifegrad „Referenz“. 354 von 410 Regeln an 19 URLs und 202 Dateien (41.831 Zeilen) geprüft.
+**Messung vom 25.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 96,0 von 100**, Reifegrad „Referenz“. 354 von 410 Regeln an 19 URLs und 207 Dateien (43.123 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
 | Erreichbarkeit & Postfach | **74** | Brauchbar |
 | Substanz & Reichweite | **86** | Solide |
 | Konversion | **88** | Solide |
-| Code-Qualität & Projektreife | **94** | Referenz |
-| SEO — Inhalt | **95** | Referenz |
-| Sicherheit | **97** | Referenz |
+| SEO — Inhalt | **93** | Referenz |
 | GEO — KI-Sichtbarkeit | **97** | Referenz |
 | Vorlagen-Konformität | **99** | Referenz |
+| Performance & Core Web Vitals | **99** | Referenz |
+| Code-Qualität & Projektreife | **100** | Referenz |
 | SEO — Technik | **100** | Referenz |
+| Sicherheit | **100** | Referenz |
 | Formulare & Preisrechner | **100** | Referenz |
-| Performance & Core Web Vitals | **100** | Referenz |
 | Barrierefreiheit | **100** | Referenz |
 | Recht & Vertrauen | **100** | Referenz |
 | Betrieb & Auslieferung | **100** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 202 Dateien, **2 Befunde**, davon 1 kritisch und 0 wichtig.
+Quelltext: 207 Dateien, **2 Befunde**, davon 0 kritisch und 0 wichtig.
 
 Kritische Befunde:
 
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
-- **Keine Python-Abhängigkeit hat eine bekannte Lücke** (`SI40`) — 1 Pakete mit 8 bekannten Lücken: pillow==12.3.0 (GHSA-22hg-r758-rrw9, GHSA-24rc-8hj2-v98c … (+6))
 <!-- messung:ende -->
 
 Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen
