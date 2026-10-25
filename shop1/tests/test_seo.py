@@ -53,7 +53,7 @@ HANDLUNGSVERBEN = {
 #: konkurriert: den Ort (belegt durch das Impressum und die
 #: Liefergebietsseite) oder den Nutzen, der die Seite von anderen abhebt.
 ORT_ODER_NUTZEN = (
-    'alsfeld', 'hessen', 'fulda', 'gießen',
+    'lübeck', 'alsfeld', 'hessen', 'fulda', 'gießen',
     'handbemalt', 'vintage', 'unikat', 'upcycling', 'second hand', 'second-hand',
 )
 
@@ -172,7 +172,7 @@ class SitemapTest(LuviqTestCase):
         for eintrag in wurzel.findall('sm:url', ns):
             pfad = eintrag.find('sm:loc', ns).text.split('testserver', 1)[-1] or '/'
             bilder[pfad.rstrip('/') or '/'] = [b.text for b in eintrag.findall('image:image/image:loc', ns)]
-        self.assertTrue(any('hero-panorama' in b for b in bilder['/']), bilder['/'])
+        self.assertTrue(any('hero-dornen' in b for b in bilder['/']), bilder['/'])
         self.assertGreaterEqual(len(bilder['/']), 6)
         self.assertTrue(any('probe' in b for b in bilder['/produkte']), bilder['/produkte'])
         self.assertEqual(bilder['/datenschutz'], [])
@@ -746,7 +746,7 @@ class SeitenkopfTest(LuviqTestCase):
     def test_jeder_titel_nennt_ort_oder_nutzen(self):
         """Verhindert einen Titel wie „AGB – Luviq Universe", der mit jedem
         Shop im Land konkurriert: jede Inhaltsseite nennt im ``<title>`` den
-        Ort (Alsfeld, Hessen, Fulda, Gießen) oder den Nutzen (handbemalt,
+        Ort (Lübeck, Alsfeld, Hessen, Fulda, Gießen) oder den Nutzen (handbemalt,
         Vintage, Unikat, Upcycling, Second Hand)."""
         for pfad in INHALTSSEITEN:
             with self.subTest(pfad=pfad):
@@ -812,10 +812,10 @@ class ProduktMetaangabenTest(LuviqTestCase):
 
     def test_kurzer_name_erhaelt_den_ortsbezug_im_titel(self):
         """Verhindert, dass der automatische Titel den Ort verliert (Schritt 12):
-        ein Name, der samt Zusatz in ``META_TITEL_MAX`` passt, trägt „Alsfeld"."""
+        ein Name, der samt Zusatz in ``META_TITEL_MAX`` passt, trägt „Lübeck"."""
         produkt = erzeuge_produkt('Bemalte Jacke')
         self.assertEqual(produkt.meta_title, 'Bemalte Jacke' + META_TITEL_ZUSAETZE[0])
-        self.assertIn('Alsfeld', produkt.meta_title)
+        self.assertIn('Lübeck', produkt.meta_title)
         self.assertLessEqual(len(produkt.meta_title), META_TITEL_MAX)
 
     def test_langer_name_sprengt_den_titel_nicht(self):

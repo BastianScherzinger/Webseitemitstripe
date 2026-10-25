@@ -165,6 +165,7 @@ MINDESTWOERTER = {
     '/wissen/pflege-handbemalte-kleidung/': 800,
     '/wissen/upcycling-mode-second-hand-vintage/': 920,
     '/wissen/groesse-bei-einzelstuecken/': 855,
+    '/wissen/so-entsteht-dein-motiv/': 380,  # Entwurf; gemessen siehe Logbuch
     '/wissen/bestellen-und-bezahlen/': 1110,
     '/wissen/widerruf-und-ruecksendung/': 1015,
     '/wissen/konto-und-daten/': 980,
@@ -186,8 +187,9 @@ if not settings.VERKAUF_AKTIV:
 #: Seite ihren zitierfähigen Einstieg.
 OHNE_ZAHL_IM_ERSTEN_DRITTEL = set()
 
-#: Belegt im Impressum (impressum.html) und im seitenweiten JSON-LD.
-ANSCHRIFT = ['Grünberger Str. 16', '36304', 'Alsfeld']
+#: Belegt im Impressum (impressum.html) und im seitenweiten JSON-LD; Quelle
+#: ist die Gewerbeanmeldung vom 22.10.2026 (``luviq_daten.ANBIETERIN``).
+ANSCHRIFT = ['Mühlenkamp 5', '23569', 'Lübeck']
 EMAIL = 'brehlerluisa@gmail.com'
 
 #: Muster, die im sichtbaren Text auf Platzhalter oder Blindtext hindeuten.
@@ -309,12 +311,15 @@ class AngabenTest(LuviqTestCase):
     def test_die_lieferzeit_stimmt_auf_beiden_seiten_ueberein(self):
         """Verhindert zwei verschiedene Lieferversprechen. Vorher sagte die
         Kontaktseite '2-3 Werktage', die Liefergebietsseite '1-2 Werktage
-        Versand, 1-3 Werktage Zustellung'."""
+        Versand, 1-3 Werktage Zustellung'. Seit dem Umzug nach Lübeck
+        (Gewerbeanmeldung 22.10.2026) entfällt die Zustellzeit „innerhalb
+        Hessens“ – sie galt nur für den Versand aus Alsfeld."""
         for pfad in ('/kontakt/', '/liefergebiet/'):
             with self.subTest(pfad=pfad):
                 text = sichtbarer_text(self.hole(pfad).content.decode())
                 self.assertIn('1-2 Werktagen versendet', text)
-                self.assertIn('1-3 Werktagen', text)
+                self.assertNotIn('1-3 Werktagen', text)
+                self.assertNotIn('Hessens', text)
 
 
 class DatenschutzTest(LuviqTestCase):
@@ -379,7 +384,7 @@ class AntwortZuerstTest(LuviqTestCase):
                     f'{pfad}: erster Absatz nur {len(absatz)} Zeichen: "{absatz}"',
                 )
                 self.assertTrue(
-                    re.search(r'Luviq|Alsfeld|Luisa Brehler', absatz),
+                    re.search(r'Luviq|Lübeck|Alsfeld|Luisa Brehler', absatz),
                     f'{pfad}: erster Absatz nennt weder Anbieter noch Ort: "{absatz}"',
                 )
 
@@ -554,8 +559,8 @@ class AntwortAbsatzUndListenTest(LuviqTestCase):
 
     def test_die_orte_auf_der_herkunftsseite_sind_eine_liste(self):
         html = self.hole('/liefergebiet/').content.decode()
-        liste = re.search(r'<ul class="grid[^>]*>(.*?)</ul>', html, re.DOTALL).group(1)
-        self.assertEqual(liste.count('<li '), 16)
+        liste = re.search(r'<ul class="lv-orte">(.*?)</ul>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<li>'), 16)
 
     def test_kontakt_und_gaestebuch_haben_ein_section_im_inhalt(self):
         """GE28: ``<main>`` allein genügt nicht; ein ``section`` oder ``article`` im
@@ -566,11 +571,12 @@ class AntwortAbsatzUndListenTest(LuviqTestCase):
                 self.assertIn('<section', haupt)
 
     def test_die_kontaktwege_sind_eine_liste(self):
-        """GE27: Impressum und E-Mail-Adresse stehen als Listenpunkte da."""
+        """GE27: Anschrift, Impressum und E-Mail-Adresse stehen seit 23.10.2026 als Datenliste (dl) da."""
         html = self.hole('/kontakt/').content.decode()
-        liste = re.search(r'<ul class="space-y-4">(.*?)</ul>', html, re.DOTALL).group(1)
-        self.assertEqual(liste.count('<li>'), 2)
+        liste = re.search(r'<dl class="lv-daten lv-kontaktdaten">(.*?)</dl>', html, re.DOTALL).group(1)
+        self.assertEqual(liste.count('<dt>'), 4)
         self.assertIn('mailto:brehlerluisa@gmail.com', liste)
+        self.assertIn('/impressum/', liste)
 
 
 class Widersprueche02102026Test(LuviqTestCase):
@@ -589,6 +595,9 @@ class Widersprueche02102026Test(LuviqTestCase):
                                         beschreibung='Hoodie mit backprint')
         self.hoodie_b = erzeuge_produkt('Custom print hoodie', slug='hoodie-b', nummer=3,
                                         beschreibung='Hoodie mit backprint')
+        # Das Stück im Startbild seit 22.10.2026 (Hoodie mit Dornen-Augen, Archiv Nº 002).
+        self.dornen = erzeuge_produkt('Custom print jacke', slug='custom-print-jacke', nummer=2,
+                                      beschreibung='Hoodie mit backprint')
 
     def _text(self, pfad):
         return sichtbarer_text(self.hole(pfad).content.decode())
@@ -604,20 +613,20 @@ class Widersprueche02102026Test(LuviqTestCase):
     # EIG134 -------------------------------------------------------------
     def test_hero_und_archivkarte_nennen_das_stueck_gleich(self):
         text = self._text('/')
-        self.assertIn('Nº 005 · Custom Pants', text)
-        self.assertNotIn('Spinnennetz-Jeans', text)
+        self.assertIn('Nº 002 · Custom print jacke', text)
+        self.assertNotIn('Nº 005 · Custom Pants', text)
 
     def test_hero_behaelt_seine_nummer_nach_einer_umbenennung(self):
         """Die Nummer hängt an der Archivnummer, nicht am Namen (EIG134)."""
-        self.hose.name = 'Jeans Spinnennetz'
-        self.hose.save()
-        self.assertIn('Nº 005 · Jeans Spinnennetz', self._text('/'))
+        self.dornen.name = 'Hoodie Dornenaugen'
+        self.dornen.save()
+        self.assertIn('Nº 002 · Hoodie Dornenaugen', self._text('/'))
 
     def test_ohne_treffer_steht_kein_erfundener_stueckname_da(self):
-        self.hose.delete()
+        self.dornen.delete()
         text = self._text('/')
-        self.assertNotIn('Spinnennetz-Jeans', text)
-        self.assertNotIn('Nº 005 ·', text)
+        self.assertNotIn('Nº 002 ·', text)
+        self.assertNotIn('Custom print jacke', text)
 
     # EIG124 / EIG125 / EIG67 --------------------------------------------
     def test_eine_technik_ueberall_bleiche_und_pinsel(self):
@@ -662,7 +671,7 @@ class Widersprueche02102026Test(LuviqTestCase):
         for satz in ('Großteil unserer Community', 'Auszug aus unserer Community',
                      'Beliebt in deiner Nähe'):
             self.assertNotIn(satz, text)
-        self.assertIn('Orte in deiner Nähe', text)
+        self.assertIn('Wo Luviq angefangen hat', text)
 
     # EIG103 -------------------------------------------------------------
     def test_gleichnamige_stuecke_haben_verschiedene_bildtitel_in_der_sitemap(self):
@@ -680,7 +689,8 @@ class Widersprueche02102026Test(LuviqTestCase):
         html = self.hole('/gaestebuch/').content.decode()
         self.assertNotIn('Gr%C3%BCnberger', html)
         self.assertNotIn('Grünberger', sichtbarer_text(html))
-        self.assertIn('data-src="https://maps.google.com/maps?q=36304+Alsfeld', html)
+        self.assertIn('data-src="https://maps.google.com/maps?q=L%C3%BCbeck&', html)
+        self.assertNotIn('M%C3%BChlenkamp', html)
 
     def test_ohne_bewertungsformular_heisst_der_knopf_nicht_bewerten(self):
         """Der Standardwert von ``GOOGLE_REVIEW_URL`` ist eine Kartensuche;

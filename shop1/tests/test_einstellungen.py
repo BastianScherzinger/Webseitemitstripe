@@ -122,6 +122,21 @@ class BetriebsmodusTest(LuviqTestCase):
         ohne = lade_einstellungen(dict(BETRIEBSUMGEBUNG, CANONICAL_HOST=''))
         self.assertEqual(ohne.CANONICAL_HOST, '')
 
+    def test_umzuleitende_domains_werden_bereinigt_und_erlaubt(self):
+        """Eine zweite Domain (``UMLEITEN_HOSTS``) muss in ``ALLOWED_HOSTS``
+        stehen, sonst bekäme sie 400 statt 301 – samt www-Variante, bereinigt
+        um Schema und Schrägstrich. Der kanonische Host selbst steht nie in der
+        Umleitungsliste (sonst Endlosschleife)."""
+        betrieb = lade_einstellungen(dict(
+            BETRIEBSUMGEBUNG, CANONICAL_HOST='www.shop.example',
+            UMLEITEN_HOSTS='https://Zweite.example/, www.shop.example'))
+        self.assertEqual(betrieb.UMLEITEN_HOSTS, ['shop.example', 'www.zweite.example', 'zweite.example'])
+        for host in ('zweite.example', 'www.zweite.example'):
+            self.assertIn(host, betrieb.ALLOWED_HOSTS)
+            self.assertIn(f'https://{host}', betrieb.CSRF_TRUSTED_ORIGINS)
+        ohne = lade_einstellungen(dict(BETRIEBSUMGEBUNG, UMLEITEN_HOSTS=''))
+        self.assertEqual(ohne.UMLEITEN_HOSTS, [])
+
     def test_kein_geheimnis_steht_fest_im_quelltext(self):
         """Verhindert, dass ein Schlüssel oder Passwort in die Versionsverwaltung
         gerät: jedes Geheimnis muss aus der Umgebung kommen."""
@@ -550,6 +565,34 @@ class KanonischerHostTest(LuviqTestCase):
         with self.settings(CANONICAL_HOST=''):
             antwort = self.hole('/', HTTP_HOST='luviq-alsfeld.com')
         self.assertEqual(antwort.status_code, 200)
+
+    def test_eine_zweite_domain_wird_per_301_mit_vollem_pfad_umgeleitet(self):
+        """Seit 23.10.2026: ``luviq-luebeck.com`` lieferte am 22.10.2026 die
+        ganze Seite mit 200 als Kopie. Mit ``UMLEITEN_HOSTS`` führt jede
+        Schreibweise dieser Domain in einer 301 auf den kanonischen Host."""
+        hosts = ['luviq-luebeck.com', 'www.luviq-luebeck.com']
+        with self.settings(UMLEITEN_HOSTS=hosts,
+                           ALLOWED_HOSTS=settings.ALLOWED_HOSTS + hosts):
+            for host in hosts:
+                with self.subTest(host=host):
+                    antwort = self.client.get('/wissen/?x=1', HTTP_HOST=host)
+                    self.assertEqual(antwort.status_code, 301)
+                    self.assertEqual(antwort['Location'], 'https://www.luviq-alsfeld.com/wissen/?x=1')
+            self.assertEqual(self.client.get('/health/', HTTP_HOST=hosts[0]).status_code, 200)
+
+    def test_nach_einem_umzug_wird_die_alte_domain_umgeleitet_nie_die_neue(self):
+        """Der Umzugsfall: neuer kanonischer Host, alte Domain in der Liste.
+        Steht der kanonische Host versehentlich selbst in der Liste, antwortet
+        er trotzdem mit 200 – keine Schleife."""
+        alle = ['www.luviq-luebeck.com', 'luviq-luebeck.com', 'www.luviq-alsfeld.com',
+                'luviq-alsfeld.com', 'testserver']
+        with self.settings(CANONICAL_HOST='www.luviq-luebeck.com', ALLOWED_HOSTS=alle,
+                           UMLEITEN_HOSTS=['luviq-alsfeld.com', 'www.luviq-alsfeld.com',
+                                           'www.luviq-luebeck.com']):
+            alt = self.hole('/produkte/', HTTP_HOST='www.luviq-alsfeld.com')
+            self.assertEqual(alt.status_code, 301)
+            self.assertEqual(alt['Location'], 'https://www.luviq-luebeck.com/produkte/')
+            self.assertEqual(self.hole('/', HTTP_HOST='www.luviq-luebeck.com').status_code, 200)
 
 
 class DatenbankweicheTest(LuviqTestCase):

@@ -12,11 +12,11 @@
                 <div style="position:relative;padding-bottom:66%;overflow:hidden;">
                     {# RE17: kein src – die Karte lädt erst nach einem Klick, siehe base.html #}
                     <iframe
-                        data-src="https://maps.google.com/maps?q=36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=12"
+                        data-src="https://maps.google.com/maps?q=L%C3%BCbeck&output=embed&hl=de&z=12"
                         style="position:absolute;inset:0;width:100%;height:100%;border:0;"
                         allowfullscreen loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"
-                        title="Luviq Universe – Alsfeld, Hessen">
+                        title="Luviq Universe – Lübeck">
                     </iframe>
                 </div>
                 <div class="p-6">
@@ -26,7 +26,7 @@
                         </div>
                         <div>
                             <p class="text-white font-black text-sm">Luviq Universe</p>
-                            <p class="text-white/30 text-[9px] uppercase tracking-widest">Alsfeld, Hessen</p>
+                            <p class="text-white/30 text-[9px] uppercase tracking-widest">Lübeck · angefangen in Alsfeld</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 mb-5">
@@ -99,11 +99,11 @@
             <div style="position:relative;min-height:320px;">
                 {# RE17: kein src – die Karte lädt erst nach einem Klick, siehe base.html #}
                 <iframe
-                    data-src="https://maps.google.com/maps?q=36304+Alsfeld%2C+Hessen&output=embed&hl=de&z=12"
+                    data-src="https://maps.google.com/maps?q=L%C3%BCbeck&output=embed&hl=de&z=12"
                     style="position:absolute;inset:0;width:100%;height:100%;border:0;"
                     allowfullscreen loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"
-                    title="Luviq Universe – Alsfeld, Hessen">
+                    title="Luviq Universe – Lübeck">
                 </iframe>
             </div>
             <div class="p-10 flex flex-col justify-center gap-6">
@@ -113,7 +113,7 @@
                     </div>
                     <div>
                         <p class="text-white font-black text-lg">Luviq Universe</p>
-                        <p class="text-white/30 text-xs uppercase tracking-widest">36304 Alsfeld · Hessen · ohne Ladengeschäft</p>
+                        <p class="text-white/30 text-xs uppercase tracking-widest">Lübeck · ohne Ladengeschäft</p>
                     </div>
                 </div>
                 {# Hier stand fest eingetippt „5.0 ★★★★★" – eine Durchschnittsbewertung, die aus keiner Quelle kommt (UWG Anh. Nr. 23b/23c). Die echten Google-Bewertungen sind über die Knöpfe darunter erreichbar. Beide Elemente bleiben leer stehen, damit der Seitenaufbau (Designwache) gleich bleibt. #}
@@ -128,7 +128,7 @@
                         {% if '/maps/search/' in GOOGLE_REVIEW_URL %}Luviq Universe auf Google Maps suchen{% else %}Jetzt bei Google bewerten{% endif %}
                     </a>
                     {# EIG87: Ohne gesetztes GOOGLE_REVIEW_URL zeigt der erste Knopf nur auf eine Kartensuche, nicht auf ein Bewertungsformular – dann heißt er ehrlich „suchen“ und der zweite führt zu einem anderen Ziel (Rückmeldung per Formular), statt dasselbe Ziel zweimal zu beschriften. #}
-                    <a href="{% if '/maps/search/' in GOOGLE_REVIEW_URL %}{% url 'kontakt' %}{% else %}https://www.google.com/maps/search/Luviq+Universe+Alsfeld{% endif %}"{% if '/maps/search/' not in GOOGLE_REVIEW_URL %} target="_blank" rel="noopener"{% endif %}
+                    <a href="{% if '/maps/search/' in GOOGLE_REVIEW_URL %}{% url 'kontakt' %}{% else %}https://www.google.com/maps/search/Luviq+Universe{% endif %}"{% if '/maps/search/' not in GOOGLE_REVIEW_URL %} target="_blank" rel="noopener"{% endif %}
                        class="flex items-center justify-center gap-2 glass px-6 py-4 rounded-2xl text-white/50 font-black uppercase tracking-widest text-[10px] hover:text-white transition-colors"
                        style="border-color:rgba(200,150,92,0.15)">
                         {% if '/maps/search/' in GOOGLE_REVIEW_URL %}Rückmeldung per Formular →{% else %}Auf Google Maps ansehen →{% endif %}

@@ -50,6 +50,22 @@ if CANONICAL_HOST:
     # Weiterleitung überhaupt erreicht statt mit 400 abgewiesen zu werden.
     _extra_raw.append(CANONICAL_HOST)
 
+# ═══ WEITERE DOMAINS, DIE UMGELEITET WERDEN (23.10.2026) ═══
+# Komma-Liste ganzer Domains, die per 301 (Pfad + Query) auf CANONICAL_HOST
+# zeigen sollen, jeweils samt www-/Nicht-www-Variante – z. B. heute
+# „luviq-luebeck.com“ (antwortete am 22.10.2026 mit 200 als Kopie der Seite)
+# oder nach einem Domainumzug „luviq-alsfeld.com“. Leer = aus. Wirkt nur mit
+# gesetztem CANONICAL_HOST; der kanonische Host selbst wird nie umgeleitet.
+UMLEITEN_HOSTS = []
+for _h in os.getenv('UMLEITEN_HOSTS', '').split(','):
+    _h = _h.strip().lower().removeprefix('https://').removeprefix('http://').split('/')[0]
+    if _h:
+        _basis = _h[4:] if _h.startswith('www.') else _h
+        UMLEITEN_HOSTS += [_basis, f'www.{_basis}']
+UMLEITEN_HOSTS = sorted(set(UMLEITEN_HOSTS) - {CANONICAL_HOST})
+if CANONICAL_HOST:
+    _extra_raw += UMLEITEN_HOSTS
+
 _extra = set(_extra_raw)
 for _h in _extra_raw:
     _extra.add(_h[4:] if _h.startswith('www.') else f'www.{_h}')
@@ -179,6 +195,7 @@ TEMPLATES = [
                 'shop1.context_processors.feed_beworben',
                 'shop1.verkauf.verkauf_kontext',
                 'shop1.context_processors.luviq',
+                'shop1.context_processors.anbieterin',
             ],
         },
     },
@@ -500,7 +517,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # in luviq_daten.GOOGLE_PROFIL und sameAs) ist ein Kartenlink, kein
 # Bewertungsformular – dann hiesse der Knopf zu Unrecht „bewerten“ (EIG87).
 # Den echten Bewertungslink (g.page/r/…/review) als Railway-Variable setzen.
-GOOGLE_REVIEW_URL = os.getenv('GOOGLE_REVIEW_URL', 'https://www.google.com/maps/search/Luviq+Universe+Alsfeld')
+GOOGLE_REVIEW_URL = os.getenv('GOOGLE_REVIEW_URL', 'https://www.google.com/maps/search/Luviq+Universe')
 
 # ═══ FEHLER-MONITORING (VL19) ═══
 # Kein Sentry o.ä. (neue Abhaengigkeit, in diesem Lauf verboten) - stattdessen

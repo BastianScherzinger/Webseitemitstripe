@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
 
-from .. import indexnow
+from .. import indexnow, luviq_daten
 from ..middleware import oeffentliche_basis
 from ..models import Produkt, Subscriber
 # Das Register SEITEN_STAND (Routenname → Datum) liegt seit Schritt 16 in
@@ -117,7 +117,7 @@ def indexnow_schluessel(request):
 #: Überschrift wäre für Antwortmaschinen ein Versprechen ohne Inhalt.
 WISSEN_SEITEN = [
     ('wissen', 'Wissen: Uebersicht',
-     'Einstieg in die Beitraege zu Bestellablauf, Widerruf, Konto und Pflege handbemalter Einzelstuecke; nennt, woher die Angaben stammen'),
+     'Einstieg in die freigegebenen Beitraege zu Pflege handbemalter Kleidung, Upcycling-Mode und der richtigen Groesse bei Einzelstuecken; nennt, woher die Angaben stammen'),
     ('wissen_pflege', 'Wie pflege ich handbemalte Kleidung?',
      'Waschen auf links bei 30 Grad, Trocknen an der Luft, Buegeln nur von links, Lagern ohne Druck auf die Bemalung, Flecken'),
     ('wissen_upcycling', 'Was ist Upcycling-Mode - und was unterscheidet sie von Second Hand?',
@@ -125,6 +125,8 @@ WISSEN_SEITEN = [
      'nicht nachbestellbar ist; Handbemalung von Druck unterscheiden'),
     ('wissen_groesse', 'Wie finde ich bei Einzelstuecken die richtige Groesse?',
      'Masse mit eigener Kleidung vergleichen statt Etikett, warum Vintage-Schnitte abweichen, vorab nachfragen, Widerruf'),
+    ('wissen_motiv', 'Wie entsteht aus meiner Idee ein handbemaltes Stueck?',
+     'Richtung nennen, Vorschlaege bekommen, gemeinsam entscheiden, Bleiche mit dem Pinsel; Dauer meist 2 bis 5 Tage'),
     ('wissen_bestellen', 'Wie bestelle und bezahle ich bei Luviq Universe?',
      'Anmeldepflicht, Weg in den Warenkorb, Pflichtangaben, PayPal oder '
      'Vorab-Ueberweisung, Pruefung der Zahlung, Bestaetigung, Versand in 1-2 Werktagen'),
@@ -246,17 +248,17 @@ def _llms_kopf_mit_verkauf(basis):
     return [
         "# Luviq Universe",
         "",
-        "> Luviq Universe ist ein Online-Shop aus Alsfeld (36304) in Hessen, zwischen",
-        "> Fulda und Giessen. Luisa Brehler bemalt handverlesene Second-Hand- und",
-        "> Vintage-Kleidung von Hand; jedes Stueck ist ein Einzelstueck (1-of-1).",
-        "> Versand deutschlandweit, in der Regel innerhalb von 1-2 Werktagen;",
-        "> innerhalb Hessens ist ein Stueck meist nach 1-3 Werktagen zugestellt.",
+        "> Luviq Universe ist ein Online-Shop aus Luebeck (Schleswig-Holstein),",
+        "> angefangen in Alsfeld (Hessen). Luisa Brehler bemalt handverlesene",
+        "> Second-Hand- und Vintage-Kleidung von Hand; jedes Stueck ist ein",
+        "> Einzelstueck (1-of-1). Versand deutschlandweit, in der Regel innerhalb",
+        "> von 1-2 Werktagen.",
         "> Einen Laden zum Reinschauen gibt es nicht, der Verkauf laeuft",
         "> ausschliesslich ueber diese Seite.",
         "",
         "## Eckdaten",
         "",
-        "- Betreiberin: Luisa Brehler, Gruenberger Str. 16, 36304 Alsfeld, Deutschland",
+        _betreiber_zeile("Betreiberin"),
         "- E-Mail: brehlerluisa@gmail.com",
         "- Instagram: https://www.instagram.com/luviq.archive/",
         "- TikTok: https://www.tiktok.com/@luviq.archive",
@@ -264,8 +266,7 @@ def _llms_kopf_mit_verkauf(basis):
         "- Zahlungsarten: PayPal oder Vorab-Ueberweisung (AGB, Paragraph 4)",
         "- Preise sind Endpreise; nach Paragraph 19 UStG wird keine Umsatzsteuer",
         "  berechnet (Kleinunternehmerstatus)",
-        "- Versand: in der Regel innerhalb von 1-2 Werktagen, innerhalb Hessens",
-        "  meist nach 1-3 Werktagen zugestellt; Versand deutschlandweit",
+        "- Versand: in der Regel innerhalb von 1-2 Werktagen, deutschlandweit",
         "",
         "## Seiten",
         "",
@@ -274,14 +275,33 @@ def _llms_kopf_mit_verkauf(basis):
         f"- [Ueber uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
         f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
         "Vorschlaege bekommen - kostenlos, keine Bestellung",
-        f"- [Liefergebiet]({basis}{reverse('liefergebiet')}): Versandgebiet zwischen Fulda "
-        "und Giessen, Fragen und Antworten",
+        f"- [Liefergebiet]({basis}{reverse('liefergebiet')}): von Alsfeld nach Luebeck, "
+        "Versand deutschlandweit",
         f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
         f"- [Gaestebuch]({basis}{reverse('gaestebuch')}): Rueckmeldungen von Kundinnen und Kunden",
         "",
         "## Einzelstuecke",
         "",
     ]
+
+
+def _ascii(text):
+    """llms.txt bleibt reines ASCII (wie der Rest der Datei): Umlaute und Grad aufloesen."""
+    for alt, neu in (('ä', 'ae'), ('ö', 'oe'), ('ü', 'ue'), ('Ä', 'Ae'), ('Ö', 'Oe'),
+                     ('Ü', 'Ue'), ('ß', 'ss'), ('°C', 'Grad C'), ('–', '-'), ('—', '-'),
+                     ('’', "'"), ('„', ''), ('“', '')):
+        text = text.replace(alt, neu)
+    return text
+
+
+def _llms_motiv_fragen():
+    """Fragen zur Motivanfrage, wortgleich mit ``/motiv-anfragen/`` (``luviq_daten.FAQ_MOTIV``)."""
+    import textwrap
+    from .. import luviq_daten
+    zeilen = []
+    for frage, antwort in luviq_daten.FAQ_MOTIV:
+        zeilen += [f"### {_ascii(frage)}", *textwrap.wrap(_ascii(antwort), 78), ""]
+    return zeilen
 
 
 def _llms_fragen_mit_verkauf(basis):
@@ -291,18 +311,19 @@ def _llms_fragen_mit_verkauf(basis):
         "## Haeufige Fragen",
         "",
         "### Was ist Luviq Universe?",
-        "Ein nachhaltiger Second-Hand-Shop aus Alsfeld in Hessen. Gruenderin Luisa",
+        "Ein Second-Hand-Shop aus Luebeck, angefangen in Alsfeld. Gruenderin Luisa",
         "Brehler verwandelt handverlesene Vintage-Kleidung durch Handmalerei in",
         "1-of-1 Kunstwerke. Jedes Stueck ist ein Unikat.",
         "",
         "### Wo sitzt Luviq Universe?",
-        "In Alsfeld (36304) im Vogelsbergkreis, Hessen - zwischen Fulda und",
-        "Giessen. Einen Laden zum Reinschauen gibt es nicht, der Verkauf laeuft",
-        "ausschliesslich ueber diese Seite.",
+        "In Luebeck (Schleswig-Holstein); dort malt Luisa Brehler heute.",
+        "Angefangen hat Luviq in Alsfeld im Vogelsbergkreis, Hessen. Einen Laden",
+        "zum Reinschauen gibt es nicht, der Verkauf laeuft ausschliesslich ueber",
+        "diese Seite.",
         "",
-        "### Liefert Luviq nach Giessen, Fulda und in andere Staedte?",
-        "Ja, versendet wird deutschlandweit. Innerhalb Hessens ist ein Unikat",
-        "meist nach 1-3 Werktagen zugestellt.",
+        "### Liefert Luviq nach Luebeck, Alsfeld und in andere Staedte?",
+        "Ja, versendet wird deutschlandweit, in der Regel innerhalb von 1-2",
+        "Werktagen.",
         "",
         "### Was verkauft Luviq Universe?",
         "Handbemalte Second-Hand- und Vintage-Kleidung, vor allem Hoodies und",
@@ -317,6 +338,7 @@ def _llms_fragen_mit_verkauf(basis):
         "Statt neue Kleidung zu produzieren, wird vorhandene Vintage-Kleidung",
         "weiterverwendet und von Hand bemalt.",
         "",
+        *_llms_motiv_fragen(),
         "## Rechtliches",
         "",
         f"- [Impressum]({basis}{reverse('impressum')})",
@@ -334,13 +356,22 @@ def _llms_fragen_mit_verkauf(basis):
     ]
 
 
+def _betreiber_zeile(rolle):
+    """Eckdaten-Zeile mit der Anschrift aus der Gewerbeanmeldung (``ANBIETERIN``).
+
+    llms.txt bleibt ASCII wie bisher (Umlaute umschrieben)."""
+    a = luviq_daten.ANBIETERIN
+    zeile = f"- {rolle}: {a['name']}, {a['strasse']}, {a['plz']} {a['ort']}, {a['land_name']}"
+    return zeile.translate(str.maketrans({'ü': 'ue', 'ö': 'oe', 'ä': 'ae', 'ß': 'ss', 'Ü': 'Ue'}))
+
+
 def _llms_kopf_ohne_verkauf(basis):
     """Kopf, Eckdaten und Seitenliste der llms.txt ohne Verkauf (Marke im Aufbau)."""
     return [
         "# Luviq Universe",
         "",
-        "> Luviq Universe ist eine Modemarke im Aufbau aus Alsfeld (36304) in Hessen,",
-        "> zwischen Fulda und Giessen. Luisa Brehler bemalt handverlesene Second-Hand-",
+        "> Luviq Universe ist eine Modemarke im Aufbau aus Luebeck, angefangen in",
+        "> Alsfeld (Hessen). Luisa Brehler bemalt handverlesene Second-Hand-",
         "> und Vintage-Kleidung von Hand; jedes Stueck ist ein Einzelstueck (1-of-1).",
         "> Die bisherigen Stuecke sind bereits vergeben und stehen im Archiv. Neue",
         "> Stuecke gibt es mit dem ersten Drop; wer davon erfahren will, traegt sich",
@@ -348,7 +379,7 @@ def _llms_kopf_ohne_verkauf(basis):
         "",
         "## Eckdaten",
         "",
-        "- Verantwortlich: Luisa Brehler, Gruenberger Str. 16, 36304 Alsfeld, Deutschland",
+        _betreiber_zeile("Verantwortlich"),
         "- E-Mail: brehlerluisa@gmail.com",
         "- Instagram: https://www.instagram.com/luviq.archive/",
         "- TikTok: https://www.tiktok.com/@luviq.archive",
@@ -362,7 +393,7 @@ def _llms_kopf_ohne_verkauf(basis):
         f"- [Ueber uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
         f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
         "Vorschlaege bekommen - kostenlos, keine Bestellung",
-        f"- [Herkunft]({basis}{reverse('liefergebiet')}): Alsfeld zwischen Fulda und Giessen",
+        f"- [Herkunft]({basis}{reverse('liefergebiet')}): von Alsfeld nach Luebeck",
         f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
         f"- [Gaestebuch]({basis}{reverse('gaestebuch')}): Beitraege aus der Community",
         "",
@@ -378,13 +409,14 @@ def _llms_fragen_ohne_verkauf(basis):
         "## Haeufige Fragen",
         "",
         "### Was ist Luviq Universe?",
-        "Eine Modemarke im Aufbau aus Alsfeld in Hessen. Gruenderin Luisa Brehler",
+        "Eine Modemarke im Aufbau aus Luebeck, angefangen in Alsfeld. Gruenderin Luisa Brehler",
         "verwandelt handverlesene Vintage-Kleidung durch Handmalerei in 1-of-1",
         "Kunstwerke. Jedes Stueck ist ein Unikat.",
         "",
         "### Wo sitzt Luviq Universe?",
-        "In Alsfeld (36304) im Vogelsbergkreis, Hessen - zwischen Fulda und",
-        "Giessen. Einen Laden zum Reinschauen gibt es nicht.",
+        "In Luebeck (Schleswig-Holstein); dort malt Luisa Brehler heute.",
+        "Angefangen hat Luviq in Alsfeld im Vogelsbergkreis, Hessen, zwischen Fulda",
+        "und Giessen. Einen Laden zum Reinschauen gibt es nicht.",
         "",
         "### Kann man bei Luviq Universe schon kaufen?",
         "Nein. Die bisherigen Stuecke sind bereits vergeben; neue gibt es mit dem",
@@ -395,6 +427,19 @@ def _llms_fragen_ohne_verkauf(basis):
         "Statt neue Kleidung zu produzieren, wird vorhandene Vintage-Kleidung",
         "weiterverwendet und von Hand bemalt.",
         "",
+        "### Womit malt Luisa Brehler?",
+        "Mit Bleiche und Pinsel auf dunkler Second-Hand-Kleidung: Die Bleiche zieht",
+        "die Farbe aus dem Stoff, deshalb sind die Linien hell. Ein Strich laesst",
+        "sich nicht zuruecknehmen, und kein Motiv wird wiederholt.",
+        "",
+        "### Wie bekomme ich ein eigenes Motiv?",
+        f"Ueber {basis}{reverse('motiv_anfragen')}: Richtung (zum Beispiel ein Tier,",
+        "ein Zeichen, eine Ranke, Mond und Sterne oder etwas Abstraktes), Teil und",
+        "Platzierung angeben. Luisa Brehler schickt Vorschlaege per Instagram oder",
+        "E-Mail, dann wird gemeinsam entschieden. Die Anfrage kostet nichts und ist",
+        "keine Bestellung.",
+        "",
+        *_llms_motiv_fragen(),
         "## Rechtliches",
         "",
         f"- [Impressum]({basis}{reverse('impressum')})",
@@ -487,7 +532,7 @@ def _seitenbilder(name: str, base_url: str) -> list[tuple[str, str]]:
         return adresse if adresse.startswith('http') else f"{base_url}{adresse}"
 
     if name == 'home':
-        bilder = [(absolut(static('shop1/images/luviq/hero-panorama-1600.webp')),
+        bilder = [(absolut(static('shop1/images/luviq/hero-dornen-quer-1036.webp')),
                    luviq_daten.HERO_STUECK['alt'])]
         bilder += [(absolut(static(f'shop1/images/luviq/{bild}-720.webp')), alt)
                    for _titel, _text, bild, alt in luviq_daten.SCHRITTE]
@@ -649,6 +694,9 @@ def _bestaetigung_senden(request, abo):
     )
 
 
+# offen-ok: der Bestätigungslink steht in der Double-Opt-in-Mail und richtet
+# sich an Empfänger ohne Konto. Geschrieben wird nur „bestätigt“ der Adresse
+# aus dem signierten Token (signing.loads mit eigenem Salt), sonst nichts.
 def newsletter_bestaetigen(request):
     """Schritt 2 des Double-Opt-in: der signierte Link aus der Mail."""
     try:

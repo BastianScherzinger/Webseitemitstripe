@@ -18,12 +18,38 @@ from django.utils import timezone
 
 _log = logging.getLogger('shop1')
 
+#: Anbieterin laut Gewerbeanmeldung (GewA 1 vom 22.10.2026, Ordnungsamt der
+#: Hansestadt Lübeck; Unterlagen ``Buero\luisa\arbeitsplatz\recht\gewerbe``):
+#: Feld 3 Geschäftsbezeichnung „LUVIQ", Feld 4/5 Name, Feld 15 Betriebsstätte,
+#: Feld 20 Beginn 01.11.2026 im Nebenerwerb. Impressum, Datenschutz, Kontakt,
+#: Schema, llms.txt und die Mailfußzeile lesen **nur** von hier. Die
+#: Telefonnummer aus Feld 15 steht bewusst nicht hier: ob sie öffentlich
+#: werden soll, entscheidet Luisa (Frage F12); Pflicht ist sie nicht.
+ANBIETERIN = {
+    'name': 'Luisa Brehler',
+    'geschaeft': 'Luviq',
+    'strasse': 'Mühlenkamp 5',
+    'plz': '23569',
+    'ort': 'Lübeck',
+    'region': 'Schleswig-Holstein',
+    'land': 'DE',
+    'land_name': 'Deutschland',
+    'email': 'brehlerluisa@gmail.com',
+    'gewerbe_beginn': '01.11.2026',
+}
+
+#: Wo Luviq angefangen hat: die ersten Stücke (Nº 001–005), die Domain
+#: luviq-alsfeld.com und das Google-Profil stammen aus Alsfeld. Seit Oktober
+#: 2026 malt Luisa in Lübeck (Gewerbeanmeldung) – Alsfeld bleibt Herkunft,
+#: kein Sitz mehr.
+HERKUNFT = {'ort': 'Alsfeld', 'region': 'Hessen', 'kreis': 'Vogelsbergkreis'}
+
 #: Luisas Markensatz, von ihr gewählt am 19.09.2026. Gesprochen, nicht gesetzt.
 MARKENSATZ = 'Sag mir, was du willst — ich mal’s dir.'
 
 #: Erster Absatz nach der Überschrift. Nennt den Ort, weil Antwortmaschinen
 #: den ersten Absatz zitieren (test_inhalt: Anbieter oder Ort im ersten Absatz).
-LEAD = ('Ich bemale in Alsfeld Second-Hand-Teile von Hand, mit Bleiche und Pinsel, meist '
+LEAD = ('Ich bemale in Lübeck Second-Hand-Teile von Hand, mit Bleiche und Pinsel, meist '
         'in 2 bis 5 Tagen. Du sagst mir, was drauf soll, ich schick dir Vorschläge, und '
         'dann entsteht dein Stück. Jedes Motiv gibt es genau einmal.')
 
@@ -50,6 +76,30 @@ GOOGLE_PROFIL = 'https://www.google.com/maps?cid=13899750731019902000'
 
 #: Belegte Profiladressen für ``sameAs`` (Schema) und ``llms.txt``.
 PROFILE = (INSTAGRAM, TIKTOK, GOOGLE_PROFIL)
+
+#: Häufige Fragen rund um die Motivanfrage (Bestellung nach Wunsch), wortgleich als
+#: Text auf ``/motiv-anfragen/`` und – erst mit Verkauf – als ``FAQPage``. Nur, was
+#: auf der Seite und in den Wissensbeiträgen schon belegt ist: kein Preis, keine
+#: Zusage, keine Lieferzeit, kein Verkaufsversprechen.
+FAQ_MOTIV = [
+    ('Ist eine Motivanfrage schon eine Bestellung?',
+     'Nein. Die Anfrage kostet nichts und verpflichtet zu nichts: Du zahlst dabei '
+     'nichts und bekommst keine Zusage. Du beschreibst, was dir vorschwebt, und Luisa '
+     'schickt dir Vorschläge.'),
+    ('Was passiert nach meiner Anfrage?',
+     'Luisa meldet sich bei dir, per Instagram oder E-Mail, je nachdem, was du angegeben '
+     'hast. Sie schickt dir ein paar Vorschläge, und ihr entscheidet zusammen. Erst wenn das '
+     'Motiv passt, entsteht das Stück.'),
+    ('Wie lange dauert es von der Anfrage bis zum fertigen Stück?',
+     f'Meistens {DAUER}, je nach Motiv. Das ist ein Erfahrungswert und keine feste Zusage.'),
+    ('Bekomme ich dasselbe Motiv zweimal?',
+     'Nein. Jedes Stück ist ein handbemaltes Einzelstück, und weil jedes Motiv frei von Hand '
+     'gemalt wird, entsteht kein zweites genauso. Ein Strich mit der Bleiche lässt sich '
+     'außerdem nicht zurücknehmen.'),
+    ('Wie pflege ich ein handbemaltes Stück?',
+     'Auf links bei 30 °C waschen, nicht in den Trockner, keinen Weichspüler nehmen und nur '
+     'von links bügeln. So bleibt die Bemalung lange schön.'),
+]
 
 #: Antwortzeit auf Anfragen, von Bastian für Luisa am 02.10.2026 bestätigt.
 #: Eine Erreichbarkeit, keine Öffnungszeit (kein Ladengeschäft, GE20).
@@ -122,7 +172,7 @@ def drop_nummer():
     return f'{hoechste + 1:03d}'
 
 
-#: Kopfzeile des Hero: „LUVIQ Universe | Oktober 2026 | Alsfeld". Eine eigene
+#: Kopfzeile des Hero: „LUVIQ Universe | Oktober 2026 | Lübeck". Eine eigene
 #: „Ausgabe 01" gibt es nicht mehr (EIG126): die Seite nennt sonst Nº 006 als
 #: nächste Ausgabe, und zwei Zählungen widersprachen sich.
 _MONATE = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August',
@@ -134,8 +184,8 @@ _MONATE = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August
 #: ``nummer`` (übersteht eine Umbenennung), sonst über den ersten Namen, der
 #: einen der ``suche``-Begriffe enthält. Ohne Treffer steht nur die
 #: Beschreibung des Fotos da, kein erfundener Stückname und keine Nummer.
-HERO_STUECK = {'nummer': 5, 'name': 'Jeans mit Spinnennetz-Motiv', 'suche': ('spinnen', 'pants'),
-               'alt': 'Handbemalte Jeans mit Spinnennetz-Motiv, draußen im Gras fotografiert'}
+HERO_STUECK = {'nummer': 2, 'name': 'Hoodie mit Dornen-Augen-Motiv', 'suche': ('dornen',),
+               'alt': 'Rückenansicht eines dunklen Hoodies mit handgebleichtem Rankenmotiv aus Dornen und Augen, draußen vor Herbstbäumen fotografiert'}
 
 #: Teaser vor dem Drop: (Datum, Titel, Bildadresse, Alternativtext). Leer ⇒
 #: der Abschnitt „Nº …, in Teilen" entfällt ganz – keine leeren Kacheln.
@@ -149,7 +199,7 @@ def laufband(nummer, termin):
         teile.append(f'Nº {nummer} erscheint {termin_text(termin)}')
     else:
         teile.append('Die nächste Ausgabe ist in Arbeit')
-    teile.append('Handbemalt in Alsfeld')
+    teile.append('Handbemalt in Lübeck')
     return teile
 
 

@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{% if verkauf_aktiv %}Liefergebiet Fulda bis Gießen – Luviq Universe, Alsfeld{% else %}Herkunft zwischen Fulda und Gießen – Luviq Universe, Alsfeld{% endif %}{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Alsfeld versendet handbemalte Vintage-Unikate von Fulda bis Gießen und deutschlandweit – in Hessen meist in 1–3 Werktagen zugestellt. Jetzt nachlesen.{% else %}Luviq Universe kommt aus Alsfeld, zwischen Fulda und Gießen: handbemalte Vintage-Unikate von Luisa Brehler. Marke im Aufbau, kein Ladengeschäft. Jetzt nachlesen.{% endif %}{% endblock %}
-{% block og_title %}{% if verkauf_aktiv %}Liefergebiet Fulda – Gießen | Luviq Universe{% else %}Herkunft Fulda – Gießen | Luviq Universe{% endif %}{% endblock %}
-{% block og_description %}{% if verkauf_aktiv %}Handbemalte Vintage-Unikate aus Alsfeld – beliebt in der ganzen Region zwischen Fulda und Gießen. Deutschlandweiter Versand.{% else %}Handbemalte Vintage-Unikate aus Alsfeld, mitten in der Region zwischen Fulda und Gießen.{% endif %}{% endblock %}
-{% block twitter_title %}{% if verkauf_aktiv %}Liefergebiet Fulda – Gießen | Luviq Universe{% else %}Herkunft Fulda – Gießen | Luviq Universe{% endif %}{% endblock %}
-{% block twitter_description %}{% if verkauf_aktiv %}Handbemalte Vintage-Unikate aus Alsfeld, versendet in die Region zwischen Fulda und Gießen sowie deutschlandweit.{% else %}Handbemalte Vintage-Unikate aus Alsfeld, mitten in der Region zwischen Fulda und Gießen.{% endif %}{% endblock %}
+{% block title %}{% if verkauf_aktiv %}Versand aus Lübeck, Herkunft Alsfeld – Luviq Universe{% else %}Herkunft: von Alsfeld nach Lübeck – Luviq Universe{% endif %}{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe hat in Alsfeld angefangen und versendet heute aus Lübeck handbemalte Vintage-Unikate deutschlandweit, meist in 1–2 Werktagen. Jetzt nachlesen.{% else %}Luviq Universe hat in Alsfeld angefangen, heute malt Luisa Brehler in Lübeck: handbemalte Vintage-Unikate, Marke im Aufbau, kein Laden. Jetzt nachlesen.{% endif %}{% endblock %}
+{% block og_title %}{% if verkauf_aktiv %}Versand aus Lübeck | Luviq Universe{% else %}Von Alsfeld nach Lübeck | Luviq Universe{% endif %}{% endblock %}
+{% block og_description %}{% if verkauf_aktiv %}Handbemalte Vintage-Unikate, angefangen in Alsfeld, heute aus Lübeck. Deutschlandweiter Versand.{% else %}Handbemalte Vintage-Unikate: angefangen in Alsfeld, heute bemalt in Lübeck.{% endif %}{% endblock %}
+{% block twitter_title %}{% if verkauf_aktiv %}Versand aus Lübeck | Luviq Universe{% else %}Von Alsfeld nach Lübeck | Luviq Universe{% endif %}{% endblock %}
+{% block twitter_description %}{% if verkauf_aktiv %}Handbemalte Vintage-Unikate aus Lübeck, angefangen in Alsfeld, versendet deutschlandweit.{% else %}Handbemalte Vintage-Unikate: angefangen in Alsfeld, heute bemalt in Lübeck.{% endif %}{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+  "@id": "{{ seiten_url }}#breadcrumb",
   "itemListElement": [
-    {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
     {"@type": "ListItem", "position": 2, "name": "{% if verkauf_aktiv %}Liefergebiet{% else %}Herkunft{% endif %}", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'liefergebiet' %}"}
   ]
 }
@@ -33,10 +33,10 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "Gibt es einen Luviq-Laden in Fulda oder Gießen?",
+          "name": "Gibt es einen Luviq-Laden in Lübeck oder Alsfeld, mit Öffnungszeiten?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Nein. Luviq Universe ist ein reiner Online-Shop mit Sitz in Alsfeld. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – auch nach Fulda und Gießen gibt es also keinen Laden zum Reinschauen, aber sehr wohl schnellen Versand.{% else %}Nein. Luviq Universe ist eine Marke im Aufbau mit Sitz in Alsfeld. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Fulda noch in Gießen.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Nein. Luviq Universe ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten. Luisa erreichst du über das Kontaktformular oder per E-Mail.{% else %}Nein. Luviq Universe ist eine Marke im Aufbau mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten. Luisa erreichst du über das Kontaktformular oder per E-Mail.{% endif %}"
           }
         },
         {
@@ -44,15 +44,15 @@
           "name": "{% if verkauf_aktiv %}Wie schnell kommt eine Bestellung in der Region an?{% else %}Kann ich aus der Region schon bestellen?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Innerhalb von Hessen – etwa nach Fulda, Gießen, Lauterbach oder Grünberg – ist ein Unikat meist schon nach 1-3 Werktagen im Briefkasten.{% else %}Noch nicht – weder aus Fulda, Gießen, Lauterbach oder Grünberg noch von anderswo. Neue Stücke gibt es erst mit dem ersten Drop; wer dabei sein will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet, deutschlandweit – nach Lübeck und Alsfeld genauso wie überallhin.{% else %}Noch nicht – weder aus Lübeck noch aus Alsfeld oder von anderswo. Neue Stücke gibt es erst mit dem ersten Drop; wer dabei sein will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}"
           }
         },
         {
           "@type": "Question",
-          "name": "{% if verkauf_aktiv %}Welche Region beliefert Luviq besonders oft?{% else %}Woher kommt die Luviq-Community?{% endif %}",
+          "name": "{% if verkauf_aktiv %}Welche Region beliefert Luviq besonders oft?{% else %}Woher kommt Luviq?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Versendet wird deutschlandweit – egal wo du wohnst. Welche Region am häufigsten bestellt, wertet diese Seite nicht aus.{% else %}Luviq Universe sitzt in Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen. Wie sich die Community zusammensetzt, wertet diese Seite nicht aus; die Warteliste steht allen offen.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Versendet wird deutschlandweit – egal wo du wohnst. Welche Region am häufigsten bestellt, wertet diese Seite nicht aus.{% else %}Angefangen hat Luviq Universe in Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen. Heute malt Luisa Brehler in Lübeck. Die Warteliste steht allen offen, egal wo.{% endif %}"
           }
         }
       ]
@@ -62,79 +62,59 @@
 </script>
 {% endblock %}
 
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='textseite' %}{% endblock %}
+
 {% block content %}
-<div class="relative min-h-screen pt-20 pb-32">
-    <!-- Nebula Background Layer -->
-    <div class="energy-nebula"></div>
+<div class="lv-seite">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">{% if verkauf_aktiv %}Liefergebiet{% else %}Herkunft{% endif %}</li></ol></nav>
 
-    <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <!-- Hero -->
-        <div class="mb-28 animate-reveal text-center">
-            <h3 class="text-[10px] font-black uppercase tracking-[0.4em] text-glow-orange mb-6">Herkunft{% if verkauf_aktiv %} &amp; Liefergebiet{% else %} &amp; Region{% endif %}</h3>
-            <h1 class="text-4xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-8 leading-[0.9]">
-                Von Alsfeld<br class="md:hidden"> bis <span class="text-glow">Fulda &amp; Gießen</span>
-            </h1>
-            <p class="text-white/40 text-lg font-light max-w-2xl mx-auto leading-relaxed">
-                {% if verkauf_aktiv %}Luviq Universe versendet jedes handbemalte Unikat von 36304 Alsfeld in Hessen aus deutschlandweit: Bestellungen gehen in der Regel innerhalb von 1-2 Werktagen raus, innerhalb Hessens ist ein Stück meist nach 1-3 Werktagen zugestellt. Jedes Luviq-Unikat entsteht in Alsfeld, Hessen – und reist von dort in die ganze Region und deutschlandweit zu dir.{% else %}Luviq Universe kommt aus 36304 Alsfeld in Hessen, mitten im Vogelsbergkreis zwischen Fulda und Gießen. Jedes Luviq-Unikat entsteht hier – handbemalt, 1-of-1. Die Marke ist im Aufbau, neue Stücke gibt es erst mit dem ersten Drop.{% endif %}
-            </p>
-            <div class="h-px w-32 bg-glow-orange mt-16 rounded-full mx-auto"></div>
+    <section class="lv-seitenkopf" aria-labelledby="herkunft-titel">
+        <p class="lv-nr">Herkunft{% if verkauf_aktiv %} &amp; Liefergebiet{% else %} &amp; Region{% endif %}</p>
+        <h1 class="lv-serif lv-satz" id="herkunft-titel">Von Alsfeld nach Lübeck</h1>
+        <p class="lv-lead">{% if verkauf_aktiv %}Luviq Universe hat in Alsfeld in Hessen angefangen; heute entsteht jedes handbemalte Unikat in Lübeck und geht von dort deutschlandweit raus, in der Regel innerhalb von 1-2 Werktagen.{% else %}Luviq Universe hat in Alsfeld angefangen, im Vogelsbergkreis zwischen Fulda und Gießen. Heute malt Luisa Brehler in Lübeck – jedes Stück von Hand, 1-of-1. Die Marke ist im Aufbau, neue Stücke gibt es erst mit dem ersten Drop.{% endif %}</p>
+    </section>
+
+    <section class="lv-abschnitt" aria-label="Wo Luviq entsteht">
+        <div class="lv-prosa">
+            <p>In Alsfeld ist Luviq entstanden, im Vogelsbergkreis zwischen Fulda und Gießen. Inzwischen bemalt Luisa Brehler jedes Unikat in Lübeck. {% if verkauf_aktiv %}Einen Ladenverkauf gibt es bewusst nicht: Luviq Universe ist ein reiner Online-Shop. Versendet wird aus Lübeck, deutschlandweit. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet –, und für jede Bestellung gilt das Widerrufsrecht von 14 Tagen (§ 5 der AGB).{% else %}Einen Laden gibt es bewusst nicht: Luviq Universe ist eine Marke im Aufbau, und der erste Drop kommt online. Wer ihn nicht verpassen will, egal ob in Lübeck, in Alsfeld oder anderswo, trägt sich auf der Startseite in die Warteliste ein. Bis dahin ist Luviq Universe auf Instagram unter @luviq.archive zu finden; Fragen zu einem Stück beantwortet Luisa Brehler über das Kontaktformular.{% endif %}</p>
         </div>
+    </section>
 
-        <!-- Story -->
-        <section class="scroll-reveal glass-card p-10 md:p-16 rounded-[3.5rem] mb-24 max-w-4xl mx-auto">
-            <p class="text-white/60 text-lg leading-relaxed font-light">
-                Luisa Brehler bemalt jedes Unikat mit der Hand in ihrem Atelier in Alsfeld, mitten im Vogelsbergkreis – genau zwischen Fulda und Gießen. {% if verkauf_aktiv %}Einen Ladenverkauf gibt es bewusst nicht: Luviq Universe ist ein reiner Online-Shop. Dafür kommt der Versand aus Hessen heraus besonders schnell bei dir an, egal ob du eher Richtung Fulda oder Richtung Gießen wohnst. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet –, und für jede Bestellung gilt das Widerrufsrecht von 14 Tagen (§ 5 der AGB).{% else %}Einen Laden gibt es bewusst nicht: Luviq Universe ist eine Marke im Aufbau, und der erste Drop kommt online. Wer ihn nicht verpassen will, egal ob eher Richtung Fulda oder Richtung Gießen, trägt sich auf der Startseite in die Warteliste ein. Bis dahin ist Luviq Universe auf Instagram unter @luviq.universe zu finden; Fragen zu einem Stück beantwortet Luisa Brehler über das Kontaktformular.{% endif %}
-            </p>
-        </section>
+    <section class="lv-abschnitt" aria-labelledby="herkunft-orte">
+        <h2 class="lv-serif lv-abschnittstitel" id="herkunft-orte">Wo Luviq angefangen hat</h2>
+        <p class="lv-nr lv-orte-zahl">{{ orte|length }} Orte rund um Alsfeld, zwischen Fulda und Gießen</p>
+        {% comment %}Die Orte sind eine Liste und stehen als solche da (GE27): ul/li; seit 23.10.2026 als ruhige Liste mit Haarlinien statt als Kacheln.{% endcomment %}
+        <ul class="lv-orte">
+            {% for ort in orte %}
+            <li>{{ ort }}</li>
+            {% endfor %}
+        </ul>
+        <p class="lv-klein lv-orte-hinweis">{% if verkauf_aktiv %}Du wohnst woanders? Kein Problem – wir versenden jedes Unikat deutschlandweit.{% else %}Du wohnst woanders? Die Warteliste steht allen offen.{% if motivanfrage_aktiv %} Ein eigenes Motiv lässt sich schon jetzt anfragen; von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.{% endif %}{% endif %}</p>
+    </section>
 
-        <!-- Region Grid -->
-        <section class="mb-28">
-            <h2 class="text-2xl md:text-4xl font-black heading-font text-white uppercase tracking-tighter mb-4 text-center">
-                Orte in <span class="text-glow">deiner Nähe</span>
-            </h2>
-            <p class="text-white/30 text-xs sm:text-sm text-center max-w-2xl mx-auto mb-14 uppercase tracking-widest">
-                {{ orte|length }} Orte entlang der Strecke Fulda – Alsfeld – Gießen
-            </p>
-            {% comment %}Die Orte sind eine Liste und stehen jetzt als solche da (GE27): ul/li statt div, gleiche Klassen, gleiches Aussehen (Tailwind setzt Listen ohne Punkt und Einzug zurück).{% endcomment %}
-            <ul class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
-                {% for ort in orte %}
-                <li class="scroll-reveal glass rounded-2xl px-4 py-5 text-center border-white/5">
-                    <span class="text-white/70 text-sm font-semibold">{{ ort }}</span>
-                </li>
-                {% endfor %}
-            </ul>
-            <p class="text-white/20 text-xs text-center mt-10 max-w-xl mx-auto leading-relaxed">
-                {% if verkauf_aktiv %}Du wohnst woanders? Kein Problem – wir versenden jedes Unikat deutschlandweit.{% else %}Du wohnst woanders? Die Warteliste steht allen offen.{% if motivanfrage_aktiv %} Ein eigenes Motiv lässt sich schon jetzt anfragen; von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.{% endif %}{% endif %}
-            </p>
-        </section>
-
-        <!-- FAQ -->
-        <section class="max-w-4xl mx-auto mb-24">
-            <h2 class="text-2xl md:text-4xl font-black heading-font text-white uppercase tracking-tighter mb-12 text-center">
-                Fragen zu <span class="text-glow">{% if verkauf_aktiv %}Versand{% else %}Herkunft{% endif %} &amp; Region</span>
-            </h2>
-            <div class="space-y-6">
-                <div class="scroll-reveal glass-card p-8 rounded-[2rem]">
-                    <h3 class="text-white font-bold mb-3">Gibt es einen Luviq-Laden in Fulda oder Gießen?</h3>
-                    <p class="text-white/50 font-light leading-relaxed">{% if verkauf_aktiv %}Nein. Luviq Universe ist ein reiner Online-Shop mit Sitz in Alsfeld. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – auch nach Fulda und Gießen gibt es also keinen Laden zum Reinschauen, aber sehr wohl schnellen Versand.{% else %}Nein. Luviq Universe ist eine Marke im Aufbau mit Sitz in Alsfeld. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Fulda noch in Gießen.{% endif %}</p>
-                </div>
-                <div class="scroll-reveal glass-card p-8 rounded-[2rem]" style="transition-delay: 0.1s;">
-                    <h3 class="text-white font-bold mb-3">{% if verkauf_aktiv %}Wie schnell kommt eine Bestellung in der Region an?{% else %}Kann ich aus der Region schon bestellen?{% endif %}</h3>
-                    <p class="text-white/50 font-light leading-relaxed">{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Innerhalb von Hessen – etwa nach Fulda, Gießen, Lauterbach oder Grünberg – ist ein Unikat meist schon nach 1-3 Werktagen im Briefkasten.{% else %}Noch nicht – weder aus Fulda, Gießen, Lauterbach oder Grünberg noch von anderswo. Neue Stücke gibt es erst mit dem ersten Drop; wer dabei sein will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}</p>
-                </div>
-                <div class="scroll-reveal glass-card p-8 rounded-[2rem]" style="transition-delay: 0.2s;">
-                    <h3 class="text-white font-bold mb-3">{% if verkauf_aktiv %}Welche Region beliefert Luviq besonders oft?{% else %}Woher kommt die Luviq-Community?{% endif %}</h3>
-                    <p class="text-white/50 font-light leading-relaxed">{% if verkauf_aktiv %}Versendet wird deutschlandweit – egal wo du wohnst. Welche Region am häufigsten bestellt, wertet diese Seite nicht aus.{% else %}Luviq Universe sitzt in Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen. Wie sich die Community zusammensetzt, wertet diese Seite nicht aus; die Warteliste steht allen offen.{% endif %}</p>
-                </div>
+    <section class="lv-abschnitt" aria-labelledby="herkunft-faq">
+        <h2 class="lv-serif lv-abschnittstitel" id="herkunft-faq">Fragen zu {% if verkauf_aktiv %}Versand{% else %}Herkunft{% endif %} &amp; Region</h2>
+        <div class="lv-faq">
+            <div>
+                <h3>Gibt es einen Luviq-Laden in Lübeck oder Alsfeld, mit Öffnungszeiten?</h3>
+                <p>{% if verkauf_aktiv %}Nein. Luviq Universe ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten. Luisa erreichst du über das Kontaktformular oder per E-Mail.{% else %}Nein. Luviq Universe ist eine Marke im Aufbau mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten. Luisa erreichst du über das Kontaktformular oder per E-Mail.{% endif %}</p>
             </div>
-        </section>
-
-        <!-- CTA -->
-        <div class="text-center">
-            <a href="{% url 'produkte' %}" class="inline-block px-12 py-5 rounded-full bg-glow-orange text-white text-sm font-black uppercase tracking-widest hover:shadow-[0_0_30px_rgba(200,150,92,0.5)] transition-all transform hover:scale-105 active:scale-95">
-                Kollektion entdecken
-            </a>
+            <div>
+                <h3>{% if verkauf_aktiv %}Wie schnell kommt eine Bestellung in der Region an?{% else %}Kann ich aus der Region schon bestellen?{% endif %}</h3>
+                <p>{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet, deutschlandweit – nach Lübeck und Alsfeld genauso wie überallhin.{% else %}Noch nicht – weder aus Lübeck noch aus Alsfeld oder von anderswo. Neue Stücke gibt es erst mit dem ersten Drop; wer dabei sein will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}</p>
+            </div>
+            <div>
+                <h3>{% if verkauf_aktiv %}Welche Region beliefert Luviq besonders oft?{% else %}Woher kommt Luviq?{% endif %}</h3>
+                <p>{% if verkauf_aktiv %}Versendet wird deutschlandweit – egal wo du wohnst. Welche Region am häufigsten bestellt, wertet diese Seite nicht aus.{% else %}Angefangen hat Luviq Universe in Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen. Heute malt Luisa Brehler in Lübeck. Die Warteliste steht allen offen, egal wo.{% endif %}</p>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <section class="lv-abschnitt lv-abschluss" aria-label="Weiter">
+        <a class="lv-knopf" href="{% url 'produkte' %}">Kollektion entdecken <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </section>
 </div>
 {% endblock %}

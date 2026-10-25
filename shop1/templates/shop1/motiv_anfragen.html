@@ -5,9 +5,9 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
 <fieldset>/<legend>. Honeypot und Zeitfalle wie beim Kontaktformular.
 {% endcomment %}
 
-{% block title %}Motiv anfragen: sag, was du willst – Luviq Universe, Alsfeld{% endblock %}
-{% block meta_description %}Sag Luisa Brehler aus Alsfeld, welches Motiv du willst: Richtung, Teil, Bedeutung. Du bekommst Vorschläge, kostenlos und ohne Bestellung. Jetzt anfragen.{% endblock %}
-{% block og_title %}Motiv anfragen – Luviq Universe aus Alsfeld{% endblock %}
+{% block title %}Motiv anfragen: sag, was du willst – Luviq Universe, Lübeck{% endblock %}
+{% block meta_description %}Sag Luisa Brehler aus Lübeck, welches Motiv du willst: Richtung, Teil, Bedeutung. Du bekommst Vorschläge, kostenlos und ohne Bestellung. Jetzt anfragen.{% endblock %}
+{% block og_title %}Motiv anfragen – Luviq Universe aus Lübeck{% endblock %}
 {% block og_description %}Beschreib dein Motiv, Luisa schickt dir Vorschläge, und ihr entscheidet zusammen. Kostet nichts und ist keine Bestellung.{% endblock %}
 {% block twitter_title %}Motiv anfragen – Luviq Universe{% endblock %}
 {% block twitter_description %}Sag Luisa Brehler, welches Motiv du willst. Du bekommst Vorschläge, kostenlos und ohne Bestellung.{% endblock %}
@@ -16,14 +16,28 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+  "@id": "{{ seiten_url }}#breadcrumb",
   "itemListElement": [
-    {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
     {"@type": "ListItem", "position": 2, "name": "Motiv anfragen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'motiv_anfragen' %}"}
   ]
 }
 </script>
 {% endblock %}
+
+{% block schema_ld %}{% if verkauf_aktiv %}
+{% comment %}FAQPage erst mit Verkauf (ab dem Start am 01.11.2026): bis dahin steht die Seite nur als Anfrage da, nichts darf wie ein Angebot wirken. Wortgleich mit dem sichtbaren Text unten (luviq_daten.FAQ_MOTIV, ohne Anführungszeichen und Backslashes - ein Test hält das).{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "{{ seiten_url }}#faq",
+  "mainEntity": [{% for frage, antwort in faq %}
+    {"@type": "Question", "name": "{{ frage }}", "acceptedAnswer": {"@type": "Answer", "text": "{{ antwort }}"}}{% if not forloop.last %},{% endif %}{% endfor %}
+  ]
+}
+</script>
+{% endif %}{% endblock %}
 
 {% block alte_stile %}{% endblock %}
 {% block alpine %}{% endblock %}
@@ -37,10 +51,10 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
             <p class="lv-nr">Motiv anfragen</p>
             <h1 class="lv-serif lv-satz" id="anfrage-titel">Sag mir, was du willst — ich mal’s dir.</h1>
             {% if geschlossen %}
-            <p class="lv-lead">Gerade nehme ich in Alsfeld keine neuen Motivanfragen an. Trag dich auf der Startseite in die Warteliste ein, dann erfährst du als Erstes, wann es wieder geht.</p>
+            <p class="lv-lead">Gerade nehme ich keine neuen Motivanfragen an. Trag dich auf der Startseite in die Warteliste ein, dann erfährst du als Erstes, wann es wieder geht.</p>
             <p><a class="lv-knopf" href="{% url 'home' %}#warteliste">Zur Warteliste</a></p>
             {% else %}
-            <p class="lv-lead">Beschreib mir kurz, was dir vorschwebt. Ich bin Luisa aus Alsfeld, ich schick dir Vorschläge, und wir entscheiden zusammen. Das kostet nichts und ist keine Bestellung. Jedes Stück ist ein handbemaltes Einzelstück, kein zweites entsteht genauso. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.</p>
+            <p class="lv-lead">Beschreib mir kurz, was dir vorschwebt. Ich bin Luisa aus Lübeck, ich schick dir Vorschläge, und wir entscheiden zusammen. Das kostet nichts und ist keine Bestellung. Jedes Stück ist ein handbemaltes Einzelstück, kein zweites entsteht genauso. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.</p>
             <ol class="lv-stationen" aria-label="So geht es weiter">
                 {% for titel, beschreibung in stationen %}<li><span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span>{{ titel }} — {{ beschreibung }}</li>{% endfor %}
             </ol>
@@ -97,6 +111,14 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
             <button class="lv-knopf" type="submit">Anfrage schicken <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </form>
         {% endif %}
+    </section>
+
+    <section class="lv-wissen-liste" aria-label="Häufige Fragen zur Motivanfrage">
+        {% for frage, antwort in faq %}<div class="lv-wissen-frage">
+            <h2 class="lv-serif">{{ frage }}</h2>
+            <div class="lv-wissen-antwort"><p class="lv-wissen-erst">{{ antwort }}</p>{% if forloop.last %}
+                <p>Mehr dazu im Beitrag <a href="{% url 'wissen_pflege' %}">Wie pflege ich handbemalte Kleidung?</a>; zur Größe bei Einzelstücken steht etwas unter <a href="{% url 'wissen_groesse' %}">Die richtige Größe finden</a>.</p>{% endif %}</div>
+        </div>{% endfor %}
     </section>
 </div>
 {% endblock %}

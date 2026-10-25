@@ -9,20 +9,20 @@ Entstehung · Archiv · Luisa · Die nächste Ausgabe. Alle Texte aus
 shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
 {% endcomment %}
 
-{% block title %}Was du willst, handbemalt: Mode aus Alsfeld – Luviq Universe{% endblock %}
-{% block meta_description %}Handbemalte Second-Hand-Mode aus Alsfeld: Luisa Brehler malt dein Motiv mit Bleiche und Pinsel auf ein Einzelstück. Kostenlos und unverbindlich Motiv anfragen.{% endblock %}
+{% block title %}Was du willst, handbemalt: Mode aus Lübeck – Luviq Universe{% endblock %}
+{% block meta_description %}Handbemalte Second-Hand-Mode aus Lübeck: Luisa Brehler malt dein Motiv mit Bleiche und Pinsel auf ein Einzelstück. Kostenlos und unverbindlich Motiv anfragen.{% endblock %}
 {% block og_title %}Luviq Universe – Sag mir, was du willst, ich mal’s dir{% endblock %}
-{% block og_description %}Handbemalte Second-Hand-Teile aus Alsfeld. Du sagst Luisa, was drauf soll, sie schickt dir Vorschläge, und dann entsteht dein Stück. Jedes Motiv gibt es einmal.{% endblock %}
+{% block og_description %}Handbemalte Second-Hand-Teile aus Lübeck. Du sagst Luisa, was drauf soll, sie schickt dir Vorschläge, und dann entsteht dein Stück. Jedes Motiv gibt es einmal.{% endblock %}
 {% block og_image_tag %}
 {% comment %}Vorschaubild 1200 × 630 als JPEG (IS39): aus dem Hero-Panorama zugeschnitten; WhatsApp, LinkedIn und Facebook lesen JPEG sicherer als WebP.{% endcomment %}
-<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/luviq/og-start-1200x630.jpg' %}">
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/luviq/og-start-1200x630.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 {% endblock %}
-{% block twitter_title %}Luviq Universe – Handbemalte Mode aus Hessen{% endblock %}
-{% block twitter_description %}Handbemalte Second-Hand-Teile aus Alsfeld, Hessen. Motiv anfragen, Vorschläge bekommen, Einzelstück tragen.{% endblock %}
+{% block twitter_title %}Luviq Universe – Handbemalte Mode aus Lübeck{% endblock %}
+{% block twitter_description %}Handbemalte Second-Hand-Teile aus Lübeck. Motiv anfragen, Vorschläge bekommen, Einzelstück tragen.{% endblock %}
 {% block twitter_image_tag %}
-<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/luviq/og-start-1200x630.jpg' %}">
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/luviq/og-start-1200x630.jpg">
 {% endblock %}
 
 {% block schema_ld %}
@@ -31,8 +31,8 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
   "@context": "https://schema.org",
   "@type": "ItemList",
   "@id": "{{ request.scheme }}://{{ request.get_host }}/#archiv",
-  "name": "{% if verkauf_aktiv %}Aktuelle Unikate – Luviq Universe Alsfeld{% else %}Bisherige Unikate – Archiv von Luviq Universe Alsfeld{% endif %}",
-  "description": "{% if verkauf_aktiv %}Handbemalte 1-of-1 Upcycling-Mode aus Alsfeld, Hessen – exklusive Einzelstücke.{% else %}Handbemalte 1-of-1 Upcycling-Mode aus Alsfeld, Hessen – bisherige Einzelstücke, bereits vergeben.{% endif %}",
+  "name": "{% if verkauf_aktiv %}Aktuelle Unikate – Luviq Universe Lübeck{% else %}Bisherige Unikate – Archiv von Luviq Universe Lübeck{% endif %}",
+  "description": "{% if verkauf_aktiv %}Handbemalte 1-of-1 Upcycling-Mode aus Lübeck – exklusive Einzelstücke.{% else %}Handbemalte 1-of-1 Upcycling-Mode aus Lübeck – bisherige Einzelstücke, bereits vergeben.{% endif %}",
   "url": "{{ request.scheme }}://{{ request.get_host }}/",
   "itemListElement": [{% for produkt in produkte_galerie %}
     {"@type": "ListItem", "position": {{ forloop.counter }}, "name": "{{ produkt.name|escapejs }}", "url": "{{ request.scheme }}://{{ request.get_host }}{{ produkt.get_absolute_url }}"}{% if not forloop.last %},{% endif %}{% endfor %}
@@ -49,28 +49,28 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
 {% block preload %}
 {# imagesrcset/imagesizes wörtlich wie Quelle und Bild unten, sonst lädt der Browser zwei Fassungen. href = Rückfall für Browser ohne imagesrcset (und von Prüfwerkzeugen gelesen). #}
 <link rel="preload" as="image" media="(min-width: 640px)" fetchpriority="high"
-      href="{% static 'shop1/images/luviq/hero-panorama-1600.webp' %}"
-      imagesrcset="{% static 'shop1/images/luviq/hero-panorama-960.webp' %} 960w, {% static 'shop1/images/luviq/hero-panorama-1600.webp' %} 1600w"
+      href="{% static 'shop1/images/luviq/hero-dornen-quer-1036.webp' %}"
+      imagesrcset="{% static 'shop1/images/luviq/hero-dornen-quer-480.webp' %} 480w, {% static 'shop1/images/luviq/hero-dornen-quer-768.webp' %} 768w, {% static 'shop1/images/luviq/hero-dornen-quer-1036.webp' %} 1036w"
       imagesizes="(min-width: 1440px) 1325px, 92vw">
 <link rel="preload" as="image" media="(max-width: 639px)" fetchpriority="high"
-      href="{% static 'shop1/images/luviq/hero-hoch-900.webp' %}"
-      imagesrcset="{% static 'shop1/images/luviq/hero-hoch-480.webp' %} 480w, {% static 'shop1/images/luviq/hero-hoch-900.webp' %} 900w"
+      href="{% static 'shop1/images/luviq/hero-dornen-hoch-548.webp' %}"
+      imagesrcset="{% static 'shop1/images/luviq/hero-dornen-hoch-400.webp' %} 400w, {% static 'shop1/images/luviq/hero-dornen-hoch-548.webp' %} 548w"
       imagesizes="100vw">
 {% endblock %}
 
 {% block content %}
 <div class="lv-seite">
 
-    <!-- ═══ Hero H4 „Panorama": Foto ohne Text, darunter Markensatz und Drop ═══ -->
+    <!-- ═══ Hero H4 „Panorama": Foto ohne Text, darunter Markensatz und Drop. Seit 22.10.2026 Luisas Hoodie mit Dornen-Augen (Rücken, 16:9 / Handy 4:5) ═══ -->
     <section class="lv-hero" id="start" aria-labelledby="markensatz">
-        <p class="lv-mast"><span>LUVIQ Universe</span><span>{{ drop.monat }}</span><span>Alsfeld</span></p>
+        <p class="lv-mast"><span>LUVIQ Universe</span><span>{{ drop.monat }}</span><span>Lübeck</span></p>
         <figure class="lv-pano">
             <picture>
-                <source media="(max-width: 639px)" srcset="{% static 'shop1/images/luviq/hero-hoch-480.webp' %} 480w, {% static 'shop1/images/luviq/hero-hoch-900.webp' %} 900w" sizes="100vw" width="900" height="1125">
-                <img src="{% static 'shop1/images/luviq/hero-panorama-1600.webp' %}"
-                     srcset="{% static 'shop1/images/luviq/hero-panorama-960.webp' %} 960w, {% static 'shop1/images/luviq/hero-panorama-1600.webp' %} 1600w"
+                <source media="(max-width: 639px)" srcset="{% static 'shop1/images/luviq/hero-dornen-hoch-400.webp' %} 400w, {% static 'shop1/images/luviq/hero-dornen-hoch-548.webp' %} 548w" sizes="100vw" width="548" height="685">
+                <img src="{% static 'shop1/images/luviq/hero-dornen-quer-1036.webp' %}"
+                     srcset="{% static 'shop1/images/luviq/hero-dornen-quer-480.webp' %} 480w, {% static 'shop1/images/luviq/hero-dornen-quer-768.webp' %} 768w, {% static 'shop1/images/luviq/hero-dornen-quer-1036.webp' %} 1036w"
                      sizes="(min-width: 1440px) 1325px, 92vw"
-                     alt="{{ hero.alt }}" width="1600" height="686"
+                     alt="{{ hero.alt }}" width="1036" height="583"
                      loading="eager" fetchpriority="high" decoding="async">
             </picture>
             <figcaption><span>{% if hero.nummer %}Nº {{ hero.nummer }} · {% endif %}{{ hero.name }}</span><span>Archiv · vergeben</span></figcaption>
@@ -197,7 +197,7 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
             <footer>{{ zitat_quelle }}</footer>
         </blockquote>
         <div class="lv-luisa-text">
-            <p>Luviq ist ein Ein-Personen-Atelier in Alsfeld. Die Teile sind Second Hand, die Motive freihand, mit Pinsel und Bleiche, bald auch mit Textilfarbe.</p>
+            <p>Luviq ist ein Ein-Personen-Atelier in Lübeck, angefangen hat es in Alsfeld. Die Teile sind Second Hand, die Motive freihand, mit Pinsel und Bleiche, bald auch mit Textilfarbe.</p>
             <a class="lv-link" href="{% url 'ueber_uns' %}">Mehr über Luisa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
     </section>

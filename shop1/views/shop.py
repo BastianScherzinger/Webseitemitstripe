@@ -329,7 +329,7 @@ def ueber_uns(request):
 
 
 def liefergebiet(request):
-    """SEO/GEO-Landingpage: Herkunft Alsfeld + Liefergebiet zwischen Fulda und Gießen."""
+    """SEO/GEO-Landingpage: Herkunft Alsfeld (Orte rundherum) und Sitz heute in Lübeck."""
     orte = [
         'Fulda', 'Herbstein', 'Lauterbach', 'Grebenau', 'Ulrichstein',
         'Alsfeld', 'Romrod', 'Antrifttal', 'Kirtorf', 'Homberg (Efze)',
@@ -383,6 +383,9 @@ def produkt_detail_slug(request, slug):
     return render(request, 'shop1/produkt_detail.html', {'produkt': produkt})
 
 
+# offen-ok: Altadresse /produkt/<id>/ aus Links und Suchindex, absichtlich
+# ohne Anmeldung. Geschrieben wird nur der fehlende Slug eines aktiven Stücks
+# (Produkt.save bildet ihn aus dem Namen), nichts aus der Anfrage.
 def produkt_detail_redirect(request, produkt_id):
     """Redirect numerische ID → Slug-URL; generiert Slug falls noch keiner existiert."""
     produkt = get_object_or_404(Produkt, id=produkt_id, aktiv=True)

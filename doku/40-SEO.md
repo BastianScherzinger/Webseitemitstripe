@@ -1,7 +1,7 @@
 ---
 bereich: seo
 titel: SEO und GEO
-stand: 2026-10-03
+stand: 2026-10-23
 status: vollständig
 fortschritt: 98
 zusammenfassung: Stand 02.10.2026: Wissensbereich frei und indexierbar (17 Sitemap-URLs), llms.txt und llms-full.txt, Feed, sameAs mit Instagram, TikTok und Google-Profil, @id-Schema mit speakable, Apex-301; gemessen SEO-Inhalt 94, SEO-Technik 99, GEO 100. Offen: Indexierung beantragen (Bastian, TS46), zwei Entscheidungen (Stückseiten noindex, Pfad /ueber_uns/) und die Alt-Texte je Stück (später).
@@ -14,6 +14,8 @@ quellen: GOOGLE_SEO_GUIDE.md, LOGBUCH.md, DOCUMENTATION.md, shop1/views/legal.py
 *Woran sich der Fortschritt bemisst: am Mittel der drei gemessenen Bereichswerte **SEO-Technik, SEO-Inhalt und GEO** des Laufs vom 02.10.2026 (Regelstand `2026-10-02e`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße. Nennt die Datei zusätzlich einen Planfortschritt (etwa „52 von 73 Aufgaben“), steht der im Abschnitt „Stand“ — er misst den Plan, nicht die Seite.*
 
 > **Stand 02.10.2026 (geprüft, abends):** `main` = `origin/main` = `7ae67ab` und live. Alle Arbeitszweige des Tages (`fix/2026-10-02-luviq-fertig`, `-rest`, `-luisa`, `-recht`, `-wissen`, `fix/2026-10-02d-standard`) sind gemergt (`git log origin/main..<zweig>` leer, `git branch -r --no-merged origin/main` leer); die GitHub-Prüfungen auf `main` sind grün (Lauf 37040107996, 02.10.2026). Live belegt am 02.10.2026 (curl): Sitemap mit 17 Adressen samt der drei Wissensbeiträge, `/llms-full.txt` 200, „Aktualisiert am …“ (`<time>`) auf den Wissensbeiträgen (GE47), `Permissions-Policy` im Kopf, `/health/` 200, Apex 301 auf www. Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
+
+> **23.10.2026 Schub 3:** Weiterlesen-Links zwischen den freigegebenen Wissensbeiträgen, Öffnungszeiten-Antwort auf `/liefergebiet/` (echte Suchanfrage), Entwurf `/wissen/so-entsteht-dein-motiv/` (noindex bis Freigabe). Einzelheiten `LOGBUCH.md`.
 
 ## Stand
 
@@ -136,6 +138,7 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 
 | Datum | Was | Beleg |
 |---|---|---|
+| 23.10.2026 | **Zweig `seo/2026-10-23-luviq-upgrade`, nicht gemergt, nicht live.** Befunde aus Website-Check (lokal, 22.10.2026) und Live-Abruf: canonical/og:url/hreflang und Schema-`@id` ohne Query (die sechs Vorbelegungen `/motiv-anfragen/?richtung=…` standen als eigene Seiten mit gleichem Titel im Index); `UMLEITEN_HOSTS` für zweite Domains (`luviq-luebeck.com` lieferte 200 als Kopie); llms.txt mit „Womit malt Luisa Brehler?“ und „Wie bekomme ich ein eigenes Motiv?“, Wissenszeile berichtigt; Titel ≤ 60 (Wissen, Pflege, Upcycling) und Beschreibungen ≤ 160 Zeichen (Archiv, Gästebuch, Pflege, Upcycling, Größe, Herkunft). Google-Profil/Domain: [2026-10-23_GOOGLE-PROFIL-ENTSCHEIDUNG.md](2026-10-23_GOOGLE-PROFIL-ENTSCHEIDUNG.md) | `12cc89e`, `62147a0`, `78822a0`, `189152e`, `287ed36` |
 | 02.10.2026 | **Wissensbereich frei und live:** Pflege, Upcycling und Größe `index, follow`, in Sitemap (17 URLs), `llms.txt` und Feed; Titel, FAQPage, Quellen nachgeschärft; sichtbares Datum „Aktualisiert am …“ (`GE47`) | `3073388`, `c943006`, `f03bf61` (live 02.10.2026 abgerufen) |
 | 02.10.2026 | **`sameAs` erweitert** (GE11, GE46): Instagram `luviq.archive`, TikTok `@luviq.archive`, Google-Unternehmensprofil „Luviq“ in `sameAs` und `llms.txt` | `3073388` (live `llms.txt` abgerufen) |
 | 02.10.2026 | **`llms-full.txt`** (GE31, VL09): 200, 44 KB; von `robots.txt` und `llms.txt` genannt | `bf8882e` |
@@ -161,6 +164,10 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 | 27.09.2026 (Zweig `sofort/2026-09-27-pj05-und-2-weitere`, nicht gemergt) | GE22 gebaut: `geo` (`GeoCoordinates`) stand im JSON-LD-Graphen bisher nur, wenn `VERKAUF_AKTIV` gesetzt ist — die `PostalAddress` selbst wird unabhängig davon immer schon ausgeliefert. Koordinaten sind keine Geschäftsbehauptung wie Preisspanne, Zahlarten oder Liefergebiet, sondern nur die maschinenlesbare Form derselben Adresse, deshalb eine Zeile in `templates/base.html` aus dem `verkauf_aktiv`-Block herausgezogen; kein neues Element, `test_aufbau` unverändert. `PJ05` (kein kritischer Code-Befund, Mail-Vorlagen sind von der Prüfung ausgenommen) und `KV08` (fehlende Telefonnummer plus zwei Eigenheiten der Katalogmessung) im selben Paket als **beim Kunden** im Bewertungsblock von [80-AUFGABEN.md](80-AUFGABEN.md) eingetragen, dafür keine Zeile Code geändert | `89643e2` |
 | 28.09.2026 (Zweig `sofort/2026-09-27-pj05-und-2-weitere`, nicht gemergt, Nachbesserung) | GE22 berichtigt: Die Fassung aus `89643e2` (`geo` ausserhalb des `verkauf_aktiv`-Blocks, aber weiter direkt am `Organization`/`ClothingStore`-Knoten) war von der Gegenprüfung zu Recht abgelehnt — `geo` ist nach schema.org nur an `Place` und dessen Untertypen gültig, und ohne `VERKAUF_AKTIV` gibt der Knoten nur `"Organization"` aus. Statt dessen trägt der Organization-Knoten jetzt einen eigenen `location`-Knoten vom Typ `Place` mit eigener `PostalAddress` und `GeoCoordinates` (`templates/base.html:80-93`), unabhängig vom Verkaufsschalter gültig; `address` bleibt zusätzlich am Organization-Knoten stehen. Kein Element, keine Klasse, keine Kennung im sichtbaren Aufbau geändert, `test_aufbau` unverändert | *(dieser Zweig)* |
 | 01.10.2026 | **TS19** — Bild-Auszeichnung in der Sitemap: Startseite (Titelbild, fünf Entstehungsbilder aus `luviq_daten`) und `/produkte/` (Bilder der aktiven Stücke); kein Logo als Platzhalter an Seiten ohne Inhaltsbild. Live bestätigt (Sitemap abgerufen 01.10.2026) | `36c0741` |
+
+## Schub 23.10.2026 (Zweig, nicht live)
+
+Sitz Lübeck, Herkunft Alsfeld in Titeln, Schema und Stückbeschreibungen; `sameAs` aus `luviq_daten.PROFILE`; fünf Motiv-Fragen (`luviq_daten.FAQ_MOTIV`) sichtbar auf `/motiv-anfragen/`, `FAQPage` erst mit Verkauf; `llms.txt` führt sie in beiden Fassungen. Keine Lübecker Ortsseite, solange Luisas persönlicher Kontakt in Lübeck ungeklärt ist (`80-AUFGABEN.md`).
 
 ## Offen
 

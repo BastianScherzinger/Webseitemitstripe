@@ -1,7 +1,7 @@
 ---
 bereich: design
 titel: Design und Gestaltungslinie
-stand: 2026-10-03
+stand: 2026-10-23
 status: vollständig
 fortschritt: 100
 zusammenfassung: Stand 02.10.2026: Linie „Nachtausgabe“ (luviq.css, ein Akzent #C8763F, selbst gehostete Schriften, Radius 0) live; Alpine.js entfernt (Menü als details-Element), Critical CSS über tools/kritisches_css.py, Überschriften ohne Sprung, Barrierefreiheit 100 gemessen. Offen sind drei Punkte: Umbau der alten lv-alt-Seiten und Orbit-Texte der Kasse (beide später, ohne Verkauf unsichtbar) und eine Sichtprüfung im Browser durch Bastian; Fotos und Textfreigabe liegen bei Luisa (80-AUFGABEN).
@@ -105,7 +105,7 @@ bleibt damit offen ([80-AUFGABEN.md](80-AUFGABEN.md) → Offen Nr. 3). Fallback 
 
 **Rahmen (`templates/base.html`):** Sprunglink „Zum Inhalt springen“ (`.lv-sprung`) als erstes Element; Kopf `.lv-kopf` mit Wortmarke „LUVIQ“ und Hauptnavigation *Motiv anfragen · Drop · Archiv · Entstehung · Luisa · Konto/Anmelden* (Warenkorb nur bei `VERKAUF_AKTIV`, „Panel“ nur für die Betreiberin), mobil ein Menü per `<details>`; Fuß `.lv-fuss` mit *Start · Motiv anfragen · Archiv · Luisa · Wissen · Gästebuch · Kontakt · Herkunft (mit Verkauf „Liefergebiet“) · Warteliste*, der Zeile „Marke im Aufbau · Alsfeld, Hessen“ sowie Impressum, Datenschutz (AGB nur mit Verkauf). Keine Telefonnummer — es gibt keine belegte.
 
-**Zwei Seitenarten** (`{% block seitenart %}`): `lv-seite` für Startseite, Motiv anfragen (und Danke-Seite), Archiv (`/produkte/`), Stückseite, „Luisa“ (`/ueber_uns/`) und die 404-Seite; `lv-alt` (Vorgabe) mit Übersetzungsschicht für Kontakt, Gästebuch, Wissen, Rechtstexte, Konto und Kasse; das Admin-Panel bleibt `lv-admin`.
+**Zwei Seitenarten** (`{% block seitenart %}`): `lv-seite` für Startseite, Motiv anfragen (und Danke-Seite), Archiv (`/produkte/`), Stückseite, „Luisa“ (`/ueber_uns/`), die 404-Seite und – **auf Zweig `seo/2026-10-23-luviq-upgrade`, noch nicht live** – Wissen (Übersicht + sechs Beiträge, Critical-CSS-Profil `wissen`), Kontakt und Herkunft (`/liefergebiet/`, Profil `textseite`); `lv-alt` (Vorgabe) mit Übersetzungsschicht für Gästebuch, Rechtstexte, Konto und Kasse (live bis zum Merge auch noch Kontakt, Herkunft, Wissen); das Admin-Panel bleibt `lv-admin`.
 
 **Startseite (`index.html`, sieben Abschnitte):** Hero `#start` (Ausgabe-Datum, Nº und Titel des letzten Stücks, Markensatz „Sag mir, was du willst — ich mal’s dir.“, Panoramafoto) → `#anfragen` („Du hast eine Idee?“, drei Schritte, Richtungsauswahl, Motiv anfragen) → `#drop` (Countdown „Nº 006 erscheint Donnerstag, 08.10., 18 Uhr“, Warteliste-Feld) → `#entstehung` („Wie ein Stück entsteht“, fünf Schritte) → `#archiv` (Karten `teile/archiv_karte.html`, „vergeben“) → `#luisa` (Zitat) → `#warteliste`. Texte und Werte kommen aus `shop1/luviq_daten.py`.
 
@@ -206,7 +206,7 @@ Stand 02.10.2026, gegen die Vorlagen und die Live-Seite geprüft. Erledigt und d
 
 | Punkt | Beleg | Regel |
 |---|---|---|
-| Später: alte Seiten (Kontakt, Gästebuch, Wissen, Rechtstexte, Konto, Kasse) von der Übersetzungsschicht `lv-alt` auf neu gebaute `lv-seite` umstellen. Grund: sie sind seit dem Umbau vom 19.09.2026 lesbar und bestehen die Messung (Barrierefreiheit 100, Vorlagen-Konformität 99); ein Neubau verändert Seiten unter der Designwache (`aufbau_referenz.json`) und braucht Luisas Blick | `{% block seitenart %}` steht in `base.html` und in den Vorlagen Start, Archiv, Stück, Luisa, Motiv anfragen, Danke und 404 (Zählung 02.10.2026) | VL-Konformität |
+| Später: alte Seiten (Gästebuch, Rechtstexte, Konto, Kasse; Kontakt, Herkunft und Wissen sind auf Zweig `seo/2026-10-23-luviq-upgrade` umgestellt) von der Übersetzungsschicht `lv-alt` auf neu gebaute `lv-seite` umstellen. Grund: sie sind seit dem Umbau vom 19.09.2026 lesbar und bestehen die Messung (Barrierefreiheit 100, Vorlagen-Konformität 99); ein Neubau verändert Seiten unter der Designwache (`aufbau_referenz.json`) und braucht Luisas Blick | `{% block seitenart %}` steht in `base.html` und in den Vorlagen Start, Archiv, Stück, Luisa, Motiv anfragen, Danke und 404 (Zählung 02.10.2026) | VL-Konformität |
 | Später: Kasse, Warenkorb, Zahlung und Profil tragen noch „Orbit/Mission“-Texte („Your Orbit“, „Mission Checkout“) — erst vor dem Einschalten des Verkaufs sprachlich nachziehen. Grund: ohne Verkauf sind diese Seiten gesperrt und für Besucher unsichtbar; die öffentliche Meldung nach einem Gästebuchbeitrag ist bereits klar („Dein Beitrag wurde veröffentlicht.“, Test `GaestebuchMeldungTest`) | [80-AUFGABEN.md](80-AUFGABEN.md), „Verkauf einschalten nach Gewerbeanmeldung“ | — |
 | Bei Bastian: drei Sichtprüfungen im Browser — Kartenplatzhalter auf `/gaestebuch/` (Gestaltung aus Inline-Stilen statt aus Klassen der Linie, `RE17`), Darstellung des Datenschutzhinweises auf `/kontakt/` (reiner Fließtext ohne Klasse, `KV05`) und Fokusring (Geschmacksentscheidung). Grund: ein Agent ohne Browser kann sie nicht sehen; Quelltext und Tests belegen nur, dass die Elemente da sind | `_reviews_map.html`, `kontakt.html`, `luviq.css`; nach den Quellen hat sie noch niemand durchgeführt | RE17, KV05 |
 

@@ -5,16 +5,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Luviq Universe – Handbemalte Second Hand Mode aus Alsfeld | Hessen{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Alsfeld (Hessen): Handbemalte 1-of-1 Vintage-Unikate. Nachhaltige Second-Hand-Mode – deutschlandweit bestellen. Gießen, Fulda, Frankfurt &amp; mehr.{% else %}Luviq Universe aus Alsfeld (Hessen): handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler. Marke im Aufbau – jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}">
-    <meta name="keywords" content="Luviq, Luviq Universe, Second Hand Mode Alsfeld, Vintage Mode Hessen, handbemalte Kleidung{% if verkauf_aktiv %} kaufen{% endif %}, Upcycling Mode Deutschland, 1 of 1 Unikate, Second Hand Gießen, Vintage Fulda, nachhaltige Mode Hessen">
+    <title>{% block title %}Luviq Universe – Handbemalte Second Hand Mode aus Lübeck{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Lübeck: Handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler, angefangen in Alsfeld. Second-Hand-Mode – deutschlandweit bestellen.{% else %}Luviq Universe aus Lübeck: handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler, angefangen in Alsfeld. Marke im Aufbau – jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}">
+    <meta name="keywords" content="Luviq, Luviq Universe, Second Hand Mode Lübeck, Second Hand Mode Alsfeld, Vintage Mode Lübeck, handbemalte Kleidung{% if verkauf_aktiv %} kaufen{% endif %}, Upcycling Mode Deutschland, 1 of 1 Unikate, handbemalte Hoodies Lübeck, Upcycling Lübeck">
     <meta name="author" content="Luisa Brehler">
 
     <!-- Geo / Local SEO -->
-    <meta name="geo.region" content="DE-HE">
-    <meta name="geo.placename" content="Alsfeld, Hessen">
-    <meta name="geo.position" content="50.7517;9.2685">
-    <meta name="ICBM" content="50.7517, 9.2685">
+    <meta name="geo.region" content="DE-SH">
+    <meta name="geo.placename" content="Lübeck">
     <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
     <meta name="google-site-verification" content="wxLpa8ANLiSPL7mfpSwUxEPl8-H3yyCsiUzHu4lMxsM" />
     <meta name="csrf-token" content="{{ csrf_token }}">
@@ -39,7 +37,7 @@
     <meta property="og:locale" content="de_DE">
     <meta property="og:site_name" content="Luviq Universe">
     {% block og_image_tag %}
-    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/logo-luviq.jpeg">
     <meta property="og:image:width" content="1290">
     <meta property="og:image:height" content="1346">
     <meta property="og:image:alt" content="Luviq Universe – Logo">
@@ -50,7 +48,7 @@
     <meta name="twitter:title" content="{% block twitter_title %}Luviq Universe – Handbemalte Vintage Mode{% endblock %}">
     <meta name="twitter:description" content="{% block twitter_description %}Handbemalte 1-of-1 Upcycling-Unikate aus Deutschland.{% endblock %}">
     {% block twitter_image_tag %}
-    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}">
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/logo-luviq.jpeg">
     {% endblock %}
 
     <!-- Schema.org Sitewide JSON-LD -->
@@ -63,7 +61,7 @@
           "@type": {% if verkauf_aktiv %}["Organization", "ClothingStore", "LocalBusiness"]{% else %}"Organization"{% endif %},
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
           "name": "Luviq Universe",
-          "alternateName": ["Luviq", "Luviq Mode", "Luviq Alsfeld"],
+          "alternateName": ["Luviq", "Luviq Mode", "Luviq Lübeck", "Luviq Alsfeld"],
           "url": "{{ request.scheme }}://{{ request.get_host }}/",
           "logo": {
             "@type": "ImageObject",
@@ -71,58 +69,25 @@
           },
           "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}",
           "founder": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
-          "description": "{% if verkauf_aktiv %}Luviq Universe ist ein nachhaltiger Second-Hand-Shop aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Versand deutschlandweit.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus Alsfeld in Hessen. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Derzeit findet kein Verkauf statt.{% endif %}",
+          "description": "{% if verkauf_aktiv %}Luviq Universe ist ein Second-Hand-Shop aus Lübeck, angefangen in Alsfeld (Hessen). Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Versand deutschlandweit.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus Lübeck, angefangen in Alsfeld (Hessen). Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Derzeit findet kein Verkauf statt.{% endif %}",
+          {% comment %}Anschrift aus der Gewerbeanmeldung vom 22.10.2026 (luviq_daten.ANBIETERIN). Keine Koordinaten mehr: die Anschrift ist eine Wohnung, kein Laden; die Alsfelder Koordinaten stimmen seit dem Umzug nicht mehr. Alsfeld bleibt als Herkunft (foundingLocation).{% endcomment %}
           "address": {
             "@type": "PostalAddress",
-            "streetAddress": "Grünberger Str. 16",
-            "addressLocality": "Alsfeld",
-            "postalCode": "36304",
-            "addressRegion": "Hessen",
-            "addressCountry": "DE"
+            "streetAddress": "{{ anbieterin.strasse }}",
+            "addressLocality": "{{ anbieterin.ort }}",
+            "postalCode": "{{ anbieterin.plz }}",
+            "addressRegion": "{{ anbieterin.region }}",
+            "addressCountry": "{{ anbieterin.land }}"
           },
-          {% comment %}geo gehoert nach schema.org nicht direkt an Organization, sondern an einen Place-Knoten - deshalb ueber location eingehaengt, unabhaengig vom Verkaufsschalter gueltig.{% endcomment %}
-          "location": {
-            "@type": "Place",
-            "address": {
-              "@type": "PostalAddress",
-              "streetAddress": "Grünberger Str. 16",
-              "addressLocality": "Alsfeld",
-              "postalCode": "36304",
-              "addressRegion": "Hessen",
-              "addressCountry": "DE"
-            },
-            "geo": {
-              "@type": "GeoCoordinates",
-              "latitude": 50.7517,
-              "longitude": 9.2685
-            }
-          },
+          "foundingLocation": {"@type": "Place", "name": "{{ herkunft.ort }}, {{ herkunft.region }}"},
 {% if verkauf_aktiv %}
           "areaServed": [
+            {"@type": "City", "name": "Lübeck"},
             {"@type": "City", "name": "Alsfeld"},
-            {"@type": "City", "name": "Gießen"},
-            {"@type": "City", "name": "Fulda"},
-            {"@type": "City", "name": "Lauterbach"},
-            {"@type": "City", "name": "Herbstein"},
-            {"@type": "City", "name": "Grebenau"},
-            {"@type": "City", "name": "Romrod"},
-            {"@type": "City", "name": "Antrifttal"},
-            {"@type": "City", "name": "Kirtorf"},
-            {"@type": "City", "name": "Homberg (Efze)"},
-            {"@type": "City", "name": "Neustadt (Hessen)"},
-            {"@type": "City", "name": "Schwalmstadt"},
-            {"@type": "City", "name": "Ulrichstein"},
-            {"@type": "City", "name": "Mücke"},
-            {"@type": "City", "name": "Grünberg"},
-            {"@type": "City", "name": "Laubach"},
-            {"@type": "City", "name": "Frankfurt am Main"},
-            {"@type": "City", "name": "Marburg"},
-            {"@type": "City", "name": "Kassel"},
-            {"@type": "State", "name": "Hessen"},
             {"@type": "Country", "name": "Deutschland"}
           ],
 {% endif %}
-          "email": "brehlerluisa@gmail.com",
+          "email": "{{ anbieterin.email }}",
 {% if verkauf_aktiv %}
           "priceRange": "€€",
           "currenciesAccepted": "EUR",
@@ -137,18 +102,31 @@
             ]
           },
 {% endif %}
-          "sameAs": [
-            "https://www.instagram.com/luviq.archive/",
-            "https://www.tiktok.com/@luviq.archive",
-            "https://www.google.com/maps?cid=13899750731019902000"
+          "sameAs": [{% for url in profile_urls %}
+            "{{ url }}"{% if not forloop.last %},{% endif %}{% endfor %}
           ]
-        },
+        },{% if motivanfrage_aktiv %}
+        {
+          {% comment %}GE13 (23.10.2026): die eine Leistung, die es ohne Verkauf gibt, ist die Motivanfrage. Als Service mit provider und areaServed, bewusst ohne offers: es gibt keinen Preis, und eine Preisspanne zu nennen hiesse, einen Verkauf vorzutaeuschen. Mit Verkauf kommt der Preis ueber die Product-Knoten der Stueckseiten.{% endcomment %}
+          "@type": "Service",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#motivanfrage",
+          "name": "Motiv anfragen: Handbemalung nach Wunsch",
+          "serviceType": "Handbemalung von Second-Hand-Kleidung nach Motivwunsch",
+          "description": "Du beschreibst ein Motiv, Luisa Brehler schickt Vorschläge, dann wird gemeinsam entschieden. Die Anfrage kostet nichts und ist keine Bestellung.{% if not verkauf_aktiv %} Derzeit findet kein Verkauf statt.{% endif %}",
+          "provider": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
+          "areaServed": [
+            {"@type": "City", "name": "{{ anbieterin.ort }}"},
+            {"@type": "City", "name": "{{ herkunft.ort }}"},
+            {"@type": "Country", "name": "Deutschland"}
+          ],
+          "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'motiv_anfragen' %}"
+        },{% endif %}
         {
           "@type": "WebSite",
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
           "url": "{{ request.scheme }}://{{ request.get_host }}/",
           "name": "Luviq Universe",
-          "description": "Handbemalte Second Hand Mode und Vintage-Unikate aus Alsfeld, Hessen{% if verkauf_aktiv %} – deutschlandweit bestellen{% endif %}.",
+          "description": "Handbemalte Second Hand Mode und Vintage-Unikate aus Lübeck{% if verkauf_aktiv %} – deutschlandweit bestellen{% endif %}.",
           "inLanguage": "de-DE",
           "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
         },
@@ -163,8 +141,8 @@
         {
           {% comment %}name und dateModified kommen aus dem gepflegten Register shop1/seiten_stand.py (ueber den Kontextprozessor als "seite"). Dasselbe Register speist das lastmod der Sitemap - beide koennen so nicht auseinanderlaufen. Auf Seiten ohne Registereintrag (Produkt, Konto) fehlen die beiden Angaben, statt erfunden zu werden.{% endcomment %}
           "@type": "WebPage",
-          "@id": "{{ request.build_absolute_uri }}#webpage",
-          "url": "{{ request.build_absolute_uri }}",{% if seite %}
+          "@id": "{{ seiten_url }}#webpage",
+          "url": "{{ seiten_url }}",{% if seite %}
           "name": "{{ seite.name|escapejs }}",
           "dateModified": "{{ seite.stand }}",{% endif %}
           {% comment %}speakable (PJ13): Titel und Meta-Beschreibung als die Teile, die ein Sprachassistent vorlesen soll - beide stehen auf jeder Seite genau einmal (pruefe_seite, test_seo), und beide sind knapp und in ganzen Saetzen. XPath statt CSS-Selektor, weil kein sichtbares Element eine Klasse dafuer bekommen darf (Designwache).{% endcomment %}
@@ -185,8 +163,8 @@
 
     <!-- Favicon & PWA -->
     {# flavicon.ico (16/32/48 px, aus flavicon.jpeg erzeugt) statt des 1254-px-JPEGs: 7 KB statt 69 KB auf jeder Seite. #}
-    <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="{% static 'shop1/images/flavicon.ico' %}">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'shop1/images/flavicon.ico' %}">
+    <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="/static/shop1/images/flavicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/static/shop1/images/flavicon.ico">
     {# TS37: quadratisches 180-px-PNG, verkleinert aus flavicon.jpeg (1254 x 1254) - statt des nicht quadratischen 1290 x 1346-JPEGs. #}
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'shop1/images/apple-touch-icon.png' %}">
     <link rel="manifest" href="{% static 'shop1/manifest.json' %}">
@@ -362,7 +340,7 @@
     <footer class="lv-fuss">
         <p class="lv-fuss-wm" aria-hidden="true">LUVIQ</p>
         <nav aria-label="Fußnavigation">
-            <a href="{% url 'home' %}">Start</a>
+            <a href="{% url 'home' %}">Startseite</a>
             {% if motivanfrage_aktiv %}<a href="{% url 'motiv_anfragen' %}">Motiv anfragen</a>{% endif %}
             <a href="{% url 'produkte' %}">Archiv</a>
             <a href="{% url 'ueber_uns' %}">Luisa</a>
@@ -374,7 +352,7 @@
             <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg>{{ instagram_name|default:'luviq.archive' }}</a>
         </nav>
         {% comment %}Verkaufsschalter: die AGB gelten erst ab Eröffnung des Shops und sind ohne Verkauf nicht verlinkt (die Seite bleibt erreichbar).{% endcomment %}
-        <p class="lv-recht"><span>© {% now "Y" %} Luviq Universe · Marke im Aufbau · Alsfeld, Hessen · Antwort auf Nachrichten {{ antwort|default:"innerhalb von 2 Stunden" }}</span><span><a href="{% url 'impressum' %}">Impressum</a> · <a href="{% url 'datenschutz' %}">Datenschutz</a>{% if verkauf_aktiv %} · <a href="{% url 'agb' %}">AGB</a>{% endif %}</span></p>
+        <p class="lv-recht"><span>© {% now "Y" %} Luviq Universe · Marke im Aufbau · Lübeck · angefangen in Alsfeld · Antwort auf Nachrichten {{ antwort|default:"innerhalb von 2 Stunden" }}</span><span><a href="{% url 'impressum' %}">Impressum</a> · <a href="{% url 'datenschutz' %}">Datenschutz</a>{% if verkauf_aktiv %} · <a href="{% url 'agb' %}">AGB</a>{% endif %}</span></p>
     </footer>
 
     {% if motivanfrage_aktiv and ist_panel != '/shop-admin/' and seitenname != 'motiv_anfragen' %}

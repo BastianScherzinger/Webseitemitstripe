@@ -41,6 +41,7 @@ FAQ_SEITEN = (
     '/wissen/pflege-handbemalte-kleidung/',
     '/wissen/upcycling-mode-second-hand-vintage/',
     '/wissen/groesse-bei-einzelstuecken/',
+    '/wissen/so-entsteht-dein-motiv/',
     '/wissen/bestellen-und-bezahlen/',
     '/wissen/widerruf-und-ruecksendung/',
     '/wissen/konto-und-daten/',
@@ -808,7 +809,10 @@ class RatgeberSchemaTest(LuviqTestCase):
         listen = [k for k in schema_knoten(inhalt) if k.get('@type') == 'ItemList']
         self.assertEqual(len(listen), 1)
         eintraege = listen[0]['itemListElement']
-        erwartet = [b['titel'] for _, _, b in self._beitraege()]
+        # Entwürfe (freigegeben=False) stehen nie in der Übersicht.
+        from ..views.wissen import freigegebene_beitraege
+        erwartet = [b['titel'] for _, slug, b in self._beitraege()
+                    if slug in freigegebene_beitraege()]
         self.assertEqual([e['name'] for e in eintraege], erwartet)
         self.assertEqual(listen[0]['numberOfItems'], len(erwartet))
         for eintrag in eintraege:

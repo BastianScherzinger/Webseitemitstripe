@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Impressum – Luviq Universe | Alsfeld, Hessen{% endblock %}
-{% block meta_description %}Anbieterkennzeichnung von Luviq Universe: Luisa Brehler, Grünberger Str. 16, 36304 Alsfeld. Kontaktdaten, Verantwortliche und rechtliche Hinweise hier nachlesen.{% endblock %}
+{% block title %}Impressum – Luviq Universe | {{ anbieterin.ort }}{% endblock %}
+{% block meta_description %}Anbieterkennzeichnung von Luviq Universe: {{ anbieterin.name }}, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}. Kontaktdaten, Verantwortliche und rechtliche Hinweise hier nachlesen.{% endblock %}
 {% block meta_robots %}noindex, follow{% endblock %}
 {% block brotkrume_ld %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+  "@id": "{{ seiten_url }}#breadcrumb",
   "itemListElement": [
-    {"@type": "ListItem", "position": 1, "name": "Start", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
     {"@type": "ListItem", "position": 2, "name": "Impressum", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'impressum' %}"}
   ]
 }
@@ -24,18 +24,18 @@
   "@type": {% if verkauf_aktiv %}"LocalBusiness"{% else %}"Organization"{% endif %},
   "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
   "name": "Luviq Universe",
-  {% comment %}legalName „Name – Marke" liest sich wie die Bezeichnung eines Gewerbes; ohne Verkauf (kein Gewerbe angemeldet) entfällt er.{% endcomment %}
-  {% if verkauf_aktiv %}"legalName": "Luisa Brehler – Luviq Universe",{% endif %}
+  {% comment %}legalName einer Einzelunternehmerin ist ihr Name (Gewerbeanmeldung 22.10.2026, luviq_daten.ANBIETERIN). Ohne Verkauf bleibt er weg: die Seite tritt bis dahin nicht als Geschäft auf.{% endcomment %}
+  {% if verkauf_aktiv %}"legalName": "{{ anbieterin.name }}",{% endif %}
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "Grünberger Str. 16",
-    "addressLocality": "Alsfeld",
-    "postalCode": "36304",
-    "addressRegion": "Hessen",
-    "addressCountry": "DE"
+    "streetAddress": "{{ anbieterin.strasse }}",
+    "addressLocality": "{{ anbieterin.ort }}",
+    "postalCode": "{{ anbieterin.plz }}",
+    "addressRegion": "{{ anbieterin.region }}",
+    "addressCountry": "{{ anbieterin.land }}"
   },
-  {% if verkauf_aktiv %}"geo": {"@type": "GeoCoordinates", "latitude": 50.7517, "longitude": 9.2685},{% else %}"location": {"@type": "Place", "geo": {"@type": "GeoCoordinates", "latitude": 50.7517, "longitude": 9.2685}},{% endif %}
-  "email": "brehlerluisa@gmail.com",
+  {% comment %}Keine Koordinaten: die Anschrift ist eine Wohnung, kein Laden (23.10.2026). Die früheren Alsfelder Koordinaten stimmen nicht mehr.{% endcomment %}
+  "email": "{{ anbieterin.email }}",
   "url": "{{ request.scheme }}://{{ request.get_host }}/"
 }
 </script>
@@ -55,7 +55,7 @@
                 <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                     Impressum
                 </h1>
-                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Impressum & Transparency – dieses Impressum nennt die Anbieterin von Luviq Universe, Luisa Brehler aus 36304 Alsfeld in Hessen, ihre Kontaktadresse und den Hinweis zur Streitschlichtung.</p>
+                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Impressum & Transparency – dieses Impressum nennt die Anbieterin von Luviq Universe, {{ anbieterin.name }} aus {{ anbieterin.plz }} {{ anbieterin.ort }}, ihre Kontaktadresse und den Hinweis zur Streitschlichtung.</p>
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-20">
@@ -66,12 +66,12 @@
                             <h2 class="text-xs font-black uppercase tracking-widest text-white/80">Angaben gemäß § 5 DDG</h2>
                         </div>
                         <div class="text-white/40 leading-relaxed font-light pl-12">
-                            <p class="text-white font-bold mb-2">Anbieterin: Luisa Brehler</p>
-                            <p>Grünberger Str. 16</p>
-                            <p>36304 Alsfeld</p>
-                            <p>Deutschland</p>
-                            {% comment %}Verkaufsschalter: solange kein Gewerbe angemeldet ist, sagt das Impressum ausdrücklich, dass nichts verkauft wird. Die Impressumspflicht (Name, ladungsfähige Anschrift, E-Mail) bleibt auch ohne Verkauf.{% endcomment %}
-                            {% if not verkauf_aktiv %}<p class="mt-4">Luviq Universe ist eine Marke im Aufbau. Derzeit findet kein Verkauf statt.</p>{% endif %}
+                            <p class="text-white font-bold mb-2">Anbieterin: {{ anbieterin.name }}</p>
+                            <p>{{ anbieterin.strasse }}</p>
+                            <p>{{ anbieterin.plz }} {{ anbieterin.ort }}</p>
+                            <p>{{ anbieterin.land_name }}</p>
+                            {% comment %}Angaben aus der Gewerbeanmeldung vom 22.10.2026 (luviq_daten.ANBIETERIN): Geschäftsbezeichnung „Luviq", Betriebsstätte Lübeck. Verkaufsschalter: solange er aus ist, sagt das Impressum ausdrücklich, dass nichts verkauft wird.{% endcomment %}
+                            {% if not verkauf_aktiv %}<p class="mt-4">Geschäftsbezeichnung: {{ anbieterin.geschaeft }}. Luviq Universe ist eine Marke im Aufbau. Derzeit findet kein Verkauf statt.</p>{% endif %}
                         </div>
                     </section>
 
@@ -81,7 +81,7 @@
                             <h2 class="text-xs font-black uppercase tracking-widest text-white/80">Kontakt</h2>
                         </div>
                         <div class="text-white/40 leading-relaxed font-light pl-12">
-                            <p>E-Mail: <a href="mailto:brehlerluisa@gmail.com" class="text-glow-orange hover:underline">brehlerluisa@gmail.com</a></p>
+                            <p>E-Mail: <a href="mailto:{{ anbieterin.email }}" class="text-glow-orange hover:underline">{{ anbieterin.email }}</a></p>
                             {# Hier stand "www.luviq.de" - eine Adresse, unter der dieses Projekt nicht erreichbar ist. Die Seite nennt jetzt den Host, unter dem sie tatsaechlich ausgeliefert wird; damit stimmt die Angabe unabhaengig davon, welche Domain gerade davorsteht. #}
                             <p>Website: <a href="{{ request.scheme }}://{{ request.get_host }}/" class="hover:text-white transition-colors">{{ request.get_host }}</a></p>
                         </div>
@@ -95,9 +95,9 @@
                             <h2 class="text-xs font-black uppercase tracking-widest text-white/80">Redaktionell verantwortlich</h2>
                         </div>
                         <div class="text-white/40 leading-relaxed font-light pl-12">
-                            <p>Verantwortlich für den Inhalt: Luisa Brehler</p>
-                            <p>Grünberger Str. 16</p>
-                            <p>36304 Alsfeld</p>
+                            <p>Verantwortlich für den Inhalt: {{ anbieterin.name }}</p>
+                            <p>{{ anbieterin.strasse }}</p>
+                            <p>{{ anbieterin.plz }} {{ anbieterin.ort }}</p>
                         </div>
                     </section>
 
