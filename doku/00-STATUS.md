@@ -1,8 +1,8 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-10-25
-stand: 2026-10-25
+stand: 2026-10-26
+stand: 2026-10-26
 status: vollständig
 fortschritt: 97
 zusammenfassung: Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau, kein Gewerbe angemeldet). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
@@ -55,7 +55,7 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 25.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 96,0 von 100**, Reifegrad „Referenz“. 354 von 410 Regeln an 19 URLs und 207 Dateien (43.123 Zeilen) geprüft.
+**Messung vom 26.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 96,0 von 100**, Reifegrad „Referenz“. 354 von 410 Regeln an 19 URLs und 207 Dateien (43.150 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
