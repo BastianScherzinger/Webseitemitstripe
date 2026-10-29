@@ -172,6 +172,7 @@ def luviq(request):
         'versand': luviq_daten.VERSAND,
         'abholung': luviq_daten.ABHOLUNG,
         'herkunft_satz': luviq_daten.HERKUNFT_SATZ,
+        'verkauft_wort': luviq_daten.VERKAUFT_WORT,
         **_rahmen(),
     }
 

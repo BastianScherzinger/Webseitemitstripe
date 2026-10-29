@@ -1,17 +1,18 @@
 {% load custom_tags %}{% comment %}
-Karte eines Stücks im Archiv (Startseite und /produkte/), Look „Nachtausgabe"
-seit 19.09.2026. Freisteller liegen auf der hellen Kachel (multiply). Ohne
-Verkauf: Nummer + „vergeben", mit Verkauf: Nummer + Preis. Die ganze Karte
-ist über den Namen verlinkt (ein Link, kein zweiter Pfeil-Knopf).
-`produkt` und `forloop` kommen aus der umgebenden Schleife. `stufe` setzt die
-Überschriftsebene des Namens (Vorgabe 3: unter einer Abschnittsüberschrift auf der
-Startseite; `/produkte/` setzt 2, dort folgen die Karten direkt auf die h1, VL17).
-`erstes` (nur im Archiv gesetzt: das erste Bild im Hauptbereich ist das LCP-Bild) lädt
-sofort und mit Vorrang, alle anderen lazy. `srcset`/`sizes` der ersten Karte müssen zum
-Preload in produkte.html passen.
-{% endcomment %}<li class="lv-karte">
-    <figure{% if not produkt.bild %} data-ohne-foto{% endif %}>{% if produkt.bild %}<img src="{{ produkt.bild.url|cloud:'w_600,h_750,c_fill' }}" srcset="{{ produkt.bild.url|cloud_srcset:'300,450,600;c_fill;1.25' }}" sizes="{% if erstes %}(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 92vw{% else %}(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 46vw{% endif %}" alt="Foto: {{ produkt.name }}, handbemaltes Einzelstück von Luviq Universe" width="600" height="750"{% if erstes %} loading="eager" fetchpriority="high"{% else %} loading="lazy"{% endif %} decoding="async">{% endif %}</figure>
-    <p class="lv-karte-kopf"><b>Nº {{ produkt.archiv_nummer }}</b>{% if verkauf_aktiv %}<span class="lv-preis">{{ produkt.preis }} €</span>{% else %}<span>vergeben</span>{% endif %}</p>
-    <h{{ stufe|default:"3" }} class="lv-serif"><a href="{{ produkt.get_absolute_url }}">{{ produkt.name }}</a></h{{ stufe|default:"3" }}>
-    {% if produkt.material or produkt.technik %}<p class="lv-material">{{ produkt.material }}{% if produkt.material and produkt.technik %} · {% endif %}{{ produkt.technik }}</p>{% endif %}
-</li>
+Karte eines Stücks (Startseite #stuecke und #archiv, /produkte/), Look „Nachtausgabe“, P4 (29.10.2026).
+Alle Bilder liegen auf derselben dunklen Kachel (4:5), Name links und Größe (`masse`, Freitext) rechts in
+einer Zeile, darunter Mono: `Nº 001` und der Zustand. Zustand: vergeben = „Archiv“ (das Bild trägt das
+Band „Verkauft“, Text im DOM), mit Verkauf und kaufbar = Preis, sonst „Unikat“ (noch nicht im Verkauf,
+kein Preis). Die ganze Karte ist über den Namen verlinkt (ein Link).
+`produkt` und `forloop` kommen aus der umgebenden Schleife. `stufe` setzt die Überschriftsebene des Namens
+(Vorgabe 3; `/produkte/` setzt 2). `erstes` (nur auf /produkte/ im ersten Abschnitt: LCP-Bild) lädt sofort und
+mit Vorrang, alle anderen lazy; `srcset`/`sizes` der ersten Karte müssen zum Preload in produkte.html passen.
+Das Bild kommt aus `produkt.hauptbild` (Upload über Cloudinary oder statische Datei, shop1/produktbilder.py).
+{% endcomment %}{% with bild=produkt.hauptbild %}<li class="lv-karte{% if produkt.verkauft %} ist-verkauft{% endif %}">
+    <figure{% if not bild %} data-ohne-foto{% endif %}>{% if bild %}<img src="{{ bild.karte_src }}" srcset="{{ bild.karte_srcset }}" sizes="{% if erstes %}(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 92vw{% else %}(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 46vw{% endif %}" alt="Foto: {{ produkt.name }}, handbemaltes Einzelstück von Luviq Universe" width="600" height="750"{% if erstes %} loading="eager" fetchpriority="high"{% else %} loading="lazy"{% endif %} decoding="async">{% endif %}{% if produkt.verkauft %}<span class="lv-verkauft"><span>{{ verkauft_wort }}</span></span>{% endif %}</figure>
+    <div class="lv-karte-name">
+        <h{{ stufe|default:"3" }} class="lv-serif"><a href="{{ produkt.get_absolute_url }}">{{ produkt.name }}</a></h{{ stufe|default:"3" }}>
+        {% if produkt.masse %}<span class="lv-groesse">{{ produkt.masse }}</span>{% endif %}
+    </div>
+    <p class="lv-karte-kopf"><b>Nº {{ produkt.archiv_nummer }}</b>{% if produkt.verkauft %}<span>Archiv</span>{% elif verkauf_aktiv and produkt.kaufbar %}<span class="lv-preis">{{ produkt.preis|floatformat:2 }} €</span>{% else %}<span>Unikat</span>{% endif %}</p>
+</li>{% endwith %}

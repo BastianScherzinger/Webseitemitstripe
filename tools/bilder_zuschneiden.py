@@ -61,6 +61,19 @@ def echtfoto():
         bild.save(ZIEL_LUVIQ / f"echt-engel-2-{breite}.webp", "WEBP", quality=80, method=6)
 
 
+def stueck_engel_echt():
+    """Zweites Galeriebild des Engel-Shirts Nº 006 (P4): das echte Foto im Format 4:5.
+
+    Quelle engel-echt-warm.jpg (960 x 1280). Zuschnitt 960 x 1200: Shirt ganz, unten nur ein
+    Streifen Tisch; WebP in 600/900/960 nach shop1/images/stuecke/."""
+    ziel = BILDER / "stuecke"
+    ziel.mkdir(parents=True, exist_ok=True)
+    quelle = Image.open(QUELLE_ECHT).convert("RGB").crop((0, 10, 960, 1210))
+    for breite in (600, 900, 960):
+        bild = quelle if breite == quelle.width else verkleinern(quelle, breite)
+        bild.save(ziel / f"engel-echt-45-{breite}.webp", "WEBP", quality=80, method=6)
+
+
 def og_start():
     quelle = Image.open(QUELLE_HERO).convert("RGB")
     ausschnitt = quelle.crop((0, 60, 1536, 60 + 806))
@@ -144,6 +157,7 @@ if __name__ == "__main__":
     print("Markenfarbe gemessen: #%02X%02X%02X" % MARKE_FARBE, "| AVIF:", AVIF)
     hero()
     echtfoto()
+    stueck_engel_echt()
     og_start()
     wm = wortmarke(MARKE_FARBE)
     icons()

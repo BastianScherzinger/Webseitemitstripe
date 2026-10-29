@@ -225,20 +225,34 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-entstehung p:last-child{color:var(--lv-leise);font-size:15px;line-height:1.5}
 
 /* Archiv */
-.lv-raster{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(var(--u)*2.4) calc(var(--u)*1.4);list-style:none;padding:0}
-.lv-karte{display:grid;gap:calc(var(--u)*.6);align-content:start;position:relative}
-.lv-karte figure{aspect-ratio:4/5;overflow:hidden;background:var(--lv-kachel)}
+.lv-raster{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--lv-raum-6) var(--lv-raum-5);list-style:none;padding:0}
+.lv-raster>li{min-width:0}
+.lv-raster-stuecke:has(>li:only-child){grid-template-columns:minmax(0,1fr)}
+@media (min-width:1024px){.lv-raster-stuecke:has(>li:only-child){grid-template-columns:minmax(0,min(100%,440px))}}
+.lv-raster-titel{font-size:max(28px,calc(var(--u)*2.6));margin:var(--lv-raum-7) 0 var(--lv-raum-3)}
+.lv-raster-titel:first-of-type{margin-top:0}
+.lv-raster-hinweis{color:var(--lv-leise);margin:0 0 var(--lv-raum-5)}
+.lv-karte{display:grid;gap:var(--lv-raum-2);align-content:start;position:relative}
+.lv-karte figure{aspect-ratio:4/5;overflow:hidden;background:var(--lv-grund-2);position:relative;container-type:inline-size}
 .lv-karte figure[data-ohne-foto]{display:grid;place-items:center}
-.lv-karte figure[data-ohne-foto]::after{content:"Foto folgt";color:#5a5148;font:max(12px,calc(var(--u)*.85)) var(--lv-mono);letter-spacing:.08em;text-transform:uppercase}
-.lv-karte img{mix-blend-mode:multiply;filter:saturate(.9);transition:transform .6s ease}
-.lv-karte:hover img{transform:scale(1.03)}
-.lv-karte-kopf{display:flex;justify-content:space-between;gap:1em;margin-top:calc(var(--u)*.4);font:max(12px,calc(var(--u)*.85)) var(--lv-mono)}
+.lv-karte figure[data-ohne-foto]::after{content:"Foto folgt";color:var(--lv-leise);font:max(12px,calc(var(--u)*.85)) var(--lv-mono);letter-spacing:.08em;text-transform:uppercase}
+.lv-karte img{object-position:center 35%;transition:opacity .2s}
+.lv-karte:hover img{opacity:.85}
+.lv-karte-name{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px var(--lv-raum-3);margin-top:var(--lv-raum-1)}
+.lv-karte-name>h2,.lv-karte-name>h3{min-width:0}
+.lv-groesse{font:max(12px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.lv-karte-kopf{display:flex;justify-content:space-between;gap:1em;font:max(12px,calc(var(--u)*.85)) var(--lv-mono)}
 .lv-karte-kopf span{color:var(--lv-leise);letter-spacing:.08em;text-transform:uppercase}
 .lv-karte h2,.lv-karte h3{font-size:max(19px,calc(var(--u)*1.7))}
 .lv-karte h2 a,.lv-karte h3 a{display:inline-block;min-height:24px}
 .lv-karte h2 a::after,.lv-karte h3 a::after{content:"";position:absolute;inset:0}
-.lv-karte .lv-material{color:var(--lv-leise);font-size:max(13px,calc(var(--u)*.88))}
-.lv-karte .lv-preis{font:500 max(14px,calc(var(--u)*1)) var(--lv-mono)}
+.lv-karte .lv-preis{font:500 max(14px,calc(var(--u)*1)) var(--lv-mono);color:var(--lv-text)}
+/* „Verkauft“: ein Band quer über dem Bild, Bild leicht abgedunkelt, Schrift in Bleich-Beige (Text im DOM). */
+.ist-verkauft img{filter:brightness(.55) saturate(.85)}
+.lv-verkauft{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;pointer-events:none}
+.lv-verkauft>span{display:block;width:150%;padding:.1em 0 .16em;text-align:center;transform:rotate(-9deg);background:rgba(10,10,10,.78);border-block:1px solid var(--lv-marke);color:var(--lv-marke);
+  font:italic 500 clamp(20px,21cqi,60px)/1 var(--lv-serif);letter-spacing:.02em}
+.lv-verkauft-gross>span{font-size:clamp(34px,18cqi,110px)}
 .lv-leer{color:var(--lv-leise);padding:calc(var(--u)*3) 0}
 .lv-weiter{margin-top:calc(var(--u)*3)}
 .lv-abschnittskopf-r{display:grid;gap:var(--lv-raum-2);justify-self:end;justify-items:end}
@@ -343,10 +357,35 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-brotkrume ol{display:flex;flex-wrap:wrap;gap:.6em;list-style:none;padding:0;margin:0}
 .lv-brotkrume li+li::before{content:"/";margin-right:.6em;color:var(--lv-linie-2)}
 .lv-brotkrume a:hover{color:var(--lv-text)}
-.lv-stueck-bild{background:var(--lv-kachel)}
-.lv-stueck-bild img{mix-blend-mode:multiply;height:auto;max-height:80vh;object-fit:contain}
-.lv-stueck-nummer{font:500 calc(var(--u)*6)/1 var(--lv-mono);letter-spacing:-.03em;color:var(--lv-text)}
-.lv-stueck h1{font-size:max(36px,calc(var(--u)*4.4));margin-top:calc(var(--u)*1)}
+.lv-stueck-bild{min-width:0}
+.lv-galerie{display:grid;gap:var(--lv-raum-3);position:sticky;top:88px}
+.lv-galerie-rahmen{position:relative;container-type:inline-size;background:var(--lv-grund-2);width:min(100%,calc((100svh - 200px)*.8))}
+.lv-galerie-spur{display:flex;list-style:none;margin:0;padding:0;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;aspect-ratio:4/5}
+.lv-galerie-spur::-webkit-scrollbar{display:none}
+.lv-galerie-spur:focus-visible{outline:3px solid var(--lv-akzent);outline-offset:3px}
+.lv-galerie-bild{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;margin:0}
+.lv-galerie-bild img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.lv-galerie-steuer{display:none}
+.lv-galerie.ist-bereit .lv-galerie-steuer{display:flex;align-items:center;gap:var(--lv-raum-3)}
+.lv-galerie-punkte{display:flex;flex:1;gap:var(--lv-raum-2);list-style:none;margin:0;padding:0}
+.lv-galerie-punkte button{position:relative;display:block;width:30px;height:44px;padding:0;border:0;background:none;cursor:pointer}
+.lv-galerie-punkte button::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:var(--lv-linie-2)}
+.lv-galerie-punkte button[aria-current]::before{background:var(--lv-marke)}
+.lv-galerie-punkte img{display:none}
+.lv-galerie-zaehler{margin:0;font:500 13px var(--lv-mono);letter-spacing:.08em;color:var(--lv-leise)}
+.lv-galerie-pfeil{display:none;place-items:center;width:44px;height:44px;padding:0;border:1px solid var(--lv-linie-2);background:none;color:var(--lv-text);cursor:pointer}
+.lv-galerie-pfeil:disabled{opacity:.35;cursor:default}
+@media (min-width:1024px){
+  .lv-galerie-pfeil{display:grid}
+  .lv-galerie-punkte button{width:56px;height:70px;border:1px solid var(--lv-linie-2);background:var(--lv-grund-2)}
+  .lv-galerie-punkte button::before{display:none}
+  .lv-galerie-punkte button[aria-current]{border-color:var(--lv-marke)}
+  .lv-galerie-punkte img{display:block;width:100%;height:100%;object-fit:cover}
+  .lv-galerie-punkte button:not([aria-current]) img{opacity:.6}
+  .lv-galerie-zaehler{order:3}
+}
+.lv-stueck-nummer{font:500 max(14px,calc(var(--u)*1.1))/1 var(--lv-mono);letter-spacing:.1em;color:var(--lv-marke)}
+.lv-stueck h1{font-size:max(36px,calc(var(--u)*4.4));margin-top:0}
 .lv-stueck-text{display:grid;gap:calc(var(--u)*1.6);align-content:start}
 .lv-stueck-text>p{color:var(--lv-leise)}
 .lv-stueck-text>p.lv-stueck-nummer,.lv-stueck-text>p.lv-stueck-preis{color:var(--lv-text)}
@@ -358,6 +397,19 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-stueck-knoepfe{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px}
 .lv-stueck-text .lv-klein a{color:var(--lv-text)}
 .lv-stueck-preis{font:500 max(28px,calc(var(--u)*2.6)) var(--lv-mono)}
+.lv-stueck-text>p.lv-stueck-zustand{font:500 max(12px,calc(var(--u)*.9)) var(--lv-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--lv-leise)}
+.lv-stueck-zustand b{color:var(--lv-marke);font-weight:500}
+.lv-stueck-text>p.lv-technik{border-left:2px solid var(--lv-marke);padding:var(--lv-raum-1) 0 var(--lv-raum-1) var(--lv-raum-4);color:var(--lv-text);font:italic 500 max(22px,calc(var(--u)*2)) var(--lv-serif);line-height:1.2}
+.lv-stueck-hinweis{font-size:max(13px,calc(var(--u)*.9));line-height:1.6;max-width:64ch;color:var(--lv-leise);display:grid;gap:var(--lv-raum-3)}
+.lv-stueck-hinweis p,.lv-stueck-versand p{margin:0}
+.lv-mehr{border-top:1px solid var(--lv-linie-2)}
+.lv-mehr summary{display:flex;justify-content:space-between;align-items:center;min-height:48px;cursor:pointer;list-style:none;font:500 max(12px,calc(var(--u)*.85)) var(--lv-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--lv-text)}
+.lv-mehr summary::-webkit-details-marker{display:none}
+.lv-mehr summary::after{content:"+";font-size:18px}
+.lv-mehr[open] summary::after{content:"–"}
+.lv-mehr>p{margin:0 0 var(--lv-raum-3);color:var(--lv-leise)}
+.lv-stueck-versand{font-size:max(13px,calc(var(--u)*.9));max-width:64ch}
+.lv-stueck-versand a{color:var(--lv-text);text-decoration:underline;text-underline-offset:.2em}
 
 /* ── Übrige Seiten: Übersetzungsschicht für das alte Markup ──
    Die Inhalte bleiben, das Aussehen folgt den Tokens: Radius 0, keine
@@ -438,10 +490,10 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-abschnittskopf p{justify-self:start;font-size:16px}
   .lv-wischen{display:block;margin-top:12px;font:12px var(--lv-mono);color:var(--lv-leise);letter-spacing:.08em;text-transform:uppercase}
   .lv-raster{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}
-  .lv-raster>li:first-child{grid-column:1/-1}
   .lv-karte h2,.lv-karte h3{font-size:18px}
   .lv-karte-kopf{font-size:12px}
-  .lv-karte .lv-material{font-size:12.5px}
+  .lv-groesse{font-size:12px}
+  .lv-raster-titel{font-size:28px;margin-top:var(--lv-raum-7)}
   .lv-luisa,.lv-luisa.lv-luisa-start{grid-template-columns:minmax(0,1fr);padding:48px var(--rand);gap:20px}
   .lv-luisa blockquote p{font-size:36px}
   .lv-luisa-start blockquote p{font-size:28px}
@@ -471,7 +523,10 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-feld2{grid-template-columns:1fr;gap:16px}
   .lv-danke{padding:40px var(--rand) 56px;gap:16px}
   .lv-stueck{grid-template-columns:minmax(0,1fr);padding:16px var(--rand) 48px;gap:24px}
-  .lv-stueck-nummer{font-size:44px}
+  .lv-stueck-nummer{font-size:14px}
+  .lv-galerie{position:static}
+  .lv-galerie-rahmen{width:calc(100% + 2*var(--rand));margin-inline:calc(var(--rand)*-1)}
+  .lv-stueck-text>p.lv-technik{font-size:22px}
   .lv-brotkrume{padding-top:16px;font-size:12px}
   .lv-nr,.lv-daten dt{font-size:12px}
   .lv-formular legend .lv-nr,.lv-feld .lv-nr{font-size:12px}
@@ -524,7 +579,6 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 @media (min-width:640px) and (max-width:1023px){
   .lv-satz{font-size:48px}
   .lv-raster{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .lv-raster>li:first-child{grid-column:auto}
   .lv-luisa blockquote p{font-size:48px}
   .lv-anfragen{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 }
@@ -610,7 +664,6 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-abschluss{padding-top:calc(var(--u)*5);padding-bottom:calc(var(--u)*7)}
 .lv-stueck-text>p.lv-stueck-lead{color:var(--lv-text);font-size:max(17px,calc(var(--u)*1.4));line-height:1.45}
 .lv-stueck-text>p.lv-stueck-beschreibung{color:var(--lv-text)}
-.lv-stueck-text>p.lv-stueck-hinweis{font-size:max(13px,calc(var(--u)*.9));line-height:1.6;max-width:64ch}
 @media (max-width:1023px){
   .lv-kontaktseite{grid-template-columns:minmax(0,1fr);padding:24px var(--rand) 48px;gap:32px}
   .lv-kontaktseite .lv-satz,.lv-seitenkopf .lv-satz{font-size:36px}
@@ -629,5 +682,5 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-seite .lv-orte-hinweis{margin-top:16px}
   .lv-abschluss{padding-top:32px;padding-bottom:48px}
   .lv-stueck-text>p.lv-stueck-lead{font-size:18px}
-  .lv-stueck-text>p.lv-stueck-hinweis{font-size:14px}
+  .lv-stueck-hinweis,.lv-stueck-versand{font-size:14px}
 }

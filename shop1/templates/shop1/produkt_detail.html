@@ -3,21 +3,21 @@
 
 {% block title %}{{ produkt.meta_title }}{% endblock %}
 {% block meta_description %}{{ produkt.meta_description }}{% endblock %}
-{% block preload %}{% if produkt.bild %}<link rel="preload" as="image" href="{{ produkt.bild.url|cloud:'w_900,c_limit' }}" imagesrcset="{{ produkt.bild.url|cloud_srcset:'600,900,1200' }}" imagesizes="(min-width: 1024px) 50vw, 100vw" fetchpriority="high">{% endif %}{% endblock %}
+{% block preload %}{% with bild=galerie.0 %}{% if bild %}<link rel="preload" as="image" href="{{ bild.src }}" imagesrcset="{{ bild.srcset }}" imagesizes="(min-width: 1024px) 48vw, 100vw" fetchpriority="high">{% endif %}{% endwith %}{% endblock %}
 {% block og_type %}{% if verkauf_aktiv %}product{% else %}website{% endif %}{% endblock %}
 {% block og_title %}{{ produkt.meta_title }}{% endblock %}
 {% block og_description %}{{ produkt.meta_description }}{% endblock %}
 {% block twitter_title %}{{ produkt.meta_title }}{% endblock %}
 {% block twitter_description %}{{ produkt.meta_description }}{% endblock %}
-{# Die Pruefung auf produkt.bild steht bewusst INNERHALB der Bloecke: eine Bedingung um einen Block herum wirkt in einem erbenden Template nicht, weil Bloecke beim Uebersetzen eingesammelt werden und nicht beim Rendern. Stand sie aussen, wurde produkt.bild.url auch ohne Bild ausgewertet und warf einen ValueError - also 500 auf jeder bildlosen Produktseite. #}
-{% block og_image_tag %}{% if produkt.bild %}
-<meta property="og:image" content="{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url|cloud_vorschau }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}">
-{% if '/image/upload/' in produkt.bild.url %}<meta property="og:image:width" content="1200">
+{# Die Pruefung auf das Bild steht bewusst INNERHALB der Bloecke: eine Bedingung um einen Block herum wirkt in einem erbenden Template nicht, weil Bloecke beim Uebersetzen eingesammelt werden und nicht beim Rendern. Stand sie aussen, wurde produkt.bild.url auch ohne Bild ausgewertet und warf einen ValueError - also 500 auf jeder bildlosen Produktseite. #}
+{% block og_image_tag %}{% with bild=galerie.0 %}{% if bild %}
+<meta property="og:image" content="{% if bild.original|slice:':4' == 'http' %}{{ bild.original|cloud_vorschau }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ bild.original }}{% endif %}">
+{% if '/image/upload/' in bild.original %}<meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">{% endif %}
-{% else %}{{ block.super }}{% endif %}{% endblock %}
-{% block twitter_image_tag %}{% if produkt.bild %}
-<meta name="twitter:image" content="{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url|cloud_vorschau }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}">
-{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% else %}{{ block.super }}{% endif %}{% endwith %}{% endblock %}
+{% block twitter_image_tag %}{% with bild=galerie.0 %}{% if bild %}
+<meta name="twitter:image" content="{% if bild.original|slice:':4' == 'http' %}{{ bild.original|cloud_vorschau }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ bild.original }}{% endif %}">
+{% else %}{{ block.super }}{% endif %}{% endwith %}{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">
@@ -36,14 +36,16 @@
 {% endblock %}
 
 {% block schema_ld %}
+{% comment %}Vor dem Verkaufsstart (VERKAUF_AKTIV aus) steht kein Preis auf der Seite, darum kein Product mit Offer, sondern VisualArtwork (Vorgabe 07.10.2026): ein Offer ohne sichtbaren Preis widerspräche der Seite. Mit Verkauf: Product mit Offer (Preis aus dem Datensatz); die Verfügbarkeit folgt `kaufbar` – ein vergebenes Stück ist SoldOut, nie InStock.{% endcomment %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "{% if verkauf_aktiv %}Product{% else %}VisualArtwork{% endif %}",
   "@id": "{{ seiten_url }}#product",
   "name": "{{ produkt.name|escapejs }}",
-  "description": "{{ produkt.beschreibung|escapejs }}",{% if produkt.bild %}
-  "image": "{% if produkt.bild.url|slice:':4' == 'http' %}{{ produkt.bild.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ produkt.bild.url }}{% endif %}",{% endif %}
+  "description": "{{ produkt.beschreibung|escapejs }}",{% if galerie %}
+  "image": [{% for bild in galerie %}"{% if bild.original|slice:':4' == 'http' %}{{ bild.original }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ bild.original }}{% endif %}"{% if not forloop.last %}, {% endif %}{% endfor %}],{% endif %}{% if produkt.material %}
+  "material": "{{ produkt.material|escapejs }}",{% endif %}
   {% if verkauf_aktiv %}"brand": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
   "sku": "LUVIQ-{{ produkt.id }}",{% else %}"creator": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},{% endif %}
   "dateModified": "{{ produkt.aktualisiert_am|date:'c' }}",
@@ -52,8 +54,8 @@
     "@type": "Offer",
     "@id": "{{ seiten_url }}#offer",
     "priceCurrency": "EUR",
-    "price": "{{ produkt.preis|floatformat:2 }}",
-    "availability": "{% if produkt.lagerbestand > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "price": "{{ produkt.preis|floatformat:"2u" }}",
+    "availability": "{% if produkt.kaufbar %}https://schema.org/InStock{% elif produkt.verkauft %}https://schema.org/SoldOut{% else %}https://schema.org/OutOfStock{% endif %}",
     "itemCondition": "https://schema.org/UsedCondition",
     "seller": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
     "url": "{{ seiten_url }}"
@@ -68,43 +70,61 @@
 {% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='stueck' %}{% endblock %}
 
 {% block content %}
-{% comment %}„Stück" im Look „Nachtausgabe" (19.09.2026, Bauplan § 4): Nummer groß (Mono), Name kursiv, Datenliste aus den Feldern material/technik/masse (leer = Zeile entfällt), beide Zustände des Verkaufsschalters. Der Antwortsatz (GE23) und der statische Teil stehen unverändert im ersten Absatz nach der Überschrift.{% endcomment %}
+{% comment %}„Stück“ im Look „Nachtausgabe“, P4 (29.10.2026): links die wischbare Galerie (CSS Scroll-Snap, Punkte/Vorschaubilder und „1 / 3“ erst mit Skript, ohne Skript wischt/scrollt die Spur trotzdem), rechts Nummer, Name, Preis nur mit Verkauf, Datenliste nur mit gesetzten Feldern, Text kurz und der Rest in <details>. Ein vergebenes Stück trägt das Band „Verkauft“ über dem Bild (Text im DOM). Beide Zustände des Verkaufsschalters.{% endcomment %}
 <div class="lv-seite">
     <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li><a href="{% url 'produkte' %}">Archiv</a></li><li aria-current="page">{{ produkt.name }}</li></ol></nav>
-    <article class="lv-stueck">
-        <figure class="lv-stueck-bild">
-            {% if produkt.bild %}
-            {# c_limit statt c_fill: das Hauptbild darf nicht beschnitten werden. #}
-            {# src = mittlere Breite (PF23: die Rückfalladresse bleibt unter 300 kB); width/height = Maße des Originals auf höchstens 1200 px, damit der Platz vor dem Laden stimmt (PF25, Produkt.bild_masse). #}
-            {% with masse=produkt.bild_masse %}<img class="produkt_detail" src="{{ produkt.bild.url|cloud:'w_900,c_limit' }}"
-                 srcset="{{ produkt.bild.url|cloud_srcset:'600,900,1200' }}"
-                 sizes="(min-width: 1024px) 50vw, 100vw"{% if masse %}
-                 width="{{ masse.0 }}" height="{{ masse.1 }}"{% endif %}
-                 alt="{{ produkt.name }} – handbemaltes Upcycling-Unikat von Luviq Universe"
-                 loading="eager" fetchpriority="high" decoding="async">{% endwith %}
+    <article class="lv-stueck{% if produkt.verkauft %} ist-verkauft{% endif %}">
+        <div class="lv-stueck-bild">
+            {% if galerie %}
+            <div class="lv-galerie" data-galerie role="group" aria-roledescription="Bildergalerie" aria-label="Fotos: {{ produkt.name }}">
+                <div class="lv-galerie-rahmen">
+                    <ul class="lv-galerie-spur" data-galerie-spur tabindex="0" aria-label="Fotos, seitlich wischen oder mit den Pfeiltasten blättern">
+                        {% for bild in galerie %}
+                        <li class="lv-galerie-bild" aria-label="Foto {{ forloop.counter }} von {{ galerie|length }}">
+                            <img{% if forloop.first %} class="produkt_detail"{% endif %} src="{{ bild.src }}" srcset="{{ bild.srcset }}" sizes="(min-width: 1024px) 48vw, 100vw" width="{{ bild.breite }}" height="{{ bild.hoehe }}" alt="{{ bild.alt }}"{% if forloop.first %} loading="eager" fetchpriority="high"{% else %} loading="lazy"{% endif %} decoding="async">
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% if produkt.verkauft %}<span class="lv-verkauft lv-verkauft-gross"><span>{{ verkauft_wort }}</span></span>{% endif %}
+                </div>
+                {% if galerie|length > 1 %}
+                <div class="lv-galerie-steuer" data-galerie-steuer>
+                    <button type="button" class="lv-galerie-pfeil" data-galerie-zurueck aria-label="Vorheriges Foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+                    <ul class="lv-galerie-punkte">
+                        {% for bild in galerie %}
+                        <li><button type="button" data-galerie-nr="{{ forloop.counter0 }}" aria-label="Foto {{ forloop.counter }} anzeigen"{% if forloop.first %} aria-current="true"{% endif %}><img src="{{ bild.karte_src }}" srcset="{{ bild.karte_srcset }}" sizes="72px" alt="" width="72" height="90" loading="lazy" decoding="async"></button></li>
+                        {% endfor %}
+                    </ul>
+                    <p class="lv-galerie-zaehler" data-galerie-zaehler aria-live="polite"><span data-galerie-nummer>1</span> / {{ galerie|length }}</p>
+                    <button type="button" class="lv-galerie-pfeil" data-galerie-weiter aria-label="Nächstes Foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+                </div>
+                {% endif %}
+            </div>
             {% endif %}
-        </figure>
+        </div>
         <div class="lv-stueck-text">
             <p class="lv-stueck-nummer">Nº {{ produkt.archiv_nummer }}</p>
             <h1 class="lv-serif">{{ produkt.name }}</h1>
-            {% comment %}Textblock gegliedert (23.10.2026): Antwortsatz als Lead, Luisas Beschreibung als eigener Absatz (nur wenn vorhanden), Kauf- bzw. Archivhinweis gedämpft darunter. Vorher lief alles in einem einzigen Absatz ineinander.{% endcomment %}
+            {% if produkt.verkauft %}<p class="lv-stueck-zustand"><b>{{ verkauft_wort }}</b> · Archiv</p>
+            {% elif verkauf_aktiv and produkt.kaufbar %}<p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} €</p>
+            {% else %}<p class="lv-stueck-zustand">Unikat · {{ shop_oeffnet }}</p>{% endif %}
+            {% comment %}Antwortsatz als Lead, Luisas Beschreibung als eigener Absatz (nur wenn vorhanden). Die Technik steht in einem eigenen, gut sichtbaren Satz, wenn das Feld „Technik“ Bleiche nennt (Bastian 29.10.2026: Bleiche betonen).{% endcomment %}
             <p class="lv-stueck-lead">{% include 'shop1/antwort_produkt.html' %}</p>
             {% if produkt.beschreibung %}<p class="lv-stueck-beschreibung">{{ produkt.beschreibung|linebreaksbr }}</p>{% endif %}
-            <p class="lv-stueck-hinweis">{% if verkauf_aktiv %}Bezahlt wird per PayPal oder Vorab-Überweisung; der angezeigte Preis ist ein Endpreis, nach § 19 UStG wird keine Umsatzsteuer berechnet. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen. Gekauft wird über den Warenkorb, und dafür ist ein Konto nötig: Warenkorb und Bestellvorgang sind an eine Anmeldung gebunden. Wer per Vorab-Überweisung zahlt, bekommt die Bankdaten per E-Mail; über PayPal wird die Zahlung sofort abgeschlossen. Für die Bestellung gilt das Widerrufsrecht von 14 Tagen ab dem Tag, an dem die Ware angekommen ist (§ 5 der AGB). Weil das Basisteil getragene Second-Hand-Kleidung ist, gehören leichte Unregelmäßigkeiten der Bemalung und kleine Gebrauchsspuren des Stoffes zum Stück und sind kein Mangel (§ 3 der AGB). Die Fotos zeigen genau dieses Teil; Maße, Material oder Zustand fragst du vor dem Kauf über das Kontaktformular ab, ein zweites Exemplar zum Vergleich gibt es nicht.{% else %}Dieses Stück ist bereits vergeben. Neue Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein: Eine E-Mail-Adresse genügt, ein Konto ist dafür nicht nötig, und erst nach der Bestätigung über den Link in der E-Mail kommt Post. Weil das Basisteil getragene Second-Hand-Kleidung ist, gehören leichte Unregelmäßigkeiten der Bemalung und kleine Gebrauchsspuren des Stoffes zum Stück. Die Fotos zeigen genau dieses Teil; ein zweites Exemplar gibt es nicht, und Fragen zum Stück oder zur Arbeitsweise gehen über das Kontaktformular. Das Motiv entsteht direkt auf dem Stoff, mit Pinsel und Bleiche, und wird nicht wiederholt – darum trägt das Stück den Zusatz 1-of-1. Grundlage ist ein getragenes Second-Hand- oder Vintage-Teil, das Luisa Brehler selbst ausgesucht hat, weil sich Stoff und Schnitt als Leinwand eignen. Ein Ladengeschäft zum Anschauen gibt es nicht.{% endif %}</p>
+            {% if bleiche %}<p class="lv-technik">{{ bleiche_satz }}</p>{% endif %}
             <dl class="lv-daten">
                 <dt>Nummer</dt><dd>Nº {{ produkt.archiv_nummer }}</dd>
+                {% if produkt.masse %}<dt>Größe</dt><dd>{{ produkt.masse }}</dd>{% endif %}
                 {% if produkt.material %}<dt>Material</dt><dd>{{ produkt.material }}</dd>{% endif %}
                 {% if produkt.technik %}<dt>Technik</dt><dd>{{ produkt.technik }}</dd>{% endif %}
-                {% if produkt.masse %}<dt>Maße</dt><dd>{{ produkt.masse }}</dd>{% endif %}
                 <dt>Stück</dt><dd>Gebraucht (Second Hand), von Hand bemalt, 1-of-1</dd>
             </dl>
             {% comment %}EIG84: Preis und Kaufweg nur für ein Stück, das noch da ist (`Produkt.kaufbar`: aktiv, nicht vergeben, vorrätig); sonst derselbe „vergeben“-Zustand wie ohne Verkauf, statt eines Knopfes, der auf der Startseite endet.{% endcomment %}
             {% if verkauf_aktiv and produkt.kaufbar %}
-            <p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} €</p>
             <p class="lv-klein">Gesamtpreis. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Zuzüglich <a href="{% url 'agb' %}">Versandkosten</a> · PayPal oder Vorab-Überweisung · Versand deutschlandweit, in der Regel 1-2 Werktage</p>
             {% comment %}GPSR (VO (EU) 2023/988 Art. 19): Herstellerangaben und Kennnummer im Online-Angebot. Luisa verändert die Teile wesentlich und verkauft unter eigener Marke, sie gilt als Herstellerin. Nur mit Verkauf, Werte aus luviq_daten.ANBIETERIN und luviq_daten.PFLEGE.{% endcomment %}
             <p class="lv-klein">Herstellerin: {{ anbieterin.name }} ({{ anbieterin.geschaeft }}), {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.email }} · Kennnummer Nº {{ produkt.archiv_nummer }} · Pflege: {{ pflege }}</p>
-            {% else %}
+            {% elif produkt.verkauft %}
             <p class="lv-status">Nº {{ produkt.archiv_nummer }} · Archiv · Bereits vergeben · Neue Stücke mit dem ersten Drop</p>
             {% endif %}
             <p class="lv-stueck-knoepfe">
@@ -122,8 +142,95 @@
                 {% endif %}
             </p>
             {% if verkauf_aktiv and produkt.kaufbar and user.is_authenticated %}<form id="lv-in-den-warenkorb" method="post" action="{% url 'add_to_cart' produkt.id %}?next=warenkorb" hidden>{% csrf_token %}</form>{% endif %}
+            {% comment %}Hinweistext: die ersten zwei Sätze sichtbar, der Rest in <details> (bleibt für Google lesbar).{% endcomment %}
+            {% if verkauf_aktiv and produkt.kaufbar %}
+            <div class="lv-stueck-hinweis">
+                <p>Bezahlt wird per PayPal oder Vorab-Überweisung; der angezeigte Preis ist ein Endpreis, nach § 19 UStG wird keine Umsatzsteuer berechnet. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.</p>
+                <details class="lv-mehr"><summary>Mehr zum Kauf</summary>
+                <p>Gekauft wird über den Warenkorb, und dafür ist ein Konto nötig: Warenkorb und Bestellvorgang sind an eine Anmeldung gebunden. Wer per Vorab-Überweisung zahlt, bekommt die Bankdaten per E-Mail; über PayPal wird die Zahlung sofort abgeschlossen. Für die Bestellung gilt das Widerrufsrecht von 14 Tagen ab dem Tag, an dem die Ware angekommen ist (§ 5 der AGB). Weil das Basisteil getragene Second-Hand-Kleidung ist, gehören leichte Unregelmäßigkeiten der Bemalung und kleine Gebrauchsspuren des Stoffes zum Stück und sind kein Mangel (§ 3 der AGB). Die Fotos zeigen genau dieses Teil; Maße, Material oder Zustand fragst du vor dem Kauf über das Kontaktformular ab, ein zweites Exemplar zum Vergleich gibt es nicht.</p></details>
+            </div>
+            {% elif produkt.verkauft %}
+            <div class="lv-stueck-hinweis">
+                <p>Dieses Stück ist bereits vergeben. Neue Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein: Eine E-Mail-Adresse genügt, ein Konto ist dafür nicht nötig, und erst nach der Bestätigung über den Link in der E-Mail kommt Post.</p>
+                <details class="lv-mehr"><summary>Mehr zu diesem Stück</summary>
+                <p>Weil das Basisteil getragene Second-Hand-Kleidung ist, gehören leichte Unregelmäßigkeiten der Bemalung und kleine Gebrauchsspuren des Stoffes zum Stück. Die Fotos zeigen genau dieses Teil; ein zweites Exemplar gibt es nicht, und Fragen zum Stück oder zur Arbeitsweise gehen über das Kontaktformular. Das Motiv entsteht direkt auf dem Stoff, mit Pinsel und Bleiche, und wird nicht wiederholt – darum trägt das Stück den Zusatz 1-of-1. Grundlage ist ein getragenes Second-Hand- oder Vintage-Teil, das Luisa Brehler selbst ausgesucht hat, weil sich Stoff und Schnitt als Leinwand eignen. Ein Ladengeschäft zum Anschauen gibt es nicht.</p></details>
+            </div>
+            {% else %}
+            <div class="lv-stueck-hinweis">
+                <p>Dieses Stück ist noch nicht im Verkauf. {{ shop_oeffnet }} Trag dich in die Warteliste ein, dann erfährst du es zuerst: Eine E-Mail-Adresse genügt, ein Konto ist dafür nicht nötig, und erst nach der Bestätigung über den Link in der E-Mail kommt Post.</p>
+                <details class="lv-mehr"><summary>Mehr zu diesem Stück</summary>
+                <p>Die Fotos zeigen genau dieses Teil; ein zweites Exemplar gibt es nicht, und Fragen zum Stück oder zur Arbeitsweise gehen über das Kontaktformular. Das Motiv entsteht direkt auf dem Stoff und wird nicht wiederholt – darum trägt das Stück den Zusatz 1-of-1. Ein Ladengeschäft zum Anschauen gibt es nicht.</p></details>
+            </div>
+            {% endif %}
+            {% if not produkt.verkauft %}
+            <details class="lv-mehr lv-stueck-versand"><summary>Versand &amp; Abholung</summary>
+                <p>{% if versand.gebiet %}Versand in {{ versand.gebiet }}. {% endif %}{{ abholung.text }} Mehr dazu unter <a href="{% url 'liefergebiet' %}">Versand &amp; Abholung</a>.</p></details>
+            {% endif %}
             {% if motivanfrage_aktiv %}{% include 'shop1/teile/motivanfrage.html' with klasse='lv-klein' frage='So eins, aber mit deinem Motiv?' %}{% endif %}
         </div>
     </article>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+{% if galerie|length > 1 %}
+<script nonce="{{ csp_nonce }}">
+(function () {
+    'use strict';
+    // Galerie: die Spur wischt von allein (CSS Scroll-Snap, auch ohne dieses Skript). Das Skript fügt
+    // Vorschau/Punkte, den Zähler „1 / 3“ und Pfeile hinzu und bedient Tastatur (Pfeile, Pos1, Ende).
+    var galerie = document.querySelector('[data-galerie]');
+    if (!galerie) { return; }
+    var spur = galerie.querySelector('[data-galerie-spur]');
+    var knoepfe = Array.prototype.slice.call(galerie.querySelectorAll('[data-galerie-nr]'));
+    var zurueck = galerie.querySelector('[data-galerie-zurueck]');
+    var weiter = galerie.querySelector('[data-galerie-weiter]');
+    var nummer = galerie.querySelector('[data-galerie-nummer]');
+    var anzahl = knoepfe.length;
+    var ruhig = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var aktuell = 0;
+    galerie.classList.add('ist-bereit');
+
+    function zeige(i) {
+        aktuell = i;
+        if (nummer) { nummer.textContent = String(i + 1); }
+        knoepfe.forEach(function (k, n) {
+            if (n === i) { k.setAttribute('aria-current', 'true'); } else { k.removeAttribute('aria-current'); }
+        });
+        if (zurueck) { zurueck.disabled = i === 0; }
+        if (weiter) { weiter.disabled = i === anzahl - 1; }
+    }
+    function geheZu(i) {
+        i = Math.max(0, Math.min(anzahl - 1, i));
+        spur.scrollTo({ left: i * spur.clientWidth, behavior: ruhig ? 'auto' : 'smooth' });
+        zeige(i);
+    }
+    var wartet = false;
+    spur.addEventListener('scroll', function () {
+        if (wartet) { return; }
+        wartet = true;
+        window.requestAnimationFrame(function () {
+            wartet = false;
+            var i = Math.round(spur.scrollLeft / Math.max(1, spur.clientWidth));
+            if (i !== aktuell) { zeige(Math.max(0, Math.min(anzahl - 1, i))); }
+        });
+    }, { passive: true });
+    knoepfe.forEach(function (k, n) { k.addEventListener('click', function () { geheZu(n); }); });
+    if (zurueck) { zurueck.addEventListener('click', function () { geheZu(aktuell - 1); }); }
+    if (weiter) { weiter.addEventListener('click', function () { geheZu(aktuell + 1); }); }
+    galerie.addEventListener('keydown', function (e) {
+        var ziel = null;
+        if (e.key === 'ArrowLeft') { ziel = aktuell - 1; }
+        else if (e.key === 'ArrowRight') { ziel = aktuell + 1; }
+        else if (e.key === 'Home') { ziel = 0; }
+        else if (e.key === 'End') { ziel = anzahl - 1; }
+        if (ziel === null) { return; }
+        e.preventDefault();
+        geheZu(ziel);
+    });
+    window.addEventListener('resize', function () { spur.scrollLeft = aktuell * spur.clientWidth; });
+    zeige(0);
+})();
+</script>
+{% endif %}
 {% endblock %}

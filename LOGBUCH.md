@@ -10,6 +10,21 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 30.10.2026 — Luviq-Umbau P4: Stücke-Seiten, Verkauft-Band, Galerie, Engel-Shirt Nº 006 (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
+
+**Warum.** Masterplan § 7 plus Bastians Zusätze (29.10.): alle Archivstücke tragen „Verkauft“, die Stückseite hat eine wischbare Galerie, das Engel-Shirt ist das erste offizielle Stück Nº 006 und soll nach dem Deploy ohne Admin-Anmeldung live sein.
+
+**Geändert.**
+- Karte (`teile/archiv_karte.html`): dunkle Kachel 4:5 statt Beige, Name links, Größe (`masse`) rechts, darunter `Nº` und Zustand („Archiv“ / Preis nur mit Verkauf und kaufbar / „Unikat“). Raster 4 Spalten PC, 2 Handy, keine Sonderkarte.
+- „Verkauft“: `Produkt.verkauft` (= `vergeben` oder Bestand 0) setzt ein Band quer über das abgedunkelte Bild (Cormorant kursiv, Bleich-Beige, Schrift skaliert per `cqi`), Text im DOM; Wort an einer Stelle (`luviq_daten.VERKAUFT_WORT`). Das Datenfeld heißt weiter `vergeben`.
+- `/produkte/`: „Neue Unikate“ vor „Archiv: schon verkauft“, langer Text auf drei Sätze, Rest in `<details>`; der falsche Satz „Die Startseite zeigt die ersten zehn Stücke“ ist raus. Startseite: `#stuecke` (verfügbare Stücke vor dem Archiv, auch vor dem Verkaufsstart, ohne Preis).
+- Stückseite: Galerie (CSS Scroll-Snap, Skript mit Nonce für Zähler „1 / 3“, Striche am Handy, Vorschaubilder und Pfeile am PC, Tastatur Pfeile/Pos1/Ende), Datenliste, Bleiche-Satz (`BLEICHE_SATZ`, nur wenn „Technik“ Bleiche nennt), Kauftext zwei Sätze + `<details>`, „Versand & Abholung“ einklappbar. Luisa-Seite: „Warum Bleiche?“ nennt „nichts ist aufgedruckt“.
+- Bilder: neues Feld `Produkt.bild_statisch` (statische Datei als Rückfall, Schreibweise in `produktbilder.py`) und Modell `ProduktBild` (weitere Fotos, im Django-Admin als Inline) – Migration 0028. Vorderseiten-Fotos später nur als weiteres Zusatzbild eintragen.
+- Engel-Shirt: `manage.py luviq_engel_anlegen` (idempotent über den Slug `engel-shirt-handgebleicht`, überschreibt nichts), aufgerufen in `start.sh` nach `migrate`. Daten: `luviq_daten.ENGEL_STUECK`. Bilder: `hero-engel-45-*` (Studio) und neu `stuecke/engel-echt-45-*` (Echtfoto 4:5, `tools/bilder_zuschneiden.py`).
+- Schema: ohne Verkauf `VisualArtwork` ohne Preis (Vorgabe 07.10., ein Offer ohne sichtbaren Preis widerspräche der Seite), mit Verkauf `Product` + `Offer`; Verfügbarkeit nach `kaufbar` (vergeben = SoldOut statt InStock); `price` jetzt mit `floatformat:"2u"` (vorher „69,00“ mit Komma im JSON-LD).
+
+**Tests.** Neu `test_stuecke_p4` (Band, Galerie, Befehl idempotent, Schema beide Zustände). Umgeschrieben, nicht gelöscht: `test_verkauf.ArchivOhneVerkaufTest` (Archivstück = `vergeben=True`, „sind verkauft“), `test_abwehr` (Karte als Archiv-Stück). Designwache bewusst nicht angefasst (P6): `test_aufbau` ist rot für `/`, `/produkte/` und die Referenz-Stückseite.
+
 ## 29.10.2026 — Luviq-Umbau P3b: Handy-Feinschliff Startseite (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
 
 **Warum.** Bastian: Die Seite muss am Handy am besten aussehen. P3 hatte am Handy eine dreizeilige Ankündigung, das Echtfoto schmaler als die Spalte (Zwischenstand ohne Stern) und eine Gesamthöhe von 5.743 px.

@@ -120,6 +120,14 @@ class Produkt(models.Model):
         help_text='Meta-Description (max. 160 Zeichen). Leer = aus Beschreibung.')
     preis = models.DecimalField(max_digits=10, decimal_places=2)
     bild = models.ImageField(upload_to='produkte/', blank=True, null=True)
+    # Rückfall ohne Upload (P4): ein Bild, das als statische Datei im Repo liegt, etwa das
+    # Engel-Shirt Nº 006 – so braucht ein neues Stück beim Deploy keine Anmeldung im Admin
+    # und keinen Cloudinary-Zugang. Schreibweise siehe ``produktbilder.statisches_bild``.
+    # Ein hochgeladenes ``bild`` hat immer Vorrang.
+    bild_statisch = models.CharField(
+        'Bild aus dem Repo', max_length=200, blank=True,
+        help_text='Nur für Bilder aus den statischen Dateien: '
+                  '„pfad-{w}.webp@480,640,800#800x1000“. Leer lassen, wenn ein Foto hochgeladen wird.')
     # Maße des Originalbilds (PF25): damit die Stückseite `width`/`height` am Bild
     # nennen kann, ohne es bei jedem Aufruf zu laden. Kein ImageField-width_field:
     # das öffnete bei jeder Instanz ohne Maße die Datei (bei Cloudinary ein Abruf).
@@ -152,6 +160,37 @@ class Produkt(models.Model):
     vergeben = models.BooleanField(
         'Archiv (vergeben)', default=False,
         help_text='Schon vergeben: wird gezeigt, ist aber nie kaufbar – auch nicht bei laufendem Verkauf.')
+
+    @property
+    def verkauft(self):
+        """Für die Anzeige: Archiv (``vergeben``) oder nicht mehr vorrätig – trägt das Band „Verkauft“."""
+        return self.vergeben or self.lagerbestand < 1
+
+    @property
+    def hat_bild(self):
+        """Ein Hauptbild ist da: Upload oder statische Datei."""
+        return bool(self.bild or self.bild_statisch)
+
+    def hauptbild(self):
+        """Hauptbild als ``produktbilder.Bild`` (oder ``None``)."""
+        from . import produktbilder
+        alt = f'{self.name} – handbemaltes Upcycling-Unikat von Luviq Universe'
+        return produktbilder.bild_aus(self.bild, self.bild_statisch, self.bild_breite, self.bild_hoehe, alt)
+
+    def galerie(self):
+        """Alle Bilder des Stücks in Reihenfolge: Hauptbild, dann die Zusatzbilder."""
+        bilder = []
+        haupt = self.hauptbild()
+        if haupt:
+            bilder.append(haupt)
+        if self.pk:
+            from . import produktbilder
+            for nr, extra in enumerate(self.zusatzbilder.all(), start=2):
+                alt = extra.alt or f'{self.name} – Foto {nr}'
+                bild = produktbilder.bild_aus(extra.bild, extra.bild_statisch, extra.breite, extra.hoehe, alt)
+                if bild:
+                    bilder.append(bild)
+        return bilder
 
     @property
     def kaufbar(self):
@@ -279,6 +318,31 @@ class Produkt(models.Model):
     class Meta:
         verbose_name_plural = "Produkte"
         ordering = ['-erstellt_am']
+
+
+class ProduktBild(models.Model):
+    """Weiteres Foto eines Stücks für die wischbare Galerie auf der Stückseite (P4).
+
+    Das erste Bild bleibt ``Produkt.bild`` (bzw. ``bild_statisch``); hier stehen alle weiteren,
+    in der Reihenfolge ``position``. Entweder ein Upload oder ein statisches Bild.
+    """
+    produkt = models.ForeignKey(Produkt, on_delete=models.CASCADE, related_name='zusatzbilder')
+    bild = models.ImageField(upload_to='produkte/', blank=True, null=True)
+    bild_statisch = models.CharField('Bild aus dem Repo', max_length=200, blank=True,
+                                     help_text='Wie bei Produkt: „pfad-{w}.webp@480,720,960#960x1200“.')
+    alt = models.CharField('Bildbeschreibung', max_length=200, blank=True,
+                           help_text='Was auf dem Foto zu sehen ist (für Screenreader und Google).')
+    breite = models.PositiveIntegerField(null=True, blank=True)
+    hoehe = models.PositiveIntegerField(null=True, blank=True)
+    position = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['position', 'pk']
+        verbose_name = 'Zusatzbild'
+        verbose_name_plural = 'Zusatzbilder'
+
+    def __str__(self):
+        return f'{self.produkt.name}: Bild {self.position}'
 
 
 def produkt_zu_posten(posten):

@@ -45,7 +45,8 @@ def add_to_cart(request, produkt_id):
             produkt_name=produkt.name,
             produkt_ref=produkt.id,
             produkt_preis=produkt.preis,
-            produkt_bild=produkt.bild.url if produkt.bild else '',
+            produkt_bild=(produkt.bild.url if produkt.bild else
+                          (produkt.hauptbild().original if produkt.hat_bild else '')),
             menge=1,
         )
         messages.success(request, f'"{produkt.name}" wurde zum Warenkorb hinzugefügt!')

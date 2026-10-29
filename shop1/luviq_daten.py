@@ -484,3 +484,42 @@ LEISTE_AUS = frozenset({
     'warenkorb', 'checkout', 'payment', 'payment_success', 'payment_cancel',
     'newsletter_abmelden', 'newsletter_bestaetigen', 'kontakt_danke', 'lockout',
 })
+
+
+# ── P4: Stücke-Seiten ────────────────────────────────────────────────────────
+
+#: Schriftzug über dem Bild eines vergebenen Stücks (Karte und Stückseite). Ein Wort an einer
+#: Stelle: Bastian wollte „Verkauft“ (29.10.2026). Das Datenfeld heißt weiter ``vergeben``.
+VERKAUFT_WORT = 'Verkauft'
+
+#: Die Technik in einem Satz, auf Stückseite und Luisa-Seite gleich (Bastian 29.10.2026).
+BLEICHE_SATZ = ('Mit Bleiche gemalt: Die Farbe wird aus dem Stoff gezogen, nichts ist aufgedruckt. '
+                'Deshalb steht das Motiv in Bleich-Beige auf dem schwarzen Stoff.')
+
+#: Erstes offizielles Stück Nº 006, angelegt von ``manage.py luviq_engel_anlegen`` (aus
+#: ``start.sh``). Quelle: Bastian am 29.10.2026, 23:45. Nicht belegt und deshalb nicht
+#: eingetragen: Maße in cm, Marke des Shirts, Pflegeversprechen. Preis 69 € wird erst
+#: mit dem Verkauf gezeigt (``verkauf_aktiv``), vorher steht nur „Unikat“.
+ENGEL_STUECK = {
+    'slug': 'engel-shirt-handgebleicht',
+    'name': 'Engel-Shirt, mit Bleiche gemalt',
+    'preis': '69.00',
+    'masse': 'Größe M',
+    'material': '100 % Baumwolle',
+    'technik': 'Mit Bleiche von Hand gemalt',
+    'seo_titel': 'Engel-Shirt mit Bleiche gemalt – Luviq Lübeck',
+    'seo_beschreibung': ('Unikat Nº 006: T-Shirt mit Engel, Rose und Stern, von Hand mit Bleiche '
+                         'gemalt. 100 % Baumwolle, Größe M. Luviq, Lübeck.'),
+    'beschreibung': ('Ein T-Shirt aus 100 % Baumwolle in Größe M. Auf dem Rücken steht ein Engel mit '
+                     'Rose und einem Stern, von Hand gemalt – viel Handarbeit, genau einmal. '
+                     'Vorne ein kleines Luviq-Zeichen auf Herzhöhe – Foto folgt.'),
+    # Statische Bilder (siehe produktbilder.py): Studiobild mit Stern (Hero-Zuschnitt 4:5) zuerst,
+    # dann das echte Foto. Vorderseiten-Fotos später als weitere „Zusatzbilder“ im Admin eintragen.
+    'bild_statisch': 'shop1/images/luviq/hero-engel-45-{w}.webp@480,640,800#800x999',
+    'zusatzbilder': [
+        {'bild_statisch': 'shop1/images/stuecke/engel-echt-45-{w}.webp@600,900,960#960x1200',
+         'breite': 960, 'hoehe': 1200,
+         'alt': ('Echtes Foto des fertigen Engel-Shirts von hinten: schwarzes T-Shirt, darauf in '
+                 'Bleich-Beige ein Engel mit Flügeln, Rose und Stern')},
+    ],
+}

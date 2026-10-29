@@ -92,10 +92,10 @@ def startseite(request):
 
     # Mit Verkauf stehen die verfügbaren Stücke in einem eigenen Abschnitt, das
     # Archiv zeigt dann nur die vergebenen; ohne Verkauf zeigt das Archiv alles.
-    verfuegbare = list(Produkt.objects.filter(aktiv=True, vergeben=False)
-                       .order_by('nummer', 'erstellt_am')[:8])
-    vergebene = list(Produkt.objects.filter(aktiv=True, vergeben=True)
-                     .order_by('nummer', 'erstellt_am')[:10])
+    alle = list(Produkt.objects.filter(aktiv=True).order_by('nummer', 'erstellt_am')
+                .prefetch_related('zusatzbilder'))
+    verfuegbare = [p for p in alle if not p.verkauft][:8]
+    vergebene = [p for p in alle if p.verkauft][:10]
 
     echt = []
     for name, breiten, (breite, hoehe), alt, unterschrift in luviq_daten.ECHT_FOTOS:
@@ -104,12 +104,12 @@ def startseite(request):
                      'unterschrift': unterschrift,
                      'srcset': ', '.join(f'{a} {b}w' for b, a in adressen.items())})
 
-    mit_verkauf = verkauf.verkauf_aktiv()
     return render(request, 'shop1/index.html', {
         'titel': 'Luviq-Shop',
         'produkte_galerie': produkte_galerie,
-        'verfuegbare': verfuegbare if mit_verkauf else [],
-        'archiv_liste': vergebene if mit_verkauf else list(produkte_galerie),
+        # P4: das verfügbare Stück steht auch vor dem Verkaufsstart da (ohne Preis, ohne Kaufweg).
+        'verfuegbare': verfuegbare,
+        'archiv_liste': vergebene,
         'echt_titel': luviq_daten.ECHT_TITEL,
         'echt_text': luviq_daten.ECHT_TEXT,
         'echt_fotos': echt,
@@ -367,8 +367,17 @@ def liefergebiet(request):
 
 def produkte(request):
     """Zeigt alle aktiven Produkte aus der Datenbank."""
-    produkte_liste = Produkt.objects.filter(aktiv=True).order_by('nummer', 'erstellt_am')
-    return render(request, 'shop1/produkte.html', {'produkte_liste': produkte_liste})
+    produkte_liste = list(Produkt.objects.filter(aktiv=True).order_by('nummer', 'erstellt_am')
+                          .prefetch_related('zusatzbilder'))
+    verfuegbare = [p for p in produkte_liste if not p.verkauft]
+    vergebene = [p for p in produkte_liste if p.verkauft]
+    return render(request, 'shop1/produkte.html', {
+        'produkte_liste': produkte_liste,
+        'verfuegbare_liste': verfuegbare,
+        'vergebene_liste': vergebene,
+        # Erste Karte in der Anzeigereihenfolge = LCP-Bild (Preload in produkte.html).
+        'erstes_stueck': (verfuegbare or vergebene or [None])[0],
+    })
 
 
 #: Slug-Endung eines früheren Verkaufsvermerks („custom-pants-sold"), auch mit
@@ -407,7 +416,13 @@ def produkt_detail_slug(request, slug):
         if neu is not None and neu.slug != slug:
             return redirect(neu.get_absolute_url(), permanent=True)
         produkt = get_object_or_404(Produkt, slug=slug, aktiv=True)
-    return render(request, 'shop1/produkt_detail.html', {'produkt': produkt})
+    return render(request, 'shop1/produkt_detail.html', {
+        'produkt': produkt,
+        'galerie': produkt.galerie(),
+        # Technik-Satz nur, wenn das Feld „Technik“ Bleiche nennt (nichts raten).
+        'bleiche': 'bleich' in (produkt.technik or '').lower(),
+        'bleiche_satz': luviq_daten.BLEICHE_SATZ,
+    })
 
 
 # offen-ok: Altadresse /produkt/<id>/ aus Links und Suchindex, absichtlich

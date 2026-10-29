@@ -4,7 +4,7 @@ Das eigene Verwaltungspanel unter ``/shop-admin/`` steht in
 ``admin_views.py``; hier geht es nur um die Standardoberfläche von Django.
 """
 from django.contrib import admin
-from .models import UserProfile, Produkt, Cart, CartItem, Order, OrderItem, Subscriber, KontaktAnfrage, Motivanfrage
+from .models import UserProfile, Produkt, ProduktBild, Cart, CartItem, Order, OrderItem, Subscriber, KontaktAnfrage, Motivanfrage
 
 
 @admin.register(UserProfile)
@@ -66,6 +66,13 @@ class KontaktAnfrageAdmin(admin.ModelAdmin):
         return False
 
 
+class ProduktBildInline(admin.TabularInline):
+    """Weitere Fotos (Vorder-, Detail-, Echtfoto) für die Galerie der Stückseite."""
+    model = ProduktBild
+    extra = 1
+    fields = ('position', 'bild', 'alt', 'bild_statisch')
+
+
 @admin.register(Produkt)
 class ProduktAdmin(admin.ModelAdmin):
     """Stücke. ``nummer`` (Nº 001 …) ist direkt in der Liste änderbar – so
@@ -79,6 +86,7 @@ class ProduktAdmin(admin.ModelAdmin):
     list_filter = ('aktiv', 'vergeben', 'erstellt_am')
     ordering = ('nummer',)
     readonly_fields = ('erstellt_am', 'aktualisiert_am')
+    inlines = [ProduktBildInline]
 
 
 @admin.register(Cart)

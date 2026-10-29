@@ -325,7 +325,15 @@ VERBOTEN_IM_ARCHIV = [
 
 
 class ArchivOhneVerkaufTest(_Grundlage):
-    """Ohne Verkauf erscheinen die Stücke neutral als Archiv bisheriger Stücke."""
+    """Ohne Verkauf erscheinen die Stücke neutral als Archiv bisheriger Stücke.
+
+    Seit P4 gilt das für Stücke mit ``vergeben=True``; ein nicht vergebenes Stück steht als
+    „Unikat“ vor dem Archiv (``test_stuecke_p4``)."""
+
+    def setUp(self):
+        super().setUp()
+        self.produkt.vergeben = True
+        self.produkt.save()
 
     def test_karten_karussell_und_produktseite_zeigen_das_archiv(self):
         # Archivnummer aus dem Feld ``nummer`` (Migration 0024), auf den
@@ -361,7 +369,7 @@ class ArchivOhneVerkaufTest(_Grundlage):
     def test_ueberschriften_heissen_archiv(self):
         self.assertContains(self.hole('/produkte/'), 'id="archiv-titel">Das Archiv</h1>')
         self.assertContains(self.hole('/'), 'id="archiv-titel">Das Archiv</h2>')
-        self.assertContains(self.hole('/'), 'Diese Stücke sind vergeben')
+        self.assertContains(self.hole('/'), 'Diese Stücke sind verkauft')
 
     def test_llms_txt_nennt_das_archiv(self):
         llms = self.hole('/llms.txt').content.decode()

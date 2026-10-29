@@ -346,7 +346,7 @@ class UeberschriftenfolgeTest(LuviqTestCase):
                     letzte = ebene
 
     def test_das_archiv_setzt_die_namen_der_karten_als_h2_die_startseite_als_h3(self):
-        erzeuge_produkt('Stueck')
+        erzeuge_produkt('Stueck', vergeben=True)
         archiv = self.hole('/produkte/').content.decode()
         self.assertRegex(archiv, r'<h2 class="lv-serif"><a href="/produkt/stueck/">')
         start = self.hole('/').content.decode()

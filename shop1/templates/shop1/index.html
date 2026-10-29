@@ -123,6 +123,22 @@ View und Kontextprozessor), kein Datum hier.
     </section>
     {% endif %}
 
+    {% if verfuegbare %}
+    <!-- ═══ Verfügbare Stücke vor dem Archiv (P4): auch vor dem Verkaufsstart, dann ohne Preis; Karten aus teile/archiv_karte.html ═══ -->
+    <section class="lv-abschnitt" id="stuecke" aria-labelledby="stuecke-titel">
+        <div class="lv-abschnittskopf">
+            <h2 class="lv-serif" id="stuecke-titel">{% if verfuegbare|length == 1 %}Das erste Stück{% else %}Die ersten Stücke{% endif %}</h2>
+            <div class="lv-abschnittskopf-r">
+                <p>{% if not verkauf_aktiv %}{{ shop_oeffnet }} {% endif %}Jedes Stück gibt es genau einmal.</p>
+                <a class="lv-link" href="{% url 'produkte' %}">Alle Stücke</a>
+            </div>
+        </div>
+        <ol class="lv-raster lv-raster-stuecke">
+            {% for produkt in verfuegbare %}{% include 'shop1/teile/archiv_karte.html' %}{% endfor %}
+        </ol>
+    </section>
+    {% endif %}
+
     <!-- ═══ Wege: Unikate oder dein eigenes Teil (Linktexte beschreiben das Ziel) ═══ -->
     <section class="lv-wege" id="wege" aria-labelledby="wege-titel">
         <h2 class="lv-serif" id="wege-titel">Unikate oder dein eigenes Teil</h2>
@@ -160,22 +176,6 @@ View und Kontextprozessor), kein Datum hier.
             {% endif %}
         </div>
     </section>
-
-    {% if verfuegbare %}
-    <!-- ═══ Mit Verkauf: die verfügbaren Stücke zuerst (Karten gehören P4) ═══ -->
-    <section class="lv-abschnitt" id="stuecke" aria-labelledby="stuecke-titel">
-        <div class="lv-abschnittskopf">
-            <h2 class="lv-serif" id="stuecke-titel">Die ersten Stücke</h2>
-            <div class="lv-abschnittskopf-r">
-                <p>Jedes Stück gibt es genau einmal. Wenn es weg ist, ist es weg.</p>
-                <a class="lv-link" href="{% url 'produkte' %}">Alle Stücke</a>
-            </div>
-        </div>
-        <ol class="lv-raster">
-            {% for produkt in verfuegbare %}{% include 'shop1/teile/archiv_karte.html' %}{% endfor %}
-        </ol>
-    </section>
-    {% endif %}
 
     <!-- ═══ Wie ein Stück entsteht: nummerierte Linienliste, ohne Bilder ═══ -->
     <section class="lv-abschnitt dunkel" id="entstehung" aria-labelledby="entstehung-titel">
@@ -229,7 +229,7 @@ View und Kontextprozessor), kein Datum hier.
         <div class="lv-abschnittskopf">
             <h2 class="lv-serif" id="archiv-titel">Das Archiv</h2>
             <div class="lv-abschnittskopf-r">
-                <p>{% if verkauf_aktiv %}Alles, was bisher entstanden ist. Jedes Stück gibt es genau einmal.{% else %}Alles, was bisher entstanden ist. Diese Stücke sind vergeben, sie kommen nicht wieder.{% endif %}</p>
+                <p>{% if verkauf_aktiv %}Alles, was bisher entstanden ist. Jedes Stück gibt es genau einmal.{% else %}Alles, was bisher entstanden ist. Diese Stücke sind verkauft, sie kommen nicht wieder.{% endif %}</p>
                 {% if archiv_liste %}<a class="lv-link" href="{% url 'produkte' %}">Das ganze Archiv</a>{% endif %}
             </div>
         </div>

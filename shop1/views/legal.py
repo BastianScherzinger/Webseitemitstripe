@@ -540,9 +540,9 @@ def _seitenbilder(name: str, base_url: str) -> list[tuple[str, str]]:
     if name == 'produkte':
         # Mit Archivnummer: zwei Stücke heißen gleich („Custom print hoodie“),
         # ihre Bildtitel dürfen es nicht tun (EIG103).
-        return [(absolut(p.bild.url), f'{p.name} (Nº {p.archiv_nummer}) – Luviq Universe')
+        return [(absolut(p.hauptbild().original), f'{p.name} (Nº {p.archiv_nummer}) – Luviq Universe')
                 for p in Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am')
-                if p.bild]
+                if p.hat_bild]
     return []
 
 
@@ -629,8 +629,8 @@ def _produkt_xml(produkt, base_url):
     xml += '    <changefreq>weekly</changefreq>\n'
     xml += '    <priority>0.8</priority>\n'
 
-    if produkt.bild:
-        bild_url = produkt.bild.url
+    if produkt.hat_bild:
+        bild_url = produkt.hauptbild().original
         if not bild_url.startswith('http'):
             bild_url = f"{base_url}{bild_url}"
         escaped = bild_url.replace('&', '&amp;')

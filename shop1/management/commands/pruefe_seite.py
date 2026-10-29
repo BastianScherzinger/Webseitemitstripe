@@ -283,7 +283,7 @@ class Command(BaseCommand):
 
         try:
             aktive = list(Produkt.objects.filter(aktiv=True)
-                          .values('id', 'name', 'slug', 'preis', 'beschreibung', 'bild'))
+                          .values('id', 'name', 'slug', 'preis', 'beschreibung', 'bild', 'bild_statisch'))
         except Exception as fehler:
             _log.warning('pruefe_seite: Produkte nicht lesbar', exc_info=True)
             self.fehler.append(f'Produkte nicht lesbar: {fehler}')
@@ -299,7 +299,7 @@ class Command(BaseCommand):
                     f'Aktives Produkt #{p["id"]} „{p["name"] or "?"}“ ohne '
                     f'{", ".join(leer)} – es steht so in Sitemap und Übersicht.'
                 )
-            if not p['bild']:
+            if not (p['bild'] or p['bild_statisch']):
                 self.warnungen.append(
                     f'Aktives Produkt #{p["id"]} „{p["name"]}“ hat kein Bild.'
                 )

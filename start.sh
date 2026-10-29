@@ -41,6 +41,10 @@ python manage.py besucher_aufraeumen || echo "WARNING: besucher_aufraeumen faile
 # ═══ BILDMASSE DER PRODUKTE NACHTRAGEN (PF25) ═══
 python manage.py bildmasse_nachtragen || echo "WARNING: bildmasse_nachtragen failed"
 
+# ═══ ENGEL-SHIRT Nº 006 ANLEGEN (P4) ═══
+# Idempotent: legt das Stück nur an, wenn der Slug fehlt; Bilder liegen als statische Dateien im Repo.
+python manage.py luviq_engel_anlegen || echo "WARNING: luviq_engel_anlegen failed"
+
 # ═══ STATISCHE DATEIEN SAMMELN ═══
 echo "Collecting static files..."
 python manage.py collectstatic --noinput --clear || echo "WARNING: collectstatic failed"

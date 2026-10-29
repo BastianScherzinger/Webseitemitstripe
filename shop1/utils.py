@@ -137,6 +137,8 @@ def send_newsletter_email(produkt, subscribers):
         image_url = produkt.bild.url
     elif produkt.bild:
         image_url = f"{site_url}{produkt.bild.url}"
+    elif getattr(produkt, 'bild_statisch', ''):
+        image_url = f"{site_url}{produkt.hauptbild().original}"
     else:
         image_url = ""
     # Höhe zur festen Breite 528 der Mail, aus den gespeicherten Bildmaßen (V04);
