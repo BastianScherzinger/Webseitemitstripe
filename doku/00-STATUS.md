@@ -1,10 +1,11 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-10-23
+stand: 2026-10-29
+stand: 2026-10-29
 status: vollständig
 fortschritt: 97
-zusammenfassung: Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau, kein Gewerbe angemeldet). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
+zusammenfassung: 29.10.2026 – Gewerbe LUVIQ angemeldet (Beginn 01.11.2026, § 19 UStG, USt-IdNr. beantragt). Zweig recht/2026-10-29-verkaufsstart (nicht gepusht) - Startsperre für den Verkauf, Hinweis „Shop öffnet frühestens am 01.11.2026“, Generator-Ablagen, USt-IdNr.-Platzhalter, Einwilligungs-Gerüst; Prüfbericht in Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29. Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
 offen: 4
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 ---
@@ -19,6 +20,7 @@ quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 |---|---|
 | **Kundin** | Luisa Brehler (Anrede: Frau Brehler) |
 | **Sitz** | Seit der Gewerbeanmeldung (22.10.2026, Beginn 01.11.2026): Mühlenkamp 5, 23569 Lübeck (Entwurf im Zweig `seo/2026-10-23-luviq-upgrade`, Rechtstexte warten auf Generator und Freigabe); Herkunft Alsfeld (live noch: Grünberger Str. 16, 36304 Alsfeld) · brehlerluisa@gmail.com · kein Ladengeschäft; keine Telefonnummer, Antwort „in der Regel innerhalb von 2 Stunden“ (laut `/kontakt/` und Impressum, abgerufen 02.10.2026) |
+| **Sitz** | Grünberger Str. 16, 36304 Alsfeld (Hessen) · brehlerluisa@gmail.com · kein Ladengeschäft; keine Telefonnummer, Antwort „in der Regel innerhalb von 2 Stunden“ (laut `/kontakt/` und Impressum, abgerufen 02.10.2026) |
 | **Art** | Marke im Aufbau: **kein Verkauf** (Impressum live: „Derzeit findet kein Verkauf statt“). Die bisherigen Stücke stehen als Archiv „bereits vergeben“; es gibt Motivanfrage (kostenlos, keine Bestellung), Warteliste mit Double-Opt-in und den Hinweis „Die nächste Ausgabe ist in Arbeit“ — **ohne Termin und ohne Countdown** (`DROP_TERMIN_VORGABE` ist seit `3073388` leer). Der Wissensbereich mit drei Beiträgen ist live. Der Shop-Code (Konten, Warenkorb, Kasse, PayPal) bleibt im Projekt, ist aber hinter `VERKAUF_AKTIV` abgeschaltet (Vorgabe aus). **Kein Gewerbe angemeldet** (Angabe des Betreibers 01.10.2026) — deshalb keine Unternehmensangaben auf der Seite |
 | **Bezahlung** | derzeit keine. Im Code: **PayPal** oder Vorab-Überweisung, **kein Stripe** — erst nach Einschalten des Verkaufs relevant ([80-AUFGABEN.md](80-AUFGABEN.md), „Verkauf einschalten nach Gewerbeanmeldung“) |
 | **Domain** | `https://www.luviq-alsfeld.com` (200) · Apex `https://luviq-alsfeld.com` leitet per **301 auf www** (abgerufen 02.10.2026; `CanonicalHostMiddleware`, `CANONICAL_HOST` in Railway gesetzt) · Railway `luviq-luisa-shop.up.railway.app` leitet seit `feeb95e` ebenfalls per 301 auf `www` (abgerufen 02.10.2026) |
@@ -53,28 +55,28 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 19.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-18b) — **Gesamtstand 95,9 von 100**, Reifegrad „Referenz“. 354 von 410 Regeln an 19 URLs und 202 Dateien (41.824 Zeilen) geprüft.
+**Messung vom 29.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 96,0 von 100**, Reifegrad „Referenz“. 354 von 410 Regeln an 19 URLs und 207 Dateien (43.150 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
 | Erreichbarkeit & Postfach | **74** | Brauchbar |
 | Substanz & Reichweite | **86** | Solide |
 | Konversion | **88** | Solide |
-| Code-Qualität & Projektreife | **94** | Referenz |
-| SEO — Inhalt | **95** | Referenz |
+| SEO — Inhalt | **93** | Referenz |
 | GEO — KI-Sichtbarkeit | **97** | Referenz |
 | Vorlagen-Konformität | **99** | Referenz |
+| Performance & Core Web Vitals | **99** | Referenz |
+| Code-Qualität & Projektreife | **100** | Referenz |
 | SEO — Technik | **100** | Referenz |
 | Sicherheit | **100** | Referenz |
 | Formulare & Preisrechner | **100** | Referenz |
-| Performance & Core Web Vitals | **100** | Referenz |
 | Barrierefreiheit | **100** | Referenz |
 | Recht & Vertrauen | **100** | Referenz |
 | Betrieb & Auslieferung | **100** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 202 Dateien, **2 Befunde**, davon 1 kritisch und 0 wichtig.
+Quelltext: 207 Dateien, **2 Befunde**, davon 0 kritisch und 0 wichtig.
 
 Kritische Befunde:
 
@@ -86,7 +88,6 @@ Kritische Befunde:
 Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen
 Ordner (Zweig)** — die Zahl mischt also zwei Stände, siehe
 [90-NOTIZEN.md](90-NOTIZEN.md).
-
 ## Upgrade 23.10.2026 (Zweig, nicht live)
 
 Zweig **`seo/2026-10-23-luviq-upgrade`** (Worktree `webseiten buisnes\luviq-wt-seo-2026-10-23`), baut auf `design/2026-10-22-startbild` (neues Startbild, ebenfalls nicht gemergt) auf. Nicht gepusht, nicht deployt. 742 Tests grün.
@@ -98,11 +99,13 @@ Zweig **`seo/2026-10-23-luviq-upgrade`** (Worktree `webseiten buisnes\luviq-wt-s
 - **Gewerbe (23.10. Tag):** Luisas Gewerbe ist bei der Hansestadt Lübeck angemeldet (22.10., Beginn 01.11.2026, Geschäftsbezeichnung „Luviq“). Impressum, Datenschutz, Kontakt, Schema, llms.txt und Mailfuß nennen jetzt die Lübecker Anschrift aus `luviq_daten.ANBIETERIN` (`94764de`); alle Texte mit Sitz Lübeck und Herkunft Alsfeld, Herkunftsseite „Von Alsfeld nach Lübeck“ (`4d40a9a`); Overview `GE13`, `PJ05`, `PJ07`, `SI40` (`56258a7`). Screenshots `doku/screens/2026-10-23-gewerbe/`.
 - **Nicht gemacht:** Verkauf bleibt aus; keine Railway-, Domain- oder Google-Profil-Änderung (Entscheidungsvorlage oben). Rechtstexte brauchen Luisas Freigabe (Agenturregel 3). Einzelheiten `LOGBUCH.md` (23.10.2026), Screenshots `doku/screens/2026-10-23/`.
 
+
 ## Die wichtigsten offenen Punkte
 
 Die Punkte hängen an Entscheidungen oder Angaben von Betreiberin und Betreiber; im Code liegt nichts mehr aus.
-
 1. **Verkauf bleibt aus, bis die Liste in [80-AUFGABEN.md](80-AUFGABEN.md) („Verkauf einschalten nach Gewerbeanmeldung“) abgearbeitet ist.** Das Gewerbe ist seit 22.10.2026 angemeldet (Beginn 01.11.2026); es fehlen Steuernummer, Rechtstexte aus dem Generator, LUCID, GPSR-Angaben. Bis dahin nichts auf der Seite ergänzen, was ein Unternehmen, Preise oder Kleinunternehmer-Sätze behauptet.
+
+1. **Verkauf bleibt aus, bis ein Gewerbe angemeldet und die Liste in [80-AUFGABEN.md](80-AUFGABEN.md) („Verkauf einschalten nach Gewerbeanmeldung“) abgearbeitet ist.** Bis dahin nichts auf der Seite ergänzen, was ein Unternehmen, Preise oder Kleinunternehmer-Sätze behauptet.
 2. **Luisa (80-AUFGABEN, „Beim Kunden“, 14 Zeilen):** Texte der „Nachtausgabe“ und die Rechtstexte gegenlesen, eigene Beschreibung je Stück und eindeutige Produktnamen, neue Fotos, Stoff für zweite Seiten, Vertrauenssignale und Bewertungen, Aufbewahrungsfristen, Drop-Termin und -Inhalt. Erledigt am 02.10.2026: Freigabe der Wissensbeiträge, Antwortzeit, Profiladressen.
 3. **Bastian:** Railway-Variablen und -Einstellungen (`INDEXNOW_KEY`, `STRIPE_*` entfernen, eigene Datenbank K1, geteilte Zugangswerte K7, Healthcheck-Pfad, `GOOGLE_REVIEW_URL` auf den echten Bewertungslink), Search Console (Indexierung beantragen, TS46), Bestätigung des Google-Profils prüfen, Livetest des Kontaktformulars, drei Sichtprüfungen im Browser, zwei Entscheidungen (Stückseiten `noindex`?, `/ueber_uns/` umziehen?). Einzelzeilen in [10-TECHNIK.md](10-TECHNIK.md), [20-DESIGN.md](20-DESIGN.md), [40-SEO.md](40-SEO.md) und [50-LOCAL-SEO.md](50-LOCAL-SEO.md).
 4. **Eigene Domainadresse für Mail?** `luviq-alsfeld.com` hat laut Messung keinen MX- und keinen SPF-Eintrag (`MW01`, `MW04`); Mail geht von der Gmail-Adresse der Betreiberin — der schwächste Messbereich („Erreichbarkeit & Postfach“, 77). Entscheidung der Betreiberin (80-AUFGABEN, „Beim Kunden“).

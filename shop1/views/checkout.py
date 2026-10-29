@@ -250,6 +250,8 @@ def checkout(request):
         'profile_data': _profil_vorbelegung(request.user),
         'laengen': BESTELL_LAENGEN,
         'bank_moeglich': _bank_konfiguriert(),
+        # § 312j Abs. 2 BGB: Stücke und Preise unmittelbar vor dem Bestellknopf.
+        'posten': posten,
     })
 
 

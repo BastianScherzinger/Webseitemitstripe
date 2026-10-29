@@ -1,0 +1,20 @@
+{% load static %}
+{% comment %}
+Einwilligungs-Banner (§ 25 TDDDG, Art. 6 Abs. 1 lit. a / Art. 7 DSGVO), Gerüst vom 29.10.2026.
+Erscheint nur, wenn EINWILLIGUNG_DIENST gesetzt ist (Vorgabe leer: kein Banner, kein Fremdskript).
+Regeln: nichts Nicht-Notwendiges vor dem Klick auf „Akzeptieren"; „Ablehnen" ist gleich groß und gleich
+gestaltet (dieselbe Klasse) und steht auf derselben Ebene; kein vorangekreuztes Kästchen; die Wahl lässt
+sich über „Cookie-Einstellungen" im Fuß jederzeit ändern. Das Fremdskript steht NICHT im HTML, sondern nur
+als Adresse in data-skript – einwilligung.js lädt es erst nach „Akzeptieren".
+Wortlaut der Datenschutzerklärung zum Dienst kommt aus dem Generator (Agenturregel 3).
+{% endcomment %}
+<link rel="stylesheet" href="{% static 'shop1/einwilligung.css' %}">
+<section class="lv-einwilligung" id="lv-einwilligung" data-skript="{{ einwilligung.skript }}" aria-labelledby="lv-einwilligung-titel" hidden>
+    <h2 class="lv-einwilligung-titel" id="lv-einwilligung-titel">Darf {{ einwilligung.dienst }} mitzählen?</h2>
+    <p>Die Seite funktioniert auch ohne. Mit deinem Ja lädt sie {{ einwilligung.dienst }}, um zu sehen, wie die Seite genutzt wird. Das kannst du jederzeit unten unter „Cookie-Einstellungen" ändern. Mehr dazu in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
+    <p class="lv-einwilligung-knoepfe">
+        <button type="button" class="lv-einwilligung-knopf" data-einwilligung="nein">Ablehnen</button>
+        <button type="button" class="lv-einwilligung-knopf" data-einwilligung="ja">Akzeptieren</button>
+    </p>
+</section>
+<script defer src="{% static 'shop1/einwilligung.js' %}"></script>

@@ -489,7 +489,37 @@ PERMISSIONS_POLICY = {
 # Paragraph 19 UStG, Zahlung oder Versand, Organization statt Offer im Schema.
 # Der Shop bleibt im Code. VERKAUF_AKTIV=1 (auch true/yes/on/ja/an) schaltet
 # ihn nach der Gewerbeanmeldung zurueck - Checkliste in doku/80-AUFGABEN.md.
-VERKAUF_AKTIV = os.getenv('VERKAUF_AKTIV', '').strip().lower() in ('1', 'true', 'yes', 'on', 'ja', 'an')
+#
+# Seit 29.10.2026 zusaetzlich die Startsperre (shop1/startsperre.py): Das
+# Gewerbe beginnt am 01.11.2026, verkauft wird aber erst, wenn auch die
+# Rechtstexte aus dem Generator, die LUCID-Registriernummer, die Versandkosten
+# und die Widerrufsfunktion stehen. Steht ein Grund auf der Liste, bleibt der
+# Verkauf trotz VERKAUF_AKTIV=1 aus; pruefe_seite nennt die Gruende im Log.
+# Gelesen beim Start: ein vor dem 01.11. gesetzter Schalter wirkt erst nach
+# dem naechsten Neustart ab diesem Tag (sichere Richtung).
+from shop1.startsperre import fruehester_tag as _fruehester_tag, sperrgruende as _sperrgruende
+VERKAUF_GEWUENSCHT = os.getenv('VERKAUF_AKTIV', '').strip().lower() in ('1', 'true', 'yes', 'on', 'ja', 'an')
+VERKAUF_SPERRGRUENDE = _sperrgruende()
+VERKAUF_AKTIV = VERKAUF_GEWUENSCHT and not VERKAUF_SPERRGRUENDE
+#: Fruehester Verkaufstag fuer den Hinweis „Der Shop oeffnet fruehestens am …".
+VERKAUF_FRUEHESTENS = _fruehester_tag()
+
+# ═══ PFLICHTANGABEN, DIE SPAETER KOMMEN ═══
+# USt-IdNr. (beantragt im ELSTER-Fragebogen am 29.10.2026, kommt per Post vom
+# BZSt). Gesetzt erscheint sie im Impressum (§ 5 Abs. 1 Nr. 6 DDG). Nie eine
+# Nummer erfinden; die Steuernummer gehoert NICHT ins Impressum.
+UST_IDNR = os.getenv('UST_IDNR', '').strip()
+# Registriernummer im Verpackungsregister LUCID (vor dem ersten Paket).
+LUCID_REGISTRIERNUMMER = os.getenv('LUCID_REGISTRIERNUMMER', '').strip()
+
+# ═══ EINWILLIGUNG (Cookie-Banner) ═══
+# Geruest nach § 25 TDDDG / Art. 6 Abs. 1 lit. a DSGVO fuer spaeteres Tracking.
+# Leer (Vorgabe) = kein nicht notwendiger Dienst, kein Banner, kein Skript.
+# Gesetzt = Name des Dienstes, der erst NACH „Akzeptieren" geladen wird;
+# EINWILLIGUNG_SKRIPT ist die Skriptadresse (deren Host muss zusaetzlich in
+# CSP_QUELLEN). Die Datenschutzerklaerung muss den Dienst vorher nennen.
+EINWILLIGUNG_DIENST = os.getenv('EINWILLIGUNG_DIENST', '').strip()
+EINWILLIGUNG_SKRIPT = os.getenv('EINWILLIGUNG_SKRIPT', '').strip()
 
 # ═══ MOTIV ANFRAGEN ═══
 # /motiv-anfragen/ (Umbau „Nachtausgabe", 19.09.2026): Anfrage ohne Preis,

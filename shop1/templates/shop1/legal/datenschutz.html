@@ -36,6 +36,10 @@
                 <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Datenschutzerklärung &amp; Security – diese Erklärung von Luviq Universe, {{ anbieterin.name }}, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, umfasst 4 Abschnitte und nennt, welche Daten beim Besuch dieser Seite{% if verkauf_aktiv %}, bei einer Bestellung{% endif %}, bei einer Anfrage über die Formulare und beim Newsletter anfallen, an welche Dienste sie fließen und welche Rechte Sie dabei haben.</p>
             </header>
 
+            {% comment %}Generator-Text (legal/generator/datenschutz.html) ersetzt nach Luisas Freigabe den Block darunter; dann die Aufbau-Referenz gezielt nachziehen.{% endcomment %}
+            {% if rechtstexte.datenschutz %}
+            <div class="lv-rechtstext">{% include 'shop1/legal/generator/datenschutz.html' %}</div>
+            {% else %}
             <div class="space-y-20 text-white/60 leading-relaxed font-light">
                 <section class="group">
                     <h2 class="text-xs font-black uppercase tracking-widest text-glow-orange mb-6 flex items-center gap-3">
@@ -88,6 +92,7 @@
                 </section>
             </div>
 
+            {% endif %}
             <div class="mt-24 pt-12 border-t border-white/5 text-center">
                 <p class="text-[9px] text-white/10 uppercase tracking-[0.4em]">Stand: 2. Oktober 2026 – Protect your Art, Protect your Data.</p>
             </div>

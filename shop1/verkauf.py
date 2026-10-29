@@ -30,9 +30,26 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 
-#: Hinweis, den eine abgefangene Kaufroute als Meldung mitgibt.
-HINWEIS = ('Der Shop öffnet mit dem ersten Drop – trag dich in die '
-           'Warteliste ein, dann erfährst du es zuerst.')
+
+
+def oeffnungs_satz(heute=None):
+    """„Der Shop öffnet frühestens am 01.11.2026." – solange der Tag kommt.
+
+    Danach (Schalter weiter aus, weil die Startliste noch nicht grün ist) nur
+    „Der Shop ist noch nicht geöffnet.", damit nie ein vergangenes Datum als
+    Ankündigung stehen bleibt. Mit Verkauf: leer."""
+    from datetime import date
+    if verkauf_aktiv():
+        return ''
+    tag = getattr(settings, 'VERKAUF_FRUEHESTENS', None)
+    if tag and (heute or date.today()) < tag:
+        return f'Der Shop öffnet frühestens am {tag:%d.%m.%Y}.'
+    return 'Der Shop ist noch nicht geöffnet.'
+
+
+def hinweis():
+    """Meldung einer abgefangenen Kaufroute, mit Öffnungsdatum."""
+    return f'{oeffnungs_satz()} Trag dich in die Warteliste ein, dann erfährst du es zuerst.'
 
 #: Routennamen des Kaufwegs. Admin-Panel (/shop-admin/…), Konto und Profil
 #: samt Bestellübersicht bleiben erreichbar.
@@ -58,7 +75,7 @@ def verkauf_aktiv():
 
 def verkauf_kontext(request):
     """Kontextprozessor: ``verkauf_aktiv`` für jede Vorlage."""
-    return {'verkauf_aktiv': verkauf_aktiv()}
+    return {'verkauf_aktiv': verkauf_aktiv(), 'shop_oeffnet': oeffnungs_satz()}
 
 
 class VerkaufsschalterMiddleware:
@@ -81,8 +98,8 @@ class VerkaufsschalterMiddleware:
         treffer = getattr(request, 'resolver_match', None)
         name = treffer.url_name if treffer else None
         if name in KAUFROUTEN_JSON:
-            return JsonResponse({'error': HINWEIS, 'verkauf_aktiv': False}, status=409)
+            return JsonResponse({'error': hinweis(), 'verkauf_aktiv': False}, status=409)
         if name in KAUFROUTEN:
-            messages.info(request, HINWEIS)
+            messages.info(request, hinweis())
             return redirect(reverse('home') + WARTELISTE_ANKER)
         return None

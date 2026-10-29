@@ -96,12 +96,14 @@
                 {% if produkt.material %}<dt>Material</dt><dd>{{ produkt.material }}</dd>{% endif %}
                 {% if produkt.technik %}<dt>Technik</dt><dd>{{ produkt.technik }}</dd>{% endif %}
                 {% if produkt.masse %}<dt>Maße</dt><dd>{{ produkt.masse }}</dd>{% endif %}
-                <dt>Stück</dt><dd>Second Hand, von Hand bemalt, 1-of-1</dd>
+                <dt>Stück</dt><dd>Gebraucht (Second Hand), von Hand bemalt, 1-of-1</dd>
             </dl>
             {% comment %}EIG84: Preis und Kaufweg nur für ein Stück, das noch da ist (`Produkt.kaufbar`: aktiv, nicht vergeben, vorrätig); sonst derselbe „vergeben“-Zustand wie ohne Verkauf, statt eines Knopfes, der auf der Startseite endet.{% endcomment %}
             {% if verkauf_aktiv and produkt.kaufbar %}
             <p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} €</p>
-            <p class="lv-klein">Endpreis nach § 19 UStG · PayPal oder Vorab-Überweisung · Versand deutschlandweit, in der Regel 1-2 Werktage</p>
+            <p class="lv-klein">Gesamtpreis. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Zuzüglich <a href="{% url 'agb' %}">Versandkosten</a> · PayPal oder Vorab-Überweisung · Versand deutschlandweit, in der Regel 1-2 Werktage</p>
+            {% comment %}GPSR (VO (EU) 2023/988 Art. 19): Herstellerangaben und Kennnummer im Online-Angebot. Luisa verändert die Teile wesentlich und verkauft unter eigener Marke, sie gilt als Herstellerin. Nur mit Verkauf, Werte aus luviq_daten.ANBIETERIN und luviq_daten.PFLEGE.{% endcomment %}
+            <p class="lv-klein">Herstellerin: {{ anbieterin.name }} ({{ anbieterin.geschaeft }}), {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.email }} · Kennnummer Nº {{ produkt.archiv_nummer }} · Pflege: {{ pflege }}</p>
             {% else %}
             <p class="lv-status">Nº {{ produkt.archiv_nummer }} · Archiv · Bereits vergeben · Neue Stücke mit dem ersten Drop</p>
             {% endif %}

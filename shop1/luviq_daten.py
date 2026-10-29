@@ -77,6 +77,11 @@ GOOGLE_PROFIL = 'https://www.google.com/maps?cid=13899750731019902000'
 #: Belegte Profiladressen für ``sameAs`` (Schema) und ``llms.txt``.
 PROFILE = (INSTAGRAM, TIKTOK, GOOGLE_PROFIL)
 
+#: Pflegehinweis (GPSR-Angabe im Online-Angebot), wortgleich aus Luisas
+#: Antwort in ``FAQ_MOTIV`` unten – kein neuer Satz, keine neue Zusage.
+PFLEGE = ('Auf links bei 30 °C waschen, nicht in den Trockner, keinen Weichspüler nehmen und nur '
+          'von links bügeln.')
+
 #: Häufige Fragen rund um die Motivanfrage (Bestellung nach Wunsch), wortgleich als
 #: Text auf ``/motiv-anfragen/`` und – erst mit Verkauf – als ``FAQPage``. Nur, was
 #: auf der Seite und in den Wissensbeiträgen schon belegt ist: kein Preis, keine
@@ -97,8 +102,7 @@ FAQ_MOTIV = [
      'gemalt wird, entsteht kein zweites genauso. Ein Strich mit der Bleiche lässt sich '
      'außerdem nicht zurücknehmen.'),
     ('Wie pflege ich ein handbemaltes Stück?',
-     'Auf links bei 30 °C waschen, nicht in den Trockner, keinen Weichspüler nehmen und nur '
-     'von links bügeln. So bleibt die Bemalung lange schön.'),
+     PFLEGE + ' So bleibt die Bemalung lange schön.'),
 ]
 
 #: Antwortzeit auf Anfragen, von Bastian für Luisa am 02.10.2026 bestätigt.

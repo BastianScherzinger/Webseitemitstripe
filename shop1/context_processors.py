@@ -114,7 +114,31 @@ def anbieterin(request):
 
     Reine Konstanten, keine Abfrage – deshalb auf jeder Seite, auch im Panel."""
     from . import luviq_daten
-    return {'anbieterin': luviq_daten.ANBIETERIN, 'herkunft': luviq_daten.HERKUNFT}
+    return {'anbieterin': luviq_daten.ANBIETERIN, 'herkunft': luviq_daten.HERKUNFT,
+            # USt-IdNr. erst, wenn sie da ist (settings.UST_IDNR, Impressum).
+            'ust_idnr': getattr(settings, 'UST_IDNR', ''),
+            'lucid_nr': getattr(settings, 'LUCID_REGISTRIERNUMMER', ''),
+            'rechtstexte': rechtstexte_vorhanden(),
+            'pflege': luviq_daten.PFLEGE,
+            # Einwilligungs-Banner nur, wenn ein nicht notwendiger Dienst eingestellt ist.
+            'einwilligung': ({'dienst': settings.EINWILLIGUNG_DIENST,
+                              'skript': getattr(settings, 'EINWILLIGUNG_SKRIPT', '')}
+                             if getattr(settings, 'EINWILLIGUNG_DIENST', '') else None)}
+
+
+def rechtstexte_vorhanden():
+    """Welche Generator-Ablagen (legal/generator/*.html) schon Text tragen.
+
+    Ändert sich nur mit einem neuen Stand, deshalb einmal je Prozess gelesen."""
+    global _RECHTSTEXTE
+    if _RECHTSTEXTE is None:
+        from .startsperre import generator_text_fehlt
+        _RECHTSTEXTE = {name: not generator_text_fehlt(name)
+                        for name in ('impressum', 'datenschutz', 'agb', 'widerruf')}
+    return _RECHTSTEXTE
+
+
+_RECHTSTEXTE = None
 
 
 def luviq(request):

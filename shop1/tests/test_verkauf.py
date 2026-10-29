@@ -111,7 +111,7 @@ class OhneVerkaufTest(_Grundlage):
                     self.assertEqual(antwort.status_code, 302)
                     self.assertEqual(antwort['Location'], '/#newsletter-form')
         antwort = self.hole('/warenkorb/', follow=True)
-        self.assertContains(antwort, 'Der Shop öffnet mit dem ersten Drop')
+        self.assertContains(antwort, 'Trag dich in die Warteliste ein')
 
     def test_kaufwege_leiten_auch_gaeste_um(self):
         for muster in KAUFWEGE:
@@ -403,8 +403,12 @@ class ArchivMitVerkaufTest(_Grundlage):
         beitrag = Comment.objects.create(user=self.kundin, text='Schoen bemalt')
         Comment.objects.create(user=chefin, text='Danke', parent=beitrag, is_admin_reply=True)
         html = self.hole('/gaestebuch/').content.decode()
-        self.assertIn('Shopbesitzer', html)
-        self.assertIn('Kundinnen und Kunden', html)
+        # Seit 29.10.2026 auch mit Verkauf kein „Kundinnen und Kunden" und kein
+        # „Shopbesitzer": wer im Gästebuch schreibt, ist nicht als Käuferin
+        # geprüft (UWG § 5b Abs. 3, Anhang Nr. 23b) – die Seite sagt das.
+        self.assertIn('Betreiberin', html)
+        self.assertNotIn('Kundinnen und Kunden', html)
+        self.assertIn('wird nicht geprüft', html)
 
 
 class AlterVerkaufsslugTest(LuviqTestCase):
