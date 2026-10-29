@@ -123,6 +123,12 @@ class SitemapTest(LuviqTestCase):
         xml = self.hole('/sitemap.xml').content.decode()
         return xml, _LOC.findall(xml)
 
+    def test_startseite_steht_mit_schraegstrich_in_der_sitemap(self):
+        """Kanonische Form: Startseite mit '/' wie canonical und Redirect-Ziel."""
+        _xml, adressen = self._adressen()
+        self.assertTrue(any(a.endswith('/') and a.count('/') == 3 for a in adressen), adressen[:3])
+        self.assertFalse(any(a.count('/') == 2 for a in adressen), adressen[:3])
+
     def test_sitemap_ist_wohlgeformtes_xml(self):
         """Verhindert, dass ein unmaskiertes Zeichen in einem Produktnamen die
         gesamte Sitemap unlesbar macht – Google verwirft sie dann komplett.
