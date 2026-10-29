@@ -154,7 +154,8 @@ MINDESTWOERTER = {
     '/motiv-anfragen/': 200,
     '/produkte/': 380,
     '/kontakt/': 235,
-    '/ueber_uns/': 370,
+    # P1 (29.10.2026): „Dein Motiv“ auf die Hälfte gekürzt, PLZ aus dem Fließtext; gemessen 336.
+    '/ueber_uns/': 330,
     '/liefergebiet/': 270,
     '/gaestebuch/': 490,
     '/impressum/': 70,
@@ -557,10 +558,18 @@ class AntwortAbsatzUndListenTest(LuviqTestCase):
         self.assertEqual(liste.count('<li>'), 6)
         self.assertIn('Ein Beitrag darf höchstens 2.000 Zeichen lang sein', liste)
 
-    def test_die_orte_auf_der_herkunftsseite_sind_eine_liste(self):
+    def test_die_seite_versand_und_abholung_hat_keine_ortsliste_mehr(self):
+        """P1 (29.10.2026): die 16 Orte rund um Alsfeld sind entfallen (Doorway-Grenze,
+        SEO-Analyse § 3.2). Die Seite gliedert sich in Abschnitte mit eigener Überschrift;
+        Kiel, Hamburg und Flensburg stehen als ein Absatz da, nicht als Liste."""
         html = self.hole('/liefergebiet/').content.decode()
-        liste = re.search(r'<ul class="lv-orte">(.*?)</ul>', html, re.DOTALL).group(1)
-        self.assertEqual(liste.count('<li>'), 16)
+        self.assertNotIn('<ul class="lv-orte"', html)
+        for h2 in ('Versand nach ganz Deutschland', 'Persönliche Übergabe in Lübeck',
+                   'Auch nach Kiel, Hamburg, Flensburg?', 'Angefangen in Alsfeld',
+                   'Fragen zu Versand und Übergabe'):
+            with self.subTest(h2=h2):
+                self.assertRegex(html, rf'<h2[^>]*>{re.escape(h2)}</h2>')
+        self.assertIn('id="alsfeld"', html)
 
     def test_kontakt_und_gaestebuch_haben_ein_section_im_inhalt(self):
         """GE28: ``<main>`` allein genügt nicht; ein ``section`` oder ``article`` im
@@ -671,7 +680,44 @@ class Widersprueche02102026Test(LuviqTestCase):
         for satz in ('Großteil unserer Community', 'Auszug aus unserer Community',
                      'Beliebt in deiner Nähe'):
             self.assertNotIn(satz, text)
-        self.assertIn('Wo Luviq angefangen hat', text)
+        self.assertIn('Angefangen in Alsfeld', text)
+
+    # P1 (29.10.2026) -----------------------------------------------------
+    def test_versand_und_uebergabe_nennen_keine_uhrzeit_und_keinen_betrag(self):
+        """Die Übergabezeiten (10 bis 20 Uhr) sind bei Luisa noch offen, Versandkosten
+        stehen in keinen AGB: beides darf auf keiner Seite stehen."""
+        for pfad in ('/liefergebiet/', '/kontakt/', '/ueber_uns/', '/'):
+            with self.subTest(pfad=pfad):
+                text = self._text(pfad)
+                self.assertNotRegex(text, r'\d{1,2}\s*(?:bis|–|-)\s*\d{1,2}\s*Uhr')
+                self.assertNotRegex(text, r'Versandkosten\s*(?:betragen|von)?\s*\d')
+
+    def test_ein_leerer_abholungstext_nimmt_die_uebergabe_von_den_seiten(self):
+        """``luviq_daten.ABHOLUNG['text']`` leer ⇒ keine Seite erwähnt eine Übergabe."""
+        from unittest import mock
+        from .. import luviq_daten
+        with mock.patch.dict(luviq_daten.ABHOLUNG, {'text': ''}):
+            for pfad in ('/liefergebiet/', '/kontakt/'):
+                with self.subTest(pfad=pfad):
+                    text = self._text(pfad)
+                    for erwaehnung in ('Übergabe in Lübeck', 'nach Absprache', 'persönlich übernehmen',
+                                       'Lübeck abholen', 'Persönliche Übergabe'):
+                        self.assertNotIn(erwaehnung, text)
+
+    def test_die_wissensuebersicht_hat_ihre_beitraege_unter_h2_gruppen(self):
+        html = self.hole('/wissen/').content.decode()
+        self.assertRegex(html, r'<h2[^>]*>Rund um Bleiche, Upcycling und Unikate</h2>')
+        gruppe = html.split('Rund um Bleiche, Upcycling und Unikate</h2>', 1)[1]
+        self.assertIn('wissen/pflege-handbemalte-kleidung/', gruppe.split('Woher die Angaben', 1)[0])
+        self.assertIn('<details', html.split('Woher die Angaben stammen</h2>', 1)[1])
+
+    @override_settings(VERKAUF_AKTIV=True)
+    def test_mit_verkauf_steht_die_zweite_gruppe_der_wissensuebersicht_da(self):
+        html = self.hole('/wissen/').content.decode()
+        self.assertRegex(html, r'<h2[^>]*>Bestellen, Versand, Rechtliches</h2>')
+        zweite = html.split('Bestellen, Versand, Rechtliches</h2>', 1)[1].split('Woher die Angaben', 1)[0]
+        self.assertIn('wissen/bestellen-und-bezahlen/', zweite)
+        self.assertNotIn('wissen/pflege-handbemalte-kleidung/', zweite)
 
     # EIG103 -------------------------------------------------------------
     def test_gleichnamige_stuecke_haben_verschiedene_bildtitel_in_der_sitemap(self):

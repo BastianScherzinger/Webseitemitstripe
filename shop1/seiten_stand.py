@@ -23,9 +23,9 @@ SEITEN_STAND = {
     'home':         '2026-10-23',
     'produkte':     '2026-10-29',
     'gaestebuch':   '2026-10-23',
-    'ueber_uns':    '2026-10-23',
-    'liefergebiet': '2026-10-23',
-    'kontakt':      '2026-10-23',
+    'ueber_uns':    '2026-10-29',
+    'liefergebiet': '2026-10-29',
+    'kontakt':      '2026-10-29',
     'impressum':    '2026-10-29',
     'datenschutz':  '2026-10-23',
     'agb':          '2026-10-29',  # Rechtstexte ohne Verkauf: Hinweis statt Paragraphen
@@ -35,7 +35,7 @@ SEITEN_STAND = {
     # liefergebiet, kontakt, datenschutz und motiv_anfragen tragen deshalb dieses Datum.
     'motiv_anfragen': '2026-10-23',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
-    'wissen':           '2026-10-23',
+    'wissen':           '2026-10-29',
     'wissen_pflege':    '2026-10-23',
     'wissen_upcycling': '2026-10-29',
     'wissen_groesse':   '2026-10-23',

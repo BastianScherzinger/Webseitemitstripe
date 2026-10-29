@@ -127,13 +127,20 @@ class HinweisAufDenSeitenTest(LuviqTestCase):
 
 class ImpressumTest(LuviqTestCase):
 
-    def test_ohne_ust_idnr_steht_keine_zeile_da(self):
-        self.assertNotContains(self.hole('/impressum/'), 'Umsatzsteuer-Identifikationsnummer')
+    def test_ohne_ust_idnr_steht_wird_nachgereicht_da(self):
+        """Ohne UST_IDNR sagt das Impressum ehrlich „wird nachgereicht“ (Leitung
+        29.10.2026): keine Nummer, kein § 27a, vor allem keine Steuernummer."""
+        antwort = self.hole('/impressum/')
+        self.assertContains(antwort, 'Umsatzsteuer-Identifikationsnummer: wird nachgereicht.')
+        self.assertNotContains(antwort, 'gemäß § 27a')
+        self.assertNotContains(antwort, 'Steuernummer:')
 
     @override_settings(UST_IDNR='DE999999999')
     def test_gesetzte_ust_idnr_erscheint_mit_paragraph(self):
-        self.assertContains(self.hole('/impressum/'),
+        antwort = self.hole('/impressum/')
+        self.assertContains(antwort,
                             'Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: DE999999999')
+        self.assertNotContains(antwort, 'wird nachgereicht')
 
     def test_ladungsfaehige_anschrift_aus_luebeck_und_keine_alsfelder_strasse(self):
         html = self.hole('/impressum/').content.decode()

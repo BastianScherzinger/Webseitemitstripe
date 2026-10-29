@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Kontakt und Fragen – Luviq Universe, Lübeck{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Kontakt zu Luviq Universe aus Lübeck: Fragen zu handbemalten Vintage-Unikaten, Bestellung oder Versand über das Formular oder per E-Mail. Jetzt anfragen.{% else %}Kontakt zu Luviq Universe aus Lübeck: Fragen zu handbemalten Vintage-Unikaten und zum ersten Drop über das Formular oder per E-Mail. Jetzt anfragen.{% endif %}{% endblock %}
-{% block og_title %}Kontakt – Luviq Universe{% endblock %}
+{% block title %}Kontakt und Fragen an Luisa | Luviq Lübeck{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Kontakt zu Luviq aus Lübeck: Fragen zu handbemalten Unikaten, zu Bestellung oder Versand über das Formular oder per E-Mail. Jetzt Luisa schreiben.{% else %}Kontakt zu Luviq aus Lübeck: Fragen zu handbemalten Unikaten, zum eigenen Motiv oder zum Verkaufsstart über das Formular oder per E-Mail. Jetzt Luisa schreiben.{% endif %}{% endblock %}
+{% block og_title %}Kontakt – Luviq, Lübeck{% endblock %}
 {% block og_description %}{% if verkauf_aktiv %}Fragen zu deiner Bestellung oder unseren handbemalten Upcycling-Unikaten? Schreib uns – Luviq Universe antwortet schnell.{% else %}Fragen zu unseren handbemalten Upcycling-Unikaten oder zum ersten Drop? Schreib uns.{% endif %}{% endblock %}
 {% block twitter_title %}Kontakt und Fragen – Luviq Universe{% endblock %}
 {% block twitter_description %}Fragen zu den handbemalten Einzelstücken von Luviq Universe aus Lübeck? Schreib über das Formular oder per E-Mail.{% endblock %}
@@ -64,7 +64,15 @@
             "@type": "Answer",
             "text": "{% if verkauf_aktiv %}Bezahlt wird per PayPal oder Vorab-Überweisung. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
           }
-        }
+        }{% if abholung.text %},
+        {
+          "@type": "Question",
+          "name": "Kann ich mein Stück in Lübeck abholen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{ abholung.text }} Wann und wo, klärst du vorher mit Luisa über dieses Formular."
+          }
+        }{% endif %}
       ]
     }
   ]
@@ -84,9 +92,8 @@
     <section class="lv-kontaktseite" aria-labelledby="kontakt-titel">
         <div class="lv-kontakt-text">
             <h1 class="lv-serif lv-satz" id="kontakt-titel">Kontakt</h1>
-            {% if verkauf_aktiv %}<p class="lv-lead">Luviq Universe ist ein reiner Online-Shop aus Lübeck; erreichbar ist Luisa Brehler über das Formular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Ein Ladengeschäft gibt es nicht. Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet.</p>
-            <p class="lv-lead">Über das Formular gehen Fragen zu einem einzelnen Stück – Maße, Material, Zustand –, zu einer laufenden Bestellung, zum Widerruf innerhalb von 14 Tagen oder zur Löschung eines Kontos. Geantwortet wird per E-Mail an die Adresse, die im Formular steht, in der Regel {{ antwort }}; eine Telefonnummer gibt es nicht. Wer zuerst nachlesen möchte: Bestellablauf und Zahlung, Widerruf und Rücksendung sowie Konto und Daten stehen ausführlich im Wissensbereich, die Versandzeiten unter Liefergebiet und die Vertragsbedingungen in den AGB. Im Formular sind alle vier Felder Pflichtfelder und mit einem Stern (*) gekennzeichnet.</p>{% else %}<p class="lv-lead">Luviq Universe ist eine Modemarke im Aufbau aus Lübeck; erreichbar ist Luisa Brehler über das Formular auf dieser Seite oder per E-Mail an brehlerluisa@gmail.com. Ein Ladengeschäft gibt es nicht, deshalb auch keine Öffnungszeiten, und neue Stücke gibt es erst mit dem ersten Drop.</p>
-            <p class="lv-lead">Über das Formular gehen Fragen zu einem einzelnen Stück – Maße, Material, Zustand –, zum ersten Drop oder zur Löschung eines Kontos. Geantwortet wird per E-Mail an die Adresse, die im Formular steht, in der Regel {{ antwort }}; eine Telefonnummer gibt es nicht. {% if motivanfrage_aktiv %}Wer ein eigenes Motiv möchte, fragt es über die Motivanfrage an; von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv. {% endif %}Wer zuerst nachlesen möchte: Hintergrund zu Upcycling, Second Hand und Vintage steht im <a href="{% url 'wissen' %}">Wissensbereich</a>. Im Formular sind alle vier Felder Pflichtfelder und mit einem Stern (*) gekennzeichnet.</p>{% endif %}
+            <p class="lv-lead">Luviq ist {% if verkauf_aktiv %}ein reiner Online-Shop{% else %}ein Label im Aufbau{% endif %} aus Lübeck. Ein Ladengeschäft gibt es nicht, deshalb auch keine Öffnungszeiten.</p>
+            <p class="lv-lead">Luisa Brehler erreichst du über das Formular oder per E-Mail an brehlerluisa@gmail.com; geantwortet wird in der Regel {{ antwort }}{% if motivanfrage_aktiv %}; wer ein eigenes Motiv möchte, fragt es über die <a href="{% url 'motiv_anfragen' %}">Motivanfrage</a> an, von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv{% endif %}.</p>
 
             <dl class="lv-daten lv-kontaktdaten">
                 <dt>Anschrift</dt><dd>Luviq Universe – {{ anbieterin.name }}<br>{{ anbieterin.strasse }}<br>{{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.land }}</dd>
@@ -161,6 +168,7 @@
 
                 <button type="submit" class="lv-knopf">Nachricht abschicken <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
             </form>
+            <p class="lv-klein">Fragen zu einem einzelnen Stück (Maße, Material, Zustand){% if verkauf_aktiv %}, zu einer Bestellung, zum Widerruf{% endif %} oder zur Löschung eines Kontos gehen auch über das Formular. Alle vier Felder sind Pflichtfelder und mit einem Stern (*) gekennzeichnet. Mehr zum Nachlesen steht im <a href="{% url 'wissen' %}">Wissensbereich</a>.</p>
         </section>
     </section>
 
@@ -175,31 +183,11 @@
                 <h3>{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h3>
                 <p>{% if verkauf_aktiv %}Bezahlt wird per PayPal oder Vorab-Überweisung. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
             </div>
-        </div>
-    </section>
-
-    <section class="lv-abschnitt" aria-labelledby="kontakt-gaestebuch">
-        <h2 class="lv-serif lv-abschnittstitel" id="kontakt-gaestebuch">Gästebuch</h2>
-        <div class="lv-zweispaltig">
-            <div class="lv-prosa">
-                <p class="lv-nr">Öffentliches Feedback</p>
-                <p>Möchtest du einen öffentlichen Kommentar hinterlassen? Dein Feedback erscheint direkt in unserem <a href="{% url 'gaestebuch' %}">Gästebuch</a>. Beiträge dort sind öffentlich sichtbar und stehen mit Benutzername und Zeitpunkt auf der Seite; schreiben kann sie, wer angemeldet ist.</p>
-                <p><a class="lv-link" href="{% url 'gaestebuch' %}">Alle Kommentare ansehen</a></p>
-            </div>
-
-            {% if user.is_authenticated %}
-            <form action="{% url 'comment_add' %}" method="POST" class="lv-formular">
-                {% csrf_token %}
-                <div class="lv-feld">
-                    <label for="kontakt-feedback">Dein Feedback</label>
-                    <textarea id="kontakt-feedback" name="text" rows="4" required maxlength="2000" aria-label="Dein Feedback fürs Gästebuch" placeholder="Schreib ein kurzes Feedback..."></textarea>
-                </div>
-                <button type="submit" class="lv-knopf">Beitrag senden <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-            </form>
-            {% else %}
-            <div class="lv-prosa">
-                <p class="lv-klein">Login erforderlich für Feedback</p>
-                <p><a class="lv-knopf" href="{% url 'login' %}">Login <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+            {% if abholung.text %}
+            <div>
+                <h3>Kann ich mein Stück in Lübeck abholen?</h3>
+                <p>{{ abholung.text }} Wann und wo, klärst du vorher mit Luisa über dieses Formular.</p>
+                <p><a class="lv-link" href="{% url 'liefergebiet' %}">Versand &amp; Abholung im Überblick</a></p>
             </div>
             {% endif %}
         </div>

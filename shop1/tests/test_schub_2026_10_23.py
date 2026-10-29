@@ -123,3 +123,5 @@ class WissenVerlinkungUndEntwurfTest(LuviqTestCase):
         html = self.hole('/liefergebiet/').content.decode()
         self.assertIn('keine Öffnungszeiten', html)
         self.assertIn('mit Öffnungszeiten?', html)
+        # P1 (29.10.2026): die Seite sagt auch, was es statt eines Ladens gibt.
+        self.assertIn('Persönliche Übergabe in Lübeck nach Absprache.', html)

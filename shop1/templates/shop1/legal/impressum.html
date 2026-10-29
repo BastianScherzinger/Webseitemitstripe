@@ -76,8 +76,8 @@
                             <p>{{ anbieterin.land_name }}</p>
                             {% comment %}Angaben aus der Gewerbeanmeldung vom 22.10.2026 (luviq_daten.ANBIETERIN): Geschäftsbezeichnung „Luviq", Betriebsstätte Lübeck. Verkaufsschalter: solange er aus ist, sagt das Impressum ausdrücklich, dass nichts verkauft wird.{% endcomment %}
                             {% if not verkauf_aktiv %}<p class="mt-4">Geschäftsbezeichnung: {{ anbieterin.geschaeft }}. Luviq Universe ist eine Marke im Aufbau. Derzeit findet kein Verkauf statt. {{ shop_oeffnet }}</p>{% endif %}
-                            {% comment %}USt-IdNr. (§ 5 Abs. 1 Nr. 6 DDG): erscheint erst, wenn UST_IDNR in Railway gesetzt ist – beantragt am 29.10.2026, kommt per Post vom BZSt. Nie eine Nummer erfinden; die Steuernummer gehört nicht hierher.{% endcomment %}
-                            {% if ust_idnr %}<p class="mt-4">Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: {{ ust_idnr }}</p>{% endif %}
+                            {% comment %}USt-IdNr. (§ 5 Abs. 1 Nr. 6 DDG): erscheint erst, wenn UST_IDNR in Railway gesetzt ist; bis dahin steht „wird nachgereicht“ da (Leitung 29.10.2026). Nie eine Nummer erfinden; die Steuernummer gehört nicht hierher.{% endcomment %}
+                            {% if ust_idnr %}<p class="mt-4">Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: {{ ust_idnr }}</p>{% else %}<p class="mt-4">Umsatzsteuer-Identifikationsnummer: wird nachgereicht.</p>{% endif %}
                         </div>
                     </section>
 

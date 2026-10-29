@@ -291,3 +291,23 @@ SCHRITTE = [
     ('Waschen und los', 'Waschen, fotografieren, einpacken und ab zu dir.',
      'drache', 'Hoodie mit Drachen-Motiv auf dem Rücken'),
 ]
+
+
+# ── Versand, Übergabe, Herkunft (Paket P1, 29.10.2026) ───────────────────────
+
+#: Versand. ``werktage`` steht so in den AGB (``legal/agb.html``, § 4: „Nach
+#: Zahlungseingang wird in der Regel innerhalb von 1-2 Werktagen versendet“) und
+#: wird nur mit Verkauf gezeigt. Versandkosten und ein Versanddienstleister stehen
+#: weder in den AGB noch im Code, deshalb gibt es hier keinen Wert dafür und keine
+#: Seite nennt einen. ``ausland=False``: Versand nur innerhalb Deutschlands.
+VERSAND = {'gebiet': 'ganz Deutschland', 'ausland': False, 'werktage': '1-2'}
+
+#: Persönliche Übergabe in Lübeck. Bewusst ohne Uhrzeiten und ohne Treffpunkt:
+#: Luisa hat beides noch nicht festgelegt (SEO-Analyse, „Offene Angaben“). Ein
+#: leerer ``text`` nimmt jede Erwähnung der Übergabe von den Seiten.
+ABHOLUNG = {'ort': 'Lübeck', 'text': 'Persönliche Übergabe in Lübeck nach Absprache.'}
+
+#: Herkunft in einem Satz. Belegt durch ``HERKUNFT`` und die Archivnummern
+#: Nº 001 bis 005 (Alsfeld); Gewerbe und Sitz Lübeck laut ``ANBIETERIN``.
+HERKUNFT_SATZ = ('Angefangen hat Luviq in Alsfeld im Vogelsbergkreis, mit den ersten fünf '
+                 'Stücken Nº 001 bis 005. Seit Herbst 2026 entsteht jedes Stück in Lübeck.')

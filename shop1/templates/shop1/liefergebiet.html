@@ -1,12 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
+{% comment %}
+„Versand &amp; Abholung" (P1, 29.10.2026). Die Adresse /liefergebiet/ bleibt (Domainumzug, keine URL-Änderung
+bis etwa 16.11.2026). Werte kommen aus luviq_daten.py: VERSAND, ABHOLUNG (leerer Text = keine Erwähnung der
+Übergabe), HERKUNFT_SATZ. Versandkosten und -dienstleister stehen nirgends im Code oder in den AGB und
+stehen deshalb auch hier nicht. Die Ortsliste rund um Alsfeld ist entfallen (Doorway-Grenze, SEO-Analyse § 3.2).
+Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine Links in den Antworten.
+{% endcomment %}
 
-{% block title %}{% if verkauf_aktiv %}Versand aus Lübeck, Herkunft Alsfeld – Luviq Universe{% else %}Herkunft: von Alsfeld nach Lübeck – Luviq Universe{% endif %}{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe hat in Alsfeld angefangen und versendet heute aus Lübeck handbemalte Vintage-Unikate deutschlandweit, meist in 1–2 Werktagen. Jetzt nachlesen.{% else %}Luviq Universe hat in Alsfeld angefangen, heute malt Luisa Brehler in Lübeck: handbemalte Vintage-Unikate, Marke im Aufbau, kein Laden. Jetzt nachlesen.{% endif %}{% endblock %}
-{% block og_title %}{% if verkauf_aktiv %}Versand aus Lübeck | Luviq Universe{% else %}Von Alsfeld nach Lübeck | Luviq Universe{% endif %}{% endblock %}
-{% block og_description %}{% if verkauf_aktiv %}Handbemalte Vintage-Unikate, angefangen in Alsfeld, heute aus Lübeck. Deutschlandweiter Versand.{% else %}Handbemalte Vintage-Unikate: angefangen in Alsfeld, heute bemalt in Lübeck.{% endif %}{% endblock %}
-{% block twitter_title %}{% if verkauf_aktiv %}Versand aus Lübeck | Luviq Universe{% else %}Von Alsfeld nach Lübeck | Luviq Universe{% endif %}{% endblock %}
-{% block twitter_description %}{% if verkauf_aktiv %}Handbemalte Vintage-Unikate aus Lübeck, angefangen in Alsfeld, versendet deutschlandweit.{% else %}Handbemalte Vintage-Unikate: angefangen in Alsfeld, heute bemalt in Lübeck.{% endif %}{% endblock %}
+{% block title %}Versand &amp; Abholung: Lübeck und ganz Deutschland | Luviq{% endblock %}
+{% block meta_description %}Versand nach ganz Deutschland, persönliche Übergabe in Lübeck nach Absprache: So läuft es bei Luviq, dem Label für handbemalte Unikate. Hier nachlesen.{% endblock %}
+{% block og_title %}Versand &amp; Abholung | Luviq, Lübeck{% endblock %}
+{% block og_description %}Versand nach ganz Deutschland, Übergabe in Lübeck nach Absprache. Angefangen in Alsfeld, heute bemalt in Lübeck.{% endblock %}
+{% block twitter_title %}Versand &amp; Abholung | Luviq, Lübeck{% endblock %}
+{% block twitter_description %}Versand nach ganz Deutschland, Übergabe in Lübeck nach Absprache: handbemalte Unikate von Luviq.{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">
@@ -16,7 +23,7 @@
   "@id": "{{ seiten_url }}#breadcrumb",
   "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
-    {"@type": "ListItem", "position": 2, "name": "{% if verkauf_aktiv %}Liefergebiet{% else %}Herkunft{% endif %}", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'liefergebiet' %}"}
+    {"@type": "ListItem", "position": 2, "name": "Versand & Abholung", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'liefergebiet' %}"}
   ]
 }
 </script>
@@ -36,23 +43,31 @@
           "name": "Gibt es einen Luviq-Laden in Lübeck oder Alsfeld, mit Öffnungszeiten?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Nein. Luviq Universe ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten. Luisa erreichst du über das Kontaktformular oder per E-Mail.{% else %}Nein. Luviq Universe ist eine Marke im Aufbau mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten. Luisa erreichst du über das Kontaktformular oder per E-Mail.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Nein. Luviq ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% else %}Nein. Luviq ist ein Label im Aufbau mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% endif %}{% if abholung.text %} {{ abholung.text }}{% endif %} Luisa erreichst du über das Kontaktformular oder per E-Mail."
           }
         },
         {
           "@type": "Question",
-          "name": "{% if verkauf_aktiv %}Wie schnell kommt eine Bestellung in der Region an?{% else %}Kann ich aus der Region schon bestellen?{% endif %}",
+          "name": "{% if verkauf_aktiv %}Wie schnell kommt eine Bestellung an?{% else %}Kann ich schon bestellen?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet, deutschlandweit – nach Lübeck und Alsfeld genauso wie überallhin.{% else %}Noch nicht – weder aus Lübeck noch aus Alsfeld oder von anderswo. Neue Stücke gibt es erst mit dem ersten Drop; wer dabei sein will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von {{ versand.werktage }} Werktagen versendet, deutschlandweit – nach Lübeck, Kiel und Alsfeld genauso wie überallhin.{% else %}Noch nicht.{% if shop_oeffnet %} {{ shop_oeffnet }}{% endif %} Wer nichts verpassen will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}"
           }
-        },
+        }{% if abholung.text %},
         {
           "@type": "Question",
-          "name": "{% if verkauf_aktiv %}Welche Region beliefert Luviq besonders oft?{% else %}Woher kommt Luviq?{% endif %}",
+          "name": "Kann ich mein Stück in Lübeck persönlich übernehmen?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Versendet wird deutschlandweit – egal wo du wohnst. Welche Region am häufigsten bestellt, wertet diese Seite nicht aus.{% else %}Angefangen hat Luviq Universe in Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen. Heute malt Luisa Brehler in Lübeck. Die Warteliste steht allen offen, egal wo.{% endif %}"
+            "text": "{{ abholung.text }} Wann und wo, klärst du vorher mit Luisa über das Kontaktformular."
+          }
+        }{% endif %},
+        {
+          "@type": "Question",
+          "name": "Woher kommt Luviq?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{ herkunft_satz }} Einen Laden in Alsfeld gibt es nicht."
           }
         }
       ]
@@ -69,46 +84,65 @@
 
 {% block content %}
 <div class="lv-seite">
-    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">{% if verkauf_aktiv %}Liefergebiet{% else %}Herkunft{% endif %}</li></ol></nav>
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">Versand &amp; Abholung</li></ol></nav>
 
-    <section class="lv-seitenkopf" aria-labelledby="herkunft-titel">
-        <p class="lv-nr">Herkunft{% if verkauf_aktiv %} &amp; Liefergebiet{% else %} &amp; Region{% endif %}</p>
-        <h1 class="lv-serif lv-satz" id="herkunft-titel">Von Alsfeld nach Lübeck</h1>
-        <p class="lv-lead">{% if verkauf_aktiv %}Luviq Universe hat in Alsfeld in Hessen angefangen; heute entsteht jedes handbemalte Unikat in Lübeck und geht von dort deutschlandweit raus, in der Regel innerhalb von 1-2 Werktagen.{% else %}Luviq Universe hat in Alsfeld angefangen, im Vogelsbergkreis zwischen Fulda und Gießen. Heute malt Luisa Brehler in Lübeck – jedes Stück von Hand, 1-of-1. Die Marke ist im Aufbau, neue Stücke gibt es erst mit dem ersten Drop.{% endif %}</p>
+    <section class="lv-seitenkopf" aria-labelledby="versand-titel">
+        <p class="lv-nr">Versand &amp; Abholung</p>
+        <h1 class="lv-serif lv-satz" id="versand-titel">Versand nach ganz Deutschland{% if abholung.text %}, Übergabe in Lübeck{% endif %}</h1>
+        <p class="lv-lead">Luviq verschickt handbemalte Unikate nach {{ versand.gebiet }}{% if verkauf_aktiv %}, in der Regel innerhalb von {{ versand.werktage }} Werktagen{% endif %}.{% if abholung.text %} In Lübeck ist die persönliche Übergabe nach Absprache möglich.{% endif %} Die ersten Stücke, Nº 001 bis 005, sind noch in Alsfeld entstanden, heute malt Luisa Brehler in Lübeck.</p>
     </section>
 
-    <section class="lv-abschnitt" aria-label="Wo Luviq entsteht">
+    <section class="lv-abschnitt" aria-labelledby="versand-ganz-deutschland">
+        <h2 class="lv-serif lv-abschnittstitel" id="versand-ganz-deutschland">Versand nach ganz Deutschland</h2>
         <div class="lv-prosa">
-            <p>In Alsfeld ist Luviq entstanden, im Vogelsbergkreis zwischen Fulda und Gießen. Inzwischen bemalt Luisa Brehler jedes Unikat in Lübeck. {% if verkauf_aktiv %}Einen Ladenverkauf gibt es bewusst nicht: Luviq Universe ist ein reiner Online-Shop. Versendet wird aus Lübeck, deutschlandweit. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet –, und für jede Bestellung gilt das Widerrufsrecht von 14 Tagen (§ 5 der AGB).{% else %}Einen Laden gibt es bewusst nicht: Luviq Universe ist eine Marke im Aufbau, und der erste Drop kommt online. Wer ihn nicht verpassen will, egal ob in Lübeck, in Alsfeld oder anderswo, trägt sich auf der Startseite in die Warteliste ein. Bis dahin ist Luviq Universe auf Instagram unter @luviq.archive zu finden; Fragen zu einem Stück beantwortet Luisa Brehler über das Kontaktformular.{% endif %}</p>
+            {% if verkauf_aktiv %}<p>Luviq versendet nach {{ versand.gebiet }}. Bestellungen werden in der Regel innerhalb von {{ versand.werktage }} Werktagen versendet. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet. Für jede Bestellung gilt das Widerrufsrecht von 14 Tagen (§ 5 der AGB); wie Widerruf und Rücksendung ablaufen, steht unter <a href="{% url 'wissen_widerruf' %}">Widerruf und Rücksendung</a>.</p>{% else %}<p>Luviq versendet nach {{ versand.gebiet }}. Alles zu Dauer und Kosten des Versands steht mit dem Verkaufsstart hier.</p>{% endif %}
+            <p>Die <a href="{% url 'produkte' %}">handbemalten Unikate im Archiv</a> sind alle Einzelstücke{% if motivanfrage_aktiv %}; wer lieber <a href="{% url 'motiv_anfragen' %}">sein eigenes Teil bemalen lassen</a> möchte, fragt es an. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv{% endif %}.</p>
         </div>
     </section>
 
-    <section class="lv-abschnitt" aria-labelledby="herkunft-orte">
-        <h2 class="lv-serif lv-abschnittstitel" id="herkunft-orte">Wo Luviq angefangen hat</h2>
-        <p class="lv-nr lv-orte-zahl">{{ orte|length }} Orte rund um Alsfeld, zwischen Fulda und Gießen</p>
-        {% comment %}Die Orte sind eine Liste und stehen als solche da (GE27): ul/li; seit 23.10.2026 als ruhige Liste mit Haarlinien statt als Kacheln.{% endcomment %}
-        <ul class="lv-orte">
-            {% for ort in orte %}
-            <li>{{ ort }}</li>
-            {% endfor %}
-        </ul>
-        <p class="lv-klein lv-orte-hinweis">{% if verkauf_aktiv %}Du wohnst woanders? Kein Problem – wir versenden jedes Unikat deutschlandweit.{% else %}Du wohnst woanders? Die Warteliste steht allen offen.{% if motivanfrage_aktiv %} Ein eigenes Motiv lässt sich schon jetzt anfragen; von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.{% endif %}{% endif %}</p>
+    {% if abholung.text %}
+    <section class="lv-abschnitt" aria-labelledby="versand-uebergabe">
+        <h2 class="lv-serif lv-abschnittstitel" id="versand-uebergabe">Persönliche Übergabe in Lübeck</h2>
+        <div class="lv-prosa">
+            <p>{{ abholung.text }} Wann und wo, besprichst du vorher mit Luisa über das <a href="{% url 'kontakt' %}">Kontaktformular</a>. Einen Laden mit festen Öffnungszeiten gibt es nicht.</p>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="lv-abschnitt" aria-labelledby="versand-norden">
+        <h2 class="lv-serif lv-abschnittstitel" id="versand-norden">Auch nach Kiel, Hamburg, Flensburg?</h2>
+        <div class="lv-prosa">
+            <p>Ja. Für Kiel, Hamburg, Flensburg und jeden anderen Ort in Deutschland gilt dasselbe: Luviq hat keinen Laden, die Stücke kommen per Versand{% if abholung.text %}; in Lübeck selbst geht auch die persönliche Übergabe nach Absprache{% endif %}.</p>
+        </div>
+    </section>
+
+    <section class="lv-abschnitt" aria-labelledby="alsfeld">
+        <h2 class="lv-serif lv-abschnittstitel" id="alsfeld">Angefangen in Alsfeld</h2>
+        <div class="lv-prosa">
+            <p>{{ herkunft_satz }} Ein Laden in Alsfeld ist daraus nicht geworden: Auch nach Alsfeld und ganz Hessen kommt ein Stück per Versand, wie überall in Deutschland. Luisa erzählt auf ihrer Seite, <a href="{% url 'ueber_uns' %}">wie Luviq angefangen hat</a>.</p>
+        </div>
     </section>
 
     <section class="lv-abschnitt" aria-labelledby="herkunft-faq">
-        <h2 class="lv-serif lv-abschnittstitel" id="herkunft-faq">Fragen zu {% if verkauf_aktiv %}Versand{% else %}Herkunft{% endif %} &amp; Region</h2>
+        <h2 class="lv-serif lv-abschnittstitel" id="herkunft-faq">Fragen zu Versand und Übergabe</h2>
         <div class="lv-faq">
             <div>
                 <h3>Gibt es einen Luviq-Laden in Lübeck oder Alsfeld, mit Öffnungszeiten?</h3>
-                <p>{% if verkauf_aktiv %}Nein. Luviq Universe ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten. Luisa erreichst du über das Kontaktformular oder per E-Mail.{% else %}Nein. Luviq Universe ist eine Marke im Aufbau mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten. Luisa erreichst du über das Kontaktformular oder per E-Mail.{% endif %}</p>
+                <p>{% if verkauf_aktiv %}Nein. Luviq ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% else %}Nein. Luviq ist ein Label im Aufbau mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% endif %}{% if abholung.text %} {{ abholung.text }}{% endif %} Luisa erreichst du über das Kontaktformular oder per E-Mail.</p>
             </div>
             <div>
-                <h3>{% if verkauf_aktiv %}Wie schnell kommt eine Bestellung in der Region an?{% else %}Kann ich aus der Region schon bestellen?{% endif %}</h3>
-                <p>{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet, deutschlandweit – nach Lübeck und Alsfeld genauso wie überallhin.{% else %}Noch nicht – weder aus Lübeck noch aus Alsfeld oder von anderswo. Neue Stücke gibt es erst mit dem ersten Drop; wer dabei sein will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}</p>
+                <h3>{% if verkauf_aktiv %}Wie schnell kommt eine Bestellung an?{% else %}Kann ich schon bestellen?{% endif %}</h3>
+                <p>{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von {{ versand.werktage }} Werktagen versendet, deutschlandweit – nach Lübeck, Kiel und Alsfeld genauso wie überallhin.{% else %}Noch nicht.{% if shop_oeffnet %} {{ shop_oeffnet }}{% endif %} Wer nichts verpassen will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}</p>
             </div>
+            {% if abholung.text %}
             <div>
-                <h3>{% if verkauf_aktiv %}Welche Region beliefert Luviq besonders oft?{% else %}Woher kommt Luviq?{% endif %}</h3>
-                <p>{% if verkauf_aktiv %}Versendet wird deutschlandweit – egal wo du wohnst. Welche Region am häufigsten bestellt, wertet diese Seite nicht aus.{% else %}Angefangen hat Luviq Universe in Alsfeld im Vogelsbergkreis, zwischen Fulda und Gießen. Heute malt Luisa Brehler in Lübeck. Die Warteliste steht allen offen, egal wo.{% endif %}</p>
+                <h3>Kann ich mein Stück in Lübeck persönlich übernehmen?</h3>
+                <p>{{ abholung.text }} Wann und wo, klärst du vorher mit Luisa über das Kontaktformular.</p>
+            </div>
+            {% endif %}
+            <div>
+                <h3>Woher kommt Luviq?</h3>
+                <p>{{ herkunft_satz }} Einen Laden in Alsfeld gibt es nicht.</p>
             </div>
         </div>
     </section>

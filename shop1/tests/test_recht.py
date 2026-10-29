@@ -252,6 +252,8 @@ class RechtstexteOhneVerkaufTest(LuviqTestCase):
         for pfad in self._seiten():
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
+                # Einzige Ausnahme (Leitung 29.10.2026): die ehrliche Impressum-Zeile ohne Nummer.
+                html = html.replace('Umsatzsteuer-Identifikationsnummer: wird nachgereicht.', '')
                 for wort in verboten:
                     self.assertNotIn(wort, html, f'{pfad}: {wort}')
 

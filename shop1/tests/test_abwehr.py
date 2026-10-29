@@ -306,7 +306,8 @@ class FormularResteTest(LuviqTestCase):
         """``comment_add`` weist über 2000 Zeichen ab – das Formular sagt es vorher."""
         benutzer = erzeuge_benutzer()
         self.client.force_login(benutzer)
-        for pfad in ('/kontakt/', '/gaestebuch/'):
+        # P1 (29.10.2026): das Gästebuch-Formular unter dem Kontaktformular ist entfallen.
+        for pfad in ('/gaestebuch/',):
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
                 self.assertRegex(html, r'<textarea[^>]*maxlength="2000"')

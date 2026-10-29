@@ -167,4 +167,8 @@ def luviq(request):
         'dauer': luviq_daten.DAUER,
         # Antwortzeit auf Nachrichten (bestätigt 02.10.2026), eine Quelle.
         'antwort': luviq_daten.ANTWORT,
+        # Versand, Übergabe, Herkunftssatz (P1): eine Quelle; leerer ABHOLUNG-Text = keine Erwähnung.
+        'versand': luviq_daten.VERSAND,
+        'abholung': luviq_daten.ABHOLUNG,
+        'herkunft_satz': luviq_daten.HERKUNFT_SATZ,
     }
