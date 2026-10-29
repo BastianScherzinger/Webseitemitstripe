@@ -267,6 +267,6 @@ class StartseiteP3Test(LuviqTestCase):
     def test_echtfotos_kommen_aus_der_liste_und_ohne_liste_entfaellt_der_abschnitt(self):
         html = self.hole('/').content.decode()
         self.assertIn('id="echt-titel">So sieht es in echt aus</h2>', html)
-        self.assertIn('echt-engel-1-720.', html)
+        self.assertIn('echt-engel-2-720.', html)
         with mock.patch.object(luviq_daten, 'ECHT_FOTOS', []):
             self.assertNotIn('id="echt"', self.hole('/').content.decode())

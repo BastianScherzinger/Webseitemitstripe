@@ -155,8 +155,9 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-echt-text h2{font-size:clamp(34px,3.4vw,52px);line-height:1}
 .lv-echt-text p{color:var(--lv-leise);max-width:46ch}
 .lv-echt-fotos{display:flex;flex-wrap:wrap;gap:var(--lv-raum-5);align-items:flex-start}
-.lv-echt-fotos figure{display:grid;gap:var(--lv-raum-2);flex:0 1 420px;max-width:100%}
-.lv-echt-fotos img{height:auto;aspect-ratio:1152/1215}
+.lv-echt-fotos figure{display:grid;gap:var(--lv-raum-2);flex:0 1 520px;max-width:100%}
+.lv-echt-fotos img{height:auto;aspect-ratio:960/1080}
+.lv-echt-fotos:focus-visible{outline:2px solid var(--lv-akzent);outline-offset:4px}
 .lv-echt-fotos figcaption{font:500 12px/1.4 var(--lv-mono);color:var(--lv-marke);letter-spacing:.06em}
 
 /* Vertrauensleiste unter dem Hero: drei belegte Aussagen, Linie statt Kasten */
@@ -449,8 +450,9 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-warteliste{grid-template-columns:minmax(0,1fr);padding:var(--lv-abschnitt) var(--rand);gap:var(--lv-raum-5)}
   .lv-warteliste h2{font-size:30px}
   .lv-warteliste .lv-klein{font-size:13px}
-  .lv-fuss{padding:var(--lv-raum-7) var(--rand) var(--lv-raum-6);gap:var(--lv-raum-6)}
-  .lv-fuss-oben{grid-template-columns:minmax(0,1fr);gap:var(--lv-raum-6)}
+  .lv-fuss{padding:var(--lv-raum-6) var(--rand) var(--lv-raum-5);gap:var(--lv-raum-5)}
+  .lv-fuss-oben{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--lv-raum-5) var(--lv-raum-4)}
+  .lv-fuss-marke,.lv-fuss-oben>.lv-fuss-gruppe:last-child{grid-column:1/-1}
   .lv-fuss-gruppe a,.lv-fuss-start{min-height:44px;font-size:16px}
   .lv-recht{flex-direction:column;gap:var(--lv-raum-2)}
   .lv-leiste{display:grid;position:fixed;left:0;right:0;bottom:0;z-index:45;grid-template-columns:1fr auto;gap:10px;align-items:center;
@@ -478,11 +480,29 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   /* Absätze der Altseiten, die als Beschriftung gesetzt waren, sind Fließtext: mindestens 16 px (BF27). */
   .lv-alt main p[class*="text-[9px]"],.lv-alt main p[class*="text-[10px]"],.lv-alt main p[class*="text-[11px]"],.lv-alt main p[class*="text-xs"],.lv-alt main p[class*="text-sm"]{font-size:16px}
 }
+/* Ankündigung am Handy: nur der erste Satz, eine Zeile (Versand/Übergabe stehen in der Vertrauensleiste) */
+@media (max-width:699px){
+  .lv-hinweis{min-height:0;padding-block:6px;font-size:12px;flex-wrap:nowrap}
+  .lv-hinweis span:nth-child(n+2){display:none}
+}
 /* Startseite am Handy (P3): Foto randlos, Text darunter, alles einspaltig */
 @media (max-width:767px){
-  .lv-echt{grid-template-columns:minmax(0,1fr);gap:var(--lv-raum-5)}
+  :root{--lv-abschnitt:36px}
+  .lv-echt{grid-template-columns:minmax(0,1fr);gap:var(--lv-raum-4);padding-bottom:var(--lv-raum-5)}
   .lv-echt-text h2{font-size:30px}
-  .lv-echt-fotos figure{flex:0 1 min(100%,300px)}
+  .lv-echt-fotos{display:block}
+  .lv-echt-fotos figure{width:100%;flex:none;gap:var(--lv-raum-2)}
+  .lv-echt-fotos img{border-radius:2px}
+  .lv-echt-mehr{display:flex;flex-wrap:nowrap;gap:var(--lv-raum-3);overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;margin-inline:calc(var(--rand)*-1);padding-inline:var(--rand);scroll-padding-inline:var(--rand)}
+  .lv-echt-mehr::-webkit-scrollbar{display:none}
+  .lv-echt-mehr figure{flex:0 0 88%;scroll-snap-align:start}
+  .lv-hero-bild{aspect-ratio:5/6}
+  .lv-hero-bild img{object-position:50% 12%}
+  .lv-hero-bild::after{background:linear-gradient(180deg,rgba(43,42,40,0) 55%,var(--lv-wand) 100%)}
+  .lv-hero-figur figcaption{position:relative;z-index:2;margin-top:-30px;padding-top:0}
+  .lv-hero-text{position:relative;z-index:2;padding-top:var(--lv-raum-3);padding-bottom:var(--lv-raum-5);gap:var(--lv-raum-3)}
+  .lv-hero .lv-satz{font-size:38px}
+  .lv-hero-knoepfe{margin-top:var(--lv-raum-1)}
   .lv-vertrauen{grid-auto-flow:row;grid-auto-columns:auto}
   .lv-vertrauen li{padding:var(--lv-raum-3) 0;border-top:1px solid var(--lv-linie)}
   .lv-vertrauen li:first-child{border-top:0}

@@ -103,10 +103,10 @@ View und Kontextprozessor), kein Datum hier.
             <h2 class="lv-serif" id="echt-titel">{{ echt_titel }}</h2>
             <p>{{ echt_text }}</p>
         </div>
-        <div class="lv-echt-fotos">
+        <div class="lv-echt-fotos{% if echt_fotos|length > 1 %} lv-echt-mehr" tabindex="0" role="region" aria-label="Weitere Handyfotos, seitlich wischen{% endif %}">
             {% for foto in echt_fotos %}
             <figure>
-                <img src="{{ foto.src }}" srcset="{{ foto.srcset }}" sizes="(min-width: 900px) 34vw, 70vw" alt="{{ foto.alt }}" width="{{ foto.width }}" height="{{ foto.height }}" loading="lazy" decoding="async">
+                <img src="{{ foto.src }}" srcset="{{ foto.srcset }}" sizes="(min-width: 900px) 520px, 100vw" alt="{{ foto.alt }}" width="{{ foto.width }}" height="{{ foto.height }}" loading="lazy" decoding="async">
                 <figcaption>{{ foto.unterschrift }}</figcaption>
             </figure>
             {% endfor %}

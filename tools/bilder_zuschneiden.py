@@ -12,8 +12,8 @@ from pathlib import Path
 from PIL import Image, ImageFilter, features
 
 BUERO = Path(r"C:\Users\basti\Desktop\Webagentur Scherzinger\Buero\luisa\arbeitsplatz")
-QUELLE_HERO = BUERO / "bilder" / "2026-10-29-chatgpt" / "engel-studio-2.png"
-QUELLE_ECHT = BUERO / "bilder" / "2026-10-29-chatgpt" / "luviq-chat-01-user.jpg"
+QUELLE_HERO = BUERO / "bilder" / "2026-10-29-produkt-engel" / "engel-studio-stern-1.png"  # fertiges Stueck mit Stern
+QUELLE_ECHT = BUERO / "bilder" / "2026-10-29-produkt-engel" / "engel-echt-warm.jpg"
 QUELLE_LOGO = BUERO / "grafik" / "logo-2026-10-29" / "luviq-neu-3.png"
 
 WURZEL = Path(__file__).resolve().parent.parent
@@ -40,7 +40,7 @@ def webp_avif(bild, pfad_ohne_endung, qualitaet=82):
 # ---------------------------------------------------------------- Hero und OG
 def hero():
     quelle = Image.open(QUELLE_HERO).convert("RGB")
-    hoch = quelle.crop((592, 0, 1412, 1024))  # 820 x 1024, 4:5, Buegel im Anschnitt oben
+    hoch = quelle.crop((618, 0, 1438, 1024))  # 820 x 1024, 4:5, Buegel im Anschnitt oben, Shirt rechts
     for breite in (480, 640, 800):
         # 800 px: Qualitaet 74, damit die Datei unter 120 KB bleibt (Vorgabe Masterplan)
         webp_avif(verkleinern(hoch, breite), ZIEL_LUVIQ / f"hero-engel-45-{breite}", 74 if breite == 800 else 82)
@@ -50,18 +50,20 @@ def hero():
 
 
 def echtfoto():
-    """Echtes Handyfoto des Engel-Shirts (Abschnitt „So sieht es in echt aus“, P3).
+    """Echtes Handyfoto des fertigen Engel-Shirts mit Stern (Abschnitt „So sieht es in echt aus“).
 
-    Zuschnitt 1152 x 1215: oben der Kragen, unten ohne Boden und Schuh; nur WebP."""
-    quelle = Image.open(QUELLE_ECHT).convert("RGB").crop((0, 110, 1152, 1325))
-    for breite in (480, 720, 1152):
+    Quelle engel-echt-warm.jpg (960 x 1280, echte Farben). Zuschnitt 960 x 1080 (8:9):
+    oben Tischkante und Stoffreste weg, unten Boden und Fuesse weg, Shirt vollstaendig;
+    nur WebP."""
+    quelle = Image.open(QUELLE_ECHT).convert("RGB").crop((0, 130, 960, 1210))
+    for breite in (480, 720, 960):
         bild = quelle if breite == quelle.width else verkleinern(quelle, breite)
-        bild.save(ZIEL_LUVIQ / f"echt-engel-1-{breite}.webp", "WEBP", quality=80, method=6)
+        bild.save(ZIEL_LUVIQ / f"echt-engel-2-{breite}.webp", "WEBP", quality=80, method=6)
 
 
 def og_start():
     quelle = Image.open(QUELLE_HERO).convert("RGB")
-    ausschnitt = quelle.crop((0, 109, 1536, 109 + 806))
+    ausschnitt = quelle.crop((0, 60, 1536, 60 + 806))
     ausschnitt = ausschnitt.resize((1200, 630), Image.LANCZOS).filter(SCHARF)
     ausschnitt.save(ZIEL_LUVIQ / "og-start-1200x630.jpg", "JPEG", quality=85, optimize=True)
 

@@ -186,7 +186,7 @@ _MONATE = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August
 #: Beschreibung des Fotos da, kein erfundener Stückname und keine Nummer.
 #: ``status`` steht rechts in der Bildunterschrift: „Unikat“, kein Preis, kein Datum.
 HERO_STUECK = {'nummer': None, 'suche': ('engel',), 'name': 'Shirt mit Engel-Motiv',
-               'alt': 'Rückenansicht eines schwarzen T-Shirts auf einem Holzbügel vor dunkler Betonwand; darauf ein handgebleichtes Linienmotiv: ein Engel mit Flügeln hält eine Rose',
+               'alt': 'Rückenansicht eines schwarzen T-Shirts auf einem Holzbügel vor dunkler Betonwand; darauf ein handgebleichtes Linienmotiv: ein Engel mit Flügeln hält eine Rose, rechts daneben ein kleiner Stern',
                'status': 'Unikat'}
 
 #: Teaser vor dem Drop: (Datum, Titel, Bildadresse, Alternativtext). Leer ⇒
@@ -379,10 +379,10 @@ ECHT_TITEL = 'So sieht es in echt aus'
 ECHT_TEXT = ('Das Studiobild oben ist aus diesem echten Stück entstanden. Jedes Unikat ist von Hand '
              'gemalt und sieht deshalb ein bisschen anders aus.')
 ECHT_FOTOS = [
-    ('echt-engel-1', (480, 720, 1152), (1152, 1215),
-     'Handyfoto des echten Engel-Shirts: schwarzes T-Shirt von hinten, darauf ein handgebleichter '
-     'Engel mit Flügeln, der eine Rose hält',
-     'Handyfoto'),
+    ('echt-engel-2', (480, 720, 960), (960, 1080),
+     'Handyfoto des fertigen Engel-Shirts: schwarzes T-Shirt von hinten, darauf ein handgebleichter '
+     'Engel mit Flügeln, der eine Rose hält, und rechts daneben ein kleiner Stern',
+     'Handyfoto, ungeschönt'),
 ]
 
 

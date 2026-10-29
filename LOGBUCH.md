@@ -10,6 +10,18 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 29.10.2026 — Luviq-Umbau P3b: Handy-Feinschliff Startseite (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
+
+**Warum.** Bastian: Die Seite muss am Handy am besten aussehen. P3 hatte am Handy eine dreizeilige Ankündigung, das Echtfoto schmaler als die Spalte (Zwischenstand ohne Stern) und eine Gesamthöhe von 5.743 px.
+
+**Geändert.**
+- Neues Echtfoto `engel-echt-warm.jpg` (fertiges Stück mit Stern, echte Farben) statt `echt-engel-1`: `tools/bilder_zuschneiden.py::echtfoto()` schneidet 960 x 1080 (8:9, ohne Tischkante und Füße) nach `echt-engel-2-{480,720,960}.webp`; alte Dateien gelöscht. `ECHT_FOTOS`: neuer Alt-Text mit Stern, Unterschrift „Handyfoto, ungeschönt“. Handy: volle Inhaltsbreite; ab zwei Fotos wischbar (`lv-echt-mehr`, Scroll-Snap, fokussierbar), PC: bis 520 px neben dem Text.
+- Neues Studiobild mit Stern (`engel-studio-stern-1.png`) als Quelle aller Hero- und OG-Bilder (Dateinamen gleich); `HERO_STUECK['alt']` nennt den Stern. 4:5-Ausschnitt `crop(618,0,1438,1024)`.
+- Ankündigung unter 700 px: nur der erste Satz, eine Zeile.
+- Handy-Hero: Bild 5:6 mit `object-position` oben, Bildunterschrift und Überschrift überlappen den unteren Verlauf; Überschrift im ersten Bildschirm (390 x 844, Unterkante bei 641 px).
+- Straffen: `--lv-abschnitt` 36 px am Handy, Fuß am Handy zweispaltig. Gesamthöhe 390 px breit: 5.458 px (vorher 5.743).
+- Kontrast (aus Screenshots, ungünstigster Hintergrundton): PC Lead 5,7:1, PC Überschrift 7,1:1, Handy Überschrift 8,0:1, Lead 7,5:1, Bildunterschrift 6,4:1.
+
 ## 29.10.2026 — Luviq-Umbau P3: Startseite (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
 
 - Hero: ab 900 px das Querformat `hero-engel-quer-*` vollflächig (Text links auf dem Bild, Verlauf von links, unten Übergang in den Grund; Kontrast gemessen: schlechtester Pixel hinter dem Text ≥ 7:1 bei 900/1024/1440 px), am Handy der 4:5-Ausschnitt `hero-engel-45-*` randlos, Text darunter auf `--lv-wand` (#2b2a28). Vorgabe Bastian vom 29.10., sie ersetzt den Zweispalter aus dem Masterplan § 6. Zwei Preloads mit `media` (PC quer, Handy 4:5), `data-leiste-ab` am Hero.
