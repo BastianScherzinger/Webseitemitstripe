@@ -10,7 +10,8 @@ from datetime import datetime, timedelta, timezone as utc
 from unittest import mock
 
 from django.db import DatabaseError
-from django.test import SimpleTestCase
+from django.conf import settings
+from django.test import SimpleTestCase, override_settings
 from django.utils import timezone
 
 from .. import luviq_daten
@@ -229,3 +230,43 @@ class RahmenSeitenTest(LuviqTestCase):
         menue = re.search(r'<details class="lv-menue">.*?</details>', html, re.S).group(0)
         for text in ('Stücke', 'Motiv anfragen', 'Wissen', 'Luisa', 'Kontakt', 'Instagram', 'Anmelden'):
             self.assertIn(f'>{text}</a>', menue)
+
+
+class StartseiteP3Test(LuviqTestCase):
+    """Paket P3: Film nur mit ``FILME``, Hero mit Preload je Bildschirm, Echtfoto-Liste."""
+
+    def test_ohne_filme_steht_kein_video_im_dom(self):
+        html = self.hole('/').content.decode()
+        self.assertNotIn('<video', html)
+        self.assertNotIn('id="film"', html)
+
+    def test_mit_filmen_steht_ein_video_mit_poster_und_ohne_vorladen(self):
+        # Das Manifest kennt nur vorhandene Dateien; für den noch nicht vorhandenen Film
+        # genügt hier der einfache Speicher ohne Hash.
+        beispiel = [('probe.mp4', 'hero-engel-45-480.webp', 'So entsteht ein Motiv', 'Zehn Sekunden Bleiche.')]
+        einfach = {'default': settings.STORAGES['default'],
+                   'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'}}
+        with mock.patch.object(luviq_daten, 'FILME', beispiel), override_settings(STORAGES=einfach):
+            html = self.hole('/').content.decode()
+        self.assertIn('<video', html)
+        self.assertIn('preload="none"', html)
+        self.assertIn('poster="', html)
+        self.assertIn('hero-engel-45-480.', html)
+        self.assertIn('data-src="', html)
+        self.assertIn('muted', html)
+
+    def test_der_hero_laedt_pc_quer_und_handy_hochkant_vor(self):
+        import re
+        html = self.hole('/').content.decode()
+        vorlade = re.findall(r'<link rel="preload" as="image"[^>]*>', html)
+        self.assertEqual(len(vorlade), 2)
+        self.assertTrue(any('min-width: 900px' in v and 'hero-engel-quer' in v for v in vorlade))
+        self.assertTrue(any('max-width: 899px' in v and 'hero-engel-45' in v for v in vorlade))
+        self.assertIn('data-leiste-ab', html)
+
+    def test_echtfotos_kommen_aus_der_liste_und_ohne_liste_entfaellt_der_abschnitt(self):
+        html = self.hole('/').content.decode()
+        self.assertIn('id="echt-titel">So sieht es in echt aus</h2>', html)
+        self.assertIn('echt-engel-1-720.', html)
+        with mock.patch.object(luviq_daten, 'ECHT_FOTOS', []):
+            self.assertNotIn('id="echt"', self.hole('/').content.decode())

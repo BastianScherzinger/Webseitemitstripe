@@ -13,6 +13,7 @@ from PIL import Image, ImageFilter, features
 
 BUERO = Path(r"C:\Users\basti\Desktop\Webagentur Scherzinger\Buero\luisa\arbeitsplatz")
 QUELLE_HERO = BUERO / "bilder" / "2026-10-29-chatgpt" / "engel-studio-2.png"
+QUELLE_ECHT = BUERO / "bilder" / "2026-10-29-chatgpt" / "luviq-chat-01-user.jpg"
 QUELLE_LOGO = BUERO / "grafik" / "logo-2026-10-29" / "luviq-neu-3.png"
 
 WURZEL = Path(__file__).resolve().parent.parent
@@ -45,6 +46,17 @@ def hero():
         webp_avif(verkleinern(hoch, breite), ZIEL_LUVIQ / f"hero-engel-45-{breite}", 74 if breite == 800 else 82)
     webp_avif(quelle.copy(), ZIEL_LUVIQ / "hero-engel-quer-1536")
     webp_avif(verkleinern(quelle, 1024), ZIEL_LUVIQ / "hero-engel-quer-1024")
+    webp_avif(verkleinern(quelle, 768), ZIEL_LUVIQ / "hero-engel-quer-768")  # Hero ab 900 px Breite (P3)
+
+
+def echtfoto():
+    """Echtes Handyfoto des Engel-Shirts (Abschnitt „So sieht es in echt aus“, P3).
+
+    Zuschnitt 1152 x 1215: oben der Kragen, unten ohne Boden und Schuh; nur WebP."""
+    quelle = Image.open(QUELLE_ECHT).convert("RGB").crop((0, 110, 1152, 1325))
+    for breite in (480, 720, 1152):
+        bild = quelle if breite == quelle.width else verkleinern(quelle, breite)
+        bild.save(ZIEL_LUVIQ / f"echt-engel-1-{breite}.webp", "WEBP", quality=80, method=6)
 
 
 def og_start():
@@ -129,6 +141,7 @@ if __name__ == "__main__":
     MARKE_FARBE = marken_farbe()
     print("Markenfarbe gemessen: #%02X%02X%02X" % MARKE_FARBE, "| AVIF:", AVIF)
     hero()
+    echtfoto()
     og_start()
     wm = wortmarke(MARKE_FARBE)
     icons()

@@ -172,7 +172,7 @@ class SitemapTest(LuviqTestCase):
         for eintrag in wurzel.findall('sm:url', ns):
             pfad = eintrag.find('sm:loc', ns).text.split('testserver', 1)[-1] or '/'
             bilder[pfad.rstrip('/') or '/'] = [b.text for b in eintrag.findall('image:image/image:loc', ns)]
-        self.assertTrue(any('hero-dornen' in b for b in bilder['/']), bilder['/'])
+        self.assertTrue(any('hero-engel' in b for b in bilder['/']), bilder['/'])
         self.assertGreaterEqual(len(bilder['/']), 6)
         self.assertTrue(any('probe' in b for b in bilder['/produkte']), bilder['/produkte'])
         self.assertEqual(bilder['/datenschutz'], [])
@@ -926,6 +926,11 @@ class KopfangabenUnterscheidbarTest(LuviqTestCase):
         for pfad in _RANKFAEHIG:
             titel, _beschreibung, h1 = self._kopf(pfad)
             kopf = _TRENNER.split(titel)[0].strip()
+            if pfad == '/':
+                # P3 (29.10.2026): der Startseiten-Title ist laut SEO-Analyse C1 „Luviq: handbemalte
+                # Second-Hand-Mode aus Lübeck“, die H1 der gesprochene Markensatz; sie teilen kein Wort.
+                self.assertNotEqual(h1.lower(), titel.lower())
+                continue
             with self.subTest(pfad=pfad):
                 self.assertNotEqual(h1.lower(), titel.lower())
                 self.assertNotEqual(h1.lower(), kopf.lower(), f'{pfad}: Titelkopf = H1')
@@ -937,6 +942,10 @@ class KopfangabenUnterscheidbarTest(LuviqTestCase):
         """IS07: ein einheitlicher Abschluss „– Luviq Universe" (mit oder ohne Ort)."""
         for pfad in _RANKFAEHIG:
             titel = self._kopf(pfad)[0]
+            if pfad == '/':
+                # P3: Startseite = Marke vorn („Luviq: …“, SEO-Analyse C1), kein Abschluss mit Trennstrich.
+                self.assertTrue(titel.startswith('Luviq'), titel)
+                continue
             with self.subTest(pfad=pfad):
                 self.assertTrue(_TRENNER.search(titel), titel)
                 letzter = _TRENNER.split(titel)[-1].lower()

@@ -47,12 +47,6 @@ HERKUNFT = {'ort': 'Alsfeld', 'region': 'Hessen', 'kreis': 'Vogelsbergkreis'}
 #: Luisas Markensatz, von ihr gewählt am 19.09.2026. Gesprochen, nicht gesetzt.
 MARKENSATZ = 'Sag mir, was du willst — ich mal’s dir.'
 
-#: Erster Absatz nach der Überschrift. Nennt den Ort, weil Antwortmaschinen
-#: den ersten Absatz zitieren (test_inhalt: Anbieter oder Ort im ersten Absatz).
-LEAD = ('Ich bemale in Lübeck Second-Hand-Teile von Hand, mit Bleiche und Pinsel, meist '
-        'in 2 bis 5 Tagen. Du sagst mir, was drauf soll, ich schick dir Vorschläge, und '
-        'dann entsteht dein Stück. Jedes Motiv gibt es genau einmal.')
-
 #: Erfahrungswert von Luisa, **nie als Zusage** schreiben („meistens").
 DAUER = '2 bis 5 Tage'
 
@@ -182,14 +176,18 @@ def drop_nummer():
 _MONATE = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August',
            'September', 'Oktober', 'November', 'Dezember')
 
-#: Das Stück im Panorama-Foto (static/shop1/images/luviq/hero-*). Nummer und
-#: Name kommen aus dem Archiv, damit die Bildunterschrift und die Karte
+#: Das Stück im Hero-Foto (static/shop1/images/luviq/hero-engel-*, P3 29.10.2026):
+#: das Engel-Shirt, Studioaufnahme des echten Motivs (KI-Aufnahme, deshalb im
+#: Alt-Text nur das sichtbare Motiv, keine Angabe zu Preis oder Größe). Nummer
+#: und Name kommen aus dem Archiv, damit die Bildunterschrift und die Karte
 #: dasselbe Stück gleich nennen (EIG134): zuerst über die Archivnummer
-#: ``nummer`` (übersteht eine Umbenennung), sonst über den ersten Namen, der
+#: ``nummer`` (``None`` = keine festgelegt), sonst über den ersten Namen, der
 #: einen der ``suche``-Begriffe enthält. Ohne Treffer steht nur die
 #: Beschreibung des Fotos da, kein erfundener Stückname und keine Nummer.
-HERO_STUECK = {'nummer': 2, 'name': 'Hoodie mit Dornen-Augen-Motiv', 'suche': ('dornen',),
-               'alt': 'Rückenansicht eines dunklen Hoodies mit handgebleichtem Rankenmotiv aus Dornen und Augen, draußen vor Herbstbäumen fotografiert'}
+#: ``status`` steht rechts in der Bildunterschrift: „Unikat“, kein Preis, kein Datum.
+HERO_STUECK = {'nummer': None, 'suche': ('engel',), 'name': 'Shirt mit Engel-Motiv',
+               'alt': 'Rückenansicht eines schwarzen T-Shirts auf einem Holzbügel vor dunkler Betonwand; darauf ein handgebleichtes Linienmotiv: ein Engel mit Flügeln hält eine Rose',
+               'status': 'Unikat'}
 
 #: Teaser vor dem Drop: (Datum, Titel, Bildadresse, Alternativtext). Leer ⇒
 #: der Abschnitt „Nº …, in Teilen" entfällt ganz – keine leeren Kacheln.
@@ -311,6 +309,81 @@ ABHOLUNG = {'ort': 'Lübeck', 'text': 'Persönliche Übergabe in Lübeck nach Ab
 #: Nº 001 bis 005 (Alsfeld); Gewerbe und Sitz Lübeck laut ``ANBIETERIN``.
 HERKUNFT_SATZ = ('Angefangen hat Luviq in Alsfeld im Vogelsbergkreis, mit den ersten fünf '
                  'Stücken Nº 001 bis 005. Seit Herbst 2026 entsteht jedes Stück in Lübeck.')
+
+
+# ── Startseite (Paket P3, 29.10.2026) ────────────────────────────────────────
+
+def _lead():
+    """Antwortsatz unter der H1 (höchstens 45 Wörter, Quelle SEO-Analyse C1).
+
+    Der letzte Satz setzt sich aus ``VERSAND`` und ``ABHOLUNG`` zusammen; ohne
+    Übergabetext (``ABHOLUNG['text']`` leer) bleibt nur der Versand."""
+    teile = ['Luviq ist ein Modelabel aus Lübeck: Luisa Brehler bemalt Second-Hand-Teile '
+             'von Hand, mit Bleiche und Pinsel.',
+             'Jedes Motiv gibt es genau einmal.']
+    if VERSAND.get('gebiet'):
+        letzter = f'Versand in {VERSAND["gebiet"]}'
+        if ABHOLUNG.get('text'):
+            letzter += f', Übergabe in {ABHOLUNG["ort"]} nach Absprache'
+        teile.append(letzter + '.')
+    return ' '.join(teile)
+
+
+#: Erster Absatz nach der Überschrift. Nennt den Ort, weil Antwortmaschinen
+#: den ersten Absatz zitieren (test_inhalt: Anbieter oder Ort im ersten Absatz).
+LEAD = _lead()
+
+
+def _vertrauen():
+    """Die drei belegten Aussagen der Vertrauensleiste; leere Einträge fallen weg."""
+    eintraege = []
+    if VERSAND.get('gebiet'):
+        eintraege.append(f'Versand in {VERSAND["gebiet"]}')
+    eintraege.append(ABHOLUNG.get('text', ''))
+    eintraege.append('Von Luisa in Lübeck von Hand gebleicht')
+    return [e for e in eintraege if e]
+
+
+#: Vertrauensleiste unter dem Hero. Nur Aussagen, die im Code oder in den AGB
+#: stehen (Versand: ``VERSAND``, Übergabe: ``ABHOLUNG``, Technik: Bleiche).
+VERTRAUEN = _vertrauen()
+
+#: Die Wege der Startseite: (Überschrift, Satz, Routenname, Ankertext). Der Anker
+#: beschreibt das Ziel (SEO-Analyse § 4.2). ``motiv_anfragen`` erscheint nur, wenn
+#: die Motivanfrage läuft (Vorlage prüft ``motivanfrage_aktiv``).
+WEGE = [
+    ('Handbemalte Unikate',
+     'Gebrauchte Hoodies, Pullover und Shirts, jedes Motiv nur einmal.',
+     'produkte', 'alle Stücke im Archiv'),
+    ('Dein eigenes Teil',
+     'Du beschreibst dein Motiv, bekommst Vorschläge, erst dann wird gemalt.',
+     'motiv_anfragen', 'eigenes Motiv anfragen'),
+]
+
+#: Kurzfilme für den Abschnitt „Film“ der Startseite: (Datei unter
+#: ``static/shop1/video/``, Poster unter ``static/shop1/images/luviq/``, Titel,
+#: Untertitel). Leer ⇒ der Abschnitt wird nicht ausgegeben, kein Platzhalter.
+FILME = []
+
+#: Luviq-Shirts mit Logo: noch keine Daten, deshalb kein Abschnitt. Hook für später.
+LINIE_SHIRTS = None
+
+#: Abschnitt „So sieht es in echt aus“ direkt nach dem Hero (Bastian, 29.10.2026):
+#: das Studiobild ist aus dem echten Stück entstanden, jedes Unikat sieht etwas
+#: anders aus. ``ECHT_FOTOS`` nimmt später weitere echte Handyfotos auf:
+#: (Dateiname ohne Breite und Endung unter ``static/shop1/images/luviq/``,
+#: Breiten, Maße der größten Datei als (Breite, Höhe), Alt-Text, Bildunterschrift).
+#: Die Dateien ``<name>-<breite>.webp`` erzeugt ``tools/bilder_zuschneiden.py``.
+#: Leer ⇒ der Abschnitt entfällt.
+ECHT_TITEL = 'So sieht es in echt aus'
+ECHT_TEXT = ('Das Studiobild oben ist aus diesem echten Stück entstanden. Jedes Unikat ist von Hand '
+             'gemalt und sieht deshalb ein bisschen anders aus.')
+ECHT_FOTOS = [
+    ('echt-engel-1', (480, 720, 1152), (1152, 1215),
+     'Handyfoto des echten Engel-Shirts: schwarzes T-Shirt von hinten, darauf ein handgebleichter '
+     'Engel mit Flügeln, der eine Rose hält',
+     'Handyfoto'),
+]
 
 
 # ── Rahmen: Ankündigung, Navigation, Fuß, Leiste (Paket P2, 29.10.2026) ──────

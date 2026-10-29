@@ -10,6 +10,13 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 29.10.2026 — Luviq-Umbau P3: Startseite (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
+
+- Hero: ab 900 px das Querformat `hero-engel-quer-*` vollflächig (Text links auf dem Bild, Verlauf von links, unten Übergang in den Grund; Kontrast gemessen: schlechtester Pixel hinter dem Text ≥ 7:1 bei 900/1024/1440 px), am Handy der 4:5-Ausschnitt `hero-engel-45-*` randlos, Text darunter auf `--lv-wand` (#2b2a28). Vorgabe Bastian vom 29.10., sie ersetzt den Zweispalter aus dem Masterplan § 6. Zwei Preloads mit `media` (PC quer, Handy 4:5), `data-leiste-ab` am Hero.
+- Neu: Abschnitt „So sieht es in echt aus“ (`ECHT_TITEL`, `ECHT_TEXT`, `ECHT_FOTOS` in `luviq_daten.py`, Liste für weitere Handyfotos), Vertrauensleiste, Wege, Entstehung ohne Bilder, Film nur mit `FILME`, Archiv als wischbare Reihe, ein Formular statt zwei; Countdown und Drop-Kasten entfernt. `tools/bilder_zuschneiden.py`: `echtfoto()` und `hero-engel-quer-768`.
+- Umgeschriebene Tests (nicht gelöscht): `test_abwehr` (ein Formular statt zwei), `test_inhalt` (Hero-Tests laufen über den Suchbegriff „engel“, Kopfzeile „LUVIQ Universe“ entfiel), `test_seo` (Startseiten-Title „Luviq: …“ steht laut SEO-Analyse C1 ohne Trennstrich und teilt kein Wort mit dem Markensatz-H1; Sitemap-Bild `hero-engel`), `test_ladezeit` (kritisches CSS enthält `.lv-hero-bild`), Designwache nur `/` neu erfasst.
+- Hover im Formular: `.lv-feldzeile button:hover` jetzt `--lv-marke` statt Orange (offen aus P2).
+
 ## 29.10.2026 — Luviq-Umbau P2: Rahmen (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
 
 - Kopf mit Wortmarken-Bild, Ankündigungszeile statt Laufband, Navigation aus `luviq_daten.NAVIGATION`, Fuß in drei Gruppen, Handy-Leiste erst nach dem Hero (Skript mit Nonce, ohne Skript sichtbar), Tokens `--lv-marke` (#FAE6C5, gemessen), `--lv-raum-1…10`, `--lv-abschnitt`, zweiter Knopfstil `.linie`; Standard-OG-Bild 1200×630, Schema-Logo `logo-luviq-512.png`, Schema-Name „Luviq“. Warum: Masterplan § 5.

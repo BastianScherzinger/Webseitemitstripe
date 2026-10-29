@@ -5,6 +5,7 @@ import logging
 import os
 import re
 
+from django.templatetags.static import static
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.core.cache import cache
@@ -16,7 +17,7 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 
 from ..models import Produkt, Werbung, WerbungStat, KontaktAnfrage
-from .. import luviq_daten, mails, spamschutz
+from .. import luviq_daten, mails, spamschutz, verkauf
 from ..utils import send_brevo_email
 from ..middleware import ist_bot
 from ._helpers import mail_ergebnis_vermerken, zu_viele_anfragen
@@ -73,7 +74,10 @@ def startseite(request):
         _log.exception('Werbe-Impressionen auf der Startseite konnten nicht gezählt werden')
 
     hero = dict(luviq_daten.HERO_STUECK)
-    treffer = Produkt.objects.filter(aktiv=True, nummer=hero['nummer']).first()
+    # nummer=None heißt „keine festgelegt“; filter(nummer=None) würde sonst
+    # Stücke ohne Nummer treffen.
+    treffer = (Produkt.objects.filter(aktiv=True, nummer=hero['nummer']).first()
+               if hero['nummer'] is not None else None)
     if not treffer:
         for begriff in hero['suche']:
             treffer = (Produkt.objects.filter(aktiv=True, name__icontains=begriff)
@@ -86,9 +90,32 @@ def startseite(request):
     if treffer:
         hero['name'] = treffer.name
 
+    # Mit Verkauf stehen die verfügbaren Stücke in einem eigenen Abschnitt, das
+    # Archiv zeigt dann nur die vergebenen; ohne Verkauf zeigt das Archiv alles.
+    verfuegbare = list(Produkt.objects.filter(aktiv=True, vergeben=False)
+                       .order_by('nummer', 'erstellt_am')[:8])
+    vergebene = list(Produkt.objects.filter(aktiv=True, vergeben=True)
+                     .order_by('nummer', 'erstellt_am')[:10])
+
+    echt = []
+    for name, breiten, (breite, hoehe), alt, unterschrift in luviq_daten.ECHT_FOTOS:
+        adressen = {b: static(f'shop1/images/luviq/{name}-{b}.webp') for b in breiten}
+        echt.append({'src': adressen[max(breiten)], 'width': breite, 'height': hoehe, 'alt': alt,
+                     'unterschrift': unterschrift,
+                     'srcset': ', '.join(f'{a} {b}w' for b, a in adressen.items())})
+
+    mit_verkauf = verkauf.verkauf_aktiv()
     return render(request, 'shop1/index.html', {
         'titel': 'Luviq-Shop',
         'produkte_galerie': produkte_galerie,
+        'verfuegbare': verfuegbare if mit_verkauf else [],
+        'archiv_liste': vergebene if mit_verkauf else list(produkte_galerie),
+        'echt_titel': luviq_daten.ECHT_TITEL,
+        'echt_text': luviq_daten.ECHT_TEXT,
+        'echt_fotos': echt,
+        'wege': luviq_daten.WEGE,
+        'vertrauen': luviq_daten.VERTRAUEN,
+        'filme': luviq_daten.FILME,
         'hero': hero,
         'lead': luviq_daten.LEAD,
         'markensatz': luviq_daten.MARKENSATZ,

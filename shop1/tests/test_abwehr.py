@@ -161,20 +161,21 @@ class PruefbefehlTest(LuviqTestCase):
 class NewsletterOhneSkriptTest(LuviqTestCase):
     """EIG89/EIG129: ohne JavaScript ging die Adresse per GET in die Adresszeile."""
 
-    def test_beide_formulare_senden_per_post_an_die_anmeldung(self):
+    def test_das_formular_sendet_per_post_an_die_anmeldung(self):
         html = self.hole('/').content.decode()
         formulare = re.findall(r'<form[^>]*data-newsletter[^>]*>', html)
-        self.assertEqual(len(formulare), 2)
+        # P3 (29.10.2026): die Startseite hat nur noch ein Formular (der Hero-Kasten entfiel).
+        self.assertEqual(len(formulare), 1)
         for form in formulare:
             with self.subTest(form=form):
                 self.assertIn('method="post"', form)
                 self.assertIn('action="/newsletter/subscribe/"', form)
 
-    def test_beide_formulare_tragen_csrf_falle_und_zeitstempel(self):
+    def test_das_formular_traegt_csrf_falle_und_zeitstempel(self):
         html = self.hole('/').content.decode()
-        self.assertEqual(html.count('name="csrfmiddlewaretoken"'), 2)
-        self.assertEqual(html.count(f'name="{spamschutz.FELD_FALLE}"'), 2)
-        self.assertEqual(html.count('<input type="hidden" name="formzeit"'), 2)
+        self.assertEqual(html.count('name="csrfmiddlewaretoken"'), 1)
+        self.assertEqual(html.count(f'name="{spamschutz.FELD_FALLE}"'), 1)
+        self.assertEqual(html.count('<input type="hidden" name="formzeit"'), 1)
 
     def test_die_anmeldung_ohne_skript_leitet_mit_meldung_auf_die_warteliste(self):
         with mock.patch(_NEWSLETTER):

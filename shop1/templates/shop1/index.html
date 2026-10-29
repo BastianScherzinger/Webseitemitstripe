@@ -2,19 +2,19 @@
 {% load static %}
 {% load custom_tags %}
 {% comment %}
-Startseite im Look „Nachtausgabe" (B3 + Hero H4 „Panorama"), gebaut am
-19.09.2026 nach Design/luviq/FINALER-BAUPLAN.md § 2. Reihenfolge wie die
-Vorlage: Hero · Motiv anfragen · Nº …, in Teilen (nur mit Teasern) ·
-Entstehung · Archiv · Luisa · Die nächste Ausgabe. Alle Texte aus
-shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
+Startseite im Look „Nachtausgabe", Umbau P3 am 29.10.2026 nach dem Masterplan
+(Analysen/luviq-2026-10-29, § 6): Hero als Zweispalter mit dem Engel-Shirt ·
+Vertrauensleiste · Wege · Motiv anfragen · Entstehung (ohne Bilder) · Film (nur mit
+FILME) · Luisa · Archiv · Warteliste. Alle Texte aus shop1/luviq_daten.py (über
+View und Kontextprozessor), kein Datum hier.
 {% endcomment %}
 
-{% block title %}Was du willst, handbemalt: Mode aus Lübeck – Luviq Universe{% endblock %}
-{% block meta_description %}Handbemalte Second-Hand-Mode aus Lübeck: Luisa Brehler malt dein Motiv mit Bleiche und Pinsel auf ein Einzelstück. Kostenlos und unverbindlich Motiv anfragen.{% endblock %}
+{% block title %}Luviq: handbemalte Second-Hand-Mode aus Lübeck{% endblock %}
+{% block meta_description %}Handbemalte Second-Hand-Mode aus Lübeck: Unikate, Versand in ganz Deutschland. Dein Motiv, von Luisa mit Bleiche und Pinsel gemalt. Jetzt Motiv anfragen.{% endblock %}
 {% block og_title %}Luviq Universe – Sag mir, was du willst, ich mal’s dir{% endblock %}
 {% block og_description %}Handbemalte Second-Hand-Teile aus Lübeck. Du sagst Luisa, was drauf soll, sie schickt dir Vorschläge, und dann entsteht dein Stück. Jedes Motiv gibt es einmal.{% endblock %}
 {% block og_image_tag %}
-{% comment %}Vorschaubild 1200 × 630 als JPEG (IS39): aus dem Hero-Panorama zugeschnitten; WhatsApp, LinkedIn und Facebook lesen JPEG sicherer als WebP.{% endcomment %}
+{% comment %}Vorschaubild 1200 × 630 als JPEG (IS39): aus dem Engel-Shirt-Foto zugeschnitten (P0); WhatsApp, LinkedIn und Facebook lesen JPEG sicherer als WebP.{% endcomment %}
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/luviq/og-start-1200x630.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -47,77 +47,97 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
 {% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='start' %}{% endblock %}
 
 {% block preload %}
-{# imagesrcset/imagesizes wörtlich wie Quelle und Bild unten, sonst lädt der Browser zwei Fassungen. href = Rückfall für Browser ohne imagesrcset (und von Prüfwerkzeugen gelesen). #}
-<link rel="preload" as="image" media="(min-width: 640px)" fetchpriority="high"
-      href="{% static 'shop1/images/luviq/hero-dornen-quer-1036.webp' %}"
-      imagesrcset="{% static 'shop1/images/luviq/hero-dornen-quer-480.webp' %} 480w, {% static 'shop1/images/luviq/hero-dornen-quer-768.webp' %} 768w, {% static 'shop1/images/luviq/hero-dornen-quer-1036.webp' %} 1036w"
-      imagesizes="(min-width: 1440px) 1325px, 92vw">
-<link rel="preload" as="image" media="(max-width: 639px)" fetchpriority="high"
-      href="{% static 'shop1/images/luviq/hero-dornen-hoch-548.webp' %}"
-      imagesrcset="{% static 'shop1/images/luviq/hero-dornen-hoch-400.webp' %} 400w, {% static 'shop1/images/luviq/hero-dornen-hoch-548.webp' %} 548w"
+{# Hero-Bild vorladen, je nach Bildschirm: ab 900 px das Querformat (3:2), darunter der 4:5-Ausschnitt; je als AVIF mit WebP-Rückfall im <picture>. imagesrcset/imagesizes wörtlich wie die AVIF-Quelle unten, sonst lädt der Browser zwei Fassungen. href = Rückfall für Prüfwerkzeuge. #}
+<link rel="preload" as="image" type="image/avif" media="(min-width: 900px)" fetchpriority="high"
+      href="{% static 'shop1/images/luviq/hero-engel-quer-1536.avif' %}"
+      imagesrcset="{% static 'shop1/images/luviq/hero-engel-quer-768.avif' %} 768w, {% static 'shop1/images/luviq/hero-engel-quer-1024.avif' %} 1024w, {% static 'shop1/images/luviq/hero-engel-quer-1536.avif' %} 1536w"
+      imagesizes="100vw">
+<link rel="preload" as="image" type="image/avif" media="(max-width: 899px)" fetchpriority="high"
+      href="{% static 'shop1/images/luviq/hero-engel-45-800.avif' %}"
+      imagesrcset="{% static 'shop1/images/luviq/hero-engel-45-480.avif' %} 480w, {% static 'shop1/images/luviq/hero-engel-45-640.avif' %} 640w, {% static 'shop1/images/luviq/hero-engel-45-800.avif' %} 800w"
       imagesizes="100vw">
 {% endblock %}
 
 {% block content %}
-<div class="lv-seite">
+<div class="lv-seite lv-start">
 
-    <!-- ═══ Hero H4 „Panorama": Foto ohne Text, darunter Markensatz und Drop. Seit 22.10.2026 Luisas Hoodie mit Dornen-Augen (Rücken, 16:9 / Handy 4:5) ═══ -->
-    <section class="lv-hero" id="start" aria-labelledby="markensatz">
-        <p class="lv-mast"><span>LUVIQ Universe</span><span>{{ drop.monat }}</span><span>Lübeck</span></p>
-        <figure class="lv-pano">
-            <picture>
-                <source media="(max-width: 639px)" srcset="{% static 'shop1/images/luviq/hero-dornen-hoch-400.webp' %} 400w, {% static 'shop1/images/luviq/hero-dornen-hoch-548.webp' %} 548w" sizes="100vw" width="548" height="685">
-                <img src="{% static 'shop1/images/luviq/hero-dornen-quer-1036.webp' %}"
-                     srcset="{% static 'shop1/images/luviq/hero-dornen-quer-480.webp' %} 480w, {% static 'shop1/images/luviq/hero-dornen-quer-768.webp' %} 768w, {% static 'shop1/images/luviq/hero-dornen-quer-1036.webp' %} 1036w"
-                     sizes="(min-width: 1440px) 1325px, 92vw"
-                     alt="{{ hero.alt }}" width="1036" height="583"
+    <!-- ═══ Hero: ab 900 px vollflächig das Querformat, Text links auf dem Bild (Verlauf, Kontrast geprüft); am Handy der 4:5-Ausschnitt, Text darunter auf Anthrazit. Kein Formular. ═══ -->
+    <section class="lv-hero" id="start" data-leiste-ab aria-labelledby="markensatz">
+        <figure class="lv-hero-figur">
+            <picture class="lv-hero-bild">
+                <source media="(min-width: 900px)" type="image/avif"
+                        srcset="{% static 'shop1/images/luviq/hero-engel-quer-768.avif' %} 768w, {% static 'shop1/images/luviq/hero-engel-quer-1024.avif' %} 1024w, {% static 'shop1/images/luviq/hero-engel-quer-1536.avif' %} 1536w"
+                        sizes="100vw">
+                <source media="(min-width: 900px)" type="image/webp"
+                        srcset="{% static 'shop1/images/luviq/hero-engel-quer-768.webp' %} 768w, {% static 'shop1/images/luviq/hero-engel-quer-1024.webp' %} 1024w, {% static 'shop1/images/luviq/hero-engel-quer-1536.webp' %} 1536w"
+                        sizes="100vw">
+                <source type="image/avif"
+                        srcset="{% static 'shop1/images/luviq/hero-engel-45-480.avif' %} 480w, {% static 'shop1/images/luviq/hero-engel-45-640.avif' %} 640w, {% static 'shop1/images/luviq/hero-engel-45-800.avif' %} 800w"
+                        sizes="100vw">
+                <img src="{% static 'shop1/images/luviq/hero-engel-45-800.webp' %}"
+                     srcset="{% static 'shop1/images/luviq/hero-engel-45-480.webp' %} 480w, {% static 'shop1/images/luviq/hero-engel-45-640.webp' %} 640w, {% static 'shop1/images/luviq/hero-engel-45-800.webp' %} 800w"
+                     sizes="100vw"
+                     alt="{{ hero.alt }}" width="800" height="999"
                      loading="eager" fetchpriority="high" decoding="async">
             </picture>
-            <figcaption><span>{% if hero.nummer %}Nº {{ hero.nummer }} · {% endif %}{{ hero.name }}</span><span>Archiv · vergeben</span></figcaption>
+            <figcaption><span>{% if hero.nummer %}Nº {{ hero.nummer }} · {% endif %}{{ hero.name }}</span><span>{{ hero.status }}</span></figcaption>
         </figure>
-        <div class="lv-unterbild">
-            <div>
-                <h1 class="lv-serif lv-satz" id="markensatz">{{ markensatz }}</h1>
-                <p class="lv-lead">{{ lead }}</p>
+        <div class="lv-hero-text">
+            <h1 class="lv-serif lv-satz" id="markensatz">{{ markensatz }}</h1>
+            <p class="lv-lead">{{ lead }}</p>
+            <div class="lv-hero-knoepfe">
                 {% if motivanfrage_aktiv %}
                 <a class="lv-knopf" href="{% url 'motiv_anfragen' %}">Motiv anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
                 {% else %}
                 <a class="lv-knopf" href="#warteliste">Vormerken <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
                 {% endif %}
+                <a class="lv-knopf linie" href="{% url 'produkte' %}">Stücke ansehen</a>
             </div>
-            <aside class="lv-dropkasten" aria-label="Die nächste Ausgabe">
-                {% if drop.termin %}
-                <p class="lv-dl">Nº {{ drop.nummer }} erscheint {{ drop.termin_text }}</p>
-                <div class="lv-uhr" data-ziel="{{ drop.termin_iso }}" role="timer" aria-label="Zeit bis zur nächsten Ausgabe">
-                    <div><b data-t="d">{{ drop.rest.d }}</b><small>Tage</small></div>
-                    <div><b data-t="h">{{ drop.rest.h }}</b><small>Std</small></div>
-                    <div><b data-t="m">{{ drop.rest.m }}</b><small>Min</small></div>
-                    <div><b data-t="s">{{ drop.rest.s }}</b><small>Sek</small></div>
-                </div>
-                {% else %}
-                <p class="lv-dl">Die nächste Ausgabe ist in Arbeit.</p>
-                {% endif %}
-                {% comment %}Ohne JavaScript schickt das Formular klassisch per POST (EIG89/EIG129); mit JavaScript übernimmt das Skript unten. Honigtopf und Zeitfalle wie beim Kontaktformular (shop1/spamschutz.py). aria-describedby verweist auf die Antwortzeile darunter (BF24). Das Formular umschließt Feldzeile, Antwort und Datenschutzhinweis (KV05: der Hinweis gehört zum Formular); lv-formhuelle (display:contents) lässt den Aufbau des Kastens unverändert.{% endcomment %}
-                <form class="lv-formhuelle" method="post" action="{% url 'newsletter_subscribe' %}" data-newsletter novalidate>
-                    {% csrf_token %}
-                    <div class="lv-feldzeile">
-                        <label class="sr-only" for="vormerken-email">Deine E-Mail-Adresse zum Vormerken</label>
-                        <input type="email" id="vormerken-email" name="email" autocomplete="email" placeholder="deine@mail.de" required maxlength="254" aria-describedby="vormerken-meldung">
-                        <div class="lv-falle" aria-hidden="true">
-                            <label for="vormerken-website">Webseite (bitte leer lassen)</label>
-                            <input class="lv-falle" id="vormerken-website" name="{{ feld_falle }}" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
-                        </div>
-                        <input type="hidden" name="formzeit" value="{{ formzeit }}">
-                        <button type="submit">Vormerken</button>
-                    </div>
-                    <p class="lv-antwort" id="vormerken-meldung" role="status" aria-live="polite"></p>
-                    <p class="lv-klein">Eine Mail, wenn es losgeht. Du bestätigst deine Adresse per Link; abmelden über den Link in jeder Mail oder per kurzer Nachricht an brehlerluisa@gmail.com. Was mit der Adresse geschieht, steht in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
-                </form>
-            </aside>
         </div>
     </section>
 
-    <!-- ═══ Motiv anfragen: Luisas Anfrage-System, direkt nach dem Hero ═══ -->
+    {% if echt_fotos %}
+    <!-- ═══ So sieht es in echt aus: echte Handyfotos neben dem Studiobild; weitere Fotos kommen über ECHT_FOTOS ═══ -->
+    <section class="lv-echt" id="echt" aria-labelledby="echt-titel">
+        <div class="lv-echt-text">
+            <h2 class="lv-serif" id="echt-titel">{{ echt_titel }}</h2>
+            <p>{{ echt_text }}</p>
+        </div>
+        <div class="lv-echt-fotos">
+            {% for foto in echt_fotos %}
+            <figure>
+                <img src="{{ foto.src }}" srcset="{{ foto.srcset }}" sizes="(min-width: 900px) 34vw, 70vw" alt="{{ foto.alt }}" width="{{ foto.width }}" height="{{ foto.height }}" loading="lazy" decoding="async">
+                <figcaption>{{ foto.unterschrift }}</figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if vertrauen %}
+    <!-- ═══ Vertrauensleiste: nur belegte Aussagen aus luviq_daten ═══ -->
+    <section class="lv-vertrauen-leiste" id="vertrauen" aria-label="Das Wichtigste in Kürze">
+        <ul class="lv-vertrauen">
+            {% for aussage in vertrauen %}<li><span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span><span>{{ aussage }}</span></li>{% endfor %}
+        </ul>
+    </section>
+    {% endif %}
+
+    <!-- ═══ Wege: Unikate oder dein eigenes Teil (Linktexte beschreiben das Ziel) ═══ -->
+    <section class="lv-wege" id="wege" aria-labelledby="wege-titel">
+        <h2 class="lv-serif" id="wege-titel">Unikate oder dein eigenes Teil</h2>
+        <ul class="lv-wege-liste">
+            {% for titel, text, route, anker in wege %}{% if route != 'motiv_anfragen' or motivanfrage_aktiv %}
+            <li>
+                <h3 class="lv-serif">{{ titel }}</h3>
+                <p>{{ text }}</p>
+                <a class="lv-link" href="{% url route %}">{{ anker }}</a>
+            </li>
+            {% endif %}{% endfor %}
+        </ul>
+    </section>
+
+    <!-- ═══ Motiv anfragen: Luisas Anfrage-System ═══ -->
     <section class="lv-anfragen" id="anfragen" aria-labelledby="anfragen-titel">
         <div>
             <p class="lv-nr">Motiv anfragen</p>
@@ -141,76 +161,98 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
         </div>
     </section>
 
-    {% if drop.teaser %}
-    <!-- ═══ Nº …, in Teilen: nur, solange Teaser gepflegt sind ═══ -->
-    <section class="lv-abschnitt" id="drop" aria-labelledby="drop-titel">
+    {% if verfuegbare %}
+    <!-- ═══ Mit Verkauf: die verfügbaren Stücke zuerst (Karten gehören P4) ═══ -->
+    <section class="lv-abschnitt" id="stuecke" aria-labelledby="stuecke-titel">
         <div class="lv-abschnittskopf">
-            <h2 class="lv-serif" id="drop-titel">Nº {{ drop.nummer }}, in Teilen</h2>
-            <p>Ein Stück. Bis zur Ausgabe zeigt Luisa es nur in Teilen, jeden zweiten Tag ein bisschen mehr.</p>
+            <h2 class="lv-serif" id="stuecke-titel">Die ersten Stücke</h2>
+            <div class="lv-abschnittskopf-r">
+                <p>Jedes Stück gibt es genau einmal. Wenn es weg ist, ist es weg.</p>
+                <a class="lv-link" href="{% url 'produkte' %}">Alle Stücke</a>
+            </div>
         </div>
-        <ul class="lv-teaser">
-            {% for datum, titel, adresse, alt in drop.teaser %}<li><i><img src="{{ adresse }}" alt="{{ alt }}" width="600" height="800" loading="lazy" decoding="async"></i><p><b>{{ titel }}</b><span>{{ datum }}</span></p></li>{% endfor %}
-            <li class="gross"><i><span aria-hidden="true">?</span></i><p><b>Enthüllung</b><span>{{ drop.termin_text }}</span></p></li>
-        </ul>
+        <ol class="lv-raster">
+            {% for produkt in verfuegbare %}{% include 'shop1/teile/archiv_karte.html' %}{% endfor %}
+        </ol>
     </section>
     {% endif %}
 
-    <!-- ═══ Wie ein Stück entsteht: Luisas fünf Schritte ═══ -->
+    <!-- ═══ Wie ein Stück entsteht: nummerierte Linienliste, ohne Bilder ═══ -->
     <section class="lv-abschnitt dunkel" id="entstehung" aria-labelledby="entstehung-titel">
         <div class="lv-abschnittskopf">
             <h2 class="lv-serif" id="entstehung-titel">Wie ein Stück entsteht</h2>
             <p>Fünf Schritte, von der Anfrage bis zum Paket. Meistens dauert das {{ dauer }}, je nach Motiv.</p>
         </div>
-        <ol class="lv-schritte">
+        <ol class="lv-entstehung">
             {% for titel, text, bild, alt in schritte %}
-            <li class="lv-schritt">
-                <figure><img src="{% static 'shop1/images/luviq/'|add:bild|add:'-360.webp' %}" srcset="{% static 'shop1/images/luviq/'|add:bild|add:'-360.webp' %} 360w, {% static 'shop1/images/luviq/'|add:bild|add:'-720.webp' %} 720w" sizes="(min-width: 1024px) 18vw, 72vw" alt="{{ alt }}" width="720" height="900" loading="lazy" decoding="async"></figure>
-                <p class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</p>
+            <li>
+                <span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span>
                 <h3 class="lv-serif">{{ titel }}</h3>
                 <p>{{ text }}</p>
             </li>
             {% endfor %}
         </ol>
-        <p class="lv-wischen" aria-hidden="true">Seitlich wischen →</p>
     </section>
 
-    <!-- ═══ Das Archiv ═══ -->
-    <section class="lv-abschnitt" id="archiv" aria-labelledby="archiv-titel">
-        <div class="lv-abschnittskopf">
-            <h2 class="lv-serif" id="archiv-titel">Das Archiv</h2>
-            <p>{% if verkauf_aktiv %}Alles, was bisher entstanden ist. Jedes Stück gibt es genau einmal.{% else %}Alles, was bisher entstanden ist. Diese Stücke sind vergeben, sie kommen nicht wieder.{% endif %}</p>
+    {% if filme %}
+    <!-- ═══ Film: nur mit Einträgen in FILME. Die Quelle wird erst im Bild gesetzt (Skript unten), bis dahin das Poster. ═══ -->
+    {% for datei, poster, titel, untertitel in filme|slice:":1" %}
+    <section class="lv-film" id="film" aria-labelledby="film-titel">
+        <figure>
+            <div class="lv-film-rahmen">
+                <video data-film data-src="{% static 'shop1/video/'|add:datei %}" poster="{% static 'shop1/images/luviq/'|add:poster %}" width="1080" height="1920" muted playsinline loop preload="none" aria-label="{{ titel }}"></video>
+                <button type="button" class="lv-film-pause" data-film-pause>Pause</button>
+            </div>
+        </figure>
+        <div class="lv-film-text">
+            <h2 class="lv-serif" id="film-titel">{{ titel }}</h2>
+            {% if untertitel %}<p>{{ untertitel }}</p>{% endif %}
         </div>
-        {% if produkte_galerie %}
-        <ol class="lv-raster">
-            {% for produkt in produkte_galerie %}{% include 'shop1/teile/archiv_karte.html' %}{% endfor %}
-        </ol>
-        <p class="lv-weiter"><a class="lv-link" href="{% url 'produkte' %}">Das ganze Archiv <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
-        {% else %}
-        <p class="lv-leer">Das Archiv ist gerade leer. Die nächste Ausgabe ist in Arbeit.</p>
-        {% endif %}
     </section>
+    {% endfor %}
+    {% endif %}
 
     <!-- ═══ Luisa ═══ -->
-    <section class="lv-luisa" id="luisa" aria-label="Luisa Brehler">
+    <section class="lv-luisa lv-luisa-start" id="luisa" aria-label="Luisa Brehler">
         <blockquote>
             <p class="lv-serif">„{{ zitat }}“</p>
             <footer>{{ zitat_quelle }}</footer>
         </blockquote>
         <div class="lv-luisa-text">
-            <p>Luviq ist ein Ein-Personen-Atelier in Lübeck, angefangen hat es in Alsfeld. Die Teile sind Second Hand, die Motive freihand, mit Pinsel und Bleiche, bald auch mit Textilfarbe.</p>
+            <p>Luviq ist ein Ein-Personen-Atelier in Lübeck, <a href="{% url 'liefergebiet' %}#alsfeld">angefangen in Alsfeld</a>. Die Teile sind Second Hand, die Motive freihand, mit Pinsel und Bleiche, bald auch mit Textilfarbe.</p>
             <a class="lv-link" href="{% url 'ueber_uns' %}">Mehr über Luisa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
     </section>
 
-    <!-- ═══ Die nächste Ausgabe: Warteliste = Newsletter mit Double-Opt-in ═══ -->
+    <!-- ═══ Archiv: eine wischbare Reihe kleiner Karten ═══ -->
+    <section class="lv-abschnitt" id="archiv" aria-labelledby="archiv-titel">
+        <div class="lv-abschnittskopf">
+            <h2 class="lv-serif" id="archiv-titel">Das Archiv</h2>
+            <div class="lv-abschnittskopf-r">
+                <p>{% if verkauf_aktiv %}Alles, was bisher entstanden ist. Jedes Stück gibt es genau einmal.{% else %}Alles, was bisher entstanden ist. Diese Stücke sind vergeben, sie kommen nicht wieder.{% endif %}</p>
+                {% if archiv_liste %}<a class="lv-link" href="{% url 'produkte' %}">Das ganze Archiv</a>{% endif %}
+            </div>
+        </div>
+        {% if archiv_liste %}
+        <div class="lv-archivreihe">
+            <ol class="lv-raster">
+                {% for produkt in archiv_liste %}{% include 'shop1/teile/archiv_karte.html' %}{% endfor %}
+            </ol>
+        </div>
+        <p class="lv-wischen" aria-hidden="true">Seitlich wischen</p>
+        {% else %}
+        <p class="lv-leer">Das Archiv ist gerade leer.</p>
+        {% endif %}
+    </section>
+
+    <!-- ═══ Warteliste = Newsletter mit Double-Opt-in, das einzige Formular der Seite ═══ -->
     <section class="lv-warteliste" id="warteliste" aria-labelledby="warteliste-titel">
-        <h2 class="lv-serif" id="warteliste-titel">Die nächste Ausgabe</h2>
-        {% comment %}Das Formular umschließt Hinweis, Feldzeile und Antwort (KV05: der Datenschutzhinweis gehört zum Formular); lv-formhuelle (display:contents) lässt den Aufbau des Abschnitts unverändert. Die Sprungmarke #newsletter-form sitzt auf der Feldzeile, weil ein Element ohne eigenen Kasten kein Sprungziel ist.{% endcomment %}
-        <form class="lv-formhuelle" method="post" action="{% url 'newsletter_subscribe' %}" data-newsletter novalidate>
+        <h2 class="lv-serif" id="warteliste-titel">Neue Stücke zuerst per Mail</h2>
+        {% comment %}Ohne JavaScript schickt das Formular klassisch per POST (EIG89/EIG129); mit JavaScript übernimmt das Skript unten. Honigtopf und Zeitfalle wie beim Kontaktformular (shop1/spamschutz.py). Der Datenschutzhinweis gehört zum Formular (KV05). Die Sprungmarke #newsletter-form sitzt auf der Feldzeile.{% endcomment %}
+        <form class="lv-warteliste-form" method="post" action="{% url 'newsletter_subscribe' %}" data-newsletter novalidate>
             {% csrf_token %}
-            <p>Eine Mail, wenn die nächste Ausgabe erscheint. Du bestätigst deine Adresse über einen Link, verschickt wird über das Gmail-Postfach von Luviq Universe (Google). Abmelden: über den Link in jeder Mail oder per kurzer Nachricht an brehlerluisa@gmail.com. Was mit der Adresse geschieht, steht in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
             <div id="newsletter-form" class="lv-feldzeile">
-                <label class="sr-only" for="newsletter-email">Deine E-Mail-Adresse für die Warteliste</label>
+                <label class="sr-only" for="newsletter-email">Deine E-Mail-Adresse für neue Stücke</label>
                 <input type="email" id="newsletter-email" name="email" autocomplete="email" placeholder="deine@mail.de" required maxlength="254" aria-describedby="newsletter-message">
                 <div class="lv-falle" aria-hidden="true">
                     <label for="newsletter-website">Webseite (bitte leer lassen)</label>
@@ -220,6 +262,7 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
                 <button type="submit">Eintragen</button>
             </div>
             <p id="newsletter-message" class="lv-antwort" role="status" aria-live="polite"></p>
+            <p class="lv-klein">Du bestätigst deine Adresse per Link, abmelden geht über den Link in jeder Mail. Was mit der Adresse geschieht, steht in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
         </form>
     </section>
 </div>
@@ -229,22 +272,36 @@ shop1/luviq_daten.py (über View und Kontextprozessor), kein Datum hier.
 <script nonce="{{ csp_nonce }}">
 (function () {
     'use strict';
-    // Countdown bis zur nächsten Ausgabe. Der Server schreibt den Stand beim
-    // Ausliefern hinein; das Skript zählt nur weiter.
-    document.querySelectorAll('[data-ziel]').forEach(function (uhr) {
-        var ziel = new Date(uhr.getAttribute('data-ziel'));
-        if (isNaN(ziel)) { return; }
-        var felder = uhr.querySelectorAll('[data-t]');
-        function stelle() {
-            var s = Math.max(0, Math.floor((ziel - new Date()) / 1000));
-            var werte = { d: Math.floor(s / 86400), h: Math.floor(s % 86400 / 3600), m: Math.floor(s % 3600 / 60), s: s % 60 };
-            felder.forEach(function (b) { b.textContent = String(werte[b.getAttribute('data-t')]).padStart(2, '0'); });
+    // Film (nur vorhanden, wenn FILME Einträge hat): die Quelle wird erst gesetzt,
+    // wenn das Video ins Bild kommt; abgespielt wird nur ohne „Bewegung reduzieren“.
+    document.querySelectorAll('video[data-film]').forEach(function (video) {
+        var knopf = video.parentNode.querySelector('[data-film-pause]');
+        var ruhig = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var geladen = false;
+        function beschrifte() { if (knopf) { knopf.textContent = video.paused ? 'Abspielen' : 'Pause'; } }
+        function laden() {
+            if (!geladen) { video.src = video.getAttribute('data-src'); video.load(); geladen = true; }
         }
-        stelle();
-        setInterval(stelle, 1000);
+        if (knopf) {
+            knopf.addEventListener('click', function () {
+                laden();
+                if (video.paused) { video.play().catch(function () {}); } else { video.pause(); }
+                beschrifte();
+            });
+        }
+        video.addEventListener('play', beschrifte);
+        video.addEventListener('pause', beschrifte);
+        if (ruhig) { beschrifte(); return; }
+        if (!('IntersectionObserver' in window)) { beschrifte(); return; }
+        new IntersectionObserver(function (eintraege) {
+            eintraege.forEach(function (e) {
+                if (e.isIntersecting) { laden(); video.play().catch(function () {}); }
+                else if (geladen) { video.pause(); }
+            });
+        }, { threshold: 0.35 }).observe(video);
     });
 
-    // Warteliste und „Vormerken": dieselbe Anmeldung mit Double-Opt-in
+    // Warteliste: dieselbe Anmeldung mit Double-Opt-in
     // (/newsletter/subscribe/). Absendesperre (FO03): solange die Anmeldung
     // läuft, schickt ein zweiter Klick keine zweite Anfrage.
     document.querySelectorAll('form[data-newsletter]').forEach(function (form) {

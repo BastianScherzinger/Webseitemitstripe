@@ -492,7 +492,7 @@ class KritischesCssTest(LuviqTestCase):
     def test_jeder_seitentyp_ist_klein_und_traegt_den_ersten_bildschirm(self):
         modul = self._werkzeug()
         erwartet = {
-            'start': ('.lv-hero{', '.lv-pano'),
+            'start': ('.lv-hero{', '.lv-hero-bild'),
             'archiv': ('.lv-raster{', '.lv-karte{'),
             'stueck': ('.lv-stueck{', '.lv-stueck-bild'),
             'luisa': ('.lv-luisa{', '.lv-ablauf'),

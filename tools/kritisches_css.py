@@ -41,11 +41,11 @@ BASIS = {
 
 #: Je Seitentyp, was zusätzlich im ersten Bildschirm steht.
 PROFILE = {
-    # Startseite: Hero H4, Drop-Kasten mit Uhr und Eintragsfeld; darunter der Abschnitt
-    # „Motiv anfragen“ (auf hohen Tablets noch im ersten Bildschirm).
-    "start": {"lv-hero", "lv-mast", "lv-pano", "lv-unterbild", "lv-satz", "lv-lead",
-              "lv-dropkasten", "lv-dl", "lv-uhr", "lv-formhuelle", "lv-feldzeile", "lv-antwort", "lv-anfragen",
-              "lv-ablauf", "lv-anfragekasten", "lv-frage", "lv-chips", "lv-chip"},
+    # Startseite (P3): Hero als Zweispalter mit Foto, Text und zwei Knöpfen; darunter die
+    # Vertrauensleiste und der Abschnitt „Motiv anfragen“ (auf hohen Tablets noch im ersten Bildschirm).
+    "start": {"lv-start", "lv-hero", "lv-hero-figur", "lv-hero-bild", "lv-hero-text", "lv-hero-knoepfe",
+              "lv-satz", "lv-lead", "linie", "lv-vertrauen-leiste", "lv-vertrauen",
+              "lv-anfragen", "lv-ablauf", "lv-anfragekasten", "lv-frage", "lv-chips", "lv-chip"},
     # Archiv: Raster aus Karten.
     "archiv": {"lv-raster", "lv-karte", "lv-karte-kopf", "lv-material", "lv-preis", "lv-leer"},
     # Stückseite: Bild, Nummer, Datenliste, Knöpfe.

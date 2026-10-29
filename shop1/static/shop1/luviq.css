@@ -38,6 +38,8 @@
   --lv-raum-1:4px;--lv-raum-2:8px;--lv-raum-3:12px;--lv-raum-4:16px;--lv-raum-5:24px;
   --lv-raum-6:32px;--lv-raum-7:48px;--lv-raum-8:64px;--lv-raum-9:96px;--lv-raum-10:128px;
   --lv-abschnitt:clamp(64px,7.8vw,112px);
+  /* Wandfarbe des Engel-Studiofotos (Anthrazit): Grund hinter dem Hero, am Handy unter dem Bild */
+  --lv-wand:#2b2a28;
   --lv-kachel:#E8E1D6;
   --lv-fehler:#E8927A;
   --lv-serif:"Cormorant Garamond","Cormorant Ersatz",Georgia,serif;
@@ -114,31 +116,70 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-meldung.fehler{border-left-color:var(--lv-fehler)}
 .lv-meldung button{background:none;border:0;color:var(--lv-leise);font-size:22px;line-height:1;min-width:44px;min-height:44px;cursor:pointer}
 
-/* ── Hero H4 „Panorama" ── */
-.lv-hero{padding:calc(var(--u)*2) var(--rand) calc(var(--u)*6)}
-.lv-mast{display:flex;justify-content:space-between;gap:1em;border-bottom:1px solid var(--lv-linie-2);padding-bottom:calc(var(--u)*1);
-  font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.06em;text-transform:uppercase}
-.lv .lv-pano{margin-top:calc(var(--u)*1.6);display:grid;gap:calc(var(--u)*1)}
-.lv-pano picture{display:block;width:100%;aspect-ratio:16/9;max-height:76vh;overflow:hidden;background:var(--lv-grund-2)}
-.lv-pano img{filter:saturate(.8);object-position:50% 45%}
-.lv-pano figcaption{display:flex;justify-content:space-between;gap:1em;font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise)}
-.lv-unterbild{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:calc(var(--u)*5);margin-top:calc(var(--u)*3.4);align-items:start}
-.lv-satz{font-size:calc(var(--u)*6)}
-.lv .lv-lead{margin-top:calc(var(--u)*1.8);max-width:62ch}
-.lv-unterbild .lv-knopf{margin-top:calc(var(--u)*2.2)}
-.lv-unterbild>*{min-width:0}
-.lv-dropkasten{border:1px solid var(--lv-linie-2);padding:calc(var(--u)*2);display:grid;grid-template-columns:minmax(0,1fr);gap:calc(var(--u)*1.4)}
-.lv-dl{font-weight:500}
-.lv-uhr{display:flex;flex-wrap:wrap;gap:calc(var(--u)*2);font-family:var(--lv-mono)}
-.lv-uhr div{display:grid;gap:.3em}
-.lv-uhr b{font:500 max(24px,calc(var(--u)*3))/1 var(--lv-mono);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
-.lv-uhr small{font-size:max(10px,calc(var(--u)*.75));color:var(--lv-leise);letter-spacing:.16em;text-transform:uppercase}
+/* ── Hero (P3, 29.10.2026, Vorgabe Bastian) ──
+   Ab 900 px: das Querformat (3:2) vollflächig, der Shirt hängt rechts, links steht der Text direkt
+   auf dem Bild; ein Verlauf von links sichert den Kontrast, unten blendet das Bild in den Grund.
+   Handy: 4:5-Ausschnitt randlos, Text darunter auf demselben Anthrazit. */
+.lv-hero{position:relative;display:grid;background:linear-gradient(180deg,var(--lv-wand) 0,var(--lv-wand) 78%,var(--lv-grund) 100%);padding:0}
+.lv-hero>*{min-width:0}
+.lv-hero-figur{margin:0;position:relative}
+.lv-hero-bild{display:block;position:relative;aspect-ratio:4/5;max-height:80svh;overflow:hidden;background:var(--lv-wand)}
+.lv-hero-bild img{object-position:50% 20%}
+.lv-hero-bild::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(43,42,40,0) 82%,var(--lv-wand) 100%)}
+.lv-hero-figur figcaption{padding:var(--lv-raum-3) var(--rand) 0;display:flex;justify-content:space-between;gap:var(--lv-raum-4);font:500 12px/1.4 var(--lv-mono);letter-spacing:.06em;color:var(--lv-marke)}
+.lv-hero-text{display:grid;gap:var(--lv-raum-4);justify-items:start;padding:var(--lv-raum-5) var(--rand) var(--lv-raum-7)}
+.lv-hero .lv-satz{font-size:40px;line-height:1.05}
+.lv .lv-hero-text .lv-lead{margin:0;max-width:62ch;font-size:16px;line-height:1.55;color:var(--lv-text)}
+.lv-hero-knoepfe{display:grid;width:100%;gap:var(--lv-raum-3);margin-top:var(--lv-raum-2)}
+.lv .lv-hero-knoepfe .lv-knopf{min-height:52px;width:100%;padding:0 var(--lv-raum-5);font-size:15px}
+.lv .lv-hero-knoepfe .lv-knopf.linie{justify-content:center;border-color:rgba(242,238,230,.6)}
+@media (min-width:900px){
+  .lv-hero{height:clamp(520px,min(calc(100svh - 124px),64vw),880px);background:var(--lv-grund)}
+  .lv-hero>*{grid-area:1/1}
+  .lv-hero-figur,.lv-hero-bild{position:absolute;inset:0;aspect-ratio:auto;max-height:none}
+  .lv-hero-bild img{object-position:75% 40%}
+  .lv-hero-bild::after{background:
+    linear-gradient(90deg,rgba(14,13,12,.94) 0%,rgba(14,13,12,.86) 36%,rgba(14,13,12,.5) 54%,rgba(14,13,12,0) 70%),
+    linear-gradient(180deg,rgba(10,10,10,0) 86%,var(--lv-grund) 100%)}
+  .lv-hero-figur figcaption{position:absolute;right:var(--rand);bottom:var(--lv-raum-5);padding:0;gap:var(--lv-raum-5);text-shadow:0 0 8px rgba(10,10,10,.9)}
+  .lv-hero-text{position:relative;z-index:2;align-self:center;width:min(48%,680px);padding:0 0 0 var(--rand);gap:var(--lv-raum-5)}
+  .lv-hero .lv-satz{font-size:clamp(34px,4.6vw,76px);line-height:.98}
+  .lv .lv-hero-text .lv-lead{font-size:clamp(15px,1.2vw,17px)}
+  .lv-hero-knoepfe{display:flex;flex-wrap:wrap;width:auto}
+  .lv .lv-hero-knoepfe .lv-knopf{width:auto;min-height:48px}
+}
+
+/* „So sieht es in echt aus“: ehrliche Handyfotos, später mehrere */
+.lv-echt{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--lv-raum-8);align-items:center;padding:var(--lv-abschnitt) var(--rand)}
+.lv-echt-text{display:grid;gap:var(--lv-raum-4);align-content:center}
+.lv-echt-text h2{font-size:clamp(34px,3.4vw,52px);line-height:1}
+.lv-echt-text p{color:var(--lv-leise);max-width:46ch}
+.lv-echt-fotos{display:flex;flex-wrap:wrap;gap:var(--lv-raum-5);align-items:flex-start}
+.lv-echt-fotos figure{display:grid;gap:var(--lv-raum-2);flex:0 1 420px;max-width:100%}
+.lv-echt-fotos img{height:auto;aspect-ratio:1152/1215}
+.lv-echt-fotos figcaption{font:500 12px/1.4 var(--lv-mono);color:var(--lv-marke);letter-spacing:.06em}
+
+/* Vertrauensleiste unter dem Hero: drei belegte Aussagen, Linie statt Kasten */
+.lv-vertrauen-leiste{padding:0 var(--rand)}
+.lv-vertrauen{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);list-style:none;margin:0;padding:0;border-top:1px solid var(--lv-linie-2);border-bottom:1px solid var(--lv-linie)}
+.lv-vertrauen li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:var(--lv-raum-3);align-items:baseline;padding:var(--lv-raum-5) var(--lv-raum-5) var(--lv-raum-5) 0;font-size:16px}
+.lv-vertrauen .lv-nr{color:var(--lv-marke)}
+
+/* Wege: Überschrift links, zwei Wege als Linienliste rechts */
+.lv-start .lv-wege{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--lv-raum-8);align-items:start;padding:var(--lv-abschnitt) var(--rand)}
+.lv-wege h2{font-size:clamp(40px,3.8vw,56px);line-height:1}
+.lv-wege-liste{list-style:none;margin:0;padding:0;display:grid}
+.lv-wege-liste li{display:grid;gap:var(--lv-raum-2);padding:var(--lv-raum-5) 0;border-top:1px solid var(--lv-linie-2)}
+.lv-wege-liste li:last-child{border-bottom:1px solid var(--lv-linie)}
+.lv-wege-liste h3{font-size:max(26px,calc(var(--u)*2.4))}
+.lv-wege-liste p{color:var(--lv-leise);max-width:52ch}
+.lv-wege-liste .lv-link{justify-self:start}
+
 .lv-feldzeile{display:flex;border:1px solid var(--lv-linie-2);max-width:calc(var(--u)*44)}
 .lv-feldzeile input{flex:1;min-width:0;background:transparent;border:0;border-radius:0;color:var(--lv-text);font:inherit;font-size:max(16px,calc(var(--u)*1.1));padding:calc(var(--u)*1.1) calc(var(--u)*1.4)}
 .lv-feldzeile input::placeholder{color:var(--lv-leise)}
 .lv-feldzeile button{background:var(--lv-text);color:var(--lv-grund);border:0;border-radius:0;font:700 max(14px,calc(var(--u)*1.05)) var(--lv-sans);padding:0 calc(var(--u)*1.8);min-height:44px;cursor:pointer}
-.lv-feldzeile button:hover{background:var(--lv-akzent)}
-.lv-dropkasten .lv-feldzeile{max-width:none}
+.lv-feldzeile button:hover{background:var(--lv-marke)}
 .lv-formhuelle{display:contents}
 .lv-antwort{font-size:14px;min-height:0}
 .lv-antwort.gut{color:#9FD4A8}.lv-antwort.schlecht{color:var(--lv-fehler)}
@@ -176,23 +217,11 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-prosa a.lv-knopf:hover{color:var(--lv-grund)}
 .lv-prosa strong{color:var(--lv-text);font-weight:600}
 
-/* Drop in Teilen */
-.lv-teaser{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,1.6fr);gap:calc(var(--u)*1.2);align-items:end;list-style:none;padding:0}
-.lv-teaser li{display:grid;gap:calc(var(--u)*.9)}
-.lv-teaser i{display:block;aspect-ratio:3/4;overflow:hidden;background:var(--lv-kachel)}
-.lv-teaser .gross i{aspect-ratio:4/5;background:var(--lv-grund);border:1px solid var(--lv-linie-2);display:grid;place-items:center}
-.lv-teaser .gross i span{font-family:var(--lv-serif);font-style:italic;font-size:calc(var(--u)*8);color:var(--lv-akzent)}
-.lv-teaser p{display:flex;justify-content:space-between;gap:1em;font-size:max(12px,calc(var(--u)*.9))}
-.lv-teaser p span{color:var(--lv-leise);font-family:var(--lv-mono)}
-
-/* Entstehung */
-.lv-schritte{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(var(--u)*1.6);list-style:none;padding:0}
-.lv-schritt{display:grid;gap:calc(var(--u)*.8);align-content:start}
-.lv-schritt figure{aspect-ratio:9/13;overflow:hidden;background:var(--lv-kachel)}
-.lv-schritt img{mix-blend-mode:multiply}
-.lv-schritt .lv-nr{margin-top:calc(var(--u)*.4)}
-.lv-schritt h3{font-size:max(20px,calc(var(--u)*2.2))}
-.lv-schritt p:last-child{color:var(--lv-leise);font-size:max(13px,calc(var(--u)*.98))}
+/* Entstehung: fünf Schritte als nummerierte Linienliste, ohne Bilder (P3) */
+.lv-entstehung{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--lv-raum-5)}
+.lv-entstehung li{display:grid;gap:var(--lv-raum-2);align-content:start;padding-top:var(--lv-raum-4);border-top:1px solid var(--lv-linie-2)}
+.lv-entstehung h3{font-size:max(24px,calc(var(--u)*2.2))}
+.lv-entstehung p:last-child{color:var(--lv-leise);font-size:15px;line-height:1.5}
 
 /* Archiv */
 .lv-raster{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(var(--u)*2.4) calc(var(--u)*1.4);list-style:none;padding:0}
@@ -211,6 +240,16 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-karte .lv-preis{font:500 max(14px,calc(var(--u)*1)) var(--lv-mono)}
 .lv-leer{color:var(--lv-leise);padding:calc(var(--u)*3) 0}
 .lv-weiter{margin-top:calc(var(--u)*3)}
+.lv-abschnittskopf-r{display:grid;gap:var(--lv-raum-2);justify-self:end;justify-items:end}
+.lv-abschnittskopf-r p{justify-self:end}
+/* Archiv auf der Startseite: eine wischbare Reihe kleiner Karten (3:4); die Karte selbst gehört P4 */
+.lv-archivreihe{margin-inline:calc(var(--rand)*-1);padding-inline:var(--rand);overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:var(--rand);scrollbar-width:none}
+.lv-archivreihe::-webkit-scrollbar{display:none}
+.lv-archivreihe .lv-raster{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 5*var(--lv-raum-5))/6);gap:var(--lv-raum-5)}
+.lv-archivreihe .lv-raster>li:first-child{grid-column:auto}
+.lv-archivreihe .lv-karte{scroll-snap-align:start}
+.lv-archivreihe .lv-karte figure{aspect-ratio:3/4}
+.lv-archivreihe .lv-material{display:none}
 
 /* Luisa */
 .lv-luisa{padding:calc(var(--u)*8) var(--rand);border-top:1px solid var(--lv-linie);display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:calc(var(--u)*5);align-items:end}
@@ -219,13 +258,33 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-luisa-text{display:grid;gap:calc(var(--u)*1.6);color:var(--lv-leise)}
 .lv-luisa-text .lv-link{justify-self:start}
 .lv-portraet{aspect-ratio:4/5;max-width:calc(var(--u)*22);overflow:hidden}
+/* Startseite: Zitat Spalte 1–7, Text Spalte 8–12, keine leere Hälfte (P3) */
+.lv-luisa.lv-luisa-start{grid-template-columns:minmax(0,7fr) minmax(0,5fr);align-items:center;padding:var(--lv-abschnitt) var(--rand)}
+.lv-luisa-start blockquote p{font-size:clamp(36px,4.2vw,60px)}
+.lv-luisa-text p a{text-decoration:underline;text-underline-offset:.2em;color:var(--lv-text)}
 
-/* Warteliste */
-.lv-warteliste{padding:calc(var(--u)*8) var(--rand);border-top:1px solid var(--lv-linie);display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;gap:calc(var(--u)*1.8);background:var(--lv-grund-2)}
-.lv-warteliste h2{font-size:calc(var(--u)*7.4)}
-.lv-warteliste p{color:var(--lv-leise);max-width:52ch}
-.lv-warteliste p a{text-decoration:underline;text-underline-offset:.2em}
-.lv-warteliste .lv-feldzeile{width:100%}
+/* Warteliste: schmale Leiste, Text links, Feld rechts (P3) */
+.lv-warteliste{padding:var(--lv-abschnitt) var(--rand);border-top:1px solid var(--lv-linie);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--lv-raum-8);align-items:center;background:var(--lv-grund-2)}
+.lv-warteliste h2{font-size:clamp(36px,3.8vw,56px);line-height:1}
+.lv-warteliste-form{display:grid;gap:var(--lv-raum-3)}
+.lv-warteliste-form .lv-feldzeile{max-width:none}
+.lv-warteliste .lv-klein{max-width:52ch}
+
+/* Film (nur mit FILME, sonst nicht im DOM) */
+.lv-film{padding:var(--lv-abschnitt) var(--rand);border-top:1px solid var(--lv-linie);display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--lv-raum-8);align-items:center}
+.lv-film-rahmen{position:relative;aspect-ratio:9/16;width:min(100%,calc(70svh*.5625));background:var(--lv-grund-2);overflow:hidden}
+.lv-film-rahmen video{display:block;width:100%;height:100%;object-fit:cover}
+.lv .lv-film-pause{position:absolute;right:var(--lv-raum-3);bottom:var(--lv-raum-3);min-width:44px;min-height:44px;padding:0 var(--lv-raum-4);background:rgba(10,10,10,.82);color:var(--lv-text);border:1px solid var(--lv-linie-2);border-radius:0;font:500 12px var(--lv-mono);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.lv .lv-film-pause:hover{border-color:var(--lv-marke);color:var(--lv-marke)}
+.lv-film-text{display:grid;gap:var(--lv-raum-4);align-content:center}
+.lv-film-text h2{font-size:clamp(36px,3.8vw,56px);line-height:1}
+.lv-film-text p{color:var(--lv-leise);max-width:46ch}
+.lv-film figcaption{font:500 12px/1.4 var(--lv-mono);color:var(--lv-marke);letter-spacing:.06em;margin-top:var(--lv-raum-3)}
+
+/* Abschnitte der Startseite nutzen den Abstand aus dem Token (112 px PC / 64 px Handy) */
+.lv-start .lv-abschnitt{padding-block:var(--lv-abschnitt)}
+.lv-start .lv-anfragen{padding-block:var(--lv-abschnitt)}
+.lv-start .lv-abschnittskopf h2,.lv-start .lv-anfragen h2{font-size:clamp(40px,3.8vw,56px);line-height:1}
 
 /* ── Fuß ── */
 .lv-fuss{padding:var(--lv-raum-8) var(--rand) var(--lv-raum-6);border-top:1px solid var(--lv-linie);display:grid;gap:var(--lv-raum-7);margin-top:auto}
@@ -357,21 +416,9 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-menue nav a{min-height:48px;display:flex;align-items:center;border-bottom:1px solid var(--lv-linie);font-size:17px}
   .lv-menue nav .lv-nav-anfrage{color:var(--lv-akzent)}
   .lv-menue nav .lv-menue-klein{font-size:14px;color:var(--lv-leise)}
-  .lv-hero{padding:12px var(--rand) 36px}
-  .lv-mast{font-size:12px;padding-bottom:6px}
-  .lv-mast span:nth-child(2){display:none}
-  .lv .lv-pano{margin-top:12px;gap:8px}
-  .lv-pano picture{aspect-ratio:4/5}
-  .lv-pano figcaption{font-size:12px}
-  .lv-unterbild{grid-template-columns:minmax(0,1fr);gap:24px;margin-top:20px}
   .lv-satz{font-size:40px}
   .lv-lead{font-size:16px}
-  .lv-unterbild .lv-knopf,.lv-knopf{padding:12px 18px;font-size:15px}
-  .lv-unterbild .lv-knopf{margin-top:18px}
-  .lv-dropkasten{padding:16px;gap:12px}
-  .lv-uhr{gap:14px}
-  .lv-uhr b{font-size:24px}
-  .lv-uhr small{font-size:12px}
+  .lv-knopf{padding:12px 18px;font-size:15px}
   .lv-feldzeile{max-width:none}
   .lv-feldzeile input{padding:12px}
   .lv-feldzeile button{font-size:14px;padding:0 14px;min-height:48px}
@@ -384,31 +431,24 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-anfragekasten{padding:16px;gap:12px}
   .lv-chip{font-size:14px;padding:8px 12px}
   .lv-abschnitt{padding:44px var(--rand)}
+  .lv-start .lv-abschnitt,.lv-start .lv-anfragen{padding-block:var(--lv-abschnitt)}
   .lv-abschnittskopf{grid-template-columns:minmax(0,1fr);gap:8px;margin-bottom:20px}
   .lv-abschnittskopf h1,.lv-abschnittskopf h2{font-size:36px}
   .lv-abschnittskopf p{justify-self:start;font-size:16px}
-  .lv-teaser{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .lv-teaser .gross{grid-column:1/-1}
-  .lv-teaser .gross i{aspect-ratio:16/10}
-  .lv-teaser .gross i span{font-size:52px}
-  .lv-schritte{display:flex;overflow-x:auto;gap:12px;scroll-snap-type:x mandatory;margin-inline:calc(var(--rand)*-1);padding-inline:var(--rand);scrollbar-width:none;scroll-padding-inline:var(--rand)}
-  .lv-schritte::-webkit-scrollbar{display:none}
-  .lv-schritt{flex:0 0 min(72%,300px);scroll-snap-align:start;gap:6px}
-  .lv-schritt h3{font-size:22px}
-  .lv-schritt p:last-child{font-size:16px}
   .lv-wischen{display:block;margin-top:12px;font:12px var(--lv-mono);color:var(--lv-leise);letter-spacing:.08em;text-transform:uppercase}
   .lv-raster{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}
   .lv-raster>li:first-child{grid-column:1/-1}
   .lv-karte h2,.lv-karte h3{font-size:18px}
   .lv-karte-kopf{font-size:12px}
   .lv-karte .lv-material{font-size:12.5px}
-  .lv-luisa{grid-template-columns:minmax(0,1fr);padding:48px var(--rand);gap:20px}
+  .lv-luisa,.lv-luisa.lv-luisa-start{grid-template-columns:minmax(0,1fr);padding:48px var(--rand);gap:20px}
   .lv-luisa blockquote p{font-size:36px}
+  .lv-luisa-start blockquote p{font-size:28px}
   .lv-luisa blockquote footer{font-size:12px}
   .lv-luisa-text{font-size:16px;gap:12px}
-  .lv-warteliste{padding:48px var(--rand) 44px;gap:14px}
-  .lv-warteliste h2{font-size:40px}
-  .lv-warteliste p{font-size:16px}
+  .lv-warteliste{grid-template-columns:minmax(0,1fr);padding:var(--lv-abschnitt) var(--rand);gap:var(--lv-raum-5)}
+  .lv-warteliste h2{font-size:30px}
+  .lv-warteliste .lv-klein{font-size:13px}
   .lv-fuss{padding:var(--lv-raum-7) var(--rand) var(--lv-raum-6);gap:var(--lv-raum-6)}
   .lv-fuss-oben{grid-template-columns:minmax(0,1fr);gap:var(--lv-raum-6)}
   .lv-fuss-gruppe a,.lv-fuss-start{min-height:44px;font-size:16px}
@@ -438,14 +478,35 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   /* Absätze der Altseiten, die als Beschriftung gesetzt waren, sind Fließtext: mindestens 16 px (BF27). */
   .lv-alt main p[class*="text-[9px]"],.lv-alt main p[class*="text-[10px]"],.lv-alt main p[class*="text-[11px]"],.lv-alt main p[class*="text-xs"],.lv-alt main p[class*="text-sm"]{font-size:16px}
 }
+/* Startseite am Handy (P3): Foto randlos, Text darunter, alles einspaltig */
+@media (max-width:767px){
+  .lv-echt{grid-template-columns:minmax(0,1fr);gap:var(--lv-raum-5)}
+  .lv-echt-text h2{font-size:30px}
+  .lv-echt-fotos figure{flex:0 1 min(100%,300px)}
+  .lv-vertrauen{grid-auto-flow:row;grid-auto-columns:auto}
+  .lv-vertrauen li{padding:var(--lv-raum-3) 0;border-top:1px solid var(--lv-linie)}
+  .lv-vertrauen li:first-child{border-top:0}
+  .lv-start .lv-wege{grid-template-columns:minmax(0,1fr);gap:var(--lv-raum-5)}
+  .lv-wege h2{font-size:30px}
+  .lv-wege-liste h3{font-size:26px}
+  .lv-abschnittskopf-r{justify-self:start;justify-items:start}
+  .lv-entstehung{grid-template-columns:minmax(0,1fr);gap:0}
+  .lv-entstehung li{grid-template-columns:36px minmax(0,1fr);column-gap:var(--lv-raum-3);padding:var(--lv-raum-4) 0}
+  .lv-entstehung li .lv-nr{grid-row:1/3}
+  .lv-entstehung li h3,.lv-entstehung li p:last-child{grid-column:2}
+  .lv-entstehung p:last-child{font-size:16px}
+  .lv-archivreihe .lv-raster{grid-auto-columns:140px;gap:var(--lv-raum-3)}
+  .lv-film{grid-template-columns:minmax(0,1fr);gap:var(--lv-raum-5)}
+  .lv-film-rahmen{width:calc(100% + 2*var(--rand));margin-inline:calc(var(--rand)*-1)}
+  .lv-film-text h2{font-size:30px}
+  .lv-start .lv-abschnittskopf h2,.lv-start .lv-anfragen h2{font-size:30px}
+}
 @media (min-width:640px) and (max-width:1023px){
-  .lv-unterbild{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px}
   .lv-satz{font-size:48px}
   .lv-raster{grid-template-columns:repeat(3,minmax(0,1fr))}
   .lv-raster>li:first-child{grid-column:auto}
   .lv-luisa blockquote p{font-size:48px}
   .lv-anfragen{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-  .lv-pano picture{aspect-ratio:16/9}
 }
 @media (min-width:1024px){.lv-wischen{display:none}}
 
