@@ -21,14 +21,14 @@ SEITEN_STAND = {
     # 23.10.2026: Sitz Lübeck laut Gewerbeanmeldung, Alsfeld als Herkunft – Titel,
     # Beschreibungen und Texte aller Seiten; deshalb tragen alle dieses Datum.
     'home':         '2026-10-23',
-    'produkte':     '2026-10-23',
+    'produkte':     '2026-10-29',
     'gaestebuch':   '2026-10-23',
     'ueber_uns':    '2026-10-23',
     'liefergebiet': '2026-10-23',
     'kontakt':      '2026-10-23',
-    'impressum':    '2026-10-23',
+    'impressum':    '2026-10-29',
     'datenschutz':  '2026-10-23',
-    'agb':          '2026-10-23',  # Rechtstexte ohne Verkauf: Hinweis statt Paragraphen
+    'agb':          '2026-10-29',  # Rechtstexte ohne Verkauf: Hinweis statt Paragraphen
     # IS19 (27.09.2026): Erklärsätze der Stationen, Dauer, Bestätigungshinweis.
     # 02.10.2026 (L1-B1): Titel, Beschreibung, Vorschaubild und Twitter-Angaben neu
     # (IS03/06/07/09/10/11/13/36/39, EIG137) — home, produkte, gaestebuch, ueber_uns,
@@ -37,7 +37,7 @@ SEITEN_STAND = {
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
     'wissen':           '2026-10-23',
     'wissen_pflege':    '2026-10-23',
-    'wissen_upcycling': '2026-10-23',
+    'wissen_upcycling': '2026-10-29',
     'wissen_groesse':   '2026-10-23',
     'wissen_motiv':     '2026-10-23',  # Entwurf, noindex
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).

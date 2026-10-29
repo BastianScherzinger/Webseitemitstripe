@@ -127,6 +127,13 @@
                 <div class="glass-card p-10 rounded-[3rem] sticky top-28">
                     <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-8">Summary</h3>
                     <div class="space-y-6">
+                        {% comment %}§ 312j Abs. 2 BGB / Art. 246a EGBGB: wesentliche Merkmale und Preis jedes Stücks unmittelbar vor dem Bestellknopf.{% endcomment %}
+                        {% for p in posten %}
+                        <div class="flex justify-between items-center text-white/50 text-[10px] uppercase tracking-widest">
+                            <span>{{ p.produkt_name }} · Unikat, gebraucht, handbemalt{% if p.menge > 1 %} · {{ p.menge }}×{% endif %}</span>
+                            <span>{{ p.produkt_preis|floatformat:2 }} €</span>
+                        </div>
+                        {% endfor %}
                         <div class="flex justify-between items-center text-white/50 text-[10px] uppercase tracking-widest">
                             <span>Subtotal</span>
                             <span>{{ gesamt_betrag_original|floatformat:2 }} €</span>
@@ -145,10 +152,11 @@
                             <span class="text-[10px] font-black uppercase tracking-widest text-white/30">Total Transfer</span>
                             <span class="text-3xl font-black text-glow">{{ gesamt_betrag|floatformat:2 }} €</span>
                         </div>
+                        <p class="text-[10px] text-white/40 leading-relaxed">Gesamtpreis. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</p>
                         <div class="p-6 glass rounded-2xl border-white/5 bg-white/[0.02]">
                             <p class="text-[10px] text-white/40 leading-relaxed uppercase tracking-widest">
                                 <span class="text-glow-orange mr-2">ℹ️</span>
-                                Im nächsten Schritt wählst du deine Verschlüsselung (Zahlungsart).
+                                Im nächsten Schritt bezahlst du mit der hier gewählten Zahlungsart.
                             </p>
                         </div>
                     </div>

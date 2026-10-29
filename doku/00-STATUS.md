@@ -5,7 +5,7 @@ stand: 2026-10-29
 stand: 2026-10-29
 status: vollständig
 fortschritt: 97
-zusammenfassung: Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau, kein Gewerbe angemeldet). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
+zusammenfassung: 29.10.2026 – Gewerbe LUVIQ angemeldet (Beginn 01.11.2026, § 19 UStG, USt-IdNr. beantragt). Zweig recht/2026-10-29-verkaufsstart (nicht gepusht) - Startsperre für den Verkauf, Hinweis „Shop öffnet frühestens am 01.11.2026“, Generator-Ablagen, USt-IdNr.-Platzhalter, Einwilligungs-Gerüst; Prüfbericht in Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29. Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
 offen: 4
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 ---

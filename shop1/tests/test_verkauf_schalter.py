@@ -32,12 +32,12 @@ class SchalterTest(SimpleTestCase):
     @override_settings(VERKAUF_AKTIV=False)
     def test_aus_ist_aus(self):
         self.assertFalse(verkauf.verkauf_aktiv())
-        self.assertEqual(verkauf.verkauf_kontext(None), {'verkauf_aktiv': False})
+        self.assertEqual(verkauf.verkauf_kontext(None), {'verkauf_aktiv': False, 'shop_oeffnet': verkauf.oeffnungs_satz()})
 
     @override_settings(VERKAUF_AKTIV=True)
     def test_an_ist_an(self):
         self.assertTrue(verkauf.verkauf_aktiv())
-        self.assertEqual(verkauf.verkauf_kontext(None), {'verkauf_aktiv': True})
+        self.assertEqual(verkauf.verkauf_kontext(None), {'verkauf_aktiv': True, 'shop_oeffnet': ''})
 
     def test_fehlt_die_einstellung_ist_der_verkauf_aus(self):
         """Rechtslage: ohne ausdrückliches Einschalten wird nie verkauft."""
@@ -62,7 +62,7 @@ class MiddlewareTest(SimpleTestCase):
                 antwort = _middleware().process_view(anfrage, mock.Mock(), (), {})
                 self.assertEqual(antwort.status_code, 302)
                 self.assertEqual(antwort['Location'], '/#newsletter-form')
-                self.assertEqual([str(m) for m in anfrage._messages], [verkauf.HINWEIS])
+                self.assertEqual([str(m) for m in anfrage._messages], [verkauf.hinweis()])
 
     @override_settings(VERKAUF_AKTIV=False)
     def test_der_paypal_abruf_bekommt_json_mit_status_409(self):
@@ -70,7 +70,7 @@ class MiddlewareTest(SimpleTestCase):
         antwort = _middleware().process_view(_anfrage('paypal_capture'), mock.Mock(), (), {})
         self.assertEqual(antwort.status_code, 409)
         self.assertEqual(json.loads(antwort.content),
-                         {'error': verkauf.HINWEIS, 'verkauf_aktiv': False})
+                         {'error': verkauf.hinweis(), 'verkauf_aktiv': False})
 
     @override_settings(VERKAUF_AKTIV=False)
     def test_andere_routen_und_unaufgeloeste_adressen_bleiben_unberuehrt(self):
@@ -90,5 +90,5 @@ class MiddlewareTest(SimpleTestCase):
     def test_der_hinweis_nennt_weder_preis_noch_kauf(self):
         for wort in ('€', 'Preis', 'kaufen', 'bestellen', 'verkauft'):
             with self.subTest(wort=wort):
-                self.assertNotIn(wort, verkauf.HINWEIS)
+                self.assertNotIn(wort, verkauf.hinweis())
         self.assertTrue(verkauf.WARTELISTE_ANKER.startswith('#'))

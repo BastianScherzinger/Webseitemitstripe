@@ -64,7 +64,17 @@ aus, siehe [10-TECHNIK.md](10-TECHNIK.md) Falle 22). Der Schalter wird erst
 umgelegt, wenn alles darüber erledigt ist — in dieser Reihenfolge:
 
 - [x] Gewerbe anmelden — **22.10.2026 online bei der Hansestadt Lübeck** (nicht Alsfeld: Betriebsstätte Mühlenkamp 5, 23569 Lübeck), Beginn 01.11.2026, Nebenerwerb, Geschäftsbezeichnung „Luviq“; Antrag und Zahlungsnachweis in `Buero\luisa\arbeitsplatz\recht\gewerbe`. Empfangsbescheinigung des Ordnungsamts steht noch aus. Die Seite nennt die Lübecker Anschrift seit dem Zweig `seo/2026-10-23-luviq-upgrade` (nicht live).
-- [ ] Fragebogen zur steuerlichen Erfassung beim Finanzamt abgeben, Steuernummer liegt vor.
+- [x] Fragebogen zur steuerlichen Erfassung abgeschickt (**29.10.2026**, ELSTER): Kleinunternehmerin § 19 UStG, USt-IdNr. beantragt. [ ] Steuernummer liegt vor (gehört **nicht** ins Impressum). [ ] USt-IdNr. da → Railway `UST_IDNR` setzen (Impressum zeigt sie dann, § 5 Abs. 1 Nr. 6 DDG).
+- **Startsperre seit 29.10.2026** (`shop1/startsperre.py`, Zweig `recht/2026-10-29-verkaufsstart`): `VERKAUF_AKTIV=1` wirkt erst, wenn **alle** folgenden Punkte erfüllt sind – sonst bleibt der Verkauf aus und `pruefe_seite` nennt die Gründe im Railway-Log:
+  - [ ] Datum ≥ 01.11.2026 (`VERKAUF_FRUEHESTENS`; gelesen beim Start → nach dem 01.11. einmal neu starten)
+  - [ ] Generator-Texte eingefügt: `shop1/templates/shop1/legal/generator/agb.html`, `widerruf.html` (mit Muster-Formular), `datenschutz.html` (Impressum `impressum.html` optional, ersetzt den heutigen Block); Eingabeliste `Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29\GENERATOR-EINGABEN.md`; Luisas Freigabe schriftlich
+  - [ ] `LUCID_REGISTRIERNUMMER` in Railway (Registrierung + Systemvertrag vor dem ersten Paket)
+  - [ ] Versandkosten in Kasse, Preiszeile und PayPal-Betrag eingebaut → `VERSANDKOSTEN_IM_BESTELLWEG = True` (Betrag entscheidet Luisa)
+  - [ ] Widerrufsfunktion „Vertrag widerrufen“ (§ 356a BGB, seit 19.06.2026) gebaut → `WIDERRUFSFUNKTION_VORHANDEN = True`
+- [ ] Bestellbestätigung mit AGB + Widerrufsbelehrung (Text oder Anhang, § 312f Abs. 2 BGB).
+- [ ] GPSR-Beipackkarte (Name, Anschrift, E-Mail, Nº, Pflege) je Paket; Angaben im Angebot sind seit 29.10. eingebaut (nur mit Verkauf sichtbar).
+- [ ] Auftragsarbeiten: Bestellweg mit Hinweis „kein Widerruf (§ 312g Abs. 2 Nr. 1 BGB)“ vor der Bestellung – oder vorerst nicht verkaufen.
+- [ ] Tracking erst mit Generator-Datenschutztext; dann `EINWILLIGUNG_DIENST`/`EINWILLIGUNG_SKRIPT` setzen und den Host in `CSP_QUELLEN`.
 - [ ] Mit Steuerberatung/Finanzamt klären, ob die Kleinunternehmerregelung (§ 19 UStG) gewählt wird und zutrifft — erst dann dürfen die Sätze „Endpreise, nach § 19 UStG keine Umsatzsteuer" zurück (sie kommen mit dem Schalter automatisch wieder).
 - [ ] AGB, Widerrufsbelehrung (samt Muster-Widerrufsformular) und Datenschutzerklärung von einer Anwältin oder einem Rechtstext-Dienst durchsehen lassen; Impressum um Angaben ergänzen, die dann nötig werden (z. B. USt-IdNr., falls vorhanden).
 - [ ] Verpackungsregister LUCID: vor dem ersten Versand registrieren und einem Dualen System beitreten.

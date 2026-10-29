@@ -58,6 +58,10 @@
                 <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Impressum & Transparency – dieses Impressum nennt die Anbieterin von Luviq Universe, {{ anbieterin.name }} aus {{ anbieterin.plz }} {{ anbieterin.ort }}, ihre Kontaktadresse und den Hinweis zur Streitschlichtung.</p>
             </header>
 
+            {% comment %}Sobald Luisa den Generator-Text freigegeben hat und er in legal/generator/impressum.html steht, ersetzt er den Block darunter (Agenturregel 3). Dann die Aufbau-Referenz dieser Seite gezielt nachziehen.{% endcomment %}
+            {% if rechtstexte.impressum %}
+            <div class="lv-rechtstext">{% include 'shop1/legal/generator/impressum.html' %}{% if not verkauf_aktiv %}<p>Luviq Universe ist eine Marke im Aufbau. Derzeit findet kein Verkauf statt. {{ shop_oeffnet }}</p>{% endif %}</div>
+            {% else %}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-20">
                 <div class="space-y-16">
                     <section class="group">
@@ -71,7 +75,9 @@
                             <p>{{ anbieterin.plz }} {{ anbieterin.ort }}</p>
                             <p>{{ anbieterin.land_name }}</p>
                             {% comment %}Angaben aus der Gewerbeanmeldung vom 22.10.2026 (luviq_daten.ANBIETERIN): Geschäftsbezeichnung „Luviq", Betriebsstätte Lübeck. Verkaufsschalter: solange er aus ist, sagt das Impressum ausdrücklich, dass nichts verkauft wird.{% endcomment %}
-                            {% if not verkauf_aktiv %}<p class="mt-4">Geschäftsbezeichnung: {{ anbieterin.geschaeft }}. Luviq Universe ist eine Marke im Aufbau. Derzeit findet kein Verkauf statt.</p>{% endif %}
+                            {% if not verkauf_aktiv %}<p class="mt-4">Geschäftsbezeichnung: {{ anbieterin.geschaeft }}. Luviq Universe ist eine Marke im Aufbau. Derzeit findet kein Verkauf statt. {{ shop_oeffnet }}</p>{% endif %}
+                            {% comment %}USt-IdNr. (§ 5 Abs. 1 Nr. 6 DDG): erscheint erst, wenn UST_IDNR in Railway gesetzt ist – beantragt am 29.10.2026, kommt per Post vom BZSt. Nie eine Nummer erfinden; die Steuernummer gehört nicht hierher.{% endcomment %}
+                            {% if ust_idnr %}<p class="mt-4">Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: {{ ust_idnr }}</p>{% endif %}
                         </div>
                     </section>
 
@@ -117,6 +123,7 @@
                 </div>
             </div>
 
+            {% endif %}
             <div class="mt-24 pt-12 border-t border-white/5 text-center">
                 <p class="text-[9px] text-white/10 uppercase tracking-[0.4em]">Luviq Universe – Art is not a luxury, it's a necessity.</p>
             </div>

@@ -2,9 +2,9 @@
 {% load static custom_tags %}
 
 {% block title %}{% if verkauf_aktiv %}Second Hand & Vintage Mode kaufen | Luviq Universe – Lübeck{% else %}Archiv: handbemalte Unikate aus Lübeck – Luviq Universe{% endif %}{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Alle handbemalten 1-of-1 Vintage-Unikate von Luviq Universe aus Lübeck: nachhaltige Second-Hand-Mode, jedes Stück nur einmal zu haben. Jetzt bestellen.{% else %}Archiv von Luviq Universe aus Lübeck: bisherige handbemalte 1-of-1 Vintage-Unikate, bereits vergeben. Jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Alle handbemalten 1-of-1 Vintage-Unikate von Luviq Universe aus Lübeck: gebrauchte Second-Hand-Mode, von Hand bemalt, jedes Stück nur einmal zu haben. Jetzt bestellen.{% else %}Archiv von Luviq Universe aus Lübeck: bisherige handbemalte 1-of-1 Vintage-Unikate, bereits vergeben. Jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}
 {% block og_title %}Second Hand & Vintage Mode | Luviq Universe Lübeck{% endblock %}
-{% block og_description %}Handbemalte Vintage-Unikate aus Lübeck. 1-of-1 Second-Hand-Mode – nachhaltig und einzigartig. Jetzt bei Luviq Universe entdecken.{% endblock %}
+{% block og_description %}Handbemalte Vintage-Unikate aus Lübeck. 1-of-1 Second-Hand-Mode, getragen und von Hand neu bemalt. Jetzt bei Luviq Universe entdecken.{% endblock %}
 {% block twitter_title %}{% if verkauf_aktiv %}Handbemalte Vintage-Unikate – Luviq Universe{% else %}Archiv: handbemalte Unikate – Luviq Universe{% endif %}{% endblock %}
 {% block twitter_description %}{% if verkauf_aktiv %}Handbemalte 1-of-1 Vintage-Unikate aus Lübeck, jedes Stück nur einmal.{% else %}Bisherige handbemalte 1-of-1 Unikate aus Lübeck, bereits vergeben. Neue Stücke gibt es mit dem ersten Drop.{% endif %}{% endblock %}
 
@@ -32,7 +32,7 @@
       "@type": "CollectionPage",
       "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}#collection",
       "name": "{% if verkauf_aktiv %}Luviq Universe – Vintage Upcycling Mode Kollektion{% else %}Luviq Universe – Archiv der bisherigen Stücke{% endif %}",
-      "description": "{% if verkauf_aktiv %}Handbemalte 1-of-1 Vintage-Unikate. Nachhaltige Upcycling-Mode aus Deutschland.{% else %}Bisherige handbemalte 1-of-1 Vintage-Unikate, bereits vergeben. Upcycling-Mode aus Lübeck.{% endif %}",
+      "description": "{% if verkauf_aktiv %}Handbemalte 1-of-1 Vintage-Unikate. Upcycling-Mode aus getragener Kleidung, aus Deutschland.{% else %}Bisherige handbemalte 1-of-1 Vintage-Unikate, bereits vergeben. Upcycling-Mode aus Lübeck.{% endif %}",
       "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}",
       "provider": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
       "hasPart": [{% for p in produkte_liste %}{"@id": "{{ request.scheme }}://{{ request.get_host }}{{ p.get_absolute_url }}#product"}{% if not forloop.last %}, {% endif %}{% endfor %}]

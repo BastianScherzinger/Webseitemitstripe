@@ -31,7 +31,7 @@
                 <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
                     Allgemeine Geschäftsbedingungen
                 </h1>
-                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Allgemeine Geschäftsbedingungen – diese AGB von Luviq Universe, {{ anbieterin.name }} aus {{ anbieterin.plz }} {{ anbieterin.ort }}, {% if verkauf_aktiv %}regeln in fünf Paragraphen den Vertragsschluss, die Beschaffenheit der handbemalten Unikate, Preise und Zahlung sowie das Widerrufsrecht von 14 Tagen. Maßgeblich ist der Wortlaut der Paragraphen darunter.{% else %}gelten erst ab Eröffnung des Shops. Derzeit findet kein Verkauf statt, deshalb gibt es noch keine Geschäftsbedingungen.{% endif %}</p>
+                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Allgemeine Geschäftsbedingungen – diese AGB von Luviq Universe, {{ anbieterin.name }} aus {{ anbieterin.plz }} {{ anbieterin.ort }}, {% if verkauf_aktiv %}regeln in fünf Paragraphen den Vertragsschluss, die Beschaffenheit der handbemalten Unikate, Preise und Zahlung sowie das Widerrufsrecht von 14 Tagen. Maßgeblich ist der Wortlaut der Paragraphen darunter.{% else %}gelten erst ab Eröffnung des Shops. Derzeit findet kein Verkauf statt, deshalb gibt es noch keine Geschäftsbedingungen. {{ shop_oeffnet }}{% endif %}</p>
             </header>
 
             <div class="space-y-16 text-white/60 leading-relaxed font-light">
@@ -44,9 +44,14 @@
                 {% if not verkauf_aktiv %}
                 <section>
                     <h2 class="text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5">Derzeit kein Verkauf</h2>
-                    <p>Hinweis: Diese AGB gelten erst ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt: Auf dieser Seite lässt sich nichts bestellen und nichts bezahlen. Die Stücke im Archiv sind bisherige Arbeiten und bereits vergeben. Eine Anfrage über das Kontaktformular oder über „Motiv anfragen“ ist unverbindlich. Die Allgemeinen Geschäftsbedingungen und die Belehrung über das Widerrufsrecht werden erst veröffentlicht, wenn der Shop eröffnet.</p>
+                    <p>Hinweis: Diese AGB gelten erst ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt: Auf dieser Seite lässt sich nichts bestellen und nichts bezahlen. Die Stücke im Archiv sind bisherige Arbeiten und bereits vergeben. Eine Anfrage über das Kontaktformular oder über „Motiv anfragen“ ist unverbindlich. Die Allgemeinen Geschäftsbedingungen und die Belehrung über das Widerrufsrecht werden erst veröffentlicht, wenn der Shop eröffnet. {{ shop_oeffnet }}</p>
                 </section>
+                {% elif rechtstexte.agb and rechtstexte.widerruf %}
+                {% comment %}Mit Verkauf: die Texte aus dem Generator (legal/generator/), von Luisa freigegeben. Ohne sie öffnet der Verkauf gar nicht (shop1/startsperre.py).{% endcomment %}
+                <section class="lv-rechtstext">{% include 'shop1/legal/generator/agb.html' %}</section>
+                <section class="lv-rechtstext" id="widerruf">{% include 'shop1/legal/generator/widerruf.html' %}</section>
                 {% else %}
+                {% comment %}Alter Entwurf von vor dem Gewerbe, kein Generator-Text: erscheint nur noch in Tests mit VERKAUF_AKTIV=True, in Betrieb sperrt startsperre den Verkauf ohne Generator-Text.{% endcomment %}
                 <section>
                     <h2 class="text-xs font-black uppercase tracking-widest text-white/80 mb-6 pb-2 border-b border-white/5">§ 1 Geltungsbereich</h2>
                     <p>Für die Geschäftsbeziehung zwischen <strong>Luviq (Luisa Brehler)</strong> und dem Besteller gelten ausschließlich die nachfolgenden Allgemeinen Geschäftsbedingungen in ihrer zum Zeitpunkt der Bestellung gültigen Fassung.</p>

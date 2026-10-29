@@ -100,6 +100,7 @@ class Command(BaseCommand):
         self._pruefe_datenbanken()
         self._pruefe_statische_dateien()
         self._pruefe_dienste()
+        self._pruefe_verkaufsstart()
         self._pruefe_produkte()
         self._pruefe_ausgelieferte_seite()
 
@@ -258,6 +259,13 @@ class Command(BaseCommand):
         for name, grund in empfohlen.items():
             if not os.getenv(name):
                 self.warnungen.append(f'{name} ist nicht gesetzt – {grund}.')
+
+    def _pruefe_verkaufsstart(self):
+        """Startsperre (shop1/startsperre.py): warum VERKAUF_AKTIV=1 noch nicht wirkt."""
+        if not getattr(settings, 'VERKAUF_GEWUENSCHT', False):
+            return
+        for grund in getattr(settings, 'VERKAUF_SPERRGRUENDE', []):
+            self.warnungen.append(f'VERKAUF_AKTIV=1 gesetzt, Verkauf bleibt aus: {grund}')
 
     # ── Daten ──────────────────────────────────────────────────────────
 
