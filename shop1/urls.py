@@ -5,6 +5,7 @@ dort re-exportiert werden.
 """
 from . import views
 from . import admin_views
+from django.http import HttpResponse
 from django.urls import path
 from django.views.generic import RedirectView
 from django.contrib.auth import views as auth_views
@@ -74,6 +75,12 @@ urlpatterns = [
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
     path('llms.txt', views.llms_txt, name='llms_txt'),
+    # Search-Console-Bestätigung der neuen Hauptdomain www.luviq-luebeck.com
+    # (29.10.2026, Konto der Property sc-domain:luviq-alsfeld.com). Nicht entfernen,
+    # sonst verliert die Property ihre Bestätigung.
+    path('google9f0e3cd9fc777b96.html', lambda request: HttpResponse(
+        'google-site-verification: google9f0e3cd9fc777b96.html',
+        content_type='text/html; charset=utf-8'), name='gsc_bestaetigung'),
     # Volltext der Seiten fuer Antwortmaschinen (GE31/VL08), siehe views/legal.py.
     path('llms-full.txt', views.llms_full_txt, name='llms_full_txt'),
     # Betrieb und Sicherheit (02.10.2026): schlanke Gesundheitsadresse für die
