@@ -32,6 +32,12 @@
   --lv-text:#F2EEE6;--lv-leise:#9C968C;
   --lv-linie:rgba(242,238,230,.12);--lv-linie-2:rgba(242,238,230,.28);
   --lv-akzent:#C8763F;
+  /* Beige der Wortmarke (aus marke/luviq-wortmarke-*.png gemessen, P0): zweiter, ruhiger Akzent. */
+  --lv-marke:#FAE6C5;
+  /* Abstandsskala 4 8 12 16 24 32 48 64 96 128 */
+  --lv-raum-1:4px;--lv-raum-2:8px;--lv-raum-3:12px;--lv-raum-4:16px;--lv-raum-5:24px;
+  --lv-raum-6:32px;--lv-raum-7:48px;--lv-raum-8:64px;--lv-raum-9:96px;--lv-raum-10:128px;
+  --lv-abschnitt:clamp(64px,7.8vw,112px);
   --lv-kachel:#E8E1D6;
   --lv-fehler:#E8927A;
   --lv-serif:"Cormorant Garamond","Cormorant Ersatz",Georgia,serif;
@@ -49,7 +55,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv *,.lv *::before,.lv *::after{box-sizing:border-box}
 .lv main{flex:1 0 auto}
 .lv-seite p,.lv-seite h1,.lv-seite h2,.lv-seite h3,.lv-seite figure,.lv-seite blockquote,.lv-seite ol,.lv-seite ul{margin:0}
-.lv-seite a,.lv-kopf a,.lv-fuss a,.lv-leiste a,.lv-band a{color:inherit;text-decoration:none}
+.lv-seite a,.lv-kopf a,.lv-fuss a,.lv-leiste a,.lv-hinweis a{color:inherit;text-decoration:none}
 .lv-seite img{display:block;width:100%;height:100%;object-fit:cover}
 .lv svg{flex:none}
 .lv-serif{font-family:var(--lv-serif);font-style:italic;font-weight:500;letter-spacing:-.01em;line-height:.98;text-wrap:balance}
@@ -65,39 +71,41 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv .lv-wahl input:focus-visible+span{outline:3px solid var(--lv-akzent);outline-offset:3px}
 
 /* ── Knöpfe und Links ── */
-.lv-knopf{display:inline-flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*1.6);min-height:44px;
+.lv-knopf{display:inline-flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*1.6);min-height:48px;
   padding:calc(var(--u)*1.1) calc(var(--u)*1.6);background:var(--lv-text);color:var(--lv-grund);border:0;border-radius:0;
   font:700 max(14px,calc(var(--u)*1.1)) var(--lv-sans);letter-spacing:.02em;cursor:pointer;text-decoration:none}
 /* Farbe der Knöpfe: stärker als die Linkfarbe der Rahmen (.lv-seite a usw.). */
 .lv .lv-knopf,.lv .lv-sprung{color:var(--lv-grund)}
 .lv-knopf svg{width:1.1em;height:1.1em}
-.lv-knopf:hover{background:var(--lv-akzent)}
+.lv-knopf:hover{background:var(--lv-marke)}
+/* Zweiter Knopfstil: Rahmen statt Fläche. Orange ist nie eine Knopffläche (Befund #11). */
+.lv .lv-knopf.linie{background:transparent;color:var(--lv-text);border:1px solid var(--lv-linie-2)}
+.lv .lv-knopf.linie:hover{background:transparent;border-color:var(--lv-marke);color:var(--lv-marke)}
 .lv-knopf[disabled]{opacity:.6;cursor:wait}
 .lv-link{display:inline-flex;align-items:center;gap:.5em;min-height:44px;border-bottom:1px solid var(--lv-linie-2);font-weight:600;color:var(--lv-text)}
 .lv-link svg{width:1em;height:1em}
 .lv-link:hover{border-color:var(--lv-akzent)}
 
-/* ── Laufband ── */
-.lv-band{border-bottom:1px solid var(--lv-linie);color:var(--lv-leise);overflow:hidden;white-space:nowrap;
-  font:500 max(10px,calc(var(--u)*.8)) var(--lv-mono);letter-spacing:.16em;text-transform:uppercase;padding:calc(var(--u)*.6) 0}
-.lv-band p{display:inline-flex;margin:0;animation:lv-lauf 48s linear infinite}
-.lv-band span{padding-right:.8em}
-.lv-band span::after{content:"·";padding-left:.8em}
-@keyframes lv-lauf{to{transform:translateX(-50%)}}
+/* ── Ankündigungszeile (ersetzt das Laufband, ohne Bewegung) ── */
+.lv-hinweis{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:0 var(--lv-raum-5);margin:0;min-height:36px;padding:var(--lv-raum-2) var(--rand);
+  background:var(--lv-grund-2);border-bottom:1px solid var(--lv-linie);color:var(--lv-leise);
+  font:500 13px/1.4 var(--lv-mono);letter-spacing:.04em;text-align:center}
+.lv-hinweis span+span::before{content:"·";padding-right:var(--lv-raum-5);color:var(--lv-marke)}
 
 /* ── Kopf ── */
 .lv-kopf{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:calc(var(--u)*3);padding:calc(var(--u)*1.5) var(--rand);
   background:var(--lv-grund);border-bottom:1px solid var(--lv-linie)}
-.lv-wm{display:inline-flex;align-items:center;min-height:44px;font:700 max(15px,calc(var(--u)*1.5))/1 var(--lv-sans);letter-spacing:.6em;margin-right:-.6em;white-space:nowrap}
+.lv-logo{display:inline-flex;align-items:center;min-height:44px;flex:none}
+.lv .lv-logo img{display:block;width:auto;height:32px;max-width:none;object-fit:contain}
 .lv-nav{display:flex;align-items:center;gap:calc(var(--u)*2.6);margin-left:auto;color:var(--lv-leise);font-size:max(13px,calc(var(--u)*1))}
 .lv-nav a{padding:.3em 0}
 .lv-nav a:hover,.lv-nav a[aria-current="page"]{color:var(--lv-text)}
-.lv-nav .lv-nav-anfrage{color:var(--lv-text);border-bottom:1px solid var(--lv-akzent)}
+.lv-nav .lv-nav-anfrage{color:var(--lv-text);border-bottom:1px solid var(--lv-marke)}
 .lv-kopf-rechts{display:flex;align-items:center;gap:calc(var(--u)*1.6);padding-left:calc(var(--u)*2.4);border-left:1px solid var(--lv-linie);font-size:max(13px,calc(var(--u)*1))}
 .lv-ig{display:inline-flex;align-items:center;gap:.5em;font-weight:600}
-.lv-ig svg{width:1.3em;height:1.3em}
 .lv-kopf-rechts .lv-konto{color:var(--lv-leise)}
-.lv-kopf-rechts .lv-konto:hover{color:var(--lv-text)}
+.lv-kopf-rechts .lv-konto:hover,.lv-kopf-rechts .lv-ig:hover{color:var(--lv-text)}
+.lv-kopf-rechts .lv-ig{font-weight:400;color:var(--lv-leise)}
 .lv-menue{display:none}
 
 /* ── Meldungen ── */
@@ -220,15 +228,22 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-warteliste .lv-feldzeile{width:100%}
 
 /* ── Fuß ── */
-.lv-fuss{padding:calc(var(--u)*4) var(--rand) calc(var(--u)*3);border-top:1px solid var(--lv-linie);display:grid;gap:calc(var(--u)*2);margin-top:auto}
-.lv-fuss-wm{font:700 calc(var(--u)*8)/.9 var(--lv-sans);letter-spacing:.3em;margin:0}
-.lv-fuss nav{display:flex;flex-wrap:wrap;gap:.2em calc(var(--u)*2.4);font-size:max(14px,calc(var(--u)*1))}
-.lv-fuss nav a{min-height:32px;display:inline-flex;align-items:center}
-.lv-fuss nav a:hover{color:var(--lv-akzent)}
-.lv-fuss nav .lv-ig{margin-left:auto}
-.lv-recht{display:flex;justify-content:space-between;gap:calc(var(--u)*2);padding-top:calc(var(--u)*1.4);border-top:1px solid var(--lv-linie);font-size:max(12px,calc(var(--u)*.82));color:var(--lv-leise);margin:0}
+.lv-fuss{padding:var(--lv-raum-8) var(--rand) var(--lv-raum-6);border-top:1px solid var(--lv-linie);display:grid;gap:var(--lv-raum-7);margin-top:auto}
+.lv-fuss-oben{display:grid;grid-template-columns:minmax(0,1.1fr) repeat(3,minmax(0,1fr));gap:var(--lv-raum-6);align-items:start}
+.lv .lv-fuss-logo{display:block;width:160px;height:auto;max-width:100%;object-fit:contain}
+.lv-fuss-marke{display:grid;gap:var(--lv-raum-3);justify-items:start}
+.lv-fuss-start{min-height:36px;display:inline-flex;align-items:center;font-size:15px;color:var(--lv-text)}
+.lv-fuss-start:hover{color:var(--lv-marke)}
+.lv-fuss-gruppe{display:grid;gap:var(--lv-raum-2);align-content:start}
+.lv-fuss-titel{margin:0;font:500 13px/1.4 var(--lv-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--lv-marke)}
+.lv-fuss-gruppe ul{list-style:none;margin:0;padding:0;display:grid}
+.lv-fuss-gruppe a{min-height:36px;display:inline-flex;align-items:center;font-size:15px;color:var(--lv-text)}
+.lv-fuss-gruppe a:hover{color:var(--lv-marke)}
+.lv-recht{display:flex;justify-content:space-between;gap:calc(var(--u)*2);padding-top:var(--lv-raum-5);border-top:1px solid var(--lv-linie);font-size:13px;color:var(--lv-leise);margin:0}
 .lv-recht a{text-decoration:underline;text-underline-offset:.2em}
 .lv-leiste{display:none}
+.lv-leiste{transition:transform 200ms ease}
+.leiste-zu .lv-leiste{transform:translateY(110%);visibility:hidden}
 
 /* ── Seite „Motiv anfragen" ── */
 .lv-anfrageseite{padding:calc(var(--u)*4) var(--rand) calc(var(--u)*7);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:calc(var(--u)*6);align-items:start}
@@ -326,9 +341,10 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   :root{--rand:16px}
   body.lv{font-size:16px;padding-bottom:76px}
   body.lv.ohne-leiste{padding-bottom:0}
-  .lv-band{font-size:12px;padding:6px 0}
+  .lv-hinweis{letter-spacing:0;padding:var(--lv-raum-2) var(--rand);gap:0 var(--lv-raum-4)}
+  .lv-hinweis span+span::before{display:none}
   .lv-kopf{padding:10px var(--rand);gap:10px}
-  .lv-wm{font-size:15px;letter-spacing:.45em}
+  .lv .lv-logo img{height:28px}
   .lv-nav,.lv-kopf-rechts{display:none}
   .lv-kopf{position:sticky}
   .lv-menue{display:block;margin-left:auto;position:static}
@@ -393,17 +409,15 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-warteliste{padding:48px var(--rand) 44px;gap:14px}
   .lv-warteliste h2{font-size:40px}
   .lv-warteliste p{font-size:16px}
-  .lv-fuss{padding:32px var(--rand) 28px;gap:16px}
-  .lv-fuss-wm{font-size:clamp(44px,14vw,110px)}
-  .lv-fuss nav{display:grid;grid-template-columns:1fr 1fr;gap:0;font-size:15px}
-  .lv-fuss nav a{min-height:44px}
-  .lv-fuss nav .lv-ig{margin:0;grid-column:1/-1}
-  .lv-recht{flex-direction:column;gap:6px;font-size:12px}
+  .lv-fuss{padding:var(--lv-raum-7) var(--rand) var(--lv-raum-6);gap:var(--lv-raum-6)}
+  .lv-fuss-oben{grid-template-columns:minmax(0,1fr);gap:var(--lv-raum-6)}
+  .lv-fuss-gruppe a,.lv-fuss-start{min-height:44px;font-size:16px}
+  .lv-recht{flex-direction:column;gap:var(--lv-raum-2)}
   .lv-leiste{display:grid;position:fixed;left:0;right:0;bottom:0;z-index:45;grid-template-columns:1fr auto;gap:10px;align-items:center;
     padding:10px var(--rand) calc(10px + env(safe-area-inset-bottom));background:var(--lv-grund);border-top:1px solid var(--lv-linie-2)}
-  .lv-leiste p{font:12px/1.3 var(--lv-mono);color:var(--lv-leise);margin:0}
-  .lv-leiste b{display:block;color:var(--lv-text);font-size:12.5px}
-  .lv-leiste a{min-height:48px;display:flex;align-items:center;padding:0 18px;background:var(--lv-akzent);color:var(--lv-grund);font-weight:700;font-size:15px}
+  .lv-leiste p{font:13px/1.3 var(--lv-mono);color:var(--lv-text);margin:0}
+  .lv-leiste a{min-height:52px;display:flex;align-items:center;padding:0 var(--lv-raum-5);background:var(--lv-text);color:var(--lv-grund);font-weight:700;font-size:15px}
+  .lv .lv-knopf{min-height:52px}
   .lv-anfrageseite{grid-template-columns:minmax(0,1fr);padding:24px var(--rand) 48px;gap:24px}
   .lv-anfrageseite .lv-satz{font-size:36px}
   .lv-stationen{flex-wrap:wrap;gap:12px 0}
@@ -437,7 +451,6 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 
 /* ── Bewegung reduzieren ── */
 @media (prefers-reduced-motion: reduce){
-  .lv-band p{animation:none}
   .lv *,.lv *::before,.lv *::after{animation-duration: 0.01ms !important;animation-iteration-count:1 !important;transition-duration: 0.01ms !important;scroll-behavior:auto !important}
 }
 
@@ -485,6 +498,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-wissen-beitraege h3{font-size:24px}
   .lv-wissen-beitraege p{font-size:14px}
   .lv-wissen-ende{gap:4px 24px;padding:20px var(--rand) 0}
+}
 /* ═══ Kontakt, Herkunft, Stücktext (23.10.2026) ═══ */
 .lv-kontaktseite{padding:calc(var(--u)*4) var(--rand) calc(var(--u)*7);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:calc(var(--u)*6);align-items:start}
 .lv-kontaktseite>*{min-width:0}

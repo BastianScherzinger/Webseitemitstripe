@@ -58,7 +58,7 @@ SEITEN_NAME = {
     'produkte':     'Archiv',
     'gaestebuch':   'Gästebuch',
     'ueber_uns':    'Luisa',
-    'liefergebiet': 'Liefergebiet',
+    'liefergebiet': 'Versand & Abholung',
     'kontakt':      'Kontakt',
     'impressum':    'Impressum',
     'datenschutz':  'Datenschutz',
@@ -76,9 +76,9 @@ SEITEN_NAME = {
 
 
 #: Abweichende Namen, solange ``VERKAUF_AKTIV`` aus ist (shop1/verkauf.py).
-SEITEN_NAME_OHNE_VERKAUF = {
-    'liefergebiet': 'Herkunft',
-}
+#: Seit P1/P2 (29.10.2026) heißt die Seite mit und ohne Verkauf „Versand & Abholung“; der
+#: Mechanismus bleibt für künftige Fälle.
+SEITEN_NAME_OHNE_VERKAUF = {}
 
 
 def seite_fuer(url_name):
@@ -91,8 +91,8 @@ def seite_fuer(url_name):
     if url_name not in SEITEN_STAND:
         return None
     name = SEITEN_NAME[url_name]
-    # Verkaufsschalter: ohne Verkauf heisst die Liefergebietsseite sichtbar
-    # „Herkunft" (Fuss, Brotkrume); der WebPage-Name folgt.
+    # Verkaufsschalter: ohne Verkauf kann eine Seite sichtbar anders heißen; der
+    # WebPage-Name folgt (derzeit kein Eintrag).
     from django.conf import settings
     if not getattr(settings, 'VERKAUF_AKTIV', False):
         name = SEITEN_NAME_OHNE_VERKAUF.get(url_name, name)

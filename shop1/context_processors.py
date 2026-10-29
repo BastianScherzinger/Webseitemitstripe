@@ -148,7 +148,8 @@ def luviq(request):
     Datenbankabfrage (nächste freie Archivnummer), nur für öffentliche Seiten."""
     if request.path.startswith(('/shop-admin/', '/admin/', '/static/', '/media/')):
         from . import luviq_daten
-        return {'motivanfrage_aktiv': settings.MOTIVANFRAGE_AKTIV, 'profile_urls': luviq_daten.PROFILE}
+        return {'motivanfrage_aktiv': settings.MOTIVANFRAGE_AKTIV, 'profile_urls': luviq_daten.PROFILE,
+                **_rahmen()}
     from . import luviq_daten
     try:
         drop = luviq_daten.drop_kontext()
@@ -171,4 +172,23 @@ def luviq(request):
         'versand': luviq_daten.VERSAND,
         'abholung': luviq_daten.ABHOLUNG,
         'herkunft_satz': luviq_daten.HERKUNFT_SATZ,
+        **_rahmen(),
+    }
+
+
+def _rahmen():
+    """Ankündigungszeile, Navigation, Fußgruppen und Handy-Leiste (Paket P2).
+
+    Reine Konstanten und der Verkaufsschalter, keine Abfrage. Die Ankündigung
+    nennt den abgestimmten Öffnungssatz wörtlich (``verkauf.oeffnungs_satz``)."""
+    from . import luviq_daten, verkauf
+    aktiv = verkauf.verkauf_aktiv()
+    motiv = settings.MOTIVANFRAGE_AKTIV
+    satz, knopf, route, anker = luviq_daten.leiste(aktiv, getattr(settings, 'VERKAUF_FRUEHESTENS', None))
+    return {
+        'hinweis': luviq_daten.hinweis(aktiv, verkauf.oeffnungs_satz()),
+        'navigation': luviq_daten.navigation(aktiv, motiv),
+        'fuss_gruppen': luviq_daten.fuss(aktiv, motiv),
+        'leiste': {'satz': satz, 'knopf': knopf, 'route': route, 'anker': anker},
+        'leiste_aus': sorted(luviq_daten.LEISTE_AUS),
     }

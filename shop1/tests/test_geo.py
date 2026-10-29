@@ -484,7 +484,7 @@ class SchemaBildAdressenTest(LuviqTestCase):
     """EIG07: das Schema baut keine Bildadresse von Hand am Static-Manifest vorbei.
 
     ``ManifestStaticFilesStorage`` hängt einen Inhalts-Hash an jede Datei
-    (``logo-luviq.<hash>.jpeg``). Eine von Hand getippte ``/static/…``-Adresse
+    (``logo-luviq-512.<hash>.png``). Eine von Hand getippte ``/static/…``-Adresse
     zeigte nach dem nächsten Deploy ins Leere oder auf eine alte Fassung."""
 
     def test_das_logo_im_schema_traegt_den_manifest_hash(self):
@@ -494,7 +494,7 @@ class SchemaBildAdressenTest(LuviqTestCase):
         for adresse in (betrieb['logo']['url'], betrieb['image']):
             with self.subTest(adresse=adresse):
                 self.assertRegex(urlsplit(adresse).path,
-                                 r'^/static/shop1/images/logo-luviq\.[0-9a-f]{12}\.jpeg$')
+                                 r'^/static/shop1/images/logo-luviq-512\.[0-9a-f]{12}\.png$')
 
     def test_keine_vorlage_tippt_eine_static_adresse_ins_schema(self):
         from pathlib import Path

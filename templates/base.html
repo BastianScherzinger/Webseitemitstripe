@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Luviq Universe – Handbemalte Second Hand Mode aus Lübeck{% endblock %}</title>
+    <title>{% block title %}Luviq: handbemalte Second-Hand-Mode aus Lübeck{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Lübeck: Handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler, angefangen in Alsfeld. Second-Hand-Mode – deutschlandweit bestellen.{% else %}Luviq Universe aus Lübeck: handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler, angefangen in Alsfeld. Marke im Aufbau – jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}">
     <meta name="keywords" content="Luviq, Luviq Universe, Second Hand Mode Lübeck, Second Hand Mode Alsfeld, Vintage Mode Lübeck, handbemalte Kleidung{% if verkauf_aktiv %} kaufen{% endif %}, Upcycling Mode Deutschland, 1 of 1 Unikate, handbemalte Hoodies Lübeck, Upcycling Lübeck">
     <meta name="author" content="Luisa Brehler">
@@ -37,10 +37,10 @@
     <meta property="og:locale" content="de_DE">
     <meta property="og:site_name" content="Luviq Universe">
     {% block og_image_tag %}
-    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/logo-luviq.jpeg">
-    <meta property="og:image:width" content="1290">
-    <meta property="og:image:height" content="1346">
-    <meta property="og:image:alt" content="Luviq Universe – Logo">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/og-logo-1200x630.jpg' %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Luviq – Logo">
     {% endblock %}
 
     <!-- Twitter Card -->
@@ -48,7 +48,7 @@
     <meta name="twitter:title" content="{% block twitter_title %}Luviq Universe – Handbemalte Vintage Mode{% endblock %}">
     <meta name="twitter:description" content="{% block twitter_description %}Handbemalte 1-of-1 Upcycling-Unikate aus Deutschland.{% endblock %}">
     {% block twitter_image_tag %}
-    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/logo-luviq.jpeg">
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/og-logo-1200x630.jpg' %}">
     {% endblock %}
 
     <!-- Schema.org Sitewide JSON-LD -->
@@ -60,14 +60,14 @@
           {% comment %}Verkaufsschalter: ohne Verkauf nur Organization - kein ClothingStore/LocalBusiness, keine Preisspanne, Zahlarten, Angebote oder Liefergebiet. Eine Geschaeftsbehauptung ohne angemeldetes Gewerbe waere eine irrefuehrende Angabe.{% endcomment %}
           "@type": {% if verkauf_aktiv %}["Organization", "ClothingStore", "LocalBusiness"]{% else %}"Organization"{% endif %},
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
-          "name": "Luviq Universe",
-          "alternateName": ["Luviq", "Luviq Mode", "Luviq Lübeck", "Luviq Alsfeld"],
+          "name": "Luviq",
+          "alternateName": ["Luviq Universe", "LUVIQ", "luviq.archive"],
           "url": "{{ request.scheme }}://{{ request.get_host }}/",
           "logo": {
             "@type": "ImageObject",
-            "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}"
+            "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq-512.png' %}"
           },
-          "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq.jpeg' %}",
+          "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq-512.png' %}",
           "founder": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
           "description": "{% if verkauf_aktiv %}Luviq Universe ist ein Second-Hand-Shop aus Lübeck, angefangen in Alsfeld (Hessen). Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Versand deutschlandweit.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus Lübeck, angefangen in Alsfeld (Hessen). Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Derzeit findet kein Verkauf statt.{% endif %}",
           {% comment %}Anschrift aus der Gewerbeanmeldung vom 22.10.2026 (luviq_daten.ANBIETERIN). Keine Koordinaten mehr: die Anschrift ist eine Wohnung, kein Laden; die Alsfelder Koordinaten stimmen seit dem Umzug nicht mehr. Alsfeld bleibt als Herkunft (foundingLocation).{% endcomment %}
@@ -125,7 +125,7 @@
           "@type": "WebSite",
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
           "url": "{{ request.scheme }}://{{ request.get_host }}/",
-          "name": "Luviq Universe",
+          "name": "Luviq",
           "description": "Handbemalte Second Hand Mode und Vintage-Unikate aus Lübeck{% if verkauf_aktiv %} – deutschlandweit bestellen{% endif %}.",
           "inLanguage": "de-DE",
           "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
@@ -272,26 +272,22 @@
     {% block extra_css %}{% endblock %}
 </head>
 {% with ist_panel=request.path|slice:":12" seitenname=request.resolver_match.url_name %}
-<body class="lv {% if ist_panel == '/shop-admin/' %}lv-admin{% else %}{% block seitenart %}lv-alt{% endblock %}{% endif %}{% if not motivanfrage_aktiv or seitenname == 'motiv_anfragen' or ist_panel == '/shop-admin/' %} ohne-leiste{% endif %}">
+<body class="lv {% if ist_panel == '/shop-admin/' %}lv-admin{% else %}{% block seitenart %}lv-alt{% endblock %}{% endif %}{% if not motivanfrage_aktiv or not seitenname or seitenname in leiste_aus or ist_panel == '/shop-admin/' %} ohne-leiste{% endif %}">
     <a class="lv-sprung" href="#inhalt">Zum Inhalt springen</a>
 
-    {% if drop %}
-    <!-- Laufband: Texte aus shop1/luviq_daten.py. Ab der vierten Zeile nur
-         die Wiederholung für den nahtlosen Lauf, für Vorleseprogramme stumm. -->
-    <div class="lv-band"><p>{% for teil in drop.laufband %}<span>{{ teil }}</span>{% endfor %}{% for runde in "123" %}{% for teil in drop.laufband %}<span aria-hidden="true">{{ teil }}</span>{% endfor %}{% endfor %}</p></div>
+    {% comment %}Ankündigungszeile (P2, 29.10.2026) statt des Laufbands: ruhig, ohne Bewegung. Texte aus luviq_daten.hinweis(); der Öffnungssatz kommt wörtlich aus verkauf.oeffnungs_satz().{% endcomment %}
+    {% if hinweis %}
+    <p class="lv-hinweis">{% for teil in hinweis %}<span>{{ teil }}</span>{% endfor %}</p>
     {% endif %}
 
     <header class="lv-kopf">
-        <a class="lv-wm" href="{% url 'home' %}" aria-label="Luviq Universe, zur Startseite">LUVIQ</a>
+        {% comment %}Wortmarke als Bild mit Alpha (P0). alt leer + aria-label am Link: ein wiederholter Alternativtext auf jeder Seite gilt als Schablone.{% endcomment %}
+        <a class="lv-logo" href="{% url 'home' %}" aria-label="Luviq, zur Startseite"><img src="{% static 'shop1/images/marke/luviq-wortmarke-420.webp' %}" srcset="{% static 'shop1/images/marke/luviq-wortmarke-210.webp' %} 210w, {% static 'shop1/images/marke/luviq-wortmarke-420.webp' %} 420w, {% static 'shop1/images/marke/luviq-wortmarke-840.webp' %} 840w" sizes="75px" width="420" height="180" alt="" loading="eager"></a>
         <nav class="lv-nav" aria-label="Hauptnavigation">
-            {% if motivanfrage_aktiv %}<a class="lv-nav-anfrage" href="{% url 'motiv_anfragen' %}"{% if seitenname == 'motiv_anfragen' %} aria-current="page"{% endif %}>Motiv anfragen</a>{% endif %}
-            <a href="{% url 'home' %}{% if drop.teaser %}#drop{% else %}#warteliste{% endif %}">Drop</a>
-            <a href="{% url 'produkte' %}"{% if seitenname == 'produkte' %} aria-current="page"{% endif %}>Archiv</a>
-            <a href="{% url 'home' %}#entstehung">Entstehung</a>
-            <a href="{% url 'ueber_uns' %}"{% if seitenname == 'ueber_uns' %} aria-current="page"{% endif %}>Luisa</a>
+            {% for weg in navigation %}<a{% if weg.route == 'motiv_anfragen' %} class="lv-nav-anfrage"{% endif %} href="{% url weg.route %}{{ weg.anker }}"{% if seitenname == weg.route %} aria-current="page"{% endif %}>{{ weg.name }}</a>{% endfor %}
         </nav>
         <div class="lv-kopf-rechts">
-            <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg>Instagram</a>
+            <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank">Instagram</a>
             {% if user.is_authenticated %}
             {% if verkauf_aktiv %}<a class="lv-konto" href="{% url 'warenkorb' %}">Warenkorb{% if cart_count %} ({{ cart_count }}){% endif %}</a>{% endif %}
             {% if is_shop_owner %}<a class="lv-konto" href="{% url 'admin_dashboard' %}">Panel</a>{% endif %}
@@ -303,11 +299,7 @@
         <details class="lv-menue">
             <summary aria-label="Menü öffnen"><i></i></summary>
             <nav aria-label="Menü">
-                {% if motivanfrage_aktiv %}<a class="lv-nav-anfrage" href="{% url 'motiv_anfragen' %}">Motiv anfragen</a>{% endif %}
-                <a href="{% url 'home' %}{% if drop.teaser %}#drop{% else %}#warteliste{% endif %}">Drop</a>
-                <a href="{% url 'produkte' %}">Archiv</a>
-                <a href="{% url 'home' %}#entstehung">Entstehung</a>
-                <a href="{% url 'ueber_uns' %}">Luisa</a>
+                {% for weg in navigation %}<a{% if weg.route == 'motiv_anfragen' %} class="lv-nav-anfrage"{% endif %} href="{% url weg.route %}{{ weg.anker }}">{{ weg.name }}</a>{% endfor %}
                 <a class="lv-menue-klein" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank">Instagram</a>
                 {% if user.is_authenticated %}
                 {% if verkauf_aktiv %}<a class="lv-menue-klein" href="{% url 'warenkorb' %}">Warenkorb</a>{% endif %}
@@ -338,27 +330,40 @@
     </main>
 
     <footer class="lv-fuss">
-        <p class="lv-fuss-wm" aria-hidden="true">LUVIQ</p>
-        <nav aria-label="Fußnavigation">
-            <a href="{% url 'home' %}">Startseite</a>
-            {% if motivanfrage_aktiv %}<a href="{% url 'motiv_anfragen' %}">Motiv anfragen</a>{% endif %}
-            <a href="{% url 'produkte' %}">Archiv</a>
-            <a href="{% url 'ueber_uns' %}">Luisa</a>
-            <a href="{% url 'wissen' %}">Wissen</a>
-            <a href="{% url 'gaestebuch' %}">Gästebuch</a>
-            <a href="{% url 'kontakt' %}">Kontakt</a>
-            <a href="{% url 'liefergebiet' %}">{% if verkauf_aktiv %}Liefergebiet{% else %}Herkunft{% endif %}</a>
-            <a href="{% url 'home' %}#newsletter-form">Warteliste</a>
-            <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg>{{ instagram_name|default:'luviq.archive' }}</a>
-        </nav>
-        {% comment %}Verkaufsschalter: die AGB gelten erst ab Eröffnung des Shops und sind ohne Verkauf nicht verlinkt (die Seite bleibt erreichbar).{% endcomment %}
-        <p class="lv-recht"><span>© {% now "Y" %} Luviq Universe · Marke im Aufbau · Lübeck · angefangen in Alsfeld · Antwort auf Nachrichten {{ antwort|default:"innerhalb von 2 Stunden" }}{% if shop_oeffnet %} · {{ shop_oeffnet }}{% endif %}</span><span><a href="{% url 'impressum' %}">Impressum</a> · <a href="{% url 'datenschutz' %}">Datenschutz</a>{% if verkauf_aktiv %} · <a href="{% url 'agb' %}">AGB</a>{% endif %}{% if einwilligung %} · <a href="{% url 'datenschutz' %}" data-einwilligung-aendern>Cookie-Einstellungen</a>{% endif %} · Website: <a href="https://webagentur-scherzinger.com/referenzen/luviq-universe/">Webagentur Scherzinger</a></span></p>
+        <div class="lv-fuss-oben">
+            <div class="lv-fuss-marke">
+                <img class="lv-fuss-logo" src="{% static 'shop1/images/marke/luviq-wortmarke-420.webp' %}" srcset="{% static 'shop1/images/marke/luviq-wortmarke-210.webp' %} 210w, {% static 'shop1/images/marke/luviq-wortmarke-420.webp' %} 420w" sizes="160px" width="420" height="180" alt="" loading="lazy">
+                <a class="lv-fuss-start" href="{% url 'home' %}">Startseite</a>
+            </div>
+            {% for titel, wege in fuss_gruppen %}
+            <nav class="lv-fuss-gruppe" aria-label="{{ titel }}">
+                <p class="lv-fuss-titel">{{ titel }}</p>
+                <ul>{% for weg in wege %}
+                    <li><a href="{% url weg.route %}{{ weg.anker }}">{{ weg.name }}</a></li>{% endfor %}
+                </ul>
+            </nav>
+            {% endfor %}
+            {% comment %}Verkaufsschalter: die AGB gelten erst ab Eröffnung des Shops und sind ohne Verkauf nicht verlinkt (die Seite bleibt erreichbar). Der Agentur-Credit bleibt hier (Umzug ins Impressum ist ein eigener Auftrag, SEO § 4.3).{% endcomment %}
+            <nav class="lv-fuss-gruppe" aria-label="Rechtliches">
+                <p class="lv-fuss-titel">Rechtliches</p>
+                <ul>
+                    <li><a href="{% url 'impressum' %}">Impressum</a></li>
+                    <li><a href="{% url 'datenschutz' %}">Datenschutz</a></li>
+                    {% if verkauf_aktiv %}<li><a href="{% url 'agb' %}">AGB</a></li>{% endif %}
+                    {% if einwilligung %}<li><a href="{% url 'datenschutz' %}" data-einwilligung-aendern>Cookie-Einstellungen</a></li>{% endif %}
+                    <li><a href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank">{{ instagram_name|default:'luviq.archive' }}</a></li>
+                    <li>Website: <a href="https://webagentur-scherzinger.com/referenzen/luviq-universe/">Webagentur Scherzinger</a></li>
+                </ul>
+            </nav>
+        </div>
+        <p class="lv-recht"><span>© {% now "Y" %} Luviq · Lübeck · angefangen in Alsfeld{% if shop_oeffnet %} · {{ shop_oeffnet }}{% endif %}</span></p>
     </footer>
 
-    {% if motivanfrage_aktiv and ist_panel != '/shop-admin/' and seitenname != 'motiv_anfragen' %}
+    {% comment %}Handy-Leiste (P2): Inhalt aus luviq_daten.leiste(), nie auf Rechts-, Konto-, Kasse-, Fehler- und Panel-Seiten (luviq_daten.LEISTE_AUS). Ohne Skript sichtbar; das Skript unten blendet sie nur aus, solange der Hero im Bild ist.{% endcomment %}
+    {% if motivanfrage_aktiv and seitenname and seitenname not in leiste_aus and ist_panel != '/shop-admin/' %}
     <div class="lv-leiste">
-        <p><b>Eigenes Motiv?</b>Kostet nichts</p>
-        <a href="{% url 'motiv_anfragen' %}">Motiv anfragen</a>
+        <p>{{ leiste.satz }}</p>
+        <a href="{% url leiste.route %}{{ leiste.anker }}">{{ leiste.knopf }}</a>
     </div>
     {% endif %}
 
@@ -396,6 +401,15 @@
             });
             huelle.appendChild(knopf);
         });
+        // Handy-Leiste: erst sichtbar, wenn der Hero (data-leiste-ab, sonst .lv-hero) den
+        // Bildschirm verlassen hat. Seiten ohne Hero zeigen sie sofort. Ohne Skript bleibt sie sichtbar.
+        var leiste = document.querySelector('.lv-leiste');
+        var hero = document.querySelector('[data-leiste-ab], .lv-hero');
+        if (leiste && hero && 'IntersectionObserver' in window) {
+            new IntersectionObserver(function (eintraege) {
+                document.body.classList.toggle('leiste-zu', eintraege[0].isIntersecting);
+            }).observe(hero);
+        }
         // Das Handy-Menü schließt, sobald ein Anker auf derselben Seite
         // angesprungen wird – sonst bliebe es über dem Ziel liegen.
         document.querySelectorAll('.lv-menue a').forEach(function (a) {

@@ -4,7 +4,7 @@
     python tools/kritisches_css.py --pruefen  # Exit 1, wenn eine Datei veraltet ist
 
 Critical CSS heißt: das, was im ersten Bildschirm einer Seite gebraucht wird —
-Schriften, Tokens, Grundstil, Kopf, Laufband, Fuß (auf kurzen Seiten steht er im
+Schriften, Tokens, Grundstil, Kopf, Ankündigungszeile, Fuß (auf kurzen Seiten steht er im
 ersten Bildschirm) und je Seitentyp der Teil, der dort oben steht (`PROFILE`).
 `shop1/templates/shop1/teile/stil_kritisch.html` setzt die passende Datei inline
 in den `<head>`; `luviq.css` selbst lädt danach ohne Blockierung nach.
@@ -27,14 +27,14 @@ WURZEL = Path(__file__).resolve().parent.parent
 QUELLE = WURZEL / "shop1" / "static" / "shop1" / "luviq.css"
 ZIEL_ORDNER = WURZEL / "shop1" / "templates" / "shop1" / "stile"
 
-#: Klassen, die auf jeder neu gebauten Seite oben stehen: Kopf, Laufband, Knöpfe,
+#: Klassen, die auf jeder neu gebauten Seite oben stehen: Kopf, Ankündigungszeile, Knöpfe,
 #: Meldungen, Abschnittsrahmen und die feste Leiste am Handy. Den Fuß trägt nur die
 #: kurze Danke-Seite (Seitentyp „danke“): auf langen steht er weit unterhalb des ersten
 #: Bildschirms, und jedes Kilobyte Critical CSS geht bei jedem Abruf mit (PF20).
 BASIS = {
-    "lv-seite", "lv-kopf", "lv-leiste", "lv-band",
+    "lv-seite", "lv-kopf", "lv-leiste", "lv-hinweis",
     "lv-serif", "lv-nr", "lv-klein", "lv-versteckt", "lv-sprung", "lv-knopf", "lv-link",
-    "lv-wm", "lv-nav", "lv-nav-anfrage", "lv-kopf-rechts", "lv-ig", "lv-konto", "lv-menue",
+    "lv-logo", "lv-nav", "lv-nav-anfrage", "lv-kopf-rechts", "lv-ig", "lv-konto", "lv-menue",
     "lv-menue-klein", "lv-meldungen", "lv-meldung", "lv-brotkrume", "lv-abschnitt",
     "lv-abschnittskopf", "lv-ohne-linie",
 }
@@ -66,7 +66,7 @@ PROFILE = {
                   "lv-kontaktdaten", "lv-formular", "lv-feld", "lv-feld2", "lv-fehler", "lv-falle", "lv-prosa",
                   "lv-abschnittstitel"},
     # Danke-Seite: so kurz, dass der Fuß schon im ersten Bildschirm steht.
-    "danke": {"lv-danke", "lv-fuss", "lv-fuss-wm", "lv-recht"},
+    "danke": {"lv-danke", "lv-fuss", "lv-fuss-oben", "lv-fuss-marke", "lv-fuss-start", "lv-fuss-logo", "lv-fuss-gruppe", "lv-fuss-titel", "lv-recht"},
 }
 
 _KLASSE = re.compile(r"\.(lv-[a-z0-9-]+)")

@@ -146,3 +146,86 @@ class AuswahllistenTest(SimpleTestCase):
         for wort in ('€', 'Euro', 'Preis', 'kaufen', 'garantiert'):
             with self.subTest(wort=wort):
                 self.assertNotIn(wort, alles)
+
+
+class RahmenTest(SimpleTestCase):
+    """Paket P2: Ankündigungszeile, Navigation, Fuß und Handy-Leiste."""
+
+    SATZ = 'Der Shop öffnet frühestens am 01.11.2026.'
+
+    def test_die_ankuendigung_nennt_ohne_verkauf_den_oeffnungssatz_wortwoertlich(self):
+        teile = luviq_daten.hinweis(False, self.SATZ)
+        self.assertEqual(teile[0], self.SATZ)
+        self.assertNotIn('Shop ist offen', teile)
+
+    def test_die_ankuendigung_nennt_mit_verkauf_keinen_oeffnungssatz(self):
+        teile = luviq_daten.hinweis(True, '')
+        self.assertEqual(teile[0], 'Shop ist offen')
+        self.assertFalse([t for t in teile if 'öffnet' in t])
+
+    def test_versand_und_uebergabe_kommen_aus_den_konstanten(self):
+        teile = luviq_daten.hinweis(False, self.SATZ)
+        self.assertIn(f'Versand in {luviq_daten.VERSAND["gebiet"]}', teile)
+        self.assertIn('Übergabe in Lübeck nach Absprache', teile)
+        with mock.patch.object(luviq_daten, 'ABHOLUNG', {'ort': 'Lübeck', 'text': ''}):
+            self.assertFalse([t for t in luviq_daten.hinweis(False, self.SATZ) if 'Übergabe' in t])
+
+    def test_die_navigation_hat_die_fuenf_wege_und_kein_drop(self):
+        wege = luviq_daten.navigation(False, True)
+        self.assertEqual([w['route'] for w in wege],
+                         ['produkte', 'motiv_anfragen', 'wissen', 'ueber_uns', 'kontakt'])
+        self.assertEqual([w['name'] for w in wege], ['Stücke', 'Motiv anfragen', 'Wissen', 'Luisa', 'Kontakt'])
+        self.assertEqual(luviq_daten.navigation(True, True)[0]['name'], 'Unikate')
+        self.assertNotIn('motiv_anfragen', [w['route'] for w in luviq_daten.navigation(False, False)])
+
+    def test_der_fuss_hat_zwei_datengruppen_und_heisst_versand_und_abholung(self):
+        gruppen = dict(luviq_daten.fuss(False, True))
+        self.assertEqual(list(gruppen), ['Stücke', 'Hilfe'])
+        self.assertIn('Versand & Abholung', [w['name'] for w in gruppen['Hilfe']])
+        self.assertIn('#warteliste', [w['anker'] for w in gruppen['Stücke']])
+
+    def test_die_leiste_nennt_den_tag_nur_vor_dem_tag(self):
+        from datetime import date
+        vor = luviq_daten.leiste(False, date(2026, 11, 1), date(2026, 10, 30))
+        self.assertEqual(vor, ('Shop öffnet frühestens am 1. November', 'Vormerken', 'home', '#warteliste'))
+        nach = luviq_daten.leiste(False, date(2026, 11, 1), date(2026, 11, 2))
+        self.assertNotIn('November', nach[0])
+        self.assertEqual(luviq_daten.leiste(True)[1], 'Stücke ansehen')
+
+    def test_keine_leiste_auf_recht_konto_und_kasse(self):
+        for name in ('impressum', 'datenschutz', 'agb', 'login', 'profil', 'warenkorb', 'checkout', 'motiv_anfragen'):
+            with self.subTest(name=name):
+                self.assertIn(name, luviq_daten.LEISTE_AUS)
+        self.assertNotIn('home', luviq_daten.LEISTE_AUS)
+
+
+class RahmenSeitenTest(LuviqTestCase):
+    """Was base.html aus dem Rahmen auf jede Seite setzt."""
+
+    def test_kein_laufband_mehr_und_die_ankuendigung_steht_einmal(self):
+        for pfad in ('/', '/kontakt/', '/impressum/', '/produkte/'):
+            with self.subTest(pfad=pfad):
+                html = self.hole(pfad).content.decode()
+                self.assertNotIn('lv-band', html)
+                self.assertEqual(html.count('class="lv-hinweis"'), 1)
+
+    def test_das_logo_im_kopf_hat_masse_und_ist_nicht_vorgeladen_mit_prioritaet(self):
+        import re
+        html = self.hole('/kontakt/').content.decode()
+        logo = re.search(r'<a class="lv-logo".*?</a>', html, re.S).group(0)
+        for teil in ('width="420"', 'height="180"', 'loading="eager"', 'alt=""', 'luviq-wortmarke-420'):
+            self.assertIn(teil, logo)
+        self.assertNotIn('fetchpriority', logo)
+
+    def test_die_leiste_fehlt_auf_rechts_und_kontoseiten(self):
+        for pfad in ('/impressum/', '/datenschutz/', '/login/', '/register/'):
+            with self.subTest(pfad=pfad):
+                self.assertNotContains(self.hole(pfad), 'class="lv-leiste"')
+        self.assertContains(self.hole('/kontakt/'), 'class="lv-leiste"')
+
+    def test_das_menue_nennt_alle_wege(self):
+        import re
+        html = self.hole('/kontakt/').content.decode()
+        menue = re.search(r'<details class="lv-menue">.*?</details>', html, re.S).group(0)
+        for text in ('Stücke', 'Motiv anfragen', 'Wissen', 'Luisa', 'Kontakt', 'Instagram', 'Anmelden'):
+            self.assertIn(f'>{text}</a>', menue)

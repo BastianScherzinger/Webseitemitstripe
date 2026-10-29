@@ -519,11 +519,16 @@ class FeedVerweisTest(LuviqTestCase):
             self.assertRegex(html, self.VERWEIS)
 
     def test_das_standard_og_bild_nennt_die_echten_masse(self):
-        """``logo-luviq.jpeg`` ist 1290 × 1346 – nicht die früher
-        angegebenen 800 × 800."""
+        """Seit P2 ist das Standard-Bild ``og-logo-1200x630.jpg`` (1200 × 630) –
+        die Maße müssen zur Datei passen."""
+        from PIL import Image
+        from django.conf import settings
         html = self.hole('/kontakt/').content.decode()
-        self.assertIn('<meta property="og:image:width" content="1290">', html)
-        self.assertIn('<meta property="og:image:height" content="1346">', html)
+        self.assertIn('<meta property="og:image:width" content="1200">', html)
+        self.assertIn('<meta property="og:image:height" content="630">', html)
+        self.assertRegex(html, r'og:image" content="[^"]*og-logo-1200x630(\.[0-9a-f]{12})?\.jpg"')
+        bild = settings.BASE_DIR / 'shop1' / 'static' / 'shop1' / 'images' / 'og-logo-1200x630.jpg'
+        self.assertEqual(Image.open(bild).size, (1200, 630))
 
 
 class RobotsTest(LuviqTestCase):

@@ -235,17 +235,15 @@ class AlternativtexteTest(LuviqTestCase):
     )
 
     def test_die_wortmarke_im_kopf_hat_einen_sprechbaren_namen(self):
-        """Seit dem Umbau „Nachtausgabe" (19.09.2026) steht im Kopf kein
-        Logo-Bild mehr, sondern die gesperrte Wortmarke „LUVIQ" als Text.
-        Vorgelesen würde sie Buchstabe für Buchstabe; deshalb trägt der Link
-        einen Namen, der Marke und Ziel nennt – nicht nur den Dateizweck.
-        Früher prüfte dieser Test den Alternativtext des Logo-Bildes."""
+        """Seit P2 (29.10.2026) steht im Kopf wieder die Wortmarke als Bild mit
+        Alpha (``alt=""``, ein wiederholter Alternativtext gilt als Schablone). Den
+        Namen trägt der Link: Marke und Ziel, nicht nur der Dateizweck."""
         for pfad in INHALTSSEITEN:
             html = self.hole(pfad).content.decode()
             with self.subTest(pfad=pfad):
-                treffer = re.search(r'<a class="lv-wm"[^>]*aria-label="([^"]+)"', html)
-                self.assertTrue(treffer, f'{pfad}: Wortmarke ohne aria-label')
-                self.assertIn('Luviq Universe', treffer.group(1))
+                treffer = re.search(r'<a class="lv-logo"[^>]*aria-label="([^"]+)"[^>]*><img[^>]*alt=""', html)
+                self.assertTrue(treffer, f'{pfad}: Wortmarke ohne aria-label oder mit Alternativtext am Bild')
+                self.assertIn('Luviq', treffer.group(1))
                 self.assertIsNone(self._NUR_ZWECK.match(treffer.group(1)))
 
 

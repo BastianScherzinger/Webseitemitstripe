@@ -260,4 +260,4 @@ class UrheberrechtTest(LuviqTestCase):
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
                 fuss = html[html.index('class="lv-fuss"'):]
-                self.assertRegex(fuss, rf'©\s*{jahr}\s+Luviq Universe')
+                self.assertRegex(fuss, rf'©\s*{jahr}\s+Luviq\b')

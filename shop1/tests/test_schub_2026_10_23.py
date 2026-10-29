@@ -106,7 +106,9 @@ class WissenVerlinkungUndEntwurfTest(LuviqTestCase):
         sichtbar = freigegebene_beitraege()
         for slug, b in sichtbar.items():
             html = self.hole(reverse(b['url_name'])).content.decode()
-            fuss = html[html.index('aria-label="Weiterlesen"'):]
+            # Nur die Weiterlesen-Navigation: der Fuß (seit P2) verlinkt selbst Pflege und Größe.
+            start = html.index('aria-label="Weiterlesen"')
+            fuss = html[start:html.index('</nav>', start)]
             andere = [x for s, x in sichtbar.items() if s != slug]
             for x in andere[:2]:
                 self.assertIn(f'href="{reverse(x["url_name"])}"', fuss)

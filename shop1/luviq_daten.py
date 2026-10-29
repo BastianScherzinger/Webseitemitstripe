@@ -311,3 +311,103 @@ ABHOLUNG = {'ort': 'Lübeck', 'text': 'Persönliche Übergabe in Lübeck nach Ab
 #: Nº 001 bis 005 (Alsfeld); Gewerbe und Sitz Lübeck laut ``ANBIETERIN``.
 HERKUNFT_SATZ = ('Angefangen hat Luviq in Alsfeld im Vogelsbergkreis, mit den ersten fünf '
                  'Stücken Nº 001 bis 005. Seit Herbst 2026 entsteht jedes Stück in Lübeck.')
+
+
+# ── Rahmen: Ankündigung, Navigation, Fuß, Leiste (Paket P2, 29.10.2026) ──────
+
+def hinweis(verkauf_aktiv, shop_oeffnet=''):
+    """Die Teile der Ankündigungszeile über dem Kopf (ersetzt das Laufband).
+
+    Ohne Verkauf steht als erstes der abgestimmte Satz ``shop_oeffnet`` (siehe
+    ``verkauf.oeffnungs_satz``, wörtlich, nicht umformulieren), mit Verkauf
+    „Shop ist offen“. Versand und Übergabe kommen aus ``VERSAND`` und
+    ``ABHOLUNG``; ein leerer ``ABHOLUNG['text']`` nimmt die Übergabe heraus."""
+    teile = ['Shop ist offen' if verkauf_aktiv else shop_oeffnet]
+    if VERSAND.get('gebiet'):
+        teile.append(f'Versand in {VERSAND["gebiet"]}')
+    if ABHOLUNG.get('text'):
+        teile.append(f'Übergabe in {ABHOLUNG["ort"]} nach Absprache')
+    return [t for t in teile if t]
+
+
+#: Die Wege im Kopf und im Handy-Menü: (Routenname, Beschriftung, Beschriftung mit
+#: Verkauf, nur wenn die Motivanfrage aktiv ist). „Drop“ und „Entstehung“ gibt es
+#: nicht mehr (Design-Analyse Befund #12).
+NAVIGATION = [
+    ('produkte', 'Stücke', 'Unikate', False),
+    ('motiv_anfragen', 'Motiv anfragen', 'Motiv anfragen', True),
+    ('wissen', 'Wissen', 'Wissen', False),
+    ('ueber_uns', 'Luisa', 'Luisa', False),
+    ('kontakt', 'Kontakt', 'Kontakt', False),
+]
+
+#: Der Fuß in zwei Linkgruppen (die dritte, „Rechtliches“, hängt an Schaltern und
+#: steht in ``base.html``). Je Eintrag: (Routenname, Anker, Beschriftung, Beschriftung
+#: mit Verkauf, nur wenn die Motivanfrage aktiv ist). Adressen ändern sich nicht:
+#: ``liefergebiet`` heißt jetzt „Versand & Abholung“, bleibt aber ``/liefergebiet/``.
+FUSS = [
+    ('Stücke', [
+        ('produkte', '', 'Archiv', 'Unikate', False),
+        ('motiv_anfragen', '', 'Motiv anfragen', 'Motiv anfragen', True),
+        ('home', '#warteliste', 'Warteliste', 'Warteliste', False),
+    ]),
+    ('Hilfe', [
+        ('liefergebiet', '', 'Versand & Abholung', 'Versand & Abholung', False),
+        ('wissen_groesse', '', 'Größe bei Einzelstücken', 'Größe bei Einzelstücken', False),
+        ('wissen_pflege', '', 'Pflege', 'Pflege', False),
+        ('wissen', '', 'Wissen', 'Wissen', False),
+        ('kontakt', '', 'Kontakt', 'Kontakt', False),
+        ('gaestebuch', '', 'Gästebuch', 'Gästebuch', False),
+    ]),
+]
+
+
+def _wege(eintraege, verkauf_aktiv, motiv_aktiv, mit_anker):
+    wege = []
+    for e in eintraege:
+        route, anker = (e[0], e[1]) if mit_anker else (e[0], '')
+        rest = e[2:] if mit_anker else e[1:]
+        name, name_verkauf, nur_motiv = rest
+        if nur_motiv and not motiv_aktiv:
+            continue
+        wege.append({'route': route, 'anker': anker, 'name': name_verkauf if verkauf_aktiv else name})
+    return wege
+
+
+def navigation(verkauf_aktiv, motiv_aktiv):
+    """Die Wege für Kopf und Handy-Menü, fertig beschriftet."""
+    return _wege(NAVIGATION, verkauf_aktiv, motiv_aktiv, False)
+
+
+def fuss(verkauf_aktiv, motiv_aktiv):
+    """Die Linkgruppen des Fußes: Liste aus (Titel, Wege)."""
+    return [(titel, _wege(eintraege, verkauf_aktiv, motiv_aktiv, True)) for titel, eintraege in FUSS]
+
+
+def leiste(verkauf_aktiv, tag=None, heute=None):
+    """Handy-Leiste: (Satz, Beschriftung des Knopfs, Routenname, Anker).
+
+    Der Tag kommt aus ``settings.VERKAUF_FRUEHESTENS`` (``tag``), nie aus einer Vorlage;
+    „frühestens“ bleibt dabei, wie im abgestimmten Satz ``verkauf.oeffnungs_satz``. Liegt der
+    Tag hinter uns und der Verkauf ist noch aus, steht kein Datum mehr da."""
+    if verkauf_aktiv:
+        return ('Jedes Stück nur einmal', 'Stücke ansehen', 'produkte', '')
+    heute = heute or timezone.localdate()
+    if tag and heute < tag:
+        satz = f'Shop öffnet frühestens am {tag.day}. {_MONATE[tag.month - 1]}'
+    else:
+        satz = 'Der Shop ist noch nicht geöffnet'
+    return (satz, 'Vormerken', 'home', '#warteliste')
+
+
+#: Routennamen, auf denen es keine Handy-Leiste gibt: Rechtsseiten, Konto, Kasse,
+#: Motivanfrage (hat ihr eigenes Formular). Fehlerseiten (ohne Routenname) und das
+#: Admin-Panel bekommen sie ebenfalls nie (``base.html``).
+LEISTE_AUS = frozenset({
+    'impressum', 'datenschutz', 'agb', 'motiv_anfragen', 'motiv_danke',
+    'login', 'logout', 'register', 'profil', 'change_password', 'delete_account',
+    'verify_email', 'verify_email_no_slash', 'resend_verification',
+    'password_reset', 'password_reset_done', 'password_reset_confirm', 'password_reset_complete',
+    'warenkorb', 'checkout', 'payment', 'payment_success', 'payment_cancel',
+    'newsletter_abmelden', 'newsletter_bestaetigen', 'kontakt_danke', 'lockout',
+})

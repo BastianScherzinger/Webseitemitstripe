@@ -10,6 +10,14 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 29.10.2026 — Luviq-Umbau P2: Rahmen (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
+
+- Kopf mit Wortmarken-Bild, Ankündigungszeile statt Laufband, Navigation aus `luviq_daten.NAVIGATION`, Fuß in drei Gruppen, Handy-Leiste erst nach dem Hero (Skript mit Nonce, ohne Skript sichtbar), Tokens `--lv-marke` (#FAE6C5, gemessen), `--lv-raum-1…10`, `--lv-abschnitt`, zweiter Knopfstil `.linie`; Standard-OG-Bild 1200×630, Schema-Logo `logo-luviq-512.png`, Schema-Name „Luviq“. Warum: Masterplan § 5.
+- Umgeschriebene Tests (nicht gelöscht): `test_barrierefreiheit` (Logo-Link statt Text-Wortmarke), `test_betrieb` (Fußzeile „© Jahr Luviq“), `test_seo` (OG-Maße 1200×630), `test_geo` (Schema-Logo), `test_schub_2026_10_23` (Weiterlesen-Prüfung nur auf die Navigation, weil der Fuß jetzt Pflege und Größe verlinkt).
+- `seiten_stand.py`: Seitenname von `/liefergebiet/` ist „Versand & Abholung“ (P1 hatte die sichtbare Beschriftung geändert, das Register nicht; der Fuß-Link „Herkunft“ verdeckte es).
+- `luviq.css`: im Block `@media (max-width:1023px)` des Wissensbereichs fehlte die schließende Klammer; dadurch standen Kontakt-, Herkunft- und Stücktext-Regeln nur am Handy. Klammer ergänzt; /kontakt/ hat am PC wieder Raster und Rand.
+- „Startseite“ steht als Fußlink unter dem Logo, weil die Brotkrumen-Schemas den Namen sichtbar verlangen (`test_geo`).
+
 ## 29.10.2026 — Verkaufsstart vorbereiten, Rechtsprüfung (Zweig `recht/2026-10-29-verkaufsstart`, nicht gepusht)
 
 **Anlass:** Gewerbe „LUVIQ“ angemeldet (22.10., Beginn 01.11.2026), ELSTER-Fragebogen am 29.10. (§ 19 UStG, USt-IdNr. beantragt). Bastian: sichtbar machen, dass frühestens ab 01.11. verkauft wird; Verkauf selbst erst nach Startliste (LUCID, GPSR, Rechtstexte aus Generator). Prüfbericht, Generator-Eingabeliste und Umsetzung: `Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29\`.
