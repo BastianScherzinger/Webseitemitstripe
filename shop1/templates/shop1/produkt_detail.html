@@ -28,7 +28,7 @@
   "itemListElement": [
     {# Die Namen muessen woertlich den sichtbaren Beschriftungen der Brotkrume weiter unten entsprechen ("Startseite", "Archiv") - ein Schema, das etwas anderes behauptet als die Seite, ist schlimmer als keines. #}
     {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
-    {"@type": "ListItem", "position": 2, "name": "Archiv", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}"},
+    {"@type": "ListItem", "position": 2, "name": "{{ krume }}", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}"},
     {"@type": "ListItem", "position": 3, "name": "{{ produkt.name|escapejs }}", "item": "{{ seiten_url }}"}
   ]
 }
@@ -72,7 +72,7 @@
 {% block content %}
 {% comment %}„Stück“ im Look „Nachtausgabe“, P4 (29.10.2026): links die wischbare Galerie (CSS Scroll-Snap, Punkte/Vorschaubilder und „1 / 3“ erst mit Skript, ohne Skript wischt/scrollt die Spur trotzdem), rechts Nummer, Name, Preis nur mit Verkauf, Datenliste nur mit gesetzten Feldern, Text kurz und der Rest in <details>. Ein vergebenes Stück trägt das Band „Verkauft“ über dem Bild (Text im DOM). Beide Zustände des Verkaufsschalters.{% endcomment %}
 <div class="lv-seite">
-    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li><a href="{% url 'produkte' %}">Archiv</a></li><li aria-current="page">{{ produkt.name }}</li></ol></nav>
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li><a href="{% url 'produkte' %}">{{ krume }}</a></li><li aria-current="page">{{ produkt.name }}</li></ol></nav>
     <article class="lv-stueck{% if produkt.verkauft %} ist-verkauft{% endif %}">
         <div class="lv-stueck-bild">
             {% if galerie %}
@@ -85,7 +85,7 @@
                         </li>
                         {% endfor %}
                     </ul>
-                    {% if produkt.verkauft %}<span class="lv-verkauft lv-verkauft-gross"><span>{{ verkauft_wort }}</span></span>{% endif %}
+                    {% if produkt.verkauft %}<span class="lv-verkauft lv-verkauft-gross"><span>{{ produkt.band_wort }}</span></span>{% endif %}
                 </div>
                 {% if galerie|length > 1 %}
                 <div class="lv-galerie-steuer" data-galerie-steuer>
@@ -105,7 +105,7 @@
         <div class="lv-stueck-text">
             <p class="lv-stueck-nummer">Nº {{ produkt.archiv_nummer }}</p>
             <h1 class="lv-serif">{{ produkt.name }}</h1>
-            {% if produkt.verkauft %}<p class="lv-stueck-zustand"><b>{{ verkauft_wort }}</b> · Archiv</p>
+            {% if produkt.verkauft %}<p class="lv-stueck-zustand"><b>{{ produkt.band_wort }}</b> · Archiv</p>
             {% elif verkauf_aktiv and produkt.kaufbar %}<p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} €</p>
             {% else %}<p class="lv-stueck-zustand">Unikat · {{ shop_oeffnet }}</p>{% endif %}
             {% comment %}Antwortsatz als Lead, Luisas Beschreibung als eigener Absatz (nur wenn vorhanden). Die Technik steht in einem eigenen, gut sichtbaren Satz, wenn das Feld „Technik“ Bleiche nennt (Bastian 29.10.2026: Bleiche betonen).{% endcomment %}
@@ -117,7 +117,7 @@
                 {% if produkt.masse %}<dt>Größe</dt><dd>{{ produkt.masse }}</dd>{% endif %}
                 {% if produkt.material %}<dt>Material</dt><dd>{{ produkt.material }}</dd>{% endif %}
                 {% if produkt.technik %}<dt>Technik</dt><dd>{{ produkt.technik }}</dd>{% endif %}
-                <dt>Stück</dt><dd>Gebraucht (Second Hand), von Hand bemalt, 1-of-1</dd>
+                {% if produkt.zustand %}<dt>Stück</dt><dd>{{ produkt.zustand }}</dd>{% endif %}
             </dl>
             {% comment %}EIG84: Preis und Kaufweg nur für ein Stück, das noch da ist (`Produkt.kaufbar`: aktiv, nicht vergeben, vorrätig); sonst derselbe „vergeben“-Zustand wie ohne Verkauf, statt eines Knopfes, der auf der Startseite endet.{% endcomment %}
             {% if verkauf_aktiv and produkt.kaufbar %}
@@ -147,7 +147,7 @@
             <div class="lv-stueck-hinweis">
                 <p>Bezahlt wird per PayPal oder Vorab-Überweisung; der angezeigte Preis ist ein Endpreis, nach § 19 UStG wird keine Umsatzsteuer berechnet. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.</p>
                 <details class="lv-mehr"><summary>Mehr zum Kauf</summary>
-                <p>Gekauft wird über den Warenkorb, und dafür ist ein Konto nötig: Warenkorb und Bestellvorgang sind an eine Anmeldung gebunden. Wer per Vorab-Überweisung zahlt, bekommt die Bankdaten per E-Mail; über PayPal wird die Zahlung sofort abgeschlossen. Für die Bestellung gilt das Widerrufsrecht von 14 Tagen ab dem Tag, an dem die Ware angekommen ist (§ 5 der AGB). Weil das Basisteil getragene Second-Hand-Kleidung ist, gehören leichte Unregelmäßigkeiten der Bemalung und kleine Gebrauchsspuren des Stoffes zum Stück und sind kein Mangel (§ 3 der AGB). Die Fotos zeigen genau dieses Teil; Maße, Material oder Zustand fragst du vor dem Kauf über das Kontaktformular ab, ein zweites Exemplar zum Vergleich gibt es nicht.</p></details>
+                <p>Gekauft wird über den Warenkorb, und dafür ist ein Konto nötig: Warenkorb und Bestellvorgang sind an eine Anmeldung gebunden. Wer per Vorab-Überweisung zahlt, bekommt die Bankdaten per E-Mail; über PayPal wird die Zahlung sofort abgeschlossen. Für die Bestellung gilt das Widerrufsrecht von 14 Tagen ab dem Tag, an dem die Ware angekommen ist (§ 5 der AGB). {% if produkt.zustand %}Weil das Basisteil getragene Second-Hand-Kleidung ist, gehören leichte Unregelmäßigkeiten der Bemalung und kleine Gebrauchsspuren des Stoffes zum Stück und sind kein Mangel (§ 3 der AGB). {% endif %}Die Fotos zeigen genau dieses Teil; Maße, Material oder Zustand fragst du vor dem Kauf über das Kontaktformular ab, ein zweites Exemplar zum Vergleich gibt es nicht.</p></details>
             </div>
             {% elif produkt.verkauft %}
             <div class="lv-stueck-hinweis">

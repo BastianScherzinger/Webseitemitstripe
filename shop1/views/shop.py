@@ -377,6 +377,7 @@ def produkte(request):
         'vergebene_liste': vergebene,
         # Erste Karte in der Anzeigereihenfolge = LCP-Bild (Preload in produkte.html).
         'erstes_stueck': (verfuegbare or vergebene or [None])[0],
+        'krume': 'Unikate' if (verfuegbare or verkauf.verkauf_aktiv()) else 'Archiv',
     })
 
 
@@ -420,6 +421,7 @@ def produkt_detail_slug(request, slug):
         'produkt': produkt,
         'galerie': produkt.galerie(),
         # Technik-Satz nur, wenn das Feld „Technik“ Bleiche nennt (nichts raten).
+        'krume': 'Archiv' if produkt.verkauft else 'Stücke',
         'bleiche': 'bleich' in (produkt.technik or '').lower(),
         'bleiche_satz': luviq_daten.BLEICHE_SATZ,
     })

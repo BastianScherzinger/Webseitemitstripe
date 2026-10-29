@@ -2,14 +2,14 @@
 Karte eines Stücks (Startseite #stuecke und #archiv, /produkte/), Look „Nachtausgabe“, P4 (29.10.2026).
 Alle Bilder liegen auf derselben dunklen Kachel (4:5), Name links und Größe (`masse`, Freitext) rechts in
 einer Zeile, darunter Mono: `Nº 001` und der Zustand. Zustand: vergeben = „Archiv“ (das Bild trägt das
-Band „Verkauft“, Text im DOM), mit Verkauf und kaufbar = Preis, sonst „Unikat“ (noch nicht im Verkauf,
+Band „Vergeben“ bzw. „Verkauft“, Text im DOM), mit Verkauf und kaufbar = Preis, sonst „Unikat“ (noch nicht im Verkauf,
 kein Preis). Die ganze Karte ist über den Namen verlinkt (ein Link).
 `produkt` und `forloop` kommen aus der umgebenden Schleife. `stufe` setzt die Überschriftsebene des Namens
 (Vorgabe 3; `/produkte/` setzt 2). `erstes` (nur auf /produkte/ im ersten Abschnitt: LCP-Bild) lädt sofort und
 mit Vorrang, alle anderen lazy; `srcset`/`sizes` der ersten Karte müssen zum Preload in produkte.html passen.
 Das Bild kommt aus `produkt.hauptbild` (Upload über Cloudinary oder statische Datei, shop1/produktbilder.py).
 {% endcomment %}{% with bild=produkt.hauptbild %}<li class="lv-karte{% if produkt.verkauft %} ist-verkauft{% endif %}">
-    <figure{% if not bild %} data-ohne-foto{% endif %}>{% if bild %}<img src="{{ bild.karte_src }}" srcset="{{ bild.karte_srcset }}" sizes="{% if erstes %}(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 92vw{% else %}(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 46vw{% endif %}" alt="Foto: {{ produkt.name }}, handbemaltes Einzelstück von Luviq Universe" width="600" height="750"{% if erstes %} loading="eager" fetchpriority="high"{% else %} loading="lazy"{% endif %} decoding="async">{% endif %}{% if produkt.verkauft %}<span class="lv-verkauft"><span>{{ verkauft_wort }}</span></span>{% endif %}</figure>
+    <figure{% if not bild %} data-ohne-foto{% endif %}>{% if bild %}<img src="{{ bild.karte_src }}" srcset="{{ bild.karte_srcset }}" sizes="{% if erstes %}(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 92vw{% else %}(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 46vw{% endif %}" alt="Foto: {{ produkt.name }}, handbemaltes Einzelstück von Luviq Universe" width="600" height="750"{% if erstes %} loading="eager" fetchpriority="high"{% else %} loading="lazy"{% endif %} decoding="async">{% endif %}{% if produkt.verkauft %}<span class="lv-verkauft"><span>{{ produkt.band_wort }}</span></span>{% endif %}</figure>
     <div class="lv-karte-name">
         <h{{ stufe|default:"3" }} class="lv-serif"><a href="{{ produkt.get_absolute_url }}">{{ produkt.name }}</a></h{{ stufe|default:"3" }}>
         {% if produkt.masse %}<span class="lv-groesse">{{ produkt.masse }}</span>{% endif %}

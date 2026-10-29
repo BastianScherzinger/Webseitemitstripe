@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 name=d['name'], slug=d['slug'], preis=Decimal(d['preis']), nummer=frei,
                 beschreibung=d['beschreibung'], seo_titel=d['seo_titel'],
                 seo_beschreibung=d['seo_beschreibung'], masse=d['masse'], material=d['material'],
-                technik=d['technik'], bild_statisch=d['bild_statisch'],
+                technik=d['technik'], zustand=d['zustand'], bild_statisch=d['bild_statisch'],
                 aktiv=True, vergeben=False, lagerbestand=1,
                 # Kein Newsletter-Versand durch das Anlegen: der läuft nur über das Panel.
                 newsletter_gesendet=True)

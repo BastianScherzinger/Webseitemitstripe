@@ -227,11 +227,11 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 /* Archiv */
 .lv-raster{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--lv-raum-6) var(--lv-raum-5);list-style:none;padding:0}
 .lv-raster>li{min-width:0}
-.lv-raster-stuecke:has(>li:only-child){grid-template-columns:minmax(0,1fr)}
-@media (min-width:1024px){.lv-raster-stuecke:has(>li:only-child){grid-template-columns:minmax(0,min(100%,440px))}}
-.lv-raster-titel{font-size:max(28px,calc(var(--u)*2.6));margin:var(--lv-raum-7) 0 var(--lv-raum-3)}
-.lv-raster-titel:first-of-type{margin-top:0}
-.lv-raster-hinweis{color:var(--lv-leise);margin:0 0 var(--lv-raum-5)}
+.lv-raster:has(>li:only-child){grid-template-columns:minmax(0,1fr)}
+@media (min-width:1024px){.lv-raster:has(>li:only-child){grid-template-columns:minmax(0,min(calc(50% - var(--lv-raum-3)),560px))}}
+.lv-seite .lv-raster-titel{font-size:max(28px,calc(var(--u)*2.6));margin:var(--lv-raum-7) 0 var(--lv-raum-3)}
+.lv-seite .lv-raster-titel:first-of-type{margin-top:0}
+.lv-seite .lv-raster-hinweis{color:var(--lv-leise);margin:0 0 var(--lv-raum-5)}
 .lv-karte{display:grid;gap:var(--lv-raum-2);align-content:start;position:relative}
 .lv-karte figure{aspect-ratio:4/5;overflow:hidden;background:var(--lv-grund-2);position:relative;container-type:inline-size}
 .lv-karte figure[data-ohne-foto]{display:grid;place-items:center}
@@ -493,7 +493,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-karte h2,.lv-karte h3{font-size:18px}
   .lv-karte-kopf{font-size:12px}
   .lv-groesse{font-size:12px}
-  .lv-raster-titel{font-size:28px;margin-top:var(--lv-raum-7)}
+  .lv-seite .lv-raster-titel{font-size:28px;margin-top:var(--lv-raum-7)}
   .lv-luisa,.lv-luisa.lv-luisa-start{grid-template-columns:minmax(0,1fr);padding:48px var(--rand);gap:20px}
   .lv-luisa blockquote p{font-size:36px}
   .lv-luisa-start blockquote p{font-size:28px}

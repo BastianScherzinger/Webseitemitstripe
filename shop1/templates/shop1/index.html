@@ -229,7 +229,7 @@ View und Kontextprozessor), kein Datum hier.
         <div class="lv-abschnittskopf">
             <h2 class="lv-serif" id="archiv-titel">Das Archiv</h2>
             <div class="lv-abschnittskopf-r">
-                <p>{% if verkauf_aktiv %}Alles, was bisher entstanden ist. Jedes Stück gibt es genau einmal.{% else %}Alles, was bisher entstanden ist. Diese Stücke sind verkauft, sie kommen nicht wieder.{% endif %}</p>
+                <p>{% if verkauf_aktiv %}Alles, was bisher entstanden ist. Jedes Stück gibt es genau einmal.{% else %}Alles, was bisher entstanden ist. Diese Stücke sind vergeben, sie kommen nicht wieder.{% endif %}</p>
                 {% if archiv_liste %}<a class="lv-link" href="{% url 'produkte' %}">Das ganze Archiv</a>{% endif %}
             </div>
         </div>

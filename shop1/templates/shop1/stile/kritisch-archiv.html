@@ -58,6 +58,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-ohne-linie{border-top:0}
 .lv-raster{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--lv-raum-6) var(--lv-raum-5);list-style:none;padding:0}
 .lv-raster>li{min-width:0}
+.lv-raster:has(>li:only-child){grid-template-columns:minmax(0,1fr)}
+@media (min-width:1024px){.lv-raster:has(>li:only-child){grid-template-columns:minmax(0,min(calc(50% - var(--lv-raum-3)),560px))}}
 .lv-karte{display:grid;gap:var(--lv-raum-2);align-content:start;position:relative}
 .lv-karte figure{aspect-ratio:4/5;overflow:hidden;background:var(--lv-grund-2);position:relative;container-type:inline-size}
 .lv-karte figure[data-ohne-foto]{display:grid;place-items:center}

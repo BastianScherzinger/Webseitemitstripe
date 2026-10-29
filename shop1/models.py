@@ -151,6 +151,9 @@ class Produkt(models.Model):
     # entfällt; es wird nichts geraten.
     material = models.CharField(max_length=80, blank=True, help_text='z. B. „Sweat, Baumwolle". Leer = nicht angezeigt.')
     technik = models.CharField(max_length=80, blank=True, help_text='z. B. „Bleiche" oder „Textilfarbe". Leer = nicht angezeigt.')
+    zustand = models.CharField(
+        max_length=120, blank=True, default='Gebraucht (Second Hand), von Hand bemalt, 1-of-1',
+        help_text='Zeile „Stück“ der Datenliste (Textilkennzeichnung). Leer = keine Angabe, es wird nichts geraten.')
     masse = models.CharField('Maße', max_length=120, blank=True, help_text='z. B. „Größe M, Brustweite 56 cm". Leer = nicht angezeigt.')
     # Archivstück (EIG115): schon vergeben, nie kaufbar – auch nicht, wenn es
     # aktiv ist und der Verkauf läuft. Ohne dieses Feld hätte der Verkaufsstart
@@ -163,8 +166,15 @@ class Produkt(models.Model):
 
     @property
     def verkauft(self):
-        """Für die Anzeige: Archiv (``vergeben``) oder nicht mehr vorrätig – trägt das Band „Verkauft“."""
+        """Für die Anzeige: Archiv (``vergeben``) oder nicht mehr vorrätig – trägt ein Band über dem Bild."""
         return self.vergeben or self.lagerbestand < 1
+
+    @property
+    def band_wort(self):
+        """„Vergeben“ für Archivstücke (nie verkauft, Migration 0022), „Verkauft“ nur für ein Stück,
+        das nach einer Bestellung ausverkauft ist."""
+        from . import luviq_daten
+        return luviq_daten.VERGEBEN_WORT if self.vergeben else luviq_daten.VERKAUFT_WORT
 
     @property
     def hat_bild(self):

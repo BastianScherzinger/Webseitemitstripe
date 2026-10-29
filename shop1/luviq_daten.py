@@ -488,8 +488,12 @@ LEISTE_AUS = frozenset({
 
 # ── P4: Stücke-Seiten ────────────────────────────────────────────────────────
 
-#: Schriftzug über dem Bild eines vergebenen Stücks (Karte und Stückseite). Ein Wort an einer
-#: Stelle: Bastian wollte „Verkauft“ (29.10.2026). Das Datenfeld heißt weiter ``vergeben``.
+#: Schriftzug über dem Bild eines Stücks, das nicht mehr zu haben ist (Karte und Stückseite).
+#: Die fünf Archivstücke Nº 001–005 sind „vergeben“, aber nie über den Shop verkauft worden
+#: (Migration 0022: keine Rechnungen) – für sie steht „Vergeben“, nie „Verkauft“, sonst wäre es
+#: eine falsche Tatsachenbehauptung. „Verkauft“ steht nur bei einem Stück, das nicht als Archiv
+#: gekennzeichnet ist und nach einer Bestellung Bestand 0 hat (``Produkt.band_wort``).
+VERGEBEN_WORT = 'Vergeben'
 VERKAUFT_WORT = 'Verkauft'
 
 #: Die Technik in einem Satz, auf Stückseite und Luisa-Seite gleich (Bastian 29.10.2026).
@@ -507,6 +511,7 @@ ENGEL_STUECK = {
     'masse': 'Größe M',
     'material': '100 % Baumwolle',
     'technik': 'Mit Bleiche von Hand gemalt',
+    'zustand': '',  # „gebraucht“ ist nicht belegt (Bastian 29.10.): keine Angabe statt Vermutung
     'seo_titel': 'Engel-Shirt mit Bleiche gemalt – Luviq Lübeck',
     'seo_beschreibung': ('Unikat Nº 006: T-Shirt mit Engel, Rose und Stern, von Hand mit Bleiche '
                          'gemalt. 100 % Baumwolle, Größe M. Luviq, Lübeck.'),

@@ -369,7 +369,7 @@ class ArchivOhneVerkaufTest(_Grundlage):
     def test_ueberschriften_heissen_archiv(self):
         self.assertContains(self.hole('/produkte/'), 'id="archiv-titel">Das Archiv</h1>')
         self.assertContains(self.hole('/'), 'id="archiv-titel">Das Archiv</h2>')
-        self.assertContains(self.hole('/'), 'Diese Stücke sind verkauft')
+        self.assertContains(self.hole('/'), 'Diese Stücke sind vergeben')
 
     def test_llms_txt_nennt_das_archiv(self):
         llms = self.hole('/llms.txt').content.decode()

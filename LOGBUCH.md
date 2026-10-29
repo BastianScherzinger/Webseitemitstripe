@@ -10,6 +10,13 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 30.10.2026 — Luviq-Umbau P4b: Vergeben statt Verkauft, Raster und Abstände Handy
+
+- Migration 0022 belegt, dass die Archivstücke nie verkauft wurden: Band und Texte sagen „Vergeben“ (`VERGEBEN_WORT`), „Verkauft“ nur für ein Stück mit Bestand 0, das nicht Archiv ist (`Produkt.band_wort`). „Archiv: schon vergeben“, Einleitung und Startseite angepasst.
+- Einzelne Karte: Handy volle Breite, PC höchstens etwa zwei Spalten (560 px). Abstand der Raster-Überschriften (Selektor war von `.lv-seite h2` überstimmt).
+- Brotkrume „Stücke“ (verfügbar) bzw. „Archiv“ (vergeben) auf der Stückseite, „Unikate“/„Archiv“ auf /produkte/, jeweils auch im BreadcrumbList-Schema.
+- Neues Feld `Produkt.zustand` (Migration 0029, Vorgabe „Gebraucht (Second Hand), von Hand bemalt, 1-of-1“ für Bestand und neue Admin-Stücke). Das Engel-Shirt bekommt keinen Zustand (nicht belegt): keine Zeile, kein Second-Hand-Satz, kein `itemCondition`.
+
 ## 30.10.2026 — Luviq-Umbau P4: Stücke-Seiten, Verkauft-Band, Galerie, Engel-Shirt Nº 006 (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
 
 **Warum.** Masterplan § 7 plus Bastians Zusätze (29.10.): alle Archivstücke tragen „Verkauft“, die Stückseite hat eine wischbare Galerie, das Engel-Shirt ist das erste offizielle Stück Nº 006 und soll nach dem Deploy ohne Admin-Anmeldung live sein.
