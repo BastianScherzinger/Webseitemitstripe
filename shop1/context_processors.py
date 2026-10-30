@@ -122,7 +122,8 @@ def anbieterin(request):
             'pflege': luviq_daten.PFLEGE,
             # Einwilligungs-Banner nur, wenn ein nicht notwendiger Dienst eingestellt ist.
             'einwilligung': ({'dienst': settings.EINWILLIGUNG_DIENST,
-                              'skript': getattr(settings, 'EINWILLIGUNG_SKRIPT', '')}
+                              'skript': getattr(settings, 'EINWILLIGUNG_SKRIPT', ''),
+                              'ga': getattr(settings, 'GA_MESSUNG_ID', '')}
                              if getattr(settings, 'EINWILLIGUNG_DIENST', '') else None)}
 
 
