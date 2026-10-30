@@ -100,6 +100,12 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 **Bewusst nicht:** Widerrufsfunktion, Versandkosten, Bestellmail mit AGB, Bestellweg für Auftragsarbeiten (Sperrgründe, eigene Bauaufgaben); Stripe (nicht eingebaut, PayPal/Überweisung bleiben); Straße im Schema; Datenschutz-/Impressum-Text inhaltlich (Generator).
 **Tests:** neu `test_verkaufsstart` (23 Tests, beide Zustände); `test_verkauf_schalter` auf `hinweis()`, `test_verkauf.test_gaestebuch_wie_bisher` auf die neue Gästebuch-Formulierung umgestellt. Volle Suite: 779 Tests grün; Designwache unverändert (keine Referenzänderung nötig).
 
+## 30.10.2026 — Umsetzung der Luviq-Analyse Runde 2 (Zweig `seo/2026-10-30-luviq-runde2`, nicht gepusht)
+
+**Was:** C1 Cookie-Banner am Handy 289 auf 139 px (Titel `<p>` statt `<h2>`, Wortlaut unverändert, Knöpfe nebeneinander, 44 px). C3 `OfferCatalog` „Vintage-Jacken“ entfernt. C4 (ohne Titel-Tags, Domainumzug-Regel): Meta-/Schema-/llms-/Fließtext auf „handbemalte Unikate, gebraucht oder neu, immer hochwertig“. C5 `sameAs`: Pinterest und ProvenExpert an die Marke, Facebook und LinkedIn an die Person (`luviq_daten.PROFILE_PERSON`). C7 Alt-Text/Sitemap-Bildtitel „Studiobild (KI) aus dem echten Foto“ (`KI_BILD_PRAEFIXE`, `Produkt.bild_ist_ki`). C9 Gästebuch `noindex,follow`, aus Sitemap und llms.txt. C11 keine Straße/Gmail im Fließtext „Woher die Angaben stammen“. C12 lastmod nachgezogen. C13 Fließtext 16 px, Hinweise 14 px, Brotkrumen-Tippziel. Engel-Antwortsatz ohne doppeltes „genau einmal“. C8 Entwurf: `/wissen/bleach-painting/` und `/wissen/bleichfleck-uebermalen/` (`freigegeben=False`, Datum mit Uhrzeit +01:00; Text zum Gegenlesen in `Analysen\luviq-2026-10-30-analyse\ENTWURF-ARTIKEL.md`).
+**Tests:** neu `test_schub_2026_10_30`; Tests für Datumsformat (mit Uhrzeit erlaubt), Gästebuch-Sitemap und den alten Vintage-Katalog angepasst; Aufbau-Referenz nur um die zwei Entwürfe ergänzt.
+**Offen:** Luisa bestätigt die Artikel (beide gemeinsam freigeben); C2, C6, C10, C14 brauchen ihre Angaben; Titel-Sammelschub nach dem Domainumzug; Wirkung `priceRange: €€` nur mit ihrem Ja.
+
 ## 25.10.2026 — Technischer SEO/GEO-Check (Zweig `seo/2026-10-25-check`)
 
 **Was:** Live-Crawl der 17 Sitemap-Seiten: keine kaputten Links/Bilder, Titel/Meta/H1/canonical in Ordnung, Apex → www per 301. `<link rel="icon">` sowie `og:image`/`twitter:image` (Basis und Startseite) zeigen jetzt auf die feste, hash-freie Adresse unter `/static/shop1/images/…` statt auf die inhaltsgehashte Fassung.
