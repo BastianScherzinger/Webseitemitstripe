@@ -357,7 +357,7 @@ VERTRAUEN = _vertrauen()
 #: die Motivanfrage läuft (Vorlage prüft ``motivanfrage_aktiv``).
 WEGE = [
     ('Handbemalte Unikate',
-     'Gebrauchte Hoodies, Pullover und Shirts, jedes Motiv nur einmal.',
+     'Hochwertige Hoodies, Pullover und Shirts, gebraucht oder neu, jedes Motiv nur einmal.',
      'produkte', 'alle Stücke im Archiv'),
     ('Dein eigenes Teil',
      'Du beschreibst dein Motiv, bekommst Vorschläge, erst dann wird gemalt.',
