@@ -205,7 +205,7 @@ _MONATE = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August
 #: Beschreibung des Fotos da, kein erfundener Stückname und keine Nummer.
 #: ``status`` steht rechts in der Bildunterschrift: „Unikat“, kein Preis, kein Datum.
 HERO_STUECK = {'nummer': None, 'suche': ('engel',), 'name': 'Shirt mit Engel-Motiv',
-               'alt': 'Rückenansicht eines schwarzen T-Shirts auf einem Holzbügel vor dunkler Betonwand; darauf ein handgebleichtes Linienmotiv: ein Engel mit Flügeln hält eine Rose, rechts daneben ein kleiner Stern',
+               'alt': 'Studiobild (KI) aus dem echten Foto: Rückenansicht eines schwarzen T-Shirts auf einem Holzbügel vor dunkler Betonwand; darauf ein handgebleichtes Linienmotiv: ein Engel mit Flügeln hält eine Rose, rechts daneben ein kleiner Stern',
                'status': 'Unikat'}
 
 #: Teaser vor dem Drop: (Datum, Titel, Bildadresse, Alternativtext). Leer ⇒
@@ -524,6 +524,10 @@ VERKAUFT_WORT = 'Verkauft'
 #: Die Technik in einem Satz, auf Stückseite und Luisa-Seite gleich (Bastian 29.10.2026).
 BLEICHE_SATZ = ('Mit Bleiche gemalt: Die Farbe wird aus dem Stoff gezogen, nichts ist aufgedruckt. '
                 'Deshalb steht das Motiv in Bleich-Beige auf dem schwarzen Stoff.')
+
+#: Statische Bilder, die KI-Studiobilder aus einem echten Foto sind (Präfixe). Ihr Alt-Text,
+#: der Sitemap-Bildtitel und die Bildunterschrift nennen das ehrlich (Analyse 30.10.2026, C7).
+KI_BILD_PRAEFIXE = ('shop1/images/luviq/hero-engel',)
 
 #: Erstes offizielles Stück Nº 006, angelegt von ``manage.py luviq_engel_anlegen`` (aus
 #: ``start.sh``). Quelle: Bastian am 29.10.2026, 23:45. Nicht belegt und deshalb nicht

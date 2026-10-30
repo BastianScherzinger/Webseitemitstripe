@@ -251,7 +251,7 @@ def _llms_kopf_mit_verkauf(basis):
         "",
         "> Luviq Universe ist ein Online-Shop aus Lübeck (Schleswig-Holstein),",
         "> angefangen in Alsfeld (Hessen), heute in Lübeck. Luisa Brehler malt",
-        "> handverlesene Second-Hand- und Vintage-Kleidung von Hand mit Bleiche",
+        "> hochwertige Teile, gebraucht oder neu, von Hand mit Bleiche",
         "> (die Farbe wird aus dem Stoff gezogen, nichts ist aufgedruckt); jedes",
         "> Stück ist ein Einzelstück (1-of-1). Versand deutschlandweit, in der Regel innerhalb",
         "> von 1-2 Werktagen.",
@@ -280,7 +280,6 @@ def _llms_kopf_mit_verkauf(basis):
         f"- [Liefergebiet]({basis}{reverse('liefergebiet')}): von Alsfeld nach Lübeck, "
         "Versand deutschlandweit",
         f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
-        f"- [Gästebuch]({basis}{reverse('gaestebuch')}): Rückmeldungen von Kundinnen und Kunden",
         "",
         "## Einzelstücke",
         "",
@@ -304,9 +303,9 @@ def _llms_fragen_mit_verkauf(basis):
         "## Häufige Fragen",
         "",
         "### Was ist Luviq Universe?",
-        "Ein Second-Hand-Shop aus Lübeck, angefangen in Alsfeld. Gründerin Luisa",
-        "Brehler verwandelt handverlesene Vintage-Kleidung durch Handmalerei in",
-        "1-of-1 Kunstwerke. Jedes Stück ist ein Unikat.",
+        "Ein Online-Shop aus Lübeck für handbemalte Unikate, gebraucht oder neu,",
+        "immer hochwertig, angefangen in Alsfeld. Gründerin Luisa Brehler malt die",
+        "Teile von Hand zu 1-of-1 Kunstwerken. Jedes Stück ist ein Unikat.",
         "",
         "### Wo sitzt Luviq Universe?",
         "In Lübeck (Schleswig-Holstein); dort malt Luisa Brehler heute.",
@@ -319,8 +318,9 @@ def _llms_fragen_mit_verkauf(basis):
         "Werktagen.",
         "",
         "### Was verkauft Luviq Universe?",
-        "Handbemalte Second-Hand- und Vintage-Kleidung, vor allem Hoodies und",
-        "Jacken. Jedes Stück ist ein Einzelstück und nur einmal zu haben.",
+        "Handbemalte Unikate, gebraucht oder neu, immer hochwertig, zum Beispiel",
+        "Shirts, Hoodies und Pullover. Jedes Stück ist ein Einzelstück und nur",
+        "einmal zu haben.",
         "",
         "### Wie bestellt man?",
         f"Über diese Seite: Einzelstück auf {basis}{reverse('produkte')} auswählen,",
@@ -328,8 +328,8 @@ def _llms_fragen_mit_verkauf(basis):
         "Vorab-Überweisung.",
         "",
         "### Was hat Upcycling mit der Umwelt zu tun?",
-        "Statt neue Kleidung zu produzieren, wird vorhandene Vintage-Kleidung",
-        "weiterverwendet und von Hand bemalt.",
+        "Wo ein gebrauchtes Teil die Grundlage ist, wird vorhandene Kleidung",
+        "weiterverwendet und von Hand bemalt statt neu produziert.",
         "",
         *_llms_motiv_fragen(),
         "## Rechtliches",
@@ -364,8 +364,8 @@ def _llms_kopf_ohne_verkauf(basis):
         "# Luviq Universe",
         "",
         "> Luviq Universe ist eine Modemarke im Aufbau, angefangen in Alsfeld",
-        "> (Hessen), heute in Lübeck. Luisa Brehler malt handverlesene Second-Hand-",
-        "> und Vintage-Kleidung von Hand mit Bleiche (die Farbe wird aus dem Stoff",
+        "> (Hessen), heute in Lübeck. Luisa Brehler malt hochwertige Teile,",
+        "> gebraucht oder neu, von Hand mit Bleiche (die Farbe wird aus dem Stoff",
         "> gezogen, nichts ist aufgedruckt); jedes Stück ist ein Einzelstück (1-of-1).",
         "> Die bisherigen Stücke sind bereits vergeben und stehen im Archiv. Das erste",
         "> neue Stück ist das Engel-Shirt Nº 006 (Größe M, 100 % Baumwolle).",
@@ -390,7 +390,6 @@ def _llms_kopf_ohne_verkauf(basis):
         "Vorschläge bekommen - kostenlos, keine Bestellung",
         f"- [Herkunft und Übergabe]({basis}{reverse('liefergebiet')}): von Alsfeld nach Lübeck, Übergabe nach Absprache",
         f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
-        f"- [Gästebuch]({basis}{reverse('gaestebuch')}): Beiträge aus der Community",
         "",
         "## Archiv: bisherige Einzelstücke (bereits vergeben)",
         "",
@@ -405,8 +404,8 @@ def _llms_fragen_ohne_verkauf(basis):
         "",
         "### Was ist Luviq Universe?",
         "Eine Modemarke im Aufbau aus Lübeck, angefangen in Alsfeld. Gründerin Luisa Brehler",
-        "verwandelt handverlesene Vintage-Kleidung durch Handmalerei in 1-of-1",
-        "Kunstwerke. Jedes Stück ist ein Unikat.",
+        "malt hochwertige Teile, gebraucht oder neu, von Hand zu 1-of-1",
+        "Kunstwerken. Jedes Stück ist ein Unikat.",
         "",
         "### Wo sitzt Luviq Universe?",
         "In Lübeck (Schleswig-Holstein); dort malt Luisa Brehler heute.",
@@ -420,11 +419,11 @@ def _llms_fragen_ohne_verkauf(basis):
         "eine E-Mail-Adresse genügt, die Anmeldung wird per Link bestätigt.",
         "",
         "### Was hat Upcycling mit der Umwelt zu tun?",
-        "Statt neue Kleidung zu produzieren, wird vorhandene Vintage-Kleidung",
-        "weiterverwendet und von Hand bemalt.",
+        "Wo ein gebrauchtes Teil die Grundlage ist, wird vorhandene Kleidung",
+        "weiterverwendet und von Hand bemalt statt neu produziert.",
         "",
         "### Womit malt Luisa Brehler?",
-        "Mit Bleiche und Pinsel auf dunkler Second-Hand-Kleidung: Die Bleiche zieht",
+        "Mit Bleiche und Pinsel auf dunkler Kleidung, gebraucht oder neu: Die Bleiche zieht",
         "die Farbe aus dem Stoff, deshalb sind die Linien hell. Ein Strich lässt",
         "sich nicht zurücknehmen, und kein Motiv wird wiederholt.",
         "",
@@ -536,7 +535,9 @@ def _seitenbilder(name: str, base_url: str) -> list[tuple[str, str]]:
     if name == 'produkte':
         # Mit Archivnummer: zwei Stücke heißen gleich („Custom print hoodie“),
         # ihre Bildtitel dürfen es nicht tun (EIG103).
-        return [(absolut(p.hauptbild().original), f'{p.name} (Nº {p.archiv_nummer}) – Luviq Universe')
+        return [(absolut(p.hauptbild().original),
+                 f'{"Studiobild (KI) aus dem echten Foto: " if p.bild_ist_ki else ""}'
+                 f'{p.name} (Nº {p.archiv_nummer}) – Luviq Universe')
                 for p in Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am')
                 if p.hat_bild and p.hauptbild()]
     return []
@@ -565,7 +566,8 @@ def _sitemap_seiten():
     static_pages = [
         {'name': 'home',         'loc': '/',                     'priority': '1.0', 'changefreq': 'daily'},
         {'name': 'produkte',     'loc': reverse('produkte'),     'priority': '0.9', 'changefreq': 'daily'},
-        {'name': 'gaestebuch',   'loc': reverse('gaestebuch'),   'priority': '0.7', 'changefreq': 'weekly'},
+        # Gästebuch bewusst nicht in der Sitemap: noindex,follow, bis echte Beiträge fremder
+        # Personen da sind (Analyse 30.10.2026, C9). Nichts gelöscht, nur nicht angeboten.
         {'name': 'ueber_uns',    'loc': reverse('ueber_uns'),    'priority': '0.7', 'changefreq': 'monthly'},
         {'name': 'motiv_anfragen', 'loc': reverse('motiv_anfragen'), 'priority': '0.8', 'changefreq': 'monthly'},
         {'name': 'liefergebiet', 'loc': reverse('liefergebiet'), 'priority': '0.7', 'changefreq': 'monthly'},
@@ -633,9 +635,10 @@ def _produkt_xml(produkt, base_url):
         name_esc = produkt.name.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
         xml += '    <image:image>\n'
         xml += f'      <image:loc>{escaped}</image:loc>\n'
-        xml += (f'      <image:title>{name_esc} (Nº {produkt.archiv_nummer}) – Luviq Universe'
+        ki = 'Studiobild (KI) aus dem echten Foto: ' if produkt.bild_ist_ki else ''
+        xml += (f'      <image:title>{ki}{name_esc} (Nº {produkt.archiv_nummer}) – Luviq Universe'
                 '</image:title>\n')
-        xml += f'      <image:caption>Handbemaltes 1-of-1 Upcycling-Unikat: {name_esc}</image:caption>\n'
+        xml += f'      <image:caption>{ki}Handbemaltes 1-of-1-Unikat: {name_esc}</image:caption>\n'
         xml += '    </image:image>\n'
 
     return xml + '  </url>\n'

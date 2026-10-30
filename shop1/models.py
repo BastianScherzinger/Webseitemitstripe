@@ -191,6 +191,13 @@ class Produkt(models.Model):
         return (self.zustand or '').strip().lower().startswith('neu')
 
     @property
+    def bild_ist_ki(self):
+        """Das Hauptbild ist ein KI-Studiobild aus einem echten Foto (``luviq_daten.KI_BILD_PRAEFIXE``)."""
+        from . import luviq_daten
+        return bool(not self.bild and self.bild_statisch
+                    and self.bild_statisch.startswith(luviq_daten.KI_BILD_PRAEFIXE))
+
+    @property
     def hat_bild(self):
         """Ein Hauptbild ist da: Upload oder statische Datei."""
         return bool(self.bild or self.bild_statisch)
@@ -198,7 +205,9 @@ class Produkt(models.Model):
     def hauptbild(self):
         """Hauptbild als ``produktbilder.Bild`` (oder ``None``)."""
         from . import produktbilder
-        alt = f'{self.name} – handbemaltes Upcycling-Unikat von Luviq Universe'
+        alt = f'{self.name} – handbemaltes Unikat von Luviq Universe'
+        if self.bild_ist_ki:
+            alt = f'Studiobild (KI) aus dem echten Foto: {alt}'
         return produktbilder.bild_aus(self.bild, self.bild_statisch, self.bild_breite, self.bild_hoehe, alt)
 
     def galerie(self):
