@@ -343,13 +343,13 @@ class ArchivOhneVerkaufTest(_Grundlage):
         for pfad in ('/', '/produkte/', self.produktseite):
             with self.subTest(pfad=pfad):
                 self.assertContains(self.hole(pfad), nummer)
-                self.assertContains(self.hole(pfad), 'Referenz')
+                self.assertContains(self.hole(pfad), 'Vergeben')
         self.assertContains(self.hole(self.produktseite), f'{nummer} · Archiv')
         produktseite = self.hole(self.produktseite).content.decode()
-        self.assertIn('Dieses Stück ist eines der ersten Referenzstücke und nicht zu kaufen. Neue '
+        self.assertIn('Dieses Stück ist eines der ersten Referenzstücke und bereits vergeben. Neue '
                       'Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein', produktseite)
         self.assertIn('aus dem Archiv der bisherigen Stücke', produktseite)
-        self.assertIn('Referenzstück, nicht zu kaufen · Neue Stücke mit dem ersten Drop', produktseite)
+        self.assertIn('Referenzstück, bereits vergeben · Neue Stücke mit dem ersten Drop', produktseite)
 
     def test_keine_seite_behauptet_kommenden_drop_oder_verkauf(self):
         for pfad in self.seiten() + ['/llms.txt', '/feed/']:

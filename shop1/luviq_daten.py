@@ -502,8 +502,8 @@ LEISTE_AUS = frozenset({
 #: gekennzeichnet ist und nach einer Bestellung Bestand 0 hat (``Produkt.band_wort``).
 VERGEBEN_WORT = 'Vergeben'
 #: Band der fünf ersten Stücke Nº 001–005: Bastian 30.10.2026 – „wie Referenzen, nicht offiziell
-#: verkauft, als Beispiele drin, kommen später raus“.
-REFERENZ_WORT = 'Referenz'
+#: verkauft, als Beispiele drin, kommen später raus“; sie wurden verschenkt, deshalb „Vergeben“.
+REFERENZ_WORT = 'Vergeben'
 REFERENZ_NUMMERN = range(1, 6)
 VERKAUFT_WORT = 'Verkauft'
 

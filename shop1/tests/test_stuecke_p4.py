@@ -41,7 +41,7 @@ class VerkauftBandTest(LuviqTestCase):
         for pfad in ('/produkte/', '/'):
             html = self.hole(pfad).content.decode()
             self.assertEqual(html.count('class="lv-verkauft"'), 1, pfad)
-            self.assertIn('Referenz', html)
+            self.assertIn('Vergeben', html)
 
     def test_verfuegbares_stueck_steht_vor_dem_archiv(self):
         html = self.hole('/').content.decode()

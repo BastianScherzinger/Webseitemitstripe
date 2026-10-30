@@ -175,7 +175,7 @@ class WarenkorbKennungTest(LuviqTestCase):
 
         seite = self.hole(archiv.get_absolute_url()).content.decode()
         self.assertNotIn('In den Warenkorb', seite)
-        self.assertIn('Referenzstück, nicht zu kaufen', seite)
+        self.assertIn('Referenzstück, bereits vergeben', seite)
 
 
 # ═══ Bestellung ════════════════════════════════════════════════════════════

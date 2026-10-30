@@ -125,7 +125,7 @@
             {% comment %}GPSR (VO (EU) 2023/988 Art. 19): Herstellerangaben und Kennnummer im Online-Angebot. Luisa verändert die Teile wesentlich und verkauft unter eigener Marke, sie gilt als Herstellerin. Nur mit Verkauf, Werte aus luviq_daten.ANBIETERIN und luviq_daten.PFLEGE.{% endcomment %}
             <p class="lv-klein">Herstellerin: {{ anbieterin.name }} ({{ anbieterin.geschaeft }}), {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.email }} · Kennnummer Nº {{ produkt.archiv_nummer }} · Pflege: {{ pflege }}</p>
             {% elif produkt.verkauft %}
-            <p class="lv-status">Nº {{ produkt.archiv_nummer }} · Archiv · {% if produkt.ist_referenz %}Referenzstück, nicht zu kaufen{% else %}Bereits vergeben{% endif %} · Neue Stücke mit dem ersten Drop</p>
+            <p class="lv-status">Nº {{ produkt.archiv_nummer }} · Archiv · {% if produkt.ist_referenz %}Referenzstück, bereits vergeben{% else %}Bereits vergeben{% endif %} · Neue Stücke mit dem ersten Drop</p>
             {% endif %}
             <p class="lv-stueck-knoepfe">
                 {% comment %}Verkaufsschalter: ohne Verkauf kein Warenkorb-Knopf, sondern die Warteliste (Newsletter mit Double-Opt-in auf der Startseite) und die Frage zum Stück.{% endcomment %}
@@ -151,7 +151,7 @@
             </div>
             {% elif produkt.verkauft %}
             <div class="lv-stueck-hinweis">
-                <p>{% if produkt.ist_referenz %}Dieses Stück ist eines der ersten Referenzstücke und nicht zu kaufen.{% else %}Dieses Stück ist bereits vergeben.{% endif %} Neue Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein: Eine E-Mail-Adresse genügt, ein Konto ist dafür nicht nötig, und erst nach der Bestätigung über den Link in der E-Mail kommt Post.</p>
+                <p>{% if produkt.ist_referenz %}Dieses Stück ist eines der ersten Referenzstücke und bereits vergeben.{% else %}Dieses Stück ist bereits vergeben.{% endif %} Neue Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein: Eine E-Mail-Adresse genügt, ein Konto ist dafür nicht nötig, und erst nach der Bestätigung über den Link in der E-Mail kommt Post.</p>
                 <details class="lv-mehr"><summary>Mehr zu diesem Stück</summary>
                 <p>Weil das Basisteil getragene Second-Hand-Kleidung ist, gehören leichte Unregelmäßigkeiten der Bemalung und kleine Gebrauchsspuren des Stoffes zum Stück. Die Fotos zeigen genau dieses Teil; ein zweites Exemplar gibt es nicht, und Fragen zum Stück oder zur Arbeitsweise gehen über das Kontaktformular. Das Motiv entsteht direkt auf dem Stoff, mit Pinsel und Bleiche, und wird nicht wiederholt – darum trägt das Stück den Zusatz 1-of-1. Grundlage ist ein getragenes Second-Hand- oder Vintage-Teil, das Luisa Brehler selbst ausgesucht hat, weil sich Stoff und Schnitt als Leinwand eignen. Ein Ladengeschäft zum Anschauen gibt es nicht.</p></details>
             </div>
