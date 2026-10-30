@@ -242,9 +242,21 @@ class Produkt(models.Model):
         return bilder
 
     @property
+    def pflichtangaben_fehlen(self):
+        """Für den Verkauf fehlt eine Pflichtangabe (Gegenprüfung M3, 30.10.2026).
+
+        Neue Textilien brauchen die Faserzusammensetzung vor dem Kauf (VO (EU) Nr. 1007/2011
+        Art. 16 Abs. 1): Ein Stück mit Zustand „Neu…“ und leerem ``material`` ist nicht
+        kaufbar, bis das Feld im Admin gefüllt ist (z. B. „100 % Baumwolle“). Bei gebrauchten
+        Stücken wird die Angabe gezeigt, wenn sie bekannt ist."""
+        return self.ist_neu and not (self.material or '').strip()
+
+    @property
     def kaufbar(self):
-        """Darf in den Warenkorb und in eine Bestellung: aktiv, nicht vergeben, vorrätig."""
-        return self.aktiv and not self.vergeben and self.lagerbestand >= 1
+        """Darf in den Warenkorb und in eine Bestellung: aktiv, nicht vergeben, vorrätig,
+        Pflichtangaben vollständig (``pflichtangaben_fehlen``)."""
+        return (self.aktiv and not self.vergeben and self.lagerbestand >= 1
+                and not self.pflichtangaben_fehlen)
 
     def save(self, *args, **kwargs):
         if self.nummer is None:

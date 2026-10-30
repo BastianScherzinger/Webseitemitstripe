@@ -4,6 +4,11 @@ import hashlib
 import json
 import logging
 
+from ..luviq_daten import VERSAND as _VERSAND
+
+#: Verbindliche Lieferfrist aus AGB § 5 (Gegenprüfung M1, 30.10.2026).
+LIEFERFRIST = _VERSAND['lieferfrist_werktage']
+
 from django.conf import settings
 from django.contrib import messages
 from django.core import signing
@@ -134,10 +139,10 @@ WISSEN_SEITEN = [
      'Warum ein Bleichfleck bleibt, Fleck ausmalen, nachfärben oder zum Motiv machen, worauf man vorher achtet'),
     ('wissen_bestellen', 'Wie bestelle und bezahle ich bei Luviq Universe?',
      'Anmeldepflicht, Weg in den Warenkorb, Pflichtangaben, PayPal oder '
-     'Vorab-Überweisung, Prüfung der Zahlung, Bestätigung, Versand in 1-2 Werktagen'),
+     f'Vorab-Überweisung, Prüfung der Zahlung, Bestätigung, Lieferung in {LIEFERFRIST} Werktagen'),
     ('wissen_widerruf', 'Widerruf und Rücksendung: was gilt bei einem Einzelstück?',
-     'Vierzehn Tage Widerrufsrecht ab Erhalt, Anschrift der Anbieterin, kein Umtausch '
-     'bei Unikaten, Unregelmäßigkeiten der Bemalung sind kein Mangel'),
+     'Vierzehn Tage Widerrufsrecht ab Erhalt, Online-Widerruf, Rücksendekosten, kein Umtausch '
+     'bei Unikaten, Gewährleistung bei echten Mängeln'),
     ('wissen_konto', 'Was speichert der Shop - und warum braucht der Kauf ein Konto?',
      'Warum der Warenkorb ein Konto verlangt, Angaben der Registrierung, '
      'Besuchsprotokoll, eingebundene Dienste, Zahlungsdaten, Kontolöschung'),
@@ -257,8 +262,8 @@ def _llms_kopf_mit_verkauf(basis):
         "> angefangen in Alsfeld (Hessen), heute in Lübeck. Luisa Brehler malt",
         "> hochwertige Teile, gebraucht oder neu, von Hand mit Bleiche",
         "> (die Farbe wird aus dem Stoff gezogen, nichts ist aufgedruckt); jedes",
-        "> Stück ist ein Einzelstück (1-of-1). Versand deutschlandweit, in der Regel innerhalb",
-        "> von 1-2 Werktagen.",
+        "> Stück ist ein Einzelstück (1-of-1). Lieferung deutschlandweit innerhalb",
+        f"> von {LIEFERFRIST} Werktagen.",
         "> Einen Laden zum Reinschauen gibt es nicht, der Verkauf läuft",
         "> ausschließlich über diese Seite.",
         "",
@@ -272,7 +277,7 @@ def _llms_kopf_mit_verkauf(basis):
         "- Zahlungsarten: PayPal oder Vorab-Überweisung (AGB, § 4)",
         "- Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer",
         "  berechnet (Kleinunternehmerstatus)",
-        "- Versand: in der Regel innerhalb von 1-2 Werktagen, deutschlandweit",
+        f"- Lieferung: innerhalb von {LIEFERFRIST} Werktagen, deutschlandweit (AGB, § 5)",
         "",
         "## Seiten",
         "",
@@ -318,8 +323,8 @@ def _llms_fragen_mit_verkauf(basis):
         "diese Seite.",
         "",
         "### Liefert Luviq nach Lübeck, Alsfeld und in andere Städte?",
-        "Ja, versendet wird deutschlandweit, in der Regel innerhalb von 1-2",
-        "Werktagen.",
+        "Ja, geliefert wird deutschlandweit innerhalb von",
+        f"{LIEFERFRIST} Werktagen.",
         "",
         "### Was verkauft Luviq Universe?",
         "Handbemalte Unikate, gebraucht oder neu, immer hochwertig, zum Beispiel",

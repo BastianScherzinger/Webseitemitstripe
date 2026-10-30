@@ -217,7 +217,8 @@ class BestellwegTest(LuviqTestCase):
         self.kundin.profile.has_welcome_discount = False
         self.kundin.profile.save()
         self.client.force_login(self.kundin)
-        self.produkt = erzeuge_produkt('Neues Shirt', preis=Decimal('60.00'), zustand='Neu, von Hand bemalt, 1-of-1')
+        self.produkt = erzeuge_produkt('Neues Shirt', preis=Decimal('60.00'), zustand='Neu, von Hand bemalt, 1-of-1',
+                                       material='100 % Baumwolle')
 
     def legen(self, produkt=None):
         produkt = produkt or self.produkt
@@ -299,3 +300,103 @@ class BestellwegTest(LuviqTestCase):
     def test_warenkorb_nennt_lieferland_und_zahlungsarten(self):
         self.legen()
         self.assertContains(self.hole('/warenkorb/'), 'Lieferung nur innerhalb Deutschlands. Akzeptierte Zahlungsarten: PayPal')
+
+
+class GegenpruefungTest(LuviqTestCase):
+    """Muss-Punkte der Gegenprüfung vom 30.10.2026 (GEGENPRUEFUNG.md M1–M3, K1)."""
+
+    def setUp(self):
+        self.kundin = erzeuge_benutzer('gkundin', email='gk@example.org')
+        self.kundin.profile.email_verified = True
+        self.kundin.profile.has_welcome_discount = False
+        self.kundin.profile.save()
+        self.client.force_login(self.kundin)
+
+    def _legen(self, produkt):
+        korb, _ = Cart.objects.get_or_create(user=self.kundin)
+        CartItem.objects.create(cart=korb, produkt_name=produkt.name, produkt_ref=produkt.id,
+                                produkt_preis=produkt.preis, menge=1)
+
+    @override_settings(VERKAUF_AKTIV=True)
+    def test_m1_verbindliche_lieferfrist_ueberall_gleich(self):
+        """Art. 246a § 1 Abs. 1 Nr. 10 EGBGB, § 308 Nr. 1 BGB: ein Termin, kein „in der Regel“."""
+        from .. import luviq_daten
+        frist = luviq_daten.VERSAND['lieferfrist_werktage']
+        satz = f'innerhalb von {frist} Werktagen'
+        produkt = erzeuge_produkt('Fristjacke', zustand='Gebraucht (Second Hand)')
+        self._legen(produkt)
+        for pfad in ('/agb/', '/checkout/', produkt.get_absolute_url(), '/produkte/', '/kontakt/',
+                     '/liefergebiet/', '/wissen/bestellen-und-bezahlen/', '/llms.txt'):
+            with self.subTest(pfad=pfad):
+                text = self.hole(pfad).content.decode()
+                self.assertIn(satz, text)
+                self.assertNotIn('1-2 Werktag', text)
+                # „in der Regel“ nur noch bei der Antwortzeit (Kontakt), nie bei der Lieferung.
+                self.assertNotRegex(text, r'in der Regel[^.]{0,40}Werktag')
+        agb = self.hole('/agb/').content.decode()
+        self.assertIn('am Tag nach dem Vertragsschluss', agb)
+        # Schema: Bearbeitung 1–2 Tage plus Laufzeit höchstens bis zur Frist.
+        seite = self.hole(produkt.get_absolute_url()).content.decode()
+        self.assertIn('"transitTime"', seite)
+        self.assertIn(f'"maxValue": {frist - 2}', seite)
+
+    @override_settings(VERKAUF_AKTIV=True)
+    def test_m1_vertragsunterlagen_nennen_die_frist(self):
+        from ..mails import vertragsunterlagen
+        order = _bestellung(email='gk@example.org', user=self.kundin)
+        html, text = vertragsunterlagen(order)
+        self.assertIn('innerhalb von 5 Werktagen', text)
+
+    @override_settings(VERKAUF_AKTIV=True)
+    def test_m2_keine_veralteten_agb_verweise_und_kein_pauschaler_mangelausschluss(self):
+        produkt = erzeuge_produkt('Altjacke', zustand='Gebraucht (Second Hand)')
+        for pfad in (produkt.get_absolute_url(), '/produkte/'):
+            with self.subTest(pfad=pfad):
+                text = self.hole(pfad).content.decode()
+                for alt in ('§ 3 der AGB', '§ 5 der AGB', '§ 4 der AGB', 'sind kein Mangel',
+                            'regeln die AGB nicht', 'getragenen Basisteil'):
+                    self.assertNotIn(alt, text)
+                self.assertIn('§ 10 der AGB', text)
+        self.assertIn('trägst du (Widerrufsbelehrung)', self.hole('/produkte/').content.decode())
+
+    @override_settings(VERKAUF_AKTIV=True)
+    def test_m3_neues_stueck_ohne_material_ist_nicht_kaufbar(self):
+        ohne = erzeuge_produkt('Neu ohne Etikett', zustand='Neu')
+        mit = erzeuge_produkt('Neu mit Etikett', zustand='Neu', material='100 % Baumwolle')
+        gebraucht = erzeuge_produkt('Gebraucht ohne Etikett', zustand='Gebraucht (Second Hand)')
+        self.assertFalse(ohne.kaufbar)
+        self.assertTrue(mit.kaufbar)
+        self.assertTrue(gebraucht.kaufbar)
+        self.assertNotIn('In den Warenkorb', self.hole(ohne.get_absolute_url()).content.decode())
+        self.sende(f'/warenkorb/add/{ohne.id}/', {})
+        self.assertFalse(CartItem.objects.filter(produkt_ref=ohne.id).exists())
+        # Liegt es schon im Korb, hält die Kasse an.
+        self._legen(ohne)
+        from ..views.checkout import _verfuegbarkeit
+        posten = list(Cart.objects.get(user=self.kundin).items.all())
+        self.assertTrue(_verfuegbarkeit(posten))
+        # Mit Material steht die Faserangabe vor dem Knopf.
+        Cart.objects.get(user=self.kundin).items.all().delete()
+        self._legen(mit)
+        vor_knopf = self.hole('/checkout/').content.decode().split('Zahlungspflichtig bestellen')[0]
+        self.assertIn('Neu, 100 % Baumwolle', vor_knopf)
+
+    def test_m3_engel_shirt_hat_material(self):
+        import io
+        from django.core.management import call_command
+        from ..models import Produkt
+        from .. import luviq_daten
+        call_command('luviq_engel_anlegen', stdout=io.StringIO())
+        engel = Produkt.objects.get(slug=luviq_daten.ENGEL_STUECK['slug'])
+        Produkt.objects.filter(pk=engel.pk).update(material='')
+        call_command('luviq_engel_anlegen', stdout=io.StringIO())
+        engel.refresh_from_db()
+        self.assertEqual(engel.material, '100 % Baumwolle')
+        self.assertFalse(engel.pflichtangaben_fehlen)
+
+    @override_settings(VERKAUF_AKTIV=True)
+    def test_k1_agb_regeln_vorkasse_ohne_zahlung(self):
+        with mock.patch.dict(os.environ, _BANK):
+            agb = self.hole('/agb/').content.decode()
+        self.assertIn('Nachfrist von 7 Tagen', agb)
+        self.assertIn('am Tag nach der Erteilung des Zahlungsauftrags', agb)

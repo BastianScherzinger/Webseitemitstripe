@@ -29,11 +29,11 @@ Zahlungsarten nur, was angeboten wird: PayPal immer, Überweisung nur mit BANK_I
 <h2 id="agb-4">§ 4 Zahlung</h2>
 <p>(1) Wir akzeptieren folgende Zahlungsarten: PayPal{% if ueberweisung_moeglich %} und Vorkasse per Überweisung{% endif %}.</p>
 <p>(2) <strong>PayPal:</strong> Die Zahlung wickelt der Zahlungsdienst PayPal (Europe) S.à r.l. et Cie, S.C.A., Luxemburg, ab. Du gibst die Zahlung in deinem PayPal-Konto bzw. im Bezahlfenster von PayPal frei; es gelten zusätzlich die Bedingungen von PayPal. Der Betrag wird mit Vertragsschluss eingezogen.</p>
-{% if ueberweisung_moeglich %}<p>(3) <strong>Vorkasse per Überweisung:</strong> Der Kaufpreis ist mit Vertragsschluss fällig. Bitte überweise ihn innerhalb von 7 Tagen unter Angabe des Verwendungszwecks aus der E-Mail. Bis dahin halten wir das Stück für dich zurück. Versendet wird nach Zahlungseingang.</p>{% endif %}
+{% if ueberweisung_moeglich %}<p>(3) <strong>Vorkasse per Überweisung:</strong> Der Kaufpreis ist mit Vertragsschluss fällig. Bitte überweise ihn innerhalb von 7 Tagen unter Angabe des Verwendungszwecks aus der E-Mail. Bis dahin halten wir das Stück für dich zurück; versendet wird nach Zahlungseingang. Geht die Zahlung nicht innerhalb dieser Frist ein, erinnern wir dich per E-Mail und setzen eine Nachfrist von 7 Tagen; nach deren Ablauf können wir vom Vertrag zurücktreten, und das Stück ist wieder frei.</p>{% endif %}
 
 <h2 id="agb-5">§ 5 Lieferung</h2>
 <p>(1) Wir liefern nur an Lieferanschriften in Deutschland. Ins Ausland wird nicht geliefert.</p>
-<p>(2) Versendet wird als Paket mit einem Versanddienstleister. Wir übergeben das Paket in der Regel innerhalb von 1–2 Werktagen{% if ueberweisung_moeglich %} nach Zahlungseingang (bei PayPal nach Vertragsschluss){% else %} nach Vertragsschluss{% endif %} an den Versanddienstleister; hinzu kommt dessen Laufzeit.</p>
+<p>(2) Versendet wird als Paket mit einem Versanddienstleister. Die Lieferung erfolgt innerhalb von {{ lieferfrist }} Werktagen. Die Frist beginnt bei Zahlung mit PayPal am Tag nach dem Vertragsschluss{% if ueberweisung_moeglich %}, bei Vorkasse am Tag nach der Erteilung des Zahlungsauftrags an das überweisende Kreditinstitut{% endif %}. Fällt das Fristende auf einen Samstag, Sonntag oder gesetzlichen Feiertag am Lieferort, endet die Frist am nächsten Werktag.</p>
 <p>(3) Auf Wunsch ist statt des Versands eine persönliche Übergabe in {{ anbieterin.ort }} nach vorheriger Absprache möglich; der Preis ändert sich dadurch nicht.</p>
 
 <h2 id="agb-6">§ 6 Eigentumsvorbehalt</h2>

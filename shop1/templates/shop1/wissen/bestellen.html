@@ -96,7 +96,7 @@
       "name": "Wie lange dauert der Versand?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Bestellungen werden in der Regel innerhalb von 1-2 Werktagen nach Zahlungseingang versendet. Geliefert wird nur innerhalb Deutschlands. Einen Laden, in dem man ein Stück abholen oder anprobieren könnte, gibt es nicht: Luviq Universe ist ein reiner Online-Shop mit Sitz in Lübeck."
+        "text": "Geliefert wird innerhalb von {{ lieferfrist }} Werktagen, nur innerhalb Deutschlands; die Frist beginnt bei PayPal am Tag nach Vertragsschluss, bei Vorkasse am Tag nach dem Überweisungsauftrag. Einen Laden, in dem man ein Stück abholen oder anprobieren könnte, gibt es nicht: Luviq Universe ist ein reiner Online-Shop mit Sitz in Lübeck."
       }
     },
     {
@@ -132,7 +132,7 @@
     <header class="lv-wissen-kopf">
         <h1 class="lv-serif">Wie bestelle und bezahle ich bei Luviq Universe?</h1>
         <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
-        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Eine Bestellung bei Luviq Universe aus Lübeck läuft in fünf Schritten: ein Stück auf seiner Detailseite aussuchen, anmelden oder registrieren, es in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und zwischen PayPal und Vorab-Überweisung wählen. Ein Konto ist dafür nötig – ohne Anmeldung führt die Detailseite zuerst zur Anmeldung. {% if verkauf_aktiv %}Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}; versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.</p>
+        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Eine Bestellung bei Luviq Universe aus Lübeck läuft in fünf Schritten: ein Stück auf seiner Detailseite aussuchen, anmelden oder registrieren, es in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und zwischen PayPal und Vorab-Überweisung wählen. Ein Konto ist dafür nötig – ohne Anmeldung führt die Detailseite zuerst zur Anmeldung. {% if verkauf_aktiv %}Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}; geliefert wird deutschlandweit innerhalb von {{ lieferfrist }} Werktagen.</p>
     </header>
 
     <div class="lv-wissen-liste">
@@ -202,7 +202,7 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Wie lange dauert der Versand?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Bestellungen werden in der Regel innerhalb von 1-2 Werktagen nach Zahlungseingang versendet. Geliefert wird nur innerhalb Deutschlands. Einen Laden, in dem man ein Stück abholen oder anprobieren könnte, gibt es nicht: Luviq Universe ist ein reiner Online-Shop mit Sitz in Lübeck.</p>
+                <p class="lv-wissen-erst">Geliefert wird innerhalb von {{ lieferfrist }} Werktagen, nur innerhalb Deutschlands; die Frist beginnt bei PayPal am Tag nach Vertragsschluss, bei Vorkasse am Tag nach dem Überweisungsauftrag. Einen Laden, in dem man ein Stück abholen oder anprobieren könnte, gibt es nicht: Luviq Universe ist ein reiner Online-Shop mit Sitz in Lübeck.</p>
                 <p>Woher Luviq kommt und wo die Stücke heute entstehen, steht unter <a href="{% url 'liefergebiet' %}">Liefergebiet</a>. Der Bestellvorgang schlägt auf den Warenwert keinen Versandbetrag auf: Der Gesamtbetrag ist die Summe der Artikelpreise, {% if verkauf_aktiv %}abzüglich eines eventuellen Rabatts.{% else %}ohne weitere Abzüge.{% endif %}</p>
             
             </div>

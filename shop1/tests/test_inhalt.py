@@ -320,7 +320,9 @@ class AngabenTest(LuviqTestCase):
         for pfad in ('/kontakt/', '/liefergebiet/'):
             with self.subTest(pfad=pfad):
                 text = sichtbarer_text(self.hole(pfad).content.decode())
-                self.assertIn('1-2 Werktagen versendet', text)
+                # Seit der Gegenprüfung 30.10.2026 (M1): verbindliche Lieferfrist statt „in der Regel“.
+                self.assertIn('Geliefert wird innerhalb von 5 Werktagen', text)
+                self.assertNotRegex(text, r'in der Regel[^.]{0,40}Werktag')
                 self.assertNotIn('1-3 Werktagen', text)
                 self.assertNotIn('Hessens', text)
 

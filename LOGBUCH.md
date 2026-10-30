@@ -10,6 +10,14 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 30.10.2026 — Nachzug Gegenprüfung: Lieferfrist, Kauftexte, Materialangabe (Zweig `recht/2026-10-30-luviq-verkaufsstart`, nicht gepusht)
+
+- **M1 Lieferfrist:** verbindlich „Lieferung innerhalb von 5 Werktagen“ (PayPal ab dem Tag nach Vertragsschluss, Vorkasse ab dem Tag nach dem Überweisungsauftrag), zentral `luviq_daten.VERSAND['lieferfrist_werktage']` (Kontext `lieferfrist`, `liefer_satz`), überall statt „in der Regel 1-2 Werktage“; Schema `transitTime` 1–3 zur Bearbeitung 1–2. **Warum:** Art. 246a § 1 Abs. 1 Nr. 10 EGBGB verlangt einen Liefertermin, „in der Regel“ ist als AGB-Klausel unzulässig (§ 308 Nr. 1 BGB). Zahl: Entscheidung der Leitung, änderbar an der einen Stelle.
+- **M2 Kauftexte:** Stückseite und Übersicht nennen § 8/§ 6/§ 7/§ 10 statt alter Paragraphen, kein „sind kein Mangel“ mehr, Rücksendekosten wie Belehrung, „gebraucht oder neu“. **Warum:** Widerspruch zu den neuen AGB, pauschaler Mangelausschluss unzulässig (§ 476 Abs. 1 BGB).
+- **M3 Material:** `Produkt.pflichtangaben_fehlen` – neues Stück ohne `material` ist nicht kaufbar (Stückseite, Warenkorb, Kasse); Material steht in Kasse und Bestellmail. Engel-Shirt „100 % Baumwolle“ per Migration 0033 (nur wenn leer), `luviq_engel_anlegen` trägt nach. **Warum:** Faserangabe vor dem Kauf (VO (EU) 1007/2011 Art. 16).
+- **K1:** AGB § 4 Abs. 3 regelt Vorkasse ohne Zahlung (Erinnerung, Nachfrist 7 Tage, Rücktritt; Freigabe per Storno im Admin). **K12:** Upcycling-Seite weicher.
+- **Tests:** `test_widerruf.GegenpruefungTest` (6), angepasst `test_inhalt` (Lieferzeit), `test_runde3` (`transitTime`).
+
 ## 30.10.2026 — Rechtstexte, Widerrufsfunktion und Bestellweg für den Verkaufsstart (Zweig `recht/2026-10-30-luviq-verkaufsstart`, nicht gepusht)
 
 - **Rechtstexte (`2ada6ba`):** Widerrufsbelehrung nach dem Muster ab 19.06.2026 (Anlage 1 EGBGB mit Satz zur Online-Funktion) + Muster-Formular, AGB §§ 1–14, Datenschutzerklärung in 12 Abschnitten, VSBG-Satz im Impressum. **Warum:** Bastian: „mach die Widerrufsbelehrung komplett … rechtlich prüfen“; Agenturregel seit 30.10.: Claude schreibt selbst, belegt jede Aussage, Gegenprüfung. Entscheidungen: Rücksendekosten trägt die Kundin (§ 357 Abs. 5 BGB), keine Telefonnummer (gibt es nicht), Gewährleistung 2 Jahre unverkürzt (§ 476 Abs. 2 BGB), kein OS-Link (Plattform abgeschafft). Belege Klausel für Klausel: `Webagentur Scherzinger\Analysen\luviq-2026-10-30-recht\BERICHT.md`.

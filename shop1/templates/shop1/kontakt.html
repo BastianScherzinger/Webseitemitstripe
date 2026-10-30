@@ -54,7 +54,7 @@
           "name": "{% if verkauf_aktiv %}Wie lange dauert die Lieferung?{% else %}Kann ich schon bestellen?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Versendet wird deutschlandweit, der Versand innerhalb Deutschlands ist im Preis enthalten.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten als Referenz und nicht zu kaufen; Fragen dazu gehen über dieses Formular.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Geliefert wird innerhalb von {{ lieferfrist }} Werktagen, nur innerhalb Deutschlands; der Versand ist im Preis enthalten.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten als Referenz und nicht zu kaufen; Fragen dazu gehen über dieses Formular.{% endif %}"
           }
         },
         {
@@ -178,7 +178,7 @@
         <div class="lv-faq">
             <div>
                 <h3>{% if verkauf_aktiv %}Wie lange dauert die Lieferung?{% else %}Kann ich schon bestellen?{% endif %}</h3>
-                <p>{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Versendet wird deutschlandweit, der Versand innerhalb Deutschlands ist im Preis enthalten.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten als Referenz und nicht zu kaufen; Fragen dazu gehen über dieses Formular.{% endif %}</p>
+                <p>{% if verkauf_aktiv %}Geliefert wird innerhalb von {{ lieferfrist }} Werktagen, nur innerhalb Deutschlands; der Versand ist im Preis enthalten.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten als Referenz und nicht zu kaufen; Fragen dazu gehen über dieses Formular.{% endif %}</p>
             </div>
             <div>
                 <h3>{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h3>

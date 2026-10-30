@@ -51,7 +51,7 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
           "name": "{% if verkauf_aktiv %}Wie schnell kommt eine Bestellung an?{% else %}Kann ich schon bestellen?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von {{ versand.werktage }} Werktagen versendet, deutschlandweit – nach Lübeck, Kiel und Alsfeld genauso wie überallhin.{% else %}Noch nicht.{% if shop_oeffnet %} {{ shop_oeffnet }}{% endif %} Wer nichts verpassen will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Geliefert wird innerhalb von {{ lieferfrist }} Werktagen, deutschlandweit – nach Lübeck, Kiel und Alsfeld genauso wie überallhin.{% else %}Noch nicht.{% if shop_oeffnet %} {{ shop_oeffnet }}{% endif %} Wer nichts verpassen will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}"
           }
         },{% if verkauf_aktiv %}
         {
@@ -97,13 +97,13 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
     <section class="lv-seitenkopf" aria-labelledby="versand-titel">
         <p class="lv-nr">Versand &amp; Abholung</p>
         <h1 class="lv-serif lv-satz" id="versand-titel">Versand nach ganz Deutschland{% if abholung.text %}, Übergabe in Lübeck{% endif %}</h1>
-        <p class="lv-lead">Luviq verschickt handbemalte Unikate nach {{ versand.gebiet }}{% if verkauf_aktiv %}, in der Regel innerhalb von {{ versand.werktage }} Werktagen{% endif %}.{% if abholung.text %} In Lübeck ist die persönliche Übergabe nach Absprache möglich.{% endif %} Die ersten Stücke, Nº 001 bis 005, sind noch in Alsfeld entstanden, heute malt Luisa Brehler in Lübeck.</p>
+        <p class="lv-lead">Luviq verschickt handbemalte Unikate nach {{ versand.gebiet }}{% if verkauf_aktiv %}, Lieferung innerhalb von {{ lieferfrist }} Werktagen{% endif %}.{% if abholung.text %} In Lübeck ist die persönliche Übergabe nach Absprache möglich.{% endif %} Die ersten Stücke, Nº 001 bis 005, sind noch in Alsfeld entstanden, heute malt Luisa Brehler in Lübeck.</p>
     </section>
 
     <section class="lv-abschnitt" aria-labelledby="versand-ganz-deutschland">
         <h2 class="lv-serif lv-abschnittstitel" id="versand-ganz-deutschland">Versand nach ganz Deutschland</h2>
         <div class="lv-prosa">
-            {% if verkauf_aktiv %}<p>Luviq versendet nach {{ versand.gebiet }}. Bestellungen werden in der Regel innerhalb von {{ versand.werktage }} Werktagen versendet. Der Versand innerhalb Deutschlands ist im Preis enthalten. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet. {{ umtausch_satz }} Für jede Bestellung gilt das gesetzliche Widerrufsrecht von 14 Tagen; wie Widerruf und Rücksendung ablaufen, steht unter <a href="{% url 'wissen_widerruf' %}">Widerruf und Rücksendung</a>.</p>{% else %}<p>Luviq versendet nach {{ versand.gebiet }}. Alles zu Dauer und Kosten des Versands steht mit dem Verkaufsstart hier.</p>{% endif %}
+            {% if verkauf_aktiv %}<p>Luviq versendet nach {{ versand.gebiet }}. Geliefert wird innerhalb von {{ lieferfrist }} Werktagen (AGB § 5). Der Versand innerhalb Deutschlands ist im Preis enthalten. Bezahlt wird per PayPal oder Vorab-Überweisung, alle Preise sind Endpreise – nach § 19 UStG wird keine Umsatzsteuer berechnet. {{ umtausch_satz }} Für jede Bestellung gilt das gesetzliche Widerrufsrecht von 14 Tagen; wie Widerruf und Rücksendung ablaufen, steht unter <a href="{% url 'wissen_widerruf' %}">Widerruf und Rücksendung</a>.</p>{% else %}<p>Luviq versendet nach {{ versand.gebiet }}. Alles zu Dauer und Kosten des Versands steht mit dem Verkaufsstart hier.</p>{% endif %}
             <p>Die <a href="{% url 'produkte' %}">handbemalten Unikate im Archiv</a> sind alle Einzelstücke{% if motivanfrage_aktiv %}; wer lieber <a href="{% url 'motiv_anfragen' %}">sein eigenes Teil bemalen lassen</a> möchte, fragt es an. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv{% endif %}.</p>
         </div>
     </section>
@@ -140,7 +140,7 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
             </div>
             <div>
                 <h3>{% if verkauf_aktiv %}Wie schnell kommt eine Bestellung an?{% else %}Kann ich schon bestellen?{% endif %}</h3>
-                <p>{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von {{ versand.werktage }} Werktagen versendet, deutschlandweit – nach Lübeck, Kiel und Alsfeld genauso wie überallhin.{% else %}Noch nicht.{% if shop_oeffnet %} {{ shop_oeffnet }}{% endif %} Wer nichts verpassen will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}</p>
+                <p>{% if verkauf_aktiv %}Geliefert wird innerhalb von {{ lieferfrist }} Werktagen, deutschlandweit – nach Lübeck, Kiel und Alsfeld genauso wie überallhin.{% else %}Noch nicht.{% if shop_oeffnet %} {{ shop_oeffnet }}{% endif %} Wer nichts verpassen will, trägt sich auf der Startseite in die Warteliste ein.{% endif %}</p>
             </div>
             {% if verkauf_aktiv %}
             <div>

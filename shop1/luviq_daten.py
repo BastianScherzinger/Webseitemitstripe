@@ -321,13 +321,23 @@ SCHRITTE = [
 
 # ── Versand, Übergabe, Herkunft (Paket P1, 29.10.2026) ───────────────────────
 
-#: Versand. ``werktage`` steht so in den AGB (``legal/agb.html``, § 4: „Nach
-#: Zahlungseingang wird in der Regel innerhalb von 1-2 Werktagen versendet“) und
-#: wird nur mit Verkauf gezeigt. ``kosten``: Versand innerhalb Deutschlands ist im
+#: Versand. ``lieferfrist_werktage`` ist die **verbindliche Lieferfrist** aus AGB § 5 Abs. 2
+#: (Art. 246a § 1 Abs. 1 Nr. 10 EGBGB: Termin, bis zu dem geliefert wird; kein „in der
+#: Regel“, § 308 Nr. 1 BGB). Entscheidung der Leitung 30.10.2026 nach der Gegenprüfung
+#: (M1), Bastian und Luisa können die Zahl ändern – sie wirkt überall, wo Lieferzeit steht
+#: (AGB, Kasse, Mails, Stück-, Kontakt-, Versand- und Wissensseiten, Schema, llms.txt).
+#: Fristbeginn: PayPal am Tag nach Vertragsschluss, Vorkasse am Tag nach dem
+#: Überweisungsauftrag. ``werktage`` ist nur noch die interne Bearbeitungszeit bis zur
+#: Übergabe an den Versanddienst (Schema ``handlingTime``), kein Text für Kundinnen.
+#: Alles wird nur mit Verkauf gezeigt. ``kosten``: Versand innerhalb Deutschlands ist im
 #: Preis enthalten (Bastian 30.10.2026: „Versandkosten sind inklusive“) – 0 Euro,
 #: der Bestellweg berechnet keine Versandkosten. Ein Versanddienstleister ist nicht
 #: festgelegt, keine Seite nennt einen. ``ausland=False``: nur innerhalb Deutschlands.
-VERSAND = {'gebiet': 'ganz Deutschland', 'ausland': False, 'werktage': '1-2', 'kosten': 0}
+VERSAND = {'gebiet': 'ganz Deutschland', 'ausland': False, 'werktage': '1-2', 'kosten': 0,
+           'lieferfrist_werktage': 5}
+
+#: Der eine Satz zur Lieferzeit für alle Kurztexte (Kasse, Stückseite, llms.txt).
+LIEFER_SATZ = f"Lieferung innerhalb von {VERSAND['lieferfrist_werktage']} Werktagen, nur innerhalb Deutschlands"
 
 #: Die Preisangabe zum Versand, direkt am Preis (nur mit Verkauf sichtbar).
 VERSAND_PREISSATZ = 'inkl. Versand innerhalb Deutschlands'

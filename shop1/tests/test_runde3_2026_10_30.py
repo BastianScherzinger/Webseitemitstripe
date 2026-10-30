@@ -180,7 +180,9 @@ class VersandUndRueckgabeTest(_MitEngel):
         self.assertEqual(versand['shippingDestination']['addressCountry'], 'DE')
         zeit = versand['deliveryTime']['handlingTime']
         self.assertEqual((zeit['minValue'], zeit['maxValue'], zeit['unitCode']), (1, 2, 'DAY'))
-        self.assertNotIn('transitTime', versand['deliveryTime'])  # nicht belegt
+        # Seit der Gegenprüfung (M1, 30.10.2026) gilt eine verbindliche Lieferfrist von 5 Werktagen:
+        # Laufzeit = Frist minus Bearbeitung (höchstens 3 Tage).
+        self.assertEqual(versand['deliveryTime']['transitTime']['maxValue'], 3)
         # Produktübersicht: dieselben Angaben je Offer.
         uebersicht = _knoten(self.hole('/produkte/').content.decode())
         for k in uebersicht:

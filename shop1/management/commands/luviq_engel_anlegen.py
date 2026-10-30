@@ -26,9 +26,15 @@ class Command(BaseCommand):
             vorhanden = Produkt.objects.filter(slug=d['slug']).first()
             if vorhanden:
                 # Nur leere Felder nachtragen (Zustand „Neu“, Bastian 30.10.2026) – Luisas Werte bleiben.
+                nachtrag = {}
                 if not vorhanden.zustand and d['zustand']:
-                    Produkt.objects.filter(pk=vorhanden.pk).update(zustand=d['zustand'])
-                    self.stdout.write('Engel-Shirt: Zustand nachgetragen.')
+                    nachtrag['zustand'] = d['zustand']
+                if not (vorhanden.material or '').strip() and d['material']:
+                    # Gegenprüfung M3: Faserzusammensetzung bei neuer Ware vor dem Kauf.
+                    nachtrag['material'] = d['material']
+                if nachtrag:
+                    Produkt.objects.filter(pk=vorhanden.pk).update(**nachtrag)
+                    self.stdout.write(f'Engel-Shirt: {", ".join(nachtrag)} nachgetragen.')
                 else:
                     self.stdout.write('Engel-Shirt ist schon vorhanden, nichts geändert.')
                 return

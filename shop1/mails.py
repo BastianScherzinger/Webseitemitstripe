@@ -31,7 +31,7 @@ from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
 from django.utils.html import escape
 
-from .luviq_daten import ANBIETERIN
+from .luviq_daten import ANBIETERIN, VERSAND
 from .utils import send_brevo_email
 
 _log = logging.getLogger('shop1')
@@ -266,12 +266,12 @@ def vertragsunterlagen(order):
         produkt = item.produkt()
         posten.append({
             'menge': item.menge, 'produkt_name': item.produkt_name,
-            'zustand_text': (produkt.zustand or '').strip() if produkt else '',
+            'zustand_text': ', '.join(x for x in ((produkt.zustand or '').strip(), (produkt.material or '').strip()) if x) if produkt else '',
             'summe': f'{float(item.produkt_preis) * item.menge:.2f}',
         })
     html = rendern(
         '_vertragsunterlagen.html', order=order, posten=posten, anbieterin=ANBIETERIN,
-        rechts_basis=live_url(), ueberweisung_moeglich=bool(os.getenv('BANK_IBAN', '').strip()),
+        rechts_basis=live_url(), lieferfrist=VERSAND['lieferfrist_werktage'], ueberweisung_moeglich=bool(os.getenv('BANK_IBAN', '').strip()),
         bestellt_am=timezone.localtime(order.erstellt_am).strftime('%d.%m.%Y, %H:%M Uhr') if order.erstellt_am else '',
         gesamt=f'{float(order.gesamt_betrag):.2f}', rabatt=f'{float(order.rabatt_betrag or 0):.2f}')
     return html, _klartext(html)

@@ -9,7 +9,7 @@ Nur Inline-Styles; Überschriften der Rechtstexte erben die Schrift der Mail.
 {% for p in posten %}<p style="margin:0 0 4px;">{{ p.menge }}× {{ p.produkt_name }}{% if p.zustand_text %} – {{ p.zustand_text }}{% endif %}: {{ p.summe }} €</p>
 {% endfor %}{% if order.rabatt_betrag %}<p style="margin:0 0 4px;">Willkommensrabatt: −{{ rabatt }} €</p>{% endif %}
 <p style="margin:0 0 4px;"><strong>Gesamtpreis: {{ gesamt }} €</strong> inkl. Versand innerhalb Deutschlands. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</p>
-<p style="margin:0 0 4px;">Zahlungsart: {% if order.payment_method == 'bank_transfer' %}Vorkasse per Überweisung{% else %}PayPal{% endif %} · Lieferung nach Deutschland, Übergabe an den Versanddienstleister in der Regel innerhalb von 1–2 Werktagen {% if order.payment_method == 'bank_transfer' %}nach Zahlungseingang{% else %}nach Vertragsschluss{% endif %}.</p>
+<p style="margin:0 0 4px;">Zahlungsart: {% if order.payment_method == 'bank_transfer' %}Vorkasse per Überweisung{% else %}PayPal{% endif %} · Lieferung nach Deutschland innerhalb von {{ lieferfrist }} Werktagen {% if order.payment_method == 'bank_transfer' %}ab dem Tag nach deinem Überweisungsauftrag{% else %}ab dem Tag nach Vertragsschluss{% endif %}.</p>
 <p style="margin:0;">Lieferanschrift: {{ order.vorname }} {{ order.nachname }}, {{ order.adresse }}, {{ order.postleitzahl }} {{ order.stadt }}, {{ order.land }}</p>
 </div>
 <p style="margin:22px 0 0;font-size:14px;">Du kannst diesen Vertrag innerhalb von 14 Tagen nach Erhalt der Ware widerrufen – auch online: <a href="{{ rechts_basis }}{% url 'vertrag_widerrufen' %}" class="lv-link" style="color:#8A4A22;font-weight:600;">Vertrag widerrufen</a></p>

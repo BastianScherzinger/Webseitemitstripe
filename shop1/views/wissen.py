@@ -165,8 +165,8 @@ WISSEN_BEITRAEGE = {
         'url_name': 'wissen_widerruf',
         'template': 'shop1/wissen/widerruf.html',
         'titel': 'Widerruf und Rücksendung: was gilt bei einem Einzelstück?',
-        'kurz': 'Vierzehn Tage Widerrufsrecht nach § 5 der AGB, Anschrift für die '
-                'Rücksendung, Unregelmäßigkeiten der Bemalung und echte Mängel.',
+        'kurz': 'Vierzehn Tage Widerrufsrecht, Online-Widerruf über „Vertrag widerrufen“, '
+                'Rücksendekosten, Unregelmäßigkeiten der Bemalung und echte Mängel.',
         'freigegeben': True,
         # Beschreibt den Kaufweg: ohne Verkauf (VERKAUF_AKTIV aus) noindex
         # und nicht in Sitemap, llms.txt und Feed, siehe _sichtbar().

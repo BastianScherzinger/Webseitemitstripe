@@ -37,8 +37,8 @@ SEITEN_STAND = {
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
     'wissen':           '2026-10-30',
     'wissen_pflege':    '2026-10-30',
-    'wissen_upcycling': '2026-10-29',
-    'wissen_groesse':   '2026-10-23',
+    'wissen_upcycling': '2026-10-30',
+    'wissen_groesse':   '2026-10-30',
     'wissen_motiv':     '2026-10-23',  # Entwurf, noindex
     # Ratgeber (30.10.2026, C8), seit Runde 3 veröffentlicht; ISO 8601 mit Uhrzeit und Zone:
     'wissen_bleach':      '2026-10-30T14:15:00+01:00',  # veröffentlicht, Runde 3

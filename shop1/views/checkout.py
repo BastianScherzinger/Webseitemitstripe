@@ -212,6 +212,9 @@ def _verfuegbarkeit(posten, ausser=None):
         if produkt is None or not produkt.aktiv or produkt.vergeben:
             probleme.append(f'"{item.produkt_name}" ist nicht mehr verfügbar.')
             continue
+        if produkt.pflichtangaben_fehlen:  # Gegenprüfung M3: Material bei neuen Textilien
+            probleme.append(f'"{item.produkt_name}" ist gerade nicht bestellbar.')
+            continue
         frei = max(0, produkt.lagerbestand - reserviert(produkt, ausser))
         if frei < item.menge:
             if frei == 0 and produkt.lagerbestand > 0:
@@ -271,6 +274,9 @@ def checkout(request):
     for item in posten:
         produkt = item.produkt()
         item.zustand_text = (produkt.zustand or '').strip() if produkt else ''
+        # Gegenprüfung M3: Faserzusammensetzung steht vor dem Knopf mit in der Zeile.
+        if produkt and (produkt.material or '').strip():
+            item.zustand_text = ', '.join(x for x in (item.zustand_text, produkt.material.strip()) if x)
 
     if request.method == 'POST':
         return _bestellung_absenden(request, cart, posten, betraege)
