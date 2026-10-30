@@ -94,15 +94,6 @@
           "priceRange": "€€",
           "currenciesAccepted": "EUR",
           "paymentAccepted": "PayPal, Banküberweisung",
-          "hasOfferCatalog": {
-            "@type": "OfferCatalog",
-            "name": "Handbemalte Vintage & Second Hand Mode",
-            "itemListElement": [
-              {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Handbemalte Vintage-Jacken"}},
-              {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Handbemalte Vintage-Hoodies"}},
-              {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "1-of-1 Upcycling-Unikate"}}
-            ]
-          },
 {% endif %}
           "sameAs": [{% for url in profile_urls %}
             "{{ url }}"{% if not forloop.last %},{% endif %}{% endfor %}
@@ -138,7 +129,10 @@
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa",
           "name": "Luisa Brehler",
           "jobTitle": "Gründerin & Creative Director",
-          "worksFor": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
+          "worksFor": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
+          "sameAs": [{% for url in profile_person_urls %}
+            "{{ url }}"{% if not forloop.last %},{% endif %}{% endfor %}
+          ]
         },
         {
           {% comment %}name und dateModified kommen aus dem gepflegten Register shop1/seiten_stand.py (ueber den Kontextprozessor als "seite"). Dasselbe Register speist das lastmod der Sitemap - beide koennen so nicht auseinanderlaufen. Auf Seiten ohne Registereintrag (Produkt, Konto) fehlen die beiden Angaben, statt erfunden zu werden.{% endcomment %}

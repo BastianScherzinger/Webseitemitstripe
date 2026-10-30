@@ -150,7 +150,7 @@ def luviq(request):
     if request.path.startswith(('/shop-admin/', '/admin/', '/static/', '/media/')):
         from . import luviq_daten
         return {'motivanfrage_aktiv': settings.MOTIVANFRAGE_AKTIV, 'profile_urls': luviq_daten.PROFILE,
-                **_rahmen()}
+                'profile_person_urls': luviq_daten.PROFILE_PERSON, **_rahmen()}
     from . import luviq_daten
     try:
         drop = luviq_daten.drop_kontext()
@@ -164,6 +164,7 @@ def luviq(request):
         'instagram_name': luviq_daten.INSTAGRAM_NAME,
         # sameAs des Schemas: nur belegte Profile, eine Quelle (luviq_daten.PROFILE).
         'profile_urls': luviq_daten.PROFILE,
+        'profile_person_urls': luviq_daten.PROFILE_PERSON,
         # Luisas Erfahrungswert „2 bis 5 Tage“ (nie als Zusage): jede Seite, die ihn
         # nennt, liest ihn von hier, nicht aus eigener Abschrift.
         'dauer': luviq_daten.DAUER,

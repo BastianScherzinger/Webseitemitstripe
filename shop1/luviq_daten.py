@@ -73,8 +73,22 @@ TIKTOK = 'https://www.tiktok.com/@luviq.archive'
 #: Profiladresse 0xc0e5d5a554eadc30).
 GOOGLE_PROFIL = 'https://www.google.com/maps?cid=13899750731019902000'
 
+#: Pinterest-Unternehmenskonto (Website bestätigt) und ProvenExpert-Profil der Marke
+#: (beide am 30.10.2026 abgerufen, 200). Die Adresse ``/luviq-luebeck/`` bei
+#: ProvenExpert liefert 410, richtig ist ``/de-de/luviq/``.
+PINTEREST = 'https://www.pinterest.com/luviqarchive/'
+PROVENEXPERT = 'https://www.provenexpert.com/de-de/luviq/'
+
+#: Luisas persönliche Profile (Facebook, LinkedIn): gehören an den Personenknoten,
+#: nicht an die Marke (Analyse 30.10.2026, C5).
+FACEBOOK_LUISA = 'https://www.facebook.com/profile.php?id=61595684296277'
+LINKEDIN_LUISA = 'https://www.linkedin.com/in/luisa-brehler-89a050448'
+
 #: Belegte Profiladressen für ``sameAs`` (Schema) und ``llms.txt``.
-PROFILE = (INSTAGRAM, TIKTOK, GOOGLE_PROFIL)
+PROFILE = (INSTAGRAM, TIKTOK, GOOGLE_PROFIL, PINTEREST, PROVENEXPERT)
+
+#: ``sameAs`` des Personenknotens Luisa Brehler.
+PROFILE_PERSON = (FACEBOOK_LUISA, LINKEDIN_LUISA)
 
 #: Pflegehinweis (GPSR-Angabe im Online-Angebot), wortgleich aus Luisas
 #: Antwort in ``FAQ_MOTIV`` unten – kein neuer Satz, keine neue Zusage.
