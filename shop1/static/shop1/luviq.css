@@ -230,7 +230,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-entstehung{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--lv-raum-5)}
 .lv-entstehung li{display:grid;gap:var(--lv-raum-2);align-content:start;padding-top:var(--lv-raum-4);border-top:1px solid var(--lv-linie-2)}
 .lv-entstehung h3{font-size:max(24px,calc(var(--u)*2.2))}
-.lv-entstehung p:last-child{color:var(--lv-leise);font-size:15px;line-height:1.5}
+.lv-entstehung p:last-child{color:var(--lv-leise);font-size:16px;line-height:1.5}
 
 /* Archiv */
 .lv-raster{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--lv-raum-6) var(--lv-raum-5);list-style:none;padding:0}
@@ -322,7 +322,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-fuss-gruppe ul{list-style:none;margin:0;padding:0;display:grid}
 .lv-fuss-gruppe a{min-height:36px;display:inline-flex;align-items:center;font-size:15px;color:var(--lv-text)}
 .lv-fuss-gruppe a:hover{color:var(--lv-marke)}
-.lv-recht{display:flex;justify-content:space-between;gap:calc(var(--u)*2);padding-top:var(--lv-raum-5);border-top:1px solid var(--lv-linie);font-size:13px;color:var(--lv-leise);margin:0}
+.lv-recht{display:flex;justify-content:space-between;gap:calc(var(--u)*2);padding-top:var(--lv-raum-5);border-top:1px solid var(--lv-linie);font-size:14px;color:var(--lv-leise);margin:0}
 .lv-recht a{text-decoration:underline;text-underline-offset:.2em}
 .lv-leiste{display:none}
 .lv-leiste{transition:transform 200ms ease}
@@ -484,12 +484,12 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-feldzeile{max-width:none}
   .lv-feldzeile input{padding:12px}
   .lv-feldzeile button{font-size:14px;padding:0 14px;min-height:48px}
-  .lv-klein{font-size:12px}
+  .lv-klein{font-size:14px}
   .lv-anfragen{grid-template-columns:minmax(0,1fr);padding:44px var(--rand);gap:24px}
   .lv-anfragen h2{font-size:34px}
   .lv .lv-ablauf{margin-top:18px}
   .lv-ablauf li{grid-template-columns:32px minmax(0,1fr);padding:10px 0}
-  .lv-ablauf span{font-size:13.5px}
+  .lv-ablauf span{font-size:15px}
   .lv-anfragekasten{padding:16px;gap:12px}
   .lv-chip{font-size:14px;padding:8px 12px}
   .lv-abschnitt{padding:44px var(--rand)}
@@ -510,7 +510,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-luisa-text{font-size:16px;gap:12px}
   .lv-warteliste{grid-template-columns:minmax(0,1fr);padding:var(--lv-abschnitt) var(--rand);gap:var(--lv-raum-5)}
   .lv-warteliste h2{font-size:30px}
-  .lv-warteliste .lv-klein{font-size:13px}
+  .lv-warteliste .lv-klein{font-size:14px}
   .lv-fuss{padding:var(--lv-raum-6) var(--rand) var(--lv-raum-5);gap:var(--lv-raum-5)}
   .lv-fuss-oben{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--lv-raum-5) var(--lv-raum-4)}
   .lv-fuss-marke,.lv-fuss-oben>.lv-fuss-gruppe:last-child{grid-column:1/-1}
@@ -536,7 +536,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-galerie{position:static}
   .lv-galerie-rahmen{width:calc(100% + 2*var(--rand));margin-inline:calc(var(--rand)*-1)}
   .lv-stueck-text>p.lv-technik{font-size:18px}
-  .lv-brotkrume{padding-top:16px;font-size:12px}
+  .lv-brotkrume{padding-top:16px;font-size:14px}
+  .lv-brotkrume a{display:inline-block;padding:14px 6px;margin:-14px -6px}
   .lv-nr,.lv-daten dt{font-size:12px}
   .lv-formular legend .lv-nr,.lv-feld .lv-nr{font-size:12px}
   /* Kleinstes Tailwind-Maß der Altseiten (Kontakt, Gästebuch) ebenfalls auf 12 px (BF27). */
@@ -561,7 +562,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-echt-mehr::-webkit-scrollbar{display:none}
   .lv-echt-mehr figure{flex:0 0 88%;scroll-snap-align:start}
   .lv-hero-bild{aspect-ratio:1/1}
-  .lv .lv-hero-text .lv-lead{font-size:15px;line-height:1.45}
+  .lv .lv-hero-text .lv-lead{font-size:16px;line-height:1.45}
   .lv .lv-hero-knoepfe .lv-knopf{min-height:48px}
   .lv-hero-bild img{object-position:50% 12%}
   .lv-hero-bild::after{background:linear-gradient(180deg,rgba(43,42,40,0) 55%,var(--lv-wand) 100%)}
@@ -636,13 +637,14 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-wissen-kopf{gap:14px;padding:28px var(--rand) 32px}
   .lv-wissen-kopf h1{font-size:38px}
   .lv-wissen-lead{font-size:17px}
-  .lv-wissen-lead.lv-wissen-leise{font-size:15px}
+  .lv-wissen-lead.lv-wissen-leise{font-size:16px}
+  .lv-wissen-antwort>summary{display:flex;align-items:center;min-height:44px}
   .lv-wissen-frage{grid-template-columns:minmax(0,1fr);gap:14px;padding:26px var(--rand) 30px}
   .lv-wissen-frage h2{font-size:26px;max-width:none}
   .lv-wissen-antwort .lv-wissen-erst{font-size:16px}
   .lv-wissen-beitraege li{grid-template-columns:32px minmax(0,1fr) auto;padding:16px 0}
   .lv-wissen-beitraege h3{font-size:24px}
-  .lv-wissen-beitraege p{font-size:14px}
+  .lv-wissen-beitraege p{font-size:16px}
   .lv-wissen-ende{gap:4px 24px;padding:20px var(--rand) 0}
 }
 /* ═══ Kontakt, Herkunft, Stücktext (23.10.2026) ═══ */
@@ -693,7 +695,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-seite .lv-orte-hinweis{margin-top:16px}
   .lv-abschluss{padding-top:32px;padding-bottom:48px}
   .lv-stueck-text>p.lv-stueck-lead{font-size:18px}
-  .lv-stueck-hinweis,.lv-stueck-versand{font-size:14px}
+  .lv-stueck-hinweis,.lv-stueck-versand{font-size:16px}
 }
 
 /* ── P6: Reste ── */
