@@ -31,6 +31,10 @@ Plan und Belege: `Analysen\luviq-2026-10-29\` (MASTERPLAN, NACHTPLAN-2, KUNDENPA
 - **Designwache neu erfasst (P6):** `aufbau_referenz.json` für `/`, `/produkte/`, die Referenz-Stückseite, `/kontakt/danke/`, `/gaestebuch/`, `/impressum/`, `/datenschutz/`, `/agb/`, `/login/`, `/register/`, `/password-reset/`, `/password-reset/done/`, `/reset/done/` (13 Seiten, alle bewusst umgebaut; alle anderen unverändert). Vorher jede Seite im Screen angesehen.
 - **Aufgeräumt:** Hero-Dateien `hero-dornen-*`, `hero-hoch-*`, `hero-panorama-*`, `hero-dragon*`, `ich*`, `logo-luviq.jpeg` gelöscht (nichts verweist mehr darauf). `logo-luviq-96/192.webp` bleiben, weil `_reviews_map.html` sie nennt.
 
+## Unterbau 30.10.2026 (Zweig `design/2026-10-30-luviq-unten`, nicht gepusht)
+
+Bastian: „gegen unten übersichtlicher, komische Schriftarten weg, normal direkt erkennbar, krass wie der Hero“. Unterhalb des Heros gilt **nur Schibsted Grotesk** (Überschriften fett 700, Labels Sans in Großbuchstaben); `--lv-serif` und `--lv-mono` sind Alias auf `--lv-sans`. Kursive Antiqua (Cormorant) und Mono (JetBrains) gehören nur noch dem Hero (`--lv-hero-serif`, `--lv-hero-mono`) und bleiben dort unverändert. Zweite Fläche neben Schwarz ist das Anthrazit des Heros (`--lv-wand`). Umgesetzt als eigener Block „Unterbau“ am Ende von `luviq.css`, ohne Vorlagenänderung. Belege: `Analysen\luviq-2026-10-30-unten\` (vorher/nachher, Handy 390 und PC 1440).
+
 ## Gestaltungslinie
 
 **Seit 19.09.2026: „Nachtausgabe“.**

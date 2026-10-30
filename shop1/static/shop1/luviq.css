@@ -781,3 +781,5 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-entstehung h3{font-size:20px}
   .lv-luisa blockquote p,.lv-luisa-start blockquote p{font-size:28px}
 }
+/* Hero-Eyebrow: am Handy 12 px wie vor dem Unterbau (die Hero-Regel oben hat die Mediaregel für .lv-nr überstimmt) */
+@media (max-width:1023px){.lv-hero .lv-nr{font-size:12px}}

@@ -10,6 +10,13 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 30.10.2026 — Luviq unten: eine klare Schrift, ruhigerer Unterbau (Zweig `design/2026-10-30-luviq-unten`, nicht gepusht)
+
+- **Auftrag (Bastian):** „gegen unten übersichtlicher, diese komischen Schriftarten weg, normal direkt erkennbar, krass wie der Hero“. Der Hero bleibt unverändert (Pixelvergleich Handy 390 und PC 1440: keine Abweichung).
+- **Schriften:** `--lv-serif` und `--lv-mono` zeigen jetzt auf Schibsted Grotesk (`--lv-sans`); Überschriften fett 700 mit engem Zeilenabstand, Nummern und Labels in Sans (Großbuchstaben, Sperrung), Band „Vergeben“, Stücktechnik-Zitat, Cookie-Banner-Titel und die Überschriften der Alt-Seiten ebenfalls. Cormorant kursiv und JetBrains Mono bleiben nur im Hero (`--lv-hero-serif`, `--lv-hero-mono`; Regeln `.lv-hero .lv-serif`, `.lv-hero .lv-nr`, Bildunterschrift).
+- **Aufbau (nur CSS, keine Vorlage geändert, Designwache unberührt):** Wege als zwei Kacheln unter der Überschrift, Motiv-anfragen-Fläche und Luisa-Zitat auf dem Anthrazit des Heros, Entstehung mit großen orangen Ziffern, Vertrauensleiste ohne Zählung, Karten mit klaren Namen, Einzelstück auf dem PC höchstens 420 px breit.
+- **Kritisches CSS** mit `tools/kritisches_css.py` neu erzeugt. Tests: 836 grün.
+
 ## 30.10.2026 — Luviq-Umbau P6: Abschluss (Designwache, Aufräumen, Doku) (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
 
 - **CSS-Reste:** Warenkorb-Vorschaubild 84×105 px (die Regel `.lv-seite img{width:100%}` machte es riesig); `.lv-faq`-Zeilen (Gästebuch, Warenkorb) mit ruhig gestapelter Namensspalte, Knöpfe 44 px; Kasse: Zusammenfassung zweispaltig `minmax(0,1fr) auto`, Beträge `nowrap` rechtsbündig (kein Zeilenumbruch mehr am Handy); Hero Handy: Bildunterschrift rechtsbündig 11 px, mehr Abstand zur Nummernzeile. `--lv-kachel` entfernt. Kritisches CSS neu erzeugt.
