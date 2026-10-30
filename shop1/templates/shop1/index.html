@@ -32,7 +32,7 @@ View und Kontextprozessor), kein Datum hier.
   "@type": "ItemList",
   "@id": "{{ request.scheme }}://{{ request.get_host }}/#archiv",
   "name": "{% if verkauf_aktiv %}Aktuelle Unikate – Luviq Universe Lübeck{% else %}Bisherige Unikate – Archiv von Luviq Universe Lübeck{% endif %}",
-  "description": "{% if verkauf_aktiv %}Handbemalte 1-of-1 Upcycling-Mode aus Lübeck – exklusive Einzelstücke.{% else %}Handbemalte 1-of-1 Upcycling-Mode aus Lübeck – bisherige Einzelstücke, bereits vergeben.{% endif %}",
+  "description": "{% if verkauf_aktiv %}Handbemalte 1-of-1 Upcycling-Mode aus Lübeck – exklusive Einzelstücke.{% else %}Handbemalte 1-of-1 Upcycling-Mode aus Lübeck – bisherige Einzelstücke als Referenz.{% endif %}",
   "url": "{{ request.scheme }}://{{ request.get_host }}/",
   "itemListElement": [{% for produkt in produkte_galerie %}
     {"@type": "ListItem", "position": {{ forloop.counter }}, "name": "{{ produkt.name|escapejs }}", "url": "{{ request.scheme }}://{{ request.get_host }}{{ produkt.get_absolute_url }}"}{% if not forloop.last %},{% endif %}{% endfor %}
@@ -230,7 +230,7 @@ View und Kontextprozessor), kein Datum hier.
         <div class="lv-abschnittskopf">
             <h2 class="lv-serif" id="archiv-titel">Das Archiv</h2>
             <div class="lv-abschnittskopf-r">
-                <p>{% if verkauf_aktiv %}Alles, was bisher entstanden ist. Jedes Stück gibt es genau einmal.{% else %}Alles, was bisher entstanden ist. Diese Stücke sind vergeben, sie kommen nicht wieder.{% endif %}</p>
+                <p>{% if verkauf_aktiv %}Alles, was bisher entstanden ist. Jedes Stück gibt es genau einmal.{% else %}Alles, was bisher entstanden ist. Diese ersten Stücke zeigen als Referenz, wie Luviq aussieht; zu kaufen sind sie nicht.{% endif %}</p>
                 {% if archiv_liste %}<a class="lv-link" href="{% url 'produkte' %}">Das ganze Archiv</a>{% endif %}
             </div>
         </div>

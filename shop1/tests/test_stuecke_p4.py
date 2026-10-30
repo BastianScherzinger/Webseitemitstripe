@@ -33,7 +33,7 @@ class VerkauftBandTest(LuviqTestCase):
     def test_band_steht_nur_bei_vergebenem_stueck(self):
         seite = self.hole(self.alt.get_absolute_url()).content.decode()
         self.assertIn('lv-verkauft', seite)
-        self.assertIn(f'<span>{luviq_daten.VERGEBEN_WORT}</span>', seite)
+        self.assertIn(f'<span>{luviq_daten.REFERENZ_WORT}</span>', seite)
         self.assertNotIn('Verkauft', seite)
         self.assertNotIn('lv-verkauft', self.hole(self.neu.get_absolute_url()).content.decode())
 
@@ -41,7 +41,7 @@ class VerkauftBandTest(LuviqTestCase):
         for pfad in ('/produkte/', '/'):
             html = self.hole(pfad).content.decode()
             self.assertEqual(html.count('class="lv-verkauft"'), 1, pfad)
-            self.assertIn('Vergeben', html)
+            self.assertIn('Referenz', html)
 
     def test_verfuegbares_stueck_steht_vor_dem_archiv(self):
         html = self.hole('/').content.decode()
@@ -162,12 +162,21 @@ class EngelAnlegenTest(LuviqTestCase):
         engel = Produkt.objects.get(slug=luviq_daten.ENGEL_STUECK['slug'])
         self.assertNotEqual(engel.nummer, 6)
 
-    def test_engel_hat_keine_zustandsangabe(self):
+    def test_engel_ist_neu(self):
+        """Bastian 30.10.2026: das Engel-Shirt ist neu – „Neu“, nie „Gebraucht“."""
         self.anlegen()
-        self.assertEqual(Produkt.objects.get(slug='engel-shirt-handgebleicht').zustand, '')
+        engel = Produkt.objects.get(slug='engel-shirt-handgebleicht')
+        self.assertEqual(engel.zustand, 'Neu')
+        self.assertTrue(engel.ist_neu)
         html = self.hole('/produkt/engel-shirt-handgebleicht/').content.decode()
         self.assertNotIn('Gebraucht', html)
-        self.assertNotIn('<dt>Stück</dt>', html)
+        self.assertIn('<dt>Stück</dt><dd>Neu</dd>', html)
+
+    def test_leerer_zustand_wird_nachgetragen(self):
+        self.anlegen()
+        Produkt.objects.filter(slug='engel-shirt-handgebleicht').update(zustand='')
+        self.anlegen()
+        self.assertEqual(Produkt.objects.get(slug='engel-shirt-handgebleicht').zustand, 'Neu')
 
     def test_altstueck_behaelt_den_zustand(self):
         p = erzeuge_produkt('Alt')

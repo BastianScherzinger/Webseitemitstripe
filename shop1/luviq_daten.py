@@ -501,6 +501,10 @@ LEISTE_AUS = frozenset({
 #: eine falsche Tatsachenbehauptung. „Verkauft“ steht nur bei einem Stück, das nicht als Archiv
 #: gekennzeichnet ist und nach einer Bestellung Bestand 0 hat (``Produkt.band_wort``).
 VERGEBEN_WORT = 'Vergeben'
+#: Band der fünf ersten Stücke Nº 001–005: Bastian 30.10.2026 – „wie Referenzen, nicht offiziell
+#: verkauft, als Beispiele drin, kommen später raus“.
+REFERENZ_WORT = 'Referenz'
+REFERENZ_NUMMERN = range(1, 6)
 VERKAUFT_WORT = 'Verkauft'
 
 #: Die Technik in einem Satz, auf Stückseite und Luisa-Seite gleich (Bastian 29.10.2026).
@@ -518,7 +522,7 @@ ENGEL_STUECK = {
     'masse': 'Größe M',
     'material': '100 % Baumwolle',
     'technik': 'Mit Bleiche von Hand gemalt',
-    'zustand': '',  # „gebraucht“ ist nicht belegt (Bastian 29.10.): keine Angabe statt Vermutung
+    'zustand': 'Neu',  # Bastian 30.10.2026: „eigentlich komplett neu“
     'seo_titel': 'Engel-Shirt mit Bleiche gemalt – Luviq Lübeck',
     'seo_beschreibung': ('Unikat Nº 006: T-Shirt mit Engel, Rose und Stern, von Hand mit Bleiche '
                          'gemalt. 100 % Baumwolle, Größe M. Luviq, Lübeck.'),

@@ -2,11 +2,11 @@
 {% load static custom_tags %}
 
 {% block title %}{% if verkauf_aktiv %}Second Hand & Vintage Mode kaufen | Luviq Universe – Lübeck{% else %}Archiv: handbemalte Unikate aus Lübeck – Luviq Universe{% endif %}{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Alle handbemalten 1-of-1 Vintage-Unikate von Luviq Universe aus Lübeck: gebrauchte Second-Hand-Mode, von Hand bemalt, jedes Stück nur einmal zu haben. Jetzt bestellen.{% else %}Archiv von Luviq Universe aus Lübeck: bisherige handbemalte 1-of-1 Vintage-Unikate, bereits vergeben. Jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Alle handbemalten 1-of-1 Vintage-Unikate von Luviq Universe aus Lübeck: gebrauchte Second-Hand-Mode, von Hand bemalt, jedes Stück nur einmal zu haben. Jetzt bestellen.{% else %}Archiv von Luviq Universe aus Lübeck: bisherige handbemalte 1-of-1 Vintage-Unikate als Referenz. Jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}
 {% block og_title %}Second Hand & Vintage Mode | Luviq Universe Lübeck{% endblock %}
 {% block og_description %}Handbemalte Vintage-Unikate aus Lübeck. 1-of-1 Second-Hand-Mode, getragen und von Hand neu bemalt. Jetzt bei Luviq Universe entdecken.{% endblock %}
 {% block twitter_title %}{% if verkauf_aktiv %}Handbemalte Vintage-Unikate – Luviq Universe{% else %}Archiv: handbemalte Unikate – Luviq Universe{% endif %}{% endblock %}
-{% block twitter_description %}{% if verkauf_aktiv %}Handbemalte 1-of-1 Vintage-Unikate aus Lübeck, jedes Stück nur einmal.{% else %}Bisherige handbemalte 1-of-1 Unikate aus Lübeck, bereits vergeben. Neue Stücke gibt es mit dem ersten Drop.{% endif %}{% endblock %}
+{% block twitter_description %}{% if verkauf_aktiv %}Handbemalte 1-of-1 Vintage-Unikate aus Lübeck, jedes Stück nur einmal.{% else %}Bisherige handbemalte 1-of-1 Unikate aus Lübeck als Referenz. Neue Stücke gibt es mit dem ersten Drop.{% endif %}{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">
@@ -32,7 +32,7 @@
       "@type": "CollectionPage",
       "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}#collection",
       "name": "{% if verkauf_aktiv %}Luviq Universe – Vintage Upcycling Mode Kollektion{% else %}Luviq Universe – Archiv der bisherigen Stücke{% endif %}",
-      "description": "{% if verkauf_aktiv %}Handbemalte 1-of-1 Vintage-Unikate. Upcycling-Mode aus getragener Kleidung, aus Deutschland.{% else %}Bisherige handbemalte 1-of-1 Vintage-Unikate, bereits vergeben. Upcycling-Mode aus Lübeck.{% endif %}",
+      "description": "{% if verkauf_aktiv %}Handbemalte 1-of-1 Vintage-Unikate. Upcycling-Mode aus getragener Kleidung, aus Deutschland.{% else %}Bisherige handbemalte 1-of-1 Vintage-Unikate als Referenz. Upcycling-Mode aus Lübeck.{% endif %}",
       "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}",
       "provider": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
       "hasPart": [{% for p in produkte_liste %}{"@id": "{{ request.scheme }}://{{ request.get_host }}{{ p.get_absolute_url }}#product"}{% if not forloop.last %}, {% endif %}{% endfor %}]
@@ -49,7 +49,7 @@
         "price": "{{ p.preis|floatformat:"2u" }}",
         "priceCurrency": "EUR",
         "availability": "{% if p.kaufbar %}https://schema.org/InStock{% elif p.verkauft %}https://schema.org/SoldOut{% else %}https://schema.org/OutOfStock{% endif %}",
-        "itemCondition": "https://schema.org/UsedCondition"
+        "itemCondition": "https://schema.org/{% if p.ist_neu %}NewCondition{% else %}UsedCondition{% endif %}"
       }{% endif %}{% with b=p.hauptbild %}{% if b %},
       "image": "{% if b.original|slice:':4' == 'http' %}{{ b.original }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ b.original }}{% endif %}"{% endif %}{% endwith %}
     }{% endfor %}
@@ -76,7 +76,7 @@
     <section class="lv-abschnitt lv-ohne-linie" aria-labelledby="archiv-titel">
         <div class="lv-abschnittskopf">
             <h1 class="lv-serif" id="archiv-titel">{% if krume == 'Unikate' %}Unikate{% else %}Das Archiv{% endif %}</h1>
-            <p>{% if verkauf_aktiv %}Luviq Universe ist der Online-Shop von Luisa Brehler aus Lübeck für handbemalte Second-Hand- und Vintage-Kleidung; auf dieser Seite stehen zurzeit {{ verfuegbare_liste|length }} Einzelstück{{ verfuegbare_liste|length|pluralize:"e" }} zum Kauf, darunter das Archiv der schon vergebenen.{% elif verfuegbare_liste %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Second-Hand- und Vintage-Kleidung; jedes Motiv gibt es genau einmal. Oben steht das neue Stück, darunter das Archiv der schon vergebenen.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Second-Hand- und Vintage-Kleidung; auf dieser Seite stehen zurzeit {{ produkte_liste|length }} Einzelstück{{ produkte_liste|length|pluralize:"e" }} aus dem Archiv – bisherige Arbeiten, die bereits vergeben sind.{% endif %}</p>
+            <p>{% if verkauf_aktiv %}Luviq Universe ist der Online-Shop von Luisa Brehler aus Lübeck für handbemalte Second-Hand- und Vintage-Kleidung; auf dieser Seite stehen zurzeit {{ verfuegbare_liste|length }} Einzelstück{{ verfuegbare_liste|length|pluralize:"e" }} zum Kauf, darunter die ersten Stücke als Referenz.{% elif verfuegbare_liste %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Second-Hand- und Vintage-Kleidung; jedes Motiv gibt es genau einmal. Oben steht das neue Stück, darunter die ersten Stücke als Referenz.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Second-Hand- und Vintage-Kleidung; auf dieser Seite stehen zurzeit {{ produkte_liste|length }} Einzelstück{{ produkte_liste|length|pluralize:"e" }} aus dem Archiv – bisherige Arbeiten als Referenz, nicht zu kaufen.{% endif %}</p>
         </div>
         {% if verfuegbare_liste %}
         <h2 class="lv-serif lv-raster-titel" id="verfuegbar-titel">Neue Unikate</h2>
@@ -86,7 +86,7 @@
         </ol>
         {% endif %}
         {% if vergebene_liste %}
-        {% if verfuegbare_liste %}<h2 class="lv-serif lv-raster-titel" id="archiv-raster-titel">Archiv: schon vergeben</h2>{% endif %}
+        {% if verfuegbare_liste %}<h2 class="lv-serif lv-raster-titel" id="archiv-raster-titel">Archiv: Referenzstücke</h2>{% endif %}
         <ol class="lv-raster"{% if verfuegbare_liste %} aria-labelledby="archiv-raster-titel"{% endif %}>
             {% for produkt in vergebene_liste %}{% if verfuegbare_liste %}{% include 'shop1/teile/archiv_karte.html' with stufe=3 %}{% else %}{% include 'shop1/teile/archiv_karte.html' with stufe=2 erstes=forloop.first %}{% endif %}{% endfor %}
         </ol>

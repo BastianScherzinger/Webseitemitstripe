@@ -23,8 +23,14 @@ class Command(BaseCommand):
     def handle(self, *args, **optionen):
         d = luviq_daten.ENGEL_STUECK
         with transaction.atomic():
-            if Produkt.objects.filter(slug=d['slug']).exists():
-                self.stdout.write('Engel-Shirt ist schon vorhanden, nichts geändert.')
+            vorhanden = Produkt.objects.filter(slug=d['slug']).first()
+            if vorhanden:
+                # Nur leere Felder nachtragen (Zustand „Neu“, Bastian 30.10.2026) – Luisas Werte bleiben.
+                if not vorhanden.zustand and d['zustand']:
+                    Produkt.objects.filter(pk=vorhanden.pk).update(zustand=d['zustand'])
+                    self.stdout.write('Engel-Shirt: Zustand nachgetragen.')
+                else:
+                    self.stdout.write('Engel-Shirt ist schon vorhanden, nichts geändert.')
                 return
             frei = 6 if not Produkt.objects.filter(nummer=6).exists() else None  # sonst nächste freie
             produkt = Produkt.objects.create(

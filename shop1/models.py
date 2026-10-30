@@ -174,7 +174,21 @@ class Produkt(models.Model):
         """„Vergeben“ für Archivstücke (nie verkauft, Migration 0022), „Verkauft“ nur für ein Stück,
         das nach einer Bestellung ausverkauft ist."""
         from . import luviq_daten
+        if self.ist_referenz:
+            return luviq_daten.REFERENZ_WORT
         return luviq_daten.VERGEBEN_WORT if self.vergeben else luviq_daten.VERKAUFT_WORT
+
+    @property
+    def ist_referenz(self):
+        """Eines der fünf ersten Stücke (Nº 001–005): Beispiel/Referenz, nie verkauft (Bastian 30.10.2026)."""
+        from . import luviq_daten
+        # Bestand 0 heißt: über den Shop verkauft – dann nie „Referenz“.
+        return self.vergeben and self.nummer in luviq_daten.REFERENZ_NUMMERN and self.lagerbestand >= 1
+
+    @property
+    def ist_neu(self):
+        """Zustand beginnt mit „Neu“ (z. B. Engel-Shirt Nº 006): Schema NewCondition, kein Second-Hand-Hinweis."""
+        return (self.zustand or '').strip().lower().startswith('neu')
 
     @property
     def hat_bild(self):
