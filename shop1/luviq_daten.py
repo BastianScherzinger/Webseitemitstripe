@@ -45,7 +45,12 @@ ANBIETERIN = {
 HERKUNFT = {'ort': 'Alsfeld', 'region': 'Hessen', 'kreis': 'Vogelsbergkreis'}
 
 #: Luisas Markensatz, von ihr gewählt am 19.09.2026. Gesprochen, nicht gesetzt.
+#: Seit P5b (A/B-Sieger B) nicht mehr die H1 der Startseite, sondern die Überschrift
+#: des Abschnitts „Motiv anfragen“ (``index.html``, ``#anfragen``).
 MARKENSATZ = 'Sag mir, was du willst — ich mal’s dir.'
+
+#: H1 der Startseite (P5b, Kundenpanel-Sieger B, 30.10.2026): nennt die Technik und das Unikat.
+HERO_H1 = 'Mit Bleiche gemalt. Jedes Stück gibt es nur einmal.'
 
 #: Erfahrungswert von Luisa, **nie als Zusage** schreiben („meistens").
 DAUER = '2 bis 5 Tage'
@@ -314,19 +319,18 @@ HERKUNFT_SATZ = ('Angefangen hat Luviq in Alsfeld im Vogelsbergkreis, mit den er
 # ── Startseite (Paket P3, 29.10.2026) ────────────────────────────────────────
 
 def _lead():
-    """Antwortsatz unter der H1 (höchstens 45 Wörter, Quelle SEO-Analyse C1).
+    """Antwortsatz unter der H1 (höchstens 45 Wörter, Quelle SEO-Analyse C1; Lead B, P5b).
 
     Der letzte Satz setzt sich aus ``VERSAND`` und ``ABHOLUNG`` zusammen; ohne
     Übergabetext (``ABHOLUNG['text']`` leer) bleibt nur der Versand."""
-    teile = ['Luviq ist ein Modelabel aus Lübeck: Luisa Brehler bemalt Second-Hand-Teile '
-             'von Hand, mit Bleiche und Pinsel.',
-             'Jedes Motiv gibt es genau einmal.']
+    teile = ['Luisa Brehler aus Lübeck zieht die Farbe mit Bleiche aus dem Stoff – nichts ist '
+             'aufgedruckt. Das Engel-Shirt ist das erste Stück']
     if VERSAND.get('gebiet'):
         letzter = f'Versand in {VERSAND["gebiet"]}'
         if ABHOLUNG.get('text'):
             letzter += f', Übergabe in {ABHOLUNG["ort"]} nach Absprache'
-        teile.append(letzter + '.')
-    return ' '.join(teile)
+        teile.append(letzter)
+    return '; '.join(teile) + '.'
 
 
 #: Erster Absatz nach der Überschrift. Nennt den Ort, weil Antwortmaschinen
@@ -376,8 +380,11 @@ LINIE_SHIRTS = None
 #: Die Dateien ``<name>-<breite>.webp`` erzeugt ``tools/bilder_zuschneiden.py``.
 #: Leer ⇒ der Abschnitt entfällt.
 ECHT_TITEL = 'So sieht es in echt aus'
-ECHT_TEXT = ('Das Studiobild oben ist aus diesem echten Stück entstanden. Jedes Unikat ist von Hand '
-             'gemalt und sieht deshalb ein bisschen anders aus.')
+ECHT_TEXT = ('So sieht das Shirt wirklich aus: Handyfoto vom echten Stück. Das Bild oben ist daraus '
+             'als Studiobild erstellt (KI). Jedes Unikat ist von Hand gemalt und sieht deshalb '
+             'ein bisschen anders aus.')
+#: Kleine Bildunterschrift am Hero-Bild (P5b): sagt ehrlich, dass es ein KI-Studiobild ist.
+HERO_BILDUNTERSCHRIFT = 'Studiobild (KI) aus dem echten Foto'
 ECHT_FOTOS = [
     ('echt-engel-2', (480, 720, 960), (960, 1080),
      'Handyfoto des fertigen Engel-Shirts: schwarzes T-Shirt von hinten, darauf ein handgebleichter '

@@ -12,7 +12,8 @@ Das Bild kommt aus `produkt.hauptbild` (Upload über Cloudinary oder statische D
     <figure{% if not bild %} data-ohne-foto{% endif %}>{% if bild %}<img src="{{ bild.karte_src }}" srcset="{{ bild.karte_srcset }}" sizes="{% if erstes %}(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 92vw{% else %}(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 46vw{% endif %}" alt="Foto: {{ produkt.name }}, handbemaltes Einzelstück von Luviq Universe" width="600" height="750"{% if erstes %} loading="eager" fetchpriority="high"{% else %} loading="lazy"{% endif %} decoding="async">{% endif %}{% if produkt.verkauft %}<span class="lv-verkauft"><span>{{ produkt.band_wort }}</span></span>{% endif %}</figure>
     <div class="lv-karte-name">
         <h{{ stufe|default:"3" }} class="lv-serif"><a href="{{ produkt.get_absolute_url }}">{{ produkt.name }}</a></h{{ stufe|default:"3" }}>
-        {% if produkt.masse %}<span class="lv-groesse">{{ produkt.masse }}</span>{% endif %}
+        {% if produkt.masse and verkauf_aktiv or produkt.masse and produkt.verkauft %}<span class="lv-groesse">{{ produkt.masse }}</span>{% endif %}
     </div>
+    {% if not verkauf_aktiv and not produkt.verkauft %}<p class="lv-groesse lv-vorpreis">{% if produkt.masse %}{{ produkt.masse }} · {% endif %}{% if produkt.material %}{{ produkt.material }} · {% endif %}{% if verkauf_ab %}Preis ab {{ verkauf_ab }}{% else %}Preis folgt{% endif %}</p>{% endif %}
     <p class="lv-karte-kopf"><b>Nº {{ produkt.archiv_nummer }}</b>{% if produkt.verkauft %}<span>Archiv</span>{% elif verkauf_aktiv and produkt.kaufbar %}<span class="lv-preis">{{ produkt.preis|floatformat:2 }} €</span>{% else %}<span>Unikat</span>{% endif %}</p>
 </li>{% endwith %}

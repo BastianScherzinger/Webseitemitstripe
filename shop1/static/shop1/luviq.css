@@ -102,7 +102,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-nav{display:flex;align-items:center;gap:calc(var(--u)*2.6);margin-left:auto;color:var(--lv-leise);font-size:max(13px,calc(var(--u)*1))}
 .lv-nav a{padding:.3em 0}
 .lv-nav a:hover,.lv-nav a[aria-current="page"]{color:var(--lv-text)}
-.lv-nav .lv-nav-anfrage{color:var(--lv-text);border-bottom:1px solid var(--lv-marke)}
+.lv-nav .lv-nav-anfrage{color:var(--lv-text)}
+.lv-nav a[aria-current="page"]{border-bottom:1px solid var(--lv-marke)}
 .lv-kopf-rechts{display:flex;align-items:center;gap:calc(var(--u)*1.6);padding-left:calc(var(--u)*2.4);border-left:1px solid var(--lv-linie);font-size:max(13px,calc(var(--u)*1))}
 .lv-ig{display:inline-flex;align-items:center;gap:.5em;font-weight:600}
 .lv-kopf-rechts .lv-konto{color:var(--lv-leise)}
@@ -241,6 +242,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-karte-name{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px var(--lv-raum-3);margin-top:var(--lv-raum-1)}
 .lv-karte-name>h2,.lv-karte-name>h3{min-width:0}
 .lv-groesse{font:max(12px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.lv-groesse.lv-vorpreis{white-space:normal;overflow:visible;text-overflow:clip;margin:0}
 .lv-karte-kopf{display:flex;justify-content:space-between;gap:1em;font:max(12px,calc(var(--u)*.85)) var(--lv-mono)}
 .lv-karte-kopf span{color:var(--lv-leise);letter-spacing:.08em;text-transform:uppercase}
 .lv-karte h2,.lv-karte h3{font-size:max(19px,calc(var(--u)*1.7))}
@@ -551,7 +553,9 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-echt-mehr{display:flex;flex-wrap:nowrap;gap:var(--lv-raum-3);overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;margin-inline:calc(var(--rand)*-1);padding-inline:var(--rand);scroll-padding-inline:var(--rand)}
   .lv-echt-mehr::-webkit-scrollbar{display:none}
   .lv-echt-mehr figure{flex:0 0 88%;scroll-snap-align:start}
-  .lv-hero-bild{aspect-ratio:5/6}
+  .lv-hero-bild{aspect-ratio:1/1}
+  .lv .lv-hero-text .lv-lead{font-size:15px;line-height:1.45}
+  .lv .lv-hero-knoepfe .lv-knopf{min-height:48px}
   .lv-hero-bild img{object-position:50% 12%}
   .lv-hero-bild::after{background:linear-gradient(180deg,rgba(43,42,40,0) 55%,var(--lv-wand) 100%)}
   .lv-hero-figur figcaption{position:relative;z-index:2;margin-top:-30px;padding-top:0}

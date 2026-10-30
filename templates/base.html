@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Luviq: handbemalte Second-Hand-Mode aus Lübeck{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Lübeck: Handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler, angefangen in Alsfeld. Second-Hand-Mode – deutschlandweit bestellen.{% else %}Luviq Universe aus Lübeck: handbemalte 1-of-1 Vintage-Unikate von Luisa Brehler, angefangen in Alsfeld. Marke im Aufbau – jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}">
+    <meta name="description" content="{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Lübeck: mit Bleiche von Hand gemalte 1-of-1 Unikate von Luisa Brehler, angefangen in Alsfeld, heute in Lübeck. Second-Hand-Mode – deutschlandweit bestellen.{% else %}Luviq Universe aus Lübeck: mit Bleiche von Hand gemalte 1-of-1 Unikate von Luisa Brehler, angefangen in Alsfeld, heute in Lübeck. Marke im Aufbau – jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}">
     <meta name="keywords" content="Luviq, Luviq Universe, Second Hand Mode Lübeck, Second Hand Mode Alsfeld, Vintage Mode Lübeck, handbemalte Kleidung{% if verkauf_aktiv %} kaufen{% endif %}, Upcycling Mode Deutschland, 1 of 1 Unikate, handbemalte Hoodies Lübeck, Upcycling Lübeck">
     <meta name="author" content="Luisa Brehler">
 
@@ -69,7 +69,7 @@
           },
           "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq-512.png' %}",
           "founder": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
-          "description": "{% if verkauf_aktiv %}Luviq Universe ist ein Second-Hand-Shop aus Lübeck, angefangen in Alsfeld (Hessen). Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Versand deutschlandweit.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus Lübeck, angefangen in Alsfeld (Hessen). Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung in handbemalte 1-of-1 Kunstwerke. Derzeit findet kein Verkauf statt.{% endif %}",
+          "description": "{% if verkauf_aktiv %}Luviq Universe ist ein Second-Hand-Shop aus Lübeck, angefangen in Alsfeld (Hessen), heute in Lübeck. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung mit Bleiche (Farbe aus dem Stoff gezogen, nichts aufgedruckt) in handgemalte 1-of-1 Unikate. Versand deutschlandweit.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus Lübeck, angefangen in Alsfeld (Hessen), heute in Lübeck. Gründerin Luisa Brehler verwandelt handverlesene Vintage-Kleidung mit Bleiche (Farbe aus dem Stoff gezogen, nichts aufgedruckt) in handgemalte 1-of-1 Unikate. Derzeit findet kein Verkauf statt.{% endif %}",
           {% comment %}Anschrift aus der Gewerbeanmeldung vom 22.10.2026 (luviq_daten.ANBIETERIN). Keine Koordinaten mehr: die Anschrift ist eine Wohnung, kein Laden; die Alsfelder Koordinaten stimmen seit dem Umzug nicht mehr. Alsfeld bleibt als Herkunft (foundingLocation).{% endcomment %}
           "address": {
             "@type": "PostalAddress",
@@ -356,7 +356,7 @@
                 </ul>
             </nav>
         </div>
-        <p class="lv-recht"><span>© {% now "Y" %} Luviq · Lübeck · angefangen in Alsfeld{% if shop_oeffnet %} · {{ shop_oeffnet }}{% endif %}</span></p>
+        <p class="lv-recht"><span>© {% now "Y" %} Luviq · angefangen in Alsfeld, heute in Lübeck{% if shop_oeffnet %} · {{ shop_oeffnet }}{% endif %}</span></p>
     </footer>
 
     {% comment %}Handy-Leiste (P2): Inhalt aus luviq_daten.leiste(), nie auf Rechts-, Konto-, Kasse-, Fehler- und Panel-Seiten (luviq_daten.LEISTE_AUS). Ohne Skript sichtbar; das Skript unten blendet sie nur aus, solange der Hero im Bild ist.{% endcomment %}

@@ -47,6 +47,20 @@ def oeffnungs_satz(heute=None):
     return 'Der Shop ist noch nicht geöffnet.'
 
 
+def verkauf_ab(heute=None):
+    """„01.11.“ – der Tag aus ``VERKAUF_FRUEHESTENS`` für „Preis ab …“, solange er noch kommt.
+
+    Leer, wenn der Verkauf läuft, kein Tag gesetzt ist oder der Tag vorbei ist (dann steht
+    auf den Karten nur „Preis folgt“)."""
+    from datetime import date
+    if verkauf_aktiv():
+        return ''
+    tag = getattr(settings, 'VERKAUF_FRUEHESTENS', None)
+    if tag and (heute or date.today()) <= tag:
+        return f'{tag:%d.%m.}'
+    return ''
+
+
 def hinweis():
     """Meldung einer abgefangenen Kaufroute, mit Öffnungsdatum."""
     return f'{oeffnungs_satz()} Trag dich in die Warteliste ein, dann erfährst du es zuerst.'
@@ -75,7 +89,8 @@ def verkauf_aktiv():
 
 def verkauf_kontext(request):
     """Kontextprozessor: ``verkauf_aktiv`` für jede Vorlage."""
-    return {'verkauf_aktiv': verkauf_aktiv(), 'shop_oeffnet': oeffnungs_satz()}
+    return {'verkauf_aktiv': verkauf_aktiv(), 'shop_oeffnet': oeffnungs_satz(),
+            'verkauf_ab': verkauf_ab()}
 
 
 class VerkaufsschalterMiddleware:

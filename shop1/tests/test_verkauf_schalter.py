@@ -32,12 +32,13 @@ class SchalterTest(SimpleTestCase):
     @override_settings(VERKAUF_AKTIV=False)
     def test_aus_ist_aus(self):
         self.assertFalse(verkauf.verkauf_aktiv())
-        self.assertEqual(verkauf.verkauf_kontext(None), {'verkauf_aktiv': False, 'shop_oeffnet': verkauf.oeffnungs_satz()})
+        self.assertEqual(verkauf.verkauf_kontext(None), {'verkauf_aktiv': False, 'shop_oeffnet': verkauf.oeffnungs_satz(),
+                          'verkauf_ab': verkauf.verkauf_ab()})
 
     @override_settings(VERKAUF_AKTIV=True)
     def test_an_ist_an(self):
         self.assertTrue(verkauf.verkauf_aktiv())
-        self.assertEqual(verkauf.verkauf_kontext(None), {'verkauf_aktiv': True, 'shop_oeffnet': ''})
+        self.assertEqual(verkauf.verkauf_kontext(None), {'verkauf_aktiv': True, 'shop_oeffnet': '', 'verkauf_ab': ''})
 
     def test_fehlt_die_einstellung_ist_der_verkauf_aus(self):
         """Rechtslage: ohne ausdrückliches Einschalten wird nie verkauft."""

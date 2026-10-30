@@ -10,6 +10,15 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 30.10.2026 — Luviq-Umbau P5b: A/B-Sieger im Hero, Warenkorb-Fix, Reste P5 (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
+
+- **Ursache des lokalen 500 (Warenkorb und Startseite):** Die lokale `db.sqlite3` (nicht im Git) enthält fünf Testdatensätze mit `bild_statisch = shop1/images/dummy/d1-{w}.webp…`; die Dateien lagen nie im Repo. `ManifestStaticFilesStorage` wirft dafür `ValueError: Missing staticfiles manifest entry` beim Rendern. Kein Fehler in den P5-Vorlagen. Gehärtet: `produktbilder.bild_aus` gibt bei fehlendem Manifest-Eintrag `None` zurück (Stück ohne Bild statt 500). Neu `test_p5b.KaufwegOhne500Test` (Startseite/Karte/Stück mit kaputtem Bild; Warenkorb leer und gefüllt, Kasse, Profil, Zahlung, Bestellung abgeschlossen mit und ohne Verkauf).
+- Vollsuite vor den Änderungen: nur `test_aufbau` (Designwache, P6) rot; die 15 Fehler aus P5 waren schon behoben.
+- A/B-Sieger B laut NACHTPLAN-2: Hero-Zeile `Nº 006 · Engel-Shirt · ab 01.11.` (Datum aus `VERKAUF_FRUEHESTENS` über `verkauf.verkauf_ab`, nach Verkaufsstart ohne Datum), H1 `HERO_H1`, Lead B (`_lead`, aus `VERSAND`/`ABHOLUNG`), Knöpfe `Engel-Shirt ansehen` (Slug `engel-shirt-handgebleicht`, sonst /produkte/) und `Eigenes Motiv anfragen` mit `data-ereignis="hero_engel"`/`"hero_motiv"`; Markensatz ist jetzt die Überschrift des Abschnitts `#anfragen`. Bildunterschrift `HERO_BILDUNTERSCHRIFT`, neuer `ECHT_TEXT`. Karte vor Verkauf: `Größe M · 100 % Baumwolle · Preis ab 01.11.` (`Preis folgt`, wenn kein Datum), kein Preis. „angefangen in Alsfeld, heute in Lübeck“ in Fuß, Startseite, Karte, Schema, Meta. SEO: Title/Description der Startseite, Meta-/Schema-Beschreibung (base.html), llms.txt-Kopf nennen Lübeck, Bleiche, Unikat.
+- Handy 390×844: Hero-Bild 1:1 statt 5:6, Lead 15 px, Knöpfe 48 px: beide Knöpfe im ersten Bildschirm (Unterkante 814 px). Kritisches CSS neu erzeugt.
+- Reste P5: Emoji in den Meldungen von `views/auth.py` entfernt. Navigation: „Motiv anfragen“ war dauerhaft unterstrichen und wirkte auf /login/ aktiv; Unterstrich nur noch mit `aria-current="page"`.
+- Offen/bemerkt: In der Kasse brechen die Beträge der Zusammenfassung am Handy zweizeilig um (kosmetisch).
+
 ## 30.10.2026 — Luviq-Umbau P5: Alt-Seiten ins neue System (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
 
 - Impressum, Datenschutz, AGB, Login, Registrieren, Passwort-Seiten (Formular, gesendet, Bestätigen, fertig, ändern), Gästebuch, Kontakt-Danke, Abmelden, Sperre, Newsletter-Abmelden, Profil, Warenkorb, Kasse, Zahlung, Bestellung abgeschlossen: alle `lv-seite` nur mit vorhandenen Klassen (kein CSS, keine neue Klasse, Critical-CSS unverändert). Kein Emoji, kein „Orbit/Mission/Identity/Biometric/ABORT“ mehr in den Kundenvorlagen (Admin-Vorlagen unberührt).

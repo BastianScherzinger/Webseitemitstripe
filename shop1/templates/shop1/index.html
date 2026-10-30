@@ -9,8 +9,8 @@ FILME) · Luisa · Archiv · Warteliste. Alle Texte aus shop1/luviq_daten.py (ü
 View und Kontextprozessor), kein Datum hier.
 {% endcomment %}
 
-{% block title %}Luviq: handbemalte Second-Hand-Mode aus Lübeck{% endblock %}
-{% block meta_description %}Handbemalte Second-Hand-Mode aus Lübeck: Unikate, Versand in ganz Deutschland. Dein Motiv, von Luisa mit Bleiche und Pinsel gemalt. Jetzt Motiv anfragen.{% endblock %}
+{% block title %}Luviq: Second-Hand-Unikate mit Bleiche gemalt, aus Lübeck{% endblock %}
+{% block meta_description %}Second-Hand-Unikate aus Lübeck, von Luisa mit Bleiche gemalt: Die Farbe kommt aus dem Stoff, nichts ist aufgedruckt. Versand in ganz Deutschland. Eigenes Motiv anfragen.{% endblock %}
 {% block og_title %}Luviq Universe – Sag mir, was du willst, ich mal’s dir{% endblock %}
 {% block og_description %}Handbemalte Second-Hand-Teile aus Lübeck. Du sagst Luisa, was drauf soll, sie schickt dir Vorschläge, und dann entsteht dein Stück. Jedes Motiv gibt es einmal.{% endblock %}
 {% block og_image_tag %}
@@ -80,18 +80,19 @@ View und Kontextprozessor), kein Datum hier.
                      alt="{{ hero.alt }}" width="800" height="999"
                      loading="eager" fetchpriority="high" decoding="async">
             </picture>
-            <figcaption><span>{% if hero.nummer %}Nº {{ hero.nummer }} · {% endif %}{{ hero.name }}</span><span>{{ hero.status }}</span></figcaption>
+            <figcaption><span>{{ hero.bildunterschrift }}</span></figcaption>
         </figure>
         <div class="lv-hero-text">
-            <h1 class="lv-serif lv-satz" id="markensatz">{{ markensatz }}</h1>
+            <p class="lv-nr">{% if hero.nummer %}Nº {{ hero.nummer }} · {% endif %}{{ hero.kurzname }}{% if verkauf_ab %} · ab {{ verkauf_ab }}{% endif %}</p>
+            <h1 class="lv-serif lv-satz" id="markensatz">{{ hero_h1 }}</h1>
             <p class="lv-lead">{{ lead }}</p>
             <div class="lv-hero-knoepfe">
+                <a class="lv-knopf" href="{{ hero.url }}" data-ereignis="hero_engel">{{ hero.kurzname }} ansehen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
                 {% if motivanfrage_aktiv %}
-                <a class="lv-knopf" href="{% url 'motiv_anfragen' %}">Motiv anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                <a class="lv-knopf linie" href="{% url 'motiv_anfragen' %}" data-ereignis="hero_motiv">Eigenes Motiv anfragen</a>
                 {% else %}
-                <a class="lv-knopf" href="#warteliste">Vormerken <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                <a class="lv-knopf linie" href="#warteliste" data-ereignis="hero_motiv">Vormerken</a>
                 {% endif %}
-                <a class="lv-knopf linie" href="{% url 'produkte' %}">Stücke ansehen</a>
             </div>
         </div>
     </section>
@@ -157,7 +158,7 @@ View und Kontextprozessor), kein Datum hier.
     <section class="lv-anfragen" id="anfragen" aria-labelledby="anfragen-titel">
         <div>
             <p class="lv-nr">Motiv anfragen</p>
-            <h2 class="lv-serif" id="anfragen-titel">Du hast eine Idee? Sag sie mir.</h2>
+            <h2 class="lv-serif" id="anfragen-titel">{{ markensatz }}</h2>
             <ol class="lv-ablauf">
                 {% for titel, text in ablauf %}<li><b>{{ titel }}</b><span>{{ text }}</span></li>{% endfor %}
             </ol>
@@ -219,7 +220,7 @@ View und Kontextprozessor), kein Datum hier.
             <footer>{{ zitat_quelle }}</footer>
         </blockquote>
         <div class="lv-luisa-text">
-            <p>Luviq ist ein Ein-Personen-Atelier in Lübeck, <a href="{% url 'liefergebiet' %}#alsfeld">angefangen in Alsfeld</a>. Die Teile sind Second Hand, die Motive freihand, mit Pinsel und Bleiche, bald auch mit Textilfarbe.</p>
+            <p>Luviq ist ein Ein-Personen-Atelier, <a href="{% url 'liefergebiet' %}#alsfeld">angefangen in Alsfeld, heute in Lübeck</a>. Die Teile sind Second Hand, die Motive freihand, mit Pinsel und Bleiche, bald auch mit Textilfarbe.</p>
             <a class="lv-link" href="{% url 'ueber_uns' %}">Mehr über Luisa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
     </section>

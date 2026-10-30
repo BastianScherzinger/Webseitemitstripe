@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import DatabaseError, transaction
 from django.db.models import F
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 
@@ -89,6 +90,12 @@ def startseite(request):
     hero['nummer'] = treffer.archiv_nummer if treffer else ''
     if treffer:
         hero['name'] = treffer.name
+    # P5b: Zeile über der H1 nennt den Kurznamen (vor dem Komma); der Hauptknopf führt auf die
+    # Stückseite des Engel-Shirts (Slug aus ENGEL_STUECK), ohne das Stück auf /produkte/.
+    hero['kurzname'] = hero['name'].split(',')[0].strip()
+    engel = Produkt.objects.filter(aktiv=True, slug=luviq_daten.ENGEL_STUECK['slug']).first()
+    hero['url'] = engel.get_absolute_url() if engel else reverse('produkte')
+    hero['bildunterschrift'] = luviq_daten.HERO_BILDUNTERSCHRIFT
 
     # Mit Verkauf stehen die verfügbaren Stücke in einem eigenen Abschnitt, das
     # Archiv zeigt dann nur die vergebenen; ohne Verkauf zeigt das Archiv alles.
@@ -119,6 +126,7 @@ def startseite(request):
         'hero': hero,
         'lead': luviq_daten.LEAD,
         'markensatz': luviq_daten.MARKENSATZ,
+        'hero_h1': luviq_daten.HERO_H1,
         'richtungen': luviq_daten.RICHTUNGEN,
         'ablauf': luviq_daten.ANFRAGE_ABLAUF,
         'schritte': luviq_daten.SCHRITTE,

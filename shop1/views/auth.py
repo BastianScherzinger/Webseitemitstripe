@@ -127,10 +127,10 @@ def verify_email(request, token):
         else:
             profile.email_verified = True
             profile.save(update_fields=['email_verified'])
-            messages.success(request, '✅ Deine E-Mail-Adresse wurde erfolgreich bestätigt! Du kannst dich jetzt einloggen.')
+            messages.success(request, 'Deine E-Mail-Adresse wurde erfolgreich bestätigt! Du kannst dich jetzt einloggen.')
         return redirect('login')
     except (UserProfile.DoesNotExist, ValueError, ValidationError):
-        messages.error(request, '❌ Ungültiger oder abgelaufener Bestätigungslink.')
+        messages.error(request, 'Ungültiger oder abgelaufener Bestätigungslink.')
         return redirect('home')
 
 
@@ -147,7 +147,7 @@ def resend_verification(request):
             profile.regenerate_token()
             from ..signals import send_verification_email
             send_verification_email(request.user, profile)
-            messages.success(request, '📧 Neue Bestätigungs-E-Mail wurde gesendet!')
+            messages.success(request, 'Neue Bestätigungs-E-Mail wurde gesendet!')
     except UserProfile.DoesNotExist:
         messages.error(request, 'Profil nicht gefunden.')
     return redirect('profil')
@@ -159,7 +159,7 @@ def delete_account(request):
     if request.method == 'POST':
         user = request.user
         if _is_admin(user):
-            messages.error(request, '⛔ Der Shopbesitzer-Account kann nicht gelöscht werden.')
+            messages.error(request, 'Der Shopbesitzer-Account kann nicht gelöscht werden.')
             return redirect('profil')
         hatte_bestellungen = user.orders.exists()
         # Bestellungen bleiben erhalten (EIG45): ``Order.user`` ist SET_NULL,
@@ -237,7 +237,7 @@ def change_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
-            messages.success(request, '✅ Dein Passwort wurde erfolgreich geändert!')
+            messages.success(request, 'Dein Passwort wurde erfolgreich geändert!')
             return redirect('profil')
         else:
             for field, errors in form.errors.items():

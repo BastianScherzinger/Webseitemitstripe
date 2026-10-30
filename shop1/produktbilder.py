@@ -61,7 +61,12 @@ def bild_aus(upload, statisch, breite, hoehe, alt):
     if not teile:
         return None
     muster, breiten, (b, h) = teile
-    adressen = {w: static(muster.replace('{w}', str(w))) for w in breiten}
+    try:
+        adressen = {w: static(muster.replace('{w}', str(w))) for w in breiten}
+    except ValueError:
+        # ManifestStaticFilesStorage: Datei fehlt im Manifest (z. B. Testdaten mit
+        # Bildern, die nie im Repo lagen). Ein Stück ohne Bild ist besser als ein 500.
+        return None
     mitte = sorted(breiten)[len(breiten) // 2]
     srcset = ', '.join(f'{adressen[w]} {w}w' for w in sorted(breiten))
     return Bild(src=adressen[mitte], srcset=srcset, breite=b, hoehe=h, alt=alt,
