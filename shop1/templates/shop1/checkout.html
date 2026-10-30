@@ -5,164 +5,93 @@
 {% block meta_description %}Lieferanschrift und Zahlungsart für deine Bestellung bei Luviq Universe.{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 
-{% block extra_css %}
-<style>
-    input, select, textarea {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        color: white !important;
-        border-radius: 1rem !important;
-        padding: 0.75rem 1rem !important;
-        width: 100%;
-    }
-</style>
-{% endblock %}
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='anfrage' %}{% endblock %}
 
 {% block content %}
-<div class="relative min-h-screen pt-20 pb-32">
-    <!-- Nebula Background Layer -->
-    <div class="energy-nebula"></div>
+<div class="lv-seite">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li><a href="{% url 'warenkorb' %}">Warenkorb</a></li><li aria-current="page">Kasse</li></ol></nav>
 
-    <div class="max-w-7xl mx-auto px-4 relative z-10 animate-reveal">
-        <!-- Header -->
-        <div class="mb-16">
-            <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
-                Mission <span class="text-glow">Checkout</span>
-            </h1>
-            <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Vorbereitung für den Transfer.</p>
+    <section class="lv-anfrageseite" aria-labelledby="kasse-titel">
+        <div>
+            <h1 class="lv-serif lv-satz" id="kasse-titel">Kasse</h1>
+            <p class="lv-lead">Lieferanschrift und Zahlungsart. Mit * markierte Felder sind Pflicht.</p>
+
+            <h2 class="lv-nr">Zusammenfassung</h2>
+            {% comment %}§ 312j Abs. 2 BGB / Art. 246a EGBGB: wesentliche Merkmale und Preis jedes Stücks unmittelbar vor dem Bestellknopf.{% endcomment %}
+            <dl class="lv-daten">
+                {% for p in posten %}
+                <dt>{{ p.produkt_name }} · Unikat, gebraucht, handbemalt{% if p.menge > 1 %} · {{ p.menge }}×{% endif %}</dt><dd>{{ p.produkt_preis|floatformat:2 }} €</dd>
+                {% endfor %}
+                <dt>Zwischensumme</dt><dd>{{ gesamt_betrag_original|floatformat:2 }} €</dd>
+                {% if hat_rabatt %}
+                <dt>Willkommensrabatt (10 %)</dt><dd>- {{ rabatt_wert|floatformat:2 }} €</dd>
+                {% endif %}
+                <dt>Gesamt</dt><dd><strong>{{ gesamt_betrag|floatformat:2 }} €</strong></dd>
+            </dl>
+            <p class="lv-klein">Gesamtpreis. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Im nächsten Schritt bezahlst du mit der hier gewählten Zahlungsart.</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <!-- Form Section -->
-            <div class="lg:col-span-2 space-y-8">
-                <div class="glass-card rounded-[3.5rem] p-10 md:p-12 shadow-2xl">
-                    <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-10">📍 Destination Sync</h3>
-                    <form method="POST" class="space-y-8">
-                        {% csrf_token %}
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Vorname *</label>
-                                <input type="text" name="vorname" aria-label="Vorname" maxlength="{{ laengen.vorname }}" autocomplete="given-name" value="{{ profile_data.vorname }}" required>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Nachname *</label>
-                                <input type="text" name="nachname" aria-label="Nachname" maxlength="{{ laengen.nachname }}" autocomplete="family-name" value="{{ profile_data.nachname }}" required>
-                            </div>
-                        </div>
+        <form method="POST" class="lv-formular" aria-labelledby="kasse-titel">
+            {% csrf_token %}
 
-                        <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">E-Mail Address *</label>
-                            <input type="email" name="email" aria-label="E-Mail-Adresse" maxlength="{{ laengen.email }}" autocomplete="email" value="{{ profile_data.email }}" required>
-                        </div>
-
-                        <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Phone Link</label>
-                            <input type="tel" name="telefon" aria-label="Telefonnummer (optional)" maxlength="{{ laengen.telefon }}" autocomplete="tel" value="{{ profile_data.telefon }}">
-                        </div>
-
-                        <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Straße & Hausnummer *</label>
-                            <input type="text" name="adresse" aria-label="Straße und Hausnummer" maxlength="{{ laengen.adresse }}" autocomplete="street-address" value="{{ profile_data.adresse }}" required>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div>
-                                <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">PLZ *</label>
-                                <input type="text" name="postleitzahl" aria-label="Postleitzahl" maxlength="{{ laengen.postleitzahl }}" autocomplete="postal-code" value="{{ profile_data.postleitzahl }}" required>
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Stadt *</label>
-                                <input type="text" name="stadt" aria-label="Stadt" maxlength="{{ laengen.stadt }}" autocomplete="address-level2" value="{{ profile_data.stadt }}" required>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Land *</label>
-                            <input type="text" name="land" aria-label="Land" maxlength="{{ laengen.land }}" autocomplete="country-name" value="{{ profile_data.land }}" required>
-                        </div>
-
-                        <!-- Payment Method Selection -->
-                        <div class="pt-8 border-t border-white/5">
-                            <h3 class="text-xs font-black uppercase tracking-[0.3em] text-glow-orange mb-8">💳 Encryption Method (Payment)</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <label class="relative cursor-pointer group">
-                                    <input type="radio" name="payment_method" value="paypal" class="peer hidden" checked>
-                                    <div class="p-6 rounded-2xl glass border-white/10 peer-checked:border-glow-orange peer-checked:bg-glow-orange/5 hover:bg-white/5 transition-all h-full flex flex-col items-center justify-center text-center gap-3">
-                                        <span class="text-2xl">💳</span>
-                                        <span class="text-[10px] font-black uppercase tracking-widest text-white">PayPal</span>
-                                        <p class="text-[8px] text-white/40 uppercase leading-tight">Instant Sync</p>
-                                    </div>
-                                </label>
-
-                                {% if bank_moeglich %}
-                                <label class="relative cursor-pointer group">
-                                    <input type="radio" name="payment_method" value="bank_transfer" class="peer hidden">
-                                    <div class="p-6 rounded-2xl glass border-white/10 peer-checked:border-glow-orange peer-checked:bg-glow-orange/5 hover:bg-white/5 transition-all h-full flex flex-col items-center justify-center text-center gap-3">
-                                        <span class="text-2xl">🏛️</span>
-                                        <span class="text-[10px] font-black uppercase tracking-widest text-white">Überweisung</span>
-                                        <p class="text-[8px] text-white/40 uppercase leading-tight">Direct Transfer</p>
-                                    </div>
-                                </label>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col sm:flex-row gap-6 pt-12 border-t border-white/5">
-                            <a href="{% url 'warenkorb' %}" class="flex-1 py-5 rounded-2xl glass border-white/10 text-white font-bold uppercase tracking-widest text-[10px] hover:bg-white/5 transition-all text-center flex items-center justify-center">
-                                ← Back to Orbit
-                            </a>
-                            <button type="submit" class="flex-1 btn-glow py-5 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] shadow-2xl">
-                                Zahlungspflichtig bestellen
-                            </button>
-                        </div>
-                        {% comment %}Rechtslinks direkt am Abschluss (EIG117, § 312j Abs. 3 BGB): der Checkout erscheint nur bei aktivem Verkauf.{% endcomment %}
-                        <p class="text-[10px] text-white/40 leading-relaxed text-center">Mit deiner Bestellung gelten unsere <a href="{% url 'agb' %}" class="text-glow-orange hover:underline">AGB mit Widerrufsbelehrung (§ 5)</a> und die <a href="{% url 'datenschutz' %}" class="text-glow-orange hover:underline">Datenschutzerklärung</a>.</p>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Sidebar -->
-            <div class="space-y-8">
-                <div class="glass-card p-10 rounded-[3rem] sticky top-28">
-                    <h3 class="text-xs font-black uppercase tracking-[0.2em] text-glow-orange mb-8">Summary</h3>
-                    <div class="space-y-6">
-                        {% comment %}§ 312j Abs. 2 BGB / Art. 246a EGBGB: wesentliche Merkmale und Preis jedes Stücks unmittelbar vor dem Bestellknopf.{% endcomment %}
-                        {% for p in posten %}
-                        <div class="flex justify-between items-center text-white/50 text-[10px] uppercase tracking-widest">
-                            <span>{{ p.produkt_name }} · Unikat, gebraucht, handbemalt{% if p.menge > 1 %} · {{ p.menge }}×{% endif %}</span>
-                            <span>{{ p.produkt_preis|floatformat:2 }} €</span>
-                        </div>
-                        {% endfor %}
-                        <div class="flex justify-between items-center text-white/50 text-[10px] uppercase tracking-widest">
-                            <span>Subtotal</span>
-                            <span>{{ gesamt_betrag_original|floatformat:2 }} €</span>
-                        </div>
-                        
-                        {% if hat_rabatt %}
-                        <div class="flex justify-between items-center text-emerald-400 text-[10px] uppercase tracking-widest font-black">
-                            <span>Welcome Discount (10%)</span>
-                            <span>- {{ rabatt_wert|floatformat:2 }} €</span>
-                        </div>
-                        {% endif %}
-
-                        <div class="h-px bg-white/10 my-4"></div>
-
-                        <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-black uppercase tracking-widest text-white/30">Total Transfer</span>
-                            <span class="text-3xl font-black text-glow">{{ gesamt_betrag|floatformat:2 }} €</span>
-                        </div>
-                        <p class="text-[10px] text-white/40 leading-relaxed">Gesamtpreis. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</p>
-                        <div class="p-6 glass rounded-2xl border-white/5 bg-white/[0.02]">
-                            <p class="text-[10px] text-white/40 leading-relaxed uppercase tracking-widest">
-                                <span class="text-glow-orange mr-2">ℹ️</span>
-                                Im nächsten Schritt bezahlst du mit der hier gewählten Zahlungsart.
-                            </p>
-                        </div>
+            <fieldset>
+                <legend>Lieferanschrift</legend>
+                <div class="lv-feld2">
+                    <div class="lv-feld">
+                        <label for="kasse-vorname">Vorname *</label>
+                        <input type="text" id="kasse-vorname" name="vorname" maxlength="{{ laengen.vorname }}" autocomplete="given-name" value="{{ profile_data.vorname }}" required>
+                    </div>
+                    <div class="lv-feld">
+                        <label for="kasse-nachname">Nachname *</label>
+                        <input type="text" id="kasse-nachname" name="nachname" maxlength="{{ laengen.nachname }}" autocomplete="family-name" value="{{ profile_data.nachname }}" required>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+                <div class="lv-feld">
+                    <label for="kasse-email">E-Mail *</label>
+                    <input type="email" id="kasse-email" name="email" maxlength="{{ laengen.email }}" autocomplete="email" value="{{ profile_data.email }}" required>
+                </div>
+                <div class="lv-feld">
+                    <label for="kasse-telefon">Telefon <em>freiwillig</em></label>
+                    <input type="tel" id="kasse-telefon" name="telefon" maxlength="{{ laengen.telefon }}" autocomplete="tel" value="{{ profile_data.telefon }}">
+                </div>
+                <div class="lv-feld">
+                    <label for="kasse-adresse">Straße und Hausnummer *</label>
+                    <input type="text" id="kasse-adresse" name="adresse" maxlength="{{ laengen.adresse }}" autocomplete="street-address" value="{{ profile_data.adresse }}" required>
+                </div>
+                <div class="lv-feld2">
+                    <div class="lv-feld">
+                        <label for="kasse-postleitzahl">PLZ *</label>
+                        <input type="text" id="kasse-postleitzahl" name="postleitzahl" maxlength="{{ laengen.postleitzahl }}" autocomplete="postal-code" value="{{ profile_data.postleitzahl }}" required>
+                    </div>
+                    <div class="lv-feld">
+                        <label for="kasse-stadt">Ort *</label>
+                        <input type="text" id="kasse-stadt" name="stadt" maxlength="{{ laengen.stadt }}" autocomplete="address-level2" value="{{ profile_data.stadt }}" required>
+                    </div>
+                </div>
+                <div class="lv-feld">
+                    <label for="kasse-land">Land *</label>
+                    <input type="text" id="kasse-land" name="land" maxlength="{{ laengen.land }}" autocomplete="country-name" value="{{ profile_data.land }}" required>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Zahlungsart</legend>
+                <div class="lv-wahlen">
+                    <label class="lv-wahl"><input type="radio" name="payment_method" value="paypal" checked><span>PayPal</span></label>
+                    {% if bank_moeglich %}
+                    <label class="lv-wahl"><input type="radio" name="payment_method" value="bank_transfer"><span>Überweisung</span></label>
+                    {% endif %}
+                </div>
+            </fieldset>
+
+            <button type="submit" class="lv-knopf">Zahlungspflichtig bestellen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            {% comment %}Rechtslinks direkt am Abschluss (EIG117, § 312j Abs. 3 BGB): der Checkout erscheint nur bei aktivem Verkauf.{% endcomment %}
+            <p class="lv-klein">Mit deiner Bestellung gelten unsere <a href="{% url 'agb' %}">AGB mit Widerrufsbelehrung (§ 5)</a> und die <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
+            <p><a class="lv-link" href="{% url 'warenkorb' %}">Zurück zum Warenkorb</a></p>
+        </form>
+    </section>
 </div>
 {% endblock %}

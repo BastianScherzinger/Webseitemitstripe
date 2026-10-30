@@ -4,20 +4,19 @@
 {% block meta_description %}Du bist von deinem Konto bei Luviq Universe abgemeldet.{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='danke' %}{% endblock %}
+
 {% block content %}
-  <div class="container py-4">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="alert alert-success border-light p-4" role="alert">
-          <h4 class="fw-bold mb-2">✓ Logout erfolgreich</h4>
-          <p class="mb-0">Sie wurden erfolgreich abgemeldet. Auf Wiedersehen!</p>
-        </div>
-        
-        <div class="text-center mt-4">
-          <a href="{% url 'home' %}" class="btn btn-primary fw-bold me-2">🏠 Zur Startseite</a>
-          <a href="{% url 'login' %}" class="btn btn-outline-primary fw-bold">🔐 Erneut anmelden</a>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="lv-seite">
+    <section class="lv-danke" aria-labelledby="danke-titel">
+        <p class="lv-nr">Konto</p>
+        <h1 class="lv-serif" id="danke-titel">Du bist abgemeldet.</h1>
+        <p>Auf Wiedersehen.</p>
+        <a class="lv-knopf" href="{% url 'home' %}">Zur Startseite <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="lv-knopf linie" href="{% url 'login' %}">Erneut anmelden <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </section>
+</div>
 {% endblock %}

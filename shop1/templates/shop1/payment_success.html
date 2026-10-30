@@ -5,84 +5,37 @@
 {% block meta_description %}Deine Bestellung bei Luviq Universe ist eingegangen.{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='danke' %}{% endblock %}
+
 {% block content %}
-<div class="relative min-h-screen pt-20 pb-32 flex items-center justify-center">
-    <!-- Nebula Background Layer -->
-    <div class="energy-nebula"></div>
+<div class="lv-seite">
+    <section class="lv-danke" aria-labelledby="danke-titel">
+        <p class="lv-nr">Bestellung #{{ order.id }}</p>
+        <h1 class="lv-serif" id="danke-titel">Bestellung abgeschlossen</h1>
+        {% if order.payment_method == 'bank_transfer' %}
+        <p><strong>Zahlung per Überweisung.</strong> Bitte prüfe deine E-Mails, dort stehen die Zahlungsdaten. Sobald das Geld eingegangen ist, startet der Versand.</p>
+        {% if bank %}
+        <dl class="lv-daten">
+            <dt>Inhaber</dt><dd>{{ bank.inhaber }}</dd>
+            <dt>IBAN</dt><dd>{{ bank.iban }}</dd>
+            <dt>Verwendungszweck</dt><dd>{{ bank.zweck }}</dd>
+        </dl>
+        {% endif %}
+        {% else %}
+        <p><strong>Zahlung verarbeitet.</strong> Vielen Dank für deine Bestellung. Dein Paket wird jetzt für den Versand vorbereitet.</p>
+        {% endif %}
 
-    <div class="max-w-3xl w-full mx-auto px-4 relative z-10 fade-in-blur">
-        
-        <div class="glass-card p-12 md:p-20 rounded-[4rem] shadow-2xl text-center border-glow-orange/20 relative overflow-hidden">
-            <!-- Decorative Elements -->
-            <div class="absolute -top-20 -left-20 w-64 h-64 bg-glow-orange/10 rounded-full blur-[80px]"></div>
-            <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-glow-orange/5 rounded-full blur-[80px]"></div>
-            
-            <!-- Icon with Glow Pulse -->
-            <div class="w-24 h-24 bg-glow-orange/10 rounded-full flex items-center justify-center mx-auto mb-12 glow-pulse">
-                <span class="text-5xl">🚀</span>
-            </div>
+        <dl class="lv-daten">
+            <dt>Bestellnummer</dt><dd>#{{ order.id }}</dd>
+            <dt>Name</dt><dd>{{ order.vorname }} {{ order.nachname|slice:":1" }}.</dd>
+            <dt>Betrag</dt><dd>{{ order.gesamt_betrag|floatformat:2 }} €</dd>
+        </dl>
 
-            <!-- Heading -->
-            <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-6">
-                Mission <span class="text-glow">Complete</span>
-            </h1>
-
-            <!-- Dynamic Subtext -->
-            <div class="space-y-4 mb-12">
-                {% if order.payment_method == 'bank_transfer' %}
-                    <p class="text-xl font-bold text-white uppercase tracking-tight">Vorbereitung für Überweisung</p>
-                    <p class="text-white/40 text-sm font-light tracking-[0.1em] leading-relaxed">
-                        Mission gestartet! Bitte checke deine E-Mails <br>
-                        für die Zahlungsdaten. Sobald das Signal (Geld) eingeht, <br>
-                        startet der Versand.
-                    </p>
-                    {% if bank %}
-                    <p class="text-white/60 text-sm font-light tracking-[0.1em] leading-relaxed">
-                        Inhaber: {{ bank.inhaber }}<br>
-                        IBAN: {{ bank.iban }}<br>
-                        Verwendungszweck: {{ bank.zweck }}
-                    </p>
-                    {% endif %}
-                {% else %}
-                    <p class="text-xl font-bold text-white uppercase tracking-tight">Transfer erfolgreich verarbeitet.</p>
-                    <p class="text-white/40 text-sm font-light tracking-[0.1em] leading-relaxed">
-                        Vielen Dank für deine Bestellung. <br>
-                        Dein Paket wird nun für den Deep-Space-Versand vorbereitet.
-                    </p>
-                {% endif %}
-            </div>
-
-            <!-- Order Identification -->
-            <div class="py-8 border-y border-white/5 flex flex-col md:flex-row justify-center gap-8 md:gap-16 mb-12">
-                <div>
-                    <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Order ID</p>
-                    <p class="text-xl font-bold text-white">#{{ order.id }}</p>
-                </div>
-                <div>
-                    <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Identity</p>
-                    <p class="text-xl font-bold text-white">{{ order.vorname }} {{ order.nachname|slice:":1" }}.</p>
-                </div>
-                <div>
-                    <p class="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">Payload</p>
-                    <p class="text-xl font-bold text-white">{{ order.gesamt_betrag|floatformat:2 }} €</p>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                <a href="{% url 'profil' %}" class="px-10 py-5 rounded-2xl glass border-white/10 text-white font-bold uppercase tracking-widest text-[10px] hover:bg-white/5 transition-all text-center">
-                    Mission Log (Profil)
-                </a>
-                <a href="{% url 'produkte' %}" class="px-10 py-5 rounded-2xl btn-glow text-white font-black uppercase tracking-widest text-[10px] shadow-2xl text-center">
-                    Back to Gallery
-                </a>
-            </div>
-        </div>
-
-        <!-- Secondary Info (Optional) -->
-        <p class="text-center mt-12 text-[10px] text-white/20 uppercase tracking-[0.4em] font-light">
-            Luviq Universe – Unique Pieces for Unique Souls
-        </p>
-    </div>
+        <a class="lv-knopf" href="{% url 'profil' %}">Zum Profil <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="lv-knopf linie" href="{% url 'produkte' %}">Weitere Stücke ansehen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </section>
 </div>
 {% endblock %}

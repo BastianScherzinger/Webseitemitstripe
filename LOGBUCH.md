@@ -10,6 +10,13 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 30.10.2026 — Luviq-Umbau P5: Alt-Seiten ins neue System (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
+
+- Impressum, Datenschutz, AGB, Login, Registrieren, Passwort-Seiten (Formular, gesendet, Bestätigen, fertig, ändern), Gästebuch, Kontakt-Danke, Abmelden, Sperre, Newsletter-Abmelden, Profil, Warenkorb, Kasse, Zahlung, Bestellung abgeschlossen: alle `lv-seite` nur mit vorhandenen Klassen (kein CSS, keine neue Klasse, Critical-CSS unverändert). Kein Emoji, kein „Orbit/Mission/Identity/Biometric/ABORT“ mehr in den Kundenvorlagen (Admin-Vorlagen unberührt).
+- Rechtstexte: Inhalt wortgleich, nur Hülle und Überschriften. Ausnahme: im Datenschutz-Platzhaltertext (der nach Generator-Freigabe ersetzt wird) entfielen „im digitalen Orbit“, „(Missions)“ und die Anführung „Anker“. USt-Zeile „wird nachgereicht“ unverändert. Datenschutz-Inhaltsverzeichnis als `<ol>` mit Sprunglinks (nur im Platzhaltertext). Der Datenschutz-Absatz über die Google-Karte im Gästebuch ist nun gegenstandslos (Karte entfallen) und bleibt bis zum Generator-Text stehen.
+- Gästebuch: Karte raus, Regeln und Ablauf in `<details>`, Einträge als `lv-faq`-Zeilen, „Markieren (n)“ statt Flamme (Ablauf-Punkt 6 entsprechend), Antworten-Schalter (`data-antwort-schalter`) unverändert. Google-Links bleiben als Textlinks.
+- Tests umgeschrieben (nicht gelöscht): `test_einstellungen` (keine Fremdquelle mehr, Gästebuch ohne Karte), `test_inhalt` (Ablaufliste nach Inhalt statt erster `<ol>`, keine Karte), `test_seo` (Zwischenüberschrift sichtbar). Designwache nicht angefasst (P6).
+
 ## 30.10.2026 — Luviq-Umbau P4b: Vergeben statt Verkauft, Raster und Abstände Handy
 
 - Migration 0022 belegt, dass die Archivstücke nie verkauft wurden: Band und Texte sagen „Vergeben“ (`VERGEBEN_WORT`), „Verkauft“ nur für ein Stück mit Bestand 0, das nicht Archiv ist (`Produkt.band_wort`). „Archiv: schon vergeben“, Einleitung und Startseite angepasst.

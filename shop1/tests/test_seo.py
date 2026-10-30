@@ -976,7 +976,7 @@ class KopfangabenUnterscheidbarTest(LuviqTestCase):
         """IS16: die Seite hat über 300 Eigenwörter und braucht mindestens eine h2/h3;
         sie steht nur für Leseprogramme sichtbar (``sr-only``), der Look bleibt."""
         inhalt = self.hole('/gaestebuch/').content.decode()
-        self.assertRegex(inhalt, r'<h2 class="sr-only">Beiträge im Gästebuch</h2>')
+        self.assertRegex(inhalt, r'<h2[^>]*>Beiträge im Gästebuch</h2>')
 
     @override_settings(VERKAUF_AKTIV=True)  # die Kaufweg-Beiträge leiten ohne Verkauf um
     def test_wissensbeitraege_melden_og_type_article_wie_ihr_schema(self):

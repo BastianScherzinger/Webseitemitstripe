@@ -5,111 +5,68 @@
 {% block meta_description %}Übersicht der Einzelstücke in deinem Warenkorb bei Luviq Universe.{% endblock %}
 {% block meta_robots %}noindex, follow{% endblock %}
 
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='textseite' %}{% endblock %}
+
 {% block content %}
-<div class="relative min-h-screen pt-20 pb-32">
-    <!-- Nebula Background Layer -->
-    <div class="energy-nebula"></div>
+<div class="lv-seite">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">Warenkorb</li></ol></nav>
 
-    <div class="max-w-6xl mx-auto px-4 relative z-10 animate-reveal">
-        <!-- Header -->
-        <div class="mb-16">
-            <h1 class="text-4xl md:text-6xl font-black heading-font text-white uppercase tracking-tighter mb-4">
-                Your <span class="text-glow">Orbit</span>
-            </h1>
-            <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Bereit zum Checkout?</p>
-        </div>
+    <section class="lv-seitenkopf" aria-labelledby="warenkorb-titel">
+        <h1 class="lv-serif lv-satz" id="warenkorb-titel">Warenkorb</h1>
+        <p class="lv-lead">{% if warenkorb_items %}Prüfe deine Auswahl, bevor du zur Kasse gehst.{% else %}Dein Warenkorb ist leer.{% endif %}</p>
+    </section>
 
-        {% if warenkorb_items %}
-            <div class="glass-card rounded-[3rem] overflow-hidden shadow-2xl mb-12">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="border-b border-white/5">
-                                <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-glow-orange">Produkt</th>
-                                <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-glow-orange text-center">Menge</th>
-                                <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-glow-orange text-right">Gesamt</th>
-                                <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-glow-orange text-center">Aktion</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-white/5">
-                            {% for item in warenkorb_items %}
-                                <tr class="group hover:bg-white/[0.02] transition-colors">
-                                    <td class="px-8 py-8">
-                                        <div class="flex items-center space-x-6">
-                                            {% if item.bild %}
-                                                <div class="w-20 h-20 rounded-2xl overflow-hidden glass">
-                                                    <img src="{{ item.bild|cloud:'w_192,h_192,c_fill' }}" alt="{{ item.name }} im Warenkorb" class="w-full h-full object-cover" width="96" height="96" loading="lazy" decoding="async">
-                                                </div>
-                                            {% else %}
-                                                <div class="w-20 h-20 rounded-2xl glass flex items-center justify-center text-white/10">
-                                                    📦
-                                                </div>
-                                            {% endif %}
-                                            <div>
-                                                <h4 class="text-white font-bold heading-font">{{ item.name }}</h4>
-                                                <p class="text-white/30 text-xs mt-1">{{ item.preis|floatformat:2 }} € / Stück</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-8 py-8">
-                                        <form method="post" action="{% url 'update_cart' item.id %}" class="flex items-center justify-center space-x-3">
-                                            {% csrf_token %}
-                                            <input type="number" name="menge" value="{{ item.menge }}" min="1" max="99" aria-label="Menge für {{ item.name }}"
-                                                   class="w-16 bg-white/5 border border-white/10 rounded-xl px-2 py-2 text-center text-white text-sm focus:outline-none focus:border-glow-orange">
-                                            <button type="submit" aria-label="Menge für {{ item.name }} aktualisieren" class="p-2 glass rounded-xl hover:bg-glow-orange transition-all" title="Aktualisieren">
-                                                ↻
-                                            </button>
-                                        </form>
-                                    </td>
-                                    <td class="px-8 py-8 text-right">
-                                        <span class="text-xl font-black text-glow">{{ item.gesamt|floatformat:2 }} €</span>
-                                    </td>
-                                    <td class="px-8 py-8 text-center">
-                                        <form method="post" action="{% url 'remove_from_cart' item.id %}">
-                                            {% csrf_token %}
-                                            <button aria-label="{{ item.name }} aus dem Warenkorb entfernen" class="text-white/30 hover:text-red-400 transition-colors" title="Entfernen">
-                                                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Summary -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-end">
+    {% if warenkorb_items %}
+    <section class="lv-abschnitt" aria-labelledby="warenkorb-stuecke">
+        <h2 class="lv-versteckt" id="warenkorb-stuecke">Stücke im Warenkorb</h2>
+        <div class="lv-faq">
+            {% for item in warenkorb_items %}
+            <div>
                 <div>
-                    <a href="{% url 'produkte' %}" class="inline-flex items-center px-8 py-4 glass border-white/10 rounded-2xl text-white font-bold uppercase tracking-widest text-xs hover:bg-white/5 transition-all">
-                        ← Weiter einkaufen
-                    </a>
+                    {% if item.bild %}
+                    <img src="{{ item.bild|cloud:'w_192,h_192,c_fill' }}" alt="{{ item.name }} im Warenkorb" width="96" height="96" loading="lazy" decoding="async">
+                    {% endif %}
+                    <h3>{{ item.name }}</h3>
+                    <p class="lv-nr">{{ item.preis|floatformat:2 }} € / Stück</p>
                 </div>
-                <div class="glass-card p-10 md:p-12 rounded-[3.5rem] shadow-2xl">
-                    <div class="flex justify-between items-center mb-8">
-                        <span class="text-xs font-black uppercase tracking-widest text-white/40">Gesamtsumme</span>
-                        <span class="text-4xl font-black text-glow">{{ gesamt|floatformat:2 }} €</span>
-                    </div>
-                    <a href="{% url 'checkout' %}" class="block w-full btn-glow py-5 rounded-[2rem] text-white font-black uppercase tracking-widest text-sm text-center shadow-2xl">
-                        ✓ Proceed to Checkout
-                    </a>
+                <div class="lv-prosa">
+                    <form method="post" action="{% url 'update_cart' item.id %}" class="lv-feldzeile">
+                        {% csrf_token %}
+                        <input type="number" name="menge" value="{{ item.menge }}" min="1" max="99" aria-label="Menge für {{ item.name }}">
+                        <button type="submit" aria-label="Menge für {{ item.name }} aktualisieren">Menge ändern</button>
+                    </form>
+                    <p><strong>{{ item.gesamt|floatformat:2 }} €</strong></p>
+                    <form method="post" action="{% url 'remove_from_cart' item.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="lv-knopf linie" aria-label="{{ item.name }} aus dem Warenkorb entfernen">Entfernen</button>
+                    </form>
                 </div>
             </div>
-        {% else %}
-            <div class="glass-card p-24 rounded-[4rem] text-center shadow-2xl">
-                <div class="text-6xl mb-8 opacity-20">🛒</div>
-                <h2 class="text-3xl font-bold heading-font text-white mb-6 uppercase tracking-widest">Orbit ist leer</h2>
-                <p class="text-white/30 mb-12 max-w-sm mx-auto font-light leading-relaxed">
-                    Deine Mission hat noch keine Objekte erfasst. Entdecke unsere Kollektion.
-                </p>
-                <a href="{% url 'produkte' %}" class="btn-glow px-12 py-5 rounded-full text-white font-black uppercase tracking-widest text-sm inline-block shadow-2xl">
-                    Kollektion ansehen
-                </a>
-            </div>
-        {% endif %}
-    </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="lv-abschnitt" aria-labelledby="warenkorb-summe">
+        <h2 class="lv-serif lv-abschnittstitel" id="warenkorb-summe">Gesamtsumme</h2>
+        <dl class="lv-daten">
+            <dt>Gesamtsumme</dt><dd>{{ gesamt|floatformat:2 }} €</dd>
+        </dl>
+        <div class="lv-prosa">
+            <p><a href="{% url 'checkout' %}" class="lv-knopf">Zur Kasse <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+            <p><a href="{% url 'produkte' %}" class="lv-link">Weiter einkaufen</a></p>
+        </div>
+    </section>
+    {% else %}
+    <section class="lv-abschnitt" aria-labelledby="warenkorb-leer">
+        <h2 class="lv-serif lv-abschnittstitel" id="warenkorb-leer">Noch nichts ausgewählt</h2>
+        <div class="lv-prosa">
+            <p>Du hast noch kein Stück in den Warenkorb gelegt.</p>
+            <p><a href="{% url 'produkte' %}" class="lv-knopf">Stücke ansehen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+        </div>
+    </section>
+    {% endif %}
 </div>
 {% endblock %}

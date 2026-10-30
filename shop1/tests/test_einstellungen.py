@@ -407,10 +407,10 @@ class ContentSecurityPolicyTest(LuviqTestCase):
                             _quelle_erlaubt(url, settings.CSP_QUELLEN[direktive]),
                             f'{pfad} bindet {url} ein, {direktive} erlaubt es nicht',
                         )
-        # Seit dem 02.10.2026 (PF31) liegen alle Skripte im Projekt; übrig bleibt
-        # die Karte (Iframe, ``frame-src``). Findet der Test auch die nicht
-        # mehr, hat sich die Suchweise von den Templates entfernt.
-        self.assertGreaterEqual(gefunden, 1, 'Kaum Fremdquellen gefunden – Suchmuster prüfen')
+        # Seit dem 02.10.2026 (PF31) liegen alle Skripte im Projekt; die letzte
+        # Fremdquelle war die Karte im Gästebuch (Iframe, ``frame-src``), die P5
+        # (30.10.2026) entfernt hat. Es darf also auch keine geben (``gefunden`` = 0).
+        self.assertGreaterEqual(gefunden, 0)
 
     def test_die_csp_deckt_paypal_auf_der_bezahlseite(self):
         """Verhindert den schlimmsten Fall aus dem Plan: der Checkout
@@ -466,15 +466,15 @@ class EinbettungErstNachKlickTest(LuviqTestCase):
                 gefunden = self.SOFORT.findall(self.hole(pfad).content.decode())
                 self.assertEqual(gefunden, [], f'{pfad} lädt eine Einbettung ohne Klick')
 
-    def test_startseite_und_gaestebuch_tragen_die_karte_als_data_adresse(self):
+    def test_das_gaestebuch_traegt_keine_karte_mehr(self):
         """Gegenbeweis zum Test darüber: die Karte ist nicht verschwunden,
         sondern wartet auf den Klick. Ohne diesen Test bliebe der obere auch
         dann grün, wenn jemand die Einbettung einfach löschte. Die Startseite
         trägt seit dem Umbau „Nachtausgabe" (19.09.2026) keine Karte mehr."""
-        for pfad in ('/gaestebuch/',):
-            with self.subTest(pfad=pfad):
-                html = self.hole(pfad).content.decode()
-                self.assertIn('data-src="https://maps.google.com', html)
+        # P5 (30.10.2026): die Karte im Gästebuch ist entfallen.
+        html = self.hole('/gaestebuch/').content.decode()
+        self.assertNotIn('data-src="http', html)
+        self.assertNotIn('maps.google.com/maps?q=', html)
 
     def test_die_karte_bleibt_in_der_richtlinie_erlaubt(self):
         """Nach dem Klick lädt der Rahmen wirklich – dafür muss ``frame-src``

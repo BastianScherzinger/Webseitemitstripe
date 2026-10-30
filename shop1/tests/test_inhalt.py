@@ -554,7 +554,10 @@ class AntwortAbsatzUndListenTest(LuviqTestCase):
 
     def test_der_ablauf_im_gaestebuch_ist_eine_nummerierte_liste(self):
         html = self.hole('/gaestebuch/').content.decode()
-        liste = re.search(r'<ol[^>]*>(.*?)</ol>', html, re.DOTALL).group(1)
+        listen = [l for l in re.findall(r'<ol[^>]*>(.*?)</ol>', html, re.DOTALL)
+                  if 'höchstens 2.000 Zeichen' in l]  # die erste <ol> ist die Brotkrume
+        self.assertEqual(len(listen), 1)
+        liste = listen[0]
         self.assertEqual(liste.count('<li>'), 6)
         self.assertIn('Ein Beitrag darf höchstens 2.000 Zeichen lang sein', liste)
 
@@ -737,7 +740,8 @@ class Widersprueche02102026Test(LuviqTestCase):
         html = self.hole('/gaestebuch/').content.decode()
         self.assertNotIn('Gr%C3%BCnberger', html)
         self.assertNotIn('Grünberger', sichtbarer_text(html))
-        self.assertIn('data-src="https://maps.google.com/maps?q=L%C3%BCbeck&', html)
+        # P5 (30.10.2026): keine Karte mehr im Gästebuch, also auch keine Anschrift darin.
+        self.assertNotIn('data-src="http', html)
         self.assertNotIn('M%C3%BChlenkamp', html)
 
     def test_ohne_bewertungsformular_heisst_der_knopf_nicht_bewerten(self):

@@ -5,57 +5,39 @@
 {% block meta_description %}Melde dich mit deinem Konto bei Luviq Universe an.{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='anfrage' %}{% endblock %}
+
 {% block content %}
-<div class="relative min-h-[80vh] flex items-center justify-center pt-20 pb-32">
-    <!-- Nebula Background Layer -->
-    <div class="energy-nebula"></div>
-
-    <div class="max-w-md w-full px-4 relative z-10 animate-reveal">
-        <div class="text-center mb-12">
-            <div class="h-20 w-20 rounded-full glass mx-auto flex items-center justify-center p-4 mb-8 shadow-[0_0_40px_rgba(255,106,0,0.2)]">
-                <img class="h-full w-auto" src="{% static 'shop1/images/logo-luviq-96.webp' %}" srcset="{% static 'shop1/images/logo-luviq-96.webp' %} 96w, {% static 'shop1/images/logo-luviq-192.webp' %} 192w" sizes="48px" alt="Luviq Universe" width="40" height="40" loading="eager" decoding="async">
-            </div>
-            <h1 class="text-4xl font-black heading-font text-white uppercase tracking-tighter mb-4">
-                Anmelden
-            </h1>
-            <p class="text-white/40 text-sm font-light tracking-[0.2em] uppercase">Willkommen zurück. Mit * markierte Felder sind Pflicht.</p>
+<div class="lv-seite">
+    <section class="lv-anfrageseite" aria-labelledby="login-titel">
+        <div>
+            <h1 class="lv-serif lv-satz" id="login-titel">Anmelden</h1>
+            <p class="lv-lead">Melde dich mit deinem Konto an. Mit * markierte Felder sind Pflicht.</p>
         </div>
 
-        <div class="glass-card p-8 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl relative">
-            <form method="post" class="space-y-8">
-                {% csrf_token %}
-                
-                <div>
-                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange mb-4">Identity *</label>
-                    <input type="text" name="username" aria-label="Benutzername" autocomplete="username" maxlength="150" placeholder="BENUTZERNAME" class="w-full form-input rounded-2xl px-6 py-4 text-sm" required>
-                </div>
-                
-                <div>
-                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-glow-orange mb-4">Security Key *</label>
-                    <input type="password" name="password" aria-label="Passwort" autocomplete="current-password" placeholder="PASSWORT" class="w-full form-input rounded-2xl px-6 py-4 text-sm" required>
-                </div>
+        <form method="post" class="lv-formular" aria-labelledby="login-titel" aria-describedby="login-fehler">
+            {% csrf_token %}
+            <p class="lv-fehler" id="login-fehler" role="alert">{% if error or form.errors %}Anmeldung fehlgeschlagen. Benutzername oder Passwort stimmt nicht.{% endif %}</p>
 
-                {% if error or form.errors %}
-                <div class="glass p-4 rounded-2xl border-red-500/30 text-red-400 text-xs text-center font-medium">
-                    ⚠️ Authentifizierung fehlgeschlagen.
-                </div>
-                {% endif %}
-
-                <button type="submit" class="w-full btn-glow py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm shadow-2xl">
-                    Anmelden
-                </button>
-            </form>
-
-            <div class="mt-12 pt-8 border-t border-white/5 space-y-4">
-                <p class="text-center text-[10px] uppercase tracking-widest text-white/30">
-                    Noch keine ID? 
-                    <a href="{% url 'register' %}" class="text-glow-orange font-black ml-1 hover:underline">Registrieren</a>
-                </p>
-                <p class="text-center">
-                    <a href="{% url 'password_reset' %}" class="text-[10px] uppercase tracking-widest text-white/20 hover:text-white transition-colors">Key vergessen?</a>
-                </p>
+            <div class="lv-feld">
+                <label for="login-benutzername">Benutzername *</label>
+                <input type="text" id="login-benutzername" name="username" autocomplete="username" maxlength="150" aria-describedby="login-fehler" required>
             </div>
-        </div>
-    </div>
+
+            <div class="lv-feld">
+                <label for="login-passwort">Passwort *</label>
+                <input type="password" id="login-passwort" name="password" autocomplete="current-password" aria-describedby="login-fehler" required>
+            </div>
+
+            <button type="submit" class="lv-knopf">Anmelden <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+
+            <p><a class="lv-link" href="{% url 'register' %}">Noch kein Konto? Konto anlegen</a></p>
+            <p><a class="lv-link" href="{% url 'password_reset' %}">Passwort vergessen?</a></p>
+            <p><a class="lv-link" href="{% url 'home' %}">Zurück zur Startseite</a></p>
+        </form>
+    </section>
 </div>
 {% endblock %}

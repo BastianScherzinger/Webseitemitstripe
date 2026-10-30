@@ -40,94 +40,60 @@
 }
 </script>
 {% endblock %}
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='textseite' %}{% endblock %}
 {% block content %}
-<div class="relative min-h-screen pt-32 pb-40">
-    <!-- Nebula Background Layer -->
-    <div class="energy-nebula"></div>
+<div class="lv-seite">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">Impressum</li></ol></nav>
 
-    <div class="max-w-5xl mx-auto px-4 relative z-10 animate-reveal">
-        <div class="glass-card p-12 md:p-24 rounded-[4.5rem] shadow-[0_0_100px_rgba(255,106,0,0.05)] border-white/5 relative overflow-hidden">
-            <!-- Decorative Glows -->
-            <div class="absolute -top-40 -left-40 w-96 h-96 bg-glow-orange/5 rounded-full blur-[120px]"></div>
-            
-            <header class="mb-20 text-center">
-                <div class="h-px w-12 bg-glow-orange mx-auto mb-10"></div>
-                <h1 class="text-5xl md:text-7xl font-black heading-font text-white uppercase tracking-tighter mb-4">
-                    Impressum
-                </h1>
-                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Impressum & Transparency – dieses Impressum nennt die Anbieterin von Luviq Universe, {{ anbieterin.name }} aus {{ anbieterin.plz }} {{ anbieterin.ort }}, ihre Kontaktadresse und den Hinweis zur Streitschlichtung.</p>
-            </header>
+    <section class="lv-seitenkopf" aria-labelledby="impressum-titel">
+        <h1 class="lv-serif lv-satz" id="impressum-titel">Impressum</h1>
+        <p class="lv-lead">Dieses Impressum nennt die Anbieterin von Luviq Universe, {{ anbieterin.name }} aus {{ anbieterin.plz }} {{ anbieterin.ort }}, ihre Kontaktadresse und den Hinweis zur Streitschlichtung.</p>
+    </section>
 
-            {% comment %}Sobald Luisa den Generator-Text freigegeben hat und er in legal/generator/impressum.html steht, ersetzt er den Block darunter (Agenturregel 3). Dann die Aufbau-Referenz dieser Seite gezielt nachziehen.{% endcomment %}
-            {% if rechtstexte.impressum %}
-            <div class="lv-rechtstext">{% include 'shop1/legal/generator/impressum.html' %}{% if not verkauf_aktiv %}<p>Luviq Universe ist eine Marke im Aufbau. Derzeit findet kein Verkauf statt. {{ shop_oeffnet }}</p>{% endif %}</div>
-            {% else %}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-20">
-                <div class="space-y-16">
-                    <section class="group">
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-8 h-8 rounded-xl glass border-glow-orange/20 flex items-center justify-center text-xs group-hover:bg-glow-orange group-hover:text-white transition-all">📍</div>
-                            <h2 class="text-xs font-black uppercase tracking-widest text-white/80">Angaben gemäß § 5 DDG</h2>
-                        </div>
-                        <div class="text-white/40 leading-relaxed font-light pl-12">
-                            <p class="text-white font-bold mb-2">Anbieterin: {{ anbieterin.name }}</p>
-                            <p>{{ anbieterin.strasse }}</p>
-                            <p>{{ anbieterin.plz }} {{ anbieterin.ort }}</p>
-                            <p>{{ anbieterin.land_name }}</p>
-                            {% comment %}Angaben aus der Gewerbeanmeldung vom 22.10.2026 (luviq_daten.ANBIETERIN): Geschäftsbezeichnung „Luviq", Betriebsstätte Lübeck. Verkaufsschalter: solange er aus ist, sagt das Impressum ausdrücklich, dass nichts verkauft wird.{% endcomment %}
-                            {% if not verkauf_aktiv %}<p class="mt-4">Geschäftsbezeichnung: {{ anbieterin.geschaeft }}. Luviq Universe ist eine Marke im Aufbau. Derzeit findet kein Verkauf statt. {{ shop_oeffnet }}</p>{% endif %}
-                            {% comment %}USt-IdNr. (§ 5 Abs. 1 Nr. 6 DDG): erscheint erst, wenn UST_IDNR in Railway gesetzt ist; bis dahin steht „wird nachgereicht“ da (Leitung 29.10.2026). Nie eine Nummer erfinden; die Steuernummer gehört nicht hierher.{% endcomment %}
-                            {% if ust_idnr %}<p class="mt-4">Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: {{ ust_idnr }}</p>{% else %}<p class="mt-4">Umsatzsteuer-Identifikationsnummer: wird nachgereicht.</p>{% endif %}
-                        </div>
-                    </section>
-
-                    <section class="group">
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-8 h-8 rounded-xl glass border-glow-orange/20 flex items-center justify-center text-xs group-hover:bg-glow-orange group-hover:text-white transition-all">📧</div>
-                            <h2 class="text-xs font-black uppercase tracking-widest text-white/80">Kontakt</h2>
-                        </div>
-                        <div class="text-white/40 leading-relaxed font-light pl-12">
-                            <p>E-Mail: <a href="mailto:{{ anbieterin.email }}" class="text-glow-orange hover:underline">{{ anbieterin.email }}</a></p>
-                            {# Hier stand "www.luviq.de" - eine Adresse, unter der dieses Projekt nicht erreichbar ist. Die Seite nennt jetzt den Host, unter dem sie tatsaechlich ausgeliefert wird; damit stimmt die Angabe unabhaengig davon, welche Domain gerade davorsteht. #}
-                            <p>Website: <a href="{{ request.scheme }}://{{ request.get_host }}/" class="hover:text-white transition-colors">{{ request.get_host }}</a></p>
-                        </div>
-                    </section>
-                </div>
-
-                <div class="space-y-16">
-                    <section class="group">
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-8 h-8 rounded-xl glass border-glow-orange/20 flex items-center justify-center text-xs group-hover:bg-glow-orange group-hover:text-white transition-all">⚖️</div>
-                            <h2 class="text-xs font-black uppercase tracking-widest text-white/80">Redaktionell verantwortlich</h2>
-                        </div>
-                        <div class="text-white/40 leading-relaxed font-light pl-12">
-                            <p>Verantwortlich für den Inhalt: {{ anbieterin.name }}</p>
-                            <p>{{ anbieterin.strasse }}</p>
-                            <p>{{ anbieterin.plz }} {{ anbieterin.ort }}</p>
-                        </div>
-                    </section>
-
-                    <section class="group">
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-8 h-8 rounded-xl glass border-glow-orange/20 flex items-center justify-center text-xs group-hover:bg-glow-orange group-hover:text-white transition-all">🌍</div>
-                            <h2 class="text-xs font-black uppercase tracking-widest text-white/80">Streitschlichtung</h2>
-                        </div>
-                        <div class="text-white/40 leading-relaxed font-light pl-12 text-xs">
-                            {# Die EU-Plattform zur Online-Streitbeilegung ist seit dem 20.07.2025 abgeschaltet; der Link darauf ist entfernt. Derselbe Knopf führt jetzt zum Kontaktformular, damit der Seitenaufbau bleibt. #}
-                            <p class="mb-4">Die frühere Plattform der EU-Kommission zur Online-Streitbeilegung (OS) ist seit dem 20. Juli 2025 abgeschaltet. Fragen und Beschwerden gehen direkt an Luisa Brehler:</p>
-                            <a href="{% url 'kontakt' %}" class="glass px-4 py-2 rounded-lg text-glow-orange border-glow-orange/20 hover:bg-glow-orange hover:text-white transition-all inline-block">
-                                Kontakt aufnehmen
-                            </a>
-                        </div>
-                    </section>
-                </div>
-            </div>
-
-            {% endif %}
-            <div class="mt-24 pt-12 border-t border-white/5 text-center">
-                <p class="text-[9px] text-white/10 uppercase tracking-[0.4em]">Luviq Universe – Art is not a luxury, it's a necessity.</p>
-            </div>
+    {% comment %}Sobald Luisa den Generator-Text freigegeben hat und er in legal/generator/impressum.html steht, ersetzt er den Block darunter (Agenturregel 3). Dann die Aufbau-Referenz dieser Seite gezielt nachziehen.{% endcomment %}
+    {% if rechtstexte.impressum %}
+    <section class="lv-abschnitt" aria-label="Anbieterangaben">
+        <div class="lv-prosa lv-rechtstext">{% include 'shop1/legal/generator/impressum.html' %}{% if not verkauf_aktiv %}<p>Luviq Universe ist eine Marke im Aufbau. Derzeit findet kein Verkauf statt. {{ shop_oeffnet }}</p>{% endif %}</div>
+    </section>
+    {% else %}
+    <section class="lv-abschnitt" aria-labelledby="impressum-angaben">
+        <h2 class="lv-serif lv-abschnittstitel" id="impressum-angaben">Angaben gemäß § 5 DDG</h2>
+        <div class="lv-prosa">
+            <p><strong>Anbieterin: {{ anbieterin.name }}</strong><br>{{ anbieterin.strasse }}<br>{{ anbieterin.plz }} {{ anbieterin.ort }}<br>{{ anbieterin.land_name }}</p>
+            {% comment %}Angaben aus der Gewerbeanmeldung vom 22.10.2026 (luviq_daten.ANBIETERIN): Geschäftsbezeichnung „Luviq", Betriebsstätte Lübeck. Verkaufsschalter: solange er aus ist, sagt das Impressum ausdrücklich, dass nichts verkauft wird.{% endcomment %}
+            {% if not verkauf_aktiv %}<p>Geschäftsbezeichnung: {{ anbieterin.geschaeft }}. Luviq Universe ist eine Marke im Aufbau. Derzeit findet kein Verkauf statt. {{ shop_oeffnet }}</p>{% endif %}
+            {% comment %}USt-IdNr. (§ 5 Abs. 1 Nr. 6 DDG): erscheint erst, wenn UST_IDNR in Railway gesetzt ist; bis dahin steht „wird nachgereicht“ da (Leitung 29.10.2026). Nie eine Nummer erfinden; die Steuernummer gehört nicht hierher.{% endcomment %}
+            {% if ust_idnr %}<p>Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: {{ ust_idnr }}</p>{% else %}<p>Umsatzsteuer-Identifikationsnummer: wird nachgereicht.</p>{% endif %}
         </div>
-    </div>
+    </section>
+
+    <section class="lv-abschnitt" aria-labelledby="impressum-kontakt">
+        <h2 class="lv-serif lv-abschnittstitel" id="impressum-kontakt">Kontakt</h2>
+        <div class="lv-prosa">
+            <p>E-Mail: <a href="mailto:{{ anbieterin.email }}">{{ anbieterin.email }}</a></p>
+            {# Hier stand "www.luviq.de" - eine Adresse, unter der dieses Projekt nicht erreichbar ist. Die Seite nennt jetzt den Host, unter dem sie tatsaechlich ausgeliefert wird; damit stimmt die Angabe unabhaengig davon, welche Domain gerade davorsteht. #}
+            <p>Website: <a href="{{ request.scheme }}://{{ request.get_host }}/">{{ request.get_host }}</a></p>
+        </div>
+    </section>
+
+    <section class="lv-abschnitt" aria-labelledby="impressum-verantwortlich">
+        <h2 class="lv-serif lv-abschnittstitel" id="impressum-verantwortlich">Redaktionell verantwortlich</h2>
+        <div class="lv-prosa">
+            <p>Verantwortlich für den Inhalt: {{ anbieterin.name }}<br>{{ anbieterin.strasse }}<br>{{ anbieterin.plz }} {{ anbieterin.ort }}</p>
+        </div>
+    </section>
+
+    <section class="lv-abschnitt" aria-labelledby="impressum-streit">
+        <h2 class="lv-serif lv-abschnittstitel" id="impressum-streit">Streitschlichtung</h2>
+        <div class="lv-prosa">
+            {# Die EU-Plattform zur Online-Streitbeilegung ist seit dem 20.07.2025 abgeschaltet; der Link darauf ist entfernt. Der Knopf führt zum Kontaktformular. #}
+            <p>Die frühere Plattform der EU-Kommission zur Online-Streitbeilegung (OS) ist seit dem 20. Juli 2025 abgeschaltet. Fragen und Beschwerden gehen direkt an Luisa Brehler:</p>
+            <p><a href="{% url 'kontakt' %}" class="lv-knopf linie">Kontakt aufnehmen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+        </div>
+    </section>
+    {% endif %}
 </div>
 {% endblock %}

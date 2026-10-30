@@ -296,7 +296,7 @@ class FormularResteTest(LuviqTestCase):
 
     def test_die_registrierung_kennzeichnet_pflichtfelder_und_begrenzt_die_adresse(self):
         html = self.hole('/register/').content.decode()
-        for label in ('Benutzername *', 'Email *', 'Vorname *', 'Nachname *'):
+        for label in ('Benutzername *', 'E-Mail *', 'Vorname *', 'Nachname *'):
             with self.subTest(label=label):
                 self.assertIn(label, html)
         self.assertIn('maxlength="254"', html)
@@ -324,7 +324,8 @@ class FormularResteTest(LuviqTestCase):
 
     def test_das_logo_auf_dem_gaestebuch_fuehrt_zur_startseite(self):
         html = self.hole('/gaestebuch/').content.decode()
-        self.assertRegex(html, r'<a href="/" aria-label="Luviq Universe, zur Startseite"[^>]*>\s*<img[^>]*logo-luviq')
+        # P5 (30.10.2026): der Logo-Kasten der Karte ist entfallen; das Logo im Kopf führt zur Startseite.
+        self.assertRegex(html, r'<a class="lv-logo" href="/" aria-label="Luviq, zur Startseite">\s*<img')
 
 
 class UeberschriftenfolgeTest(LuviqTestCase):
