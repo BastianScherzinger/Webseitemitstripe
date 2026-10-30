@@ -5,6 +5,7 @@ Django settings for mainweb project.
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import re
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -520,6 +521,20 @@ LUCID_REGISTRIERNUMMER = os.getenv('LUCID_REGISTRIERNUMMER', '').strip()
 # CSP_QUELLEN). Die Datenschutzerklaerung muss den Dienst vorher nennen.
 EINWILLIGUNG_DIENST = os.getenv('EINWILLIGUNG_DIENST', '').strip()
 EINWILLIGUNG_SKRIPT = os.getenv('EINWILLIGUNG_SKRIPT', '').strip()
+# Google Analytics 4 (Luisas Konto „Luviq", Bastian 30.10.2026). Gesetzt (z. B.
+# G-0Q3E6MDYS5) = Banner fragt nach „Google Analytics", gtag laedt erst nach
+# „Akzeptieren" (einwilligung.js), CSP bekommt die Google-Hosts. Leer = aus.
+GA_MESSUNG_ID = os.getenv('GA_MESSUNG_ID', '').strip()
+if not re.match(r'^G-[A-Z0-9]{4,20}$', GA_MESSUNG_ID):
+    GA_MESSUNG_ID = ''
+if GA_MESSUNG_ID and not EINWILLIGUNG_DIENST:
+    EINWILLIGUNG_DIENST = 'Google Analytics'
+    EINWILLIGUNG_SKRIPT = f'https://www.googletagmanager.com/gtag/js?id={GA_MESSUNG_ID}'
+if GA_MESSUNG_ID:
+    CSP_QUELLEN['script-src'] = CSP_QUELLEN['script-src'] + ['https://www.googletagmanager.com']
+    CSP_QUELLEN['connect-src'] = CSP_QUELLEN['connect-src'] + [
+        'https://www.googletagmanager.com', 'https://*.google-analytics.com',
+        'https://*.analytics.google.com']
 
 # ═══ MOTIV ANFRAGEN ═══
 # /motiv-anfragen/ (Umbau „Nachtausgabe", 19.09.2026): Anfrage ohne Preis,

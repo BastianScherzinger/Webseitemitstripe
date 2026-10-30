@@ -178,6 +178,21 @@ class EinwilligungTest(LuviqTestCase):
         self.assertIn('Cookie-Einstellungen', html)
 
 
+    @override_settings(EINWILLIGUNG_DIENST='Google Analytics',
+                       EINWILLIGUNG_SKRIPT='https://www.googletagmanager.com/gtag/js?id=G-TEST1234',
+                       GA_MESSUNG_ID='G-TEST1234')
+    def test_google_analytics_nur_nach_einwilligung_und_in_der_datenschutzerklaerung(self):
+        """Bastian 30.10.2026: GA4 für Luviq – gtag nie im HTML, nur als Adresse; die
+        Datenschutzerklärung nennt den Dienst, sobald er eingestellt ist."""
+        html = self.hole('/').content.decode()
+        self.assertIn('data-ga="G-TEST1234"', html)
+        self.assertNotIn('src="https://www.googletagmanager.com', html)
+        self.assertNotIn("gtag('config'", html)
+        self.assertIn('Google Analytics', self.hole('/datenschutz/').content.decode())
+
+    def test_ohne_mess_id_kein_analytics_absatz(self):
+        self.assertNotIn('id="ds-analytics"', self.hole('/datenschutz/').content.decode())
+
 class AngebotMitVerkaufTest(LuviqTestCase):
     """Mit Verkauf: gebraucht, § 19-Satz statt „Endpreis", Herstellerangaben (GPSR)."""
 
