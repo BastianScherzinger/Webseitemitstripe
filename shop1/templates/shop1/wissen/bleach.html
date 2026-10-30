@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% comment %}ENTWURF (freigegeben=False in views/wissen.py): erreichbar, aber noindex, weder in Sitemap noch llms.txt noch Übersicht, bis Luisa den Text bestätigt hat. Nur allgemein belegbares Wissen plus das, was die Seite schon über Luisas Arbeitsweise sagt (luviq_daten.SCHRITTE, DAUER, PFLEGE); keine Zahl, kein Stoff, keine Zeit und kein Preis, die nicht schon auf der Seite stehen. Schema-Daten mit Uhrzeit und +01:00 (WISSEN.md).{% endcomment %}
+{% comment %}Veröffentlicht 30.10.2026 (Runde 3, freigegeben=True in views/wissen.py), vorher Entwurf. Sicherheitsangaben gegen Herstellerangaben und Gesundheitsbehörden geprüft (Quellen im Register views/wissen.py). Nur allgemein belegbares Wissen plus das, was die Seite schon über Luisas Arbeitsweise sagt (luviq_daten.SCHRITTE, DAUER, PFLEGE); keine Zahl, kein Stoff, keine Zeit und kein Preis, die nicht schon auf der Seite stehen. Schema-Daten mit Uhrzeit und +01:00 (WISSEN.md).{% endcomment %}
 {% block title %}Was ist Bleach Painting? Einfach erklärt | Luviq Lübeck{% endblock %}
 {% block meta_description %}Bleach Painting erklärt: Malen mit Bleiche auf dunklem Stoff, wie die Farbe herausgezogen wird und was die Technik von Druck unterscheidet. Jetzt lesen.{% endblock %}
 {% block og_type %}article{% endblock %}
@@ -64,7 +64,7 @@
       "name": "Auf welchen Stoffen funktioniert Bleach Painting?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "In der Regel eignet sich dunkel gefärbte Baumwolle, weil sich ihr Farbstoff gut herauslösen lässt und der Kontrast zum hellen Motiv deutlich ist. Welche Fasern in einem Teil stecken, steht auf dem Pflegeetikett."
+        "text": "Am besten eignet sich dunkel gefärbte Baumwolle, weil sich ihr Farbstoff gut herauslösen lässt und der Kontrast zum hellen Motiv deutlich ist. Welche Fasern in einem Teil stecken, steht auf dem Pflegeetikett."
       }
     },
     {
@@ -80,7 +80,15 @@
       "name": "Was muss man beim Umgang mit Bleiche beachten?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Bleiche reizt Haut und Augen, ihre Dämpfe reizen die Atemwege, deshalb gehören Handschuhe, Schutzbrille und frische Luft dazu. Bleiche darf nie mit anderen Reinigern gemischt werden, vor allem nicht mit säure- oder ammoniakhaltigen, weil dabei giftige Gase entstehen können."
+        "text": "Bleiche reizt Haut und Augen, ihre Dämpfe reizen die Atemwege: deshalb mit Handschuhen und Schutzbrille arbeiten und gut lüften. Bleiche nie mit anderen Reinigern mischen, vor allem nicht mit säurehaltigen wie Essig oder WC-Reiniger und nicht mit ammoniakhaltigen, weil dabei giftige Gase entstehen: Chlorgas oder Chloramine."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Muss man Bleiche nach dem Malen neutralisieren?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Gründlich ausspülen und waschen ist das Wichtigste, damit keine Bleiche im Stoff bleibt und weiterwirkt. Wer zusätzlich neutralisieren will, nimmt ein dafür gemachtes Antichlor-Mittel wie Natriumthiosulfat oder verdünntes Wasserstoffperoxid nach Herstellerangabe, aber nie Essig."
       }
     },
     {
@@ -109,6 +117,7 @@
         <h1 class="lv-serif">Was ist Bleach Painting?</h1>
         <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
         <p class="lv-wissen-lead">Bleach Painting, auf Deutsch Bleichmalerei, heißt: Mit Bleiche und Pinsel wird die Farbe aus dunklem Stoff herausgezogen, sodass ein helles Motiv entsteht – nichts wird aufgedruckt. Hier steht, wie das funktioniert und wie Luisa Brehler in Lübeck dabei vorgeht.</p>
+        {% if beitragsbild %}<figure class="lv-wissen-bild"><img src="{{ beitragsbild.src }}" srcset="{{ beitragsbild.srcset }}" sizes="(min-width: 900px) 420px, 100vw" width="{{ beitragsbild.breite }}" height="{{ beitragsbild.hoehe }}" alt="{{ beitragsbild.alt }}" loading="lazy" decoding="async"><figcaption>{{ beitragsbild.unterschrift }}</figcaption></figure>{% endif %}
     </header>
 
     <div class="lv-wissen-liste">
@@ -124,7 +133,7 @@
             <h2 class="lv-serif">Wie funktioniert Bleach Painting?</h2>
             <div class="lv-wissen-antwort">
                 <p class="lv-wissen-erst">Die Bleiche greift den Farbstoff im Gewebe an und baut ihn ab, an den bemalten Stellen wird der Stoff dadurch heller. Wo der Pinsel nicht war, bleibt die Farbe, wie sie war.</p>
-                <p>Wie hell die gemalte Stelle wird, hängt vom Farbstoff und vom Gewebe ab. Auf schwarzem Stoff wird das Motiv nicht weiß, sondern geht in einen warmen Beigeton über; bei Luviq heißt dieser Ton Bleich-Beige, etwa beim Engel-Shirt. Bei anderen Farben fällt der Ton anders aus.</p>
+                <p>Gemalt wird in der Regel mit Chlorbleiche, also Natriumhypochlorit, wie es in Haushaltsbleiche steckt; Sauerstoffbleiche wirkt auf die meisten Farbstoffe deutlich schwächer und eignet sich dafür kaum. Wie hell die gemalte Stelle wird, hängt vom Farbstoff und vom Gewebe ab. Auf schwarzem Stoff wird das Motiv meist nicht weiß, sondern geht in einen warmen Beige- bis Rostton über; bei Luviq heißt dieser Ton Bleich-Beige, etwa beim Engel-Shirt. Bei anderen Farben fällt der Ton anders aus.</p>
                 <p>Ein Strich lässt sich nicht zurücknehmen: Was die Bleiche einmal aus dem Stoff gezogen hat, kommt nicht wieder. Deshalb wird das Motiv bei Luviq vorher auf Papier und auf dem Teil festgelegt und nicht erst beim Malen.</p>
             </div>
         </section>
@@ -140,9 +149,9 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Auf welchen Stoffen funktioniert Bleach Painting?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">In der Regel eignet sich dunkel gefärbte Baumwolle, weil sich ihr Farbstoff gut herauslösen lässt und der Kontrast zum hellen Motiv deutlich ist. Welche Fasern in einem Teil stecken, steht auf dem Pflegeetikett.</p>
-                <p>Nicht jede Faser verträgt Bleichmittel auf Chlorbasis: Wolle und Seide werden davon angegriffen, und ein durchgestrichenes Dreieck auf dem Pflegeetikett heißt, dass nicht gebleicht werden darf. Die Symbole erklärt der Verband <a href="https://www.ginetex.net/" target="_blank" rel="noopener">GINETEX</a>, der internationale Verband für Textilpflegekennzeichnung.</p>
-                <p>Aus welchem Stoff ein Stück von Luviq ist, steht auf seiner Seite; das Engel-Shirt zum Beispiel besteht aus 100 % Baumwolle. Wer etwas zum Material eines bestimmten Stücks wissen möchte, fragt über das <a href="{% url 'kontakt' %}">Kontaktformular</a> nach.</p>
+                <p class="lv-wissen-erst">Am besten eignet sich dunkel gefärbte Baumwolle, weil sich ihr Farbstoff gut herauslösen lässt und der Kontrast zum hellen Motiv deutlich ist. Welche Fasern in einem Teil stecken, steht auf dem Pflegeetikett.</p>
+                <p>Nicht jede Faser verträgt Bleichmittel auf Chlorbasis: Wolle, Seide und Elasthan werden davon angegriffen, und Kunstfasern wie Polyester lassen sich meist kaum aufhellen, und ein durchgestrichenes Dreieck auf dem Pflegeetikett heißt, dass nicht gebleicht werden darf. Die Symbole erklärt der Verband <a href="https://www.ginetex.net/" target="_blank" rel="noopener">GINETEX</a>, der internationale Verband für Textilpflegekennzeichnung.</p>
+                <p>Aus welchem Stoff ein Stück von Luviq ist, steht auf seiner Seite; {% if engel_url %}das <a href="{{ engel_url }}">Engel-Shirt</a>{% else %}das Engel-Shirt{% endif %} zum Beispiel besteht aus 100 % Baumwolle. Wer etwas zum Material eines bestimmten Stücks wissen möchte, fragt über das <a href="{% url 'kontakt' %}">Kontaktformular</a> nach.</p>
             </div>
         </section>
 
@@ -157,9 +166,17 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Was muss man beim Umgang mit Bleiche beachten?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Bleiche reizt Haut und Augen, ihre Dämpfe reizen die Atemwege, deshalb gehören Handschuhe, Schutzbrille und frische Luft dazu. Bleiche darf nie mit anderen Reinigern gemischt werden, vor allem nicht mit säure- oder ammoniakhaltigen, weil dabei giftige Gase entstehen können.</p>
-                <p>Bei Kontakt mit Haut oder Augen sofort mit reichlich Wasser spülen und bei Beschwerden ärztlichen Rat einholen. Kinder und Haustiere gehören nicht in die Nähe.</p>
+                <p class="lv-wissen-erst">Bleiche reizt Haut und Augen, ihre Dämpfe reizen die Atemwege: deshalb mit Handschuhen und Schutzbrille arbeiten und gut lüften. Bleiche nie mit anderen Reinigern mischen, vor allem nicht mit säurehaltigen wie Essig oder WC-Reiniger und nicht mit ammoniakhaltigen, weil dabei giftige Gase entstehen: Chlorgas oder Chloramine.</p>
+                <p>Bei Kontakt mit Haut oder Augen sofort mit reichlich Wasser spülen und bei Beschwerden ärztlichen Rat einholen; bei Atemnot nach dem Einatmen von Dämpfen an die frische Luft und den Notruf 112 wählen. Bleiche gehört in die Originalflasche, nicht in Trinkgefäße, und Kinder und Haustiere gehören nicht in die Nähe.</p>
                 <p>Diese Hinweise sind allgemein gehalten und ersetzen nicht die Angaben auf der Verpackung und im Sicherheitsdatenblatt des jeweiligen Produkts. Wer selbst probieren möchte, tut das zuerst an einem Stück, das nicht mehr gebraucht wird, und auf eigene Verantwortung.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Muss man Bleiche nach dem Malen neutralisieren?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Gründlich ausspülen und waschen ist das Wichtigste, damit keine Bleiche im Stoff bleibt und weiterwirkt. Wer zusätzlich neutralisieren will, nimmt ein dafür gemachtes Antichlor-Mittel wie Natriumthiosulfat oder verdünntes Wasserstoffperoxid nach Herstellerangabe, aber nie Essig.</p>
+                <p>Bleiche, die im Stoff bleibt, arbeitet weiter und kann die Fasern mit der Zeit schwächen. Bei Luviq wird jedes Stück nach dem Malen gewaschen, das ist der letzte Schritt vor dem Foto. Essig taugt zum Neutralisieren nicht: Säure und Chlorbleiche setzen zusammen Chlorgas frei. Auch Wasserstoffperoxid nur verdünnt und getrennt von der Flasche mit Bleiche verwenden, nie die beiden Flaschen mischen.</p>
             </div>
         </section>
 

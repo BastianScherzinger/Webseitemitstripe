@@ -94,16 +94,17 @@ class OhnePrivatadresseImWissenTest(LuviqTestCase):
 
 
 class EntwurfsartikelTest(LuviqTestCase):
-    """Bleach Painting und Bleichfleck: erreichbar, aber bis zu Luisas Ja nirgends angeboten."""
+    """Bleach Painting und Bleichfleck: seit Runde 3 (30.10.2026) veröffentlicht.
 
-    def test_noindex_und_nirgends_angeboten(self):
+    Vorher (Entwurf) prüfte ``test_noindex_und_nirgends_angeboten`` das Gegenteil; umgeschrieben,
+    nicht gelöscht: jetzt indexierbar und in Übersicht, Sitemap, llms.txt und Feed angeboten."""
+
+    def test_indexierbar_und_ueberall_angeboten(self):
         for pfad in ENTWUERFE:
             html = self.hole(pfad).content.decode()
-            self.assertIn('noindex', html, pfad)
-            slug = pfad.strip('/').split('/')[-1]
-            for andere in ('/wissen/', '/wissen/pflege-handbemalte-kleidung/', '/sitemap.xml',
-                           '/llms.txt', '/llms-full.txt', '/feed/'):
-                self.assertNotIn(slug, self.hole(andere).content.decode(), f'{slug} in {andere}')
+            self.assertIn('<meta name="robots" content="index, follow">', html, pfad)
+            for andere in ('/wissen/', '/sitemap.xml', '/llms.txt', '/feed/'):
+                self.assertIn(pfad, self.hole(andere).content.decode(), f'{pfad} in {andere}')
 
     def test_artikelschema_mit_uhrzeit_und_zone(self):
         for pfad in ENTWUERFE:

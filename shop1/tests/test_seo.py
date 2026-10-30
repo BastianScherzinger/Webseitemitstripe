@@ -273,9 +273,10 @@ class SitemapTest(LuviqTestCase):
             with self.subTest(loc=loc):
                 lastmod = eintrag.find('sm:lastmod', _SITEMAP_NS)
                 self.assertIsNotNone(lastmod, f'{loc} steht ohne <lastmod> in der Sitemap')
-                self.assertRegex(lastmod.text or '', r'^\d{4}-\d{2}-\d{2}$')
+                # W3C-Datum, seit 30.10.2026 auch mit Uhrzeit und Zone (Ratgeber, ISO 8601 +01:00).
+                self.assertRegex(lastmod.text or '', r'^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2})?$')
                 self.assertLessEqual(
-                    date.fromisoformat(lastmod.text), date.today(),
+                    date.fromisoformat(lastmod.text[:10]), date.today(),
                     f'{loc}: lastmod {lastmod.text} liegt in der Zukunft',
                 )
 
@@ -481,12 +482,13 @@ class FeedTest(LuviqTestCase):
         Feed zum Wegweiser in ``llms.txt``."""
         from ..views.wissen import freigegebene_beitraege
 
+        # Seit Runde 3 (30.10.2026) auch die zwei Ratgeber zur Bleiche.
         self.assertEqual(set(freigegebene_beitraege()), {
             'pflege-handbemalte-kleidung', 'upcycling-mode-second-hand-vintage',
-            'groesse-bei-einzelstuecken'})
+            'groesse-bei-einzelstuecken', 'bleach-painting', 'bleichfleck-uebermalen'})
         self.assertIn('Feed:', self.hole('/llms.txt').content.decode())
         feed = ElementTree.fromstring(self.hole('/feed/').content)
-        self.assertEqual(len(list(feed.iter('item'))), 3)
+        self.assertEqual(len(list(feed.iter('item'))), 5)
 
     def test_jede_seite_verlinkt_den_feed_im_kopfbereich(self):
         """Ohne den Verweis im ``<head>`` findet ihn niemand, der ihn nicht
@@ -518,7 +520,7 @@ class FeedVerweisTest(LuviqTestCase):
         html = self.hole('/').content.decode()
         self.assertRegex(html, self.VERWEIS)
         wurzel = ElementTree.fromstring(self.hole('/feed/').content)
-        self.assertEqual(len(list(wurzel.iter('item'))), 3)
+        self.assertEqual(len(list(wurzel.iter('item'))), 5)  # seit Runde 3 mit den zwei Ratgebern
 
     def test_mit_freigegebenem_beitrag_wird_der_feed_beworben(self):
         beitrag = {'titel': 'T', 'kurz': 'K', 'freigegeben': True,

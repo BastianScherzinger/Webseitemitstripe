@@ -678,7 +678,7 @@ class Widersprueche02102026Test(LuviqTestCase):
         """EIG128: Der Feed führt die drei freigegebenen Beiträge, nicht die
         Kaufweg-Beiträge, solange der Verkauf aus ist."""
         xml = self.hole('/feed/').content.decode()
-        self.assertEqual(xml.count('<item>'), 3)
+        self.assertEqual(xml.count('<item>'), 5)  # seit Runde 3 (30.10.2026) mit Bleach und Bleichfleck
         self.assertNotIn('/wissen/bestellen-und-bezahlen/', xml)
 
     # EIG78 --------------------------------------------------------------

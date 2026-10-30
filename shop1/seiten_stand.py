@@ -24,7 +24,7 @@ SEITEN_STAND = {
     'produkte':     '2026-10-30',
     'gaestebuch':   '2026-10-30',
     'ueber_uns':    '2026-10-30',
-    'liefergebiet': '2026-10-29',
+    'liefergebiet': '2026-10-30',
     'kontakt':      '2026-10-30',
     'impressum':    '2026-10-29',
     'datenschutz':  '2026-10-23',
@@ -33,16 +33,16 @@ SEITEN_STAND = {
     # 02.10.2026 (L1-B1): Titel, Beschreibung, Vorschaubild und Twitter-Angaben neu
     # (IS03/06/07/09/10/11/13/36/39, EIG137) — home, produkte, gaestebuch, ueber_uns,
     # liefergebiet, kontakt, datenschutz und motiv_anfragen tragen deshalb dieses Datum.
-    'motiv_anfragen': '2026-10-23',
+    'motiv_anfragen': '2026-10-30',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
     'wissen':           '2026-10-30',
     'wissen_pflege':    '2026-10-30',
     'wissen_upcycling': '2026-10-29',
     'wissen_groesse':   '2026-10-23',
     'wissen_motiv':     '2026-10-23',  # Entwurf, noindex
-    # Entwürfe (30.10.2026, C8), noindex bis Luisa bestätigt; ISO 8601 mit Uhrzeit und Zone:
-    'wissen_bleach':      '2026-10-30T11:45:00+01:00',
-    'wissen_bleichfleck': '2026-10-30T11:45:00+01:00',
+    # Ratgeber (30.10.2026, C8), seit Runde 3 veröffentlicht; ISO 8601 mit Uhrzeit und Zone:
+    'wissen_bleach':      '2026-10-30T14:15:00+01:00',  # veröffentlicht, Runde 3
+    'wissen_bleichfleck': '2026-10-30T14:15:00+01:00',  # veröffentlicht, Runde 3
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
     'wissen_bestellen': '2026-10-23',

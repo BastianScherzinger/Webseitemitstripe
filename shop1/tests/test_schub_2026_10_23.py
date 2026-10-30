@@ -110,8 +110,13 @@ class WissenVerlinkungUndEntwurfTest(LuviqTestCase):
             # Nur die Weiterlesen-Navigation: der Fuß (seit P2) verlinkt selbst Pflege und Größe.
             start = html.index('aria-label="Weiterlesen"')
             fuss = html[start:html.index('</nav>', start)]
-            andere = [x for s, x in sichtbar.items() if s != slug]
-            for x in andere[:2]:
+            # Die zwei nächsten freigegebenen Beiträge in Registerreihenfolge, rundherum
+            # (views/wissen.weiterlesen); seit Runde 3 sind es fünf, „die ersten zwei“ stimmte nur
+            # zufällig, solange es drei waren.
+            namen = list(sichtbar)
+            i = namen.index(slug)
+            andere = [sichtbar[namen[(i + k) % len(namen)]] for k in (1, 2)]
+            for x in andere:
                 self.assertIn(f'href="{reverse(x["url_name"])}"', fuss)
             self.assertNotIn(f'href="{reverse(b["url_name"])}"', fuss)
 
