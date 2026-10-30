@@ -79,6 +79,25 @@ GOOGLE_PROFIL = 'https://www.google.com/maps?cid=13899750731019902000'
 PINTEREST = 'https://www.pinterest.com/luviqarchive/'
 PROVENEXPERT = 'https://www.provenexpert.com/de-de/luviq/'
 
+#: Bewertungsbitte (30.10.2026): ``/bewerten/`` leitet direkt zu Google, ``/bewerten/alle/``
+#: zeigt jedes Portal als eigenen Knopf (Ziel des QR-Codes auf dem Bild in
+#: ``Buero\luisa\arbeitsplatz\grafik\bewertungsbitte``). Nur Adressen, die im Browser
+#: geöffnet und Luviq zugeordnet wurden:
+#: Google: Link aus dem Unternehmensprofil (Rezensionen → „Bewertungen erhalten"), öffnet
+#: „Rezension schreiben" für Luviq, Maps-ID 0x47bcbd26d91cd539:0xc0e5d5a554eadc30 (= GOOGLE_PROFIL).
+#: ProvenExpert: Umfrage „Luviq Lübeck" (angelegt 29.10.2026), ohne Anmeldung 200.
+#: Nicht dabei: Trustpilot (kein Profil, 30.10. „Seite nicht gefunden"), golocal (Übernahme
+#: pausiert), Facebook (nur Luisas persönliches Profil, keine Bewertungen).
+GOOGLE_BEWERTEN = 'https://g.page/r/CTDc6lSl1eXAECE/review'
+PROVENEXPERT_BEWERTEN = 'https://www.provenexpert.com/luviq/ffk7/'
+
+#: (Name, Adresse, Hinweis) – Google zuerst. Ein neues Portal: Formularadresse selbst
+#: öffnen, Zeile ergänzen, danach das Bild mit ``bau.py`` neu bauen (QR-Code bleibt gleich).
+BEWERTUNGSPORTALE = (
+    ('Google', GOOGLE_BEWERTEN, 'Erscheint direkt in der Google-Suche und in Google Maps.'),
+    ('ProvenExpert', PROVENEXPERT_BEWERTEN, 'Kurzer Fragebogen mit Sternen und ein paar Sätzen.'),
+)
+
 #: Luisas persönliche Profile (Facebook, LinkedIn): gehören an den Personenknoten,
 #: nicht an die Marke (Analyse 30.10.2026, C5).
 FACEBOOK_LUISA = 'https://www.facebook.com/profile.php?id=61595684296277'

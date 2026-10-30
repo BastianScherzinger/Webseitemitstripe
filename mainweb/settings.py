@@ -558,11 +558,11 @@ LOGIN_URL = '/login/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ═══ GOOGLE MAPS ═══
-# Vorgabe bleibt die Maps-Suche: das Unternehmensprofil „Luviq“ (seit 02.10.2026
-# in luviq_daten.GOOGLE_PROFIL und sameAs) ist ein Kartenlink, kein
-# Bewertungsformular – dann hiesse der Knopf zu Unrecht „bewerten“ (EIG87).
-# Den echten Bewertungslink (g.page/r/…/review) als Railway-Variable setzen.
-GOOGLE_REVIEW_URL = os.getenv('GOOGLE_REVIEW_URL', 'https://www.google.com/maps/search/Luviq+Universe')
+# Seit 30.10.2026 ist die Vorgabe der echte Bewertungslink aus dem Unternehmensprofil
+# (luviq_daten.GOOGLE_BEWERTEN, öffnet „Rezension schreiben“). Eine Railway-Variable
+# GOOGLE_REVIEW_URL überschreibt ihn. Steht dort eine Kartensuche, heißt der Knopf
+# ehrlich „suchen“ (EIG87, Vorlagen prüfen auf '/maps/search/').
+GOOGLE_REVIEW_URL = os.getenv('GOOGLE_REVIEW_URL', 'https://g.page/r/CTDc6lSl1eXAECE/review')
 
 # ═══ FEHLER-MONITORING (VL19) ═══
 # Kein Sentry o.ä. (neue Abhaengigkeit, in diesem Lauf verboten) - stattdessen

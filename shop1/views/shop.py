@@ -353,6 +353,26 @@ def kontakt_danke(request):
     return render(request, 'shop1/kontakt_danke.html')
 
 
+def bewerten(request):
+    """``/bewerten/`` – Kurzadresse für WhatsApp, Rechnung und Paketkarte (30.10.2026).
+
+    302 statt 301, damit kein Browser ein altes Ziel behält, falls Google den Link ändert.
+    """
+    return redirect(luviq_daten.GOOGLE_BEWERTEN)
+
+
+def bewerten_alle(request):
+    """``/bewerten/alle/`` – Ziel des QR-Codes auf der Bewertungsbitte (30.10.2026).
+
+    Ein Knopf je Portal aus ``luviq_daten.BEWERTUNGSPORTALE``, Google zuerst, dazu das
+    Gästebuch. noindex, nicht in Sitemap und llms.txt. Keine Gegenleistung, keine
+    Vorauswahl nach Zufriedenheit, keine Sternezahl.
+    """
+    return render(request, 'shop1/bewerten_alle.html', {
+        'portale': luviq_daten.BEWERTUNGSPORTALE,
+    })
+
+
 def ueber_uns(request):
     """„Luisa" (``/ueber_uns/``): ihr Satz, ihr Anfang, ihre fünf Schritte –
     alles aus ``luviq_daten`` (Markenwissen vom 19.09.2026)."""

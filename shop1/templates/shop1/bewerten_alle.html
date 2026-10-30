@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Luviq bewerten – Google, ProvenExpert, Gästebuch{% endblock %}
+{% block meta_description %}Hier kannst du Luviq aus Lübeck bewerten: bei Google, bei ProvenExpert oder im Gästebuch. Dauert etwa eine Minute.{% endblock %}
+{% comment %}
+Bewertungsbitte (30.10.2026): Ziel des QR-Codes auf dem Bild für WhatsApp-Status und Chat
+(Buero\luisa\arbeitsplatz\grafik\bewertungsbitte). Portale aus luviq_daten.BEWERTUNGSPORTALE,
+Google zuerst. noindex, aber follow; weder in Sitemap noch in llms.txt. Keine Sternezahl, keine
+Gegenleistung, keine Vorauswahl nach Zufriedenheit (§ 5a UWG, Richtlinien von Google und ProvenExpert).
+{% endcomment %}
+{% block meta_robots %}noindex, follow{% endblock %}
+
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='danke' %}{% endblock %}
+{% block extra_css %}<style>
+.lv-portale{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:12px;max-width:640px}
+.lv-portal{display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px 20px;min-height:64px;padding:20px 22px;border:1px solid var(--lv-linie-2);color:var(--lv-text);text-decoration:none}
+.lv-portal:hover{border-color:var(--lv-marke)}
+.lv-portal--erst{background:var(--lv-text);color:var(--lv-grund);border-color:var(--lv-text)}
+.lv-portal--erst:hover{background:var(--lv-marke);border-color:var(--lv-marke)}
+.lv-portal b{font-size:20px;letter-spacing:-.01em}
+.lv-portal small{grid-column:1;font-size:14px;opacity:.72}
+.lv-portal svg{grid-row:1/3;grid-column:2;width:22px;height:22px}
+.lv-portal__tipp{display:inline-block;margin-left:10px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;vertical-align:middle}
+</style>{% endblock %}
+
+{% block content %}
+<div class="lv-seite">
+    <section class="lv-danke" aria-labelledby="bewerten-titel">
+        <p class="lv-nr">Bewertung</p>
+        <h1 class="lv-serif" id="bewerten-titel">Wie gefällt dir dein Stück?</h1>
+        <p>Jedes Luviq-Stück malt Luisa Brehler in Lübeck von Hand. Ehrliche Worte von dir helfen anderen, Luviq zu finden und einzuschätzen. Such dir ein Portal aus, es dauert etwa eine Minute.</p>
+        <ul class="lv-portale">
+            {% for name, adresse, hinweis in portale %}
+            <li><a class="lv-portal{% if forloop.first %} lv-portal--erst{% endif %}" href="{{ adresse }}" target="_blank" rel="noopener">
+                <b>Bei {{ name }} bewerten{% if forloop.first %}<span class="lv-portal__tipp">wenn nur eins, dann dieses</span>{% endif %}</b>
+                <small>{{ hinweis }}</small>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a></li>
+            {% endfor %}
+            <li><a class="lv-portal" href="{% url 'gaestebuch' %}">
+                <b>Ins Gästebuch schreiben</b>
+                <small>Direkt hier auf luviq-luebeck.com, ohne fremdes Konto.</small>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a></li>
+        </ul>
+        <p class="lv-klein">Bewerten ist freiwillig und es gibt nichts dafür, so bleiben die Bewertungen echt. Danke dir.</p>
+        <a class="lv-knopf linie" href="{% url 'produkte' %}">Unikate ansehen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </section>
+</div>
+{% endblock %}

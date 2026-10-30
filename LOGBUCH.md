@@ -10,6 +10,11 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 30.10.2026 — Bewertungsbitte: /bewerten/ und /bewerten/alle/
+
+- **Was:** `/bewerten/` (302 zum Google-Formular) und `/bewerten/alle/` (Knopf je Portal aus `luviq_daten.BEWERTUNGSPORTALE`: Google, ProvenExpert, dazu Gästebuch), noindex, nicht in Sitemap/llms.txt. `GOOGLE_REVIEW_URL` hat als Vorgabe den echten Bewertungslink statt der Kartensuche. Tests `test_bewerten` (5), `test_inhalt` setzt die Kartensuche für den EIG87-Fall jetzt ausdrücklich.
+- **Warum:** Bastian 30.10.: Luisa braucht wie die anderen Kundenseiten ein Bild mit QR-Code für WhatsApp-Status, der auf eine Seite mit allen Bewertungslinks führt. Alle Adressen am 30.10. im Browser geöffnet und Luviq zugeordnet. Bild: `Buero\luisa\arbeitsplatz\grafik\bewertungsbitte\`.
+
 ## 30.10.2026 — Nachzug Gegenprüfung: Lieferfrist, Kauftexte, Materialangabe (Zweig `recht/2026-10-30-luviq-verkaufsstart`, nicht gepusht)
 
 - **M1 Lieferfrist:** verbindlich „Lieferung innerhalb von 5 Werktagen“ (PayPal ab dem Tag nach Vertragsschluss, Vorkasse ab dem Tag nach dem Überweisungsauftrag), zentral `luviq_daten.VERSAND['lieferfrist_werktage']` (Kontext `lieferfrist`, `liefer_satz`), überall statt „in der Regel 1-2 Werktage“; Schema `transitTime` 1–3 zur Bearbeitung 1–2. **Warum:** Art. 246a § 1 Abs. 1 Nr. 10 EGBGB verlangt einen Liefertermin, „in der Regel“ ist als AGB-Klausel unzulässig (§ 308 Nr. 1 BGB). Zahl: Entscheidung der Leitung, änderbar an der einen Stelle.

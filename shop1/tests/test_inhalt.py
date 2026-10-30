@@ -748,8 +748,9 @@ class Widersprueche02102026Test(LuviqTestCase):
         self.assertNotIn('data-src="http', html)
         self.assertNotIn('M%C3%BChlenkamp', html)
 
+    @override_settings(GOOGLE_REVIEW_URL='https://www.google.com/maps/search/Luviq+Universe')
     def test_ohne_bewertungsformular_heisst_der_knopf_nicht_bewerten(self):
-        """Der Standardwert von ``GOOGLE_REVIEW_URL`` ist eine Kartensuche;
+        """Steht in ``GOOGLE_REVIEW_URL`` eine Kartensuche (bis 30.10.2026 die Vorgabe),
         „Jetzt bei Google bewerten“ und „Auf Google Maps ansehen“ führten auf
         dasselbe Ziel (EIG87)."""
         text = self._text('/gaestebuch/')
