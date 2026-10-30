@@ -169,6 +169,12 @@ Seitenbestand, Wortzahlen und Themen: [30-INHALTE.md](30-INHALTE.md). Kurz:
 
 Sitz Lübeck, Herkunft Alsfeld in Titeln, Schema und Stückbeschreibungen; `sameAs` aus `luviq_daten.PROFILE`; fünf Motiv-Fragen (`luviq_daten.FAQ_MOTIV`) sichtbar auf `/motiv-anfragen/`, `FAQPage` erst mit Verkauf; `llms.txt` führt sie in beiden Fassungen. Keine Lübecker Ortsseite, solange Luisas persönlicher Kontakt in Lübeck ungeklärt ist (`80-AUFGABEN.md`).
 
+## Runde 3, 30.10.2026 (Zweig, nicht live)
+
+- Ratgeber `/wissen/bleach-painting/` und `/wissen/bleichfleck-uebermalen/` veröffentlicht (Sitemap, llms.txt, Feed, Übersicht; Article + FAQPage, Antwortsatz zuerst, Bleach mit `Article.image`).
+- Bild-Sitemap: alle Galeriebilder je Stück, echte Handyfotos der Startseite, Luisas Foto auf Kontakt/Luisa, Foto des Bleach-Ratgebers.
+- Mit Verkauf: `MerchantReturnPolicy` an der Organization (`#rueckgabe`, 14 Tage, DE, per Post, ohne `returnFees`), jedes Offer verweist darauf und trägt `OfferShippingDetails` (0 EUR, DE, 1–2 Tage Bearbeitung). `Person.image` = Luisas Brustbild.
+
 ## Offen
 
 Stand 02.10.2026, gegen `origin/main` und die Live-Seite geprüft. Erledigt und entfernt: Freigabe der Wissensbeiträge, `sameAs`, `llms-full.txt`, Überschriftensprünge und Merges der Arbeitszweige (siehe „Erledigt“ oben); `INDEXNOW_KEY` steht als Bastian-Zeile in [10-TECHNIK.md](10-TECHNIK.md), Produktnamen, Beschreibung je Stück und eine belegte Bewertungszahl (`AggregateRating`, KV09) unter „Beim Kunden“ in [80-AUFGABEN.md](80-AUFGABEN.md) — dort stehen sie nur einmal.

@@ -31,6 +31,22 @@ Plan und Belege: `Analysen\luviq-2026-10-29\` (MASTERPLAN, NACHTPLAN-2, KUNDENPA
 - **Designwache neu erfasst (P6):** `aufbau_referenz.json` für `/`, `/produkte/`, die Referenz-Stückseite, `/kontakt/danke/`, `/gaestebuch/`, `/impressum/`, `/datenschutz/`, `/agb/`, `/login/`, `/register/`, `/password-reset/`, `/password-reset/done/`, `/reset/done/` (13 Seiten, alle bewusst umgebaut; alle anderen unverändert). Vorher jede Seite im Screen angesehen.
 - **Aufgeräumt:** Hero-Dateien `hero-dornen-*`, `hero-hoch-*`, `hero-panorama-*`, `hero-dragon*`, `ich*`, `logo-luviq.jpeg` gelöscht (nichts verweist mehr darauf). `logo-luviq-96/192.webp` bleiben, weil `_reviews_map.html` sie nennt.
 
+## Runde 3 30.10.2026: Engel-Galerie, Foto von Luisa (Zweig `bau/2026-10-30-luviq-runde3`, nicht gepusht)
+
+- **Engel-Galerie:** Rücken KI (Studiobild, Hauptbild) → Rücken echt → *(Platz 2: KI-Studiobild vorne, gibt es noch nicht)* → Vorne echt (Nahaufnahme Luviq-Zeichen) → Arbeitstisch. Jedes Bild trägt unten links eine kleine Unterschrift („Studiobild (KI) aus dem echten Foto“ / „Echtes Foto: …“), aber nur in Galerien mit mindestens einem KI-Bild (`Produkt.galerie()`); Archivstücke ohne KI bleiben ohne. Wischen/Pfeile/Tastatur wie bisher (P4).
+- **Foto von Luisa:** altes freigestelltes Porträt als quadratisches Brustbild (240 px) auf `/kontakt/` (über der Anschrift) und `/ueber_uns/` (neben dem Zitat), `teile/luisa_foto.html`, Klasse `.lv-luisa-foto`; Rand weich ins Schwarz verlaufen, damit die Reste der alten Freistellung nicht stören.
+
+### Stückbilder und Luisas Foto tauschen
+
+| Bild | Quelle (wird nur gelesen) | Erzeugen | Ausgabe |
+|---|---|---|---|
+| Engel vorne echt | `Analysen\luviq-2026-10-30-runde3\quellbilder\engel-vorne-echt-nah.jpg` | `python -X utf8 tools/bilder_zuschneiden.py stueck_engel_vorne` | `shop1/static/shop1/images/stuecke/engel-vorne-echt-45-{600,900,960}.webp` |
+| Engel Arbeitstisch | `…\quellbilder\arbeitsplatz-engel-vorne.jpg` | `… stueck_engel_arbeitsplatz` | `…/stuecke/engel-arbeitsplatz-45-{600,900,960}.webp` |
+| Engel Rücken echt | `Buero\luisa\arbeitsplatz\bilder\2026-10-29-produkt-engel\engel-echt-warm.jpg` | `… stueck_engel_echt` | `…/stuecke/engel-echt-45-*.webp` |
+| Luisa | `…\quellbilder\luisa-portrait-alt.jpg` | `… luisa_brustbild` | `shop1/static/shop1/images/luisa/luisa-brustbild-{280,420,570}.webp` |
+
+**Gleiches Format (4:5 bzw. quadratisch):** neue Quelle unter dem alten Namen ablegen (oder Pfad oben in `tools/bilder_zuschneiden.py` ändern), Zuschnitt (`box`) prüfen, Funktion aufrufen, `collectstatic`, fertig – Dateinamen und Datenbank bleiben gleich. **Anderes Format:** zusätzlich die Maße nach `#` in `luviq_daten.ENGEL_STUECK` und im Admin (Zusatzbild „Bild aus dem Repo“, Breite/Höhe) bzw. `luviq_daten.LUISA_FOTO['masse']` anpassen. **KI-Studiobild vorne nachtragen:** Datei `stuecke/engel-vorne-studio-45-*.webp` erzeugen, dann im Django-Admin beim Engel-Shirt ein Zusatzbild mit Position 2, „KI-Studiobild“ angehakt und Bild aus dem Repo `shop1/images/stuecke/engel-vorne-studio-45-{w}.webp@600,900,960#960x1200` anlegen (Vorlage als Kommentar in `ENGEL_STUECK`). Alt-Text, Unterschrift und Sitemap nennen es dann von selbst „Studiobild (KI)“. Die Live-Datenbank bekommt neue Zusatzbilder nur über den Admin oder eine Migration (wie `0031`), `luviq_engel_anlegen` überschreibt nie etwas.
+
 ## Unterbau 30.10.2026 (Zweig `design/2026-10-30-luviq-unten`, nicht gepusht)
 
 Bastian: „gegen unten übersichtlicher, komische Schriftarten weg, normal direkt erkennbar, krass wie der Hero“. Unterhalb des Heros gilt **nur Schibsted Grotesk** (Überschriften fett 700, Labels Sans in Großbuchstaben); `--lv-serif` und `--lv-mono` sind Alias auf `--lv-sans`. Kursive Antiqua (Cormorant) und Mono (JetBrains) gehören nur noch dem Hero (`--lv-hero-serif`, `--lv-hero-mono`) und bleiben dort unverändert. Zweite Fläche neben Schwarz ist das Anthrazit des Heros (`--lv-wand`). Umgesetzt als eigener Block „Unterbau“ am Ende von `luviq.css`, ohne Vorlagenänderung. Belege: `Analysen\luviq-2026-10-30-unten\` (vorher/nachher, Handy 390 und PC 1440).

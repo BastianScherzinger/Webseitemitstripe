@@ -117,7 +117,9 @@ Weitere Lübeck-Punkte (23.10.2026, Schub 2):
 
 - **Umbau 30.10.2026 (Zweig `design/2026-10-29-luviq-start`):** Merge nach `main`, Push, Live-Prüfung PC und Handy; danach `llms.txt`/Sitemap prüfen und Indexierung der geänderten Seiten beantragen.
 - **GA4-Messung** der Hero-Knöpfe (`data-ereignis="hero_engel"` / `"hero_motiv"`): erst mit Einwilligungs-Banner und Luisas eigener Property; A/B-Ergebnis bis dahin nur Simulation (Kundenpanel).
-- **Vorderseiten-Fotos** des Engel-Shirts (Logo auf Herzhöhe) als Zusatzbild am Stück eintragen; „Zustand“ des Shirts bleibt leer, bis Luisa es sagt.
+- ~~Vorderseiten-Fotos des Engel-Shirts~~ erledigt in Runde 3 (30.10.2026): Vorne echt und Arbeitstisch in der Galerie (Migration 0031). **Offen:** KI-Studiobild der Vorderseite (Galerieplatz 2, Anleitung `20-DESIGN.md` „Stückbilder und Luisas Foto tauschen“); besseres Foto von Luisa (Bastian liefert nach).
+- **Runde 3 (Zweig `bau/2026-10-30-luviq-runde3`):** Merge, Push, `collectstatic` läuft im Start; nach dem Deploy IndexNow und GSC-Antrag für `/wissen/bleach-painting/` und `/wissen/bleichfleck-uebermalen/`, mit Verkauf Rich-Results-Test der Engel-Seite (Versand/Rückgabe).
+- **Widerrufsbelehrung aus dem Generator** muss sagen, wer die Rücksendekosten trägt; erst dann ggf. `returnFees` in der `MerchantReturnPolicy` (`templates/base.html`). Ein Versanddienst/Transitzeit ist nicht festgelegt, deshalb kein `transitTime`.
 - **Wort „Vergeben“** auf den fünf Archivstücken: Wenn sie doch verkauft wurden, `luviq_daten.VERKAUFT_WORT`/`VERGEBEN_WORT` ändern (Migration 0022).
 - `_reviews_map.html` wird von keiner Vorlage mehr eingebunden (tot), zieht aber `logo-luviq-96/192.webp`.
 
