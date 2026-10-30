@@ -74,6 +74,59 @@ def stueck_engel_echt():
         bild.save(ziel / f"engel-echt-45-{breite}.webp", "WEBP", quality=80, method=6)
 
 
+# ---------------------------------------------------------------- Runde 3 (30.10.2026)
+#: Echte Fotos von Bastian/Luisa, abgelegt fuer Runde 3. Wer ein besseres Foto hat, legt es unter
+#: demselben Namen dorthin (oder aendert den Pfad hier) und ruft nur die eine Funktion auf, z. B.
+#:     python -X utf8 tools/bilder_zuschneiden.py stueck_engel_vorne
+#: Die Ausgabedateien behalten ihren Namen; aendert sich das Seitenverhaeltnis, auch die Masse in
+#: der Bildbeschreibung nachziehen (luviq_daten.ENGEL_STUECK bzw. LUISA_FOTO, Migration 0031).
+RUNDE3 = Path(r"C:\Users\basti\Desktop\Webagentur Scherzinger\Analysen\luviq-2026-10-30-runde3\quellbilder")
+QUELLE_VORNE = RUNDE3 / "engel-vorne-echt-nah.jpg"          # Vorderseite, Luviq-Zeichen, Nahaufnahme
+QUELLE_ARBEITSPLATZ = RUNDE3 / "arbeitsplatz-engel-vorne.jpg"  # Vorderseite auf Luisas Arbeitstisch
+QUELLE_LUISA = RUNDE3 / "luisa-portrait-alt.jpg"             # freigestelltes Portraet (900 x 1350)
+
+
+def _stueck_45(quelle, box, name, qualitaet=80):
+    """Galeriebild im Format 4:5 (960 x 1200) nach shop1/images/stuecke/<name>-{600,900,960}.webp."""
+    ziel = BILDER / "stuecke"
+    ziel.mkdir(parents=True, exist_ok=True)
+    bild = Image.open(quelle).convert("RGB").crop(box)
+    assert bild.size == (960, 1200), bild.size
+    for breite in (600, 900, 960):
+        fassung = bild if breite == bild.width else verkleinern(bild, breite)
+        fassung.save(ziel / f"{name}-{breite}.webp", "WEBP", quality=qualitaet, method=6)
+
+
+def stueck_engel_vorne():
+    """Echtes Foto der Vorderseite (Luviq-Zeichen auf Herzhoehe). Quelle 960 x 1280, oben und
+    unten je 40 px weg, Zeichen bleibt mittig."""
+    _stueck_45(QUELLE_VORNE, (0, 40, 960, 1240), "engel-vorne-echt-45", 66)  # Stoffstruktur: 66 haelt die Datei klein
+
+
+def stueck_engel_arbeitsplatz():
+    """Echtes Foto: Vorderseite auf Luisas Arbeitstisch (Pinsel, Handschuhe, Bleiche-Glas).
+    Quelle 960 x 1280, oben 80 px weg (Laptopkante), der Tisch mit dem Werkzeug bleibt."""
+    _stueck_45(QUELLE_ARBEITSPLATZ, (0, 80, 960, 1280), "engel-arbeitsplatz-45")
+
+
+def luisa_brustbild():
+    """Portraet von Luisa als Brustbild (Kopf bis Schultern), quadratisch 570 x 570, schwarzer
+    Grund wie die Seite. Nach shop1/images/luisa/luisa-brustbild-{280,420,570}.webp."""
+    ziel = BILDER / "luisa"
+    ziel.mkdir(parents=True, exist_ok=True)
+    bild = Image.open(QUELLE_LUISA).convert("RGB").crop((165, 150, 735, 720))
+    # Weicher Randverlauf ins Schwarz der Seite: nimmt die farbigen Reste der alten Freistellung
+    # an Haarkante und Rand, Gesicht und Oberkoerper bleiben unberuehrt (Ellipse um die Mitte).
+    maske = Image.new("L", bild.size, 0)
+    from PIL import ImageDraw
+    ImageDraw.Draw(maske).ellipse((70, 10, 500, 640), fill=255)
+    maske = maske.filter(ImageFilter.GaussianBlur(40))
+    bild = Image.composite(bild, Image.new("RGB", bild.size, SCHWARZ), maske)
+    for breite in (280, 420, 570):
+        fassung = bild if breite == bild.width else verkleinern(bild, breite)
+        fassung.save(ziel / f"luisa-brustbild-{breite}.webp", "WEBP", quality=82, method=6)
+
+
 def og_start():
     quelle = Image.open(QUELLE_HERO).convert("RGB")
     ausschnitt = quelle.crop((0, 60, 1536, 60 + 806))
@@ -151,6 +204,13 @@ def og_logo(wortmarke_bild):
 
 
 if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1:
+        # Nur die genannten Funktionen, z. B. "stueck_engel_vorne luisa_brustbild" (Runde 3).
+        for name in sys.argv[1:]:
+            globals()[name]()
+            print("fertig:", name)
+        sys.exit(0)
     ZIEL_LUVIQ.mkdir(parents=True, exist_ok=True)
     ZIEL_MARKE.mkdir(parents=True, exist_ok=True)
     MARKE_FARBE = marken_farbe()
@@ -162,4 +222,7 @@ if __name__ == "__main__":
     wm = wortmarke(MARKE_FARBE)
     icons()
     og_logo(wm)
+    stueck_engel_vorne()
+    stueck_engel_arbeitsplatz()
+    luisa_brustbild()
     print("fertig")
