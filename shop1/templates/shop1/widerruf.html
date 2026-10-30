@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% comment %}Widerrufsfunktion „Vertrag widerrufen“ (§ 356a BGB, views/widerruf.py). Ohne Anmeldung nutzbar, noindex.
+Die Pflichtangaben nach § 356a Abs. 2 BGB: Name, Angaben zum Vertrag, E-Mail für die Eingangsbestätigung.
+Der Absendeknopf ist die Bestätigungsfunktion (Abs. 3) und trägt den gesetzlichen Wortlaut „Widerruf bestätigen“.{% endcomment %}
+{% block title %}Vertrag widerrufen – Luviq Universe, Lübeck{% endblock %}
+{% block meta_description %}Vertrag widerrufen bei Luviq Universe: Name, Bestellnummer und E-Mail eingeben, Widerruf bestätigen, Eingangsbestätigung sofort per E-Mail.{% endblock %}
+{% block meta_robots %}noindex, follow{% endblock %}
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='anfrage' %}{% endblock %}
+{% block content %}
+<div class="lv-seite">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">Vertrag widerrufen</li></ol></nav>
+
+    <section class="lv-anfrageseite" aria-labelledby="widerruf-titel">
+        <div>
+            <h1 class="lv-serif lv-satz" id="widerruf-titel">Vertrag widerrufen</h1>
+            <p class="lv-lead">Hier widerrufst du einen Kauf bei Luviq Universe online. Du brauchst kein Konto und musst keinen Grund nennen.</p>
+            <p>Gib deinen Namen, die Bestellnummer (sie steht in der Bestellbestätigung und im Profil) und deine E-Mail-Adresse an. Mit „{{ knopf_bestaetigen }}“ geht der Widerruf an {{ anbieterin.name }}, und du bekommst sofort eine Eingangsbestätigung mit Datum und Uhrzeit per E-Mail.</p>
+            <p class="lv-klein">Die Frist beträgt vierzehn Tage ab dem Tag, an dem du die Ware in Besitz genommen hast. Wie der Widerruf abläuft (Rücksendung, Kosten, Rückzahlung), steht in der <a href="{% url 'agb' %}#widerruf">Widerrufsbelehrung</a>. Du kannst auch formlos per E-Mail an <a href="mailto:{{ anbieterin.email }}">{{ anbieterin.email }}</a> oder per Brief an {{ anbieterin.name }}, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }} widerrufen.</p>
+            {% if bestellungen %}
+            <h2 class="lv-nr">Deine Bestellungen</h2>
+            <dl class="lv-daten">
+                {% for b in bestellungen %}<dt>#{{ b.pk }} vom {{ b.erstellt_am|date:"d.m.Y" }}</dt><dd>{{ b.gesamt_betrag|floatformat:2 }} €</dd>
+                {% endfor %}
+            </dl>
+            {% endif %}
+        </div>
+
+        <form method="post" class="lv-formular" data-einmal-absenden aria-live="polite" aria-labelledby="widerruf-titel">
+            <div id="widerruf-fehler" role="alert"{% if fehler %} class="lv-fehler"{% endif %}>{% if fehler %}{{ fehler }}{% endif %}</div>
+            {% csrf_token %}
+            <input type="hidden" name="formzeit" value="{{ formzeit }}">
+            <div class="lv-falle" aria-hidden="true">
+                <label for="widerruf-webseite">Webseite (bitte leer lassen)</label>
+                <input class="lv-falle" type="text" id="widerruf-webseite" name="{{ feld_falle|default:'website' }}" tabindex="-1" autocomplete="off" aria-hidden="true">
+            </div>
+            <div class="lv-feld">
+                <label for="widerruf-name">Dein Name *</label>
+                <input type="text" id="widerruf-name" name="name" aria-describedby="widerruf-fehler" autocomplete="name" maxlength="{{ laengen.name }}" value="{{ werte.name|default:'' }}" required>
+            </div>
+            <div class="lv-feld">
+                <label for="widerruf-vertrag">Bestellnummer *</label>
+                <input type="text" id="widerruf-vertrag" name="vertrag" aria-describedby="widerruf-fehler widerruf-vertrag-hilfe" maxlength="{{ laengen.vertrag }}" placeholder="z. B. #12" value="{{ werte.vertrag|default:'' }}" required>
+                <p class="lv-klein" id="widerruf-vertrag-hilfe">Keine Nummer zur Hand? Dann Bestelldatum und Stück.</p>
+            </div>
+            <div class="lv-feld">
+                <label for="widerruf-umfang">Welche Stücke widerrufst du? <em>freiwillig</em></label>
+                <textarea id="widerruf-umfang" name="umfang" rows="3" maxlength="{{ laengen.umfang }}" placeholder="Leer lassen = die ganze Bestellung">{{ werte.umfang|default:'' }}</textarea>
+            </div>
+            <div class="lv-feld">
+                <label for="widerruf-email">E-Mail für die Eingangsbestätigung *</label>
+                <input type="email" id="widerruf-email" name="email" aria-describedby="widerruf-fehler" autocomplete="email" maxlength="{{ laengen.email }}" value="{{ werte.email|default:'' }}" required>
+            </div>
+            <p class="lv-klein">Mit dem Knopf widerrufst du den Vertrag über den Kauf der angegebenen Waren. Datenschutz: Die Angaben werden gespeichert, an {{ anbieterin.name }} weitergeleitet (Kopie an die Webagentur, die diese Seite technisch betreut) und nur für die Abwicklung des Widerrufs verwendet; mehr in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
+            <button type="submit" class="lv-knopf">{{ knopf_bestaetigen }}</button>
+        </form>
+    </section>
+</div>
+{% endblock %}

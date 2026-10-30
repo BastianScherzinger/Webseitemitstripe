@@ -28,10 +28,10 @@
 
     <section class="lv-seitenkopf" aria-labelledby="datenschutz-titel">
         <h1 class="lv-serif lv-satz" id="datenschutz-titel">Datenschutz</h1>
-        <p class="lv-lead">Datenschutzerklärung – diese Erklärung von Luviq Universe, {{ anbieterin.name }}, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, umfasst 4 Abschnitte und nennt, welche Daten beim Besuch dieser Seite{% if verkauf_aktiv %}, bei einer Bestellung{% endif %}, bei einer Anfrage über die Formulare und beim Newsletter anfallen, an welche Dienste sie fließen und welche Rechte Sie dabei haben.</p>
+        <p class="lv-lead">Datenschutzerklärung – diese Erklärung von Luviq Universe, {{ anbieterin.name }}, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {% if rechtstexte.datenschutz %}umfasst 12 Abschnitte{% else %}umfasst 4 Abschnitte{% endif %} und nennt, welche Daten beim Besuch dieser Seite{% if verkauf_aktiv %}, bei einer Bestellung{% endif %}, bei einer Anfrage über die Formulare und beim Newsletter anfallen, an welche Dienste sie fließen und welche Rechte Sie dabei haben.</p>
     </section>
 
-    {% comment %}Generator-Text (legal/generator/datenschutz.html) ersetzt nach Luisas Freigabe den Block darunter; dann die Aufbau-Referenz gezielt nachziehen.{% endcomment %}
+    {% comment %}Rechtstext-Ablage (legal/generator/datenschutz.html, selbst geschrieben und belegt seit 30.10.2026) ersetzt den Block darunter; der alte Block bleibt nur als Rückfall, falls die Ablage wieder leer ist.{% endcomment %}
     {% if rechtstexte.datenschutz %}
     <section class="lv-abschnitt" aria-label="Datenschutzerklärung">
         <div class="lv-prosa lv-rechtstext">{% include 'shop1/legal/generator/datenschutz.html' %}</div>
@@ -86,7 +86,7 @@
             <p>Eine erteilte Einwilligung, etwa in den Newsletter, können Sie jederzeit mit Wirkung für die Zukunft widerrufen. Soweit wir Daten auf Grundlage unseres berechtigten Interesses verarbeiten (Besucherzählung, Schutz vor automatisierten Angriffen), steht Ihnen ein Widerspruchsrecht zu: Sie können dieser Verarbeitung aus Gründen, die sich aus Ihrer besonderen Situation ergeben, jederzeit widersprechen (Art. 21 DSGVO). Kontaktieren Sie uns hierzu einfach unter <a href="mailto:brehlerluisa@gmail.com">brehlerluisa@gmail.com</a>. Außerdem haben Sie das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren; für Luviq Universe in Lübeck ist das das Unabhängige Landeszentrum für Datenschutz Schleswig-Holstein (datenschutzzentrum.de).</p>
             </div>
         </section>
-    {% endif %}
     <section class="lv-abschnitt" aria-label="Stand"><p class="lv-klein">Stand: 2. Oktober 2026</p></section>
+    {% endif %}
 </div>
 {% endblock %}

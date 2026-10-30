@@ -58,6 +58,8 @@
         <div class="lv-prosa">
             <p><a href="{% url 'checkout' %}" class="lv-knopf">Zur Kasse <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
             <p><a href="{% url 'produkte' %}" class="lv-link">Weiter einkaufen</a></p>
+            {% comment %}§ 312j Abs. 1 BGB: Lieferbeschränkungen und akzeptierte Zahlungsmittel spätestens bei Beginn des Bestellvorgangs.{% endcomment %}
+            <p class="lv-klein">Lieferung nur innerhalb Deutschlands. Akzeptierte Zahlungsarten: PayPal{% if ueberweisung_moeglich %} und Vorkasse per Überweisung{% endif %}.</p>
         </div>
     </section>
     {% else %}

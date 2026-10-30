@@ -859,3 +859,37 @@ class Motivanfrage(models.Model):
         if self.email:
             teile.append(self.email)
         return ' · '.join(teile)
+
+
+class Widerruf(models.Model):
+    """Eine Widerrufserklärung über die Widerrufsfunktion „Vertrag widerrufen“ (§ 356a BGB).
+
+    Seit 19.06.2026 Pflicht bei Online-Verträgen mit Verbrauchern. Gespeichert
+    wird **jede** Erklärung, die die Pflichtangaben trägt (Name, Angaben zum
+    Vertrag, E-Mail für die Eingangsbestätigung) – auch wenn sie zu keiner
+    Bestellung passt: ein Widerruf darf nicht an einer Tippfehler-Nummer
+    scheitern. ``bestellung`` ist gesetzt, wenn Nummer **und** E-Mail zu einer
+    Bestellung passen; sonst ordnet Luisa sie von Hand zu.
+    ``eingegangen_am`` ist der Eingangszeitpunkt, der in der Eingangsbestätigung
+    steht (§ 356a Abs. 4 BGB). Löschen erst nach Ablauf der Aufbewahrungsfrist.
+    """
+    STATUS = [('neu', 'neu'), ('in_arbeit', 'in Bearbeitung'), ('erledigt', 'erledigt (erstattet)')]
+
+    name = models.CharField(max_length=200, verbose_name='Name')
+    vertrag = models.CharField(max_length=200, verbose_name='Bestellnummer / Vertrag')
+    umfang = models.TextField(blank=True, verbose_name='Widerrufene Stücke (leer = ganze Bestellung)')
+    email = models.EmailField(max_length=254, verbose_name='E-Mail für die Eingangsbestätigung')
+    bestellung = models.ForeignKey('Order', null=True, blank=True, on_delete=models.SET_NULL,
+                                   related_name='widerrufe', verbose_name='Zugeordnete Bestellung')
+    spamverdacht = models.BooleanField(default=False, verbose_name='Spamverdacht (keine Mails verschickt)')
+    bestaetigung_gestartet = models.BooleanField(default=False, verbose_name='Eingangsbestätigung angestoßen')
+    status = models.CharField(max_length=12, choices=STATUS, default='neu', verbose_name='Status')
+    eingegangen_am = models.DateTimeField(auto_now_add=True, verbose_name='Eingegangen am')
+
+    class Meta:
+        verbose_name = 'Widerruf'
+        verbose_name_plural = 'Widerrufe'
+        ordering = ['-eingegangen_am']
+
+    def __str__(self):
+        return f'Widerruf {self.vertrag} – {self.name}'

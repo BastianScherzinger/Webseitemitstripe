@@ -26,7 +26,7 @@
 
     <section class="lv-seitenkopf" aria-labelledby="agb-titel">
         <h1 class="lv-serif lv-satz" id="agb-titel">AGB</h1>
-        <p class="lv-lead">Allgemeine Geschäftsbedingungen – diese AGB von Luviq Universe, {{ anbieterin.name }} aus {{ anbieterin.plz }} {{ anbieterin.ort }}, {% if verkauf_aktiv %}regeln in fünf Paragraphen den Vertragsschluss, die Beschaffenheit der handbemalten Unikate, Preise und Zahlung sowie das Widerrufsrecht von 14 Tagen. Maßgeblich ist der Wortlaut der Paragraphen darunter.{% else %}gelten erst ab Eröffnung des Shops. Derzeit findet kein Verkauf statt, deshalb gibt es noch keine Geschäftsbedingungen. {{ shop_oeffnet }}{% endif %}</p>
+        <p class="lv-lead">Allgemeine Geschäftsbedingungen – diese AGB von Luviq Universe, {{ anbieterin.name }} aus {{ anbieterin.plz }} {{ anbieterin.ort }}, {% if verkauf_aktiv %}regeln Vertragsschluss, Preise inklusive Versand, Zahlung, Lieferung nach Deutschland, die Beschaffenheit der handbemalten Unikate, Gewährleistung und das Widerrufsrecht von 14 Tagen; darunter stehen die Widerrufsbelehrung und das Muster-Widerrufsformular. Maßgeblich ist der Wortlaut der Paragraphen.{% else %}gelten erst ab Eröffnung des Shops. Derzeit findet kein Verkauf statt, deshalb gibt es noch keine Geschäftsbedingungen. {{ shop_oeffnet }}{% endif %}</p>
     </section>
 
     {% comment %}
@@ -43,7 +43,7 @@
         </div>
     </section>
     {% elif rechtstexte.agb and rechtstexte.widerruf %}
-    {% comment %}Mit Verkauf: die Texte aus dem Generator (legal/generator/), von Luisa freigegeben. Ohne sie öffnet der Verkauf gar nicht (shop1/startsperre.py).{% endcomment %}
+    {% comment %}Mit Verkauf: die Rechtstexte aus legal/generator/ (selbst geschrieben und belegt, Agenturregel 30.10.2026). Ohne sie öffnet der Verkauf gar nicht (shop1/startsperre.py).{% endcomment %}
     <section class="lv-abschnitt" aria-label="Allgemeine Geschäftsbedingungen">
         <div class="lv-prosa lv-rechtstext">{% include 'shop1/legal/generator/agb.html' %}</div>
     </section>

@@ -335,7 +335,7 @@ VERSAND_PREISSATZ = 'inkl. Versand innerhalb Deutschlands'
 #: Kein freiwilliges Rückgabe- oder Umtauschrecht über das Gesetz hinaus (Bastian 30.10.2026:
 #: Einzelstücke, lange Handarbeit). Das gesetzliche Widerrufsrecht gilt trotzdem (§ 312g BGB;
 #: ein fertiges Unikat ist keine Anfertigung nach Kundenwunsch) – der Satz sagt beides. Wer beim
-#: Widerruf die Rücksendekosten trägt, steht erst in der Widerrufsbelehrung aus dem Generator.
+#: Widerruf die Rücksendekosten trägt (die Kundin, § 357 Abs. 5 BGB), steht in legal/generator/widerruf.html.
 UMTAUSCH_SATZ = ('Weil jedes Teil ein Einzelstück in langer Handarbeit ist, gibt es keinen Umtausch. '
                  'Dein gesetzliches Widerrufsrecht (14 Tage) bleibt davon unberührt.')
 

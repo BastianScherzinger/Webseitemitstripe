@@ -34,6 +34,7 @@
             <dt>Betrag</dt><dd>{{ order.gesamt_betrag|floatformat:2 }} €</dd>
         </dl>
 
+        <p class="lv-klein">Bestellbestätigung, AGB und Widerrufsbelehrung kommen per E-Mail. Widerrufen kannst du online über <a href="{% url 'vertrag_widerrufen' %}">Vertrag widerrufen</a> (auch unten auf jeder Seite).</p>
         <a class="lv-knopf" href="{% url 'profil' %}">Zum Profil <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         <a class="lv-knopf linie" href="{% url 'produkte' %}">Weitere Stücke ansehen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </section>

@@ -354,6 +354,8 @@
             <nav class="lv-fuss-gruppe" aria-label="Rechtliches">
                 <p class="lv-fuss-titel">Rechtliches</p>
                 <ul>
+                    {% comment %}„Vertrag widerrufen“ (§ 356a Abs. 1 BGB): gut lesbar, hervorgehoben, auf jeder Seite, ohne Anmeldung – mit Verkauf und bis 90 Tage nach der letzten Bestellung (context_processors.widerruf_knopf_zeigen).{% endcomment %}
+                    {% if widerruf_knopf %}<li><a class="lv-fuss-widerruf" href="{% url 'vertrag_widerrufen' %}">Vertrag widerrufen</a></li>{% endif %}
                     <li><a href="{% url 'impressum' %}">Impressum</a></li>
                     <li><a href="{% url 'datenschutz' %}">Datenschutz</a></li>
                     {% if verkauf_aktiv %}<li><a href="{% url 'agb' %}">AGB</a></li>{% endif %}

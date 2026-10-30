@@ -23,7 +23,7 @@
             {% comment %}§ 312j Abs. 2 BGB / Art. 246a EGBGB: wesentliche Merkmale und Preis jedes Stücks unmittelbar vor dem Bestellknopf.{% endcomment %}
             <dl class="lv-daten">
                 {% for p in posten %}
-                <dt>{{ p.produkt_name }} · Unikat, gebraucht, handbemalt{% if p.menge > 1 %} · {{ p.menge }}×{% endif %}</dt><dd>{{ p.produkt_preis|floatformat:2 }} €</dd>
+                <dt>{{ p.produkt_name }} · {% if p.zustand_text %}{{ p.zustand_text }}{% else %}Unikat, von Hand bemalt{% endif %}{% if p.menge > 1 %} · {{ p.menge }}×{% endif %}</dt><dd>{{ p.produkt_preis|floatformat:2 }} €</dd>
                 {% endfor %}
                 <dt>Zwischensumme</dt><dd>{{ gesamt_betrag_original|floatformat:2 }} €</dd>
                 {% if hat_rabatt %}
@@ -33,6 +33,9 @@
                 <dt>Gesamt</dt><dd><strong>{{ gesamt_betrag|floatformat:2 }} €</strong></dd>
             </dl>
             <p class="lv-klein">Gesamtpreis, {{ versand_preissatz }}. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Im nächsten Schritt bezahlst du mit der hier gewählten Zahlungsart.</p>
+            {% comment %}§ 312j Abs. 1 und 2 BGB, Art. 246a § 1 Abs. 1 Nr. 10 und 11 EGBGB: Lieferbeschränkung, Zahlungsmittel, Lieferbedingungen und der harmonisierte EU-Hinweis zur gesetzlichen Gewährleistung (DVO (EU) 2025/1960, Anhang I, Farbfassung der EU-Kommission, unverändert) vor dem Bestellknopf.{% endcomment %}
+            <p class="lv-klein">Lieferung nur innerhalb Deutschlands, Übergabe an den Versanddienstleister in der Regel innerhalb von 1–2 Werktagen {% if ueberweisung_moeglich %}nach Zahlungseingang{% else %}nach Vertragsschluss{% endif %}. Akzeptierte Zahlungsarten: PayPal{% if ueberweisung_moeglich %} und Vorkasse per Überweisung{% endif %}. Für fertige Stücke gilt das gesetzliche Widerrufsrecht von 14 Tagen; die unmittelbaren Kosten einer Rücksendung trägst du. Es gilt die gesetzliche Gewährleistung von zwei Jahren, auch für gebrauchte Stücke.</p>
+            <img class="lv-gewaehr" src="{% static 'shop1/recht/eu-gewaehrleistung-hinweis-de.png' %}" width="1654" height="2339" loading="lazy" alt="EU-Hinweis „Gesetzliche Gewährleistung“: Mindestens zwei Jahre gesetzliche Gewährleistung der Vertragsmäßigkeit für Waren, die in der Europäischen Union verkauft werden. Für gebrauchte Waren kann ein kürzerer Zeitraum gelten, jedoch nicht weniger als ein Jahr. Verkäufer haften für jede Vertragswidrigkeit, die bei Lieferung bestand und innerhalb der Gewährleistungsfrist erkennbar wird, und müssen kostenlose Nachbesserung oder Ersatzlieferung, in bestimmten Fällen Preisminderung oder Erstattung anbieten. Problem so bald wie möglich dem Verkäufer melden und einen Kaufnachweis vorlegen. Mehr: europa.eu/youreurope/garantien">
         </div>
 
         <form method="POST" class="lv-formular" aria-labelledby="kasse-titel">
@@ -72,9 +75,11 @@
                         <input type="text" id="kasse-stadt" name="stadt" maxlength="{{ laengen.stadt }}" autocomplete="address-level2" value="{{ profile_data.stadt }}" required>
                     </div>
                 </div>
+                {% comment %}Lieferung nur nach Deutschland (AGB § 5): das Land ist fest, der Server lehnt ein anderes ab (views/checkout.LIEFERLAENDER).{% endcomment %}
                 <div class="lv-feld">
                     <label for="kasse-land">Land *</label>
-                    <input type="text" id="kasse-land" name="land" maxlength="{{ laengen.land }}" autocomplete="country-name" value="{{ profile_data.land }}" required>
+                    <input type="text" id="kasse-land" name="land" maxlength="{{ laengen.land }}" autocomplete="country-name" value="Deutschland" readonly required aria-describedby="kasse-land-hinweis">
+                    <p class="lv-klein" id="kasse-land-hinweis">Wir liefern nur innerhalb Deutschlands.</p>
                 </div>
             </fieldset>
 
@@ -90,7 +95,7 @@
 
             <button type="submit" class="lv-knopf">Zahlungspflichtig bestellen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
             {% comment %}Rechtslinks direkt am Abschluss (EIG117, § 312j Abs. 3 BGB): der Checkout erscheint nur bei aktivem Verkauf.{% endcomment %}
-            <p class="lv-klein">Mit deiner Bestellung gelten unsere <a href="{% url 'agb' %}">AGB mit Widerrufsbelehrung (§ 5)</a> und die <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
+            <p class="lv-klein">Es gelten unsere <a href="{% url 'agb' %}">AGB</a>. Informationen zu deinem Widerrufsrecht stehen in der <a href="{% url 'agb' %}#widerruf">Widerrufsbelehrung</a> (mit Muster-Widerrufsformular), zum Datenschutz in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>. AGB und Widerrufsbelehrung bekommst du mit der Bestellbestätigung auch per E-Mail.</p>
             <p><a class="lv-link" href="{% url 'warenkorb' %}">Zurück zum Warenkorb</a></p>
         </form>
     </section>

@@ -33,6 +33,10 @@ BESTELL_LAENGEN = {
     'stadt': 100, 'postleitzahl': 10, 'land': 100, 'telefon': 20,
 }
 
+#: Einziges Lieferland (AGB § 5). Schreibweisen, die als Deutschland gelten.
+LIEFERLAND = 'Deutschland'
+LIEFERLAENDER = frozenset({'deutschland', 'de', 'germany', 'brd', 'bundesrepublik deutschland'})
+
 #: Zahlarten, die der Bestellvorgang anbietet.
 ZAHLARTEN = ('paypal', 'bank_transfer')
 
@@ -180,19 +184,40 @@ def _bank_konfiguriert():
     return bool(os.getenv('BANK_IBAN', '').strip())
 
 
-def _verfuegbarkeit(posten):
+def reserviert(produkt, ausser=None):
+    """Stückzahl, die offene Überweisungs-Bestellungen für ``produkt`` zurückhalten.
+
+    Bei Vorkasse kommt der Vertrag mit der Bankdaten-Mail zustande (AGB § 2 Abs. 4),
+    abgebucht wird der Bestand aber erst mit dem Zahlungseingang. Ohne Reservierung
+    könnte dasselbe Einzelstück in der Zwischenzeit ein zweites Mal verkauft werden.
+    Eine stornierte oder bezahlte Bestellung reserviert nichts mehr."""
+    from django.db.models import Sum
+    abfrage = OrderItem.objects.filter(produkt_ref=produkt.pk, order__status='pending',
+                                       order__payment_method='bank_transfer')
+    if ausser is not None:
+        abfrage = abfrage.exclude(order=ausser)
+    return abfrage.aggregate(n=Sum('menge'))['n'] or 0
+
+
+def _verfuegbarkeit(posten, ausser=None):
     """Meldungen zu allen Posten, die sich nicht (mehr) bestellen lassen.
 
     Prüft je Posten das **Stück selbst** (EIG47): vorhanden, aktiv, nicht im
-    Archiv vergeben, in ausreichender Zahl vorrätig. Leere Liste = alles
-    bestellbar."""
+    Archiv vergeben, in ausreichender Zahl vorrätig – abzüglich der Stücke, die
+    offene Überweisungs-Bestellungen zurückhalten (``reserviert``). Leere Liste =
+    alles bestellbar."""
     probleme = []
     for item in posten:
         produkt = item.produkt()
         if produkt is None or not produkt.aktiv or produkt.vergeben:
             probleme.append(f'"{item.produkt_name}" ist nicht mehr verfügbar.')
-        elif produkt.lagerbestand < item.menge:
-            probleme.append(f'Von "{item.produkt_name}" ist nur noch {produkt.lagerbestand} verfügbar.')
+            continue
+        frei = max(0, produkt.lagerbestand - reserviert(produkt, ausser))
+        if frei < item.menge:
+            if frei == 0 and produkt.lagerbestand > 0:
+                probleme.append(f'"{item.produkt_name}" ist gerade für eine andere Bestellung reserviert.')
+            else:
+                probleme.append(f'Von "{item.produkt_name}" ist nur noch {frei} verfügbar.')
     return probleme
 
 
@@ -208,6 +233,9 @@ def _eingaben_pruefen(felder):
         validate_email(felder['email'])
     except ValidationError:
         return 'Bitte gib eine gültige E-Mail-Adresse an.'
+    if felder['land'].casefold() not in LIEFERLAENDER:
+        return 'Wir liefern nur innerhalb Deutschlands. Bitte gib eine Lieferanschrift in Deutschland an.'
+    felder['land'] = LIEFERLAND
     return None
 
 
@@ -238,6 +266,11 @@ def checkout(request):
         return redirect('warenkorb')
 
     betraege = _betraege(request.user, posten)
+    # Art. 246a § 1 Abs. 1 Nr. 1 EGBGB / § 312j Abs. 2 BGB: wesentliche Merkmale je Stück –
+    # „gebraucht“ oder „neu“ aus dem Stück selbst (Produkt.zustand), nicht pauschal.
+    for item in posten:
+        produkt = item.produkt()
+        item.zustand_text = (produkt.zustand or '').strip() if produkt else ''
 
     if request.method == 'POST':
         return _bestellung_absenden(request, cart, posten, betraege)
@@ -275,7 +308,9 @@ def _bestell_felder(post):
     """Die Adressfelder des Checkout-Formulars, getrimmt."""
     felder = {name: post.get(name, '').strip()
               for name in ('vorname', 'nachname', 'email', 'adresse', 'stadt', 'postleitzahl')}
-    felder['land'] = post.get('land', 'Deutschland').strip()
+    # Lieferung nur innerhalb Deutschlands (AGB § 5, luviq_daten.VERSAND['ausland'] = False):
+    # das Land ist fest, ein anderes Land im POST wird nicht übernommen, sondern abgelehnt.
+    felder['land'] = post.get('land', LIEFERLAND).strip() or LIEFERLAND
     felder['telefon'] = post.get('telefon', '').strip()
     return felder
 
@@ -314,6 +349,11 @@ def _bestellung_absenden(request, cart, posten, betraege):
             messages.info(request, '🏛️ Mission gestartet! Bitte schließe die Überweisung ab.')
             return redirect('payment_success', order_id=order.id)
 
+        # § 312i Abs. 1 Nr. 3 BGB: Zugang der Bestellung unverzüglich elektronisch bestätigen.
+        try:
+            send_bestelleingang_email(order)
+        except Exception as e:
+            _log.error("Bestelleingang-Mail nicht gestartet: %s", e)
         return redirect('payment', order_id=order.id)
 
     except Exception:
@@ -393,7 +433,7 @@ def paypal_create(request, order_id):
         return JsonResponse({'error': 'Bestellung nicht gefunden'}, status=404)
     if order.status != 'pending' or order.payment_method != 'paypal':
         return JsonResponse({'error': 'Diese Bestellung lässt sich nicht mit PayPal bezahlen.'}, status=400)
-    probleme = _verfuegbarkeit(list(order.items.all()))
+    probleme = _verfuegbarkeit(list(order.items.all()), ausser=order)
     if probleme:
         return JsonResponse({'error': ' '.join(probleme)}, status=409)
     kennung = _paypal_bestellung_anlegen(order)
@@ -556,11 +596,21 @@ def send_order_confirmation_email(order):
                         f'\n- Willkommensrabatt: -{float(order.rabatt_betrag):.2f} €')
         rabatt_text = (f'\nZwischensumme: {float(zwischensumme):.2f} €'
                        f'\nWillkommensrabatt: -{float(order.rabatt_betrag):.2f} €')
+    from ..mails import vertragsunterlagen
+    unterlagen_html, unterlagen_text = vertragsunterlagen(order)
+    if order.payment_method == 'bank_transfer':
+        einleitung = ('vielen Dank! Deine Überweisung ist eingegangen, dein Stück wird jetzt für den '
+                      'Versand vorbereitet.')
+    else:
+        # AGB § 2 Abs. 4: bei PayPal kommt der Vertrag mit dem Einzug der Zahlung zustande;
+        # diese Mail ist die Bestellbestätigung (Vertragsbestätigung, § 312f Abs. 2 BGB).
+        einleitung = ('vielen Dank für deine Bestellung! Deine Zahlung über PayPal ist abgeschlossen. '
+                      'Hiermit bestätigen wir dir den Kaufvertrag.')
     subject = f'Bestellbestätigung #{order.id}'
     html_content = f"""
     <html><body>
         <h2>Hallo {escape(order.vorname)} {escape(order.nachname)},</h2>
-        <p>vielen Dank für deine Bestellung! Deine Zahlung wurde erfolgreich verarbeitet.</p>
+        <p>{einleitung}</p>
         <h3>Bestellnummer: #{order.id}</h3>
         <p><strong>Bestellte Artikel:</strong></p>
         <pre>{items_html}{rabatt_zeile}</pre>
@@ -569,19 +619,62 @@ def send_order_confirmation_email(order):
         <p>{escape(order.adresse)}<br>{escape(order.postleitzahl)} {escape(order.stadt)}<br>{escape(order.land)}</p>
         <p>Vielen Dank für deinen Einkauf!</p>
         <p>Herzliche Grüße,<br>Luisa Brehler</p>
+        {unterlagen_html}
     </body></html>
     """
-    text_content = (f"Bestellbestätigung #{order.id}\n\n{items_text}{rabatt_text}"
-                    f"\n\nGesamt: {float(order.gesamt_betrag):.2f} €")
+    text_content = (f"Bestellbestätigung #{order.id}\n\n{einleitung}\n\n{items_text}{rabatt_text}"
+                    f"\n\nGesamt: {float(order.gesamt_betrag):.2f} €\n\n{unterlagen_text}")
     send_brevo_email(subject, html_content, order.email, recipient_name=f"{order.vorname} {order.nachname}", text_content=text_content)
 
 
 def send_bank_details_email(order):
     """Sendet Bankverbindung & PayPal Option bei Wahl von Überweisung."""
-    subject = f'Zahlungsinformationen für deine Mission #{order.id}'
-    html_content = _bank_html(order, _bank_artikel_html(order), _bank_paypal_block())
+    from ..mails import vertragsunterlagen
+    unterlagen_html, unterlagen_text = vertragsunterlagen(order)
+    # AGB § 2 Abs. 4: bei Vorkasse ist diese Mail die Annahme (Bestellbestätigung)
+    # und zugleich die Eingangsbestätigung nach § 312i Abs. 1 Nr. 3 BGB.
+    subject = f'Bestellbestätigung und Zahlungsinformationen #{order.id}'
+    html_content = _bank_html(order, _bank_artikel_html(order), _bank_paypal_block(), unterlagen_html)
+    inhaber = os.getenv('BANK_INHABER', 'Luisa Brehler')
+    iban = os.getenv('BANK_IBAN', '')
+    text_content = (f'Bestellbestätigung und Zahlungsinformationen #{order.id}\n\n'
+                    'Vielen Dank für deine Bestellung! Hiermit nehmen wir sie an; der Kaufvertrag ist geschlossen.\n'
+                    f'Bitte überweise {float(order.gesamt_betrag):.2f} € innerhalb von 7 Tagen an {inhaber}, '
+                    f'IBAN {iban}, Verwendungszweck Mission #{order.id}. Bis dahin halten wir das Stück für dich '
+                    'zurück; versendet wird nach Zahlungseingang.\n\n'
+                    f'{unterlagen_text}')
     send_brevo_email(subject, html_content, order.email,
-                     recipient_name=f"{order.vorname} {order.nachname}")
+                     recipient_name=f"{order.vorname} {order.nachname}", text_content=text_content)
+
+
+def send_bestelleingang_email(order):
+    """Eingangsbestätigung einer PayPal-Bestellung (§ 312i Abs. 1 Nr. 3 BGB).
+
+    Geht unmittelbar nach „Zahlungspflichtig bestellen“ hinaus, bevor die Zahlung bei
+    PayPal abgeschlossen ist. Sie ist **keine** Annahme (AGB § 2 Abs. 3/4): der Vertrag
+    kommt erst mit dem Einzug der Zahlung zustande, dann folgt die Bestellbestätigung."""
+    from ..mails import live_url
+    zahlen = f'{live_url()}/payment/{order.id}/'
+    subject = f'Eingang deiner Bestellung #{order.id}'
+    posten = list(order.items.all())
+    zeilen_text = '\n'.join(f'- {i.menge}x {i.produkt_name}: {float(i.produkt_preis) * i.menge:.2f} €' for i in posten)
+    zeilen_html = ''.join(f'<li>{i.menge}x {escape(i.produkt_name)}: {float(i.produkt_preis) * i.menge:.2f} €</li>'
+                          for i in posten)
+    gesamt = f'{float(order.gesamt_betrag):.2f} €'
+    hinweis = ('Das ist noch keine Annahme: Der Kaufvertrag kommt zustande, sobald du die Zahlung bei PayPal '
+               'abgeschlossen hast. Dann bekommst du die Bestellbestätigung mit AGB und Widerrufsbelehrung.')
+    text_content = (f'Eingang deiner Bestellung #{order.id}\n\nWir haben deine Bestellung erhalten. {hinweis}\n\n'
+                    f'{zeilen_text}\nGesamt: {gesamt} (inkl. Versand innerhalb Deutschlands, gemäß § 19 UStG '
+                    f'ohne Umsatzsteuer)\n\nZahlung noch nicht abgeschlossen? Hier geht es weiter: {zahlen}'
+                    '\n\nViele Grüße\nLuisa Brehler')
+    html_content = (f'<html><body><h2>Hallo {escape(order.vorname)},</h2>'
+                    f'<p>wir haben deine Bestellung #{order.id} erhalten. {hinweis}</p>'
+                    f'<ul>{zeilen_html}</ul><p><strong>Gesamt: {gesamt}</strong> (inkl. Versand innerhalb '
+                    'Deutschlands, gemäß § 19 UStG ohne Umsatzsteuer)</p>'
+                    f'<p>Zahlung noch nicht abgeschlossen? <a href="{zahlen}">Hier geht es weiter</a>.</p>'
+                    '<p>Herzliche Grüße,<br>Luisa Brehler</p></body></html>')
+    send_brevo_email(subject, html_content, order.email,
+                     recipient_name=f"{order.vorname} {order.nachname}", text_content=text_content)
 
 
 #: Wiederkehrende Stile der Bankdaten-Mail (nur, damit die Zeilen lesbar bleiben).
@@ -629,7 +722,7 @@ def _bank_paypal_block():
                 </div>"""
 
 
-def _bank_html(order, items_html, paypal_block):
+def _bank_html(order, items_html, paypal_block, unterlagen_html=''):
     """Das HTML der Bankdaten-Mail."""
     inhaber = escape(os.getenv('BANK_INHABER', 'Luisa Brehler'))
     iban = escape(os.getenv('BANK_IBAN', ''))
@@ -643,7 +736,7 @@ def _bank_html(order, items_html, paypal_block):
             </div>
             <div style="padding:40px;">
                 <h2 style="font-size:20px;font-weight:900;margin-bottom:20px;">Hallo {escape(order.vorname)},</h2>
-                <p style="line-height:1.6;color:#4b5563;">vielen Dank für deine Bestellung! Bitte begleiche den Betrag zeitnah.</p>
+                <p style="line-height:1.6;color:#4b5563;">vielen Dank für deine Bestellung! Hiermit nehmen wir sie an; der Kaufvertrag ist geschlossen. Bitte überweise den Betrag innerhalb von 7 Tagen. Bis dahin halten wir das Stück für dich zurück; versendet wird nach Zahlungseingang.</p>
                 <div style="margin:30px 0;padding:30px;background:#fdf2f2;border-radius:20px;border-left:5px solid #ff6a00;">
                     <h3 style="{_STIL_KASTENTITEL}color:#ff6a00;">Zahlungsoption A: Überweisung</h3>
                     <p style="margin:15px 0 5px;font-size:13px;"><strong>Inhaber:</strong> {inhaber}</p>
@@ -658,6 +751,7 @@ def _bank_html(order, items_html, paypal_block):
                     <p>Sobald die Zahlung eingegangen ist, erhältst du eine Bestätigung.</p>
                     <p style="margin-top:20px;">Herzliche Grüße,<br><strong style="color:#050816;">Luisa Brehler</strong></p>
                 </div>
+                <div style="text-align:left;">{unterlagen_html}</div>
             </div>
             <div style="background:#f9fafb;padding:30px;text-align:center;border-top:1px solid #eee;">
                 <p style="font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:2px;">Luviq Universe © 2026</p>

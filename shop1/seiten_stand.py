@@ -26,9 +26,9 @@ SEITEN_STAND = {
     'ueber_uns':    '2026-10-30',
     'liefergebiet': '2026-10-30',
     'kontakt':      '2026-10-30',
-    'impressum':    '2026-10-29',
-    'datenschutz':  '2026-10-23',
-    'agb':          '2026-10-29',  # Rechtstexte ohne Verkauf: Hinweis statt Paragraphen
+    'impressum':    '2026-10-30',  # VSBG-Satz (Rechts-Runde 30.10.)
+    'datenschutz':  '2026-10-30',  # vollständige Erklärung (Rechts-Runde 30.10.)
+    'agb':          '2026-10-30',  # AGB §§ 1–14 + Widerrufsbelehrung (Rechts-Runde 30.10.)
     # IS19 (27.09.2026): Erklärsätze der Stationen, Dauer, Bestätigungshinweis.
     # 02.10.2026 (L1-B1): Titel, Beschreibung, Vorschaubild und Twitter-Angaben neu
     # (IS03/06/07/09/10/11/13/36/39, EIG137) — home, produkte, gaestebuch, ueber_uns,
@@ -45,8 +45,8 @@ SEITEN_STAND = {
     'wissen_bleichfleck': '2026-10-30T14:15:00+01:00',  # veröffentlicht, Runde 3
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
-    'wissen_bestellen': '2026-10-23',
-    'wissen_widerruf':  '2026-10-23',
+    'wissen_bestellen': '2026-10-30',
+    'wissen_widerruf':  '2026-10-30',
     'wissen_konto':     '2026-10-23',
 }
 

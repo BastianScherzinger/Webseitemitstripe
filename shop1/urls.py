@@ -26,6 +26,9 @@ urlpatterns = [
     # Motiv anfragen (Stufe 1: ohne Preis, ohne Zahlung, Mail nur an Luisa)
     path('motiv-anfragen/', views.motiv_anfragen, name='motiv_anfragen'),
     path('motiv-anfragen/danke/', views.motiv_danke, name='motiv_danke'),
+    # Widerrufsfunktion „Vertrag widerrufen“ (§ 356a BGB): ohne Anmeldung, auch ohne laufenden Verkauf erreichbar
+    path('vertrag-widerrufen/', views.vertrag_widerrufen, name='vertrag_widerrufen'),
+    path('vertrag-widerrufen/eingang/', views.widerruf_eingang, name='widerruf_eingang'),
     path('liefergebiet/', views.liefergebiet, name='liefergebiet'),
     path('kontakte/<int:produkt_id>/', views.kontakte, name='kontakte'),
     path('login/', views.login, name='login'),

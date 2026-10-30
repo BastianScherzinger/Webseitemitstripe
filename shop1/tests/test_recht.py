@@ -199,10 +199,13 @@ class RechtstexteOhneVerkaufTest(LuviqTestCase):
 
     @override_settings(VERKAUF_AKTIV=True)
     def test_agb_mit_verkauf_unveraendert(self):
-        text = _text(self.hole('/agb/').content.decode())
+        # Seit 30.10.2026 vollständige AGB (§§ 1–14); die Überweisung steht nur
+        # drin, wenn sie angeboten wird (BANK_IBAN).
+        with mock.patch.dict('os.environ', {'BANK_IBAN': 'DE00 0000 0000 0000 0000 00'}):
+            text = _text(self.hole('/agb/').content.decode())
         self.assertIn('§ 2 Vertragsschluss', text)
-        self.assertIn('§ 5 Widerrufsrecht', text)
-        self.assertIn('PayPal oder Vorab-Überweisung', text)
+        self.assertIn('§ 8 Widerrufsrecht', text)
+        self.assertIn('PayPal und Vorkasse per Überweisung', text)
         self.assertNotIn('Derzeit kein Verkauf', text)
 
     def test_datenschutz_ohne_shop_und_bestellung(self):

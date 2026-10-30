@@ -8,6 +8,7 @@ Text derselben Seite wiederzufinden sind.
 
 import json
 import re
+from unittest import mock
 from datetime import date
 from html.parser import HTMLParser
 from urllib.parse import urlsplit
@@ -477,11 +478,14 @@ class AntwortCrawlerTest(LuviqTestCase):
     @override_settings(VERKAUF_AKTIV=True)  # prüft den Shop hinter dem Verkaufsschalter
     def test_die_kurzfassung_behauptet_nichts_anderes_als_die_agb(self):
         """Verhindert genau den Fehler, den dieser Bereich verhindern soll: die
-        Kurzfassung nennt Zahlungsarten, die auf der Seite nicht gelten."""
-        text = self.hole('/llms.txt').content.decode()
-        agb = sichtbarer_text(self.hole('/agb/').content.decode())
+        Kurzfassung nennt Zahlungsarten, die auf der Seite nicht gelten.
+        Seit 30.10.2026 nennen die AGB (§ 4) die Überweisung nur, wenn sie
+        wirklich angeboten wird (``BANK_IBAN`` gesetzt, views/checkout._bank_konfiguriert)."""
+        with mock.patch.dict('os.environ', {'BANK_IBAN': 'DE00 0000 0000 0000 0000 00'}):
+            text = self.hole('/llms.txt').content.decode()
+            agb = sichtbarer_text(self.hole('/agb/').content.decode())
         self.assertIn('PayPal oder Vorab-Überweisung', text)
-        self.assertIn('PayPal oder Vorab-Überweisung', agb)
+        self.assertIn('PayPal und Vorkasse per Überweisung', agb)
 
 
 class SchemaBildAdressenTest(LuviqTestCase):

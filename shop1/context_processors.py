@@ -119,6 +119,15 @@ def anbieterin(request):
             'ust_idnr': getattr(settings, 'UST_IDNR', ''),
             'lucid_nr': getattr(settings, 'LUCID_REGISTRIERNUMMER', ''),
             'rechtstexte': rechtstexte_vorhanden(),
+            # Absolute Adresse für Rechtstexte („online unter https://…/vertrag-widerrufen/“);
+            # in Mails setzt mails.vertragsunterlagen() die Live-Adresse ein.
+            'rechts_basis': oeffentliche_basis(request),
+            # „Vertrag widerrufen“ (§ 356a BGB) muss während jeder laufenden Widerrufsfrist
+            # sichtbar sein – auch wenn der Verkauf später wieder aus ist.
+            'widerruf_knopf': widerruf_knopf_zeigen(),
+            # Rechtstexte nennen nur Zahlungsarten, die der Bestellweg wirklich anbietet
+            # (Überweisung nur mit hinterlegter IBAN, views/checkout._bank_konfiguriert).
+            'ueberweisung_moeglich': bool(os.getenv('BANK_IBAN', '').strip()),
             'pflege': luviq_daten.PFLEGE,
             # Einwilligungs-Banner nur, wenn ein nicht notwendiger Dienst eingestellt ist.
             'einwilligung': ({'dienst': settings.EINWILLIGUNG_DIENST,
@@ -140,6 +149,33 @@ def rechtstexte_vorhanden():
 
 
 _RECHTSTEXTE = None
+
+#: So lange nach der letzten Bestellung bleibt „Vertrag widerrufen“ im Fuß, auch ohne
+#: laufenden Verkauf: 14 Tage Frist ab Erhalt plus großzügig Versand, Zustellung und
+#: Überweisungsdauer. Bei fehlender Belehrung liefe die Frist bis 12 Monate + 14 Tage
+#: (§ 356 Abs. 3 BGB); die Belehrung ist vorhanden, deshalb genügt dieser Puffer.
+WIDERRUF_NACHLAUF_TAGE = 90
+
+
+def widerruf_knopf_zeigen():
+    """True bei laufendem Verkauf oder wenn die letzte Bestellung weniger als
+    ``WIDERRUF_NACHLAUF_TAGE`` alt ist (eine Abfrage, 10 Minuten zwischengespeichert)."""
+    from .verkauf import verkauf_aktiv
+    if verkauf_aktiv():
+        return True
+    wert = cache.get('widerruf_knopf')
+    if wert is None:
+        from datetime import timedelta
+        from django.utils import timezone
+        from .models import Order
+        try:
+            grenze = timezone.now() - timedelta(days=WIDERRUF_NACHLAUF_TAGE)
+            wert = Order.objects.filter(erstellt_am__gte=grenze).exists()
+        except Exception:
+            _log.exception('widerruf_knopf: Abfrage gescheitert')
+            wert = True
+        cache.set('widerruf_knopf', wert, 600)
+    return wert
 
 
 def luviq(request):
