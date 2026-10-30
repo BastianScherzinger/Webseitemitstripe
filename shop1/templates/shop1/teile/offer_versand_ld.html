@@ -1,0 +1,18 @@
+{% comment %}Versand und Rückgabe eines Offer (Runde 3, 30.10.2026), nur mit Verkauf eingebunden.
+Versand innerhalb Deutschlands ist im Preis enthalten (luviq_daten.VERSAND['kosten'] = 0),
+Bearbeitungszeit 1–2 Werktage (AGB § 4, VERSAND['werktage']). Eine Transitzeit steht nirgends fest
+und fehlt deshalb. Die Rückgabe verweist auf die eine MerchantReturnPolicy der Organization
+(base.html, #rueckgabe): gesetzliches Widerrufsrecht 14 Tage, Rücksendung per Post; wer die
+Rücksendekosten trägt, ist nicht festgelegt (Widerrufsbelehrung aus dem Generator fehlt) –
+deshalb kein returnFees. Beginnt mit Komma: wird hinter das letzte Feld des Offer gesetzt.{% endcomment %},
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#versand",
+          "shippingRate": {"@type": "MonetaryAmount", "value": "{{ versand.kosten|default:0|floatformat:"2u" }}", "currency": "EUR"},
+          "shippingDestination": {"@type": "DefinedRegion", "addressCountry": "DE"},
+          "deliveryTime": {
+            "@type": "ShippingDeliveryTime",
+            "handlingTime": {"@type": "QuantitativeValue", "minValue": {{ versand_werktage_min }}, "maxValue": {{ versand_werktage_max }}, "unitCode": "DAY"}
+          }
+        },
+        "hasMerchantReturnPolicy": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#rueckgabe"}

@@ -42,7 +42,7 @@ PFLICHT_TEXTE = {
 #: (mit Test) – dann fällt der Grund aus der Liste.
 #: Versandkosten: Bestellweg und Preisangabe kennen keine Versandkosten; ein
 #: Betrag (oder „versandkostenfrei") ist Luisas Entscheidung (PAngV § 6).
-VERSANDKOSTEN_IM_BESTELLWEG = False
+VERSANDKOSTEN_IM_BESTELLWEG = True  # Runde 3 (30.10.2026): Versand im Preis enthalten (luviq_daten.VERSAND['kosten'] = 0), Preisangabe „inkl. Versand“
 #: Elektronische Widerrufsfunktion („Vertrag widerrufen", § 356a BGB, seit
 #: 19.06.2026 für Online-Verträge mit Verbrauchern).
 WIDERRUFSFUNKTION_VORHANDEN = False

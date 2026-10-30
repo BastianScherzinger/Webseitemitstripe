@@ -94,6 +94,16 @@
           "priceRange": "€€",
           "currenciesAccepted": "EUR",
           "paymentAccepted": "PayPal, Banküberweisung",
+          {% comment %}Runde 3 (30.10.2026): eine Rückgaberegel für den ganzen Shop, auf die jedes Offer verweist (teile/offer_versand_ld.html). Inhalt = gesetzliches Widerrufsrecht: 14 Tage, Deutschland, Rücksendung per Post. Kein returnFees: wer die Rücksendekosten trägt, steht erst in der Widerrufsbelehrung aus dem Generator. Kein freiwilliges Rückgaberecht darüber hinaus (luviq_daten.UMTAUSCH_SATZ).{% endcomment %}
+          "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "@id": "{{ request.scheme }}://{{ request.get_host }}/#rueckgabe",
+            "applicableCountry": "DE",
+            "returnPolicyCountry": "DE",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+            "merchantReturnDays": 14,
+            "returnMethod": "https://schema.org/ReturnByMail"
+          },
 {% endif %}
           "sameAs": [{% for url in profile_urls %}
             "{{ url }}"{% if not forloop.last %},{% endif %}{% endfor %}
@@ -129,7 +139,8 @@
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa",
           "name": "Luisa Brehler",
           "jobTitle": "Gründerin & Creative Director",
-          "worksFor": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
+          "worksFor": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},{% if luisa_foto %}
+          "image": "{{ request.scheme }}://{{ request.get_host }}{{ luisa_foto.original }}",{% endif %}
           "sameAs": [{% for url in profile_person_urls %}
             "{{ url }}"{% if not forloop.last %},{% endif %}{% endfor %}
           ]

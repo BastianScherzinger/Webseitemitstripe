@@ -3,8 +3,8 @@
 „Luisa" im Look „Nachtausgabe" (19.09.2026, Bauplan § 4). Grundlage ist
 Luisas Befragung vom 19.09.2026 (Design/luviq/MARKENWISSEN-luisa.md):
 ihr echter Satz, der Anfang in ihren Worten ohne Gründungslegende, die fünf
-Schritte, das Anfrage-System. Kein Porträt, bis Luisa ein neues Foto liefert –
-das alte freigestellte Bild wird nicht mehr verwendet (Markenwissen § 9).
+Schritte, das Anfrage-System. Porträt seit Runde 3 (30.10.2026, Bastian): das alte
+freigestellte Bild als schlichtes Brustbild (teile/luisa_foto.html), bis ein neues kommt.
 Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
 {% endcomment %}
 
@@ -86,6 +86,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
             <footer>{{ zitat_quelle }}</footer>
         </blockquote>
         <div class="lv-luisa-text">
+            {% include 'shop1/teile/luisa_foto.html' %}
             <p>So hat es angefangen, mehr Geschichte braucht es nicht. Danach habe ich Leute gefragt, was sie gern drauf hätten, und das einfach umgesetzt.</p>
         </div>
     </section>
@@ -100,7 +101,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
     <section class="lv-abschnitt" aria-labelledby="bleiche-titel">
         <div class="lv-prosa">
             <h2 class="lv-serif" id="bleiche-titel">Warum Bleiche?</h2>
-            <p>Gemalt wird wirklich mit Bleiche: Sie zieht die Farbe aus dem dunklen Stoff, nichts ist aufgedruckt, deshalb stehen die Linien in Bleich-Beige auf Schwarz. Das ist keine Stilfrage, sondern die Technik. Später kommen Textilfarben dazu, aber nicht bunt.</p>
+            <p>Gemalt wird wirklich mit Bleiche: Sie zieht die Farbe aus dem dunklen Stoff, nichts ist aufgedruckt, deshalb stehen die Linien in Bleich-Beige auf Schwarz. Das ist keine Stilfrage, sondern die Technik. Später kommen Textilfarben dazu, aber nicht bunt. Wie die Technik funktioniert, steht unter <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a></p>
         </div>
     </section>
 

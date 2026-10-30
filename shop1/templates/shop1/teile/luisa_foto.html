@@ -1,0 +1,2 @@
+{% comment %}Foto von Luisa (Runde 3, 30.10.2026): Brustbild aus luviq_daten.LUISA_FOTO, auf Kontakt- und Luisa-Seite. Ohne Foto (LUISA_FOTO = None oder Datei fehlt) entfällt der Block ganz.{% endcomment %}
+{% if luisa_foto %}<figure class="lv-luisa-foto"><img src="{{ luisa_foto.src }}" srcset="{{ luisa_foto.srcset }}" sizes="240px" width="{{ luisa_foto.breite }}" height="{{ luisa_foto.hoehe }}" alt="{{ luisa_foto.alt }}" loading="lazy" decoding="async"><figcaption>Luisa Brehler</figcaption></figure>{% endif %}

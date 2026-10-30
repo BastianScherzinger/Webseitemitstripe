@@ -29,9 +29,10 @@
                 {% if hat_rabatt %}
                 <dt>Willkommensrabatt (10 %)</dt><dd>- {{ rabatt_wert|floatformat:2 }} €</dd>
                 {% endif %}
+                <dt>Versand innerhalb Deutschlands</dt><dd>inklusive</dd>
                 <dt>Gesamt</dt><dd><strong>{{ gesamt_betrag|floatformat:2 }} €</strong></dd>
             </dl>
-            <p class="lv-klein">Gesamtpreis. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Im nächsten Schritt bezahlst du mit der hier gewählten Zahlungsart.</p>
+            <p class="lv-klein">Gesamtpreis, {{ versand_preissatz }}. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Im nächsten Schritt bezahlst du mit der hier gewählten Zahlungsart.</p>
         </div>
 
         <form method="POST" class="lv-formular" aria-labelledby="kasse-titel">

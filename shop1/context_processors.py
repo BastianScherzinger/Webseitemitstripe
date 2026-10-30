@@ -174,8 +174,42 @@ def luviq(request):
         'versand': luviq_daten.VERSAND,
         'abholung': luviq_daten.ABHOLUNG,
         'herkunft_satz': luviq_daten.HERKUNFT_SATZ,
+        # Runde 3 (30.10.2026): Versand im Preis, kein Umtausch, Auftragsarbeit ohne Widerruf.
+        'versand_preissatz': luviq_daten.VERSAND_PREISSATZ,
+        'umtausch_satz': luviq_daten.UMTAUSCH_SATZ,
+        'auftrag_widerruf_satz': luviq_daten.AUFTRAG_WIDERRUF_SATZ,
+        'luisa_foto': luisa_foto(),
+        'versand_werktage_min': _werktage()[0],
+        'versand_werktage_max': _werktage()[1],
         **_rahmen(),
     }
+
+
+def _werktage():
+    """``VERSAND['werktage']`` (z. B. „1-2“) als Zahlenpaar für das Schema; „3“ wird (3, 3)."""
+    from . import luviq_daten
+    teile = [t for t in str(luviq_daten.VERSAND.get('werktage', '')).replace('–', '-').split('-') if t.strip()]
+    try:
+        zahlen = [int(t) for t in teile]
+    except ValueError:
+        zahlen = []
+    if not zahlen:
+        return 1, 2
+    return min(zahlen), max(zahlen)
+
+
+def luisa_foto():
+    """Luisas Brustbild als ``produktbilder.Bild`` (``None`` ohne Foto oder ohne Datei).
+
+    Eine Quelle (``luviq_daten.LUISA_FOTO``) für Kontakt, Luisa-Seite und das ``image`` des
+    Person-Knotens in ``base.html``."""
+    from . import luviq_daten, produktbilder
+    foto = luviq_daten.LUISA_FOTO
+    if not foto:
+        return None
+    breite, hoehe = foto['masse']
+    spec = f"{foto['muster']}@{','.join(str(b) for b in foto['breiten'])}#{breite}x{hoehe}"
+    return produktbilder.bild_aus(None, spec, breite, hoehe, foto['alt'])
 
 
 def _rahmen():

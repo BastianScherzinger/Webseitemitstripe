@@ -95,6 +95,13 @@ PROFILE_PERSON = (FACEBOOK_LUISA, LINKEDIN_LUISA)
 PFLEGE = ('Auf links bei 30 °C waschen, nicht in den Trockner, keinen Weichspüler nehmen und nur '
           'von links bügeln.')
 
+#: Auftragsarbeiten nach eigenem Motivwunsch: kein Widerrufsrecht (§ 312g Abs. 2 Nr. 1 BGB),
+#: weil das Stück nach den Vorgaben der Kundin oder des Kunden angefertigt wird.
+AUFTRAG_WIDERRUF_SATZ = ('Ein Stück, das nach deinem eigenen Motivwunsch gemalt wird, ist eine '
+                         'Anfertigung nur für dich: Dafür gibt es kein Widerrufsrecht '
+                         '(§ 312g Abs. 2 Nr. 1 BGB). Deshalb wird erst gemalt, wenn ihr euch auf ein '
+                         'Motiv geeinigt habt.')
+
 #: Häufige Fragen rund um die Motivanfrage (Bestellung nach Wunsch), wortgleich als
 #: Text auf ``/motiv-anfragen/`` und – erst mit Verkauf – als ``FAQPage``. Nur, was
 #: auf der Seite und in den Wissensbeiträgen schon belegt ist: kein Preis, keine
@@ -116,6 +123,8 @@ FAQ_MOTIV = [
      'außerdem nicht zurücknehmen.'),
     ('Wie pflege ich ein handbemaltes Stück?',
      PFLEGE + ' So bleibt die Bemalung lange schön.'),
+    # Runde 3 (30.10.2026): Rechtslage bei Auftragsarbeiten, § 312g Abs. 2 Nr. 1 BGB.
+    ('Kann ich ein Stück nach meinem Motiv zurückgeben?', AUFTRAG_WIDERRUF_SATZ),
 ]
 
 #: Antwortzeit auf Anfragen, von Bastian für Luisa am 02.10.2026 bestätigt.
@@ -314,10 +323,22 @@ SCHRITTE = [
 
 #: Versand. ``werktage`` steht so in den AGB (``legal/agb.html``, § 4: „Nach
 #: Zahlungseingang wird in der Regel innerhalb von 1-2 Werktagen versendet“) und
-#: wird nur mit Verkauf gezeigt. Versandkosten und ein Versanddienstleister stehen
-#: weder in den AGB noch im Code, deshalb gibt es hier keinen Wert dafür und keine
-#: Seite nennt einen. ``ausland=False``: Versand nur innerhalb Deutschlands.
-VERSAND = {'gebiet': 'ganz Deutschland', 'ausland': False, 'werktage': '1-2'}
+#: wird nur mit Verkauf gezeigt. ``kosten``: Versand innerhalb Deutschlands ist im
+#: Preis enthalten (Bastian 30.10.2026: „Versandkosten sind inklusive“) – 0 Euro,
+#: der Bestellweg berechnet keine Versandkosten. Ein Versanddienstleister ist nicht
+#: festgelegt, keine Seite nennt einen. ``ausland=False``: nur innerhalb Deutschlands.
+VERSAND = {'gebiet': 'ganz Deutschland', 'ausland': False, 'werktage': '1-2', 'kosten': 0}
+
+#: Die Preisangabe zum Versand, direkt am Preis (nur mit Verkauf sichtbar).
+VERSAND_PREISSATZ = 'inkl. Versand innerhalb Deutschlands'
+
+#: Kein freiwilliges Rückgabe- oder Umtauschrecht über das Gesetz hinaus (Bastian 30.10.2026:
+#: Einzelstücke, lange Handarbeit). Das gesetzliche Widerrufsrecht gilt trotzdem (§ 312g BGB;
+#: ein fertiges Unikat ist keine Anfertigung nach Kundenwunsch) – der Satz sagt beides. Wer beim
+#: Widerruf die Rücksendekosten trägt, steht erst in der Widerrufsbelehrung aus dem Generator.
+UMTAUSCH_SATZ = ('Weil jedes Teil ein Einzelstück in langer Handarbeit ist, gibt es keinen Umtausch. '
+                 'Dein gesetzliches Widerrufsrecht (14 Tage) bleibt davon unberührt.')
+
 
 #: Persönliche Übergabe in Lübeck. Bewusst ohne Uhrzeiten und ohne Treffpunkt:
 #: Luisa hat beides noch nicht festgelegt (SEO-Analyse, „Offene Angaben“). Ein
@@ -546,14 +567,48 @@ ENGEL_STUECK = {
                          'gemalt. 100 % Baumwolle, Größe M. Luviq, Lübeck.'),
     'beschreibung': ('Ein T-Shirt aus 100 % Baumwolle in Größe M. Auf dem Rücken steht ein Engel mit '
                      'Rose und einem Stern, von Hand gemalt – viel Handarbeit, genau einmal. '
-                     'Vorne ein kleines Luviq-Zeichen auf Herzhöhe – Foto folgt.'),
-    # Statische Bilder (siehe produktbilder.py): Studiobild mit Stern (Hero-Zuschnitt 4:5) zuerst,
-    # dann das echte Foto. Vorderseiten-Fotos später als weitere „Zusatzbilder“ im Admin eintragen.
+                     'Vorne ein kleines Luviq-Zeichen auf Herzhöhe.'),
+    # Galerie (Runde 3, Bastian 30.10.2026): Rücken KI → Rücken echt → Vorne KI → Vorne echt →
+    # Arbeitsplatz. Das Hauptbild ist das Studiobild (KI) des Rückens. Die Zusatzbilder tragen eine
+    # feste ``position``; Platz 2 ist für das KI-Studiobild der Vorderseite frei gehalten (gibt es
+    # noch nicht). Bilder tauschen: doku/20-DESIGN.md, Abschnitt „Stückbilder tauschen“.
     'bild_statisch': 'shop1/images/luviq/hero-engel-45-{w}.webp@480,640,800#800x999',
     'zusatzbilder': [
-        {'bild_statisch': 'shop1/images/stuecke/engel-echt-45-{w}.webp@600,900,960#960x1200',
+        {'position': 1, 'ist_ki': False, 'unterschrift': 'Echtes Foto: Rücken',
+         'bild_statisch': 'shop1/images/stuecke/engel-echt-45-{w}.webp@600,900,960#960x1200',
          'breite': 960, 'hoehe': 1200,
          'alt': ('Echtes Foto des fertigen Engel-Shirts von hinten: schwarzes T-Shirt, darauf in '
                  'Bleich-Beige ein Engel mit Flügeln, Rose und Stern')},
+        # Platz 2: KI-Studiobild der Vorderseite (Holzbügel, dunkle Wand wie das Rücken-Studiobild),
+        # erst eintragen, wenn es das Bild gibt und das Luviq-Zeichen exakt stimmt:
+        # {'position': 2, 'ist_ki': True, 'unterschrift': 'Studiobild (KI) aus dem echten Foto: vorne',
+        #  'bild_statisch': 'shop1/images/stuecke/engel-vorne-studio-45-{w}.webp@600,900,960#960x1200',
+        #  'breite': 960, 'hoehe': 1200, 'alt': 'Studiobild (KI) aus dem echten Foto: …'},
+        {'position': 3, 'ist_ki': False, 'unterschrift': 'Echtes Foto: vorne, Luviq-Zeichen',
+         'bild_statisch': 'shop1/images/stuecke/engel-vorne-echt-45-{w}.webp@600,900,960#960x1200',
+         'breite': 960, 'hoehe': 1200,
+         'alt': ('Echtes Foto der Vorderseite des Engel-Shirts, nah: das Luviq-Zeichen in Bleich-Beige '
+                 'auf schwarzem Stoff, ein Schriftzug mit Stern und zwei Pfeilen')},
+        {'position': 4, 'ist_ki': False, 'unterschrift': 'Echtes Foto: auf Luisas Arbeitstisch',
+         'bild_statisch': 'shop1/images/stuecke/engel-arbeitsplatz-45-{w}.webp@600,900,960#960x1200',
+         'breite': 960, 'hoehe': 1200,
+         'alt': ('Echtes Foto: das Engel-Shirt mit der Vorderseite nach oben auf Luisas Arbeitstisch, '
+                 'daneben Pinsel, Stifte, Gummihandschuhe und ein Glas mit Bleiche')},
     ],
+}
+
+#: Bildunterschriften der Stückgalerie. Sie erscheinen nur in einer Galerie mit mindestens einem
+#: KI-Studiobild – dort muss jedes Bild sagen, was es ist (Runde 3, 30.10.2026).
+KI_UNTERSCHRIFT = HERO_BILDUNTERSCHRIFT
+ECHT_UNTERSCHRIFT = 'Echtes Foto'
+
+#: Foto von Luisa (Runde 3, Bastian 30.10.2026: das alte freigestellte Porträt „clean, ganz
+#: einfach“ wieder nutzen, ein neues Foto kommt nach). Brustbild, erzeugt von
+#: ``tools/bilder_zuschneiden.py luisa_brustbild``. Tauschen: neue Quelle ablegen, Funktion laufen
+#: lassen; bei anderem Seitenverhältnis ``masse`` anpassen. Leer (``None``) ⇒ kein Foto auf den Seiten.
+LUISA_FOTO = {
+    'muster': 'shop1/images/luisa/luisa-brustbild-{w}.webp',
+    'breiten': (280, 420, 570),
+    'masse': (570, 570),
+    'alt': 'Luisa Brehler, die Malerin hinter Luviq',
 }

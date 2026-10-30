@@ -54,8 +54,9 @@ class StartsperreTest(SimpleTestCase):
         alle = _ordner_mit('agb', 'widerruf', 'datenschutz')
         gruende = startsperre.sperrgruende(heute=NACH_START, umgebung=VOLL, ordner=alle)
         # Was der Code noch nicht kann, bleibt als Grund stehen.
-        self.assertEqual(len(gruende), 2)
-        self.assertTrue(any('Versandkosten' in g for g in gruende))
+        # Runde 3: Versandkosten sind gebaut (im Preis enthalten), es bleibt die Widerrufsfunktion.
+        self.assertEqual(len(gruende), 1)
+        self.assertFalse(any('Versandkosten' in g for g in gruende))
         self.assertTrue(any('356a' in g for g in gruende))
         ohne_lucid = startsperre.sperrgruende(heute=NACH_START, umgebung={}, ordner=alle)
         self.assertTrue(any('LUCID' in g for g in ohne_lucid))
@@ -206,7 +207,9 @@ class AngebotMitVerkaufTest(LuviqTestCase):
     def test_preisangabe_und_herstellerangaben(self):
         html = self.hole(self.produkt.get_absolute_url()).content.decode()
         self.assertIn('Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.', html)
-        self.assertIn('Versandkosten', html)
+        # Runde 3: Versand im Preis enthalten, die Angabe steht am Preis (vorher „zuzüglich Versandkosten“).
+        self.assertIn('inkl. Versand innerhalb Deutschlands', html)
+        self.assertNotIn('Zuzüglich', html)
         self.assertNotIn('inkl. MwSt', html)
         self.assertIn('Herstellerin: Luisa Brehler', html)
         self.assertIn('Mühlenkamp 5, 23569 Lübeck', html)

@@ -143,8 +143,9 @@ class EngelAnlegenTest(LuviqTestCase):
         self.assertEqual(p.preis, Decimal('69.00'))
         self.assertEqual((p.nummer, p.masse, p.material), (6, 'Größe M', '100 % Baumwolle'))
         self.assertTrue(p.aktiv and not p.vergeben and p.kaufbar)
-        self.assertEqual(p.zusatzbilder.count(), 1)
-        self.assertEqual(len(p.galerie()), 2)
+        # Runde 3: Rücken echt, Vorderseite echt, Arbeitstisch (Platz 2 für das KI-Bild vorne frei).
+        self.assertEqual(p.zusatzbilder.count(), 3)
+        self.assertEqual(len(p.galerie()), 4)
 
     def test_ueberschreibt_nichts(self):
         self.anlegen()
@@ -194,7 +195,7 @@ class EngelAnlegenTest(LuviqTestCase):
         knoten = [k for k in _ld(antwort) if k.get('@type') in ('VisualArtwork', 'Product')]
         self.assertEqual([k['@type'] for k in knoten], ['VisualArtwork'])
         self.assertNotIn('offers', knoten[0])
-        self.assertEqual(len(knoten[0]['image']), 2)
+        self.assertEqual(len(knoten[0]['image']), 4)  # Runde 3: alle Galeriebilder
         # keine erfundenen Angaben
         self.assertNotIn(' cm', luviq_daten.ENGEL_STUECK['masse'])
 

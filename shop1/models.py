@@ -211,18 +211,34 @@ class Produkt(models.Model):
         return produktbilder.bild_aus(self.bild, self.bild_statisch, self.bild_breite, self.bild_hoehe, alt)
 
     def galerie(self):
-        """Alle Bilder des Stücks in Reihenfolge: Hauptbild, dann die Zusatzbilder."""
+        """Alle Bilder des Stücks in Reihenfolge: Hauptbild, dann die Zusatzbilder.
+
+        Enthält die Galerie ein KI-Studiobild, bekommt **jedes** Bild eine sichtbare
+        Bildunterschrift („Studiobild (KI) aus dem echten Foto“ bzw. „Echtes Foto“ oder den Text
+        aus ``ProduktBild.unterschrift``) – wer wischt, soll bei jedem Bild wissen, was es ist
+        (Runde 3, 30.10.2026). Galerien ohne KI-Bild bleiben ohne Unterschrift wie bisher.
+        """
+        from dataclasses import replace
+        from . import luviq_daten
         bilder = []
         haupt = self.hauptbild()
         if haupt:
-            bilder.append(haupt)
+            bilder.append(replace(haupt, ist_ki=self.bild_ist_ki))
         if self.pk:
             from . import produktbilder
             for nr, extra in enumerate(self.zusatzbilder.all(), start=2):
                 alt = extra.alt or f'{self.name} – Foto {nr}'
+                if extra.ist_ki and not alt.startswith(luviq_daten.KI_UNTERSCHRIFT):
+                    alt = f'{luviq_daten.KI_UNTERSCHRIFT}: {alt}'
                 bild = produktbilder.bild_aus(extra.bild, extra.bild_statisch, extra.breite, extra.hoehe, alt)
                 if bild:
-                    bilder.append(bild)
+                    bilder.append(replace(bild, ist_ki=extra.ist_ki, unterschrift=extra.unterschrift))
+        if any(b.ist_ki for b in bilder):
+            bilder = [b if b.unterschrift else replace(
+                b, unterschrift=luviq_daten.KI_UNTERSCHRIFT if b.ist_ki else luviq_daten.ECHT_UNTERSCHRIFT)
+                for b in bilder]
+        else:
+            bilder = [replace(b, unterschrift='') for b in bilder]
         return bilder
 
     @property
@@ -365,6 +381,14 @@ class ProduktBild(models.Model):
                                      help_text='Wie bei Produkt: „pfad-{w}.webp@480,720,960#960x1200“.')
     alt = models.CharField('Bildbeschreibung', max_length=200, blank=True,
                            help_text='Was auf dem Foto zu sehen ist (für Screenreader und Google).')
+    ist_ki = models.BooleanField(
+        'KI-Studiobild', default=False,
+        help_text='Haken, wenn das Bild ein KI-Studiobild aus einem echten Foto ist. Dann sagen '
+                  'Bildunterschrift, Alt-Text und Sitemap das ehrlich.')
+    unterschrift = models.CharField(
+        'Bildunterschrift', max_length=120, blank=True,
+        help_text='Kurz, ehrlich, z. B. „Echtes Foto: vorne“. Leer: „Echtes Foto“ bzw. '
+                  '„Studiobild (KI) aus dem echten Foto“ – sichtbar nur in Galerien mit KI-Bild.')
     breite = models.PositiveIntegerField(null=True, blank=True)
     hoehe = models.PositiveIntegerField(null=True, blank=True)
     position = models.PositiveIntegerField(default=0)

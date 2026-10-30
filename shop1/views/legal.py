@@ -535,7 +535,20 @@ def _seitenbilder(name: str, base_url: str) -> list[tuple[str, str]]:
                    luviq_daten.HERO_STUECK['alt'])]
         bilder += [(absolut(static(f'shop1/images/luviq/{bild}-720.webp')), alt)
                    for _titel, _text, bild, alt in luviq_daten.SCHRITTE]
+        # Abschnitt „So sieht es in echt aus“ (echte Handyfotos, größte Fassung).
+        bilder += [(absolut(static(f'shop1/images/luviq/{datei}-{max(breiten)}.webp')), alt)
+                   for datei, breiten, _masse, alt, _unterschrift in luviq_daten.ECHT_FOTOS]
         return bilder
+    if name in ('ueber_uns', 'kontakt'):
+        # Runde 3: Luisas Foto steht auf beiden Seiten (luviq_daten.LUISA_FOTO).
+        from ..context_processors import luisa_foto
+        foto = luisa_foto()
+        return [(absolut(foto.original), foto.alt)] if foto else []
+    from .wissen import WISSEN_BEITRAEGE, beitragsbild
+    for beitrag in WISSEN_BEITRAEGE.values():
+        if beitrag['url_name'] == name and beitrag.get('bild'):
+            bild = beitragsbild(beitrag)
+            return [(absolut(bild.original), bild.alt)] if bild else []
     if name == 'produkte':
         # Mit Archivnummer: zwei Stücke heißen gleich („Custom print hoodie“),
         # ihre Bildtitel dürfen es nicht tun (EIG103).
@@ -631,12 +644,17 @@ def _produkt_xml(produkt, base_url):
     xml += '    <changefreq>weekly</changefreq>\n'
     xml += '    <priority>0.8</priority>\n'
 
-    if produkt.hat_bild and produkt.hauptbild():
-        bild_url = produkt.hauptbild().original
+    # Alle Bilder der Galerie (Runde 3): das Hauptbild mit Titel und Bildunterschrift wie bisher,
+    # jedes weitere mit seinem Alt-Text als Titel – KI-Bilder sagen das darin ehrlich.
+    name_esc = produkt.name.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+    for nr, bild in enumerate(produkt.galerie() if produkt.hat_bild else []):
+        bild_url = bild.original
         if not bild_url.startswith('http'):
             bild_url = f"{base_url}{bild_url}"
         escaped = bild_url.replace('&', '&amp;')
-        name_esc = produkt.name.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+        if nr:
+            xml += _bild_xml(bild_url, bild.alt)
+            continue
         xml += '    <image:image>\n'
         xml += f'      <image:loc>{escaped}</image:loc>\n'
         ki = 'Studiobild (KI) aus dem echten Foto: ' if produkt.bild_ist_ki else ''

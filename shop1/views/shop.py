@@ -22,6 +22,7 @@ from .. import luviq_daten, mails, spamschutz, verkauf
 from ..utils import send_brevo_email
 from ..middleware import ist_bot
 from ._helpers import mail_ergebnis_vermerken, zu_viele_anfragen
+from .wissen import freigegebene_beitraege
 
 _log = logging.getLogger('shop1')
 
@@ -432,6 +433,8 @@ def produkt_detail_slug(request, slug):
         'krume': 'Archiv' if produkt.verkauft else 'Stücke',
         'bleiche': 'bleich' in (produkt.technik or '').lower(),
         'bleiche_satz': luviq_daten.BLEICHE_SATZ,
+        # Verweis auf den Ratgeber zur Technik, nur wenn er freigegeben ist (Runde 3).
+        'bleach_artikel': 'bleach-painting' in freigegebene_beitraege(),
     })
 
 

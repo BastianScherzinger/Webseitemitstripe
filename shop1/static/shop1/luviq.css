@@ -374,6 +374,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-galerie-spur:focus-visible{outline:3px solid var(--lv-akzent);outline-offset:3px}
 .lv-galerie-bild{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;margin:0}
 .lv-galerie-bild img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.lv-galerie-bild{position:relative}
+.lv-galerie-unterschrift{position:absolute;left:0;bottom:0;margin:0;padding:6px 10px;background:rgba(10,10,10,.78);font:500 13px/1.3 var(--lv-sans);letter-spacing:.02em;color:var(--lv-text)}
 .lv-galerie-steuer{display:none}
 .lv-galerie.ist-bereit .lv-galerie-steuer{display:flex;align-items:center;gap:var(--lv-raum-3)}
 .lv-galerie-punkte{display:flex;flex:1;gap:var(--lv-raum-2);list-style:none;margin:0;padding:0}
@@ -406,6 +408,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-stueck-knoepfe{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px}
 .lv-stueck-text .lv-klein a{color:var(--lv-text)}
 .lv-stueck-preis{font:500 max(28px,calc(var(--u)*2.6)) var(--lv-mono)}
+.lv-stueck-preis-zusatz{display:block;margin-top:4px;font:500 14px/1.4 var(--lv-sans);color:var(--lv-leise)}
+.lv-stueck-text>p.lv-technik a{font-weight:600;text-decoration:underline;text-underline-offset:.2em}
 .lv-stueck-text>p.lv-stueck-zustand{font:500 max(12px,calc(var(--u)*.9)) var(--lv-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--lv-leise)}
 .lv-stueck-zustand b{color:var(--lv-marke);font-weight:500}
 .lv-stueck-text>p.lv-technik{border-left:2px solid var(--lv-marke);padding:var(--lv-raum-1) 0 var(--lv-raum-1) var(--lv-raum-4);color:var(--lv-text);font:600 max(18px,calc(var(--u)*1.5)) var(--lv-sans);letter-spacing:-.01em;line-height:1.35}
@@ -610,6 +614,9 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-wissen-meta{font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.12em;text-transform:uppercase}
 .lv-wissen-kopf h1{font-size:max(44px,calc(var(--u)*5));max-width:22ch}
 .lv-wissen-lead{max-width:64ch;font-size:max(17px,calc(var(--u)*1.3));line-height:1.6;color:var(--lv-text)}
+.lv-wissen-bild{margin:0;display:grid;gap:8px;width:min(420px,100%)}
+.lv-seite .lv-wissen-bild img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
+.lv-wissen-bild figcaption{font:500 13px/1.4 var(--lv-sans);color:var(--lv-leise);letter-spacing:.02em}
 .lv-wissen-lead.lv-wissen-leise{font-size:max(15px,calc(var(--u)*1.1));color:var(--lv-leise)}
 .lv-wissen-frage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.2fr);gap:calc(var(--u)*4);padding:calc(var(--u)*3.4) var(--rand) calc(var(--u)*3.6);border-top:1px solid var(--lv-linie)}
 .lv-wissen-frage h2{font-size:max(24px,calc(var(--u)*2.3));line-height:1.12;max-width:20ch}
@@ -656,6 +663,9 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-kontakt-text .lv-lead a,.lv-faq a,.lv-kontaktdaten a{text-decoration:underline;text-underline-offset:.2em}
 .lv-kontakt-text .lv-lead a:hover,.lv-faq a:hover,.lv-kontaktdaten a:hover{color:var(--lv-akzent)}
 .lv-kontaktdaten{margin-top:calc(var(--u)*1.4)}
+.lv-luisa-foto{margin:0;display:grid;gap:8px;justify-items:start}
+.lv-seite .lv-luisa-foto img{width:240px;max-width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;background:#000}
+.lv-luisa-foto figcaption{font:500 13px/1.4 var(--lv-sans);color:var(--lv-leise);letter-spacing:.02em}
 .lv-kontaktdaten dd{color:var(--lv-text)}
 .lv-kontaktseite .lv-feld2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 .lv-feld>label{display:flex;align-items:baseline;gap:calc(var(--u)*.8);font-weight:600;margin-bottom:calc(var(--u)*1)}

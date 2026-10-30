@@ -42,5 +42,6 @@ class Command(BaseCommand):
                 # Kein Newsletter-Versand durch das Anlegen: der läuft nur über das Panel.
                 newsletter_gesendet=True)
             for nr, extra in enumerate(d['zusatzbilder'], start=1):
-                ProduktBild.objects.create(produkt=produkt, position=nr, **extra)
+                extra = dict(extra)
+                ProduktBild.objects.create(produkt=produkt, position=extra.pop('position', nr), **extra)
         self.stdout.write(f'Engel-Shirt Nº {produkt.archiv_nummer} angelegt.')

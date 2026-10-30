@@ -58,7 +58,7 @@
     "availability": "{% if produkt.kaufbar %}https://schema.org/InStock{% elif produkt.verkauft %}https://schema.org/SoldOut{% else %}https://schema.org/OutOfStock{% endif %}",
     "itemCondition": "https://schema.org/{% if produkt.ist_neu %}NewCondition{% else %}UsedCondition{% endif %}",
     "seller": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
-    "url": "{{ seiten_url }}"
+    "url": "{{ seiten_url }}"{% include 'shop1/teile/offer_versand_ld.html' %}
   }{% endif %}
 }
 </script>
@@ -82,6 +82,7 @@
                         {% for bild in galerie %}
                         <li class="lv-galerie-bild" aria-label="Foto {{ forloop.counter }} von {{ galerie|length }}">
                             <img{% if forloop.first %} class="produkt_detail"{% endif %} src="{{ bild.src }}" srcset="{{ bild.srcset }}" sizes="(min-width: 1024px) 48vw, 100vw" width="{{ bild.breite }}" height="{{ bild.hoehe }}" alt="{{ bild.alt }}"{% if forloop.first %} loading="eager" fetchpriority="high"{% else %} loading="lazy"{% endif %} decoding="async">
+                            {% if bild.unterschrift %}<p class="lv-galerie-unterschrift">{{ bild.unterschrift }}</p>{% endif %}
                         </li>
                         {% endfor %}
                     </ul>
@@ -106,12 +107,12 @@
             <p class="lv-stueck-nummer">Nº {{ produkt.archiv_nummer }}</p>
             <h1 class="lv-serif">{{ produkt.name }}</h1>
             {% if produkt.verkauft %}<p class="lv-stueck-zustand"><b>{{ produkt.band_wort }}</b> · Archiv</p>
-            {% elif verkauf_aktiv and produkt.kaufbar %}<p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} €</p>
+            {% elif verkauf_aktiv and produkt.kaufbar %}<p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} € <span class="lv-stueck-preis-zusatz">{{ versand_preissatz }}</span></p>
             {% else %}<p class="lv-stueck-zustand">Unikat · {{ shop_oeffnet }}</p>{% endif %}
             {% comment %}Antwortsatz als Lead, Luisas Beschreibung als eigener Absatz (nur wenn vorhanden). Die Technik steht in einem eigenen, gut sichtbaren Satz, wenn das Feld „Technik“ Bleiche nennt (Bastian 29.10.2026: Bleiche betonen).{% endcomment %}
             <p class="lv-stueck-lead">{% include 'shop1/antwort_produkt.html' %}</p>
             {% if produkt.beschreibung %}<p class="lv-stueck-beschreibung">{{ produkt.beschreibung|linebreaksbr }}</p>{% endif %}
-            {% if bleiche %}<p class="lv-technik">{{ bleiche_satz }}</p>{% endif %}
+            {% if bleiche %}<p class="lv-technik">{{ bleiche_satz }}{% if bleach_artikel %} <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a>{% endif %}</p>{% endif %}
             <dl class="lv-daten">
                 <dt>Nummer</dt><dd>Nº {{ produkt.archiv_nummer }}</dd>
                 {% if produkt.masse %}<dt>Größe</dt><dd>{{ produkt.masse }}</dd>{% endif %}
@@ -121,7 +122,8 @@
             </dl>
             {% comment %}EIG84: Preis und Kaufweg nur für ein Stück, das noch da ist (`Produkt.kaufbar`: aktiv, nicht vergeben, vorrätig); sonst derselbe „vergeben“-Zustand wie ohne Verkauf, statt eines Knopfes, der auf der Startseite endet.{% endcomment %}
             {% if verkauf_aktiv and produkt.kaufbar %}
-            <p class="lv-klein">Gesamtpreis. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Zuzüglich <a href="{% url 'agb' %}">Versandkosten</a> · PayPal oder Vorab-Überweisung · Versand deutschlandweit, in der Regel 1-2 Werktage</p>
+            {% comment %}Versand innerhalb Deutschlands ist im Preis enthalten (Bastian 30.10.2026, luviq_daten.VERSAND['kosten'] = 0): die Preisangabe sagt das direkt am Preis (PAngV) statt „zuzüglich Versandkosten“.{% endcomment %}
+            <p class="lv-klein">Gesamtpreis, {{ versand_preissatz }}. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. PayPal oder Vorab-Überweisung · Versand deutschlandweit, in der Regel 1-2 Werktage</p>
             {% comment %}GPSR (VO (EU) 2023/988 Art. 19): Herstellerangaben und Kennnummer im Online-Angebot. Luisa verändert die Teile wesentlich und verkauft unter eigener Marke, sie gilt als Herstellerin. Nur mit Verkauf, Werte aus luviq_daten.ANBIETERIN und luviq_daten.PFLEGE.{% endcomment %}
             <p class="lv-klein">Herstellerin: {{ anbieterin.name }} ({{ anbieterin.geschaeft }}), {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.email }} · Kennnummer Nº {{ produkt.archiv_nummer }} · Pflege: {{ pflege }}</p>
             {% elif produkt.verkauft %}
@@ -145,7 +147,7 @@
             {% comment %}Hinweistext: die ersten zwei Sätze sichtbar, der Rest in <details> (bleibt für Google lesbar).{% endcomment %}
             {% if verkauf_aktiv and produkt.kaufbar %}
             <div class="lv-stueck-hinweis">
-                <p>Bezahlt wird per PayPal oder Vorab-Überweisung; der angezeigte Preis ist ein Endpreis, nach § 19 UStG wird keine Umsatzsteuer berechnet. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen.</p>
+                <p>Bezahlt wird per PayPal oder Vorab-Überweisung; der angezeigte Preis ist ein Endpreis, nach § 19 UStG wird keine Umsatzsteuer berechnet, und der Versand innerhalb Deutschlands ist schon enthalten. Versendet wird deutschlandweit, in der Regel innerhalb von 1-2 Werktagen. {{ umtausch_satz }}</p>
                 <details class="lv-mehr"><summary>Mehr zum Kauf</summary>
                 <p>Gekauft wird über den Warenkorb, und dafür ist ein Konto nötig: Warenkorb und Bestellvorgang sind an eine Anmeldung gebunden. Wer per Vorab-Überweisung zahlt, bekommt die Bankdaten per E-Mail; über PayPal wird die Zahlung sofort abgeschlossen. Für die Bestellung gilt das Widerrufsrecht von 14 Tagen ab dem Tag, an dem die Ware angekommen ist (§ 5 der AGB). {% if produkt.zustand and not produkt.ist_neu %}Bei gebrauchten Basisteilen gehören leichte Unregelmäßigkeiten der Bemalung und kleine Gebrauchsspuren des Stoffes zum Stück und sind kein Mangel (§ 3 der AGB). {% endif %}Die Fotos zeigen genau dieses Teil; Maße, Material oder Zustand fragst du vor dem Kauf über das Kontaktformular ab, ein zweites Exemplar zum Vergleich gibt es nicht.</p></details>
             </div>
