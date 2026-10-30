@@ -178,11 +178,12 @@ def _nicht_indexierbare_wissensseiten():
 
 
 #: Inhaltsseiten, die heute bewusst ``noindex`` tragen und deshalb in Sitemap
-#: und llms.txt fehlen müssen: ``/impressum/`` (dauerhaft, siehe legal.py) und
+#: und llms.txt fehlen müssen: ``/impressum/`` (dauerhaft, siehe legal.py), ``/gaestebuch/``
+#: (noindex bis echte fremde Beiträge da sind, 30.10.2026) und
 #: die noch nicht freigegebenen Wissensseiten.
 #: Ohne Verkauf (``VERKAUF_AKTIV`` aus, die Vorgabe) auch ``/agb/``: die AGB
 #: gelten erst ab Eröffnung des Shops (``shop1/verkauf.py``).
-NICHT_INDEXIERBARE_SEITEN = (['/impressum/']
+NICHT_INDEXIERBARE_SEITEN = (['/impressum/', '/gaestebuch/']
                              + ([] if settings.VERKAUF_AKTIV else ['/agb/'])
                              + _nicht_indexierbare_wissensseiten())
 
