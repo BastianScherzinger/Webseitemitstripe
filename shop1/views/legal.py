@@ -559,11 +559,11 @@ def sitemap_xml(request):
 
 def _sitemap_seiten():
     """Die festen Seiten der Sitemap samt Wissensbereich, je nach Verkaufsschalter."""
-    # 'home' behält absichtlich den leeren Pfad: die Startseite steht seit
-    # jeher ohne Schrägstrich am Ende in der Sitemap, und eine andere
-    # Schreibweise wäre für Google eine neue Adresse.
+    # 'home' steht mit '/' in der Sitemap: das ist die kanonische Form
+    # (canonical und 301-Ziel enden ebenfalls auf '/'); für Google ist
+    # die Wurzel-URL mit und ohne Schrägstrich dieselbe Adresse.
     static_pages = [
-        {'name': 'home',         'loc': '',                      'priority': '1.0', 'changefreq': 'daily'},
+        {'name': 'home',         'loc': '/',                     'priority': '1.0', 'changefreq': 'daily'},
         {'name': 'produkte',     'loc': reverse('produkte'),     'priority': '0.9', 'changefreq': 'daily'},
         {'name': 'gaestebuch',   'loc': reverse('gaestebuch'),   'priority': '0.7', 'changefreq': 'weekly'},
         {'name': 'ueber_uns',    'loc': reverse('ueber_uns'),    'priority': '0.7', 'changefreq': 'monthly'},
