@@ -6,9 +6,9 @@ status: vollständig
 fortschritt: 99
 zusammenfassung: Stand 02.10.2026 (live, main = 7ae67ab): Produktbilder in mehreren Größen mit srcset und Bildmaßen, LCP-Bild mit fetchpriority und Preload, vier eigene Schriftdateien, Critical CSS, gepackte Stildateien, kein Fremdskript; Lighthouse Desktop 100, mobil 89 (LCP 3,76 s), Serverzeit 3–4 ms. Offen sind vier Später-Punkte mit Begründung (Besuchsprotokoll im Request, ein großes Original-Bild, mobil ein Punkt unter dem Ziel, Nachmessung mit Verkauf).
 offen: 4
-pagespeed_mobil: 100
+pagespeed_mobil: 97
 pagespeed_desktop: 100
-antwortzeit_ms: 7
+antwortzeit_ms: 4
 quellen: DOCUMENTATION.md, LOGBUCH.md, start.sh
 antwortzeit_quelle: PageSpeed server-response-time
 ---
@@ -21,36 +21,35 @@ Gemessen wird die **Live-Seite**, also der Stand `main`. Seit dem 02.10.2026 ist
 ## Messwerte
 
 <!-- tempo:anfang -->
-**Messung vom 29.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a). Bereich „Performance & Core Web Vitals“: **99,3 von 100**, Reifegrad „Referenz“.
+**Messung vom 30.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a). Bereich „Performance & Core Web Vitals“: **98,4 von 100**, Reifegrad „Referenz“.
 
 ### Lighthouse je Seite
 
 | Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
 |---|---|---:|---:|---:|---:|---:|
-| `/` | mobile | **99** | 2,10 s | 0,000 | 0 ms | 4 ms |
-| `/` | desktop | **100** | 0,44 s | 0,043 | 0 ms | 5 ms |
-| `/datenschutz/` | mobile | **100** | 1,65 s | 0,000 | 0 ms | 24 ms |
-| `/datenschutz/` | desktop | **100** | 0,32 s | 0,001 | 0 ms | 1 ms |
-| `/impressum/` | mobile | **100** | 1,65 s | 0,000 | 0 ms | 1 ms |
-| `/impressum/` | desktop | **100** | 0,36 s | 0,001 | 0 ms | 1 ms |
-| `/kontakt/` | mobile | **100** | 1,50 s | 0,013 | 0 ms | 3 ms |
-| `/kontakt/` | desktop | **100** | 0,32 s | 0,051 | 0 ms | 3 ms |
-| `/produkte/` | mobile | **99** | 2,05 s | 0,000 | 0 ms | 20 ms |
-| `/produkte/` | desktop | **100** | 0,45 s | 0,050 | 0 ms | 4 ms |
+| `/datenschutz/` | mobile | **99** | 1,71 s | 0,000 | 0 ms | 4 ms |
+| `/datenschutz/` | desktop | **100** | 0,45 s | 0,000 | 0 ms | 5 ms |
+| `/kontakt/` | mobile | **99** | 1,57 s | 0,000 | 0 ms | 3 ms |
+| `/kontakt/` | desktop | **100** | 0,43 s | 0,016 | 0 ms | 3 ms |
+| `/produkte/` | mobile | **94** | 2,86 s | 0,000 | 16 ms | 3 ms |
+| `/produkte/` | desktop | **100** | 0,67 s | 0,000 | 0 ms | 3 ms |
 
-10 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
+6 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 
-**Serverzeit (`server-response-time` aus PageSpeed): 6,6 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
+**Serverzeit (`server-response-time` aus PageSpeed): 3,5 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
 
 ### Tempo-Regeln, die offen sind
 
 | Regel | Titel | Ergebnis | Beleg |
 |---|---|---|---|
-| `PF20` | Inline-CSS und Inline-JS bleiben im Rahmen | teilweise | im Mittel 11 kB Inline-CSS und 6 kB Inline-JS je Seite über 17 Seiten |
+| `PF20` | Inline-CSS und Inline-JS bleiben im Rahmen | teilweise | im Mittel 13 kB Inline-CSS und 7 kB Inline-JS je Seite über 18 Seiten |
+| `PF22` | Keine grossen ungenutzten Einsparchancen offen | teilweise | 1 Einsparchance, grösste 780 ms: redirects (780 ms) |
 
 ### Die grössten Bremsen laut Lighthouse
 
-Keine Einsparchance über 150 ms.
+| Audit | Titel | Ersparnis |
+|---|---|---:|
+| `redirects` | Avoid multiple page redirects | 780 ms |
 <!-- tempo:ende -->
 
 **Was hier erzeugt wird und was von Hand kommt.** Jede gemessene Zahl steht im Block

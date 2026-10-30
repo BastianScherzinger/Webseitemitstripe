@@ -1,8 +1,8 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-10-29
-stand: 2026-10-29
+stand: 2026-10-30
+stand: 2026-10-30
 status: vollständig
 fortschritt: 97
 zusammenfassung: 29.10.2026 – Gewerbe LUVIQ angemeldet (Beginn 01.11.2026, § 19 UStG, USt-IdNr. beantragt). Zweig recht/2026-10-29-verkaufsstart (nicht gepusht) - Startsperre für den Verkauf, Hinweis „Shop öffnet frühestens am 01.11.2026“, Generator-Ablagen, USt-IdNr.-Platzhalter, Einwilligungs-Gerüst; Prüfbericht in Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29. Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
@@ -57,34 +57,40 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 29.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 96,0 von 100**, Reifegrad „Referenz“. 354 von 410 Regeln an 19 URLs und 207 Dateien (43.150 Zeilen) geprüft.
+**Messung vom 30.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 91,4 von 100**, Reifegrad „Referenz“. 337 von 410 Regeln an 20 URLs und 221 Dateien (45.210 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Erreichbarkeit & Postfach | **74** | Brauchbar |
-| Substanz & Reichweite | **86** | Solide |
-| Konversion | **88** | Solide |
-| SEO — Inhalt | **93** | Referenz |
+| Recht & Vertrauen | **69** | Brauchbar |
+| Erreichbarkeit & Postfach | **72** | Brauchbar |
+| Substanz & Reichweite | **82** | Solide |
+| Konversion | **86** | Solide |
+| SEO — Inhalt | **88** | Solide |
+| SEO — Technik | **89** | Solide |
+| Code-Qualität & Projektreife | **90** | Solide |
+| Vorlagen-Konformität | **96** | Referenz |
 | GEO — KI-Sichtbarkeit | **97** | Referenz |
-| Vorlagen-Konformität | **99** | Referenz |
-| Performance & Core Web Vitals | **99** | Referenz |
-| Code-Qualität & Projektreife | **100** | Referenz |
-| SEO — Technik | **100** | Referenz |
-| Sicherheit | **100** | Referenz |
+| Sicherheit | **98** | Referenz |
+| Performance & Core Web Vitals | **98** | Referenz |
 | Formulare & Preisrechner | **100** | Referenz |
 | Barrierefreiheit | **100** | Referenz |
-| Recht & Vertrauen | **100** | Referenz |
 | Betrieb & Auslieferung | **100** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 207 Dateien, **2 Befunde**, davon 0 kritisch und 0 wichtig.
+Quelltext: 221 Dateien, **14 Befunde**, davon 4 kritisch und 3 wichtig.
 
 Kritische Befunde:
 
+- **Canonical nennt dieselbe Domain wie die Seite** (`TS05`) — 18 canonical zeigen auf eine fremde Domain: / → www.luviq-luebeck.com, /produkte/ → www.luviq-luebeck.com, /ueber_uns/ → www.luviq-luebeck.com, /kontakt/ → www.luviq-luebeck.com, /datenschutz/ → www.luviq-luebeck.com … (+13)
+- **Alle Domainvarianten landen auf einer Adresse** (`TS11`) — 0 von 1 Nebenadressen landen dauerhaft auf der Hauptadresse — offen: https://luviq-alsfeld.com: 301 → https://www.luviq-luebeck.com/
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
+- **Die Datenschutzerklärung nennt die tatsächlich eingebundenen Dienste** (`RE06`) — 1 von 1 eingebundenen Diensten stehen nicht in der Datenschutzerklärung: luviq-luebeck.com
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
+- **Das Impressum ist aus jeder Seite verlinkt** (`RE02`) — 17 von 18 Seiten ohne Impressumslink: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /wissen/ … (+12)
+- **Datenschutzerklärung vorhanden und aus jeder Seite verlinkt** (`RE05`) — Datenschutzerklärung unter /datenschutz/ vorhanden, aber 17 von 18 Seiten verlinken sie nicht: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /wissen/ … (+12)
+- **Es gibt keinen kritischen Datei-Befund** (`PJ05`) — 4 kritische Befunde: shop1/templates/shop1/legal/generator/agb.html:1 Grundgerüst unvollständig, shop1/templates/shop1/legal/generator/datenschutz.html:1 Grundgerüst unvollständig, shop1/templates/shop1/legal/generator/impressum.html:1 Grun
 <!-- messung:ende -->
 
 Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen
