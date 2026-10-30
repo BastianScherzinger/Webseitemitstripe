@@ -1,8 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-10-29
-stand: 2026-10-29
+stand: 2026-10-30
 status: vollständig
 fortschritt: 97
 zusammenfassung: 29.10.2026 – Gewerbe LUVIQ angemeldet (Beginn 01.11.2026, § 19 UStG, USt-IdNr. beantragt). Zweig recht/2026-10-29-verkaufsstart (nicht gepusht) - Startsperre für den Verkauf, Hinweis „Shop öffnet frühestens am 01.11.2026“, Generator-Ablagen, USt-IdNr.-Platzhalter, Einwilligungs-Gerüst; Prüfbericht in Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29. Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
@@ -11,6 +10,8 @@ quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 ---
 
 # Stand — Luviq Universe
+
+> **Stand 30.10.2026 abends (Zweig `recht/2026-10-30-luviq-verkaufsstart`, `2ada6ba`, nicht gepusht):** Rechtstexte für den Verkauf fertig (Widerrufsbelehrung nach Muster ab 19.06.2026 + Formular, AGB §§ 1–14, Datenschutz 12 Abschnitte), Widerrufsfunktion `/vertrag-widerrufen/` (§ 356a BGB), Bestellmails mit AGB und Belehrung. Einziger verbleibender Sperrgrund: `LUCID_REGISTRIERNUMMER` (Railway, Nummer aus dem LUCID-Bescheid). Bericht: `Webagentur Scherzinger\Analysen\luviq-2026-10-30-recht\BERICHT.md`; LUCID: `Buero\luisa\arbeitsplatz\recht\LUCID-ANLEITUNG.md`.
 
 > **Stand 30.10.2026 (Zweig `design/2026-10-29-luviq-start`, nicht gepusht, nicht gemergt):** Designumbau P0 bis P6 fertig: neuer Rahmen, Startseite mit Engel-Shirt Nº 006 (A/B-Sieger B), Stücke-Seiten mit Galerie und Band „Vergeben“, Alt-Seiten im neuen System, Designwache neu erfasst, `llms.txt` mit Umlauten, alte Hero-Dateien gelöscht. Das Engel-Shirt legt `luviq_engel_anlegen` in `start.sh` an (im Admin nur inaktiv setzen, nicht löschen). Preis 69 € sichtbar erst mit Verkaufsstart (`VERKAUF_AKTIV` plus Datum ab 01.11.2026). Details: [20-DESIGN.md](20-DESIGN.md), [LOGBUCH.md](../LOGBUCH.md). Merge und Live-Prüfung macht Opus nach Bastians Blick auf die Screens.
 

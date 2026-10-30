@@ -1,7 +1,7 @@
 ---
 bereich: inhalte
 titel: Inhalte und Seitenbestand
-stand: 2026-10-03
+stand: 2026-10-30
 status: teilweise
 fortschritt: 85
 zusammenfassung: Stand 02.10.2026: 17 Sitemap-URLs (Start, Archiv, Gästebuch, Luisa, Motiv anfragen, Herkunft, Kontakt, Datenschutz, Wissensbereich mit drei Beiträgen, fünf Archivstücke), llms-full.txt und Feed live, Archiv statt Shop; Substanz & Reichweite 85 gemessen (02.10.2026). Offen bei Luisa: Beschreibung je Stück, Produktnamen, Stoff für zweite Seiten, Textfreigabe; zwei Später-Punkte.
@@ -56,7 +56,8 @@ Nicht in der Sitemap, aber erreichbar und per `robots.txt` gesperrt: `/login/`, 
 | `/gaestebuch/` | Gästebuch (Kommentare angemeldeter Nutzer, Likes) | 70 | | |
 | `/impressum/` | Impressum — **`noindex, follow`, steht trotzdem in der Sitemap** | | | Impressum – Luviq Universe \| Alsfeld, Hessen |
 | `/datenschutz/` | Datenschutz | 185 | | (28 Z.) |
-| `/agb/` | AGB inkl. Widerrufsbelehrung (ohne Muster-Widerrufsformular) | 179 | | (20 Z.) |
+| `/agb/` | AGB §§ 1–14 + Widerrufsbelehrung mit Muster-Widerrufsformular (seit 30.10.2026) | 179 | | (20 Z.) |
+| `/vertrag-widerrufen/` | Widerrufsfunktion § 356a BGB (Formular, `noindex`, nicht in der Sitemap; seit 30.10.2026) | – | | |
 
 Summe: **1.557 Eigenwörter** über 13 abgerufene Seiten (von 2.434 Wörtern Gesamttext), Zielgrösse 12.000 (SU02); im Schnitt 120 je Seite, Ziel 400 (SU06); 11 von 13 Seiten unter 200 Wörtern (IS19); Rahmenanteil auf Produktseiten 73 % (GE29). Die Zahlen gelten für **main**; der Zweig ist live nicht gemessen.
 

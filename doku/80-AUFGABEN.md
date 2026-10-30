@@ -1,7 +1,7 @@
 ---
 bereich: aufgaben
 titel: Aufgaben
-stand: 2026-10-03
+stand: 2026-10-30
 status: vollständig
 fortschritt: 90
 zusammenfassung: Stand 02.10.2026, gegen main (7ae67ab) und die Live-Seite geprüft: alle Zweige gemergt, Wissensbeiträge frei, Profile, Antwortzeit und Drop-Termin geklärt, Admin-Aktionen nur per POST, CI grün. Offen sind 14 Zeilen bei Luisa (Beim Kunden: Texte, Rechtstexte, Fotos, Beschreibung je Stück, Produktnamen, Vertrauenssignale, Bewertungen, Fristen u. a.) und 4 Später-Zeilen (Verkauf, erst-mit-Verkauf-Entscheidungen, Bild-Upload, security.txt); Bastians Handgriffe stehen bei ihrem Bereich (10-TECHNIK, 40-SEO, 50-LOCAL-SEO).
@@ -67,17 +67,18 @@ umgelegt, wenn alles darüber erledigt ist — in dieser Reihenfolge:
 - [x] Fragebogen zur steuerlichen Erfassung abgeschickt (**29.10.2026**, ELSTER): Kleinunternehmerin § 19 UStG, USt-IdNr. beantragt. [ ] Steuernummer liegt vor (gehört **nicht** ins Impressum). [ ] USt-IdNr. da → Railway `UST_IDNR` setzen (Impressum zeigt sie dann, § 5 Abs. 1 Nr. 6 DDG).
 - **Startsperre seit 29.10.2026** (`shop1/startsperre.py`, Zweig `recht/2026-10-29-verkaufsstart`): `VERKAUF_AKTIV=1` wirkt erst, wenn **alle** folgenden Punkte erfüllt sind – sonst bleibt der Verkauf aus und `pruefe_seite` nennt die Gründe im Railway-Log:
   - [ ] Datum ≥ 01.11.2026 (`VERKAUF_FRUEHESTENS`; gelesen beim Start → nach dem 01.11. einmal neu starten)
-  - [ ] Generator-Texte eingefügt: `shop1/templates/shop1/legal/generator/agb.html`, `widerruf.html` (mit Muster-Formular), `datenschutz.html` (Impressum `impressum.html` optional, ersetzt den heutigen Block); Eingabeliste `Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29\GENERATOR-EINGABEN.md`; Luisas Freigabe schriftlich
-  - [ ] `LUCID_REGISTRIERNUMMER` in Railway (Registrierung + Systemvertrag vor dem ersten Paket)
-  - [ ] Versandkosten in Kasse, Preiszeile und PayPal-Betrag eingebaut → `VERSANDKOSTEN_IM_BESTELLWEG = True` (Betrag entscheidet Luisa)
-  - [ ] Widerrufsfunktion „Vertrag widerrufen“ (§ 356a BGB, seit 19.06.2026) gebaut → `WIDERRUFSFUNKTION_VORHANDEN = True`
-- [ ] Bestellbestätigung mit AGB + Widerrufsbelehrung (Text oder Anhang, § 312f Abs. 2 BGB).
+  - [x] Rechtstexte in den Ablagen (30.10.2026, Zweig `recht/2026-10-30-luviq-verkaufsstart`, selbst geschrieben nach Agenturregel 30.10., belegt in `Webagentur Scherzinger\Analysen\luviq-2026-10-30-recht\BERICHT.md`): `agb.html` (§§ 1–14), `widerruf.html` (Muster ab 19.06.2026 + Formular), `datenschutz.html` (12 Abschnitte); Impressum-Ablage bewusst leer. [ ] Luisas Freigabe schriftlich
+  - [ ] `LUCID_REGISTRIERNUMMER` in Railway – Registrierung am 29.10. abgeschickt, Nummer kommt mit dem Bescheid; Systemvertrag vor dem ersten Paket (`Buero\luisa\arbeitsplatz\recht\LUCID-ANLEITUNG.md`). **Einziger verbleibender Sperrgrund.**
+  - [x] Versandkosten in Kasse, Preiszeile und PayPal-Betrag eingebaut → `VERSANDKOSTEN_IM_BESTELLWEG = True` (Betrag entscheidet Luisa)
+  - [x] Widerrufsfunktion „Vertrag widerrufen“ (§ 356a BGB, seit 19.06.2026) gebaut → `WIDERRUFSFUNKTION_VORHANDEN = True` (30.10.2026, `/vertrag-widerrufen/`)
+- [x] Bestellbestätigung mit Vertragsinhalt, AGB, Widerrufsbelehrung und Muster-Formular (§ 312f Abs. 2 BGB), Eingangsbestätigung bei PayPal (§ 312i Abs. 1 Nr. 3), EU-Gewährleistungshinweis in der Kasse (30.10.2026).
+- [ ] Luisa: Telefonnummer fürs Impressum/Belehrung ja/nein; Gesamtlieferzeit festlegen, sobald ein Versanddienst gewählt ist (AGB § 5); Railway-DPA im Konto abschließen; `BANK_IBAN` prüfen (ohne sie nur PayPal – `llms.txt` und Wissensseiten nennen aber noch „PayPal oder Vorab-Überweisung“).
 - [ ] GPSR-Beipackkarte (Name, Anschrift, E-Mail, Nº, Pflege) je Paket; Angaben im Angebot sind seit 29.10. eingebaut (nur mit Verkauf sichtbar).
-- [ ] Auftragsarbeiten: Bestellweg mit Hinweis „kein Widerruf (§ 312g Abs. 2 Nr. 1 BGB)“ vor der Bestellung – oder vorerst nicht verkaufen.
+- [x] Auftragsarbeiten (AGB § 11, Ausschluss in der Belehrung; Bestellung nur einzeln, nicht über den Warenkorb): Bestellweg mit Hinweis „kein Widerruf (§ 312g Abs. 2 Nr. 1 BGB)“ vor der Bestellung – oder vorerst nicht verkaufen.
 - [ ] Tracking erst mit Generator-Datenschutztext; dann `EINWILLIGUNG_DIENST`/`EINWILLIGUNG_SKRIPT` setzen und den Host in `CSP_QUELLEN`.
 - [ ] Mit Steuerberatung/Finanzamt klären, ob die Kleinunternehmerregelung (§ 19 UStG) gewählt wird und zutrifft — erst dann dürfen die Sätze „Endpreise, nach § 19 UStG keine Umsatzsteuer" zurück (sie kommen mit dem Schalter automatisch wieder).
 - [ ] AGB, Widerrufsbelehrung (samt Muster-Widerrufsformular) und Datenschutzerklärung von einer Anwältin oder einem Rechtstext-Dienst durchsehen lassen; Impressum um Angaben ergänzen, die dann nötig werden (z. B. USt-IdNr., falls vorhanden).
-- [ ] Verpackungsregister LUCID: vor dem ersten Versand registrieren und einem Dualen System beitreten.
+- [ ] Verpackungsregister LUCID: registriert 29.10.; Systemvertrag vor dem ersten Paket, Datenmeldung, Vertrag 2027 (`LUCID-ANLEITUNG.md`).
 - [ ] Willkommensrabatt entscheiden (10 % für jedes neue Konto, `UserProfile.has_welcome_discount`) — bleibt er, wird er mit dem Schalter wieder beworben.
 - [ ] PayPal Live-App und Live-Client-ID, `BANK_IBAN`/`BANK_INHABER` prüfen; Sandbox-Testkauf nach [`../paypal_sandbox_tutorial.md`](../paypal_sandbox_tutorial.md).
 - [x] **Vergebene Stücke kennzeichnen:** seit 02.10.2026 gibt es das Feld `Produkt.vergeben` (Migrationen 0025/0026 setzen es für Nº 001–005). Vergebene Stücke bleiben als Archiv sichtbar und sind auch bei eingeschaltetem Verkauf nie kaufbar (`Produkt.kaufbar`); ein bezahltes Stück wird ebenfalls `vergeben` statt inaktiv (EIG57). Vor dem Umschalten nur prüfen, dass jedes alte Stück den Haken trägt, und die Stücke des ersten Drops neu anlegen.
@@ -119,7 +120,7 @@ Weitere Lübeck-Punkte (23.10.2026, Schub 2):
 - **GA4-Messung** der Hero-Knöpfe (`data-ereignis="hero_engel"` / `"hero_motiv"`): erst mit Einwilligungs-Banner und Luisas eigener Property; A/B-Ergebnis bis dahin nur Simulation (Kundenpanel).
 - ~~Vorderseiten-Fotos des Engel-Shirts~~ erledigt in Runde 3 (30.10.2026): Vorne echt und Arbeitstisch in der Galerie (Migration 0031). **Offen:** KI-Studiobild der Vorderseite (Galerieplatz 2, Anleitung `20-DESIGN.md` „Stückbilder und Luisas Foto tauschen“); besseres Foto von Luisa (Bastian liefert nach).
 - **Runde 3 (Zweig `bau/2026-10-30-luviq-runde3`):** Merge, Push, `collectstatic` läuft im Start; nach dem Deploy IndexNow und GSC-Antrag für `/wissen/bleach-painting/` und `/wissen/bleichfleck-uebermalen/`, mit Verkauf Rich-Results-Test der Engel-Seite (Versand/Rückgabe).
-- **Widerrufsbelehrung aus dem Generator** muss sagen, wer die Rücksendekosten trägt; erst dann ggf. `returnFees` in der `MerchantReturnPolicy` (`templates/base.html`). Ein Versanddienst/Transitzeit ist nicht festgelegt, deshalb kein `transitTime`.
+- **Rücksendekosten** trägt seit 30.10.2026 laut Widerrufsbelehrung die Kundin; `returnFees` in der `MerchantReturnPolicy` (`templates/base.html`) kann nachgezogen werden (`ReturnShippingFees`, Betrag unbekannt). Ein Versanddienst/Transitzeit ist nicht festgelegt, deshalb kein `transitTime`.
 - **Wort „Vergeben“** auf den fünf Archivstücken: Wenn sie doch verkauft wurden, `luviq_daten.VERKAUFT_WORT`/`VERGEBEN_WORT` ändern (Migration 0022).
 - `_reviews_map.html` wird von keiner Vorlage mehr eingebunden (tot), zieht aber `logo-luviq-96/192.webp`.
 
