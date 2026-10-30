@@ -40,7 +40,6 @@
   --lv-abschnitt:clamp(64px,7.8vw,112px);
   /* Wandfarbe des Engel-Studiofotos (Anthrazit): Grund hinter dem Hero, am Handy unter dem Bild */
   --lv-wand:#2b2a28;
-  --lv-kachel:#E8E1D6;
   --lv-fehler:#E8927A;
   --lv-serif:"Cormorant Garamond","Cormorant Ersatz",Georgia,serif;
   --lv-sans:"Schibsted Grotesk","Schibsted Ersatz",Arial,sans-serif;
@@ -558,8 +557,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv .lv-hero-knoepfe .lv-knopf{min-height:48px}
   .lv-hero-bild img{object-position:50% 12%}
   .lv-hero-bild::after{background:linear-gradient(180deg,rgba(43,42,40,0) 55%,var(--lv-wand) 100%)}
-  .lv-hero-figur figcaption{position:relative;z-index:2;margin-top:-30px;padding-top:0}
-  .lv-hero-text{position:relative;z-index:2;padding-top:var(--lv-raum-3);padding-bottom:var(--lv-raum-5);gap:var(--lv-raum-3)}
+  .lv-hero-figur figcaption{position:relative;z-index:2;margin-top:-28px;padding-top:0;justify-content:flex-end;text-align:right;font-size:12px}
+  .lv-hero-text{position:relative;z-index:2;padding-top:var(--lv-raum-4);padding-bottom:var(--lv-raum-5);gap:var(--lv-raum-3)}
   .lv-hero .lv-satz{font-size:38px}
   .lv-hero-knoepfe{margin-top:var(--lv-raum-1)}
   .lv-vertrauen{grid-auto-flow:row;grid-auto-columns:auto}
@@ -688,3 +687,14 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-stueck-text>p.lv-stueck-lead{font-size:18px}
   .lv-stueck-hinweis,.lv-stueck-versand{font-size:14px}
 }
+
+/* ── P6: Reste ── */
+.lv-seite .lv-faq img{width:84px;height:105px;aspect-ratio:4/5;object-fit:cover;margin-bottom:var(--lv-raum-3)}
+.lv-faq>div>div:first-child{display:grid;gap:6px;align-content:start;justify-items:start}
+.lv-faq>div>div:first-child h3{margin:0;overflow-wrap:anywhere}
+.lv-faq>div>div:first-child p{margin:0}
+.lv-faq>div>div:first-child form{margin-top:var(--lv-raum-2)}
+.lv-faq>div>div:first-child .lv-knopf{min-height:44px;padding:0 var(--lv-raum-4);font-size:14px}
+.lv-anfrageseite .lv-daten{grid-template-columns:minmax(0,1fr) auto}
+.lv-anfrageseite .lv-daten dt{padding-right:var(--lv-raum-4);overflow-wrap:anywhere}
+.lv-anfrageseite .lv-daten dd{white-space:nowrap;text-align:right}

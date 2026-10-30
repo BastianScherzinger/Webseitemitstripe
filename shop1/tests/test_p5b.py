@@ -76,7 +76,7 @@ class HeroSiegerTest(LuviqTestCase):
     def test_llms_txt_nennt_bleiche_und_luebeck(self):
         t = self.hole('/llms.txt').content.decode()
         self.assertIn('Bleiche', t)
-        self.assertIn('heute in Luebeck', t)
+        self.assertIn('heute in Lübeck', t)
 
 
 @override_settings(PAYPAL_CLIENT_ID='test-client-id')

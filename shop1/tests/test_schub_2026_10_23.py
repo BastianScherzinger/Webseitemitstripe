@@ -85,9 +85,10 @@ class LlmsMotivFragenTest(LuviqTestCase):
             with self.subTest(verkauf=verkauf), override_settings(VERKAUF_AKTIV=verkauf):
                 text = self.hole('/llms.txt').content.decode()
                 self.assertIn('### Ist eine Motivanfrage schon eine Bestellung?', text)
-                self.assertIn('### Wie pflege ich ein handbemaltes Stueck?', text)
-                self.assertIn('30 Grad C', text)
-                self.assertTrue(text.isascii())
+                self.assertIn('### Wie pflege ich ein handbemaltes Stück?', text)
+                self.assertIn('30 °C', text)
+                self.assertNotIn('Stueck', text)  # P6: echte Umlaute statt ae/oe/ue
+                self.assertNotIn('Luebeck', text)
 
 
 class FotoHinweisStilTest(LuviqTestCase):

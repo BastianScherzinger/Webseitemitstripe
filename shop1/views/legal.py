@@ -18,6 +18,7 @@ from django.views.decorators.cache import cache_page
 
 from .. import indexnow, luviq_daten
 from ..middleware import oeffentliche_basis
+from ..verkauf import oeffnungs_satz
 from ..models import Produkt, Subscriber
 # Das Register SEITEN_STAND (Routenname → Datum) liegt seit Schritt 16 in
 # ``shop1/seiten_stand.py``, weil auch der Kontextprozessor es liest. Hier
@@ -28,7 +29,7 @@ from ..seiten_stand import SEITEN_STAND  # noqa: F401 – Re-Export
 from .wissen import freigegebene_beitraege, uebersicht_indexierbar
 from ._helpers import zu_viele_anfragen
 from .. import spamschutz
-from ..verkauf import verkauf_aktiv
+from ..verkauf import oeffnungs_satz, verkauf_aktiv
 
 _log = logging.getLogger('shop1')
 
@@ -116,26 +117,26 @@ def indexnow_schluessel(request):
 #: danach nichts übrig, erscheint der Abschnitt nicht – eine leere
 #: Überschrift wäre für Antwortmaschinen ein Versprechen ohne Inhalt.
 WISSEN_SEITEN = [
-    ('wissen', 'Wissen: Uebersicht',
-     'Einstieg in die freigegebenen Beitraege zu Pflege handbemalter Kleidung, Upcycling-Mode und der richtigen Groesse bei Einzelstuecken; nennt, woher die Angaben stammen'),
+    ('wissen', 'Wissen: Übersicht',
+     'Einstieg in die freigegebenen Beiträge zu Pflege handbemalter Kleidung, Upcycling-Mode und der richtigen Größe bei Einzelstücken; nennt, woher die Angaben stammen'),
     ('wissen_pflege', 'Wie pflege ich handbemalte Kleidung?',
-     'Waschen auf links bei 30 Grad, Trocknen an der Luft, Buegeln nur von links, Lagern ohne Druck auf die Bemalung, Flecken'),
+     'Waschen auf links bei 30 Grad, Trocknen an der Luft, Bügeln nur von links, Lagern ohne Druck auf die Bemalung, Flecken'),
     ('wissen_upcycling', 'Was ist Upcycling-Mode - und was unterscheidet sie von Second Hand?',
-     'Begriffsklaerung Upcycling, Second Hand und Vintage; warum ein Einzelstueck '
+     'Begriffsklärung Upcycling, Second Hand und Vintage; warum ein Einzelstück '
      'nicht nachbestellbar ist; Handbemalung von Druck unterscheiden'),
-    ('wissen_groesse', 'Wie finde ich bei Einzelstuecken die richtige Groesse?',
-     'Masse mit eigener Kleidung vergleichen statt Etikett, warum Vintage-Schnitte abweichen, vorab nachfragen, Widerruf'),
-    ('wissen_motiv', 'Wie entsteht aus meiner Idee ein handbemaltes Stueck?',
-     'Richtung nennen, Vorschlaege bekommen, gemeinsam entscheiden, Bleiche mit dem Pinsel; Dauer meist 2 bis 5 Tage'),
+    ('wissen_groesse', 'Wie finde ich bei Einzelstücken die richtige Größe?',
+     'Maße mit eigener Kleidung vergleichen statt Etikett, warum Vintage-Schnitte abweichen, vorab nachfragen, Widerruf'),
+    ('wissen_motiv', 'Wie entsteht aus meiner Idee ein handbemaltes Stück?',
+     'Richtung nennen, Vorschläge bekommen, gemeinsam entscheiden, Bleiche mit dem Pinsel; Dauer meist 2 bis 5 Tage'),
     ('wissen_bestellen', 'Wie bestelle und bezahle ich bei Luviq Universe?',
      'Anmeldepflicht, Weg in den Warenkorb, Pflichtangaben, PayPal oder '
-     'Vorab-Ueberweisung, Pruefung der Zahlung, Bestaetigung, Versand in 1-2 Werktagen'),
-    ('wissen_widerruf', 'Widerruf und Ruecksendung: was gilt bei einem Einzelstueck?',
+     'Vorab-Überweisung, Prüfung der Zahlung, Bestätigung, Versand in 1-2 Werktagen'),
+    ('wissen_widerruf', 'Widerruf und Rücksendung: was gilt bei einem Einzelstück?',
      'Vierzehn Tage Widerrufsrecht ab Erhalt, Anschrift der Anbieterin, kein Umtausch '
-     'bei Unikaten, Unregelmaessigkeiten der Bemalung sind kein Mangel'),
+     'bei Unikaten, Unregelmäßigkeiten der Bemalung sind kein Mangel'),
     ('wissen_konto', 'Was speichert der Shop - und warum braucht der Kauf ein Konto?',
      'Warum der Warenkorb ein Konto verlangt, Angaben der Registrierung, '
-     'Besuchsprotokoll, eingebundene Dienste, Zahlungsdaten, Kontoloeschung'),
+     'Besuchsprotokoll, eingebundene Dienste, Zahlungsdaten, Kontolöschung'),
 ]
 
 
@@ -174,7 +175,7 @@ def _feed_zeile(basis):
 def llms_txt(request):
     """Kurzfassung der Seite für Antwortmaschinen (llmstxt.org).
 
-    Enthält ausschliesslich Angaben, die auch auf der Seite selbst stehen:
+    Enthält ausschließlich Angaben, die auch auf der Seite selbst stehen:
     Anschrift und E-Mail aus dem Impressum, Instagram-Profil aus dem
     ``sameAs`` des Schemas (``base.html``), Zahlungsarten und Widerrufsfrist
     aus den AGB, Versandangaben von der Liefergebietsseite. Wo eine Angabe
@@ -202,7 +203,7 @@ def _llms_txt_ohne_verkauf(basis):
     """llms.txt, solange ``VERKAUF_AKTIV`` aus ist: Marke im Aufbau.
 
     Nur Angaben, die bei ausgeschaltetem Verkauf auch auf der Seite stehen –
-    keine Preise, keine Zahlungsarten, kein Versand, kein Paragraph 19 UStG,
+    keine Preise, keine Zahlungsarten, kein Versand, kein § 19 UStG,
     kein Verweis auf die AGB (sie gelten erst ab Eröffnung des Shops).
     """
     zeilen = (_llms_kopf_ohne_verkauf(basis)
@@ -226,8 +227,8 @@ def _llms_produktzeilen(basis, mit_preis):
         else:
             zeilen.append(adresse + (f": {beschreibung}" if beschreibung else ""))
     if not zeilen:
-        zeilen.append("- Zurzeit ist kein Einzelstueck verfuegbar." if mit_preis
-                      else "- Zurzeit ist kein Einzelstueck eingestellt.")
+        zeilen.append("- Zurzeit ist kein Einzelstück verfügbar." if mit_preis
+                      else "- Zurzeit ist kein Einzelstück eingestellt.")
     return zeilen
 
 
@@ -248,51 +249,42 @@ def _llms_kopf_mit_verkauf(basis):
     return [
         "# Luviq Universe",
         "",
-        "> Luviq Universe ist ein Online-Shop aus Luebeck (Schleswig-Holstein),",
-        "> angefangen in Alsfeld (Hessen), heute in Luebeck. Luisa Brehler malt",
+        "> Luviq Universe ist ein Online-Shop aus Lübeck (Schleswig-Holstein),",
+        "> angefangen in Alsfeld (Hessen), heute in Lübeck. Luisa Brehler malt",
         "> handverlesene Second-Hand- und Vintage-Kleidung von Hand mit Bleiche",
         "> (die Farbe wird aus dem Stoff gezogen, nichts ist aufgedruckt); jedes",
-        "> Stueck ist ein Einzelstueck (1-of-1). Versand deutschlandweit, in der Regel innerhalb",
+        "> Stück ist ein Einzelstück (1-of-1). Versand deutschlandweit, in der Regel innerhalb",
         "> von 1-2 Werktagen.",
-        "> Einen Laden zum Reinschauen gibt es nicht, der Verkauf laeuft",
-        "> ausschliesslich ueber diese Seite.",
+        "> Einen Laden zum Reinschauen gibt es nicht, der Verkauf läuft",
+        "> ausschließlich über diese Seite.",
         "",
         "## Eckdaten",
         "",
         _betreiber_zeile("Betreiberin"),
-        "- E-Mail: brehlerluisa@gmail.com",
+        "- Sitz: Lübeck · Herkunft: Alsfeld (Hessen)",
         "- Instagram: https://www.instagram.com/luviq.archive/",
         "- TikTok: https://www.tiktok.com/@luviq.archive",
         "- Google-Unternehmensprofil: https://www.google.com/maps?cid=13899750731019902000",
-        "- Zahlungsarten: PayPal oder Vorab-Ueberweisung (AGB, Paragraph 4)",
-        "- Preise sind Endpreise; nach Paragraph 19 UStG wird keine Umsatzsteuer",
+        "- Zahlungsarten: PayPal oder Vorab-Überweisung (AGB, § 4)",
+        "- Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer",
         "  berechnet (Kleinunternehmerstatus)",
         "- Versand: in der Regel innerhalb von 1-2 Werktagen, deutschlandweit",
         "",
         "## Seiten",
         "",
-        f"- [Startseite]({basis}{reverse('home')}): Ueberblick, aktuelle Einzelstuecke",
-        f"- [Alle Unikate]({basis}{reverse('produkte')}): jedes verfuegbare Einzelstueck",
-        f"- [Ueber uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
+        f"- [Startseite]({basis}{reverse('home')}): Überblick, aktuelle Einzelstücke",
+        f"- [Alle Unikate]({basis}{reverse('produkte')}): jedes verfügbare Einzelstück",
+        f"- [Über uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
         f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
-        "Vorschlaege bekommen - kostenlos, keine Bestellung",
-        f"- [Liefergebiet]({basis}{reverse('liefergebiet')}): von Alsfeld nach Luebeck, "
+        "Vorschläge bekommen - kostenlos, keine Bestellung",
+        f"- [Liefergebiet]({basis}{reverse('liefergebiet')}): von Alsfeld nach Lübeck, "
         "Versand deutschlandweit",
         f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
-        f"- [Gaestebuch]({basis}{reverse('gaestebuch')}): Rueckmeldungen von Kundinnen und Kunden",
+        f"- [Gästebuch]({basis}{reverse('gaestebuch')}): Rückmeldungen von Kundinnen und Kunden",
         "",
-        "## Einzelstuecke",
+        "## Einzelstücke",
         "",
     ]
-
-
-def _ascii(text):
-    """llms.txt bleibt reines ASCII (wie der Rest der Datei): Umlaute und Grad aufloesen."""
-    for alt, neu in (('ä', 'ae'), ('ö', 'oe'), ('ü', 'ue'), ('Ä', 'Ae'), ('Ö', 'Oe'),
-                     ('Ü', 'Ue'), ('ß', 'ss'), ('°C', 'Grad C'), ('–', '-'), ('—', '-'),
-                     ('’', "'"), ('„', ''), ('“', '')):
-        text = text.replace(alt, neu)
-    return text
 
 
 def _llms_motiv_fragen():
@@ -301,7 +293,7 @@ def _llms_motiv_fragen():
     from .. import luviq_daten
     zeilen = []
     for frage, antwort in luviq_daten.FAQ_MOTIV:
-        zeilen += [f"### {_ascii(frage)}", *textwrap.wrap(_ascii(antwort), 78), ""]
+        zeilen += [f"### {frage}", *textwrap.wrap(antwort, 78), ""]
     return zeilen
 
 
@@ -309,31 +301,31 @@ def _llms_fragen_mit_verkauf(basis):
     """Häufige Fragen, Rechtliches und Verweise der llms.txt bei eingeschaltetem Verkauf."""
     return [
         "",
-        "## Haeufige Fragen",
+        "## Häufige Fragen",
         "",
         "### Was ist Luviq Universe?",
-        "Ein Second-Hand-Shop aus Luebeck, angefangen in Alsfeld. Gruenderin Luisa",
+        "Ein Second-Hand-Shop aus Lübeck, angefangen in Alsfeld. Gründerin Luisa",
         "Brehler verwandelt handverlesene Vintage-Kleidung durch Handmalerei in",
-        "1-of-1 Kunstwerke. Jedes Stueck ist ein Unikat.",
+        "1-of-1 Kunstwerke. Jedes Stück ist ein Unikat.",
         "",
         "### Wo sitzt Luviq Universe?",
-        "In Luebeck (Schleswig-Holstein); dort malt Luisa Brehler heute.",
+        "In Lübeck (Schleswig-Holstein); dort malt Luisa Brehler heute.",
         "Angefangen hat Luviq in Alsfeld im Vogelsbergkreis, Hessen. Einen Laden",
-        "zum Reinschauen gibt es nicht, der Verkauf laeuft ausschliesslich ueber",
+        "zum Reinschauen gibt es nicht, der Verkauf läuft ausschließlich über",
         "diese Seite.",
         "",
-        "### Liefert Luviq nach Luebeck, Alsfeld und in andere Staedte?",
+        "### Liefert Luviq nach Lübeck, Alsfeld und in andere Städte?",
         "Ja, versendet wird deutschlandweit, in der Regel innerhalb von 1-2",
         "Werktagen.",
         "",
         "### Was verkauft Luviq Universe?",
         "Handbemalte Second-Hand- und Vintage-Kleidung, vor allem Hoodies und",
-        "Jacken. Jedes Stueck ist ein Einzelstueck und nur einmal zu haben.",
+        "Jacken. Jedes Stück ist ein Einzelstück und nur einmal zu haben.",
         "",
         "### Wie bestellt man?",
-        f"Ueber diese Seite: Einzelstueck auf {basis}{reverse('produkte')} auswaehlen,",
+        f"Über diese Seite: Einzelstück auf {basis}{reverse('produkte')} auswählen,",
         "in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder",
-        "Vorab-Ueberweisung.",
+        "Vorab-Überweisung.",
         "",
         "### Was hat Upcycling mit der Umwelt zu tun?",
         "Statt neue Kleidung zu produzieren, wird vorhandene Vintage-Kleidung",
@@ -343,12 +335,12 @@ def _llms_fragen_mit_verkauf(basis):
         "## Rechtliches",
         "",
         f"- [Impressum]({basis}{reverse('impressum')})",
-        f"- [Datenschutzerklaerung]({basis}{reverse('datenschutz')})",
+        f"- [Datenschutzerklärung]({basis}{reverse('datenschutz')})",
         f"- [AGB und Widerrufsrecht]({basis}{reverse('agb')})",
         "",
         f"Sitemap: {basis}/sitemap.xml",
         # Der Feed (GE32) steht hier, weil llms.txt die Datei ist, die eine
-        # Antwortmaschine zuerst liest: ueber ihn erfaehrt sie, was neu ist,
+        # Antwortmaschine zuerst liest: über ihn erfährt sie, was neu ist,
         # ohne die ganze Seite noch einmal abzulaufen. Nur mit mindestens einem
         # freigegebenen Beitrag (EIG128): ein leerer Feed ist kein Wegweiser.
         *_feed_zeile(basis),
@@ -358,12 +350,12 @@ def _llms_fragen_mit_verkauf(basis):
 
 
 def _betreiber_zeile(rolle):
-    """Eckdaten-Zeile mit der Anschrift aus der Gewerbeanmeldung (``ANBIETERIN``).
+    """Eckdaten-Zeile mit Name und Ort aus der Gewerbeanmeldung (``ANBIETERIN``).
 
-    llms.txt bleibt ASCII wie bisher (Umlaute umschrieben)."""
+    Ohne Straße und ohne E-Mail-Adresse: die vollständige Anschrift steht im
+    Impressum, auf das die Datei verweist."""
     a = luviq_daten.ANBIETERIN
-    zeile = f"- {rolle}: {a['name']}, {a['strasse']}, {a['plz']} {a['ort']}, {a['land_name']}"
-    return zeile.translate(str.maketrans({'ü': 'ue', 'ö': 'oe', 'ä': 'ae', 'ß': 'ss', 'Ü': 'Ue'}))
+    return f"- {rolle}: {a['name']}, {a['plz']} {a['ort']}, {a['land_name']} (Anschrift im Impressum)"
 
 
 def _llms_kopf_ohne_verkauf(basis):
@@ -372,17 +364,18 @@ def _llms_kopf_ohne_verkauf(basis):
         "# Luviq Universe",
         "",
         "> Luviq Universe ist eine Modemarke im Aufbau, angefangen in Alsfeld",
-        "> (Hessen), heute in Luebeck. Luisa Brehler malt handverlesene Second-Hand-",
+        "> (Hessen), heute in Lübeck. Luisa Brehler malt handverlesene Second-Hand-",
         "> und Vintage-Kleidung von Hand mit Bleiche (die Farbe wird aus dem Stoff",
-        "> gezogen, nichts ist aufgedruckt); jedes Stueck ist ein Einzelstueck (1-of-1).",
-        "> Die bisherigen Stuecke sind bereits vergeben und stehen im Archiv. Neue",
-        "> Stuecke gibt es mit dem ersten Drop; wer davon erfahren will, traegt sich",
-        "> auf der Startseite in die Warteliste ein.",
+        "> gezogen, nichts ist aufgedruckt); jedes Stück ist ein Einzelstück (1-of-1).",
+        "> Die bisherigen Stücke sind bereits vergeben und stehen im Archiv. Das erste",
+        "> neue Stück ist das Engel-Shirt Nº 006 (Größe M, 100 % Baumwolle).",
+        f"> {oeffnungs_satz()} Wer davon erfahren will, trägt sich auf der Startseite",
+        "> in die Warteliste ein.",
         "",
         "## Eckdaten",
         "",
         _betreiber_zeile("Verantwortlich"),
-        "- E-Mail: brehlerluisa@gmail.com",
+        "- Sitz: Lübeck · Herkunft: Alsfeld (Hessen)",
         "- Instagram: https://www.instagram.com/luviq.archive/",
         "- TikTok: https://www.tiktok.com/@luviq.archive",
         "- Google-Unternehmensprofil: https://www.google.com/maps?cid=13899750731019902000",
@@ -390,16 +383,16 @@ def _llms_kopf_ohne_verkauf(basis):
         "",
         "## Seiten",
         "",
-        f"- [Startseite]({basis}{reverse('home')}): Ueberblick, bisherige Stuecke, Warteliste",
-        f"- [Archiv]({basis}{reverse('produkte')}): bisherige Einzelstuecke, bereits vergeben",
-        f"- [Ueber uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
+        f"- [Startseite]({basis}{reverse('home')}): Überblick, bisherige Stücke, Warteliste",
+        f"- [Archiv]({basis}{reverse('produkte')}): bisherige Einzelstücke, bereits vergeben",
+        f"- [Über uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
         f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
-        "Vorschlaege bekommen - kostenlos, keine Bestellung",
-        f"- [Herkunft]({basis}{reverse('liefergebiet')}): von Alsfeld nach Luebeck",
+        "Vorschläge bekommen - kostenlos, keine Bestellung",
+        f"- [Herkunft und Übergabe]({basis}{reverse('liefergebiet')}): von Alsfeld nach Lübeck, Übergabe nach Absprache",
         f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
-        f"- [Gaestebuch]({basis}{reverse('gaestebuch')}): Beitraege aus der Community",
+        f"- [Gästebuch]({basis}{reverse('gaestebuch')}): Beiträge aus der Community",
         "",
-        "## Archiv: bisherige Einzelstuecke (bereits vergeben)",
+        "## Archiv: bisherige Einzelstücke (bereits vergeben)",
         "",
     ]
 
@@ -408,22 +401,23 @@ def _llms_fragen_ohne_verkauf(basis):
     """Häufige Fragen, Rechtliches und Verweise der llms.txt ohne Verkauf."""
     return [
         "",
-        "## Haeufige Fragen",
+        "## Häufige Fragen",
         "",
         "### Was ist Luviq Universe?",
-        "Eine Modemarke im Aufbau aus Luebeck, angefangen in Alsfeld. Gruenderin Luisa Brehler",
+        "Eine Modemarke im Aufbau aus Lübeck, angefangen in Alsfeld. Gründerin Luisa Brehler",
         "verwandelt handverlesene Vintage-Kleidung durch Handmalerei in 1-of-1",
-        "Kunstwerke. Jedes Stueck ist ein Unikat.",
+        "Kunstwerke. Jedes Stück ist ein Unikat.",
         "",
         "### Wo sitzt Luviq Universe?",
-        "In Luebeck (Schleswig-Holstein); dort malt Luisa Brehler heute.",
+        "In Lübeck (Schleswig-Holstein); dort malt Luisa Brehler heute.",
         "Angefangen hat Luviq in Alsfeld im Vogelsbergkreis, Hessen, zwischen Fulda",
-        "und Giessen. Einen Laden zum Reinschauen gibt es nicht.",
+        "und Gießen. Einen Laden zum Reinschauen gibt es nicht.",
         "",
         "### Kann man bei Luviq Universe schon kaufen?",
-        "Nein. Die bisherigen Stuecke sind bereits vergeben; neue gibt es mit dem",
-        f"ersten Drop. Die Warteliste steht auf der Startseite {basis}{reverse('home')} -",
-        "eine E-Mail-Adresse genuegt, die Anmeldung wird per Link bestaetigt.",
+        f"Noch nicht. {oeffnungs_satz()} Die bisherigen Stücke sind bereits vergeben;",
+        "das erste neue Stück ist das Engel-Shirt Nº 006. Die Warteliste steht auf",
+        f"der Startseite {basis}{reverse('home')} -",
+        "eine E-Mail-Adresse genügt, die Anmeldung wird per Link bestätigt.",
         "",
         "### Was hat Upcycling mit der Umwelt zu tun?",
         "Statt neue Kleidung zu produzieren, wird vorhandene Vintage-Kleidung",
@@ -431,13 +425,13 @@ def _llms_fragen_ohne_verkauf(basis):
         "",
         "### Womit malt Luisa Brehler?",
         "Mit Bleiche und Pinsel auf dunkler Second-Hand-Kleidung: Die Bleiche zieht",
-        "die Farbe aus dem Stoff, deshalb sind die Linien hell. Ein Strich laesst",
-        "sich nicht zuruecknehmen, und kein Motiv wird wiederholt.",
+        "die Farbe aus dem Stoff, deshalb sind die Linien hell. Ein Strich lässt",
+        "sich nicht zurücknehmen, und kein Motiv wird wiederholt.",
         "",
         "### Wie bekomme ich ein eigenes Motiv?",
-        f"Ueber {basis}{reverse('motiv_anfragen')}: Richtung (zum Beispiel ein Tier,",
+        f"Über {basis}{reverse('motiv_anfragen')}: Richtung (zum Beispiel ein Tier,",
         "ein Zeichen, eine Ranke, Mond und Sterne oder etwas Abstraktes), Teil und",
-        "Platzierung angeben. Luisa Brehler schickt Vorschlaege per Instagram oder",
+        "Platzierung angeben. Luisa Brehler schickt Vorschläge per Instagram oder",
         "E-Mail, dann wird gemeinsam entschieden. Die Anfrage kostet nichts und ist",
         "keine Bestellung.",
         "",
@@ -445,7 +439,7 @@ def _llms_fragen_ohne_verkauf(basis):
         "## Rechtliches",
         "",
         f"- [Impressum]({basis}{reverse('impressum')})",
-        f"- [Datenschutzerklaerung]({basis}{reverse('datenschutz')})",
+        f"- [Datenschutzerklärung]({basis}{reverse('datenschutz')})",
         "",
         f"Sitemap: {basis}/sitemap.xml",
         *_feed_zeile(basis),
@@ -544,7 +538,7 @@ def _seitenbilder(name: str, base_url: str) -> list[tuple[str, str]]:
         # ihre Bildtitel dürfen es nicht tun (EIG103).
         return [(absolut(p.hauptbild().original), f'{p.name} (Nº {p.archiv_nummer}) – Luviq Universe')
                 for p in Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am')
-                if p.hat_bild]
+                if p.hat_bild and p.hauptbild()]
     return []
 
 
@@ -631,7 +625,7 @@ def _produkt_xml(produkt, base_url):
     xml += '    <changefreq>weekly</changefreq>\n'
     xml += '    <priority>0.8</priority>\n'
 
-    if produkt.hat_bild:
+    if produkt.hat_bild and produkt.hauptbild():
         bild_url = produkt.hauptbild().original
         if not bild_url.startswith('http'):
             bild_url = f"{base_url}{bild_url}"

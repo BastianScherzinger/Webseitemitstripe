@@ -373,7 +373,7 @@ class ArchivOhneVerkaufTest(_Grundlage):
 
     def test_llms_txt_nennt_das_archiv(self):
         llms = self.hole('/llms.txt').content.decode()
-        self.assertIn('## Archiv: bisherige Einzelstuecke (bereits vergeben)', llms)
+        self.assertIn('## Archiv: bisherige Einzelstücke (bereits vergeben)', llms)
         self.assertNotIn('ersten Drops', llms)
         self.assertIn(self.produktseite, llms)
 

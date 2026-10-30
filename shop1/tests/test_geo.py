@@ -435,7 +435,7 @@ class AntwortCrawlerTest(LuviqTestCase):
             z.lstrip('> ') for z in text.splitlines() if z.startswith('>')
         )
         self.assertGreater(len(einleitung), 150)
-        for begriff in ('Alsfeld', 'Luisa Brehler', 'Einzelstueck'):
+        for begriff in ('Alsfeld', 'Luisa Brehler', 'Einzelstück'):
             with self.subTest(begriff=begriff):
                 self.assertIn(begriff, einleitung)
 
@@ -476,7 +476,7 @@ class AntwortCrawlerTest(LuviqTestCase):
         Kurzfassung nennt Zahlungsarten, die auf der Seite nicht gelten."""
         text = self.hole('/llms.txt').content.decode()
         agb = sichtbarer_text(self.hole('/agb/').content.decode())
-        self.assertIn('PayPal oder Vorab-Ueberweisung', text)
+        self.assertIn('PayPal oder Vorab-Überweisung', text)
         self.assertIn('PayPal oder Vorab-Überweisung', agb)
 
 

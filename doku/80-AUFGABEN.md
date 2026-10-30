@@ -115,6 +115,12 @@ Weitere Lübeck-Punkte (23.10.2026, Schub 2):
 
 ## Offen
 
+- **Umbau 30.10.2026 (Zweig `design/2026-10-29-luviq-start`):** Merge nach `main`, Push, Live-Prüfung PC und Handy; danach `llms.txt`/Sitemap prüfen und Indexierung der geänderten Seiten beantragen.
+- **GA4-Messung** der Hero-Knöpfe (`data-ereignis="hero_engel"` / `"hero_motiv"`): erst mit Einwilligungs-Banner und Luisas eigener Property; A/B-Ergebnis bis dahin nur Simulation (Kundenpanel).
+- **Vorderseiten-Fotos** des Engel-Shirts (Logo auf Herzhöhe) als Zusatzbild am Stück eintragen; „Zustand“ des Shirts bleibt leer, bis Luisa es sagt.
+- **Wort „Vergeben“** auf den fünf Archivstücken: Wenn sie doch verkauft wurden, `luviq_daten.VERKAUFT_WORT`/`VERGEBEN_WORT` ändern (Migration 0022).
+- `_reviews_map.html` wird von keiner Vorlage mehr eingebunden (tot), zieht aber `logo-luviq-96/192.webp`.
+
 Stand 02.10.2026, geprüft gegen `origin/main` (`7ae67ab`) und die Live-Seite. Was nur Luisa liefern kann, steht unter „Beim Kunden“. Die Entscheidungen und Railway-Handgriffe für Bastian stehen bei ihrem Bereich, damit keine Zeile zweimal zählt: [10-TECHNIK.md](10-TECHNIK.md) (`INDEXNOW_KEY`, `STRIPE_*`-Variablen, eigene Datenbank, geteilte Zugangswerte, Healthcheck-Pfad, Livetest des Kontaktformulars), [40-SEO.md](40-SEO.md) (Stückseiten `noindex`?, `/ueber_uns/` umziehen?, Indexierung beantragen TS46) und [50-LOCAL-SEO.md](50-LOCAL-SEO.md) (`GOOGLE_REVIEW_URL`, Profil prüfen). Fremde Zweige gibt es nicht mehr: `git log origin/main..<zweig>` ist für alle `fix/2026-10-02-*` leer, `git branch -r --no-merged origin/main` ist leer — es gibt also keine Zeile „Push/Merge von …“.
 
 - Später: Verkauf einschalten (`VERKAUF_AKTIV`) erst nach Gewerbeanmeldung und nach der Liste „Verkauf einschalten nach Gewerbeanmeldung“ oben. Grund: ohne Gewerbe darf die Seite keine Unternehmensangaben, Preise oder Kleinunternehmer-Sätze führen; der Schalter ist ohne Variable aus (Live 02.10.2026: Impressum „Derzeit findet kein Verkauf statt“). Nichts davon wird vorab eingeschaltet oder zugesagt.

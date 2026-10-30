@@ -1,10 +1,10 @@
 ---
 bereich: design
 titel: Design und Gestaltungslinie
-stand: 2026-10-23
+stand: 2026-10-30
 status: vollständig
 fortschritt: 100
-zusammenfassung: Stand 02.10.2026: Linie „Nachtausgabe“ (luviq.css, ein Akzent #C8763F, selbst gehostete Schriften, Radius 0) live; Alpine.js entfernt (Menü als details-Element), Critical CSS über tools/kritisches_css.py, Überschriften ohne Sprung, Barrierefreiheit 100 gemessen. Offen sind drei Punkte: Umbau der alten lv-alt-Seiten und Orbit-Texte der Kasse (beide später, ohne Verkauf unsichtbar) und eine Sichtprüfung im Browser durch Bastian; Fotos und Textfreigabe liegen bei Luisa (80-AUFGABEN).
+zusammenfassung: Stand 30.10.2026: Umbau P0–P6 im Zweig design/2026-10-29-luviq-start (siehe Abschnitt „Umbau 30.10.2026“, nicht gepusht). Davor: Stand 02.10.2026: Linie „Nachtausgabe“ (luviq.css, ein Akzent #C8763F, selbst gehostete Schriften, Radius 0) live; Alpine.js entfernt (Menü als details-Element), Critical CSS über tools/kritisches_css.py, Überschriften ohne Sprung, Barrierefreiheit 100 gemessen. Offen sind drei Punkte: Umbau der alten lv-alt-Seiten und Orbit-Texte der Kasse (beide später, ohne Verkauf unsichtbar) und eine Sichtprüfung im Browser durch Bastian; Fotos und Textfreigabe liegen bei Luisa (80-AUFGABEN).
 offen: 3
 quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, shop1/static/shop1/style.css, tailwind.config.js, templates/base.html
 ---
@@ -16,6 +16,20 @@ quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md, shop1/static/shop1/style.css, 
 *Woran sich der Fortschritt bemisst: am gemessenen Bereichswert **Barrierefreiheit** des Laufs vom 02.10.2026 (Regelstand `2026-10-02e`), gerundet — bei allen sechs betreuten Seiten dieselbe Bezugsgröße.*
 
 > **Stand 02.10.2026 (geprüft, abends):** `main` = `origin/main` = `7ae67ab` und live. Alle Arbeitszweige des Tages (`fix/2026-10-02-luviq-fertig`, `-rest`, `-luisa`, `-recht`, `-wissen`, `fix/2026-10-02d-standard`) sind gemergt (`git log origin/main..<zweig>` leer, `git branch -r --no-merged origin/main` leer); die GitHub-Prüfungen auf `main` sind grün (Lauf 37040107996, 02.10.2026). Live belegt am 02.10.2026 (curl): Sitemap mit 17 Adressen samt der drei Wissensbeiträge, `/llms-full.txt` 200, „Aktualisiert am …“ (`<time>`) auf den Wissensbeiträgen (GE47), `Permissions-Policy` im Kopf, `/health/` 200, Apex 301 auf www. Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
+
+## Umbau 30.10.2026 (Zweig `design/2026-10-29-luviq-start`, P0 bis P6, noch nicht gepusht)
+
+Plan und Belege: `Analysen\luviq-2026-10-29\` (MASTERPLAN, NACHTPLAN-2, KUNDENPANEL-AB, Screens `screens-p6`). Je Paket ein Eintrag im [LOGBUCH](../LOGBUCH.md).
+
+- **Tokens/Rahmen (P2):** `--lv-marke` (Bleich-Beige #FAE6C5), Raumskala `--lv-raum-1…10`, `--lv-abschnitt`, zweiter Knopfstil `.linie`; Kopf mit Wortmarken-Bild, Ankündigungszeile statt Laufband, Fuß in drei Gruppen (Handy zweispaltig), Handy-Leiste erst nach dem Hero. Das Token `--lv-kachel` entfiel (P6, ungenutzt).
+- **Startseite (P3/P3b/P5b):** Hero vollflächig (PC, Querformat) bzw. 4:5/1:1 (Handy) mit dem Engel-Shirt Nº 006; Abschnitt „So sieht es in echt aus“ mit Echtfoto; Wege, Entstehung, Archiv als Reihe, ein Vormerk-Formular. A/B-Sieger B (Kundenpanel, Simulation, keine Messwerte, [KUNDENPANEL-AB.md](../../Webagentur%20Scherzinger/Analysen/luviq-2026-10-29/KUNDENPANEL-AB.md)): H1 „Mit Bleiche gemalt. Jedes Stück gibt es nur einmal.“, Knöpfe „Engel-Shirt ansehen“ (primär) und „Eigenes Motiv anfragen“, Bildunterschrift „Studiobild (KI) aus dem echten Foto“.
+- **Messung vorbereitet:** Die beiden Hero-Knöpfe tragen `data-ereignis="hero_engel"` bzw. `"hero_motiv"` (Vormerken ebenfalls `hero_motiv`). Sie sind nur Markierungen für GA4-Ereignisse, die erst nach Einwilligung geladen werden dürfen; ein Skript dafür gibt es noch nicht.
+- **Stücke (P4/P4b):** `/produkte/` mit „Neue Unikate“ und „Archiv: schon vergeben“, dunkle Karte 4:5, Band quer über dem Bild. Das Wort ist **„Vergeben“** (`VERGEBEN_WORT`), nicht „Verkauft“: Migration 0022 belegt, dass die fünf Archivstücke nie verkauft wurden; „Verkauft“ nur für ein Stück mit Bestand 0, das nicht Archiv ist. Stückseite mit wischbarer Galerie, Datenliste, Bleiche-Satz.
+- **Engel-Shirt Nº 006:** wird per `manage.py luviq_engel_anlegen` angelegt (idempotent über den Slug `engel-shirt-handgebleicht`, überschreibt nichts), aufgerufen in `start.sh` nach `migrate`. Im Admin nicht löschen, nur auf inaktiv setzen: sonst legt der nächste Start es neu an. Daten aus `luviq_daten.ENGEL_STUECK` (69 €, Größe M, 100 % Baumwolle; Preis erst mit Verkaufsstart sichtbar).
+- **Alt-Seiten (P5):** Impressum, Datenschutz, AGB, Konto-, Passwort-, Gästebuch-, Kontakt-Danke-, Warenkorb-, Kasse-Seiten laufen auf `lv-seite` mit vorhandenen Klassen; Rechtstexte wortgleich (Hülle neu).
+- **P6-Reste:** Warenkorb-Vorschaubild 84×105 px, Gästebuch-/Warenkorb-Zeilen (`.lv-faq`) ruhig gestapelt, Kasse: Beträge `nowrap` rechts, Hero-Handy: Bildunterschrift rechtsbündig 11 px mit Luft zur Nummernzeile.
+- **Designwache neu erfasst (P6):** `aufbau_referenz.json` für `/`, `/produkte/`, die Referenz-Stückseite, `/kontakt/danke/`, `/gaestebuch/`, `/impressum/`, `/datenschutz/`, `/agb/`, `/login/`, `/register/`, `/password-reset/`, `/password-reset/done/`, `/reset/done/` (13 Seiten, alle bewusst umgebaut; alle anderen unverändert). Vorher jede Seite im Screen angesehen.
+- **Aufgeräumt:** Hero-Dateien `hero-dornen-*`, `hero-hoch-*`, `hero-panorama-*`, `hero-dragon*`, `ich*`, `logo-luviq.jpeg` gelöscht (nichts verweist mehr darauf). `logo-luviq-96/192.webp` bleiben, weil `_reviews_map.html` sie nennt.
 
 ## Gestaltungslinie
 

@@ -10,6 +10,16 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+## 30.10.2026 — Luviq-Umbau P6: Abschluss (Designwache, Aufräumen, Doku) (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
+
+- **CSS-Reste:** Warenkorb-Vorschaubild 84×105 px (die Regel `.lv-seite img{width:100%}` machte es riesig); `.lv-faq`-Zeilen (Gästebuch, Warenkorb) mit ruhig gestapelter Namensspalte, Knöpfe 44 px; Kasse: Zusammenfassung zweispaltig `minmax(0,1fr) auto`, Beträge `nowrap` rechtsbündig (kein Zeilenumbruch mehr am Handy); Hero Handy: Bildunterschrift rechtsbündig 11 px, mehr Abstand zur Nummernzeile. `--lv-kachel` entfernt. Kritisches CSS neu erzeugt.
+- **Designwache:** `aufbau_referenz.json` neu geschrieben; geändert sind genau `/`, `/produkte/`, die Referenz-Stückseite, `/kontakt/danke/`, `/gaestebuch/`, `/impressum/`, `/datenschutz/`, `/agb/`, `/login/`, `/register/`, `/password-reset/`, `/password-reset/done/`, `/reset/done/` (alle bewusst in P3–P5b umgebaut, vorher im Screen gesehen).
+- **llms.txt:** echte Umlaute (die ASCII-Umschreibung entfällt; `_ascii` weg), „Sitz: Lübeck · Herkunft: Alsfeld (Hessen)“, Straße und Gmail-Adresse raus (Verweis auf das Impressum), Fassung ohne Verkauf nennt Engel-Shirt Nº 006, Versand/Übergabe nach Absprache und den Öffnungssatz. Tests `test_geo` (Einzelstück, Überweisung) auf Umlaute umgestellt.
+- **Fehler gefunden:** `sitemap.xml` lieferte lokal 500, wenn ein Stück ein Bild eintrug, dessen Datei fehlt (`hauptbild()` ist dann `None`); jetzt wird ein solches Stück ohne Bild geführt (`legal.py`, zwei Stellen).
+- **Gelöscht:** `hero-dornen-*`, `hero-hoch-*`, `hero-panorama-*`, `hero-dragon*`, `ich*`, `logo-luviq.jpeg` (kein Verweis in Vorlagen, CSS, Python, Tests).
+- **Tests umgeschrieben (nicht gelöscht):** `test_schub_2026_10_23.LlmsMotivFragenTest` (statt „llms.txt ist ASCII“ jetzt „keine ae/ue-Umschreibung“, `30 °C`), `test_verkauf` (Archiv-Überschrift mit Umlaut), `test_p5b` („heute in Lübeck“). Meta-Description der Startseite auf 165 Zeichen gekürzt („Versand deutschlandweit“), weil `test_seo` höchstens 165 verlangt. Die llms.txt ohne Verkauf nennt weiterhin kein „Versand“ (`test_verkauf.OhneVerkaufTest`); Versand steht erst in der Fassung mit Verkauf.
+- **Doku:** `20-DESIGN.md`, `00-STATUS.md`, `80-AUFGABEN.md` nachgezogen (Engel-Anlage in `start.sh`, „Vergeben“, A/B, `data-ereignis`).
+
 ## 30.10.2026 — Luviq-Umbau P5b: A/B-Sieger im Hero, Warenkorb-Fix, Reste P5 (Zweig `design/2026-10-29-luviq-start`, nicht gepusht)
 
 - **Ursache des lokalen 500 (Warenkorb und Startseite):** Die lokale `db.sqlite3` (nicht im Git) enthält fünf Testdatensätze mit `bild_statisch = shop1/images/dummy/d1-{w}.webp…`; die Dateien lagen nie im Repo. `ManifestStaticFilesStorage` wirft dafür `ValueError: Missing staticfiles manifest entry` beim Rendern. Kein Fehler in den P5-Vorlagen. Gehärtet: `produktbilder.bild_aus` gibt bei fehlendem Manifest-Eintrag `None` zurück (Stück ohne Bild statt 500). Neu `test_p5b.KaufwegOhne500Test` (Startseite/Karte/Stück mit kaputtem Bild; Warenkorb leer und gefüllt, Kasse, Profil, Zahlung, Bestellung abgeschlossen mit und ohne Verkauf).
