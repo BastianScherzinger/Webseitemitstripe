@@ -4,7 +4,7 @@
 @font-face{font-family:"Cormorant Ersatz";font-display:swap;src:local("Georgia Italic"),local("Georgia-Italic");font-style:italic;size-adjust:81%;ascent-override:114.07%;descent-override:35.43%;line-gap-override:0%}
 @font-face{font-family:"Schibsted Ersatz";font-display:swap;src:local("Arial"),local("ArialMT");size-adjust:103.98%;ascent-override:93.92%;descent-override:24.79%;line-gap-override:0%}
 @font-face{font-family:"JetBrains Ersatz";font-display:swap;src:local("Consolas"),local("Menlo");size-adjust:109.13%;ascent-override:93.47%;descent-override:27.49%;line-gap-override:0%}
-:root{--lv-grund:#0A0A0A;--lv-grund-2:#131211;--lv-text:#F2EEE6;--lv-leise:#9C968C;--lv-linie:rgba(242,238,230,.12);--lv-linie-2:rgba(242,238,230,.28);--lv-akzent:#C8763F;--lv-marke:#FAE6C5;--lv-raum-1:4px;--lv-raum-2:8px;--lv-raum-3:12px;--lv-raum-4:16px;--lv-raum-5:24px;--lv-raum-6:32px;--lv-raum-7:48px;--lv-raum-8:64px;--lv-raum-9:96px;--lv-raum-10:128px;--lv-abschnitt:clamp(64px,7.8vw,112px);--lv-wand:#2b2a28;--lv-fehler:#E8927A;--lv-serif:"Cormorant Garamond","Cormorant Ersatz",Georgia,serif;--lv-sans:"Schibsted Grotesk","Schibsted Ersatz",Arial,sans-serif;--lv-mono:"JetBrains Mono","JetBrains Ersatz",Consolas,monospace;--u:min(1vw,14.4px);--rand:max(calc(var(--u)*4),calc((100vw - 1440px)/2 + 57.6px));color-scheme:dark}
+:root{--lv-grund:#0A0A0A;--lv-grund-2:#131211;--lv-text:#F2EEE6;--lv-leise:#9C968C;--lv-linie:rgba(242,238,230,.12);--lv-linie-2:rgba(242,238,230,.28);--lv-akzent:#C8763F;--lv-marke:#FAE6C5;--lv-raum-1:4px;--lv-raum-2:8px;--lv-raum-3:12px;--lv-raum-4:16px;--lv-raum-5:24px;--lv-raum-6:32px;--lv-raum-7:48px;--lv-raum-8:64px;--lv-raum-9:96px;--lv-raum-10:128px;--lv-abschnitt:clamp(64px,7.8vw,112px);--lv-wand:#2b2a28;--lv-fehler:#E8927A;--lv-hero-serif:"Cormorant Garamond","Cormorant Ersatz",Georgia,serif;--lv-hero-mono:"JetBrains Mono","JetBrains Ersatz",Consolas,monospace;--lv-sans:"Schibsted Grotesk","Schibsted Ersatz",Arial,sans-serif;--lv-serif:var(--lv-sans);--lv-mono:var(--lv-sans);--u:min(1vw,14.4px);--rand:max(calc(var(--u)*4),calc((100vw - 1440px)/2 + 57.6px));color-scheme:dark}
 html{background:var(--lv-grund);scroll-padding-top:80px}
 body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--lv-grund);color:var(--lv-text);font-family:var(--lv-sans);font-size:max(15px,calc(var(--u)*1.15));line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 .lv *,.lv *::before,.lv *::after{box-sizing:border-box}
@@ -13,8 +13,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-seite a,.lv-kopf a,.lv-fuss a,.lv-leiste a,.lv-hinweis a{color:inherit;text-decoration:none}
 .lv-seite img{display:block;width:100%;height:100%;object-fit:cover}
 .lv svg{flex:none}
-.lv-serif{font-family:var(--lv-serif);font-style:italic;font-weight:500;letter-spacing:-.01em;line-height:.98;text-wrap:balance}
-.lv-nr{font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-akzent);letter-spacing:.08em;text-transform:uppercase}
+.lv-serif{font-family:var(--lv-sans);font-style:normal;font-weight:700;letter-spacing:-.025em;line-height:1.04;text-wrap:balance}
+.lv-nr{font:600 max(12px,calc(var(--u)*.85)) var(--lv-sans);color:var(--lv-marke);letter-spacing:.1em;text-transform:uppercase;font-variant-numeric:tabular-nums}
 .lv-klein{font-size:max(12px,calc(var(--u)*.85));color:var(--lv-leise)}
 .lv-klein a{text-decoration:underline;text-underline-offset:.2em}
 .sr-only,.lv-versteckt{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
@@ -86,3 +86,5 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 @media (max-width:699px){.lv-hinweis{min-height:0;padding-block:6px;font-size:12px;flex-wrap:nowrap}.lv-hinweis span:nth-child(n+2){display:none}}
 @media (max-width:767px){:root{--lv-abschnitt:36px}}
 @media (prefers-reduced-motion:reduce){.lv *,.lv *::before,.lv *::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;scroll-behavior:auto !important}}
+:root{--lv-h2:clamp(30px,3.5vw,52px);--lv-wand-2:#1d1c1b}
+.lv-abschnitt.dunkel{background:var(--lv-grund);border-top:1px solid var(--lv-linie)}

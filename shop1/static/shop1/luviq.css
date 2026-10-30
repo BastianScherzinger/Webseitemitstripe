@@ -41,9 +41,15 @@
   /* Wandfarbe des Engel-Studiofotos (Anthrazit): Grund hinter dem Hero, am Handy unter dem Bild */
   --lv-wand:#2b2a28;
   --lv-fehler:#E8927A;
-  --lv-serif:"Cormorant Garamond","Cormorant Ersatz",Georgia,serif;
+  /* Schriften (30.10.2026, Bastian: „diese komischen Schriftarten weg, normal direkt erkennbar“):
+     unterhalb des Heros gilt nur Schibsted Grotesk. --lv-serif und --lv-mono heißen aus Gewohnheit
+     weiter so, zeigen aber auf die klare Schrift; die kursive Antiqua und die Mono-Schrift gehören nur
+     noch dem Hero (--lv-hero-serif, --lv-hero-mono), der unverändert bleibt. */
+  --lv-hero-serif:"Cormorant Garamond","Cormorant Ersatz",Georgia,serif;
+  --lv-hero-mono:"JetBrains Mono","JetBrains Ersatz",Consolas,monospace;
   --lv-sans:"Schibsted Grotesk","Schibsted Ersatz",Arial,sans-serif;
-  --lv-mono:"JetBrains Mono","JetBrains Ersatz",Consolas,monospace;
+  --lv-serif:var(--lv-sans);
+  --lv-mono:var(--lv-sans);
   --u:min(1vw,14.4px);
   --rand:max(calc(var(--u)*4),calc((100vw - 1440px)/2 + 57.6px));
   color-scheme:dark;
@@ -59,8 +65,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-seite a,.lv-kopf a,.lv-fuss a,.lv-leiste a,.lv-hinweis a{color:inherit;text-decoration:none}
 .lv-seite img{display:block;width:100%;height:100%;object-fit:cover}
 .lv svg{flex:none}
-.lv-serif{font-family:var(--lv-serif);font-style:italic;font-weight:500;letter-spacing:-.01em;line-height:.98;text-wrap:balance}
-.lv-nr{font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-akzent);letter-spacing:.08em;text-transform:uppercase}
+.lv-serif{font-family:var(--lv-sans);font-style:normal;font-weight:700;letter-spacing:-.025em;line-height:1.04;text-wrap:balance}
+.lv-nr{font:600 max(12px,calc(var(--u)*.85)) var(--lv-sans);color:var(--lv-marke);letter-spacing:.1em;text-transform:uppercase;font-variant-numeric:tabular-nums}
 .lv-klein{font-size:max(12px,calc(var(--u)*.85));color:var(--lv-leise)}
 .lv-klein a{text-decoration:underline;text-underline-offset:.2em}
 .sr-only,.lv-versteckt{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
@@ -126,7 +132,9 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-hero-bild{display:block;position:relative;aspect-ratio:4/5;max-height:80svh;overflow:hidden;background:var(--lv-wand)}
 .lv-hero-bild img{object-position:50% 20%}
 .lv-hero-bild::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(43,42,40,0) 82%,var(--lv-wand) 100%)}
-.lv-hero-figur figcaption{padding:var(--lv-raum-3) var(--rand) 0;display:flex;justify-content:space-between;gap:var(--lv-raum-4);font:500 12px/1.4 var(--lv-mono);letter-spacing:.06em;color:var(--lv-marke)}
+.lv-hero .lv-serif{font-family:var(--lv-hero-serif);font-style:italic;font-weight:500;letter-spacing:-.01em}
+.lv-hero .lv-nr{font:400 max(11px,calc(var(--u)*.85)) var(--lv-hero-mono);color:var(--lv-akzent);letter-spacing:.08em}
+.lv-hero-figur figcaption{padding:var(--lv-raum-3) var(--rand) 0;display:flex;justify-content:space-between;gap:var(--lv-raum-4);font:500 12px/1.4 var(--lv-hero-mono);letter-spacing:.06em;color:var(--lv-marke)}
 .lv-hero-text{display:grid;gap:var(--lv-raum-4);justify-items:start;padding:var(--lv-raum-5) var(--rand) var(--lv-raum-7)}
 .lv-hero .lv-satz{font-size:40px;line-height:1.05}
 .lv .lv-hero-text .lv-lead{margin:0;max-width:62ch;font-size:16px;line-height:1.55;color:var(--lv-text)}
@@ -195,7 +203,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-ablauf b{font-weight:600}
 .lv-ablauf span{color:var(--lv-leise);font-size:max(14px,calc(var(--u)*1))}
 .lv-anfragekasten{border:1px solid var(--lv-linie-2);padding:calc(var(--u)*2.4);display:grid;gap:calc(var(--u)*1.4);background:var(--lv-grund-2)}
-.lv-frage{font-family:var(--lv-serif);font-style:italic;font-weight:500;font-size:max(21px,calc(var(--u)*2.4));line-height:1.1}
+.lv-frage{font-family:var(--lv-sans);font-weight:700;letter-spacing:-.02em;font-size:max(20px,calc(var(--u)*2));line-height:1.15}
 .lv-chips{display:flex;flex-wrap:wrap;gap:calc(var(--u)*.8);list-style:none;padding:0}
 .lv-chip{border:1px solid var(--lv-linie-2);padding:calc(var(--u)*.7) calc(var(--u)*1.2);font-size:max(13px,calc(var(--u)*1));min-height:44px;display:inline-flex;align-items:center}
 .lv-chip:hover{border-color:var(--lv-text)}
@@ -228,7 +236,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-raster{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--lv-raum-6) var(--lv-raum-5);list-style:none;padding:0}
 .lv-raster>li{min-width:0}
 .lv-raster:has(>li:only-child){grid-template-columns:minmax(0,1fr)}
-@media (min-width:1024px){.lv-raster:has(>li:only-child){grid-template-columns:minmax(0,min(calc(50% - var(--lv-raum-3)),560px))}}
+@media (min-width:1024px){.lv-raster:has(>li:only-child){grid-template-columns:minmax(0,420px)}}
 .lv-seite .lv-raster-titel{font-size:max(28px,calc(var(--u)*2.6));margin:var(--lv-raum-7) 0 var(--lv-raum-3)}
 .lv-seite .lv-raster-titel:first-of-type{margin-top:0}
 .lv-seite .lv-raster-hinweis{color:var(--lv-leise);margin:0 0 var(--lv-raum-5)}
@@ -252,8 +260,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .ist-verkauft img{filter:brightness(.55) saturate(.85)}
 .lv-verkauft{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;pointer-events:none}
 .lv-verkauft>span{display:block;width:150%;padding:.1em 0 .16em;text-align:center;transform:rotate(-9deg);background:rgba(10,10,10,.78);border-block:1px solid var(--lv-marke);color:var(--lv-marke);
-  font:italic 500 clamp(20px,21cqi,60px)/1 var(--lv-serif);letter-spacing:.02em}
-.lv-verkauft-gross>span{font-size:clamp(34px,18cqi,110px)}
+  font:700 clamp(13px,11cqi,34px)/1 var(--lv-sans);letter-spacing:.12em;text-transform:uppercase}
+.lv-verkauft-gross>span{font-size:clamp(22px,9cqi,56px)}
 .lv-leer{color:var(--lv-leise);padding:calc(var(--u)*3) 0}
 .lv-weiter{margin-top:calc(var(--u)*3)}
 .lv-abschnittskopf-r{display:grid;gap:var(--lv-raum-2);justify-self:end;justify-items:end}
@@ -400,7 +408,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-stueck-preis{font:500 max(28px,calc(var(--u)*2.6)) var(--lv-mono)}
 .lv-stueck-text>p.lv-stueck-zustand{font:500 max(12px,calc(var(--u)*.9)) var(--lv-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--lv-leise)}
 .lv-stueck-zustand b{color:var(--lv-marke);font-weight:500}
-.lv-stueck-text>p.lv-technik{border-left:2px solid var(--lv-marke);padding:var(--lv-raum-1) 0 var(--lv-raum-1) var(--lv-raum-4);color:var(--lv-text);font:italic 500 max(22px,calc(var(--u)*2)) var(--lv-serif);line-height:1.2}
+.lv-stueck-text>p.lv-technik{border-left:2px solid var(--lv-marke);padding:var(--lv-raum-1) 0 var(--lv-raum-1) var(--lv-raum-4);color:var(--lv-text);font:600 max(18px,calc(var(--u)*1.5)) var(--lv-sans);letter-spacing:-.01em;line-height:1.35}
 .lv-stueck-hinweis{font-size:max(13px,calc(var(--u)*.9));line-height:1.6;max-width:64ch;color:var(--lv-leise);display:grid;gap:var(--lv-raum-3)}
 .lv-stueck-hinweis p,.lv-stueck-versand p{margin:0}
 .lv-mehr{border-top:1px solid var(--lv-linie-2)}
@@ -421,7 +429,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-alt main [class*="shadow"]{box-shadow:none}
 .lv-alt main .glass,.lv-alt main .glass-card{background:var(--lv-grund-2);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid var(--lv-linie)!important;box-shadow:none}
 .lv-alt main .glass-card:hover{transform:none}
-.lv-alt main h1,.lv-alt main h2,.lv-alt main h3,.lv-alt main .heading-font{font-family:var(--lv-serif);font-style:italic;font-weight:500;text-transform:none;letter-spacing:-.01em;line-height:1.02}
+.lv-alt main h1,.lv-alt main h2,.lv-alt main h3,.lv-alt main .heading-font{font-family:var(--lv-sans);font-style:normal;font-weight:700;text-transform:none;letter-spacing:-.02em;line-height:1.08}
 .lv-alt main h4,.lv-alt main h5{font-family:var(--lv-sans);letter-spacing:.02em}
 /* Überschriften, die früher h4 waren und für die Gliederung (VL17) eine Stufe höher stehen: gleicher Auftritt wie zuvor (Sans, nicht kursiv). lv-ueb-n: ohne eigene Schriftgröße, Zeilenhöhe geerbt wie beim früheren h4 (Gästebuch). */
 .lv-alt main .lv-ueb-s,.lv-alt main .lv-ueb-m,.lv-alt main .lv-ueb-n{font-family:var(--lv-sans);font-style:normal;letter-spacing:.02em}
@@ -435,7 +443,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-alt main .btn-glow::before{display:none}
 .lv-alt main .btn-glow:hover,.lv-alt main .bg-glow-orange:hover,.lv-alt main button[type="submit"]:not(.lv-knopf):hover{background:var(--lv-akzent)}
 .lv-alt main input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),.lv-alt main textarea,.lv-alt main select,.lv-alt main .form-input{background:transparent!important;border:1px solid var(--lv-linie-2)!important;border-radius:0!important;color:var(--lv-text)!important;box-shadow:none!important}
-.lv-alt main label{font-family:var(--lv-mono);letter-spacing:.06em}
+.lv-alt main label{font-family:var(--lv-sans);letter-spacing:.02em}
 .lv-alt main .energy-nebula,.lv-alt main [class*="blur-["],.lv-alt .ambient-glow{display:none}
 .lv-alt main .scroll-reveal,.lv-alt main .animate-reveal{opacity:1;transform:none;transition:none;animation:none}
 .lv-alt main .animate-pulse,.lv-alt main .animate-float{animation:none}
@@ -527,7 +535,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
   .lv-stueck-nummer{font-size:14px}
   .lv-galerie{position:static}
   .lv-galerie-rahmen{width:calc(100% + 2*var(--rand));margin-inline:calc(var(--rand)*-1)}
-  .lv-stueck-text>p.lv-technik{font-size:22px}
+  .lv-stueck-text>p.lv-technik{font-size:18px}
   .lv-brotkrume{padding-top:16px;font-size:12px}
   .lv-nr,.lv-daten dt{font-size:12px}
   .lv-formular legend .lv-nr,.lv-feld .lv-nr{font-size:12px}
@@ -698,3 +706,78 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-anfrageseite .lv-daten{grid-template-columns:minmax(0,1fr) auto}
 .lv-anfrageseite .lv-daten dt{padding-right:var(--lv-raum-4);overflow-wrap:anywhere}
 .lv-anfrageseite .lv-daten dd{white-space:nowrap;text-align:right}
+
+/* ═══ Unterbau (30.10.2026, Bastian: „gegen unten übersichtlicher, normal direkt erkennbar, krass wie der Hero“) ═══
+   Alles unterhalb des Heros: eine Schrift (Schibsted Grotesk, fett für Überschriften), ruhiger Rhythmus,
+   Anthrazit des Heros (--lv-wand) als zweite Fläche statt vieler Grautöne, kein Mono, keine Kursive.
+   Der Hero selbst bleibt, wie er ist. */
+:root{--lv-h2:clamp(30px,3.5vw,52px);--lv-wand-2:#1d1c1b}
+.lv-start :is(.lv-echt,.lv-wege,.lv-anfragen,.lv-abschnitt,.lv-film,.lv-warteliste) h2{font-size:var(--lv-h2);line-height:1.04;letter-spacing:-.03em}
+.lv-start .lv-abschnittskopf p,.lv-start .lv-echt-text p{font-size:max(16px,calc(var(--u)*1.15));line-height:1.55}
+
+/* Vertrauensleiste: drei Aussagen, ohne Zählung */
+.lv-vertrauen{border-top:0;border-bottom:1px solid var(--lv-linie)}
+.lv-vertrauen .lv-nr{display:none}
+.lv-vertrauen li{display:block;font-size:max(16px,calc(var(--u)*1.2));font-weight:600;letter-spacing:-.01em;line-height:1.35;padding-block:var(--lv-raum-5)}
+.lv-vertrauen li+li{padding-left:var(--lv-raum-5);border-left:1px solid var(--lv-linie)}
+
+/* Wege: Überschrift oben, zwei Kacheln nebeneinander */
+.lv-start .lv-wege{display:block}
+.lv-wege h2{margin-bottom:var(--lv-raum-6)}
+.lv-wege-liste{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--lv-raum-5)}
+.lv-wege-liste li,.lv-wege-liste li:last-child{align-content:start;gap:var(--lv-raum-3);padding:var(--lv-raum-6);border:1px solid var(--lv-linie-2);background:var(--lv-wand-2)}
+.lv-wege-liste h3{font-size:max(24px,calc(var(--u)*2.2));letter-spacing:-.025em}
+.lv-wege-liste p{font-size:max(16px,calc(var(--u)*1.1))}
+.lv-wege-liste .lv-link{margin-top:var(--lv-raum-3);border-bottom-color:var(--lv-marke)}
+
+/* Motiv anfragen: Ablauf links, Kasten rechts; die Richtungsfrage ist eine klare Überschrift */
+.lv-anfragen{border-top:0;background:var(--lv-wand)}
+.lv-anfragen h2{margin-top:var(--lv-raum-3)}
+.lv-anfragen .lv-ablauf li::before{color:var(--lv-marke);font:700 12px var(--lv-sans);letter-spacing:.08em}
+.lv-anfragekasten{background:var(--lv-grund);border-color:var(--lv-linie-2);padding:var(--lv-raum-6);gap:var(--lv-raum-4)}
+.lv-frage{font-size:max(20px,calc(var(--u)*1.9))}
+.lv-chip{font-weight:500}
+
+/* Entstehung: fünf Schritte mit großen Ziffern */
+.lv-abschnitt.dunkel{background:var(--lv-grund);border-top:1px solid var(--lv-linie)}
+.lv-entstehung .lv-nr{font-size:clamp(32px,3.2vw,44px);font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--lv-akzent)}
+.lv-entstehung h3{font-size:max(22px,calc(var(--u)*1.9));letter-spacing:-.02em}
+.lv-entstehung li{gap:var(--lv-raum-3);padding-top:var(--lv-raum-5)}
+.lv-entstehung p:last-child{font-size:max(15px,calc(var(--u)*1))}
+
+/* Stückkarten: klare Namen, ruhige Zeile darunter */
+.lv-karte h2,.lv-karte h3{font-size:max(18px,calc(var(--u)*1.5));font-weight:700;letter-spacing:-.015em;line-height:1.2}
+.lv-karte-kopf{font-variant-numeric:tabular-nums;align-items:baseline}
+.lv-karte-kopf b{font-weight:600}
+.lv-karte-kopf span{letter-spacing:.08em;font-weight:600;font-size:max(11px,calc(var(--u)*.8))}
+.lv-karte .lv-preis{font-weight:700;letter-spacing:0}
+.lv-groesse{font-size:max(13px,calc(var(--u)*.9))}
+.lv-archivreihe .lv-karte h3{font-size:16px}
+.lv-archivreihe .lv-karte-name{gap:0}
+.lv-wischen{font:600 12px var(--lv-sans);margin-top:var(--lv-raum-4)}
+
+/* Luisa: großes, klares Zitat */
+.lv-luisa{background:var(--lv-wand);border-top:0}
+.lv-luisa blockquote p{font-size:clamp(28px,3.8vw,56px);line-height:1.08;letter-spacing:-.03em}
+.lv-luisa-start blockquote p{font-size:clamp(28px,3.8vw,56px)}
+.lv-luisa blockquote footer{font:600 max(12px,calc(var(--u)*.85)) var(--lv-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--lv-marke);margin-top:var(--lv-raum-5)}
+.lv-luisa-text p{font-size:max(16px,calc(var(--u)*1.15));line-height:1.6;color:var(--lv-text)}
+
+/* Warteliste */
+.lv-warteliste{background:var(--lv-grund);border-top:1px solid var(--lv-linie)}
+.lv-warteliste h2{max-width:14ch}
+
+@media (max-width:767px){
+  .lv-vertrauen li+li{padding-left:0;border-left:0}
+  .lv-vertrauen li{font-size:16px;padding-block:var(--lv-raum-3)}
+  .lv-wege h2{margin-bottom:var(--lv-raum-5)}
+  .lv-wege-liste{grid-template-columns:minmax(0,1fr);gap:var(--lv-raum-3)}
+  .lv-wege-liste li,.lv-wege-liste li:last-child{padding:var(--lv-raum-5)}
+  .lv-wege-liste h3{font-size:22px}
+  .lv-anfragekasten{padding:var(--lv-raum-5)}
+  .lv-entstehung{gap:0}
+  .lv-entstehung li{grid-template-columns:44px minmax(0,1fr);padding:var(--lv-raum-4) 0;gap:var(--lv-raum-1) var(--lv-raum-3)}
+  .lv-entstehung .lv-nr{font-size:28px}
+  .lv-entstehung h3{font-size:20px}
+  .lv-luisa blockquote p,.lv-luisa-start blockquote p{font-size:28px}
+}

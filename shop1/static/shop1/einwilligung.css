@@ -3,7 +3,7 @@
    Beide Knöpfe tragen dieselbe Klasse – gleichwertiges Ablehnen. */
 .lv-einwilligung{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--lv-grund-2,#131211);color:var(--lv-text,#F2EEE6);border-top:1px solid var(--lv-linie-2,rgba(242,238,230,.28));padding:16px;font-family:var(--lv-sans,Arial,sans-serif);font-size:15px;line-height:1.5}
 .lv-einwilligung[hidden]{display:none}
-.lv-einwilligung-titel{font-family:var(--lv-serif,Georgia,serif);font-style:italic;font-weight:500;font-size:22px;margin:0 0 6px}
+.lv-einwilligung-titel{font-family:var(--lv-sans,Arial,sans-serif);font-weight:700;letter-spacing:-.01em;font-size:20px;margin:0 0 6px}
 .lv-einwilligung p{margin:0 0 12px;max-width:62ch;color:var(--lv-leise,#9C968C)}
 .lv-einwilligung a{color:var(--lv-text,#F2EEE6)}
 .lv-einwilligung-knoepfe{display:flex;gap:12px;flex-wrap:wrap}
