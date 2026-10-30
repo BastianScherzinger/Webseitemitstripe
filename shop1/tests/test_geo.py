@@ -42,6 +42,8 @@ FAQ_SEITEN = (
     '/wissen/upcycling-mode-second-hand-vintage/',
     '/wissen/groesse-bei-einzelstuecken/',
     '/wissen/so-entsteht-dein-motiv/',
+    '/wissen/bleach-painting/',
+    '/wissen/bleichfleck-uebermalen/',
     '/wissen/bestellen-und-bezahlen/',
     '/wissen/widerruf-und-ruecksendung/',
     '/wissen/konto-und-daten/',
@@ -284,8 +286,10 @@ class StrukturierteDatenTest(LuviqTestCase):
                 self.assertTrue(seite.get('name'), f'{pfad}: WebPage ohne name')
                 self.assertIn(seite['name'], sichtbarer_text(inhalt), f'{pfad}: name "{seite["name"]}" steht nicht auf der Seite')
                 stand = seite.get('dateModified', '')
-                self.assertRegex(stand, r'^\d{4}-\d{2}-\d{2}$', f'{pfad}: dateModified "{stand}"')
-                self.assertLessEqual(date.fromisoformat(stand), date.today())
+                # Datum, oder (neue Beiträge, WISSEN.md) ISO 8601 mit Uhrzeit und Zone +01:00.
+                self.assertRegex(stand, r'^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}\+01:00)?$',
+                                 f'{pfad}: dateModified "{stand}"')
+                self.assertLessEqual(date.fromisoformat(stand[:10]), date.today())
                 if pfad in lastmod_je_pfad:
                     self.assertEqual(
                         stand, lastmod_je_pfad[pfad],
@@ -530,16 +534,23 @@ class UnaufgeloestePlatzhalterTest(LuviqTestCase):
 
 
 class BelegteKleidungsartenTest(LuviqTestCase):
-    """EIG79: Schema und llms.txt nennen nur Kleidungsarten, die es im Bestand gibt
-    (Hoodies, Hose, Jacke) – keine Shirts."""
+    """EIG79, angepasst 30.10.2026 (C3/C4): Das Engel-Shirt ist neu, das Sortiment heißt jetzt
+    „handbemalte Unikate, gebraucht oder neu“. Das Schema trägt keinen erfundenen Katalog
+    (kein OfferCatalog mit „Vintage-Jacken“/„Vintage-Hoodies“ ohne Preis) und keine
+    „Vintage-“ oder „Second-Hand-Shirts“."""
 
     @override_settings(VERKAUF_AKTIV=True)  # Katalog und Fließtext stehen nur mit Verkauf
-    def test_weder_schema_noch_llms_txt_versprechen_shirts(self):
+    def test_schema_ohne_erfundenen_katalog_und_aussage_gebraucht_oder_neu(self):
         erzeuge_produkt('Bemalter Hoodie')
-        self.assertNotIn('Shirts', self.hole('/llms.txt').content.decode())
-        self.assertNotIn('Shirts', self.hole('/llms-full.txt').content.decode().split('## Volltext', 1)[0])
-        self.assertNotIn('Vintage-Shirts', self.hole('/').content.decode())
-        self.assertIn('Vintage-Hoodies', self.hole('/').content.decode())
+        start = self.hole('/').content.decode()
+        self.assertNotIn('hasOfferCatalog', start)
+        self.assertNotIn('Vintage-Jacken', start)
+        self.assertNotIn('Vintage-Hoodies', start)
+        self.assertNotIn('Vintage-Shirts', start)
+        for pfad in ('/llms.txt', '/llms-full.txt'):
+            self.assertIn('gebraucht oder neu', self.hole(pfad).content.decode(), pfad)
+        self.assertNotIn('Second-Hand-Shop', self.hole('/llms.txt').content.decode())
+        self.assertNotIn('Second-Hand-Shop', start)
 
 
 class ArchivSchemaTest(LuviqTestCase):
@@ -786,9 +797,11 @@ class RatgeberSchemaTest(LuviqTestCase):
                 self.assertEqual(kennung(artikel['publisher']), '#organization')
                 self.assertEqual(artikel['datePublished'], beitrag['veroeffentlicht'])
                 self.assertEqual(artikel['dateModified'], SEITEN_STAND[beitrag['url_name']])
+                for feld in ('datePublished', 'dateModified'):
+                    self.assertRegex(artikel[feld], r'^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}\+01:00)?$', feld)
                 self.assertLessEqual(
-                    date.fromisoformat(artikel['datePublished']),
-                    date.fromisoformat(artikel['dateModified']),
+                    date.fromisoformat(artikel['datePublished'][:10]),
+                    date.fromisoformat(artikel['dateModified'][:10]),
                     f'{slug}: veröffentlicht nach der letzten Änderung',
                 )
 

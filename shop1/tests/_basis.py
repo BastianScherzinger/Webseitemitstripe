@@ -99,6 +99,8 @@ OEFFENTLICHE_SEITEN = [
     '/wissen/upcycling-mode-second-hand-vintage/',
     '/wissen/groesse-bei-einzelstuecken/',
     '/wissen/so-entsteht-dein-motiv/',  # Entwurf (noindex)
+    '/wissen/bleach-painting/',  # Entwurf (noindex)
+    '/wissen/bleichfleck-uebermalen/',  # Entwurf (noindex)
     '/wissen/bestellen-und-bezahlen/',
     '/wissen/widerruf-und-ruecksendung/',
     '/wissen/konto-und-daten/',
@@ -153,6 +155,8 @@ INHALTSSEITEN = [
     '/wissen/upcycling-mode-second-hand-vintage/',
     '/wissen/groesse-bei-einzelstuecken/',
     '/wissen/so-entsteht-dein-motiv/',  # Entwurf (noindex)
+    '/wissen/bleach-painting/',  # Entwurf (noindex)
+    '/wissen/bleichfleck-uebermalen/',  # Entwurf (noindex)
     # Belegte Beiträge ohne Freigabevorbehalt (SU04): von Anfang an
     # indexierbar, weil sie nur wiedergeben, was AGB, Datenschutzerklärung,
     # Impressum, Liefergebiet und der Code des Bestellvorgangs belegen.

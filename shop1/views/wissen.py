@@ -113,6 +113,25 @@ WISSEN_BEITRAEGE = {
         'freigegeben': False,
         'veroeffentlicht': '2026-10-23',
     },
+    # ENTWÜRFE (30.10.2026, Analyse C8): zwei Ratgeber zur Technik. Nur allgemein belegbares
+    # Wissen plus das, was die Seite schon über Luisas Arbeitsweise sagt. freigegeben bleibt
+    # False, bis Luisa die Texte bestätigt hat (Text zum Gegenlesen: Analysen\luviq-2026-10-30-analyse    # ENTWURF-ARTIKEL.md). Datum mit Uhrzeit und Zeitzone (ISO 8601, +01:00).
+    'bleach-painting': {
+        'url_name': 'wissen_bleach',
+        'template': 'shop1/wissen/bleach.html',
+        'titel': 'Was ist Bleach Painting?',
+        'kurz': 'Malen mit Bleiche auf dunklem Stoff: wie die Technik funktioniert, wie sie sich von Druck unterscheidet, welche Stoffe passen und welche Sicherheitsregeln allgemein gelten.',
+        'freigegeben': False,
+        'veroeffentlicht': '2026-10-30T11:45:00+01:00',
+    },
+    'bleichfleck-uebermalen': {
+        'url_name': 'wissen_bleichfleck',
+        'template': 'shop1/wissen/bleichfleck.html',
+        'titel': 'Bleichfleck übermalen: geht das?',
+        'kurz': 'Warum ein Bleichfleck bleibt, welche Wege es gibt – Fleck ausmalen, nachfärben oder zum Motiv machen – und worauf man vorher achten sollte.',
+        'freigegeben': False,
+        'veroeffentlicht': '2026-10-30T11:45:00+01:00',
+    },
     # Ab hier: Beiträge, die ausschliesslich aus dem Projekt belegte Angaben
     # wiedergeben (AGB, Datenschutzerklärung, Impressum, Liefergebiet und der
     # Code von Warenkorb, Bestellvorgang und Anmeldung). Sie brauchen keine
@@ -304,5 +323,8 @@ class WissenFeed(Feed):
         ``USE_TZ=True``: ein naives ``datetime`` ergäbe hier eine Warnung und
         einen ``pubDate`` ohne Zonenangabe, den jeder Leser anders auslegt.
         """
-        tag = date.fromisoformat(item['veroeffentlicht'])
+        roh = item['veroeffentlicht']
+        if 'T' in roh:  # ISO 8601 mit Uhrzeit und Zone (neue Beiträge)
+            return datetime.fromisoformat(roh)
+        tag = date.fromisoformat(roh)
         return timezone.make_aware(datetime.combine(tag, time.min))

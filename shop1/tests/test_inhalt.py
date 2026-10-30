@@ -167,6 +167,8 @@ MINDESTWOERTER = {
     '/wissen/upcycling-mode-second-hand-vintage/': 920,
     '/wissen/groesse-bei-einzelstuecken/': 855,
     '/wissen/so-entsteht-dein-motiv/': 380,  # Entwurf; gemessen siehe Logbuch
+    '/wissen/bleach-painting/': 500,  # Entwurf 30.10.2026
+    '/wissen/bleichfleck-uebermalen/': 450,  # Entwurf 30.10.2026
     '/wissen/bestellen-und-bezahlen/': 1110,
     '/wissen/widerruf-und-ruecksendung/': 1015,
     '/wissen/konto-und-daten/': 980,

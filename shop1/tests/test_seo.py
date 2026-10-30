@@ -206,7 +206,7 @@ class SitemapTest(LuviqTestCase):
         _, adressen = self._adressen()
         pfade = {a.split('testserver', 1)[-1] or '/' for a in adressen}
         pflicht = {
-            '/', '/produkte/', '/gaestebuch/', '/ueber_uns/',
+            '/', '/produkte/', '/ueber_uns/',
             '/liefergebiet/', '/kontakt/', '/datenschutz/',
         }
         # Die AGB nur mit Verkauf – ohne gelten sie noch nicht (noindex).
@@ -216,6 +216,9 @@ class SitemapTest(LuviqTestCase):
             pflicht.issubset(pfade),
             f'In der Sitemap fehlen: {sorted(pflicht - pfade)}',
         )
+        # Gästebuch: noindex,follow, bewusst nicht in der Sitemap (Analyse 30.10.2026, C9).
+        self.assertNotIn('/gaestebuch/', pfade)
+        self.assertIn('noindex', self.hole('/gaestebuch/').content.decode())
 
     def test_keine_adresse_der_sitemap_ist_auf_noindex_gesetzt(self):
         """Verhindert das widersprüchliche Signal, das dieser Lauf vorgefunden
@@ -395,14 +398,14 @@ class WissensdatumTest(LuviqTestCase):
             with self.subTest(pfad=pfad), override_settings(VERKAUF_AKTIV=True):
                 html = self.hole(pfad).content.decode()
                 nach_h1 = html[html.index('</h1>'):]
-                zeit = re.search(r'<time datetime="(\d{4}-\d{2}-\d{2})">([^<]+)</time>', nach_h1)
+                zeit = re.search(r'<time datetime="(\d{4}-\d{2}-\d{2}(?:T[\d:+]+)?)">([^<]+)</time>', nach_h1)
                 self.assertIsNotNone(zeit, f'{pfad}: kein sichtbares Datum unter der h1')
                 stand = SEITEN_STAND[beitrag['url_name']]
                 self.assertEqual(zeit.group(1), stand)
                 self.assertIn(f'"dateModified": "{stand}"', html)
                 self.assertLess(nach_h1.index('<time'), nach_h1.index('<p'),
                                 'das Datum steht nicht direkt unter der h1')
-                jahr, monat, tag = (int(t) for t in stand.split('-'))
+                jahr, monat, tag = (int(t) for t in stand[:10].split('-'))
                 self.assertTrue(zeit.group(2).startswith(f'{tag}. '), zeit.group(2))
                 self.assertTrue(zeit.group(2).endswith(str(jahr)), zeit.group(2))
 

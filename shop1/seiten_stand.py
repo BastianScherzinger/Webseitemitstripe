@@ -40,6 +40,9 @@ SEITEN_STAND = {
     'wissen_upcycling': '2026-10-29',
     'wissen_groesse':   '2026-10-23',
     'wissen_motiv':     '2026-10-23',  # Entwurf, noindex
+    # Entwürfe (30.10.2026, C8), noindex bis Luisa bestätigt; ISO 8601 mit Uhrzeit und Zone:
+    'wissen_bleach':      '2026-10-30T11:45:00+01:00',
+    'wissen_bleichfleck': '2026-10-30T11:45:00+01:00',
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
     'wissen_bestellen': '2026-10-23',
@@ -69,6 +72,8 @@ SEITEN_NAME = {
     'wissen_upcycling': 'Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?',
     'wissen_groesse':   'Wie finde ich bei Einzelstücken die richtige Größe?',
     'wissen_motiv':     'Wie entsteht aus meiner Idee ein handbemaltes Stück?',
+    'wissen_bleach':      'Was ist Bleach Painting?',
+    'wissen_bleichfleck': 'Bleichfleck übermalen: geht das?',
     'wissen_bestellen': 'Wie bestelle und bezahle ich bei Luviq Universe?',
     'wissen_widerruf':  'Widerruf und Rücksendung: was gilt bei einem Einzelstück?',
     'wissen_konto':     'Was speichert der Shop – und warum braucht der Kauf ein Konto?',
@@ -109,5 +114,5 @@ def stand_anzeige(iso):
 
     Eigene Monatsliste statt ``|date``: unabhängig von der aktiven Sprache,
     und dieselbe Zeichenkette wie im ``dateModified`` bleibt die Quelle."""
-    jahr, monat, tag = (int(t) for t in iso.split('-'))
+    jahr, monat, tag = (int(t) for t in iso[:10].split('-'))
     return f'{tag}. {_MONATE[monat - 1]} {jahr}'

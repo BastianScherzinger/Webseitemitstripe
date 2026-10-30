@@ -128,6 +128,10 @@ WISSEN_SEITEN = [
      'Maße mit eigener Kleidung vergleichen statt Etikett, warum Vintage-Schnitte abweichen, vorab nachfragen, Widerruf'),
     ('wissen_motiv', 'Wie entsteht aus meiner Idee ein handbemaltes Stück?',
      'Richtung nennen, Vorschläge bekommen, gemeinsam entscheiden, Bleiche mit dem Pinsel; Dauer meist 2 bis 5 Tage'),
+    ('wissen_bleach', 'Was ist Bleach Painting?',
+     'Malen mit Bleiche auf dunklem Stoff, Unterschied zu Druck, geeignete Stoffe, Sicherheitsregeln, Ablauf bei Luviq'),
+    ('wissen_bleichfleck', 'Bleichfleck übermalen: geht das?',
+     'Warum ein Bleichfleck bleibt, Fleck ausmalen, nachfärben oder zum Motiv machen, worauf man vorher achtet'),
     ('wissen_bestellen', 'Wie bestelle und bezahle ich bei Luviq Universe?',
      'Anmeldepflicht, Weg in den Warenkorb, Pflichtangaben, PayPal oder '
      'Vorab-Überweisung, Prüfung der Zahlung, Bestätigung, Versand in 1-2 Werktagen'),

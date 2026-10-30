@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% comment %}ENTWURF (freigegeben=False in views/wissen.py): erreichbar, aber noindex, weder in Sitemap noch llms.txt noch Übersicht, bis Luisa den Text bestätigt hat. Nur allgemein belegbares Wissen plus das, was die Seite schon über Luisas Arbeitsweise sagt (luviq_daten.SCHRITTE, DAUER, PFLEGE); keine Zahl, kein Stoff, keine Zeit und kein Preis, die nicht schon auf der Seite stehen. Schema-Daten mit Uhrzeit und +01:00 (WISSEN.md).{% endcomment %}
+{% block title %}Bleichfleck übermalen: geht das? Ratgeber | Luviq Lübeck{% endblock %}
+{% block meta_description %}Bleichfleck auf dunkler Kleidung: Warum er bleibt, ob sich ein Fleck übermalen lässt und welche Wege es gibt – ausmalen, nachfärben, Motiv. Jetzt nachlesen.{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}Bleichfleck übermalen: geht das? – Luviq Universe, Lübeck{% endblock %}
+{% block og_description %}Ein Bleichfleck lässt sich nicht rückgängig machen, aber überdecken: Textilfarbe, Nachfärben oder ein Motiv. Was vorher zu beachten ist.{% endblock %}
+{% block twitter_title %}Bleichfleck übermalen: geht das? – Luviq Universe{% endblock %}
+{% block twitter_description %}Bleichfleck auf dunkler Kleidung: Warum er bleibt und welche Wege es gibt, ihn zu überdecken.{% endblock %}
+{% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "@id": "{{ seiten_url }}#breadcrumb",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Wissen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen' %}"},
+    {"@type": "ListItem", "position": 3, "name": "Bleichfleck übermalen: geht das?", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen_bleichfleck' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block schema_ld %}
+{% include 'shop1/teile/wissen_article_ld.html' %}
+{% comment %}Jede Frage steht wortgleich als h2 auf der Seite, jede Antwort wortgleich als erster Absatz unter dieser h2 (test_geo). Keine Angaben zu Haltbarkeit oder Preis, Dauer nur als belegter Erfahrungswert.{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "{{ seiten_url }}#faq",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Lässt sich ein Bleichfleck übermalen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja, überdecken geht, rückgängig machen nicht. Die Bleiche hat den Farbstoff im Stoff abgebaut, deshalb kommt die ursprüngliche Farbe nicht von allein zurück; die Stelle lässt sich aber mit Textilfarbe ausmalen, das Teil nachfärben oder der Fleck in ein Motiv einbauen."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Warum bleibt ein Bleichfleck sichtbar?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Weil Bleiche den Farbstoff nicht nur verdeckt, sondern abbaut. Die Stelle ist danach heller und hat oft einen eigenen Farbton, auf schwarzem Stoff häufig ein warmes Beige oder einen rötlichen Ton."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie kann man einen Bleichfleck kaschieren?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Es gibt drei übliche Wege: den Fleck mit passender Textilfarbe oder einem Textilmarker ausmalen, das ganze Teil nachfärben oder aus dem Fleck ein bewusstes Motiv machen."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Worauf sollte ich vor dem Übermalen achten?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Zuerst das Pflegeetikett lesen und die Faser bestimmen, dann jede Methode an einer unauffälligen Stelle oder einem Reststück testen. Textilfarben sind für bestimmte Fasern gemacht, und was auf Baumwolle hält, deckt auf anderen Stoffen anders."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie entsteht ein Bleichfleck überhaupt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Meist durch Spritzer bleichmittelhaltiger Produkte: Reiniger für Bad und WC, Desinfektionsmittel oder Waschmittel mit Bleichzusatz, manchmal auch Hautpflegeprodukte mit bleichenden Wirkstoffen wie Benzoylperoxid."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='wissen' %}{% endblock %}
+
+{% block content %}
+<div class="lv-seite lv-wissen">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li><a href="{% url 'wissen' %}">Wissen</a></li><li aria-current="page">Bleichfleck übermalen</li></ol></nav>
+
+    <header class="lv-wissen-kopf">
+        <h1 class="lv-serif">Bleichfleck übermalen: geht das?</h1>
+        <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
+        <p class="lv-wissen-lead">Ja, ein Bleichfleck lässt sich überdecken oder übermalen, rückgängig machen lässt er sich nicht, weil der Farbstoff im Stoff abgebaut ist. Hier erklärt Luviq aus Lübeck, welche Wege es gibt und was man vorher beachten sollte.</p>
+    </header>
+
+    <div class="lv-wissen-liste">
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Lässt sich ein Bleichfleck übermalen?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Ja, überdecken geht, rückgängig machen nicht. Die Bleiche hat den Farbstoff im Stoff abgebaut, deshalb kommt die ursprüngliche Farbe nicht von allein zurück; die Stelle lässt sich aber mit Textilfarbe ausmalen, das Teil nachfärben oder der Fleck in ein Motiv einbauen.</p>
+                <p>Wie gut das gelingt, hängt von Stoff, Farbe und Größe des Flecks ab. Ein kleiner Fleck auf glattem Stoff lässt sich leichter kaschieren als eine große, ausgefranste Fläche.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Warum bleibt ein Bleichfleck sichtbar?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Weil Bleiche den Farbstoff nicht nur verdeckt, sondern abbaut. Die Stelle ist danach heller und hat oft einen eigenen Farbton, auf schwarzem Stoff häufig ein warmes Beige oder einen rötlichen Ton.</p>
+                <p>Dieselbe Wirkung nutzt das Bleach Painting absichtlich: Dort ist der Bleichstrich das Motiv. Was das ist und wie Luisa Brehler dabei vorgeht, steht im Beitrag <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a>.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Wie kann man einen Bleichfleck kaschieren?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Es gibt drei übliche Wege: den Fleck mit passender Textilfarbe oder einem Textilmarker ausmalen, das ganze Teil nachfärben oder aus dem Fleck ein bewusstes Motiv machen.</p>
+                <ul><li><strong>Ausmalen:</strong> Textilfarbe oder Textilmarker in dem Ton, den der Stoff vorher hatte. Vorher an einer unauffälligen Stelle probieren, ob der Ton passt und nach dem Waschen hält, und die Farbe nach den Angaben des Herstellers fixieren.</li>
+                <li><strong>Nachfärben:</strong> das ganze Teil nach den Angaben des Herstellers färben. Das gleicht Unterschiede zwischen Fleck und Umgebung aus, funktioniert aber nur bei Fasern, für die die Farbe gemacht ist; je dunkler der neue Ton, desto eher verschwindet der Fleck.</li>
+                <li><strong>Zum Motiv machen:</strong> Auf dunklem Stoff wirkt ein Bleichfleck wie ein Strich beim Bleach Painting, hell auf dunkel. Wer ihn nicht verstecken will, kann ihn zu einem Motiv ergänzen. Wie man mit Bleiche sicher umgeht, steht im Beitrag zum Bleach Painting.</li></ul>
+                <p>Auch ein aufgenähter Flicken oder eine Stickerei deckt eine Stelle ab.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Worauf sollte ich vor dem Übermalen achten?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Zuerst das Pflegeetikett lesen und die Faser bestimmen, dann jede Methode an einer unauffälligen Stelle oder einem Reststück testen. Textilfarben sind für bestimmte Fasern gemacht, und was auf Baumwolle hält, deckt auf anderen Stoffen anders.</p>
+                <p>Den Fleck nicht weiter mit Bleiche oder bleichenden Reinigern behandeln, er kann sich dabei vergrößern. Und Bleiche nie mit anderen Reinigern mischen. Die Symbole auf dem Pflegeetikett erklärt der Verband <a href="https://www.ginetex.net/" target="_blank" rel="noopener">GINETEX</a>.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Wie entsteht ein Bleichfleck überhaupt?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Meist durch Spritzer bleichmittelhaltiger Produkte: Reiniger für Bad und WC, Desinfektionsmittel oder Waschmittel mit Bleichzusatz, manchmal auch Hautpflegeprodukte mit bleichenden Wirkstoffen wie Benzoylperoxid.</p>
+                <p>Auf dunklen Textilien fallen die hellen Stellen besonders deutlich auf.</p>
+            </div>
+        </section>
+    </div>
+
+    <nav class="lv-wissen-ende" aria-label="Weiterlesen">
+        <a class="lv-link" href="{% url 'wissen' %}">Alle Wissensbeiträge <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        {% for w in weiter %}<a class="lv-link" href="{% url w.url_name %}">{{ w.titel }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endfor %}
+        {% if motivanfrage_aktiv %}<a class="lv-link" href="{% url 'motiv_anfragen' %}">Motiv anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endif %}
+    </nav>
+</div>
+{% endblock %}
