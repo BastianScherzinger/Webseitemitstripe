@@ -10,6 +10,20 @@
     function lade() {
         var adresse = kasten.getAttribute('data-skript');
         if (!adresse || document.querySelector('script[data-einwilligung-geladen]')) { return; }
+        var ga = kasten.getAttribute('data-ga');
+        if (ga) {
+            /* Google Analytics 4: gtag erst jetzt, nach „Akzeptieren“. Knöpfe mit
+               data-ereignis (z. B. hero_engel, hero_motiv) zählen als Ereignis. */
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () { window.dataLayer.push(arguments); };
+            window.gtag('js', new Date());
+            window.gtag('config', ga);
+            document.querySelectorAll('[data-ereignis]').forEach(function (el) {
+                el.addEventListener('click', function () {
+                    window.gtag('event', el.getAttribute('data-ereignis'));
+                });
+            });
+        }
         var s = document.createElement('script');
         s.src = adresse; s.defer = true; s.setAttribute('data-einwilligung-geladen', '');
         document.head.appendChild(s);

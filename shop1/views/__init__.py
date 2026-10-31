@@ -1,6 +1,6 @@
 """Views-Package – re-exportiert alle View-Funktionen fuer urls.py Kompatibilitaet."""
 
-from .shop import (startseite, werbung_klick, kontakt, kontakt_danke, kontakte, ueber_uns, liefergebiet,
+from .shop import (startseite, werbung_klick, kontakt, kontakt_danke, kontakte, ueber_uns, liefergebiet, bewerten, bewerten_alle,
                    produkte, produkt_detail_slug, produkt_detail_redirect)
 from .auth import login, logout, register, verify_email, resend_verification, delete_account, profil, change_password
 from .cart import warenkorb, add_to_cart, remove_from_cart, update_cart
@@ -9,13 +9,14 @@ from .legal import (impressum, datenschutz, agb, robots_txt, sitemap_xml, llms_t
                     newsletter_bestaetigen, newsletter_abmelden, produkt_uebersicht_redirect, indexnow_schluessel)
 from .gaestebuch import gaestebuch, comment_add, comment_like, comment_delete
 from .motiv import motiv_anfragen, motiv_danke
+from .widerruf import vertrag_widerrufen, widerruf_eingang
 from .betrieb import gesundheit, security_txt
 from .wissen import wissen, wissen_beitrag, WissenFeed, WISSEN_BEITRAEGE, freigegebene_beitraege, uebersicht_indexierbar
 
 __all__ = [
     # shop
     'startseite', 'werbung_klick', 'kontakt', 'kontakt_danke', 'kontakte', 'ueber_uns', 'liefergebiet', 'produkte',
-    'produkt_detail_slug', 'produkt_detail_redirect',
+    'produkt_detail_slug', 'produkt_detail_redirect', 'bewerten', 'bewerten_alle',
     # auth
     'login', 'logout', 'register', 'verify_email', 'resend_verification', 'delete_account', 'profil', 'change_password',
     # cart
@@ -27,6 +28,8 @@ __all__ = [
     'newsletter_bestaetigen', 'newsletter_abmelden', 'produkt_uebersicht_redirect', 'indexnow_schluessel',
     # motiv (Umbau „Nachtausgabe“, 19.09.2026)
     'motiv_anfragen', 'motiv_danke',
+    # widerruf (§ 356a BGB, 30.10.2026)
+    'vertrag_widerrufen', 'widerruf_eingang',
     # betrieb (Gesundheitsadresse, security.txt)
     'gesundheit', 'security_txt',
     # gaestebuch

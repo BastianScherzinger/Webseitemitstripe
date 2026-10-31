@@ -167,6 +167,8 @@ MINDESTWOERTER = {
     '/wissen/upcycling-mode-second-hand-vintage/': 920,
     '/wissen/groesse-bei-einzelstuecken/': 855,
     '/wissen/so-entsteht-dein-motiv/': 380,  # Entwurf; gemessen siehe Logbuch
+    '/wissen/bleach-painting/': 500,  # Entwurf 30.10.2026
+    '/wissen/bleichfleck-uebermalen/': 450,  # Entwurf 30.10.2026
     '/wissen/bestellen-und-bezahlen/': 1110,
     '/wissen/widerruf-und-ruecksendung/': 1015,
     '/wissen/konto-und-daten/': 980,
@@ -318,7 +320,9 @@ class AngabenTest(LuviqTestCase):
         for pfad in ('/kontakt/', '/liefergebiet/'):
             with self.subTest(pfad=pfad):
                 text = sichtbarer_text(self.hole(pfad).content.decode())
-                self.assertIn('1-2 Werktagen versendet', text)
+                # Seit der Gegenprüfung 30.10.2026 (M1): verbindliche Lieferfrist statt „in der Regel“.
+                self.assertIn('Geliefert wird innerhalb von 5 Werktagen', text)
+                self.assertNotRegex(text, r'in der Regel[^.]{0,40}Werktag')
                 self.assertNotIn('1-3 Werktagen', text)
                 self.assertNotIn('Hessens', text)
 
@@ -676,7 +680,7 @@ class Widersprueche02102026Test(LuviqTestCase):
         """EIG128: Der Feed führt die drei freigegebenen Beiträge, nicht die
         Kaufweg-Beiträge, solange der Verkauf aus ist."""
         xml = self.hole('/feed/').content.decode()
-        self.assertEqual(xml.count('<item>'), 3)
+        self.assertEqual(xml.count('<item>'), 5)  # seit Runde 3 (30.10.2026) mit Bleach und Bleichfleck
         self.assertNotIn('/wissen/bestellen-und-bezahlen/', xml)
 
     # EIG78 --------------------------------------------------------------
@@ -744,8 +748,9 @@ class Widersprueche02102026Test(LuviqTestCase):
         self.assertNotIn('data-src="http', html)
         self.assertNotIn('M%C3%BChlenkamp', html)
 
+    @override_settings(GOOGLE_REVIEW_URL='https://www.google.com/maps/search/Luviq+Universe')
     def test_ohne_bewertungsformular_heisst_der_knopf_nicht_bewerten(self):
-        """Der Standardwert von ``GOOGLE_REVIEW_URL`` ist eine Kartensuche;
+        """Steht in ``GOOGLE_REVIEW_URL`` eine Kartensuche (bis 30.10.2026 die Vorgabe),
         „Jetzt bei Google bewerten“ und „Auf Google Maps ansehen“ führten auf
         dasselbe Ziel (EIG87)."""
         text = self._text('/gaestebuch/')

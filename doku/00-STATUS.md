@@ -12,6 +12,8 @@ quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 
 # Stand — Luviq Universe
 
+> **Stand 30.10.2026 abends (Zweig `recht/2026-10-30-luviq-verkaufsstart`, `2ada6ba`, nicht gepusht):** Rechtstexte für den Verkauf fertig (Widerrufsbelehrung nach Muster ab 19.06.2026 + Formular, AGB §§ 1–14, Datenschutz 12 Abschnitte), Widerrufsfunktion `/vertrag-widerrufen/` (§ 356a BGB), Bestellmails mit AGB und Belehrung. Einziger verbleibender Sperrgrund: `LUCID_REGISTRIERNUMMER` (Railway, Nummer aus dem LUCID-Bescheid). Bericht: `Webagentur Scherzinger\Analysen\luviq-2026-10-30-recht\BERICHT.md`; LUCID: `Buero\luisa\arbeitsplatz\recht\LUCID-ANLEITUNG.md`.
+
 > **Stand 30.10.2026 (Zweig `design/2026-10-29-luviq-start`, nicht gepusht, nicht gemergt):** Designumbau P0 bis P6 fertig: neuer Rahmen, Startseite mit Engel-Shirt Nº 006 (A/B-Sieger B), Stücke-Seiten mit Galerie und Band „Vergeben“, Alt-Seiten im neuen System, Designwache neu erfasst, `llms.txt` mit Umlauten, alte Hero-Dateien gelöscht. Das Engel-Shirt legt `luviq_engel_anlegen` in `start.sh` an (im Admin nur inaktiv setzen, nicht löschen). Preis 69 € sichtbar erst mit Verkaufsstart (`VERKAUF_AKTIV` plus Datum ab 01.11.2026). Details: [20-DESIGN.md](20-DESIGN.md), [LOGBUCH.md](../LOGBUCH.md). Merge und Live-Prüfung macht Opus nach Bastians Blick auf die Screens.
 
 *Woran sich der Fortschritt bemisst: am Gesamtstand der letzten Messung. Die Bezugsgröße jedes Bereichs steht in der jeweiligen Datei unter der Überschrift; sie ist bei allen sechs betreuten Seiten dieselbe.*

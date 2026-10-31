@@ -32,7 +32,7 @@
       "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'kontakt' %}#contactpage",
       "name": "Kontakt – Luviq Universe",
       "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'kontakt' %}",
-      "description": "Kontaktformular für Luviq Universe – handbemalte Vintage-Mode und Upcycling-Unikate.",
+      "description": "Kontaktformular für Luviq Universe – handbemalte Unikate, gebraucht oder neu, immer hochwertig.",
       "mainEntity": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
     },
     {
@@ -54,7 +54,7 @@
           "name": "{% if verkauf_aktiv %}Wie lange dauert die Lieferung?{% else %}Kann ich schon bestellen?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Versendet wird deutschlandweit.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten und bereits vergeben; Fragen dazu gehen über dieses Formular.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Geliefert wird innerhalb von {{ lieferfrist }} Werktagen, nur innerhalb Deutschlands; der Versand ist im Preis enthalten.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten als Referenz und nicht zu kaufen; Fragen dazu gehen über dieses Formular.{% endif %}"
           }
         },
         {
@@ -95,6 +95,7 @@
             <p class="lv-lead">Luviq ist {% if verkauf_aktiv %}ein reiner Online-Shop{% else %}ein Label im Aufbau{% endif %} aus Lübeck. Ein Ladengeschäft gibt es nicht, deshalb auch keine Öffnungszeiten.</p>
             <p class="lv-lead">Luisa Brehler erreichst du über das Formular oder per E-Mail an brehlerluisa@gmail.com; geantwortet wird in der Regel {{ antwort }}{% if motivanfrage_aktiv %}; wer ein eigenes Motiv möchte, fragt es über die <a href="{% url 'motiv_anfragen' %}">Motivanfrage</a> an, von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv{% endif %}.</p>
 
+            {% include 'shop1/teile/luisa_foto.html' %}
             <dl class="lv-daten lv-kontaktdaten">
                 <dt>Anschrift</dt><dd>Luviq Universe – {{ anbieterin.name }}<br>{{ anbieterin.strasse }}<br>{{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.land }}</dd>
                 {# Hier stand eine Platzhalter-Telefonnummer. Es gibt keine belegte Nummer im Projekt - auch das Impressum nennt keine -, und eine zu erfinden ist ausgeschlossen. Der Verweis fuehrt auf die Anbieterangaben; sobald eine Nummer vorliegt, wird daraus wieder ein tel:-Link. #}
@@ -177,7 +178,7 @@
         <div class="lv-faq">
             <div>
                 <h3>{% if verkauf_aktiv %}Wie lange dauert die Lieferung?{% else %}Kann ich schon bestellen?{% endif %}</h3>
-                <p>{% if verkauf_aktiv %}Bestellungen werden in der Regel innerhalb von 1-2 Werktagen versendet. Versendet wird deutschlandweit.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten und bereits vergeben; Fragen dazu gehen über dieses Formular.{% endif %}</p>
+                <p>{% if verkauf_aktiv %}Geliefert wird innerhalb von {{ lieferfrist }} Werktagen, nur innerhalb Deutschlands; der Versand ist im Preis enthalten.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten als Referenz und nicht zu kaufen; Fragen dazu gehen über dieses Formular.{% endif %}</p>
             </div>
             <div>
                 <h3>{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h3>

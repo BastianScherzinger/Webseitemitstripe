@@ -174,7 +174,28 @@ class Produkt(models.Model):
         """„Vergeben“ für Archivstücke (nie verkauft, Migration 0022), „Verkauft“ nur für ein Stück,
         das nach einer Bestellung ausverkauft ist."""
         from . import luviq_daten
+        if self.ist_referenz:
+            return luviq_daten.REFERENZ_WORT
         return luviq_daten.VERGEBEN_WORT if self.vergeben else luviq_daten.VERKAUFT_WORT
+
+    @property
+    def ist_referenz(self):
+        """Eines der fünf ersten Stücke (Nº 001–005): Beispiel/Referenz, nie verkauft (Bastian 30.10.2026)."""
+        from . import luviq_daten
+        # Bestand 0 heißt: über den Shop verkauft – dann nie „Referenz“.
+        return self.vergeben and self.nummer in luviq_daten.REFERENZ_NUMMERN and self.lagerbestand >= 1
+
+    @property
+    def ist_neu(self):
+        """Zustand beginnt mit „Neu“ (z. B. Engel-Shirt Nº 006): Schema NewCondition, kein Second-Hand-Hinweis."""
+        return (self.zustand or '').strip().lower().startswith('neu')
+
+    @property
+    def bild_ist_ki(self):
+        """Das Hauptbild ist ein KI-Studiobild aus einem echten Foto (``luviq_daten.KI_BILD_PRAEFIXE``)."""
+        from . import luviq_daten
+        return bool(not self.bild and self.bild_statisch
+                    and self.bild_statisch.startswith(luviq_daten.KI_BILD_PRAEFIXE))
 
     @property
     def hat_bild(self):
@@ -184,28 +205,58 @@ class Produkt(models.Model):
     def hauptbild(self):
         """Hauptbild als ``produktbilder.Bild`` (oder ``None``)."""
         from . import produktbilder
-        alt = f'{self.name} – handbemaltes Upcycling-Unikat von Luviq Universe'
+        alt = f'{self.name} – handbemaltes Unikat von Luviq Universe'
+        if self.bild_ist_ki:
+            alt = f'Studiobild (KI) aus dem echten Foto: {alt}'
         return produktbilder.bild_aus(self.bild, self.bild_statisch, self.bild_breite, self.bild_hoehe, alt)
 
     def galerie(self):
-        """Alle Bilder des Stücks in Reihenfolge: Hauptbild, dann die Zusatzbilder."""
+        """Alle Bilder des Stücks in Reihenfolge: Hauptbild, dann die Zusatzbilder.
+
+        Enthält die Galerie ein KI-Studiobild, bekommt **jedes** Bild eine sichtbare
+        Bildunterschrift („Studiobild (KI) aus dem echten Foto“ bzw. „Echtes Foto“ oder den Text
+        aus ``ProduktBild.unterschrift``) – wer wischt, soll bei jedem Bild wissen, was es ist
+        (Runde 3, 30.10.2026). Galerien ohne KI-Bild bleiben ohne Unterschrift wie bisher.
+        """
+        from dataclasses import replace
+        from . import luviq_daten
         bilder = []
         haupt = self.hauptbild()
         if haupt:
-            bilder.append(haupt)
+            bilder.append(replace(haupt, ist_ki=self.bild_ist_ki))
         if self.pk:
             from . import produktbilder
             for nr, extra in enumerate(self.zusatzbilder.all(), start=2):
                 alt = extra.alt or f'{self.name} – Foto {nr}'
+                if extra.ist_ki and not alt.startswith(luviq_daten.KI_UNTERSCHRIFT):
+                    alt = f'{luviq_daten.KI_UNTERSCHRIFT}: {alt}'
                 bild = produktbilder.bild_aus(extra.bild, extra.bild_statisch, extra.breite, extra.hoehe, alt)
                 if bild:
-                    bilder.append(bild)
+                    bilder.append(replace(bild, ist_ki=extra.ist_ki, unterschrift=extra.unterschrift))
+        if any(b.ist_ki for b in bilder):
+            bilder = [b if b.unterschrift else replace(
+                b, unterschrift=luviq_daten.KI_UNTERSCHRIFT if b.ist_ki else luviq_daten.ECHT_UNTERSCHRIFT)
+                for b in bilder]
+        else:
+            bilder = [replace(b, unterschrift='') for b in bilder]
         return bilder
 
     @property
+    def pflichtangaben_fehlen(self):
+        """Für den Verkauf fehlt eine Pflichtangabe (Gegenprüfung M3, 30.10.2026).
+
+        Neue Textilien brauchen die Faserzusammensetzung vor dem Kauf (VO (EU) Nr. 1007/2011
+        Art. 16 Abs. 1): Ein Stück mit Zustand „Neu…“ und leerem ``material`` ist nicht
+        kaufbar, bis das Feld im Admin gefüllt ist (z. B. „100 % Baumwolle“). Bei gebrauchten
+        Stücken wird die Angabe gezeigt, wenn sie bekannt ist."""
+        return self.ist_neu and not (self.material or '').strip()
+
+    @property
     def kaufbar(self):
-        """Darf in den Warenkorb und in eine Bestellung: aktiv, nicht vergeben, vorrätig."""
-        return self.aktiv and not self.vergeben and self.lagerbestand >= 1
+        """Darf in den Warenkorb und in eine Bestellung: aktiv, nicht vergeben, vorrätig,
+        Pflichtangaben vollständig (``pflichtangaben_fehlen``)."""
+        return (self.aktiv and not self.vergeben and self.lagerbestand >= 1
+                and not self.pflichtangaben_fehlen)
 
     def save(self, *args, **kwargs):
         if self.nummer is None:
@@ -342,6 +393,14 @@ class ProduktBild(models.Model):
                                      help_text='Wie bei Produkt: „pfad-{w}.webp@480,720,960#960x1200“.')
     alt = models.CharField('Bildbeschreibung', max_length=200, blank=True,
                            help_text='Was auf dem Foto zu sehen ist (für Screenreader und Google).')
+    ist_ki = models.BooleanField(
+        'KI-Studiobild', default=False,
+        help_text='Haken, wenn das Bild ein KI-Studiobild aus einem echten Foto ist. Dann sagen '
+                  'Bildunterschrift, Alt-Text und Sitemap das ehrlich.')
+    unterschrift = models.CharField(
+        'Bildunterschrift', max_length=120, blank=True,
+        help_text='Kurz, ehrlich, z. B. „Echtes Foto: vorne“. Leer: „Echtes Foto“ bzw. '
+                  '„Studiobild (KI) aus dem echten Foto“ – sichtbar nur in Galerien mit KI-Bild.')
     breite = models.PositiveIntegerField(null=True, blank=True)
     hoehe = models.PositiveIntegerField(null=True, blank=True)
     position = models.PositiveIntegerField(default=0)
@@ -812,3 +871,37 @@ class Motivanfrage(models.Model):
         if self.email:
             teile.append(self.email)
         return ' · '.join(teile)
+
+
+class Widerruf(models.Model):
+    """Eine Widerrufserklärung über die Widerrufsfunktion „Vertrag widerrufen“ (§ 356a BGB).
+
+    Seit 19.06.2026 Pflicht bei Online-Verträgen mit Verbrauchern. Gespeichert
+    wird **jede** Erklärung, die die Pflichtangaben trägt (Name, Angaben zum
+    Vertrag, E-Mail für die Eingangsbestätigung) – auch wenn sie zu keiner
+    Bestellung passt: ein Widerruf darf nicht an einer Tippfehler-Nummer
+    scheitern. ``bestellung`` ist gesetzt, wenn Nummer **und** E-Mail zu einer
+    Bestellung passen; sonst ordnet Luisa sie von Hand zu.
+    ``eingegangen_am`` ist der Eingangszeitpunkt, der in der Eingangsbestätigung
+    steht (§ 356a Abs. 4 BGB). Löschen erst nach Ablauf der Aufbewahrungsfrist.
+    """
+    STATUS = [('neu', 'neu'), ('in_arbeit', 'in Bearbeitung'), ('erledigt', 'erledigt (erstattet)')]
+
+    name = models.CharField(max_length=200, verbose_name='Name')
+    vertrag = models.CharField(max_length=200, verbose_name='Bestellnummer / Vertrag')
+    umfang = models.TextField(blank=True, verbose_name='Widerrufene Stücke (leer = ganze Bestellung)')
+    email = models.EmailField(max_length=254, verbose_name='E-Mail für die Eingangsbestätigung')
+    bestellung = models.ForeignKey('Order', null=True, blank=True, on_delete=models.SET_NULL,
+                                   related_name='widerrufe', verbose_name='Zugeordnete Bestellung')
+    spamverdacht = models.BooleanField(default=False, verbose_name='Spamverdacht (keine Mails verschickt)')
+    bestaetigung_gestartet = models.BooleanField(default=False, verbose_name='Eingangsbestätigung angestoßen')
+    status = models.CharField(max_length=12, choices=STATUS, default='neu', verbose_name='Status')
+    eingegangen_am = models.DateTimeField(auto_now_add=True, verbose_name='Eingegangen am')
+
+    class Meta:
+        verbose_name = 'Widerruf'
+        verbose_name_plural = 'Widerrufe'
+        ordering = ['-eingegangen_am']
+
+    def __str__(self):
+        return f'Widerruf {self.vertrag} – {self.name}'

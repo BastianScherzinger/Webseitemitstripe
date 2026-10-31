@@ -43,20 +43,26 @@ class StartsperreTest(SimpleTestCase):
         gruende = startsperre.sperrgruende(heute=VOR_START, umgebung={})
         self.assertTrue(any('01.11.2026' in g for g in gruende))
 
-    def test_die_ablagen_im_code_sind_noch_leer(self):
-        """Stand 29.10.: Kein Generator-Text eingefügt – der Verkauf bleibt zu."""
+    def test_die_ablagen_im_code_sind_gefuellt(self):
+        """Stand 30.10.: AGB, Widerrufsbelehrung und Datenschutz stehen in der Ablage; nach dem
+        01.11. und mit LUCID-Nummer bleibt kein Sperrgrund – ohne Nummer bleibt der Shop zu."""
         for name in startsperre.PFLICHT_TEXTE:
             with self.subTest(text=name):
-                self.assertTrue(startsperre.generator_text_fehlt(name))
-        self.assertTrue(startsperre.sperrgruende(heute=NACH_START, umgebung=VOLL))
+                self.assertFalse(startsperre.generator_text_fehlt(name))
+        self.assertEqual(startsperre.sperrgruende(heute=NACH_START, umgebung=VOLL), [])
+        ohne = startsperre.sperrgruende(heute=NACH_START, umgebung={})
+        self.assertEqual(len(ohne), 1)
+        self.assertIn('LUCID_REGISTRIERNUMMER', ohne[0])
 
     def test_jeder_pflichtpunkt_sperrt_fuer_sich(self):
         alle = _ordner_mit('agb', 'widerruf', 'datenschutz')
         gruende = startsperre.sperrgruende(heute=NACH_START, umgebung=VOLL, ordner=alle)
-        # Was der Code noch nicht kann, bleibt als Grund stehen.
-        self.assertEqual(len(gruende), 2)
-        self.assertTrue(any('Versandkosten' in g for g in gruende))
-        self.assertTrue(any('356a' in g for g in gruende))
+        # Runde 3: Versandkosten gebaut; 30.10.: Widerrufsfunktion gebaut – kein Code-Grund mehr.
+        self.assertEqual(gruende, [])
+        from unittest import mock
+        with mock.patch.object(startsperre, 'WIDERRUFSFUNKTION_VORHANDEN', False):
+            ohne_funktion = startsperre.sperrgruende(heute=NACH_START, umgebung=VOLL, ordner=alle)
+        self.assertTrue(any('356a' in g for g in ohne_funktion))
         ohne_lucid = startsperre.sperrgruende(heute=NACH_START, umgebung={}, ordner=alle)
         self.assertTrue(any('LUCID' in g for g in ohne_lucid))
         ohne_agb = startsperre.sperrgruende(heute=NACH_START, umgebung=VOLL,
@@ -149,9 +155,11 @@ class ImpressumTest(LuviqTestCase):
         for alt in ('Grünberger', '36304', '§ 5 TMG', 'ec.europa.eu/consumers/odr'):
             self.assertNotIn(alt, html)
 
-    def test_die_ablagen_gelten_als_leer(self):
+    def test_die_ablagen_stand_30_10(self):
+        """Seit 30.10.2026: AGB, Widerrufsbelehrung und Datenschutz gefüllt; das Impressum
+        bleibt die bewährte Seite (keine eigene Ablage nötig)."""
         self.assertEqual(rechtstexte_vorhanden(),
-                         {'impressum': False, 'datenschutz': False, 'agb': False, 'widerruf': False})
+                         {'impressum': False, 'datenschutz': True, 'agb': True, 'widerruf': True})
 
 
 class EinwilligungTest(LuviqTestCase):
@@ -178,6 +186,21 @@ class EinwilligungTest(LuviqTestCase):
         self.assertIn('Cookie-Einstellungen', html)
 
 
+    @override_settings(EINWILLIGUNG_DIENST='Google Analytics',
+                       EINWILLIGUNG_SKRIPT='https://www.googletagmanager.com/gtag/js?id=G-TEST1234',
+                       GA_MESSUNG_ID='G-TEST1234')
+    def test_google_analytics_nur_nach_einwilligung_und_in_der_datenschutzerklaerung(self):
+        """Bastian 30.10.2026: GA4 für Luviq – gtag nie im HTML, nur als Adresse; die
+        Datenschutzerklärung nennt den Dienst, sobald er eingestellt ist."""
+        html = self.hole('/').content.decode()
+        self.assertIn('data-ga="G-TEST1234"', html)
+        self.assertNotIn('src="https://www.googletagmanager.com', html)
+        self.assertNotIn("gtag('config'", html)
+        self.assertIn('Google Analytics', self.hole('/datenschutz/').content.decode())
+
+    def test_ohne_mess_id_kein_analytics_absatz(self):
+        self.assertNotIn('id="ds-analytics"', self.hole('/datenschutz/').content.decode())
+
 class AngebotMitVerkaufTest(LuviqTestCase):
     """Mit Verkauf: gebraucht, § 19-Satz statt „Endpreis", Herstellerangaben (GPSR)."""
 
@@ -191,7 +214,9 @@ class AngebotMitVerkaufTest(LuviqTestCase):
     def test_preisangabe_und_herstellerangaben(self):
         html = self.hole(self.produkt.get_absolute_url()).content.decode()
         self.assertIn('Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.', html)
-        self.assertIn('Versandkosten', html)
+        # Runde 3: Versand im Preis enthalten, die Angabe steht am Preis (vorher „zuzüglich Versandkosten“).
+        self.assertIn('inkl. Versand innerhalb Deutschlands', html)
+        self.assertNotIn('Zuzüglich', html)
         self.assertNotIn('inkl. MwSt', html)
         self.assertIn('Herstellerin: Luisa Brehler', html)
         self.assertIn('Mühlenkamp 5, 23569 Lübeck', html)
@@ -215,7 +240,7 @@ class AngebotMitVerkaufTest(LuviqTestCase):
         antwort = self.hole('/checkout/')
         self.assertEqual(antwort.status_code, 200)
         html = antwort.content.decode()
-        self.assertIn('Startstueck · Unikat, gebraucht, handbemalt', html)
+        self.assertIn('Startstueck · Gebraucht (Second Hand), von Hand bemalt, 1-of-1', html)
         self.assertIn('Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.', html)
         self.assertIn('Zahlungspflichtig bestellen', html)
         self.assertNotIn('Verschlüsselung (Zahlungsart)', html)

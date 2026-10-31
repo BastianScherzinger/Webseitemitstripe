@@ -18,8 +18,8 @@ Angabe ist belegt und keine ist neu erfunden:
   ohnehin auf jeder Seite ausliefert (``#luisa``, ``#organization``) – ohne
   Autor fehlt das E-E-A-T-Signal, auf das Antwortmaschinen achten.
 
-Kein ``image``: die Beiträge tragen kein eigenes Bild, und das Shoplogo wäre
-keines. Der Knoten steht im ``<head>``, ändert also nichts am sichtbaren
+``image`` nur, wenn der Beitrag ein eigenes echtes Foto trägt (``beitrag.bild`` im
+Register, Runde 3); das Shoplogo wäre keines. Der Knoten steht im ``<head>``, ändert also nichts am sichtbaren
 Aufbau.{% endcomment %}
 <script type="application/ld+json">
 {
@@ -30,7 +30,8 @@ Aufbau.{% endcomment %}
   "description": "{{ beitrag.kurz|escapejs }}",
   "datePublished": "{{ beitrag.veroeffentlicht }}",{% if seite %}
   "dateModified": "{{ seite.stand }}",{% endif %}
-  "inLanguage": "de-DE",
+  "inLanguage": "de-DE",{% if beitragsbild %}
+  "image": "{{ request.scheme }}://{{ request.get_host }}{{ beitragsbild.original }}",{% endif %}
   "author": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
   "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
   "isPartOf": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#website"},

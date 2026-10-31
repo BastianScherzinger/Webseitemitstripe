@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% comment %}Veröffentlicht 30.10.2026 (Runde 3, freigegeben=True in views/wissen.py), vorher Entwurf. Sicherheitsangaben gegen Herstellerangaben und Gesundheitsbehörden geprüft (Quellen im Register views/wissen.py). Nur allgemein belegbares Wissen plus das, was die Seite schon über Luisas Arbeitsweise sagt (luviq_daten.SCHRITTE, DAUER, PFLEGE); keine Zahl, kein Stoff, keine Zeit und kein Preis, die nicht schon auf der Seite stehen. Schema-Daten mit Uhrzeit und +01:00 (WISSEN.md).{% endcomment %}
+{% block title %}Was ist Bleach Painting? Einfach erklärt | Luviq Lübeck{% endblock %}
+{% block meta_description %}Bleach Painting erklärt: Malen mit Bleiche auf dunklem Stoff, wie die Farbe herausgezogen wird und was die Technik von Druck unterscheidet. Jetzt lesen.{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}Was ist Bleach Painting? – Luviq Universe, Lübeck{% endblock %}
+{% block og_description %}Malen mit Bleiche auf dunklem Stoff: wie Bleach Painting funktioniert, welche Stoffe passen, was beim Umgang mit Bleiche gilt und wie Luisa Brehler arbeitet.{% endblock %}
+{% block twitter_title %}Was ist Bleach Painting? – Luviq Universe{% endblock %}
+{% block twitter_description %}Bleichmalerei erklärt: Farbe aus dem Stoff ziehen statt aufdrucken, Technik, Stoffe, Sicherheit.{% endblock %}
+{% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "@id": "{{ seiten_url }}#breadcrumb",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Wissen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen' %}"},
+    {"@type": "ListItem", "position": 3, "name": "Was ist Bleach Painting?", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen_bleach' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block schema_ld %}
+{% include 'shop1/teile/wissen_article_ld.html' %}
+{% comment %}Jede Frage steht wortgleich als h2 auf der Seite, jede Antwort wortgleich als erster Absatz unter dieser h2 (test_geo). Keine Angaben zu Haltbarkeit oder Preis, Dauer nur als belegter Erfahrungswert.{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "{{ seiten_url }}#faq",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Was ist Bleach Painting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bleach Painting, auf Deutsch Bleichmalerei, ist eine Technik, bei der Bleiche mit dem Pinsel auf dunklen, gefärbten Stoff gemalt wird. Die Bleiche nimmt dort die Farbe weg, und die Linien und Flächen erscheinen heller als der Stoff."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie funktioniert Bleach Painting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Die Bleiche greift den Farbstoff im Gewebe an und baut ihn ab, an den bemalten Stellen wird der Stoff dadurch heller. Wo der Pinsel nicht war, bleibt die Farbe, wie sie war."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Worin unterscheidet sich Bleach Painting von Druck?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ein Druck legt Farbe auf den Stoff, Bleach Painting nimmt Farbe aus dem Stoff. Beim gebleichten Motiv liegt deshalb nichts auf der Oberfläche, und jede Linie trägt die Spuren der Hand."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Auf welchen Stoffen funktioniert Bleach Painting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Am besten eignet sich dunkel gefärbte Baumwolle, weil sich ihr Farbstoff gut herauslösen lässt und der Kontrast zum hellen Motiv deutlich ist. Welche Fasern in einem Teil stecken, steht auf dem Pflegeetikett."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie entsteht bei Luviq ein Bleach-Painting-Motiv?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In fünf Schritten: das Design finden, das Motiv als Skizze mit Bleistift auf Papier festhalten, es direkt auf dem Teil vorzeichnen, die Bleiche mit dem Pinsel auftragen und das Stück waschen. Zum Schluss wird es fotografiert."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was muss man beim Umgang mit Bleiche beachten?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bleiche reizt Haut und Augen, ihre Dämpfe reizen die Atemwege: deshalb mit Handschuhen und Schutzbrille arbeiten und gut lüften. Bleiche nie mit anderen Reinigern mischen, vor allem nicht mit säurehaltigen wie Essig oder WC-Reiniger und nicht mit ammoniakhaltigen, weil dabei giftige Gase entstehen: Chlorgas oder Chloramine."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Muss man Bleiche nach dem Malen neutralisieren?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Gründlich ausspülen und waschen ist das Wichtigste, damit keine Bleiche im Stoff bleibt und weiterwirkt. Wer zusätzlich neutralisieren will, nimmt ein dafür gemachtes Antichlor-Mittel wie Natriumthiosulfat oder verdünntes Wasserstoffperoxid nach Herstellerangabe, aber nie Essig."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie pflege ich ein Teil mit Bleach-Motiv?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Auf links bei 30 °C waschen, nicht in den Trockner, keinen Weichspüler nehmen und nur von links bügeln."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='wissen' %}{% endblock %}
+
+{% block content %}
+<div class="lv-seite lv-wissen">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li><a href="{% url 'wissen' %}">Wissen</a></li><li aria-current="page">Bleach Painting</li></ol></nav>
+
+    <header class="lv-wissen-kopf">
+        <h1 class="lv-serif">Was ist Bleach Painting?</h1>
+        <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
+        <p class="lv-wissen-lead">Bleach Painting, auf Deutsch Bleichmalerei, heißt: Mit Bleiche und Pinsel wird die Farbe aus dunklem Stoff herausgezogen, sodass ein helles Motiv entsteht – nichts wird aufgedruckt. Hier steht, wie das funktioniert und wie Luisa Brehler in Lübeck dabei vorgeht.</p>
+        {% if beitragsbild %}<figure class="lv-wissen-bild"><img src="{{ beitragsbild.src }}" srcset="{{ beitragsbild.srcset }}" sizes="(min-width: 900px) 420px, 100vw" width="{{ beitragsbild.breite }}" height="{{ beitragsbild.hoehe }}" alt="{{ beitragsbild.alt }}" loading="lazy" decoding="async"><figcaption>{{ beitragsbild.unterschrift }}</figcaption></figure>{% endif %}
+    </header>
+
+    <div class="lv-wissen-liste">
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Was ist Bleach Painting?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Bleach Painting, auf Deutsch Bleichmalerei, ist eine Technik, bei der Bleiche mit dem Pinsel auf dunklen, gefärbten Stoff gemalt wird. Die Bleiche nimmt dort die Farbe weg, und die Linien und Flächen erscheinen heller als der Stoff.</p>
+                <p>Es wird also keine Farbe aufgetragen, sondern Farbe entfernt: Das Motiv entsteht aus dem Stoff selbst. Bei Luviq ist das die Technik hinter jedem Stück, Luisa Brehler malt die Motive in Lübeck von Hand mit Pinsel und Bleiche.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Wie funktioniert Bleach Painting?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Die Bleiche greift den Farbstoff im Gewebe an und baut ihn ab, an den bemalten Stellen wird der Stoff dadurch heller. Wo der Pinsel nicht war, bleibt die Farbe, wie sie war.</p>
+                <p>Gemalt wird in der Regel mit Chlorbleiche, also Natriumhypochlorit, wie es in Haushaltsbleiche steckt; Sauerstoffbleiche wirkt auf die meisten Farbstoffe deutlich schwächer und eignet sich dafür kaum. Wie hell die gemalte Stelle wird, hängt vom Farbstoff und vom Gewebe ab. Auf schwarzem Stoff wird das Motiv meist nicht weiß, sondern geht in einen warmen Beige- bis Rostton über; bei Luviq heißt dieser Ton Bleich-Beige, etwa beim Engel-Shirt. Bei anderen Farben fällt der Ton anders aus.</p>
+                <p>Ein Strich lässt sich nicht zurücknehmen: Was die Bleiche einmal aus dem Stoff gezogen hat, kommt nicht wieder. Deshalb wird das Motiv bei Luviq vorher auf Papier und auf dem Teil festgelegt und nicht erst beim Malen.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Worin unterscheidet sich Bleach Painting von Druck?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Ein Druck legt Farbe auf den Stoff, Bleach Painting nimmt Farbe aus dem Stoff. Beim gebleichten Motiv liegt deshalb nichts auf der Oberfläche, und jede Linie trägt die Spuren der Hand.</p>
+                <p>Auch die Wiederholbarkeit ist eine andere: Ein Druck lässt sich beliebig oft wiederholen, ein mit dem Pinsel gemaltes Motiv wird nie ganz gleich. Woran man Handbemalung erkennt, steht im Beitrag <a href="{% url 'wissen_upcycling' %}">Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?</a>.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Auf welchen Stoffen funktioniert Bleach Painting?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Am besten eignet sich dunkel gefärbte Baumwolle, weil sich ihr Farbstoff gut herauslösen lässt und der Kontrast zum hellen Motiv deutlich ist. Welche Fasern in einem Teil stecken, steht auf dem Pflegeetikett.</p>
+                <p>Nicht jede Faser verträgt Bleichmittel auf Chlorbasis: Wolle, Seide und Elasthan werden davon angegriffen, und Kunstfasern wie Polyester lassen sich meist kaum aufhellen, und ein durchgestrichenes Dreieck auf dem Pflegeetikett heißt, dass nicht gebleicht werden darf. Die Symbole erklärt der Verband <a href="https://www.ginetex.net/" target="_blank" rel="noopener">GINETEX</a>, der internationale Verband für Textilpflegekennzeichnung.</p>
+                <p>Aus welchem Stoff ein Stück von Luviq ist, steht auf seiner Seite; {% if engel_url %}das <a href="{{ engel_url }}">Engel-Shirt</a>{% else %}das Engel-Shirt{% endif %} zum Beispiel besteht aus 100 % Baumwolle. Wer etwas zum Material eines bestimmten Stücks wissen möchte, fragt über das <a href="{% url 'kontakt' %}">Kontaktformular</a> nach.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Wie entsteht bei Luviq ein Bleach-Painting-Motiv?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">In fünf Schritten: das Design finden, das Motiv als Skizze mit Bleistift auf Papier festhalten, es direkt auf dem Teil vorzeichnen, die Bleiche mit dem Pinsel auftragen und das Stück waschen. Zum Schluss wird es fotografiert.</p>
+                <p>Die Motive entstehen frei von Hand. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv; das ist ein Erfahrungswert und keine feste Zusage.{% if motivanfrage_aktiv %} Wer ein eigenes Motiv möchte, beschreibt es unter <a href="{% url 'motiv_anfragen' %}">Motiv anfragen</a>.{% endif %}</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Was muss man beim Umgang mit Bleiche beachten?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Bleiche reizt Haut und Augen, ihre Dämpfe reizen die Atemwege: deshalb mit Handschuhen und Schutzbrille arbeiten und gut lüften. Bleiche nie mit anderen Reinigern mischen, vor allem nicht mit säurehaltigen wie Essig oder WC-Reiniger und nicht mit ammoniakhaltigen, weil dabei giftige Gase entstehen: Chlorgas oder Chloramine.</p>
+                <p>Bei Kontakt mit Haut oder Augen sofort mit reichlich Wasser spülen und bei Beschwerden ärztlichen Rat einholen; bei Atemnot nach dem Einatmen von Dämpfen an die frische Luft und den Notruf 112 wählen. Bleiche gehört in die Originalflasche, nicht in Trinkgefäße, und Kinder und Haustiere gehören nicht in die Nähe.</p>
+                <p>Diese Hinweise sind allgemein gehalten und ersetzen nicht die Angaben auf der Verpackung und im Sicherheitsdatenblatt des jeweiligen Produkts. Wer selbst probieren möchte, tut das zuerst an einem Stück, das nicht mehr gebraucht wird, und auf eigene Verantwortung.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Muss man Bleiche nach dem Malen neutralisieren?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Gründlich ausspülen und waschen ist das Wichtigste, damit keine Bleiche im Stoff bleibt und weiterwirkt. Wer zusätzlich neutralisieren will, nimmt ein dafür gemachtes Antichlor-Mittel wie Natriumthiosulfat oder verdünntes Wasserstoffperoxid nach Herstellerangabe, aber nie Essig.</p>
+                <p>Bleiche, die im Stoff bleibt, arbeitet weiter und kann die Fasern mit der Zeit schwächen. Bei Luviq wird jedes Stück nach dem Malen gewaschen, das ist der letzte Schritt vor dem Foto. Essig taugt zum Neutralisieren nicht: Säure und Chlorbleiche setzen zusammen Chlorgas frei. Auch Wasserstoffperoxid nur verdünnt und getrennt von der Flasche mit Bleiche verwenden, nie die beiden Flaschen mischen.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Wie pflege ich ein Teil mit Bleach-Motiv?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Auf links bei 30 °C waschen, nicht in den Trockner, keinen Weichspüler nehmen und nur von links bügeln.</p>
+                <p>Die ausführlichen Regeln stehen im Beitrag <a href="{% url 'wissen_pflege' %}">Wie pflege ich handbemalte Kleidung?</a>. Wie lange ein Motiv schön bleibt, hängt von Stoff, Farbe und Pflege ab; eine Zahl dafür nennt diese Seite bewusst nicht.</p>
+            </div>
+        </section>
+    </div>
+
+    <nav class="lv-wissen-ende" aria-label="Weiterlesen">
+        <a class="lv-link" href="{% url 'wissen' %}">Alle Wissensbeiträge <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        {% for w in weiter %}<a class="lv-link" href="{% url w.url_name %}">{{ w.titel }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endfor %}
+        {% if motivanfrage_aktiv %}<a class="lv-link" href="{% url 'motiv_anfragen' %}">Motiv anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endif %}
+    </nav>
+</div>
+{% endblock %}

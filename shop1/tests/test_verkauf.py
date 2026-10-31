@@ -343,13 +343,13 @@ class ArchivOhneVerkaufTest(_Grundlage):
         for pfad in ('/', '/produkte/', self.produktseite):
             with self.subTest(pfad=pfad):
                 self.assertContains(self.hole(pfad), nummer)
-                self.assertContains(self.hole(pfad), 'vergeben')
+                self.assertContains(self.hole(pfad), 'Vergeben')
         self.assertContains(self.hole(self.produktseite), f'{nummer} · Archiv')
         produktseite = self.hole(self.produktseite).content.decode()
-        self.assertIn('Dieses Stück ist bereits vergeben. Neue Stücke gibt es mit dem ersten '
-                      'Drop – trag dich in die Warteliste ein', produktseite)
+        self.assertIn('Dieses Stück ist eines der ersten Referenzstücke und bereits vergeben. Neue '
+                      'Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein', produktseite)
         self.assertIn('aus dem Archiv der bisherigen Stücke', produktseite)
-        self.assertIn('Bereits vergeben · Neue Stücke mit dem ersten Drop', produktseite)
+        self.assertIn('Referenzstück, bereits vergeben · Neue Stücke mit dem ersten Drop', produktseite)
 
     def test_keine_seite_behauptet_kommenden_drop_oder_verkauf(self):
         for pfad in self.seiten() + ['/llms.txt', '/feed/']:
@@ -369,7 +369,7 @@ class ArchivOhneVerkaufTest(_Grundlage):
     def test_ueberschriften_heissen_archiv(self):
         self.assertContains(self.hole('/produkte/'), 'id="archiv-titel">Das Archiv</h1>')
         self.assertContains(self.hole('/'), 'id="archiv-titel">Das Archiv</h2>')
-        self.assertContains(self.hole('/'), 'Diese Stücke sind vergeben')
+        self.assertContains(self.hole('/'), 'Diese ersten Stücke zeigen als Referenz')
 
     def test_llms_txt_nennt_das_archiv(self):
         llms = self.hole('/llms.txt').content.decode()
@@ -402,7 +402,7 @@ class ArchivMitVerkaufTest(_Grundlage):
     def test_titel_mit_kaufen_und_antwortsatz_mit_preis(self):
         html = self.hole(self.produktseite).content.decode()
         self.assertIn('Schalterstueck kaufen – Luviq Universe, Lübeck', html)
-        self.assertIn('Schalterstueck ist ein handbemaltes 1-of-1 Unikat von Luisa Brehler aus '
+        self.assertIn('„Schalterstueck“ ist ein von Hand gemaltes Unikat von Luisa Brehler aus '
                       'Lübeck und kostet 87,50 €', html)
         self.assertNotIn('Archiv', self.produkt.meta_description)
 

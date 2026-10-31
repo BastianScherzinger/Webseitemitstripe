@@ -21,8 +21,10 @@ from pathlib import Path
 #: Über ``VERKAUF_FRUEHESTENS`` (ISO-Datum) verschiebbar, nie früher als nötig.
 VERKAUF_FRUEHESTENS_VORGABE = '2026-11-01'
 
-#: Ablage der Rechtstexte aus dem Generator (Agenturregel 3: nur Generator plus
-#: Freigabe von Luisa). Jede Datei enthält bis dahin nur den Platzhalter.
+#: Ablage der Rechtstexte. Bis 29.10.2026 sollten sie aus einem Generator kommen
+#: (Agenturregel 3); seit 30.10.2026 schreibt die Agentur sie selbst, belegt jede
+#: Aussage gegen Code und Gesetz und lässt sie unabhängig gegenprüfen (Bericht:
+#: Analysen\luviq-2026-10-30-recht\BERICHT.md). Eine leere Ablage trägt den Platzhalter.
 GENERATOR_ORDNER = Path(__file__).resolve().parent / 'templates' / 'shop1' / 'legal' / 'generator'
 
 #: Kennwort in einer noch leeren Ablage. Wer den Generator-Text einfügt,
@@ -33,19 +35,19 @@ PLATZHALTER = 'GENERATOR-TEXT-FEHLT'
 #: auch ohne Verkauf online und werden ersetzt, sobald Luisa freigibt; für den
 #: Verkauf ist der Datenschutztext mit Shop, Zahlung und Versand Pflicht.
 PFLICHT_TEXTE = {
-    'agb': 'AGB aus dem Generator',
-    'widerruf': 'Widerrufsbelehrung mit Muster-Widerrufsformular aus dem Generator',
-    'datenschutz': 'Datenschutzerklärung mit Shop, Zahlung und Versand aus dem Generator',
+    'agb': 'AGB',
+    'widerruf': 'Widerrufsbelehrung mit Muster-Widerrufsformular',
+    'datenschutz': 'Datenschutzerklärung mit Shop, Zahlung und Versand',
 }
 
 #: Was der Code selbst noch nicht kann. Wer es baut, setzt den Wert auf True
 #: (mit Test) – dann fällt der Grund aus der Liste.
 #: Versandkosten: Bestellweg und Preisangabe kennen keine Versandkosten; ein
 #: Betrag (oder „versandkostenfrei") ist Luisas Entscheidung (PAngV § 6).
-VERSANDKOSTEN_IM_BESTELLWEG = False
+VERSANDKOSTEN_IM_BESTELLWEG = True  # Runde 3 (30.10.2026): Versand im Preis enthalten (luviq_daten.VERSAND['kosten'] = 0), Preisangabe „inkl. Versand“
 #: Elektronische Widerrufsfunktion („Vertrag widerrufen", § 356a BGB, seit
 #: 19.06.2026 für Online-Verträge mit Verbrauchern).
-WIDERRUFSFUNKTION_VORHANDEN = False
+WIDERRUFSFUNKTION_VORHANDEN = True  # 30.10.2026: /vertrag-widerrufen/ (views/widerruf.py, Modell Widerruf, Mails, Tests test_widerruf)
 
 
 def fruehester_tag():

@@ -7,7 +7,7 @@
 {% block og_title %}Widerruf und Rücksendung – Luviq Universe, Lübeck{% endblock %}
 {% block og_description %}Vierzehn Tage Widerrufsrecht, auch für handbemalte Einzelstücke: Frist, Anschrift, Reklamation und was vorab zu klären ist.{% endblock %}
 {% block twitter_title %}Widerruf und Rücksendung – Luviq Universe{% endblock %}
-{% block twitter_description %}Vierzehn Tage Frist, Anschrift für die Rücksendung, Unregelmäßigkeiten der Bemalung und echte Mängel.{% endblock %}
+{% block twitter_description %}Vierzehn Tage Frist, Online-Widerruf, Rücksendekosten, Unregelmäßigkeiten der Bemalung und echte Mängel.{% endblock %}
 {% comment %}Freigabe der Betreiberin: siehe views/wissen.py. Die Bedingung steht IM Block, nicht darum herum (CLAUDE.md).{% endcomment %}
 {% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
 
@@ -28,7 +28,7 @@
 
 {% block schema_ld %}
 {% include 'shop1/teile/wissen_article_ld.html' %}
-{% comment %}Jede Frage steht wortgleich als h2 auf der Seite, jede Antwort wortgleich als erster Absatz unter dieser h2 - test_geo prueft beides. Belegt aus AGB § 2, § 3, § 4 und § 5 (legal/agb.html), Anschrift und E-Mail aus Impressum und Datenschutzerklaerung, Ablauf der Vorab-Ueberweisung aus views/checkout.py. Was die Seite nicht regelt - Kosten der Ruecksendung, Ruecksendeverfahren, Frist der Rueckzahlung - steht hier als offene Frage und wird nicht erfunden.{% endcomment %}
+{% comment %}Jede Frage steht wortgleich als h2 auf der Seite, jede Antwort wortgleich als erster Absatz unter dieser h2 - test_geo prueft beides. Belegt (Stand 30.10.2026) aus der Widerrufsbelehrung und den AGB in legal/generator/ (widerruf.html: Frist, Ruecksendekosten, Rueckzahlung, Online-Funktion; agb.html § 2 Vertragsschluss, § 6 Eigentumsvorbehalt, § 7 Beschaffenheit, § 10 Maengelhaftung, § 11 Auftragsarbeiten), Anschrift und E-Mail aus dem Impressum, Ablauf der Vorab-Ueberweisung aus views/checkout.py, Online-Widerruf aus views/widerruf.py.{% endcomment %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -40,7 +40,7 @@
       "name": "Wie lange kann ich eine Bestellung widerrufen?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Vierzehn Tage, ohne Angabe von Gründen. Die Frist beginnt nach § 5 der AGB an dem Tag, an dem du die Ware in Besitz genommen hast – nicht mit der Bestellung und nicht mit der Zahlung. Maßgeblich ist also der Tag der Zustellung."
+        "text": "Vierzehn Tage, ohne Angabe von Gründen. Die Frist beginnt laut Widerrufsbelehrung an dem Tag, an dem du die Ware in Besitz genommen hast – nicht mit der Bestellung und nicht mit der Zahlung. Maßgeblich ist also der Tag der Zustellung."
       }
     },
     {
@@ -48,7 +48,7 @@
       "name": "Gilt das Widerrufsrecht auch für ein handbemaltes Unikat?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Ja. Die AGB nennen für Unikate keine Ausnahme: § 5 gilt für jede Bestellung in diesem Shop. Ein Stück von Luviq Universe wird auch nicht auf Bestellung angefertigt – Luisa Brehler sucht ein getragenes Basisteil aus, bemalt es und stellt es fertig in den Shop. Gekauft wird ein vorhandenes Stück, kein Auftrag."
+        "text": "Ja, für jedes fertige Stück aus dem Shop. Es wird nicht auf Bestellung angefertigt – Luisa Brehler sucht ein Basisteil aus, gebraucht oder neu, bemalt es und stellt es fertig in den Shop. Ausgenommen sind nur Auftragsarbeiten nach eigenem Motivwunsch: Für sie gibt es nach § 312g Abs. 2 Nr. 1 BGB kein Widerrufsrecht (§ 11 der AGB)."
       }
     },
     {
@@ -56,7 +56,7 @@
       "name": "Wie erkläre ich den Widerruf?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Mit einer Nachricht an Luisa Brehler. Die AGB schreiben dafür keine bestimmte Form vor; es gibt kein Rücksendeportal und kein Formular im Konto. Die Wege stehen auf der Seite: das Kontaktformular, die E-Mail-Adresse brehlerluisa@gmail.com aus Impressum und Datenschutzerklärung oder ein Brief an die Anschrift im Impressum."
+        "text": "Am einfachsten online über „Vertrag widerrufen“ im Fuß der Seite: Name, Bestellnummer und E-Mail-Adresse eintragen, „Widerruf bestätigen“ drücken, und eine Eingangsbestätigung mit Datum und Uhrzeit kommt per E-Mail. Genauso gilt eine E-Mail an brehlerluisa@gmail.com oder ein Brief an die Anschrift im Impressum; das Muster-Widerrufsformular in den AGB kann man dafür nehmen, muss es aber nicht."
       }
     },
     {
@@ -72,7 +72,7 @@
       "name": "Wer trägt die Kosten der Rücksendung?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Dazu macht diese Seite keine Angabe. Weder die AGB noch eine andere Seite dieses Shops regeln, wer das Rückporto zahlt und ob ein Rücksendeetikett gestellt wird. Statt hier eine Zahl zu nennen, die nirgends steht: vor der Rücksendung kurz über das Kontaktformular oder per E-Mail klären."
+        "text": "Die unmittelbaren Kosten der Rücksendung trägst du; so steht es in der Widerrufsbelehrung, und das Gesetz erlaubt diese Regel (§ 357 Abs. 5 BGB). Den Kaufpreis bekommst du vollständig zurück, spätestens vierzehn Tage nach Eingang des Widerrufs und auf demselben Zahlungsweg, den du beim Kauf benutzt hast."
       }
     },
     {
@@ -80,7 +80,7 @@
       "name": "Sind Farbspuren oder Gebrauchsspuren ein Grund zur Reklamation?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Nein. Nach § 3 der AGB sind leichte Unregelmäßigkeiten in der Bemalung und minimale Gebrauchsspuren des Vintage-Basisteils Teil des künstlerischen Konzepts und stellen keinen Mangel dar. Das ist bei einem von Hand bemalten, getragenen Kleidungsstück der Normalzustand und keine Einschränkung der Rechte bei einem echten Mangel."
+        "text": "Für sich genommen nicht. Nach § 7 der AGB sind Pinselstriche, Farbverläufe und Bleichkanten bei jedem Stück anders und Teil der Gestaltung; Gebrauchsspuren eines gebrauchten Basisteils werden beim Stück beschrieben oder gezeigt. Die gesetzlichen Rechte bei einem echten Mangel bleiben davon unberührt (§ 10 der AGB)."
       }
     },
     {
@@ -88,7 +88,7 @@
       "name": "Was ist bei einem echten Mangel oder einer falschen Lieferung?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Ein Riss, eine offene Naht, ein Schaden aus dem Transport oder ein falsch geliefertes Stück ist etwas anderes als eine Unregelmäßigkeit der Bemalung; § 3 der AGB stellt nur klar, was kein Mangel ist, und schränkt die gesetzlichen Rechte nicht ein. Der Weg ist derselbe: Nachricht mit Bestellnummer und einem Foto über das Kontaktformular oder per E-Mail."
+        "text": "Ein Riss, eine offene Naht, ein Schaden aus dem Transport oder ein falsch geliefertes Stück ist etwas anderes als eine Unregelmäßigkeit der Bemalung; dafür gilt die gesetzliche Gewährleistung von zwei Jahren, auch für gebrauchte Stücke (§ 10 der AGB). Der Weg ist derselbe: Nachricht mit Bestellnummer und einem Foto über das Kontaktformular oder per E-Mail."
       }
     },
     {
@@ -104,7 +104,7 @@
       "name": "Gilt das Widerrufsrecht auch bei Vorab-Überweisung?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Ja, die AGB unterscheiden beim Widerruf nicht nach Zahlungsart. Vor der Überweisung ist ohnehin nichts geschehen, was zu widerrufen wäre: Die Bestellung bleibt so lange offen, bis das Geld eingegangen ist, und die Bestätigung kommt erst danach. Wer es sich vorher anders überlegt, sagt am besten kurz Bescheid."
+        "text": "Ja, das Widerrufsrecht hängt nicht von der Zahlungsart ab. Bei Vorkasse ist der Vertrag mit der E-Mail „Bestellbestätigung und Zahlungsinformationen“ geschlossen (§ 2 der AGB); das Stück wird für dich zurückgehalten und nach Zahlungseingang verschickt. Die Frist beginnt auch hier erst mit der Zustellung, widerrufen kannst du aber schon vorher."
       }
     },
     {
@@ -132,15 +132,15 @@
     <header class="lv-wissen-kopf">
         <h1 class="lv-serif">Widerruf und Rücksendung: was gilt bei einem Einzelstück?</h1>
         <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
-        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Für eine Bestellung bei Luviq Universe in Lübeck gilt das Widerrufsrecht von vierzehn Tagen ohne Angabe von Gründen, gerechnet ab dem Tag, an dem du die Ware in Besitz genommen hast (§ 5 der AGB). Für handbemalte Einzelstücke nennen die AGB keine Ausnahme. Erklärt wird der Widerruf gegenüber Luisa Brehler, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }} – über das Kontaktformular, per E-Mail oder per Brief. Was die Seite nicht regelt, etwa wer das Rückporto trägt, steht hier als offene Frage und wird vorab geklärt, nicht geraten.</p>
+        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Für eine Bestellung bei Luviq Universe in Lübeck gilt das Widerrufsrecht von vierzehn Tagen ohne Angabe von Gründen, gerechnet ab dem Tag, an dem du die Ware in Besitz genommen hast (Widerrufsbelehrung in den AGB). Das gilt auch für handbemalte Einzelstücke; ausgenommen sind nur Auftragsarbeiten nach eigenem Motivwunsch. Erklärt wird der Widerruf gegenüber Luisa Brehler, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }} – online über „Vertrag widerrufen“, per E-Mail oder per Brief. Die unmittelbaren Kosten der Rücksendung trägst du, den Kaufpreis bekommst du spätestens vierzehn Tage nach Eingang des Widerrufs zurück.</p>
     </header>
 
     <div class="lv-wissen-liste">
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Wie lange kann ich eine Bestellung widerrufen?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Vierzehn Tage, ohne Angabe von Gründen. Die Frist beginnt nach § 5 der AGB an dem Tag, an dem du die Ware in Besitz genommen hast – nicht mit der Bestellung und nicht mit der Zahlung. Maßgeblich ist also der Tag der Zustellung.</p>
-                <p>Der vollständige Wortlaut steht in den <a href="{% url 'agb' %}">AGB</a>. Wer die Frist im Blick behalten will, nimmt das Zustelldatum des Pakets als Anfang; die Bestellnummer und das Bestelldatum stehen im Profil und in der Bestätigungsmail.</p>
+                <p class="lv-wissen-erst">Vierzehn Tage, ohne Angabe von Gründen. Die Frist beginnt laut Widerrufsbelehrung an dem Tag, an dem du die Ware in Besitz genommen hast – nicht mit der Bestellung und nicht mit der Zahlung. Maßgeblich ist also der Tag der Zustellung.</p>
+                <p>Der vollständige Wortlaut steht in der <a href="{% url 'agb' %}#widerruf">Widerrufsbelehrung</a>. Wer die Frist im Blick behalten will, nimmt das Zustelldatum des Pakets als Anfang; die Bestellnummer und das Bestelldatum stehen im Profil und in der Bestätigungsmail.</p>
             
             </div>
         </section>
@@ -148,7 +148,7 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Gilt das Widerrufsrecht auch für ein handbemaltes Unikat?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Ja. Die AGB nennen für Unikate keine Ausnahme: § 5 gilt für jede Bestellung in diesem Shop. Ein Stück von Luviq Universe wird auch nicht auf Bestellung angefertigt – Luisa Brehler sucht ein getragenes Basisteil aus, bemalt es und stellt es fertig in den Shop. Gekauft wird ein vorhandenes Stück, kein Auftrag.</p>
+                <p class="lv-wissen-erst">Ja, für jedes fertige Stück aus dem Shop. Es wird nicht auf Bestellung angefertigt – Luisa Brehler sucht ein Basisteil aus, gebraucht oder neu, bemalt es und stellt es fertig in den Shop. Ausgenommen sind nur Auftragsarbeiten nach eigenem Motivwunsch: Für sie gibt es nach § 312g Abs. 2 Nr. 1 BGB kein Widerrufsrecht (§ 11 der AGB).</p>
                 <p>Der Unterschied ist wichtig, weil er oft verwechselt wird: „handgemacht" heißt nicht „nach deinen Angaben angefertigt". Wer in einem Shop ein fertiges Stück auswählt, das dort schon liegt, kauft Ware von der Stange – auch wenn es diese Stange nur einmal gibt.</p>
             
             </div>
@@ -157,8 +157,8 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Wie erkläre ich den Widerruf?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Mit einer Nachricht an Luisa Brehler. Die AGB schreiben dafür keine bestimmte Form vor; es gibt kein Rücksendeportal und kein Formular im Konto. Die Wege stehen auf der Seite: das Kontaktformular, die E-Mail-Adresse brehlerluisa@gmail.com aus Impressum und Datenschutzerklärung oder ein Brief an die Anschrift im Impressum.</p>
-                <p>Hilfreich in der Nachricht: die Bestellnummer, der Name des Stücks und ein Satz, dass die Bestellung widerrufen wird. Mehr verlangt auch das Gesetz nicht: Nach <a href="https://www.gesetze-im-internet.de/bgb/__355.html" target="_blank" rel="noopener">§ 355 BGB</a> muss aus der Erklärung der Entschluss zum Widerruf eindeutig hervorgehen, eine Begründung braucht sie nicht. Zum Kontaktformular geht es über das Menü jeder Seite; die vollständigen Anbieterangaben stehen im <a href="{% url 'impressum' %}">Impressum</a>.</p>
+                <p class="lv-wissen-erst">Am einfachsten online über „Vertrag widerrufen“ im Fuß der Seite: Name, Bestellnummer und E-Mail-Adresse eintragen, „Widerruf bestätigen“ drücken, und eine Eingangsbestätigung mit Datum und Uhrzeit kommt per E-Mail. Genauso gilt eine E-Mail an brehlerluisa@gmail.com oder ein Brief an die Anschrift im Impressum; das Muster-Widerrufsformular in den AGB kann man dafür nehmen, muss es aber nicht.</p>
+                <p>Das Formular für den Online-Widerruf steht unter <a href="{% url 'vertrag_widerrufen' %}">Vertrag widerrufen</a>. Wer lieber schreibt, nennt die Bestellnummer, den Namen des Stücks und einen Satz, dass die Bestellung widerrufen wird. Mehr verlangt auch das Gesetz nicht: Nach <a href="https://www.gesetze-im-internet.de/bgb/__355.html" target="_blank" rel="noopener">§ 355 BGB</a> muss aus der Erklärung der Entschluss zum Widerruf eindeutig hervorgehen, eine Begründung braucht sie nicht. Zum Kontaktformular geht es über das Menü jeder Seite; die vollständigen Anbieterangaben stehen im <a href="{% url 'impressum' %}">Impressum</a>.</p>
             
             </div>
         </section>
@@ -175,8 +175,8 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Wer trägt die Kosten der Rücksendung?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Dazu macht diese Seite keine Angabe. Weder die AGB noch eine andere Seite dieses Shops regeln, wer das Rückporto zahlt und ob ein Rücksendeetikett gestellt wird. Statt hier eine Zahl zu nennen, die nirgends steht: vor der Rücksendung kurz über das Kontaktformular oder per E-Mail klären.</p>
-                <p>Dasselbe gilt für die Frage, wie schnell der Kaufpreis zurückkommt und auf welchem Weg – auch dazu steht nichts in den AGB. Beides gehört in dieselbe kurze Nachricht wie der Widerruf selbst; dann ist es geklärt, bevor das Paket unterwegs ist.</p>
+                <p class="lv-wissen-erst">Die unmittelbaren Kosten der Rücksendung trägst du; so steht es in der Widerrufsbelehrung, und das Gesetz erlaubt diese Regel (§ 357 Abs. 5 BGB). Den Kaufpreis bekommst du vollständig zurück, spätestens vierzehn Tage nach Eingang des Widerrufs und auf demselben Zahlungsweg, den du beim Kauf benutzt hast.</p>
+                <p>Zurückgezahlt werden darf erst, wenn das Stück angekommen ist oder du nachweist, dass du es abgeschickt hast. Abschicken musst du es spätestens vierzehn Tage nach dem Widerruf. Ein Versand mit Sendungsverfolgung lohnt sich, weil ein Einzelstück nicht ersetzt werden kann.</p>
             
             </div>
         </section>
@@ -184,7 +184,7 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Sind Farbspuren oder Gebrauchsspuren ein Grund zur Reklamation?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Nein. Nach § 3 der AGB sind leichte Unregelmäßigkeiten in der Bemalung und minimale Gebrauchsspuren des Vintage-Basisteils Teil des künstlerischen Konzepts und stellen keinen Mangel dar. Das ist bei einem von Hand bemalten, getragenen Kleidungsstück der Normalzustand und keine Einschränkung der Rechte bei einem echten Mangel.</p>
+                <p class="lv-wissen-erst">Für sich genommen nicht. Nach § 7 der AGB sind Pinselstriche, Farbverläufe und Bleichkanten bei jedem Stück anders und Teil der Gestaltung; Gebrauchsspuren eines gebrauchten Basisteils werden beim Stück beschrieben oder gezeigt. Die gesetzlichen Rechte bei einem echten Mangel bleiben davon unberührt (§ 10 der AGB).</p>
                 <p>Genau diese Unregelmäßigkeiten sind das Erkennungszeichen der Handarbeit: unterschiedlich dichte Pinselstriche, Kanten, die nicht wie gedruckt verlaufen, Stellen mit mehr und weniger Farbe. Was das von einem Druck unterscheidet, steht im Beitrag zu Upcycling-Mode in diesem Wissensbereich.</p>
             
             </div>
@@ -193,8 +193,8 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Was ist bei einem echten Mangel oder einer falschen Lieferung?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Ein Riss, eine offene Naht, ein Schaden aus dem Transport oder ein falsch geliefertes Stück ist etwas anderes als eine Unregelmäßigkeit der Bemalung; § 3 der AGB stellt nur klar, was kein Mangel ist, und schränkt die gesetzlichen Rechte nicht ein. Der Weg ist derselbe: Nachricht mit Bestellnummer und einem Foto über das Kontaktformular oder per E-Mail.</p>
-                <p>Ein Foto hilft, weil ein Einzelstück nicht einfach durch ein gleiches ersetzt werden kann – es gibt kein zweites. Was in einem solchen Fall geschieht, hängt vom Stück ab und wird zwischen dir und der Anbieterin geklärt; eine Pauschalregel dazu enthalten die AGB nicht.</p>
+                <p class="lv-wissen-erst">Ein Riss, eine offene Naht, ein Schaden aus dem Transport oder ein falsch geliefertes Stück ist etwas anderes als eine Unregelmäßigkeit der Bemalung; dafür gilt die gesetzliche Gewährleistung von zwei Jahren, auch für gebrauchte Stücke (§ 10 der AGB). Der Weg ist derselbe: Nachricht mit Bestellnummer und einem Foto über das Kontaktformular oder per E-Mail.</p>
+                <p>Ein Foto hilft, weil ein Einzelstück nicht einfach durch ein gleiches ersetzt werden kann – es gibt kein zweites. Statt einer Ersatzlieferung kommt deshalb meist eine Nachbesserung in Frage, sonst unter den gesetzlichen Voraussetzungen Rücktritt, Minderung oder Schadensersatz (§ 10 der AGB).</p>
             
             </div>
         </section>
@@ -211,8 +211,8 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Gilt das Widerrufsrecht auch bei Vorab-Überweisung?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Ja, die AGB unterscheiden beim Widerruf nicht nach Zahlungsart. Vor der Überweisung ist ohnehin nichts geschehen, was zu widerrufen wäre: Die Bestellung bleibt so lange offen, bis das Geld eingegangen ist, und die Bestätigung kommt erst danach. Wer es sich vorher anders überlegt, sagt am besten kurz Bescheid.</p>
-                <p>Bis zur vollständigen Bezahlung bleibt die Ware nach § 4 der AGB ohnehin Eigentum von Luviq. Wie eine Bestellung von der Auswahl bis zur Bestätigung abläuft und welche Zahlungswege es gibt, steht im Beitrag zum Bestellen und Bezahlen in diesem Wissensbereich.</p>
+                <p class="lv-wissen-erst">Ja, das Widerrufsrecht hängt nicht von der Zahlungsart ab. Bei Vorkasse ist der Vertrag mit der E-Mail „Bestellbestätigung und Zahlungsinformationen“ geschlossen (§ 2 der AGB); das Stück wird für dich zurückgehalten und nach Zahlungseingang verschickt. Die Frist beginnt auch hier erst mit der Zustellung, widerrufen kannst du aber schon vorher.</p>
+                <p>Bis zur vollständigen Bezahlung bleibt die Ware nach § 6 der AGB Eigentum von Luisa Brehler. Wie eine Bestellung von der Auswahl bis zur Bestätigung abläuft und welche Zahlungswege es gibt, steht im Beitrag zum Bestellen und Bezahlen in diesem Wissensbereich.</p>
             
             </div>
         </section>

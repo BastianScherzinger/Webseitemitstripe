@@ -5,6 +5,7 @@ Django settings for mainweb project.
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import re
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -520,6 +521,20 @@ LUCID_REGISTRIERNUMMER = os.getenv('LUCID_REGISTRIERNUMMER', '').strip()
 # CSP_QUELLEN). Die Datenschutzerklaerung muss den Dienst vorher nennen.
 EINWILLIGUNG_DIENST = os.getenv('EINWILLIGUNG_DIENST', '').strip()
 EINWILLIGUNG_SKRIPT = os.getenv('EINWILLIGUNG_SKRIPT', '').strip()
+# Google Analytics 4 (Luisas Konto „Luviq", Bastian 30.10.2026). Gesetzt (z. B.
+# G-0Q3E6MDYS5) = Banner fragt nach „Google Analytics", gtag laedt erst nach
+# „Akzeptieren" (einwilligung.js), CSP bekommt die Google-Hosts. Leer = aus.
+GA_MESSUNG_ID = os.getenv('GA_MESSUNG_ID', '').strip()
+if not re.match(r'^G-[A-Z0-9]{4,20}$', GA_MESSUNG_ID):
+    GA_MESSUNG_ID = ''
+if GA_MESSUNG_ID and not EINWILLIGUNG_DIENST:
+    EINWILLIGUNG_DIENST = 'Google Analytics'
+    EINWILLIGUNG_SKRIPT = f'https://www.googletagmanager.com/gtag/js?id={GA_MESSUNG_ID}'
+if GA_MESSUNG_ID:
+    CSP_QUELLEN['script-src'] = CSP_QUELLEN['script-src'] + ['https://www.googletagmanager.com']
+    CSP_QUELLEN['connect-src'] = CSP_QUELLEN['connect-src'] + [
+        'https://www.googletagmanager.com', 'https://*.google-analytics.com',
+        'https://*.analytics.google.com']
 
 # ═══ MOTIV ANFRAGEN ═══
 # /motiv-anfragen/ (Umbau „Nachtausgabe", 19.09.2026): Anfrage ohne Preis,
@@ -543,11 +558,11 @@ LOGIN_URL = '/login/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ═══ GOOGLE MAPS ═══
-# Vorgabe bleibt die Maps-Suche: das Unternehmensprofil „Luviq“ (seit 02.10.2026
-# in luviq_daten.GOOGLE_PROFIL und sameAs) ist ein Kartenlink, kein
-# Bewertungsformular – dann hiesse der Knopf zu Unrecht „bewerten“ (EIG87).
-# Den echten Bewertungslink (g.page/r/…/review) als Railway-Variable setzen.
-GOOGLE_REVIEW_URL = os.getenv('GOOGLE_REVIEW_URL', 'https://www.google.com/maps/search/Luviq+Universe')
+# Seit 30.10.2026 ist die Vorgabe der echte Bewertungslink aus dem Unternehmensprofil
+# (luviq_daten.GOOGLE_BEWERTEN, öffnet „Rezension schreiben“). Eine Railway-Variable
+# GOOGLE_REVIEW_URL überschreibt ihn. Steht dort eine Kartensuche, heißt der Knopf
+# ehrlich „suchen“ (EIG87, Vorlagen prüfen auf '/maps/search/').
+GOOGLE_REVIEW_URL = os.getenv('GOOGLE_REVIEW_URL', 'https://g.page/r/CTDc6lSl1eXAECE/review')
 
 # ═══ FEHLER-MONITORING (VL19) ═══
 # Kein Sentry o.ä. (neue Abhaengigkeit, in diesem Lauf verboten) - stattdessen

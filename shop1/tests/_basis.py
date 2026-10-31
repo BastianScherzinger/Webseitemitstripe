@@ -99,6 +99,8 @@ OEFFENTLICHE_SEITEN = [
     '/wissen/upcycling-mode-second-hand-vintage/',
     '/wissen/groesse-bei-einzelstuecken/',
     '/wissen/so-entsteht-dein-motiv/',  # Entwurf (noindex)
+    '/wissen/bleach-painting/',  # Entwurf (noindex)
+    '/wissen/bleichfleck-uebermalen/',  # Entwurf (noindex)
     '/wissen/bestellen-und-bezahlen/',
     '/wissen/widerruf-und-ruecksendung/',
     '/wissen/konto-und-daten/',
@@ -153,6 +155,8 @@ INHALTSSEITEN = [
     '/wissen/upcycling-mode-second-hand-vintage/',
     '/wissen/groesse-bei-einzelstuecken/',
     '/wissen/so-entsteht-dein-motiv/',  # Entwurf (noindex)
+    '/wissen/bleach-painting/',  # Entwurf (noindex)
+    '/wissen/bleichfleck-uebermalen/',  # Entwurf (noindex)
     # Belegte Beiträge ohne Freigabevorbehalt (SU04): von Anfang an
     # indexierbar, weil sie nur wiedergeben, was AGB, Datenschutzerklärung,
     # Impressum, Liefergebiet und der Code des Bestellvorgangs belegen.
@@ -178,11 +182,12 @@ def _nicht_indexierbare_wissensseiten():
 
 
 #: Inhaltsseiten, die heute bewusst ``noindex`` tragen und deshalb in Sitemap
-#: und llms.txt fehlen müssen: ``/impressum/`` (dauerhaft, siehe legal.py) und
+#: und llms.txt fehlen müssen: ``/impressum/`` (dauerhaft, siehe legal.py), ``/gaestebuch/``
+#: (noindex bis echte fremde Beiträge da sind, 30.10.2026) und
 #: die noch nicht freigegebenen Wissensseiten.
 #: Ohne Verkauf (``VERKAUF_AKTIV`` aus, die Vorgabe) auch ``/agb/``: die AGB
 #: gelten erst ab Eröffnung des Shops (``shop1/verkauf.py``).
-NICHT_INDEXIERBARE_SEITEN = (['/impressum/']
+NICHT_INDEXIERBARE_SEITEN = (['/impressum/', '/gaestebuch/']
                              + ([] if settings.VERKAUF_AKTIV else ['/agb/'])
                              + _nicht_indexierbare_wissensseiten())
 

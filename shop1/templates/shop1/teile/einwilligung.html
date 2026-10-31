@@ -9,9 +9,9 @@ als Adresse in data-skript – einwilligung.js lädt es erst nach „Akzeptieren
 Wortlaut der Datenschutzerklärung zum Dienst kommt aus dem Generator (Agenturregel 3).
 {% endcomment %}
 <link rel="stylesheet" href="{% static 'shop1/einwilligung.css' %}">
-<section class="lv-einwilligung" id="lv-einwilligung" data-skript="{{ einwilligung.skript }}" aria-labelledby="lv-einwilligung-titel" hidden>
-    <h2 class="lv-einwilligung-titel" id="lv-einwilligung-titel">Darf {{ einwilligung.dienst }} mitzählen?</h2>
-    <p>Die Seite funktioniert auch ohne. Mit deinem Ja lädt sie {{ einwilligung.dienst }}, um zu sehen, wie die Seite genutzt wird. Das kannst du jederzeit unten unter „Cookie-Einstellungen" ändern. Mehr dazu in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
+<section class="lv-einwilligung" id="lv-einwilligung" data-skript="{{ einwilligung.skript }}"{% if einwilligung.ga %} data-ga="{{ einwilligung.ga }}"{% endif %} aria-labelledby="lv-einwilligung-titel" hidden>
+    <p class="lv-einwilligung-titel" id="lv-einwilligung-titel">Kurz mitzählen?</p>
+    <p>Mit deinem Ja zählt {{ einwilligung.dienst }} für uns, wie viele Leute die Seite besuchen und was sie sich ansehen. Nur für unsere Statistik: keine Werbung, wir verkaufen keine Daten. Die Seite funktioniert auch ohne, und unten unter „Cookie-Einstellungen" kannst du es jederzeit ändern. Mehr in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
     <p class="lv-einwilligung-knoepfe">
         <button type="button" class="lv-einwilligung-knopf" data-einwilligung="nein">Ablehnen</button>
         <button type="button" class="lv-einwilligung-knopf" data-einwilligung="ja">Akzeptieren</button>

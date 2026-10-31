@@ -4,7 +4,7 @@ Das eigene Verwaltungspanel unter ``/shop-admin/`` steht in
 ``admin_views.py``; hier geht es nur um die Standardoberfläche von Django.
 """
 from django.contrib import admin
-from .models import UserProfile, Produkt, ProduktBild, Cart, CartItem, Order, OrderItem, Subscriber, KontaktAnfrage, Motivanfrage
+from .models import UserProfile, Produkt, ProduktBild, Cart, CartItem, Order, OrderItem, Subscriber, KontaktAnfrage, Motivanfrage, Widerruf
 
 
 @admin.register(UserProfile)
@@ -146,6 +146,24 @@ class MotivanfrageAdmin(admin.ModelAdmin):
     search_fields = ('instagram', 'email', 'bedeutung')
     readonly_fields = ('richtung', 'teil', 'platzierung', 'bedeutung', 'instagram', 'email', 'mail_gestartet', 'erstellt_am')
     ordering = ('-erstellt_am',)
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(Widerruf)
+class WiderrufAdmin(admin.ModelAdmin):
+    """Widerrufe über „Vertrag widerrufen“ (§ 356a BGB). Inhalt und Eingangszeit
+    sind Beweismittel und deshalb nur lesbar; änderbar ist Status und Zuordnung."""
+    list_display = ('eingegangen_am', 'vertrag', 'name', 'email', 'bestellung', 'status',
+                    'bestaetigung_gestartet', 'spamverdacht')
+    list_filter = ('status', 'spamverdacht', 'eingegangen_am')
+    list_editable = ('status',)
+    search_fields = ('name', 'email', 'vertrag', 'umfang')
+    readonly_fields = ('name', 'vertrag', 'umfang', 'email', 'spamverdacht', 'bestaetigung_gestartet',
+                       'eingegangen_am')
+    raw_id_fields = ('bestellung',)
+    ordering = ('-eingegangen_am',)
 
     def has_add_permission(self, request):
         return False

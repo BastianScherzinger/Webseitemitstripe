@@ -33,7 +33,7 @@ class VerkauftBandTest(LuviqTestCase):
     def test_band_steht_nur_bei_vergebenem_stueck(self):
         seite = self.hole(self.alt.get_absolute_url()).content.decode()
         self.assertIn('lv-verkauft', seite)
-        self.assertIn(f'<span>{luviq_daten.VERGEBEN_WORT}</span>', seite)
+        self.assertIn(f'<span>{luviq_daten.REFERENZ_WORT}</span>', seite)
         self.assertNotIn('Verkauft', seite)
         self.assertNotIn('lv-verkauft', self.hole(self.neu.get_absolute_url()).content.decode())
 
@@ -143,8 +143,9 @@ class EngelAnlegenTest(LuviqTestCase):
         self.assertEqual(p.preis, Decimal('69.00'))
         self.assertEqual((p.nummer, p.masse, p.material), (6, 'Größe M', '100 % Baumwolle'))
         self.assertTrue(p.aktiv and not p.vergeben and p.kaufbar)
-        self.assertEqual(p.zusatzbilder.count(), 1)
-        self.assertEqual(len(p.galerie()), 2)
+        # Runde 3: Rücken echt, Vorderseite echt, Arbeitstisch (Platz 2 für das KI-Bild vorne frei).
+        self.assertEqual(p.zusatzbilder.count(), 3)
+        self.assertEqual(len(p.galerie()), 4)
 
     def test_ueberschreibt_nichts(self):
         self.anlegen()
@@ -162,12 +163,21 @@ class EngelAnlegenTest(LuviqTestCase):
         engel = Produkt.objects.get(slug=luviq_daten.ENGEL_STUECK['slug'])
         self.assertNotEqual(engel.nummer, 6)
 
-    def test_engel_hat_keine_zustandsangabe(self):
+    def test_engel_ist_neu(self):
+        """Bastian 30.10.2026: das Engel-Shirt ist neu – „Neu“, nie „Gebraucht“."""
         self.anlegen()
-        self.assertEqual(Produkt.objects.get(slug='engel-shirt-handgebleicht').zustand, '')
+        engel = Produkt.objects.get(slug='engel-shirt-handgebleicht')
+        self.assertEqual(engel.zustand, 'Neu')
+        self.assertTrue(engel.ist_neu)
         html = self.hole('/produkt/engel-shirt-handgebleicht/').content.decode()
         self.assertNotIn('Gebraucht', html)
-        self.assertNotIn('<dt>Stück</dt>', html)
+        self.assertIn('<dt>Stück</dt><dd>Neu</dd>', html)
+
+    def test_leerer_zustand_wird_nachgetragen(self):
+        self.anlegen()
+        Produkt.objects.filter(slug='engel-shirt-handgebleicht').update(zustand='')
+        self.anlegen()
+        self.assertEqual(Produkt.objects.get(slug='engel-shirt-handgebleicht').zustand, 'Neu')
 
     def test_altstueck_behaelt_den_zustand(self):
         p = erzeuge_produkt('Alt')
@@ -185,7 +195,7 @@ class EngelAnlegenTest(LuviqTestCase):
         knoten = [k for k in _ld(antwort) if k.get('@type') in ('VisualArtwork', 'Product')]
         self.assertEqual([k['@type'] for k in knoten], ['VisualArtwork'])
         self.assertNotIn('offers', knoten[0])
-        self.assertEqual(len(knoten[0]['image']), 2)
+        self.assertEqual(len(knoten[0]['image']), 4)  # Runde 3: alle Galeriebilder
         # keine erfundenen Angaben
         self.assertNotIn(' cm', luviq_daten.ENGEL_STUECK['masse'])
 

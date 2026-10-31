@@ -1,0 +1,19 @@
+{% extends 'emails/basis.html' %}
+{% comment %}Eingangsbestätigung eines Widerrufs (§ 356a Abs. 4 BGB): Inhalt der Erklärung, Datum und Uhrzeit des Eingangs.
+Alle eingetippten Werte nur als Text (autoescape), keine Links aus Eingaben – die Adresse ist ungeprüft.{% endcomment %}
+{% block kopf_label %}Widerruf{% endblock %}
+{% block inhalt %}
+<h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-style:italic;font-size:26px;line-height:1.25;color:#0A0A0A;">{{ titel }}</h1>
+<p style="margin:0 0 16px;">Eingangsbestätigung: Deine Widerrufserklärung ist am <strong>{{ eingang }}</strong> bei {{ anbieterin.name }} eingegangen.</p>
+<p class="lv-leise" style="margin:0 0 6px;font-size:13px;color:#5E5850;">Inhalt deiner Erklärung</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin:0 0 18px;">
+  <tr><td class="lv-feld-b lv-leise" style="width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E6E0D5;font-size:13px;color:#5E5850;">Name</td><td class="lv-feld-w" style="padding:10px 0;border-bottom:1px solid #E6E0D5;font-size:15px;">{{ w.name }}</td></tr>
+  <tr><td class="lv-feld-b lv-leise" style="width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E6E0D5;font-size:13px;color:#5E5850;">Bestellnummer / Vertrag</td><td class="lv-feld-w" style="padding:10px 0;border-bottom:1px solid #E6E0D5;font-size:15px;">{{ w.vertrag }}</td></tr>
+  <tr><td class="lv-feld-b lv-leise" style="width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E6E0D5;font-size:13px;color:#5E5850;">Widerrufene Stücke</td><td class="lv-feld-w" style="padding:10px 0;border-bottom:1px solid #E6E0D5;font-size:15px;">{{ umfang|linebreaksbr }}</td></tr>
+  <tr><td class="lv-feld-b lv-leise" style="width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E6E0D5;font-size:13px;color:#5E5850;">E-Mail für diese Bestätigung</td><td class="lv-feld-w" style="padding:10px 0;border-bottom:1px solid #E6E0D5;font-size:15px;">{{ w.email }}</td></tr>
+  <tr><td class="lv-feld-b lv-leise" style="width:34%;padding:10px 12px 10px 0;border-bottom:1px solid #E6E0D5;font-size:13px;color:#5E5850;">Eingegangen am</td><td class="lv-feld-w" style="padding:10px 0;border-bottom:1px solid #E6E0D5;font-size:15px;">{{ eingang }}</td></tr>
+</table>
+<p style="margin:0 0 16px;">Wie es weitergeht: Bitte schick die Ware spätestens 14 Tage nach deinem Widerruf an {{ anbieterin.name }}, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }} zurück. Die unmittelbaren Kosten der Rücksendung trägst du. Den Kaufpreis einschließlich der Lieferkosten zahlen wir spätestens 14 Tage nach Eingang deines Widerrufs mit demselben Zahlungsmittel zurück; wir können die Rückzahlung verweigern, bis die Ware zurück ist oder du die Rücksendung nachgewiesen hast.</p>
+<p style="margin:24px 0 0;">Viele Grüße<br>Luisa</p>
+<p class="lv-leise" style="margin:22px 0 0;font-size:13px;color:#5E5850;">Fragen? Antworte einfach auf diese Mail oder schreib an {{ kontakt_email }}.</p>
+{% endblock %}

@@ -3,17 +3,17 @@
 „Luisa" im Look „Nachtausgabe" (19.09.2026, Bauplan § 4). Grundlage ist
 Luisas Befragung vom 19.09.2026 (Design/luviq/MARKENWISSEN-luisa.md):
 ihr echter Satz, der Anfang in ihren Worten ohne Gründungslegende, die fünf
-Schritte, das Anfrage-System. Kein Porträt, bis Luisa ein neues Foto liefert –
-das alte freigestellte Bild wird nicht mehr verwendet (Markenwissen § 9).
+Schritte, das Anfrage-System. Porträt seit Runde 3 (30.10.2026, Bastian): das alte
+freigestellte Bild als schlichtes Brustbild (teile/luisa_foto.html), bis ein neues kommt.
 Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
 {% endcomment %}
 
 {% block title %}Luisa Brehler: handbemalte Second-Hand-Mode aus Lübeck | Luviq{% endblock %}
-{% block meta_description %}Luisa Brehler bemalt in Lübeck Second-Hand-Teile von Hand, mit Bleiche und Pinsel. Wie Luviq angefangen hat und wie ein Stück entsteht: jetzt kennenlernen.{% endblock %}
+{% block meta_description %}Luisa Brehler bemalt in Lübeck hochwertige Teile von Hand, mit Bleiche und Pinsel. Wie Luviq angefangen hat und wie ein Stück entsteht: jetzt kennenlernen.{% endblock %}
 {% block og_title %}Luisa Brehler – Luviq Universe aus Lübeck{% endblock %}
-{% block og_description %}Wie Luviq angefangen hat und wie ein Stück entsteht, in fünf Schritten. Handbemalte Second-Hand-Teile aus Lübeck, jedes Motiv genau einmal.{% endblock %}
+{% block og_description %}Wie Luviq angefangen hat und wie ein Stück entsteht, in fünf Schritten. Handbemalte Unikate aus Lübeck, gebraucht oder neu, jedes Motiv genau einmal.{% endblock %}
 {% block twitter_title %}Luisa Brehler – Luviq Universe{% endblock %}
-{% block twitter_description %}Luisa Brehler bemalt in Lübeck Second-Hand-Teile von Hand, mit Bleiche und Pinsel. Wie ein Stück entsteht.{% endblock %}
+{% block twitter_description %}Luisa Brehler bemalt in Lübeck hochwertige Teile von Hand, mit Bleiche und Pinsel. Wie ein Stück entsteht.{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">
@@ -38,7 +38,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
       "@type": "AboutPage",
       "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}#aboutpage",
       "name": "Luisa Brehler – Luviq Universe",
-      "description": "Luisa Brehler bemalt in Lübeck Second-Hand-Kleidung von Hand, mit Bleiche und Pinsel; jedes Motiv gibt es genau einmal.",
+      "description": "Luisa Brehler bemalt in Lübeck hochwertige Kleidung von Hand, mit Bleiche und Pinsel; jedes Motiv gibt es genau einmal.",
       "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'ueber_uns' %}",
       "mainEntity": {
         "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
@@ -49,7 +49,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
       "@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa",
       "name": "Luisa Brehler",
       "jobTitle": "Gründerin & Creative Director",
-      "description": "Luisa Brehler hat Luviq Universe in Lübeck angefangen und malt heute in Lübeck. Sie bemalt Second-Hand-Kleidung von Hand, mit Bleiche und Pinsel, oft nach dem Motivwunsch der Person, die das Stück später trägt.",
+      "description": "Luisa Brehler hat Luviq Universe in Lübeck angefangen und malt heute in Lübeck. Sie bemalt hochwertige Teile, gebraucht oder neu, von Hand, mit Bleiche und Pinsel, oft nach dem Motivwunsch der Person, die das Stück später trägt.",
       "worksFor": {
         "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
       },
@@ -76,7 +76,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
     <section class="lv-abschnitt lv-ohne-linie" aria-labelledby="luisa-titel">
         <div class="lv-abschnittskopf">
             <h1 class="lv-serif" id="luisa-titel">Luisa</h1>
-            <p>{% if verkauf_aktiv %}Luviq Universe ist der Online-Shop von Luisa Brehler aus Lübeck für handbemalte Second-Hand-Kleidung. Sie bemalt getragene Teile von Hand, mit Bleiche und Pinsel, und jedes Motiv gibt es genau einmal. Verkauft wird ausschließlich online, ein Ladengeschäft gibt es nicht.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Second-Hand-Kleidung. Sie bemalt getragene Teile von Hand, mit Bleiche und Pinsel, und jedes Motiv gibt es genau einmal. Die Marke ist im Aufbau, ein Ladengeschäft gibt es nicht.{% endif %}</p>
+            <p>{% if verkauf_aktiv %}Luviq Universe ist der Online-Shop von Luisa Brehler aus Lübeck für handbemalte Unikate, gebraucht oder neu, immer hochwertig. Sie bemalt die Teile von Hand, mit Bleiche und Pinsel, und jedes Motiv gibt es genau einmal. Verkauft wird ausschließlich online, ein Ladengeschäft gibt es nicht.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Unikate, gebraucht oder neu, immer hochwertig. Sie bemalt die Teile von Hand, mit Bleiche und Pinsel, und jedes Motiv gibt es genau einmal. Die Marke ist im Aufbau, ein Ladengeschäft gibt es nicht.{% endif %}</p>
         </div>
     </section>
 
@@ -86,6 +86,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
             <footer>{{ zitat_quelle }}</footer>
         </blockquote>
         <div class="lv-luisa-text">
+            {% include 'shop1/teile/luisa_foto.html' %}
             <p>So hat es angefangen, mehr Geschichte braucht es nicht. Danach habe ich Leute gefragt, was sie gern drauf hätten, und das einfach umgesetzt.</p>
         </div>
     </section>
@@ -100,7 +101,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
     <section class="lv-abschnitt" aria-labelledby="bleiche-titel">
         <div class="lv-prosa">
             <h2 class="lv-serif" id="bleiche-titel">Warum Bleiche?</h2>
-            <p>Gemalt wird wirklich mit Bleiche: Sie zieht die Farbe aus dem dunklen Stoff, nichts ist aufgedruckt, deshalb stehen die Linien in Bleich-Beige auf Schwarz. Das ist keine Stilfrage, sondern die Technik. Später kommen Textilfarben dazu, aber nicht bunt.</p>
+            <p>Gemalt wird wirklich mit Bleiche: Sie zieht die Farbe aus dem dunklen Stoff, nichts ist aufgedruckt, deshalb stehen die Linien in Bleich-Beige auf Schwarz. Das ist keine Stilfrage, sondern die Technik. Später kommen Textilfarben dazu, aber nicht bunt. Wie die Technik funktioniert, steht unter <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a></p>
         </div>
     </section>
 
@@ -118,7 +119,7 @@ Keine Identitätserzählung, keine Mond-Mystik, keine Kampagnensprache.
         <div class="lv-prosa">
             <h2 class="lv-serif" id="anfrage-titel">Dein Motiv</h2>
             <p>Die meisten Motive entstehen zusammen mit der Person, die das Stück trägt: Ich frage nach der Richtung, schicke ein paar Vorschläge, und wir entscheiden gemeinsam. Erst wenn es passt, fange ich an. {% if motivanfrage_aktiv %}Du kannst <a href="{% url 'motiv_anfragen' %}">dein Motiv anfragen</a>; das kostet nichts und ist keine Bestellung.{% endif %}</p>
-            <p>Jedes Teil ist Second Hand und bekommt genau ein Motiv, eine zweite Auflage gibt es nicht. {% if verkauf_aktiv %}Fertige Stücke stehen mit Preis im Archiv; bezahlt wird per PayPal oder Vorab-Überweisung, versendet wird in der Regel innerhalb von 1-2 Werktagen.{% else %}Die bisherigen Stücke stehen im Archiv und sind vergeben. Wann die nächste Ausgabe erscheint, erfährt zuerst, wer auf der Warteliste steht.{% endif %}</p>
+            <p>Die Teile sind hochwertig, Second Hand oder neu wie das Engel-Shirt, und jedes bekommt genau ein Motiv, eine zweite Auflage gibt es nicht. {% if verkauf_aktiv %}Fertige Stücke stehen mit Preis im Archiv; bezahlt wird per PayPal oder Vorab-Überweisung, geliefert wird innerhalb von {{ lieferfrist }} Werktagen.{% else %}Die ersten Stücke stehen als Referenz im Archiv. Wann die nächste Ausgabe erscheint, erfährt zuerst, wer auf der Warteliste steht.{% endif %}</p>
             {% if motivanfrage_aktiv %}<p><a class="lv-knopf" href="{% url 'motiv_anfragen' %}">Motiv anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>{% endif %}
             <p><a href="{% url 'produkte' %}">Zum Archiv</a> · <a href="{% url 'home' %}#warteliste">Zur Warteliste</a> · <a href="{% url 'kontakt' %}">Kontakt</a></p>
         </div>

@@ -28,10 +28,10 @@
 
     <section class="lv-seitenkopf" aria-labelledby="datenschutz-titel">
         <h1 class="lv-serif lv-satz" id="datenschutz-titel">Datenschutz</h1>
-        <p class="lv-lead">Datenschutzerklärung – diese Erklärung von Luviq Universe, {{ anbieterin.name }}, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, umfasst 4 Abschnitte und nennt, welche Daten beim Besuch dieser Seite{% if verkauf_aktiv %}, bei einer Bestellung{% endif %}, bei einer Anfrage über die Formulare und beim Newsletter anfallen, an welche Dienste sie fließen und welche Rechte Sie dabei haben.</p>
+        <p class="lv-lead">Datenschutzerklärung – diese Erklärung von Luviq Universe, {{ anbieterin.name }}, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {% if rechtstexte.datenschutz %}umfasst 12 Abschnitte{% else %}umfasst 4 Abschnitte{% endif %} und nennt, welche Daten beim Besuch dieser Seite{% if verkauf_aktiv %}, bei einer Bestellung{% endif %}, bei einer Anfrage über die Formulare und beim Newsletter anfallen, an welche Dienste sie fließen und welche Rechte Sie dabei haben.</p>
     </section>
 
-    {% comment %}Generator-Text (legal/generator/datenschutz.html) ersetzt nach Luisas Freigabe den Block darunter; dann die Aufbau-Referenz gezielt nachziehen.{% endcomment %}
+    {% comment %}Rechtstext-Ablage (legal/generator/datenschutz.html, selbst geschrieben und belegt seit 30.10.2026) ersetzt den Block darunter; der alte Block bleibt nur als Rückfall, falls die Ablage wieder leer ist.{% endcomment %}
     {% if rechtstexte.datenschutz %}
     <section class="lv-abschnitt" aria-label="Datenschutzerklärung">
         <div class="lv-prosa lv-rechtstext">{% include 'shop1/legal/generator/datenschutz.html' %}</div>
@@ -65,7 +65,15 @@
             <p><strong>Zahlung, Anfragen und E-Mail:</strong> {% if verkauf_aktiv %}Bei Zahlungen über PayPal werden Ihre Daten verschlüsselt an den Zahlungsdienstleister übertragen. Wir speichern keine Kreditkarteninformationen auf unseren Servern. Bestellbestätigungen werden per E-Mail verschickt.{% else %}Solange der Shop nicht eröffnet ist, nimmt die Seite keine Bestellungen an und verarbeitet keine Zahlungsdaten; das Skript von PayPal wird nicht geladen. Die Verarbeitung durch PayPal gilt erst ab Eröffnung des Shops.{% endif %} Anfragen über das Kontaktformular (Name, E-Mail-Adresse, Betreff, Nachricht) und über „Motiv anfragen“ (Auswahl, Beschreibung, Instagram-Name und E-Mail-Adresse, eines von beiden genügt) speichern wir vor dem Versand in unserer Datenbank, damit bei einer Störung des Mailversands keine verloren geht. Jede Anfrage geht außerdem als E-Mail an Luisa Brehler, und eine Kopie davon erhält die Webagentur Scherzinger (Bastian Scherzinger), die diese Website technisch betreut; das Gleiche gilt für Benutzername und E-Mail-Adresse einer neuen Registrierung. Die Mails laufen über das E-Mail-Postfach von Luviq Universe bei Gmail (Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland); Ihre E-Mail-Adresse und der Inhalt der Nachricht werden dorthin übermittelt. Google kann Daten auch in den USA verarbeiten; die Übermittlung stützt sich auf das EU-US Data Privacy Framework. An die bei „Motiv anfragen“ eingetippte Adresse schicken wir keine automatische Bestätigung. Rechtsgrundlage für die Bearbeitung Ihrer Anfrage ist Art. 6 Abs. 1 lit. b DSGVO. Eine feste Löschfrist gibt es für gespeicherte Anfragen derzeit nicht; wir löschen sie auf Wunsch jederzeit. Zum Newsletter, über den auch die Warteliste für den ersten Drop läuft: Nach der Anmeldung erhalten Sie zunächst eine E-Mail mit einem Bestätigungslink; erst nach der Bestätigung schicken wir Ihnen den Newsletter (Double-Opt-in, Rechtsgrundlage ist Ihre Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO). Eine Newsletter-Anmeldung können Sie jederzeit widerrufen, über den Abmeldelink in jeder Newsletter-Mail oder indem Sie uns eine kurze Nachricht schreiben. Zu Kommentaren im Gästebuch: Beiträge sind öffentlich sichtbar und werden zusammen mit Ihrem Benutzernamen und dem Zeitpunkt gespeichert, bis Sie oder wir sie löschen.</p>
             </div>
         </section>
-        <section class="lv-abschnitt" id="ds-4" aria-labelledby="ds-4-titel">
+        {% if einwilligung.ga %}<section class="lv-abschnitt" id="ds-analytics" aria-labelledby="ds-analytics-titel">
+            <h2 class="lv-serif lv-abschnittstitel" id="ds-analytics-titel">Google Analytics</h2>
+            <div class="lv-prosa">
+            <p>Diese Website nutzt – <strong>nur nach Ihrer Einwilligung</strong> – Google Analytics 4, einen Webanalysedienst der Google Ireland Limited (Gordon House, Barrow Street, Dublin 4, Irland). Google Analytics verwendet Cookies, die eine Analyse der Nutzung der Website ermöglichen, etwa welche Seiten aufgerufen werden, über welchen Weg Sie auf die Seite gekommen sind und welche Knöpfe geklickt werden. Zweck ist allein unsere Besucherstatistik; die Daten nutzen wir nicht für Werbung, wir verkaufen sie nicht, und die Datenfreigabe an Google für eigene Zwecke ist ausgeschaltet. Google verarbeitet die Daten als Auftragsverarbeiter in unserem Auftrag.</p>
+            <p>Google Analytics 4 speichert keine vollständigen IP-Adressen; sie werden innerhalb der EU bzw. des EWR verarbeitet und vor der Speicherung verworfen. Eine Übermittlung in die USA kann nicht vollständig ausgeschlossen werden; Google LLC ist nach dem EU-US Data Privacy Framework zertifiziert. Die Cookies von Google Analytics (<code>_ga</code>, <code>_ga_&lt;ID&gt;</code>) bleiben höchstens 2 Jahre in Ihrem Browser; in Google Analytics werden Ereignisdaten nach 2 Monaten und nutzerbezogene Daten nach 14 Monaten gelöscht. Google-Signale (Verknüpfung mit Google-Konten) sind ausgeschaltet.</p>
+            <p>Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO i. V. m. § 25 Abs. 1 TDDDG). Das Analyse-Skript wird technisch erst <strong>nach Ihrer Zustimmung</strong> im Banner geladen. Ihre Wahl („ja“ oder „nein“) merkt sich die Seite im Speicher Ihres Browsers. Sie können die Einwilligung jederzeit über „Cookie-Einstellungen“ unten auf jeder Seite widerrufen. Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">https://policies.google.com/privacy</a></p>
+            </div>
+        </section>
+        {% endif %}<section class="lv-abschnitt" id="ds-4" aria-labelledby="ds-4-titel">
             <h2 class="lv-serif lv-abschnittstitel" id="ds-4-titel">4. Ihre Rechte</h2>
             <div class="lv-prosa">
             <p>Sie haben gegenüber uns folgende Rechte:</p>
@@ -78,7 +86,7 @@
             <p>Eine erteilte Einwilligung, etwa in den Newsletter, können Sie jederzeit mit Wirkung für die Zukunft widerrufen. Soweit wir Daten auf Grundlage unseres berechtigten Interesses verarbeiten (Besucherzählung, Schutz vor automatisierten Angriffen), steht Ihnen ein Widerspruchsrecht zu: Sie können dieser Verarbeitung aus Gründen, die sich aus Ihrer besonderen Situation ergeben, jederzeit widersprechen (Art. 21 DSGVO). Kontaktieren Sie uns hierzu einfach unter <a href="mailto:brehlerluisa@gmail.com">brehlerluisa@gmail.com</a>. Außerdem haben Sie das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren; für Luviq Universe in Lübeck ist das das Unabhängige Landeszentrum für Datenschutz Schleswig-Holstein (datenschutzzentrum.de).</p>
             </div>
         </section>
-    {% endif %}
     <section class="lv-abschnitt" aria-label="Stand"><p class="lv-klein">Stand: 2. Oktober 2026</p></section>
+    {% endif %}
 </div>
 {% endblock %}

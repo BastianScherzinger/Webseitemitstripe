@@ -23,8 +23,20 @@ class Command(BaseCommand):
     def handle(self, *args, **optionen):
         d = luviq_daten.ENGEL_STUECK
         with transaction.atomic():
-            if Produkt.objects.filter(slug=d['slug']).exists():
-                self.stdout.write('Engel-Shirt ist schon vorhanden, nichts geändert.')
+            vorhanden = Produkt.objects.filter(slug=d['slug']).first()
+            if vorhanden:
+                # Nur leere Felder nachtragen (Zustand „Neu“, Bastian 30.10.2026) – Luisas Werte bleiben.
+                nachtrag = {}
+                if not vorhanden.zustand and d['zustand']:
+                    nachtrag['zustand'] = d['zustand']
+                if not (vorhanden.material or '').strip() and d['material']:
+                    # Gegenprüfung M3: Faserzusammensetzung bei neuer Ware vor dem Kauf.
+                    nachtrag['material'] = d['material']
+                if nachtrag:
+                    Produkt.objects.filter(pk=vorhanden.pk).update(**nachtrag)
+                    self.stdout.write(f'Engel-Shirt: {", ".join(nachtrag)} nachgetragen.')
+                else:
+                    self.stdout.write('Engel-Shirt ist schon vorhanden, nichts geändert.')
                 return
             frei = 6 if not Produkt.objects.filter(nummer=6).exists() else None  # sonst nächste freie
             produkt = Produkt.objects.create(
@@ -36,5 +48,6 @@ class Command(BaseCommand):
                 # Kein Newsletter-Versand durch das Anlegen: der läuft nur über das Panel.
                 newsletter_gesendet=True)
             for nr, extra in enumerate(d['zusatzbilder'], start=1):
-                ProduktBild.objects.create(produkt=produkt, position=nr, **extra)
+                extra = dict(extra)
+                ProduktBild.objects.create(produkt=produkt, position=extra.pop('position', nr), **extra)
         self.stdout.write(f'Engel-Shirt Nº {produkt.archiv_nummer} angelegt.')

@@ -113,6 +113,35 @@ WISSEN_BEITRAEGE = {
         'freigegeben': False,
         'veroeffentlicht': '2026-10-23',
     },
+    # Zwei Ratgeber zur Technik (Analyse C8, Entwurf 30.10.2026 vormittags). Veröffentlicht
+    # 30.10.2026 (Runde 3, Bastians Auftrag): auf Wahrheit geprüft – Sicherheitsangaben zu Bleiche
+    # gegen Herstellerangaben (Clorox zu Wasserstoffperoxid), Gesundheitsbehörden (NJ Department of
+    # Health, Hazard Alert „Mixing Cleaners“) und Fachhandel (Dharma Trading, Natriumthiosulfat)
+    # abgeglichen; zu Luisas Arbeitsweise nur, was die Seite schon sagt (SCHRITTE, DAUER, PFLEGE).
+    # ``bild``: ein echtes Foto zum Beitrag (sichtbar oben, Article.image, Bild-Sitemap).
+    'bleach-painting': {
+        'url_name': 'wissen_bleach',
+        'template': 'shop1/wissen/bleach.html',
+        'titel': 'Was ist Bleach Painting?',
+        'kurz': 'Malen mit Bleiche auf dunklem Stoff: wie die Technik funktioniert, wie sie sich von Druck unterscheidet, welche Stoffe passen und welche Sicherheitsregeln allgemein gelten.',
+        'freigegeben': True,
+        'bild': {
+            'muster': 'shop1/images/stuecke/engel-arbeitsplatz-45-{w}.webp',
+            'breiten': (600, 900, 960), 'masse': (960, 1200),
+            'alt': ('Echtes Foto: das Engel-Shirt mit dem Luviq-Zeichen auf Luisas Arbeitstisch, daneben '
+                    'Pinsel, Stifte, Gummihandschuhe und ein Glas mit Bleiche'),
+            'unterschrift': 'Echtes Foto: Luisas Arbeitstisch mit dem Engel-Shirt',
+        },
+        'veroeffentlicht': '2026-10-30T11:45:00+01:00',
+    },
+    'bleichfleck-uebermalen': {
+        'url_name': 'wissen_bleichfleck',
+        'template': 'shop1/wissen/bleichfleck.html',
+        'titel': 'Bleichfleck übermalen: geht das?',
+        'kurz': 'Warum ein Bleichfleck bleibt, welche Wege es gibt – Fleck ausmalen, nachfärben oder zum Motiv machen – und worauf man vorher achten sollte.',
+        'freigegeben': True,
+        'veroeffentlicht': '2026-10-30T11:45:00+01:00',
+    },
     # Ab hier: Beiträge, die ausschliesslich aus dem Projekt belegte Angaben
     # wiedergeben (AGB, Datenschutzerklärung, Impressum, Liefergebiet und der
     # Code von Warenkorb, Bestellvorgang und Anmeldung). Sie brauchen keine
@@ -136,8 +165,8 @@ WISSEN_BEITRAEGE = {
         'url_name': 'wissen_widerruf',
         'template': 'shop1/wissen/widerruf.html',
         'titel': 'Widerruf und Rücksendung: was gilt bei einem Einzelstück?',
-        'kurz': 'Vierzehn Tage Widerrufsrecht nach § 5 der AGB, Anschrift für die '
-                'Rücksendung, Unregelmäßigkeiten der Bemalung und echte Mängel.',
+        'kurz': 'Vierzehn Tage Widerrufsrecht, Online-Widerruf über „Vertrag widerrufen“, '
+                'Rücksendekosten, Unregelmäßigkeiten der Bemalung und echte Mängel.',
         'freigegeben': True,
         # Beschreibt den Kaufweg: ohne Verkauf (VERKAUF_AKTIV aus) noindex
         # und nicht in Sitemap, llms.txt und Feed, siehe _sichtbar().
@@ -242,7 +271,31 @@ def wissen_beitrag(request, slug):
     # Verkaufsschalter); die Vorlagen setzen danach ``noindex``.
     beitrag = {**beitrag, 'freigegeben': _sichtbar(beitrag)}
     return render(request, beitrag['template'], {
-        'beitrag': beitrag, 'slug': slug, 'weiter': weiterlesen(slug)})
+        'beitrag': beitrag, 'slug': slug, 'weiter': weiterlesen(slug),
+        'beitragsbild': beitragsbild(beitrag), 'engel_url': engel_url()})
+
+
+def beitragsbild(beitrag):
+    """Das Foto eines Beitrags (``beitrag['bild']``) als ``produktbilder.Bild`` oder ``None``."""
+    from .. import produktbilder
+    bild = beitrag.get('bild')
+    if not bild:
+        return None
+    breite, hoehe = bild['masse']
+    spec = f"{bild['muster']}@{','.join(str(b) for b in bild['breiten'])}#{breite}x{hoehe}"
+    gefunden = produktbilder.bild_aus(None, spec, breite, hoehe, bild['alt'])
+    if gefunden and bild.get('unterschrift'):
+        from dataclasses import replace
+        gefunden = replace(gefunden, unterschrift=bild['unterschrift'])
+    return gefunden
+
+
+def engel_url():
+    """Adresse der Stückseite des Engel-Shirts, wenn es aktiv ist – sonst leer (kein toter Link)."""
+    from .. import luviq_daten
+    from ..models import Produkt
+    produkt = Produkt.objects.filter(slug=luviq_daten.ENGEL_STUECK['slug'], aktiv=True).first()
+    return produkt.get_absolute_url() if produkt else ''
 
 
 class WissenFeed(Feed):
@@ -304,5 +357,8 @@ class WissenFeed(Feed):
         ``USE_TZ=True``: ein naives ``datetime`` ergäbe hier eine Warnung und
         einen ``pubDate`` ohne Zonenangabe, den jeder Leser anders auslegt.
         """
-        tag = date.fromisoformat(item['veroeffentlicht'])
+        roh = item['veroeffentlicht']
+        if 'T' in roh:  # ISO 8601 mit Uhrzeit und Zone (neue Beiträge)
+            return datetime.fromisoformat(roh)
+        tag = date.fromisoformat(roh)
         return timezone.make_aware(datetime.combine(tag, time.min))

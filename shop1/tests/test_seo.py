@@ -206,7 +206,7 @@ class SitemapTest(LuviqTestCase):
         _, adressen = self._adressen()
         pfade = {a.split('testserver', 1)[-1] or '/' for a in adressen}
         pflicht = {
-            '/', '/produkte/', '/gaestebuch/', '/ueber_uns/',
+            '/', '/produkte/', '/ueber_uns/',
             '/liefergebiet/', '/kontakt/', '/datenschutz/',
         }
         # Die AGB nur mit Verkauf – ohne gelten sie noch nicht (noindex).
@@ -216,6 +216,9 @@ class SitemapTest(LuviqTestCase):
             pflicht.issubset(pfade),
             f'In der Sitemap fehlen: {sorted(pflicht - pfade)}',
         )
+        # Gästebuch: noindex,follow, bewusst nicht in der Sitemap (Analyse 30.10.2026, C9).
+        self.assertNotIn('/gaestebuch/', pfade)
+        self.assertIn('noindex', self.hole('/gaestebuch/').content.decode())
 
     def test_keine_adresse_der_sitemap_ist_auf_noindex_gesetzt(self):
         """Verhindert das widersprüchliche Signal, das dieser Lauf vorgefunden
@@ -270,9 +273,10 @@ class SitemapTest(LuviqTestCase):
             with self.subTest(loc=loc):
                 lastmod = eintrag.find('sm:lastmod', _SITEMAP_NS)
                 self.assertIsNotNone(lastmod, f'{loc} steht ohne <lastmod> in der Sitemap')
-                self.assertRegex(lastmod.text or '', r'^\d{4}-\d{2}-\d{2}$')
+                # W3C-Datum, seit 30.10.2026 auch mit Uhrzeit und Zone (Ratgeber, ISO 8601 +01:00).
+                self.assertRegex(lastmod.text or '', r'^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2})?$')
                 self.assertLessEqual(
-                    date.fromisoformat(lastmod.text), date.today(),
+                    date.fromisoformat(lastmod.text[:10]), date.today(),
                     f'{loc}: lastmod {lastmod.text} liegt in der Zukunft',
                 )
 
@@ -395,14 +399,14 @@ class WissensdatumTest(LuviqTestCase):
             with self.subTest(pfad=pfad), override_settings(VERKAUF_AKTIV=True):
                 html = self.hole(pfad).content.decode()
                 nach_h1 = html[html.index('</h1>'):]
-                zeit = re.search(r'<time datetime="(\d{4}-\d{2}-\d{2})">([^<]+)</time>', nach_h1)
+                zeit = re.search(r'<time datetime="(\d{4}-\d{2}-\d{2}(?:T[\d:+]+)?)">([^<]+)</time>', nach_h1)
                 self.assertIsNotNone(zeit, f'{pfad}: kein sichtbares Datum unter der h1')
                 stand = SEITEN_STAND[beitrag['url_name']]
                 self.assertEqual(zeit.group(1), stand)
                 self.assertIn(f'"dateModified": "{stand}"', html)
                 self.assertLess(nach_h1.index('<time'), nach_h1.index('<p'),
                                 'das Datum steht nicht direkt unter der h1')
-                jahr, monat, tag = (int(t) for t in stand.split('-'))
+                jahr, monat, tag = (int(t) for t in stand[:10].split('-'))
                 self.assertTrue(zeit.group(2).startswith(f'{tag}. '), zeit.group(2))
                 self.assertTrue(zeit.group(2).endswith(str(jahr)), zeit.group(2))
 
@@ -478,12 +482,13 @@ class FeedTest(LuviqTestCase):
         Feed zum Wegweiser in ``llms.txt``."""
         from ..views.wissen import freigegebene_beitraege
 
+        # Seit Runde 3 (30.10.2026) auch die zwei Ratgeber zur Bleiche.
         self.assertEqual(set(freigegebene_beitraege()), {
             'pflege-handbemalte-kleidung', 'upcycling-mode-second-hand-vintage',
-            'groesse-bei-einzelstuecken'})
+            'groesse-bei-einzelstuecken', 'bleach-painting', 'bleichfleck-uebermalen'})
         self.assertIn('Feed:', self.hole('/llms.txt').content.decode())
         feed = ElementTree.fromstring(self.hole('/feed/').content)
-        self.assertEqual(len(list(feed.iter('item'))), 3)
+        self.assertEqual(len(list(feed.iter('item'))), 5)
 
     def test_jede_seite_verlinkt_den_feed_im_kopfbereich(self):
         """Ohne den Verweis im ``<head>`` findet ihn niemand, der ihn nicht
@@ -515,7 +520,7 @@ class FeedVerweisTest(LuviqTestCase):
         html = self.hole('/').content.decode()
         self.assertRegex(html, self.VERWEIS)
         wurzel = ElementTree.fromstring(self.hole('/feed/').content)
-        self.assertEqual(len(list(wurzel.iter('item'))), 3)
+        self.assertEqual(len(list(wurzel.iter('item'))), 5)  # seit Runde 3 mit den zwei Ratgebern
 
     def test_mit_freigegebenem_beitrag_wird_der_feed_beworben(self):
         beitrag = {'titel': 'T', 'kurz': 'K', 'freigegeben': True,

@@ -1,7 +1,7 @@
 ---
 bereich: inhalte
 titel: Inhalte und Seitenbestand
-stand: 2026-10-03
+stand: 2026-10-30
 status: teilweise
 fortschritt: 85
 zusammenfassung: Stand 02.10.2026: 17 Sitemap-URLs (Start, Archiv, Gästebuch, Luisa, Motiv anfragen, Herkunft, Kontakt, Datenschutz, Wissensbereich mit drei Beiträgen, fünf Archivstücke), llms-full.txt und Feed live, Archiv statt Shop; Substanz & Reichweite 85 gemessen (02.10.2026). Offen bei Luisa: Beschreibung je Stück, Produktnamen, Stoff für zweite Seiten, Textfreigabe; zwei Später-Punkte.
@@ -56,7 +56,8 @@ Nicht in der Sitemap, aber erreichbar und per `robots.txt` gesperrt: `/login/`, 
 | `/gaestebuch/` | Gästebuch (Kommentare angemeldeter Nutzer, Likes) | 70 | | |
 | `/impressum/` | Impressum — **`noindex, follow`, steht trotzdem in der Sitemap** | | | Impressum – Luviq Universe \| Alsfeld, Hessen |
 | `/datenschutz/` | Datenschutz | 185 | | (28 Z.) |
-| `/agb/` | AGB inkl. Widerrufsbelehrung (ohne Muster-Widerrufsformular) | 179 | | (20 Z.) |
+| `/agb/` | AGB §§ 1–14 + Widerrufsbelehrung mit Muster-Widerrufsformular (seit 30.10.2026) | 179 | | (20 Z.) |
+| `/vertrag-widerrufen/` | Widerrufsfunktion § 356a BGB (Formular, `noindex`, nicht in der Sitemap; seit 30.10.2026) | – | | |
 
 Summe: **1.557 Eigenwörter** über 13 abgerufene Seiten (von 2.434 Wörtern Gesamttext), Zielgrösse 12.000 (SU02); im Schnitt 120 je Seite, Ziel 400 (SU06); 11 von 13 Seiten unter 200 Wörtern (IS19); Rahmenanteil auf Produktseiten 73 % (GE29). Die Zahlen gelten für **main**; der Zweig ist live nicht gemessen.
 
@@ -215,6 +216,12 @@ von `/produkte/`: [20-DESIGN.md](20-DESIGN.md).
 ## Fehlende Inhalte
 
 *Stand 02.10.2026, gegen die Live-Seite geprüft.* Nichts mehr, wofür kein Zuständiger genannt wäre: Der Wissensbereich ist live (`3073388`), die Danke-Seite (KV07), der Datenschutzhinweis am Kontaktformular und der Honigtopf (KV05/KV06, `38bb573`) sowie die konkreten Zahlen (GE25) stehen auf `main`, Frage-Überschriften (GE24) sind „bewusst so“ im Bewertungsblock von [80-AUFGABEN.md](80-AUFGABEN.md), und die Über-uns-Seite gibt es (`/ueber_uns/`, Luisa Brehler namentlich; dass `VL11` sie nicht erkennt, ist ein Messfehler des Musters, siehe Bewertungsblock). Was an Inhalt noch fehlt, braucht Angaben von Luisa und steht deshalb dort unter „Beim Kunden“: eigene Beschreibung je Einzelstück und eindeutige Produktnamen (`SU06`, `IS21`, `IS23`), Stoff für zweite Seiten je Bereich (`SU08`, `SU01`, `SU02`: 17 statt 30 rankfähige Seiten, 7.202 statt 12.000 Eigenwörter lokal), Vertrauenssignale (`KV09`) und das Gegenlesen der „Nachtausgabe“-Texte. Muster-Widerrufsformular (RE09) und BFSG-Erklärung (RE12) gibt es erst mit Verkauf (80-AUFGABEN, „Offen“, Später). Eine Telefonnummer und Öffnungszeiten gibt es bewusst nicht (KV01, KV08, KV11 im Bewertungsblock; die Antwortzeit „in der Regel innerhalb von 2 Stunden“ steht seit `3073388` auf `/kontakt/`).
+
+## Runde 3, 30.10.2026
+
+- Zwei Ratgeber veröffentlicht: „Was ist Bleach Painting?“ (mit neuer Frage zum Neutralisieren und geprüften Sicherheitsangaben) und „Bleichfleck übermalen: geht das?“. Quellen der Sicherheitsangaben stehen im Register `views/wissen.py`.
+- Versand im Preis enthalten (`luviq_daten.VERSAND['kosten'] = 0`, `VERSAND_PREISSATZ`), kein Umtausch bei gesetzlichem Widerrufsrecht (`UMTAUSCH_SATZ`), Auftragsarbeiten ohne Widerrufsrecht (`AUFTRAG_WIDERRUF_SATZ`, FAQ auf `/motiv-anfragen/`). Alle drei Sätze nur aus `luviq_daten`.
+- Foto von Luisa auf Kontakt und Luisa (`LUISA_FOTO`).
 
 ## Offen
 

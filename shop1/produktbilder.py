@@ -24,6 +24,8 @@ class Bild:
     original: str   # größte Fassung, für og:image und Sitemap
     karte_src: str = ''
     karte_srcset: str = ''
+    ist_ki: bool = False     # KI-Studiobild aus einem echten Foto (Runde 3)
+    unterschrift: str = ''   # sichtbare Bildunterschrift in der Galerie (leer = keine)
 
 
 def statisches_bild(spec):

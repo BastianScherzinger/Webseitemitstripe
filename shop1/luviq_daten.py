@@ -73,13 +73,53 @@ TIKTOK = 'https://www.tiktok.com/@luviq.archive'
 #: Profiladresse 0xc0e5d5a554eadc30).
 GOOGLE_PROFIL = 'https://www.google.com/maps?cid=13899750731019902000'
 
+#: Pinterest-Unternehmenskonto (Website bestätigt) und ProvenExpert-Profil der Marke
+#: (beide am 30.10.2026 abgerufen, 200). Die Adresse ``/luviq-luebeck/`` bei
+#: ProvenExpert liefert 410, richtig ist ``/de-de/luviq/``.
+PINTEREST = 'https://www.pinterest.com/luviqarchive/'
+PROVENEXPERT = 'https://www.provenexpert.com/de-de/luviq/'
+
+#: Bewertungsbitte (30.10.2026): ``/bewerten/`` leitet direkt zu Google, ``/bewerten/alle/``
+#: zeigt jedes Portal als eigenen Knopf (Ziel des QR-Codes auf dem Bild in
+#: ``Buero\luisa\arbeitsplatz\grafik\bewertungsbitte``). Nur Adressen, die im Browser
+#: geöffnet und Luviq zugeordnet wurden:
+#: Google: Link aus dem Unternehmensprofil (Rezensionen → „Bewertungen erhalten"), öffnet
+#: „Rezension schreiben" für Luviq, Maps-ID 0x47bcbd26d91cd539:0xc0e5d5a554eadc30 (= GOOGLE_PROFIL).
+#: ProvenExpert: Umfrage „Luviq Lübeck" (angelegt 29.10.2026), ohne Anmeldung 200.
+#: Nicht dabei: Trustpilot (kein Profil, 30.10. „Seite nicht gefunden"), golocal (Übernahme
+#: pausiert), Facebook (nur Luisas persönliches Profil, keine Bewertungen).
+GOOGLE_BEWERTEN = 'https://g.page/r/CTDc6lSl1eXAECE/review'
+PROVENEXPERT_BEWERTEN = 'https://www.provenexpert.com/luviq/ffk7/'
+
+#: (Name, Adresse, Hinweis) – Google zuerst. Ein neues Portal: Formularadresse selbst
+#: öffnen, Zeile ergänzen, danach das Bild mit ``bau.py`` neu bauen (QR-Code bleibt gleich).
+BEWERTUNGSPORTALE = (
+    ('Google', GOOGLE_BEWERTEN, 'Erscheint direkt in der Google-Suche und in Google Maps.'),
+    ('ProvenExpert', PROVENEXPERT_BEWERTEN, 'Kurzer Fragebogen mit Sternen und ein paar Sätzen.'),
+)
+
+#: Luisas persönliche Profile (Facebook, LinkedIn): gehören an den Personenknoten,
+#: nicht an die Marke (Analyse 30.10.2026, C5).
+FACEBOOK_LUISA = 'https://www.facebook.com/profile.php?id=61595684296277'
+LINKEDIN_LUISA = 'https://www.linkedin.com/in/luisa-brehler-89a050448'
+
 #: Belegte Profiladressen für ``sameAs`` (Schema) und ``llms.txt``.
-PROFILE = (INSTAGRAM, TIKTOK, GOOGLE_PROFIL)
+PROFILE = (INSTAGRAM, TIKTOK, GOOGLE_PROFIL, PINTEREST, PROVENEXPERT)
+
+#: ``sameAs`` des Personenknotens Luisa Brehler.
+PROFILE_PERSON = (FACEBOOK_LUISA, LINKEDIN_LUISA)
 
 #: Pflegehinweis (GPSR-Angabe im Online-Angebot), wortgleich aus Luisas
 #: Antwort in ``FAQ_MOTIV`` unten – kein neuer Satz, keine neue Zusage.
 PFLEGE = ('Auf links bei 30 °C waschen, nicht in den Trockner, keinen Weichspüler nehmen und nur '
           'von links bügeln.')
+
+#: Auftragsarbeiten nach eigenem Motivwunsch: kein Widerrufsrecht (§ 312g Abs. 2 Nr. 1 BGB),
+#: weil das Stück nach den Vorgaben der Kundin oder des Kunden angefertigt wird.
+AUFTRAG_WIDERRUF_SATZ = ('Ein Stück, das nach deinem eigenen Motivwunsch gemalt wird, ist eine '
+                         'Anfertigung nur für dich: Dafür gibt es kein Widerrufsrecht '
+                         '(§ 312g Abs. 2 Nr. 1 BGB). Deshalb wird erst gemalt, wenn ihr euch auf ein '
+                         'Motiv geeinigt habt.')
 
 #: Häufige Fragen rund um die Motivanfrage (Bestellung nach Wunsch), wortgleich als
 #: Text auf ``/motiv-anfragen/`` und – erst mit Verkauf – als ``FAQPage``. Nur, was
@@ -102,6 +142,8 @@ FAQ_MOTIV = [
      'außerdem nicht zurücknehmen.'),
     ('Wie pflege ich ein handbemaltes Stück?',
      PFLEGE + ' So bleibt die Bemalung lange schön.'),
+    # Runde 3 (30.10.2026): Rechtslage bei Auftragsarbeiten, § 312g Abs. 2 Nr. 1 BGB.
+    ('Kann ich ein Stück nach meinem Motiv zurückgeben?', AUFTRAG_WIDERRUF_SATZ),
 ]
 
 #: Antwortzeit auf Anfragen, von Bastian für Luisa am 02.10.2026 bestätigt.
@@ -191,7 +233,7 @@ _MONATE = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August
 #: Beschreibung des Fotos da, kein erfundener Stückname und keine Nummer.
 #: ``status`` steht rechts in der Bildunterschrift: „Unikat“, kein Preis, kein Datum.
 HERO_STUECK = {'nummer': None, 'suche': ('engel',), 'name': 'Shirt mit Engel-Motiv',
-               'alt': 'Rückenansicht eines schwarzen T-Shirts auf einem Holzbügel vor dunkler Betonwand; darauf ein handgebleichtes Linienmotiv: ein Engel mit Flügeln hält eine Rose, rechts daneben ein kleiner Stern',
+               'alt': 'Studiobild (KI) aus dem echten Foto: Rückenansicht eines schwarzen T-Shirts auf einem Holzbügel vor dunkler Betonwand; darauf ein handgebleichtes Linienmotiv: ein Engel mit Flügeln hält eine Rose, rechts daneben ein kleiner Stern',
                'status': 'Unikat'}
 
 #: Teaser vor dem Drop: (Datum, Titel, Bildadresse, Alternativtext). Leer ⇒
@@ -298,12 +340,34 @@ SCHRITTE = [
 
 # ── Versand, Übergabe, Herkunft (Paket P1, 29.10.2026) ───────────────────────
 
-#: Versand. ``werktage`` steht so in den AGB (``legal/agb.html``, § 4: „Nach
-#: Zahlungseingang wird in der Regel innerhalb von 1-2 Werktagen versendet“) und
-#: wird nur mit Verkauf gezeigt. Versandkosten und ein Versanddienstleister stehen
-#: weder in den AGB noch im Code, deshalb gibt es hier keinen Wert dafür und keine
-#: Seite nennt einen. ``ausland=False``: Versand nur innerhalb Deutschlands.
-VERSAND = {'gebiet': 'ganz Deutschland', 'ausland': False, 'werktage': '1-2'}
+#: Versand. ``lieferfrist_werktage`` ist die **verbindliche Lieferfrist** aus AGB § 5 Abs. 2
+#: (Art. 246a § 1 Abs. 1 Nr. 10 EGBGB: Termin, bis zu dem geliefert wird; kein „in der
+#: Regel“, § 308 Nr. 1 BGB). Entscheidung der Leitung 30.10.2026 nach der Gegenprüfung
+#: (M1), Bastian und Luisa können die Zahl ändern – sie wirkt überall, wo Lieferzeit steht
+#: (AGB, Kasse, Mails, Stück-, Kontakt-, Versand- und Wissensseiten, Schema, llms.txt).
+#: Fristbeginn: PayPal am Tag nach Vertragsschluss, Vorkasse am Tag nach dem
+#: Überweisungsauftrag. ``werktage`` ist nur noch die interne Bearbeitungszeit bis zur
+#: Übergabe an den Versanddienst (Schema ``handlingTime``), kein Text für Kundinnen.
+#: Alles wird nur mit Verkauf gezeigt. ``kosten``: Versand innerhalb Deutschlands ist im
+#: Preis enthalten (Bastian 30.10.2026: „Versandkosten sind inklusive“) – 0 Euro,
+#: der Bestellweg berechnet keine Versandkosten. Ein Versanddienstleister ist nicht
+#: festgelegt, keine Seite nennt einen. ``ausland=False``: nur innerhalb Deutschlands.
+VERSAND = {'gebiet': 'ganz Deutschland', 'ausland': False, 'werktage': '1-2', 'kosten': 0,
+           'lieferfrist_werktage': 5}
+
+#: Der eine Satz zur Lieferzeit für alle Kurztexte (Kasse, Stückseite, llms.txt).
+LIEFER_SATZ = f"Lieferung innerhalb von {VERSAND['lieferfrist_werktage']} Werktagen, nur innerhalb Deutschlands"
+
+#: Die Preisangabe zum Versand, direkt am Preis (nur mit Verkauf sichtbar).
+VERSAND_PREISSATZ = 'inkl. Versand innerhalb Deutschlands'
+
+#: Kein freiwilliges Rückgabe- oder Umtauschrecht über das Gesetz hinaus (Bastian 30.10.2026:
+#: Einzelstücke, lange Handarbeit). Das gesetzliche Widerrufsrecht gilt trotzdem (§ 312g BGB;
+#: ein fertiges Unikat ist keine Anfertigung nach Kundenwunsch) – der Satz sagt beides. Wer beim
+#: Widerruf die Rücksendekosten trägt (die Kundin, § 357 Abs. 5 BGB), steht in legal/generator/widerruf.html.
+UMTAUSCH_SATZ = ('Weil jedes Teil ein Einzelstück in langer Handarbeit ist, gibt es keinen Umtausch. '
+                 'Dein gesetzliches Widerrufsrecht (14 Tage) bleibt davon unberührt.')
+
 
 #: Persönliche Übergabe in Lübeck. Bewusst ohne Uhrzeiten und ohne Treffpunkt:
 #: Luisa hat beides noch nicht festgelegt (SEO-Analyse, „Offene Angaben“). Ein
@@ -357,7 +421,7 @@ VERTRAUEN = _vertrauen()
 #: die Motivanfrage läuft (Vorlage prüft ``motivanfrage_aktiv``).
 WEGE = [
     ('Handbemalte Unikate',
-     'Gebrauchte Hoodies, Pullover und Shirts, jedes Motiv nur einmal.',
+     'Hochwertige Hoodies, Pullover und Shirts, gebraucht oder neu, jedes Motiv nur einmal.',
      'produkte', 'alle Stücke im Archiv'),
     ('Dein eigenes Teil',
      'Du beschreibst dein Motiv, bekommst Vorschläge, erst dann wird gemalt.',
@@ -501,11 +565,19 @@ LEISTE_AUS = frozenset({
 #: eine falsche Tatsachenbehauptung. „Verkauft“ steht nur bei einem Stück, das nicht als Archiv
 #: gekennzeichnet ist und nach einer Bestellung Bestand 0 hat (``Produkt.band_wort``).
 VERGEBEN_WORT = 'Vergeben'
+#: Band der fünf ersten Stücke Nº 001–005: Bastian 30.10.2026 – „wie Referenzen, nicht offiziell
+#: verkauft, als Beispiele drin, kommen später raus“; sie wurden verschenkt, deshalb „Vergeben“.
+REFERENZ_WORT = 'Vergeben'
+REFERENZ_NUMMERN = range(1, 6)
 VERKAUFT_WORT = 'Verkauft'
 
 #: Die Technik in einem Satz, auf Stückseite und Luisa-Seite gleich (Bastian 29.10.2026).
 BLEICHE_SATZ = ('Mit Bleiche gemalt: Die Farbe wird aus dem Stoff gezogen, nichts ist aufgedruckt. '
                 'Deshalb steht das Motiv in Bleich-Beige auf dem schwarzen Stoff.')
+
+#: Statische Bilder, die KI-Studiobilder aus einem echten Foto sind (Präfixe). Ihr Alt-Text,
+#: der Sitemap-Bildtitel und die Bildunterschrift nennen das ehrlich (Analyse 30.10.2026, C7).
+KI_BILD_PRAEFIXE = ('shop1/images/luviq/hero-engel',)
 
 #: Erstes offizielles Stück Nº 006, angelegt von ``manage.py luviq_engel_anlegen`` (aus
 #: ``start.sh``). Quelle: Bastian am 29.10.2026, 23:45. Nicht belegt und deshalb nicht
@@ -518,20 +590,54 @@ ENGEL_STUECK = {
     'masse': 'Größe M',
     'material': '100 % Baumwolle',
     'technik': 'Mit Bleiche von Hand gemalt',
-    'zustand': '',  # „gebraucht“ ist nicht belegt (Bastian 29.10.): keine Angabe statt Vermutung
+    'zustand': 'Neu',  # Bastian 30.10.2026: „eigentlich komplett neu“
     'seo_titel': 'Engel-Shirt mit Bleiche gemalt – Luviq Lübeck',
     'seo_beschreibung': ('Unikat Nº 006: T-Shirt mit Engel, Rose und Stern, von Hand mit Bleiche '
                          'gemalt. 100 % Baumwolle, Größe M. Luviq, Lübeck.'),
     'beschreibung': ('Ein T-Shirt aus 100 % Baumwolle in Größe M. Auf dem Rücken steht ein Engel mit '
                      'Rose und einem Stern, von Hand gemalt – viel Handarbeit, genau einmal. '
-                     'Vorne ein kleines Luviq-Zeichen auf Herzhöhe – Foto folgt.'),
-    # Statische Bilder (siehe produktbilder.py): Studiobild mit Stern (Hero-Zuschnitt 4:5) zuerst,
-    # dann das echte Foto. Vorderseiten-Fotos später als weitere „Zusatzbilder“ im Admin eintragen.
+                     'Vorne ein kleines Luviq-Zeichen auf Herzhöhe.'),
+    # Galerie (Runde 3, Bastian 30.10.2026): Rücken KI → Rücken echt → Vorne KI → Vorne echt →
+    # Arbeitsplatz. Das Hauptbild ist das Studiobild (KI) des Rückens. Die Zusatzbilder tragen eine
+    # feste ``position``; Platz 2 ist für das KI-Studiobild der Vorderseite frei gehalten (gibt es
+    # noch nicht). Bilder tauschen: doku/20-DESIGN.md, Abschnitt „Stückbilder tauschen“.
     'bild_statisch': 'shop1/images/luviq/hero-engel-45-{w}.webp@480,640,800#800x999',
     'zusatzbilder': [
-        {'bild_statisch': 'shop1/images/stuecke/engel-echt-45-{w}.webp@600,900,960#960x1200',
+        {'position': 1, 'ist_ki': False, 'unterschrift': 'Echtes Foto: Rücken',
+         'bild_statisch': 'shop1/images/stuecke/engel-echt-45-{w}.webp@600,900,960#960x1200',
          'breite': 960, 'hoehe': 1200,
          'alt': ('Echtes Foto des fertigen Engel-Shirts von hinten: schwarzes T-Shirt, darauf in '
                  'Bleich-Beige ein Engel mit Flügeln, Rose und Stern')},
+        # Platz 2: KI-Studiobild der Vorderseite (Holzbügel, dunkle Wand wie das Rücken-Studiobild),
+        # erst eintragen, wenn es das Bild gibt und das Luviq-Zeichen exakt stimmt:
+        # {'position': 2, 'ist_ki': True, 'unterschrift': 'Studiobild (KI) aus dem echten Foto: vorne',
+        #  'bild_statisch': 'shop1/images/stuecke/engel-vorne-studio-45-{w}.webp@600,900,960#960x1200',
+        #  'breite': 960, 'hoehe': 1200, 'alt': 'Studiobild (KI) aus dem echten Foto: …'},
+        {'position': 3, 'ist_ki': False, 'unterschrift': 'Echtes Foto: vorne, Luviq-Zeichen',
+         'bild_statisch': 'shop1/images/stuecke/engel-vorne-echt-45-{w}.webp@600,900,960#960x1200',
+         'breite': 960, 'hoehe': 1200,
+         'alt': ('Echtes Foto der Vorderseite des Engel-Shirts, nah: das Luviq-Zeichen in Bleich-Beige '
+                 'auf schwarzem Stoff, ein Schriftzug mit Stern und zwei Pfeilen')},
+        {'position': 4, 'ist_ki': False, 'unterschrift': 'Echtes Foto: auf Luisas Arbeitstisch',
+         'bild_statisch': 'shop1/images/stuecke/engel-arbeitsplatz-45-{w}.webp@600,900,960#960x1200',
+         'breite': 960, 'hoehe': 1200,
+         'alt': ('Echtes Foto: das Engel-Shirt mit der Vorderseite nach oben auf Luisas Arbeitstisch, '
+                 'daneben Pinsel, Stifte, Gummihandschuhe und ein Glas mit Bleiche')},
     ],
+}
+
+#: Bildunterschriften der Stückgalerie. Sie erscheinen nur in einer Galerie mit mindestens einem
+#: KI-Studiobild – dort muss jedes Bild sagen, was es ist (Runde 3, 30.10.2026).
+KI_UNTERSCHRIFT = HERO_BILDUNTERSCHRIFT
+ECHT_UNTERSCHRIFT = 'Echtes Foto'
+
+#: Foto von Luisa (Runde 3, Bastian 30.10.2026: das alte freigestellte Porträt „clean, ganz
+#: einfach“ wieder nutzen, ein neues Foto kommt nach). Brustbild, erzeugt von
+#: ``tools/bilder_zuschneiden.py luisa_brustbild``. Tauschen: neue Quelle ablegen, Funktion laufen
+#: lassen; bei anderem Seitenverhältnis ``masse`` anpassen. Leer (``None``) ⇒ kein Foto auf den Seiten.
+LUISA_FOTO = {
+    'muster': 'shop1/images/luisa/luisa-brustbild-{w}.webp',
+    'breiten': (280, 420, 570),
+    'masse': (570, 570),
+    'alt': 'Luisa Brehler, die Malerin hinter Luviq',
 }

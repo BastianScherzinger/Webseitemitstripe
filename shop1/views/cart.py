@@ -26,6 +26,11 @@ def add_to_cart(request, produkt_id):
         messages.error(request, 'Dieses Stück ist nicht mehr verfügbar.')
         return redirect('produkte')
 
+    # Gegenprüfung M3: neues Textil ohne Materialangabe ist (noch) nicht bestellbar.
+    if produkt.pflichtangaben_fehlen:
+        messages.error(request, 'Dieses Stück ist gerade nicht bestellbar.')
+        return redirect('produkte')
+
     if produkt.lagerbestand < 1:
         messages.error(request, f'Entschuldigung, "{produkt.name}" ist leider ausverkauft.')
         return redirect('home')

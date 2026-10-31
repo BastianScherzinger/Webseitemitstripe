@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% comment %}Bestätigung nach „Widerruf bestätigen“ (§ 356a Abs. 4 BGB): zeigt nur den eigenen Widerruf aus der Sitzung, noindex. Die rechtlich maßgebliche Eingangsbestätigung geht per E-Mail (dauerhafter Datenträger).{% endcomment %}
+{% block title %}Widerruf eingegangen – Luviq Universe{% endblock %}
+{% block meta_description %}Dein Widerruf ist bei Luviq Universe eingegangen. Die Eingangsbestätigung kommt per E-Mail.{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='danke' %}{% endblock %}
+{% block content %}
+<div class="lv-seite">
+    <section class="lv-danke" aria-labelledby="danke-titel">
+        <p class="lv-nr">Vertrag widerrufen</p>
+        <h1 class="lv-serif" id="danke-titel">Dein Widerruf ist eingegangen.</h1>
+        <p>Eingegangen am <strong>{{ eingang }}</strong>. {% if w.spamverdacht %}Die Erklärung ist gespeichert; die Eingangsbestätigung per E-Mail konnte nicht automatisch verschickt werden. Bitte schreib kurz an <a href="mailto:{{ anbieterin.email }}">{{ anbieterin.email }}</a>, dann bekommst du sie von Hand.{% else %}Die Eingangsbestätigung mit diesen Angaben geht per E-Mail an {{ w.email }}.{% endif %}</p>
+        <dl class="lv-daten">
+            <dt>Name</dt><dd>{{ w.name }}</dd>
+            <dt>Bestellnummer / Vertrag</dt><dd>{{ w.vertrag }}</dd>
+            <dt>Widerrufene Stücke</dt><dd>{{ umfang }}</dd>
+            <dt>E-Mail</dt><dd>{{ w.email }}</dd>
+        </dl>
+        <p>Bitte schick die Ware spätestens 14 Tage nach dem Widerruf an {{ anbieterin.name }}, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}. Die unmittelbaren Kosten der Rücksendung trägst du. Den Kaufpreis samt Lieferkosten bekommst du spätestens 14 Tage nach Eingang des Widerrufs mit demselben Zahlungsmittel zurück (Einzelheiten in der <a href="{% url 'agb' %}#widerruf">Widerrufsbelehrung</a>).</p>
+        <a class="lv-knopf" href="{% url 'home' %}">Zur Startseite <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </section>
+</div>
+{% endblock %}

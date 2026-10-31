@@ -121,7 +121,7 @@ Dazu Djangos `GZipMiddleware` nach WhiteNoise (dynamische Antworten werden kompr
 - **Motiv anfragen** (`/motiv-anfragen/`, `views/motiv.py`, Modell `Motivanfrage`, Panel `/shop-admin/motivanfragen/`): Stufe 1 ohne Preis, Zahlung, Zusage. Mail **nur** an `MOTIV_EMPFAENGER` (sonst `ADMIN_EMAIL`), **nie** an die eingetippte Adresse. Schalter `MOTIVANFRAGE_AKTIV` (Vorgabe an). Bild-Upload erst nach Datenschutz-Ergänzung.
 - **Archivnummer** `Produkt.nummer` (eindeutig, beim ersten Speichern die nächste freie; im Django-Admin direkt änderbar). `archiv_nummer` liest zuerst `nummer`, sonst den Primärschlüssel.
 - Vorlagen-Kommentare über mehrere Zeilen nur mit `{% comment %}` – `{# #}` gilt nur einzeilig und steht sonst sichtbar auf der Seite (so bis 19.09.2026 auf `/kontakt/`).
-- Markenregeln (`Webagentur Scherzinger\Design\luviq\MARKENWISSEN-luisa.md`): gesprochene Sätze, keine Gründungslegende, keine Identitätserzählung, keine Mond-Mystik; das alte freigestellte Foto von Luisa wird nicht mehr verwendet.
+- Markenregeln (`Webagentur Scherzinger\Design\luviq\MARKENWISSEN-luisa.md`): gesprochene Sätze, keine Gründungslegende, keine Identitätserzählung, keine Mond-Mystik. Das alte freigestellte Foto von Luisa ist seit Runde 3 (30.10.2026, Bastians Entscheidung) wieder da, als schlichtes Brustbild auf Kontakt- und Luisa-Seite (`luviq_daten.LUISA_FOTO`, `teile/luisa_foto.html`), bis ein neues kommt.
 
 ### Context Processor (`shop1/context_processors.py`)
 `shop_owner_check` injiziert `is_shop_owner`, `cart_count`, `werbung_aktiv` (60s `LocMemCache`) und `GOOGLE_REVIEW_URL` in jedes Template. Werbe-Impressionen werden bewusst **nicht** hier gezählt (war ein Bug), sondern nur in der `startseite()`-View.

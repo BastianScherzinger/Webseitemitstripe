@@ -1,7 +1,7 @@
 ---
 bereich: local-seo
 titel: Local SEO
-stand: 2026-10-23
+stand: 2026-10-30
 status: teilweise
 fortschritt: 60
 zusammenfassung: Stand 02.10.2026: Google-Unternehmensprofil „Luviq“ vorhanden und in sameAs und llms.txt verlinkt (Bestätigung durch Google nicht belegt), Search Console verbunden (Property sc-domain:luviq-alsfeld.com), NAP auf Impressum, Kontakt, Schema und llms.txt gleich, ohne Verkauf nur Organization-Schema. Offen: Bewertungen (keine dokumentiert, nur Luisa), GOOGLE_REVIEW_URL in Railway und Bestätigungsstatus des Profils (beide Bastian).
@@ -61,6 +61,8 @@ Folge: Klicks, Impressionen und Positionen sind ab jetzt abrufbar; **eine erste 
 nicht vor**.
 
 ## Bewertungen
+
+**Bewertungsbitte seit 30.10.2026:** `/bewerten/` leitet (302) direkt zum Google-Formular `https://g.page/r/CTDc6lSl1eXAECE/review` (aus dem Profil, Rezensionen → „Bewertungen erhalten“, Maps-ID `0x47bcbd26d91cd539:0xc0e5d5a554eadc30`), `/bewerten/alle/` zeigt je Portal einen Knopf (Google zuerst, ProvenExpert-Umfrage `provenexpert.com/luviq/ffk7/`, dazu das Gästebuch); beide noindex, nicht in Sitemap und llms.txt. Daten: `luviq_daten.BEWERTUNGSPORTALE`, Tests `test_bewerten`. Derselbe Google-Link ist seit 30.10. auch die Vorgabe von `GOOGLE_REVIEW_URL` (Knöpfe „Bei Google bewerten“). Nicht dabei: Trustpilot (kein Profil), golocal (Übernahme pausiert). Bild mit QR-Code (1080×1350 Chat, 1080×1920 Status) und Anleitung: `Webagentur Scherzinger\Buero\luisa\arbeitsplatz\grafik\bewertungsbitte\` (`bau.py`). Stand 30.10.: 1 Google-Rezension (5,0), noch keine aus Verkäufen. Keine Gegenleistung, keine Vorauswahl, kein `AggregateRating`.
 
 **Nicht dokumentiert.** Der Kasten `_reviews_map.html` zeigt „★★★★★" neben dem Firmennamen und je Gästebuch-Kommentar fünf Sterne — die Zahl „5.0" ist im Projekt **nicht belegt** und wurde deshalb im Lauf 4 bewusst nicht aufgegriffen (Logbuch Schritt 23). Es gibt kein `AggregateRating` im Schema (KV09), und es sollte auch keines geben, solange keine echte Quelle existiert. **Am 17.09.2026 (Paket 243) ist `KV09` deshalb als nicht möglich beendet worden**, keine Zeile Code geändert: von den vier fehlenden Vertrauenssignalen hat keines eine Quelle im Projekt — kein Gründungsjahr (kein Treffer für „seit 20…", „gegründet" oder `foundingDate` in `index.html`, `ueber_uns.html`, `legal/impressum.html`), kein Zertifikat und keine Mitgliedschaft ausser dem TLS-Zertifikat der Domain, und eben keine Bewertungszahl. Seit dem 17.09.2026 steht `KV09` als **beim Kunden** im Bewertungsblock; die Angaben liefert die Betreiberin ([80-AUFGABEN.md](80-AUFGABEN.md) → Beim Kunden Nr. 9 und 19).
 

@@ -58,6 +58,7 @@
                 <dt>Betrag</dt><dd>{{ order.gesamt_betrag|floatformat:2 }} €</dd>
             </dl>
             {% endfor %}
+            <p><a class="lv-link" href="{% url 'vertrag_widerrufen' %}">Vertrag widerrufen</a></p>
         </div>
         {% else %}
         <div class="lv-prosa">

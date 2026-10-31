@@ -1,7 +1,46 @@
-{% comment %}GENERATOR-TEXT-FEHLT
-Ablage für den Rechtstext „widerruf" aus dem Generator (Agenturregel 3: nur Generator + Freigabe von Luisa Brehler).
-So einfügen: den GANZEN Inhalt dieser Datei durch den HTML-Text des Generators ersetzen (ohne <html>/<body>,
-nur der Inhalt). Damit verschwindet auch das Kennwort oben, und shop1/startsperre.py zählt den Text als vorhanden.
-Eingabeliste für den Generator: Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29\GENERATOR-EINGABEN.md
-Kein Text aus anderen Shops kopieren, keine Klausel selbst schreiben (§ 2 RDG).
-{% endcomment %}
+{% comment %}
+Widerrufsbelehrung und Muster-Widerrufsformular für Luviq (Luisa Brehler).
+Stand 30.10.2026, selbst geschrieben nach Agenturregel vom 30.10.2026 (Belege: Analysen\luviq-2026-10-30-recht\BERICHT.md).
+Grundlage ist das gesetzliche Muster in der seit 19.06.2026 geltenden Fassung:
+Anlage 1 zu Art. 246a § 1 Abs. 2 Satz 2 EGBGB (geändert durch Art. 2 des Gesetzes vom 3.2.2026, BGBl. 2026 I Nr. 28)
+und Anlage 2 (Muster-Widerrufsformular); Wortlaut von gesetze-im-internet.de/bgbeg, abgerufen 30.10.2026.
+Der Mustertext bleibt WÖRTLICH (Sie-Form), sonst entfällt die Gesetzlichkeitsfiktion (Art. 246a § 1 Abs. 2 Satz 2 EGBGB).
+Ausgefüllte Gestaltungshinweise:
+ [1] b) Kaufvertrag (eine Bestellung, ein Paket)
+ [2] Name, Anschrift, E-Mail – KEINE Telefonnummer (es gibt keine; nicht erfinden, Restrisiko im Bericht)
+ [3] erster Baustein: Online-Widerrufsfunktion nach § 356a BGB (/vertrag-widerrufen/)
+ [4] eingefügt (Luviq bietet nicht an, die Ware selbst abzuholen)
+ [5] a) Rücksendung an Luisa; b) „Sie tragen die unmittelbaren Kosten der Rücksendung“ (Entscheidung 30.10.2026, § 357 Abs. 5 BGB); c) Wertverlust
+ [6] entfällt (keine Dienstleistung)
+Der Abschnitt „Ausschluss des Widerrufsrechts“ steht AUSSERHALB des Musters (§ 312g Abs. 2 Nr. 1 BGB, Auftragsarbeiten).
+{% endcomment %}<h2 id="widerrufsbelehrung">Widerrufsbelehrung</h2>
+<p><em>Verbraucherinnen und Verbraucher haben ein vierzehntägiges Widerrufsrecht. Die Belehrung darunter steht im Wortlaut des gesetzlichen Musters.</em></p>
+
+<h3>Widerrufsrecht</h3>
+<p>Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
+<p>Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag, an dem Sie oder ein von Ihnen benannter Dritter, der nicht der Beförderer ist, die Waren in Besitz genommen haben bzw. hat.</p>
+<p>Um Ihr Widerrufsrecht auszuüben, müssen Sie uns ({{ anbieterin.name }}, Luviq, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.land_name }}, E-Mail: <a href="mailto:{{ anbieterin.email }}">{{ anbieterin.email }}</a>) mittels einer eindeutigen Erklärung (z. B. ein mit der Post versandter Brief oder eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren. Sie können dafür das beigefügte Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist. Sie können Ihr Widerrufsrecht auch online unter <a href="{{ rechts_basis }}{% url 'vertrag_widerrufen' %}">{{ rechts_basis }}{% url 'vertrag_widerrufen' %}</a> (Schaltfläche „Vertrag widerrufen“ unten auf jeder Seite) ausüben. Wenn Sie diese Online-Funktion nutzen, übermitteln wir Ihnen auf einem dauerhaften Datenträger (z. B. durch eine E-Mail) unverzüglich eine Eingangsbestätigung mit Informationen zum Inhalt der Widerrufserklärung sowie dem Datum und der Uhrzeit ihres Eingangs.</p>
+<p>Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.</p>
+
+<h3>Folgen des Widerrufs</h3>
+<p>Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben, einschließlich der Lieferkosten (mit Ausnahme der zusätzlichen Kosten, die sich daraus ergeben, dass Sie eine andere Art der Lieferung als die von uns angebotene, günstigste Standardlieferung gewählt haben), unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrags bei uns eingegangen ist. Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben, es sei denn, mit Ihnen wurde ausdrücklich etwas anderes vereinbart; in keinem Fall werden Ihnen wegen dieser Rückzahlung Entgelte berechnet. Wir können die Rückzahlung verweigern, bis wir die Waren wieder zurückerhalten haben oder bis Sie den Nachweis erbracht haben, dass Sie die Waren zurückgesandt haben, je nachdem, welches der frühere Zeitpunkt ist.</p>
+<p>Sie haben die Waren unverzüglich und in jedem Fall spätestens binnen vierzehn Tagen ab dem Tag, an dem Sie uns über den Widerruf dieses Vertrags unterrichten, an uns ({{ anbieterin.name }}, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.land_name }}) zurückzusenden oder zu übergeben. Die Frist ist gewahrt, wenn Sie die Waren vor Ablauf der Frist von vierzehn Tagen absenden.</p>
+<p>Sie tragen die unmittelbaren Kosten der Rücksendung der Waren.</p>
+<p>Sie müssen für einen etwaigen Wertverlust der Waren nur aufkommen, wenn dieser Wertverlust auf einen zur Prüfung der Beschaffenheit, Eigenschaften und Funktionsweise der Waren nicht notwendigen Umgang mit ihnen zurückzuführen ist.</p>
+<p><em>– Ende der Widerrufsbelehrung –</em></p>
+
+<h3>Ausschluss des Widerrufsrechts</h3>
+<p>Das Widerrufsrecht besteht nicht bei Verträgen zur Lieferung von Waren, die nicht vorgefertigt sind und für deren Herstellung eine individuelle Auswahl oder Bestimmung durch den Verbraucher maßgeblich ist oder die eindeutig auf die persönlichen Bedürfnisse des Verbrauchers zugeschnitten sind (§ 312g Abs. 2 Nr. 1 BGB). Das betrifft bei Luviq Auftragsarbeiten, die nach einem eigenen Motivwunsch der Kundin oder des Kunden gemalt werden. Für fertige Stücke aus dem Shop – auch für Einzelstücke – gilt das Widerrufsrecht dagegen uneingeschränkt.</p>
+
+<h2 id="widerrufsformular">Muster-Widerrufsformular</h2>
+<p>(Wenn Sie den Vertrag widerrufen wollen, dann füllen Sie bitte dieses Formular aus und senden Sie es zurück.)</p>
+<ul>
+    <li>An {{ anbieterin.name }}, Luviq, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.land_name }}, E-Mail: {{ anbieterin.email }}:</li>
+    <li>Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag über den Kauf der folgenden Waren (*)/die Erbringung der folgenden Dienstleistung (*)</li>
+    <li>Bestellt am (*)/erhalten am (*)</li>
+    <li>Name des/der Verbraucher(s)</li>
+    <li>Anschrift des/der Verbraucher(s)</li>
+    <li>Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf Papier)</li>
+    <li>Datum</li>
+</ul>
+<p>(*) Unzutreffendes streichen.</p>

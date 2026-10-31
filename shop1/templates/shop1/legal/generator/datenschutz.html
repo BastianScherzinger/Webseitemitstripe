@@ -1,7 +1,81 @@
-{% comment %}GENERATOR-TEXT-FEHLT
-Ablage für den Rechtstext „datenschutz" aus dem Generator (Agenturregel 3: nur Generator + Freigabe von Luisa Brehler).
-So einfügen: den GANZEN Inhalt dieser Datei durch den HTML-Text des Generators ersetzen (ohne <html>/<body>,
-nur der Inhalt). Damit verschwindet auch das Kennwort oben, und shop1/startsperre.py zählt den Text als vorhanden.
-Eingabeliste für den Generator: Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29\GENERATOR-EINGABEN.md
-Kein Text aus anderen Shops kopieren, keine Klausel selbst schreiben (§ 2 RDG).
-{% endcomment %}
+{% comment %}
+Datenschutzerklärung für Luviq (Luisa Brehler). Stand 30.10.2026. Selbst geschrieben nach Agenturregel vom 30.10.2026,
+jede Aussage gegen Code und Einstellungen belegt (Analysen\luviq-2026-10-30-recht\BERICHT.md, Abschnitt Datenschutz).
+Übernimmt den bisherigen, geprüften Text (Stand 02.10.2026) und den GA4-Abschnitt (f3f4efc, RECHTSCHECK-GA4.md) unverändert
+in der Sache; neu sind Bestellung, Zahlung, Versand, Widerrufsfunktion, Aufbewahrung und Speicherdauer.
+Abschnitte zum Shop erscheinen nur mit Verkauf (verkauf_aktiv) bzw. mit Überweisung (ueberweisung_moeglich).
+{% endcomment %}<nav aria-label="Inhalt dieser Erklärung">
+<ol>
+    <li><a href="#ds-1">Verantwortliche und Überblick</a></li>
+    <li><a href="#ds-2">Hosting, Server und Bilder</a></li>
+    <li><a href="#ds-3">Besucherzählung und Schutz vor Angriffen</a></li>
+    <li><a href="#ds-4">Cookies</a></li>
+    <li><a href="#ds-5">Kundenkonto</a></li>
+    <li><a href="#ds-6">Bestellung, Zahlung und Versand</a></li>
+    <li><a href="#ds-7">Widerruf über „Vertrag widerrufen“</a></li>
+    <li><a href="#ds-8">Kontaktformular, Motivanfrage und E-Mail</a></li>
+    <li><a href="#ds-9">Newsletter und Warteliste</a></li>
+    <li><a href="#ds-10">Gästebuch und Karte</a></li>
+    {% if einwilligung.ga %}<li><a href="#ds-analytics">Google Analytics</a></li>{% endif %}
+    <li><a href="#ds-11">Speicherdauer und Aufbewahrung</a></li>
+    <li><a href="#ds-12">Ihre Rechte</a></li>
+</ol>
+</nav>
+
+<h2 id="ds-1">1. Verantwortliche und Überblick</h2>
+<p>Verantwortlich für die Verarbeitung personenbezogener Daten auf dieser Website ist {{ anbieterin.name }}, Luviq, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.land_name }}, E-Mail: <a href="mailto:{{ anbieterin.email }}">{{ anbieterin.email }}</a>. Eine Datenschutzbeauftragte ist nicht bestellt und nicht vorgeschrieben.</p>
+<p>Personenbezogene Daten sind alle Daten, mit denen Sie persönlich identifiziert werden können. Wir verarbeiten sie nur, soweit es für den jeweiligen Zweck nötig ist. Die Rechtsgrundlagen nennen wir bei jedem Abschnitt: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung), lit. b (Vertrag und vorvertragliche Anfragen), lit. c (gesetzliche Pflicht, etwa Aufbewahrung) und lit. f (berechtigtes Interesse). Die technische Betreuung der Website übernimmt die Webagentur Scherzinger (Bastian Scherzinger, Lübeck); sie hat dafür Zugriff auf Server und Datenbank und erhält Kopien der unten genannten Anfragen.</p>
+
+<h2 id="ds-2">2. Hosting, Server und Bilder</h2>
+<p>Die Website und ihre Datenbank (PostgreSQL) laufen bei <strong>Railway</strong> (Railway Corporation, USA). Beim Aufruf jeder Seite verarbeitet der Server technisch bedingt Verbindungsdaten wie IP-Adresse, Zeitpunkt, aufgerufene Adresse und Browserkennung; der Hoster kann sie in Server-Protokollen speichern. In der Datenbank liegen Konten, {% if verkauf_aktiv %}Bestellungen, {% endif %}Widerrufe, Anfragen, Gästebuchbeiträge und Newsletter-Adressen. Eine Verarbeitung in den USA ist möglich; Railway stellt dafür einen Auftragsverarbeitungsvertrag mit den EU-Standardvertragsklauseln (Beschluss (EU) 2021/914) bereit. Rechtsgrundlage ist unser berechtigtes Interesse an einem sicheren und zuverlässigen Betrieb (Art. 6 Abs. 1 lit. f DSGVO). Die Übertragung ist verschlüsselt (TLS).</p>
+<p>Produktbilder werden von <strong>Cloudinary</strong> (Cloudinary Ltd.) ausgeliefert; dabei erhält Cloudinary Ihre IP-Adresse. Schriften liegen auf unserem eigenen Server; ein externer Schriftendienst wird nicht verwendet.</p>
+
+<h2 id="ds-3">3. Besucherzählung und Schutz vor Angriffen</h2>
+<p>Wir zählen, wie viele Menschen die Seite an einem Tag aufrufen und welche Seiten sie ansehen. Dafür setzen wir kein Cookie und speichern keine IP-Adresse. Aus IP-Adresse, Browserkennung und Datum bilden wir auf unserem Server einen verschlüsselten Kurzschlüssel, der nur für diesen Tag gilt und am Folgetag gelöscht wird; gespeichert bleiben die Tageszahl, der aufgerufene Pfad, der Zeitpunkt und die grobe Geräteklasse (zum Beispiel „Handy · Safari“). Es werden keine Daten an Dritte übermittelt. Rechtsgrundlage ist unser berechtigtes Interesse an einer datensparsamen Reichweitenmessung (Art. 6 Abs. 1 lit. f DSGVO).</p>
+<p>Zum Schutz vor automatisierten Angriffen verarbeitet der Server die IP-Adresse kurzzeitig im Arbeitsspeicher, um die Zahl der Formularabsendungen und Anmeldungen je Adresse zu begrenzen. Bei jedem Anmeldeversuch speichert das Schutzmodul django-axes IP-Adresse, Benutzername, Browserkennung und Zeitpunkt in der Datenbank, um wiederholte Fehlanmeldungen zu erkennen und die Anmeldung nach zehn Fehlversuchen eine Stunde lang zu sperren; dieses Anmeldeprotokoll wird derzeit nicht automatisch gelöscht (Art. 6 Abs. 1 lit. f DSGVO).</p>
+
+<h2 id="ds-4">4. Cookies</h2>
+<p>Wir setzen nur technisch notwendige Cookies: ein Sitzungs-Cookie für die Anmeldung{% if verkauf_aktiv %}, den Warenkorb und den Bestellvorgang{% endif %} (läuft spätestens nach 14 Tagen ab) und ein Cookie, das die Formulare vor gefälschten Absendungen schützt (CSRF-Schutz). Ohne sie funktionieren Anmeldung{% if verkauf_aktiv %}, Bestellung{% endif %} und Formulare nicht. Rechtsgrundlage ist § 25 Abs. 2 Nr. 2 TDDDG in Verbindung mit Art. 6 Abs. 1 lit. f DSGVO.{% if einwilligung.ga %} Cookies von Google Analytics werden nur nach Ihrer Einwilligung gesetzt (siehe „Google Analytics“).{% endif %}</p>
+
+<h2 id="ds-5">5. Kundenkonto</h2>
+<p>Wenn Sie ein Konto erstellen, speichern wir Benutzername, E-Mail-Adresse, Vor- und Nachnamen und das Passwort (nur als Hash, nicht im Klartext) sowie, wenn Sie sie angeben, Telefonnummer und Anschrift; im Profil lässt sich zusätzlich freiwillig ein Geburtsdatum hinterlegen. An die angegebene E-Mail-Adresse schicken wir einen Bestätigungslink. Benutzername und E-Mail-Adresse einer neuen Registrierung gehen als Benachrichtigung an Luisa Brehler, mit Kopie an die Webagentur Scherzinger. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO. Das Konto bleibt bestehen, bis Sie es im Profil löschen oder uns um Löschung bitten; Bestelldaten, die wir aufbewahren müssen, bleiben davon unberührt (Abschnitt 11).</p>
+
+<h2 id="ds-6">6. Bestellung, Zahlung und Versand</h2>
+{% if verkauf_aktiv %}<p><strong>Bestellung:</strong> Zur Datenerfassung im Shop gehört die Bestellung: Für eine Bestellung verarbeiten wir Vor- und Nachnamen, E-Mail-Adresse, Lieferanschrift, freiwillig eine Telefonnummer, die bestellten Stücke, Preise, einen etwaigen Rabatt, die Zahlungsart und den Bestellstatus. Wir brauchen diese Daten, um den Vertrag zu schließen und zu erfüllen (Art. 6 Abs. 1 lit. b DSGVO). Eingangs- und Bestellbestätigung schicken wir per E-Mail (Abschnitt 8).</p>
+<p><strong>Zahlung mit PayPal:</strong> Bei Zahlungen über PayPal gilt: Wählen Sie PayPal, lädt die Bezahlseite das Bezahlskript von PayPal (PayPal (Europe) S.à r.l. et Cie, S.C.A., 22–24 Boulevard Royal, L-2449 Luxemburg); PayPal erhält dabei Ihre IP-Adresse und Gerätedaten. Unser Server übermittelt PayPal den Betrag, die Währung und die Bestellnummer; die Zahlung selbst geben Sie in Ihrem PayPal-Konto frei, dort gelten die Datenschutzhinweise von PayPal (<a href="https://www.paypal.com/de/legalhub/privacy-full" target="_blank" rel="noopener">paypal.com</a>). PayPal kann Daten auch außerhalb der EU verarbeiten. Kartendaten oder Ihr PayPal-Passwort erhalten und speichern wir nicht; gespeichert wird nur die Transaktionskennung von PayPal. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO. Das PayPal-Skript wird nur auf der Bezahlseite geladen.</p>
+{% if ueberweisung_moeglich %}<p><strong>Vorkasse per Überweisung:</strong> Die Bankverbindung steht in der Bestellbestätigung. Mit Ihrer Überweisung erhalten wir über unsere Bank Ihren Namen, Ihre Kontoverbindung, den Betrag und den Verwendungszweck (Art. 6 Abs. 1 lit. b DSGVO).</p>{% endif %}
+<p><strong>Versand:</strong> Für die Zustellung geben wir Name und Lieferanschrift an den Versanddienstleister weiter, der das Paket befördert (Art. 6 Abs. 1 lit. b DSGVO). Bei einer persönlichen Übergabe in {{ anbieterin.ort }} gibt es keine Weitergabe.</p>{% else %}<p>Solange der Shop nicht eröffnet ist, nimmt Luviq keine Bestellungen an und verarbeitet keine Zahlungsdaten. Die Verarbeitung durch PayPal gilt erst ab Eröffnung des Shops; dann steht sie hier im Einzelnen.</p>{% endif %}
+
+<h2 id="ds-7">7. Widerruf über „Vertrag widerrufen“</h2>
+<p>Über die Widerrufsfunktion „Vertrag widerrufen“ erfassen wir Ihren Namen, die Angaben zur Bestellung (Nummer, auf Wunsch die widerrufenen Stücke), Ihre E-Mail-Adresse und den Zeitpunkt des Eingangs. Wir speichern die Erklärung, ordnen sie Ihrer Bestellung zu, wenn Nummer und E-Mail-Adresse zusammenpassen, und schicken Ihnen die gesetzlich vorgeschriebene Eingangsbestätigung per E-Mail (§ 356a BGB); Luisa Brehler und – als Kopie – die Webagentur Scherzinger werden per E-Mail benachrichtigt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. c DSGVO (gesetzliche Pflicht) und lit. b (Abwicklung des Vertrags). Die Formularschutzmaßnahmen aus Abschnitt 3 gelten auch hier.</p>
+
+<h2 id="ds-8">8. Kontaktformular, Motivanfrage und E-Mail</h2>
+<p>Anfragen über das Kontaktformular (Name, E-Mail-Adresse, Betreff, Nachricht) und über „Motiv anfragen“ (Auswahl, Beschreibung, Instagram-Name und E-Mail-Adresse, eines von beiden genügt) speichern wir vor dem Versand in unserer Datenbank, damit bei einer Störung des Mailversands keine verloren geht. Jede Anfrage geht als E-Mail an Luisa Brehler, und eine Kopie erhält die Webagentur Scherzinger (Bastian Scherzinger), die diese Website technisch betreut. An die bei „Motiv anfragen“ eingetippte Adresse schicken wir keine automatische Bestätigung. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO.</p>
+<p>Alle E-Mails dieser Website{% if verkauf_aktiv %} – auch Eingangs- und Bestellbestätigungen –{% endif %} laufen über das E-Mail-Postfach von Luviq bei Gmail (Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland); Empfängeradresse und Inhalt der Nachricht werden dorthin übermittelt. Google kann Daten auch in den USA verarbeiten; die Übermittlung stützt sich auf das EU-US Data Privacy Framework.</p>
+
+<h2 id="ds-9">9. Newsletter und Warteliste</h2>
+<p>Nach der Anmeldung erhalten Sie zunächst eine E-Mail mit einem Bestätigungslink; erst nach der Bestätigung schicken wir Ihnen den Newsletter, über den auch die Warteliste für neue Stücke läuft (Double-Opt-in). Gespeichert werden die E-Mail-Adresse und die Zeitpunkte von Anmeldung und Bestätigung. Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Sie können sie jederzeit widerrufen, über den Abmeldelink in jeder Newsletter-Mail oder mit einer kurzen Nachricht; dann löschen wir die Adresse.</p>
+
+<h2 id="ds-10">10. Gästebuch und Karte</h2>
+<p>Beiträge im Gästebuch sind öffentlich sichtbar und werden zusammen mit Ihrem Benutzernamen und dem Zeitpunkt gespeichert, bis Sie oder wir sie löschen (Art. 6 Abs. 1 lit. b DSGVO). Die Karte von Google Maps im Gästebuch wird nicht automatisch geladen: Sie sehen zunächst einen Platzhalter, und erst wenn Sie auf „Karte laden“ klicken, wird die Karte von Google abgerufen und Ihre IP-Adresse an Google übertragen (Art. 6 Abs. 1 lit. a DSGVO). Auf Instagram, TikTok und das Google-Profil verweisen wir nur mit einfachen Links; Inhalte dieser Dienste werden nicht eingebettet.</p>
+
+{% if einwilligung.ga %}<h2 id="ds-analytics">Google Analytics</h2>
+<p>Diese Website nutzt – <strong>nur nach Ihrer Einwilligung</strong> – Google Analytics 4, einen Webanalysedienst der Google Ireland Limited (Gordon House, Barrow Street, Dublin 4, Irland). Google Analytics verwendet Cookies, die eine Analyse der Nutzung der Website ermöglichen, etwa welche Seiten aufgerufen werden, über welchen Weg Sie auf die Seite gekommen sind und welche Knöpfe geklickt werden. Zweck ist allein unsere Besucherstatistik; die Daten nutzen wir nicht für Werbung, wir verkaufen sie nicht, und die Datenfreigabe an Google für eigene Zwecke ist ausgeschaltet. Google verarbeitet die Daten als Auftragsverarbeiter in unserem Auftrag.</p>
+<p>Google Analytics 4 speichert keine vollständigen IP-Adressen; sie werden innerhalb der EU bzw. des EWR verarbeitet und vor der Speicherung verworfen. Eine Übermittlung in die USA kann nicht vollständig ausgeschlossen werden; Google LLC ist nach dem EU-US Data Privacy Framework zertifiziert. Die Cookies von Google Analytics (<code>_ga</code>, <code>_ga_&lt;ID&gt;</code>) bleiben höchstens 2 Jahre in Ihrem Browser; in Google Analytics werden Ereignisdaten nach 2 Monaten und nutzerbezogene Daten nach 14 Monaten gelöscht. Google-Signale (Verknüpfung mit Google-Konten) sind ausgeschaltet.</p>
+<p>Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO i. V. m. § 25 Abs. 1 TDDDG). Das Analyse-Skript wird technisch erst <strong>nach Ihrer Zustimmung</strong> im Banner geladen. Ihre Wahl („ja“ oder „nein“) merkt sich die Seite im Speicher Ihres Browsers. Sie können die Einwilligung jederzeit über „Cookie-Einstellungen“ unten auf jeder Seite widerrufen. Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">https://policies.google.com/privacy</a></p>
+{% endif %}
+
+<h2 id="ds-11">11. Speicherdauer und Aufbewahrung</h2>
+<p>Wir löschen Daten, sobald der Zweck entfällt und keine Aufbewahrungspflicht entgegensteht. {% if verkauf_aktiv %}Bestellungen, Rechnungen und Zahlungsbelege bewahren wir nach den steuerrechtlichen Vorschriften auf (§ 147 Abgabenordnung: Buchungsbelege acht Jahre, Geschäftsbriefe wie Bestell- und Widerrufskorrespondenz sechs Jahre, jeweils ab Ende des Kalenderjahres; Art. 6 Abs. 1 lit. c DSGVO). {% endif %}Widerrufserklärungen bewahren wir auf, solange Ansprüche aus dem Vertrag geltend gemacht werden können, und wenigstens so lange wie die zugehörige Bestellung. Eine feste Löschfrist gibt es für gespeicherte Kontakt- und Motivanfragen derzeit nicht; wir löschen sie auf Wunsch jederzeit, soweit sie nicht zu einem Vertrag gehören. Newsletter-Adressen löschen wir nach der Abmeldung.</p>
+
+<h2 id="ds-12">12. Ihre Rechte</h2>
+<p>Sie haben gegenüber uns folgende Rechte:</p>
+<ul class="lv-recht-liste">
+    <li>Auskunft: Sie können jederzeit unentgeltlich Auskunft über Herkunft, Empfänger und Zweck Ihrer gespeicherten personenbezogenen Daten verlangen (Art. 15 DSGVO).</li>
+    <li>Berichtigung oder Löschung dieser Daten (Art. 16, 17 DSGVO).</li>
+    <li>Einschränkung ihrer Verarbeitung (Art. 18 DSGVO).</li>
+    <li>Herausgabe der Daten in einem gängigen Format (Art. 20 DSGVO).</li>
+</ul>
+<p>Eine erteilte Einwilligung, etwa in den Newsletter, können Sie jederzeit mit Wirkung für die Zukunft widerrufen. Soweit wir Daten auf Grundlage unseres berechtigten Interesses verarbeiten (Hosting, Besucherzählung, Schutz vor automatisierten Angriffen), steht Ihnen ein Widerspruchsrecht zu: Sie können dieser Verarbeitung aus Gründen, die sich aus Ihrer besonderen Situation ergeben, jederzeit widersprechen (Art. 21 DSGVO). Kontaktieren Sie uns hierzu einfach unter <a href="mailto:{{ anbieterin.email }}">{{ anbieterin.email }}</a>. Außerdem haben Sie das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren; für Luviq in Lübeck ist das das Unabhängige Landeszentrum für Datenschutz Schleswig-Holstein (datenschutzzentrum.de).</p>
+<p>Wir setzen keine automatisierte Entscheidungsfindung und kein Profiling ein. Die Angabe von Daten ist für Konto{% if verkauf_aktiv %}, Bestellung{% endif %} und Anfragen erforderlich, soweit Felder als Pflicht markiert sind; ohne sie können wir die Anfrage{% if verkauf_aktiv %} oder Bestellung{% endif %} nicht bearbeiten.</p>
+<p class="lv-klein">Stand: 30. Oktober 2026</p>
