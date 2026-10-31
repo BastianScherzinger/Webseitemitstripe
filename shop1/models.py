@@ -316,7 +316,8 @@ class Produkt(models.Model):
         kürzere ohne Ort; zuletzt bleibt der Name allein, an einer Wortgrenze
         gekürzt. So wird der Zusatz nie mitten im Wort abgeschnitten."""
         if self.seo_titel:
-            return self.seo_titel
+            verkauf = self._seo_mit_verkauf('seo_titel')
+            return verkauf or self.seo_titel
         from .verkauf import verkauf_aktiv
         name = ' '.join(self.name.split())
         if not verkauf_aktiv():
@@ -340,6 +341,17 @@ class Produkt(models.Model):
         platz = META_TITEL_MAX - len(vorsatz) - len(zusatz)
         return f"{vorsatz}{_kuerze_an_wortgrenze(name, platz)}{zusatz}"
 
+    def _seo_mit_verkauf(self, feld):
+        """Engel-Shirt Nº 006 (31.10.2026, SEO-Analyse N2): Mit Verkauf trägt Titel bzw. Beschreibung den
+        Preis. Gilt nur, solange im Feld noch der ursprünglich angelegte Text steht (Luisas eigene Fassung
+        bleibt unangetastet); der Preis kommt aus dem Stück, nie aus einer Abschrift. Sonst ``''``."""
+        from . import luviq_daten
+        from .verkauf import verkauf_aktiv
+        d = luviq_daten.ENGEL_STUECK
+        if not verkauf_aktiv() or self.slug != d['slug'] or getattr(self, feld) != d[feld]:
+            return ''
+        return d[feld + '_verkauf'].format(preis=f'{self.preis:.0f}')
+
     @property
     def meta_description(self):
         """``meta description`` der Produktseite: gepflegte ``seo_beschreibung``
@@ -351,7 +363,8 @@ class Produkt(models.Model):
         angehängt, das ergab bis zu ~215 Zeichen. Ohne Beschreibung steht
         der Name vor dem Nachsatz, damit kein Text mit „–" beginnt."""
         if self.seo_beschreibung:
-            return self.seo_beschreibung
+            verkauf = self._seo_mit_verkauf('seo_beschreibung')
+            return verkauf or self.seo_beschreibung
         from django.conf import settings
         from .verkauf import verkauf_aktiv
         if verkauf_aktiv():

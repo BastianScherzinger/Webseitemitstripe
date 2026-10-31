@@ -34,7 +34,7 @@ from ..seiten_stand import SEITEN_STAND  # noqa: F401 – Re-Export
 from .wissen import freigegebene_beitraege, uebersicht_indexierbar
 from ._helpers import zu_viele_anfragen
 from .. import spamschutz
-from ..verkauf import oeffnungs_satz, verkauf_aktiv
+from ..verkauf import direktkauf_aktiv, oeffnungs_satz, verkauf_aktiv
 
 _log = logging.getLogger('shop1')
 
@@ -143,10 +143,22 @@ WISSEN_SEITEN = [
     ('wissen_widerruf', 'Widerruf und Rücksendung: was gilt bei einem Einzelstück?',
      'Vierzehn Tage Widerrufsrecht ab Erhalt, Online-Widerruf, Rücksendekosten, kein Umtausch '
      'bei Unikaten, Gewährleistung bei echten Mängeln'),
-    ('wissen_konto', 'Was speichert der Shop - und warum braucht der Kauf ein Konto?',
+    ('wissen_konto', 'Was speichert der Shop - und brauche ich ein Konto?',
      'Warum der Warenkorb ein Konto verlangt, Angaben der Registrierung, '
      'Besuchsprotokoll, eingebundene Dienste, Zahlungsdaten, Kontolöschung'),
 ]
+
+#: Dieselben zwei Zeilen, solange der Direktkauf ohne Konto gilt (``verkauf.direktkauf_aktiv``).
+WISSEN_SEITEN_DIREKTKAUF = {
+    'wissen_bestellen': (
+        'Wie bestelle und bezahle ich bei Luviq Universe?',
+        'Bestellung ohne Konto direkt auf der Stückseite, Pflichtangaben, Reservierung, Rechnung per E-Mail, '
+        f'Vorkasse per Überweisung, Versand, Lieferung in {LIEFERFRIST} Werktagen'),
+    'wissen_konto': (
+        'Was speichert der Shop - und brauche ich ein Konto?',
+        'Kein Konto für den Kauf nötig, gespeicherte Bestelldaten, Besuchsprotokoll, eingebundene Dienste, '
+        'Zahlungsdaten, Löschung'),
+}
 
 
 def wissen_routen_fuer_llms():
@@ -245,6 +257,8 @@ def _llms_wissenzeilen(basis):
     """Abschnitt „Wissen“ mit den freigegebenen Beiträgen – leer, wenn keiner darf."""
     erlaubt = wissen_routen_fuer_llms()
     wissen_zeilen = [eintrag for eintrag in WISSEN_SEITEN if eintrag[0] in erlaubt]
+    if direktkauf_aktiv():
+        wissen_zeilen = [(r, *WISSEN_SEITEN_DIREKTKAUF.get(r, (a, b))) for r, a, b in wissen_zeilen]
     if not wissen_zeilen:
         return []
     zeilen = ["", "## Wissen", ""]
@@ -274,7 +288,8 @@ def _llms_kopf_mit_verkauf(basis):
         "- Instagram: https://www.instagram.com/luviq.archive/",
         "- TikTok: https://www.tiktok.com/@luviq.archive",
         "- Google-Unternehmensprofil: https://www.google.com/maps?cid=13899750731019902000",
-        "- Zahlungsarten: PayPal oder Vorab-Überweisung (AGB, § 4)",
+        *(["- Zahlungsarten: Vorkasse per Überweisung nach Rechnung per E-Mail (AGB, § 4)"]
+          if direktkauf_aktiv() else ["- Zahlungsarten: PayPal oder Vorab-Überweisung (AGB, § 4)"]),
         "- Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer",
         "  berechnet (Kleinunternehmerstatus)",
         f"- Lieferung: innerhalb von {LIEFERFRIST} Werktagen, deutschlandweit (AGB, § 5)",
@@ -332,9 +347,13 @@ def _llms_fragen_mit_verkauf(basis):
         "einmal zu haben.",
         "",
         "### Wie bestellt man?",
-        f"Über diese Seite: Einzelstück auf {basis}{reverse('produkte')} auswählen,",
-        "in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder",
-        "Vorab-Überweisung.",
+        *([f"Ohne Konto, direkt auf der Seite des Stücks ({basis}{reverse('produkte')}): Name, E-Mail-Adresse",
+           "und Anschrift angeben, das Stück ist dann reserviert. Die Rechnung mit den Zahlungsdaten kommt",
+           "per E-Mail; bezahlt wird im Voraus per Überweisung."]
+          if direktkauf_aktiv() else
+          [f"Über diese Seite: Einzelstück auf {basis}{reverse('produkte')} auswählen,",
+           "in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder",
+           "Vorab-Überweisung."]),
         "",
         "### Was hat Upcycling mit der Umwelt zu tun?",
         "Wo ein gebrauchtes Teil die Grundlage ist, wird vorhandene Kleidung",

@@ -3,7 +3,7 @@ Karte eines Stücks (Startseite #stuecke und #archiv, /produkte/), Look „Nacht
 Alle Bilder liegen auf derselben dunklen Kachel (4:5), Name links und Größe (`masse`, Freitext) rechts in
 einer Zeile, darunter Mono: `Nº 001` und der Zustand. Zustand: vergeben = „Archiv“ (das Bild trägt das
 Band „Vergeben“ bzw. „Verkauft“, Text im DOM), mit Verkauf und kaufbar = Preis, sonst „Unikat“ (noch nicht im Verkauf,
-kein Preis). Die ganze Karte ist über den Namen verlinkt (ein Link).
+kein Preis). Die ganze Karte ist über den Namen verlinkt; mit Verkauf und Direktkauf kommt bei einem kaufbaren Stück ein zweiter Link „Direkt kaufen · Preis“ auf #bestellen der Stückseite dazu (31.10.2026).
 `produkt` und `forloop` kommen aus der umgebenden Schleife. `stufe` setzt die Überschriftsebene des Namens
 (Vorgabe 3; `/produkte/` setzt 2). `erstes` (nur auf /produkte/ im ersten Abschnitt: LCP-Bild) lädt sofort und
 mit Vorrang, alle anderen lazy; `srcset`/`sizes` der ersten Karte müssen zum Preload in produkte.html passen.
@@ -16,4 +16,5 @@ Das Bild kommt aus `produkt.hauptbild` (Upload über Cloudinary oder statische D
     </div>
     {% if not verkauf_aktiv and not produkt.verkauft %}<p class="lv-groesse lv-vorpreis">{% if produkt.masse %}{{ produkt.masse }} · {% endif %}{% if produkt.material %}{{ produkt.material }} · {% endif %}{% if verkauf_ab %}Preis ab {{ verkauf_ab }}{% else %}Preis folgt{% endif %}</p>{% endif %}
     <p class="lv-karte-kopf"><b>Nº {{ produkt.archiv_nummer }}</b>{% if produkt.verkauft %}<span>Archiv</span>{% elif verkauf_aktiv and produkt.kaufbar %}<span class="lv-preis">{{ produkt.preis|floatformat:2 }} € inkl. Versand</span>{% else %}<span>Unikat</span>{% endif %}</p>
+    {% if verkauf_aktiv and direktkauf_aktiv and not produkt.verkauft and produkt.kaufbar %}<p class="lv-karte-kauf"><a class="lv-knopf" href="{{ produkt.get_absolute_url }}#bestellen">Direkt kaufen · {{ produkt.preis|floatformat:0 }} €</a></p>{% endif %}
 </li>{% endwith %}

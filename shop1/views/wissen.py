@@ -155,6 +155,8 @@ WISSEN_BEITRAEGE = {
         'titel': 'Wie bestelle und bezahle ich bei Luviq Universe?',
         'kurz': 'Konto, Warenkorb, Pflichtangaben im Bestellvorgang, PayPal oder '
                 'Vorab-Überweisung, Prüfung der Zahlung, Bestätigung und Versand.',
+        'kurz_direktkauf': 'Bestellung ohne Konto direkt beim Stück, Pflichtangaben, Reservierung, '
+                           'Rechnung per E-Mail, Vorkasse per Überweisung und Versand.',
         'freigegeben': True,
         # Beschreibt den Kaufweg: ohne Verkauf (VERKAUF_AKTIV aus) noindex
         # und nicht in Sitemap, llms.txt und Feed, siehe _sichtbar().
@@ -176,9 +178,11 @@ WISSEN_BEITRAEGE = {
     'konto-und-daten': {
         'url_name': 'wissen_konto',
         'template': 'shop1/wissen/konto.html',
-        'titel': 'Was speichert der Shop – und warum braucht der Kauf ein Konto?',
+        'titel': 'Was speichert der Shop – und brauche ich ein Konto?',
         'kurz': 'Anmeldepflicht im Warenkorb, Angaben bei der Registrierung, '
                 'Besuchsprotokoll, eingebundene Dienste und wie ein Konto gelöscht wird.',
+        'kurz_direktkauf': 'Kein Konto für den Kauf nötig, gespeicherte Bestelldaten, '
+                           'Besuchsprotokoll, eingebundene Dienste und wie Daten gelöscht werden.',
         'freigegeben': True,
         # Beschreibt den Kaufweg: ohne Verkauf (VERKAUF_AKTIV aus) noindex
         # und nicht in Sitemap, llms.txt und Feed, siehe _sichtbar().
@@ -201,6 +205,15 @@ def _sichtbar(beitrag):
         verkauf_aktiv() or not beitrag.get('nur_mit_verkauf'))
 
 
+def _aktuell(beitrag):
+    """Der Beitrag mit dem Kurztext, der zum Kaufweg passt: mit Direktkauf ohne Konto
+    (``verkauf.direktkauf_aktiv``) steht ``kurz_direktkauf`` statt ``kurz``."""
+    from ..verkauf import direktkauf_aktiv
+    if beitrag.get('kurz_direktkauf') and direktkauf_aktiv():
+        return {**beitrag, 'kurz': beitrag['kurz_direktkauf']}
+    return beitrag
+
+
 def freigegebene_beitraege():
     """Slug → Beitrag, nur die von der Betreiberin bestätigten Beiträge.
 
@@ -208,7 +221,7 @@ def freigegebene_beitraege():
     und die ohne ``noindex`` ausgeliefert wird. Beiträge zum Kaufweg zählen
     nur bei eingeschaltetem Verkauf dazu (``_sichtbar``).
     """
-    return {slug: b for slug, b in WISSEN_BEITRAEGE.items() if _sichtbar(b)}
+    return {slug: _aktuell(b) for slug, b in WISSEN_BEITRAEGE.items() if _sichtbar(b)}
 
 
 def uebersicht_indexierbar():
@@ -240,14 +253,14 @@ def weiterlesen(slug, anzahl=2):
     namen = [s for s, _ in sichtbar]
     start = namen.index(slug) + 1 if slug in namen else 0
     reihe = sichtbar[start:] + sichtbar[:start]
-    return [{'slug': s, **b} for s, b in reihe if s != slug][:anzahl]
+    return [{'slug': s, **_aktuell(b)} for s, b in reihe if s != slug][:anzahl]
 
 
 def wissen(request):
     """Übersicht des Wissensbereichs mit den freigegebenen Beiträgen – ohne
     Verkauf ohne die Beiträge zum Kaufweg (``nur_mit_verkauf``), und Entwürfe
     (``freigegeben=False``) stehen nie in der Liste, bis Luisa sie freigibt."""
-    beitraege = [{'slug': slug, **beitrag, 'freigegeben': _sichtbar(beitrag)}
+    beitraege = [{'slug': slug, **_aktuell(beitrag), 'freigegeben': _sichtbar(beitrag)}
                  for slug, beitrag in WISSEN_BEITRAEGE.items()
                  if _sichtbar(beitrag)]
     return render(request, 'shop1/wissen/uebersicht.html', {
@@ -269,10 +282,15 @@ def wissen_beitrag(request, slug):
         return redirect('wissen')
     # ``freigegeben`` im Kontext ist die wirksame Freigabe (samt
     # Verkaufsschalter); die Vorlagen setzen danach ``noindex``.
-    beitrag = {**beitrag, 'freigegeben': _sichtbar(beitrag)}
-    return render(request, beitrag['template'], {
+    beitrag = {**_aktuell(beitrag), 'freigegeben': _sichtbar(beitrag)}
+    kontext = {
         'beitrag': beitrag, 'slug': slug, 'weiter': weiterlesen(slug),
-        'beitragsbild': beitragsbild(beitrag), 'engel_url': engel_url()})
+        'beitragsbild': beitragsbild(beitrag), 'engel_url': engel_url()}
+    from ..verkauf import direktkauf_aktiv
+    if slug == 'bestellen-und-bezahlen' and direktkauf_aktiv():
+        from .. import wissen_direktkauf
+        kontext['faq_direkt'] = wissen_direktkauf.bestellen_faq()
+    return render(request, beitrag['template'], kontext)
 
 
 def beitragsbild(beitrag):

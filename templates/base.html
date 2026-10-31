@@ -93,7 +93,7 @@
 {% if verkauf_aktiv %}
           "priceRange": "€€",
           "currenciesAccepted": "EUR",
-          "paymentAccepted": "PayPal, Banküberweisung",
+          "paymentAccepted": "{% if direktkauf_aktiv %}Banküberweisung{% else %}PayPal, Banküberweisung{% endif %}",
           {% comment %}Runde 3 (30.10.2026): eine Rückgaberegel für den ganzen Shop, auf die jedes Offer verweist (teile/offer_versand_ld.html). Inhalt = gesetzliches Widerrufsrecht: 14 Tage, Deutschland, Rücksendung per Post. Kein returnFees: wer die Rücksendekosten trägt, steht erst in der Widerrufsbelehrung aus dem Generator. Kein freiwilliges Rückgaberecht darüber hinaus (luviq_daten.UMTAUSCH_SATZ).{% endcomment %}
           "hasMerchantReturnPolicy": {
             "@type": "MerchantReturnPolicy",

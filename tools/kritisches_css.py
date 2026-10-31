@@ -47,7 +47,7 @@ PROFILE = {
               "lv-satz", "lv-lead", "linie", "lv-vertrauen-leiste", "lv-vertrauen",
               "lv-anfragen", "lv-ablauf", "lv-anfragekasten", "lv-frage", "lv-chips", "lv-chip"},
     # Archiv: Raster aus Karten.
-    "archiv": {"lv-raster", "lv-karte", "lv-karte-kopf", "lv-material", "lv-preis", "lv-leer"},
+    "archiv": {"lv-raster", "lv-karte", "lv-karte-kauf", "lv-karte-kopf", "lv-material", "lv-preis", "lv-leer"},
     # Stückseite: Bild, Nummer, Datenliste, Knöpfe.
     "stueck": {"lv-stueck", "lv-stueck-bild", "lv-stueck-nummer", "lv-stueck-text",
                "lv-stueck-preis", "lv-status", "lv-daten", "lv-stueck-knoepfe",

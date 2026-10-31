@@ -18,3 +18,8 @@
 .lv-einwilligung p.lv-einwilligung-titel+p{display:inline}
 .lv-einwilligung p.lv-einwilligung-titel+p::after{content:"";display:block;height:5px}
 @media (min-width:640px){.lv-einwilligung p.lv-einwilligung-titel{display:block;margin:0 0 4px}.lv-einwilligung p.lv-einwilligung-titel+p{display:block}.lv-einwilligung p.lv-einwilligung-titel+p::after{display:none}.lv-einwilligung{padding:14px 20px 14px;font-size:14px;line-height:1.5}.lv-einwilligung-titel{font-size:16px}.lv-einwilligung p{margin-bottom:10px}}
+/* Nie zwei Leisten übereinander (31.10.2026): solange der Cookie-Hinweis offen ist, weichen die
+   Handy-Leiste („Vormerken“ bzw. „Stücke ansehen“) und die Kaufleiste „Direkt kaufen“ der Stückseite.
+   Nach „Ablehnen“ oder „Akzeptieren“ ist der Hinweis zu, und die Leisten kommen wieder. */
+body:has(.lv-einwilligung:not([hidden])) .lv-leiste,
+body:has(.lv-einwilligung:not([hidden])) .lv-kaufleiste{display:none!important}

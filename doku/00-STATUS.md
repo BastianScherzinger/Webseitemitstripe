@@ -12,7 +12,7 @@ quellen: CLAUDE.md, DOCUMENTATION.md, LOGBUCH.md
 
 # Stand — Luviq Universe
 
-> **Stand 31.10.2026 (Zweig `bau/2026-10-31-direktkauf`, nicht gepusht):** Direktkauf ohne Konto gebaut (Schalter `DIREKTKAUF`), AGB/Datenschutz angepasst, Startsperre mit Berliner Datum. Offen vor „Go“: Wissensbeitrag `wissen/bestellen.html` und `konto.html`, Kontakt-, Versand-, Über-uns-Texte beschreiben noch den Login-/PayPal-Weg; Cookie-Hinweis vs. Leiste; Zentimeter-Maße; abweichende Lieferadresse. Anleitung zweites Stück: [25-NEUES-STUECK.md](25-NEUES-STUECK.md).
+> **Stand 31.10.2026 abends (Zweig `bau/2026-10-31-direktkauf`, nicht gepusht):** Direktkauf ohne Konto gebaut (Schalter `DIREKTKAUF`), alle Kauf-, Konto- und Wartelistentexte mit aktivem Verkauf widerspruchsfrei (Wissen bestellen/konto, Kontakt, Über uns, Versand, Archiv …), Karten „Direkt kaufen · 69 €“, Cookie-Hinweis ohne Leiste darüber, SEO V1/V2/N1/N2. Offen vor „Go“: Zentimeter-Maße, abweichende Lieferadresse, Reservierungsfrist 3 Tage von Bastian bestätigen, Live-Prüfung nach Merge. Anleitung zweites Stück: [25-NEUES-STUECK.md](25-NEUES-STUECK.md).
 
 > **Stand 30.10.2026 abends (Zweig `recht/2026-10-30-luviq-verkaufsstart`, `2ada6ba`, nicht gepusht):** Rechtstexte für den Verkauf fertig (Widerrufsbelehrung nach Muster ab 19.06.2026 + Formular, AGB §§ 1–14, Datenschutz 12 Abschnitte), Widerrufsfunktion `/vertrag-widerrufen/` (§ 356a BGB), Bestellmails mit AGB und Belehrung. Einziger verbleibender Sperrgrund: `LUCID_REGISTRIERNUMMER` (Railway, Nummer aus dem LUCID-Bescheid). Bericht: `Webagentur Scherzinger\Analysen\luviq-2026-10-30-recht\BERICHT.md`; LUCID: `Buero\luisa\arbeitsplatz\recht\LUCID-ANLEITUNG.md`.
 

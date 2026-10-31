@@ -498,12 +498,13 @@ FUSS = [
     ('Stücke', [
         ('produkte', '', 'Archiv', 'Unikate', False),
         ('motiv_anfragen', '', 'Motiv anfragen', 'Motiv anfragen', True),
-        ('home', '#warteliste', 'Warteliste', 'Warteliste', False),
+        ('home', '#warteliste', 'Warteliste', 'Für das nächste Stück vormerken', False),
     ]),
     ('Hilfe', [
         ('liefergebiet', '', 'Versand & Abholung', 'Versand & Abholung', False),
         ('wissen_groesse', '', 'Größe bei Einzelstücken', 'Größe bei Einzelstücken', False),
         ('wissen_pflege', '', 'Pflege', 'Pflege', False),
+        ('wissen_bleach', '', 'Was ist Bleach Painting?', 'Was ist Bleach Painting?', False),
         ('wissen', '', 'Wissen', 'Wissen', False),
         ('kontakt', '', 'Kontakt', 'Kontakt', False),
         ('gaestebuch', '', 'Gästebuch', 'Gästebuch', False),
@@ -599,6 +600,10 @@ ENGEL_STUECK = {
     'seo_titel': 'Engel-Shirt mit Bleiche gemalt – Luviq Lübeck',
     'seo_beschreibung': ('Unikat Nº 006: T-Shirt mit Engel, Rose und Stern, von Hand mit Bleiche '
                          'gemalt. 100 % Baumwolle, Größe M. Luviq, Lübeck.'),
+    # Mit Verkauf (models.Produkt._seo_mit_verkauf, SEO-Analyse N2): Preis im Snippet erst, wenn die Seite ihn zeigt.
+    'seo_titel_verkauf': 'Engel-Shirt Nº 006: handbemaltes Unikat, {preis} € | Luviq',
+    'seo_beschreibung_verkauf': ('Engel-Shirt Nº 006: Unikat, von Hand mit Bleiche gemalt. 100 % Baumwolle, '
+                                 'Größe M, {preis} €, Versand deutschlandweit. Nur einmal vorhanden: jetzt ansehen.'),
     'beschreibung': ('Ein T-Shirt aus 100 % Baumwolle in Größe M. Auf dem Rücken steht ein Engel mit '
                      'Rose und einem Stern, von Hand gemalt – viel Handarbeit, genau einmal. '
                      'Vorne ein kleines Luviq-Zeichen auf Herzhöhe.'),

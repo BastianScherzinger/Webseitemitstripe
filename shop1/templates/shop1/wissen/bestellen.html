@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Bestellen und bezahlen im Unikat-Shop | Luviq Lübeck{% endblock %}
-{% block meta_description %}Wie eine Bestellung bei Luviq Universe in Lübeck abläuft: Konto, Warenkorb, Pflichtangaben, PayPal oder Vorab-Überweisung und Versand. Jetzt nachlesen.{% endblock %}
+{% block title %}{% if direktkauf_aktiv %}Direkt bestellen und bezahlen | Luviq Lübeck{% else %}Bestellen und bezahlen im Unikat-Shop | Luviq Lübeck{% endif %}{% endblock %}
+{% block meta_description %}{% if direktkauf_aktiv %}So bestellst du bei Luviq Universe in Lübeck ohne Konto: direkt beim Stück, Rechnung per E-Mail, Vorkasse per Überweisung, Versand deutschlandweit. Jetzt nachlesen.{% else %}Wie eine Bestellung bei Luviq Universe in Lübeck abläuft: Konto, Warenkorb, Pflichtangaben, PayPal oder Vorab-Überweisung und Versand. Jetzt nachlesen.{% endif %}{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_title %}Bestellen und bezahlen bei Luviq Universe, Lübeck{% endblock %}
-{% block og_description %}Vom Warenkorb bis zur Bestätigung: Konto, Pflichtangaben, PayPal oder Vorab-Überweisung, Versand deutschlandweit.{% endblock %}
-{% block twitter_title %}Bestellen und bezahlen bei Luviq Universe{% endblock %}
-{% block twitter_description %}Ablauf einer Bestellung: Konto, Warenkorb, Adressdaten, PayPal oder Vorab-Überweisung, Versand.{% endblock %}
+{% block og_title %}{% if direktkauf_aktiv %}Direkt bestellen und bezahlen bei Luviq Universe, Lübeck{% else %}Bestellen und bezahlen bei Luviq Universe, Lübeck{% endif %}{% endblock %}
+{% block og_description %}{% if direktkauf_aktiv %}Ohne Konto bestellen: Angaben beim Stück, Reservierung, Rechnung per E-Mail, Vorkasse per Überweisung, Versand deutschlandweit.{% else %}Vom Warenkorb bis zur Bestätigung: Konto, Pflichtangaben, PayPal oder Vorab-Überweisung, Versand deutschlandweit.{% endif %}{% endblock %}
+{% block twitter_title %}{% if direktkauf_aktiv %}Direkt bestellen und bezahlen bei Luviq Universe{% else %}Bestellen und bezahlen bei Luviq Universe{% endif %}{% endblock %}
+{% block twitter_description %}{% if direktkauf_aktiv %}Bestellen ohne Konto: Formular beim Stück, Rechnung per E-Mail, Überweisung im Voraus, Versand.{% else %}Ablauf einer Bestellung: Konto, Warenkorb, Adressdaten, PayPal oder Vorab-Überweisung, Versand.{% endif %}{% endblock %}
 {% comment %}Freigabe der Betreiberin: siehe views/wissen.py. Die Bedingung steht IM Block, nicht darum herum (CLAUDE.md).{% endcomment %}
 {% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
 
@@ -34,7 +34,15 @@
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "@id": "{{ seiten_url }}#faq",
-  "mainEntity": [
+  "mainEntity": [{% if faq_direkt %}{% for f in faq_direkt %}{% if not forloop.first %},{% endif %}
+    {
+      "@type": "Question",
+      "name": "{{ f.frage|escapejs }}",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "{{ f.antwort|escapejs }}"
+      }
+    }{% endfor %}{% else %}
     {
       "@type": "Question",
       "name": "Brauche ich ein Konto, um bei Luviq Universe zu bestellen?",
@@ -114,7 +122,7 @@
         "@type": "Answer",
         "text": "Dann bleibt der Warenkorb erhalten. Der Shop meldet den Abbruch und führt zurück zum Warenkorb; die angelegte Bestellung bleibt offen stehen. Bei der Vorab-Überweisung ist die Bestellung mit der E-Mail „Bestellbestätigung und Zahlungsinformationen“ angenommen; das Stück bleibt für dich reserviert und wird nach Zahlungseingang verschickt."
       }
-    }
+    }{% endif %}
   ]
 }
 </script>
@@ -132,10 +140,18 @@
     <header class="lv-wissen-kopf">
         <h1 class="lv-serif">Wie bestelle und bezahle ich bei Luviq Universe?</h1>
         <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
-        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Eine Bestellung bei Luviq Universe aus Lübeck läuft in fünf Schritten: ein Stück auf seiner Detailseite aussuchen, anmelden oder registrieren, es in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und zwischen PayPal und Vorab-Überweisung wählen. Ein Konto ist dafür nötig – ohne Anmeldung führt die Detailseite zuerst zur Anmeldung. {% if verkauf_aktiv %}Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}; geliefert wird deutschlandweit innerhalb von {{ lieferfrist }} Werktagen.</p>
+        <p class="lv-wissen-lead">{% if faq_direkt %}Eine Bestellung bei Luviq Universe aus Lübeck läuft in fünf Schritten und ohne Konto: ein Stück auf seiner Seite aussuchen, das Formular „Direkt bestellen“ ausfüllen, „Zahlungspflichtig bestellen“ wählen, die Rechnung per E-Mail abwarten und im Voraus überweisen. Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet; geliefert wird deutschlandweit innerhalb von {{ lieferfrist }} Werktagen.{% else %}{% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Eine Bestellung bei Luviq Universe aus Lübeck läuft in fünf Schritten: ein Stück auf seiner Detailseite aussuchen, anmelden oder registrieren, es in den Warenkorb legen, im Bestellvorgang die Lieferanschrift eingeben und zwischen PayPal und Vorab-Überweisung wählen. Ein Konto ist dafür nötig – ohne Anmeldung führt die Detailseite zuerst zur Anmeldung. {% if verkauf_aktiv %}Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet{% else %}Angaben zu Preisen und Umsatzsteuer folgen mit der Eröffnung des Shops{% endif %}; geliefert wird deutschlandweit innerhalb von {{ lieferfrist }} Werktagen.{% endif %}</p>
     </header>
 
-    <div class="lv-wissen-liste">
+    <div class="lv-wissen-liste">{% if faq_direkt %}{% for f in faq_direkt %}
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">{{ f.frage }}</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">{{ f.antwort }}</p>
+                <p>{{ f.mehr }}</p>
+            </div>
+        </section>
+{% endfor %}{% else %}
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Brauche ich ein Konto, um bei Luviq Universe zu bestellen?</h2>
             <div class="lv-wissen-antwort">
@@ -225,6 +241,7 @@
             
             </div>
         </section>
+{% endif %}
     </div>
 
     <nav class="lv-wissen-ende" aria-label="Weiterlesen">

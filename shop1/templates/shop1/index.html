@@ -248,7 +248,7 @@ View und Kontextprozessor), kein Datum hier.
 
     <!-- ═══ Warteliste = Newsletter mit Double-Opt-in, das einzige Formular der Seite ═══ -->
     <section class="lv-warteliste" id="warteliste" aria-labelledby="warteliste-titel">
-        <h2 class="lv-serif" id="warteliste-titel">Neue Stücke zuerst per Mail</h2>
+        <h2 class="lv-serif" id="warteliste-titel">{% if verkauf_aktiv %}Für das nächste Stück vormerken{% else %}Neue Stücke zuerst per Mail{% endif %}</h2>
         {% comment %}Ohne JavaScript schickt das Formular klassisch per POST (EIG89/EIG129); mit JavaScript übernimmt das Skript unten. Honigtopf und Zeitfalle wie beim Kontaktformular (shop1/spamschutz.py). Der Datenschutzhinweis gehört zum Formular (KV05). Die Sprungmarke #newsletter-form sitzt auf der Feldzeile.{% endcomment %}
         <form class="lv-warteliste-form" method="post" action="{% url 'newsletter_subscribe' %}" data-newsletter novalidate>
             {% csrf_token %}
