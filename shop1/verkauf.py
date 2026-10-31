@@ -30,6 +30,8 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 
+from .startsperre import heute_berlin
+
 
 
 def oeffnungs_satz(heute=None):
@@ -42,7 +44,7 @@ def oeffnungs_satz(heute=None):
     if verkauf_aktiv():
         return ''
     tag = getattr(settings, 'VERKAUF_FRUEHESTENS', None)
-    if tag and (heute or date.today()) < tag:
+    if tag and (heute or heute_berlin()) < tag:
         return f'Der Shop öffnet frühestens am {tag:%d.%m.%Y}.'
     return 'Der Shop ist noch nicht geöffnet.'
 
@@ -56,7 +58,7 @@ def verkauf_ab(heute=None):
     if verkauf_aktiv():
         return ''
     tag = getattr(settings, 'VERKAUF_FRUEHESTENS', None)
-    if tag and (heute or date.today()) <= tag:
+    if tag and (heute or heute_berlin()) <= tag:
         return f'{tag:%d.%m.}'
     return ''
 
@@ -70,7 +72,17 @@ def hinweis():
 KAUFROUTEN = frozenset({
     'warenkorb', 'add_to_cart', 'remove_from_cart', 'update_cart',
     'checkout', 'payment', 'payment_success', 'payment_cancel',
+    # Direktkauf ohne Konto (31.10.2026)
+    'direktkauf', 'direktkauf_danke',
 })
+
+#: Der Login-Weg (Warenkorb, Kasse, PayPal) ist bei ``settings.DIREKTKAUF`` ausgeblendet:
+#: Der Code bleibt, die Routen leiten auf die Startseite. Zurück mit ``DIREKTKAUF = False``.
+DIREKTKAUF_GESPERRT = frozenset({
+    'warenkorb', 'add_to_cart', 'remove_from_cart', 'update_cart',
+    'checkout', 'payment', 'payment_success', 'payment_cancel',
+})
+DIREKTKAUF_GESPERRT_JSON = frozenset({'paypal_create', 'paypal_capture'})
 
 #: Routen, die per ``fetch`` aufgerufen werden und JSON erwarten. Eine
 #: Weiterleitung auf eine HTML-Seite wäre für das aufrufende Skript ein
@@ -90,7 +102,12 @@ def verkauf_aktiv():
 def verkauf_kontext(request):
     """Kontextprozessor: ``verkauf_aktiv`` für jede Vorlage."""
     return {'verkauf_aktiv': verkauf_aktiv(), 'shop_oeffnet': oeffnungs_satz(),
-            'verkauf_ab': verkauf_ab()}
+            'verkauf_ab': verkauf_ab(), 'direktkauf_aktiv': direktkauf_aktiv()}
+
+
+def direktkauf_aktiv():
+    """True, wenn verkauft wird **und** der Direktkauf ohne Konto den Login-Weg ersetzt."""
+    return verkauf_aktiv() and bool(getattr(settings, 'DIREKTKAUF', False))
 
 
 class VerkaufsschalterMiddleware:
@@ -109,6 +126,13 @@ class VerkaufsschalterMiddleware:
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         if verkauf_aktiv():
+            if direktkauf_aktiv():
+                treffer = getattr(request, 'resolver_match', None)
+                name = treffer.url_name if treffer else None
+                if name in DIREKTKAUF_GESPERRT_JSON:
+                    return JsonResponse({'error': 'Bestellt wird direkt auf der Stückseite.'}, status=409)
+                if name in DIREKTKAUF_GESPERRT:
+                    return redirect(reverse('produkte'))
             return None
         treffer = getattr(request, 'resolver_match', None)
         name = treffer.url_name if treffer else None

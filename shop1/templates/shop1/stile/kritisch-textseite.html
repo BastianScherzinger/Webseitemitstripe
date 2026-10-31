@@ -80,6 +80,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-feld textarea{resize:vertical;min-height:7em}
 .lv-feld2{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*1.4)}
 .lv-formular .lv-knopf{justify-self:start}
+body:has([data-kaufleiste]) .lv-leiste{display:none!important}
 .lv-fehler{border:1px solid var(--lv-fehler);color:var(--lv-text);padding:12px 14px;font-size:15px}
 .lv-fehler:empty{display:none}
 .lv-falle{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}

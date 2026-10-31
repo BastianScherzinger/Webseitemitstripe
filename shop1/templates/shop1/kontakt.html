@@ -62,7 +62,7 @@
           "name": "{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Bezahlt wird per PayPal oder Vorab-Überweisung. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus per Überweisung nach der Rechnung, die per E-Mail kommt{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
           }
         }{% if abholung.text %},
         {
@@ -169,7 +169,7 @@
 
                 <button type="submit" class="lv-knopf">Nachricht abschicken <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
             </form>
-            <p class="lv-klein">Fragen zu einem einzelnen Stück (Maße, Material, Zustand){% if verkauf_aktiv %}, zu einer Bestellung, zum Widerruf{% endif %} oder zur Löschung eines Kontos gehen auch über das Formular. Alle vier Felder sind Pflichtfelder und mit einem Stern (*) gekennzeichnet. Mehr zum Nachlesen steht im <a href="{% url 'wissen' %}">Wissensbereich</a>.</p>
+            <p class="lv-klein">Fragen zu einem einzelnen Stück (Maße, Material, Zustand){% if verkauf_aktiv %}, zu einer Bestellung, zum Widerruf{% endif %} oder {% if direktkauf_aktiv %}zu gespeicherten Daten{% else %}zur Löschung eines Kontos{% endif %} gehen auch über das Formular. Alle vier Felder sind Pflichtfelder und mit einem Stern (*) gekennzeichnet. Mehr zum Nachlesen steht im <a href="{% url 'wissen' %}">Wissensbereich</a>.</p>
         </section>
     </section>
 
@@ -182,7 +182,7 @@
             </div>
             <div>
                 <h3>{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h3>
-                <p>{% if verkauf_aktiv %}Bezahlt wird per PayPal oder Vorab-Überweisung. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
+                <p>{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus per Überweisung nach der Rechnung, die per E-Mail kommt{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
             </div>
             {% if abholung.text %}
             <div>

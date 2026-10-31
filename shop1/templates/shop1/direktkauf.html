@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% comment %}Eigene Seite des Direktkaufs (Fehlermeldungen nach dem Absenden, Aufruf per Link). noindex.{% endcomment %}
+{% block title %}{{ produkt.name }} bestellen – Luviq Universe{% endblock %}
+{% block meta_description %}{{ produkt.name }} direkt bei Luviq Universe bestellen, ohne Konto.{% endblock %}
+{% block meta_robots %}noindex, follow{% endblock %}
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='anfrage' %}{% endblock %}
+{% block content %}
+<div class="lv-seite">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li><a href="{{ produkt.get_absolute_url }}">{{ produkt.name }}</a></li><li aria-current="page">Bestellen</li></ol></nav>
+    <section class="lv-anfrageseite">
+        <div>
+            <h1 class="lv-serif lv-satz">{{ produkt.name }} bestellen</h1>
+            <p class="lv-lead">Nº {{ produkt.archiv_nummer }} · {{ produkt.preis|floatformat:2 }} € {{ versand_preissatz }}</p>
+            <p><a class="lv-link" href="{{ produkt.get_absolute_url }}">Zurück zum Stück</a></p>
+        </div>
+        <div>
+            {% if direktkauf_zustand == 'bestellbar' %}{% include 'shop1/teile/direktkauf_formular.html' %}
+            {% else %}
+            {% if fehler %}<div role="alert" class="lv-fehler">{{ fehler }}</div>{% endif %}
+            <p>{% if direktkauf_zustand == 'reserviert' %}Dieses Stück ist gerade für eine andere Bestellung reserviert.{% else %}Dieses Stück ist leider nicht mehr verfügbar.{% endif %} <a class="lv-link" href="{% url 'produkte' %}">Zu den Stücken</a></p>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

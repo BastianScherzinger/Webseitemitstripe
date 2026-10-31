@@ -252,6 +252,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-groesse.lv-vorpreis{white-space:normal;overflow:visible;text-overflow:clip;margin:0}
 .lv-karte-kopf{display:flex;justify-content:space-between;gap:1em;font:max(12px,calc(var(--u)*.85)) var(--lv-mono)}
 .lv-karte-kopf span{color:var(--lv-leise);letter-spacing:.08em;text-transform:uppercase}
+.lv-karte-kauf{margin:var(--lv-raum-2) 0 0}
+.lv .lv-karte-kauf .lv-knopf{display:flex;justify-content:center;align-items:center;width:100%;min-height:44px;padding:0 8px;white-space:nowrap;font-size:14px;text-align:center}
 .lv-karte h2,.lv-karte h3{font-size:max(19px,calc(var(--u)*1.7))}
 .lv-karte h2 a,.lv-karte h3 a{display:inline-block;min-height:24px}
 .lv-karte h2 a::after,.lv-karte h3 a::after{content:"";position:absolute;inset:0}
@@ -354,6 +356,20 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-feld textarea{resize:vertical;min-height:7em}
 .lv-feld2{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*1.4)}
 .lv-formular .lv-knopf{justify-self:start}
+.lv-haken{display:grid;grid-template-columns:auto 1fr;gap:calc(var(--u)*1.2);align-items:start;font-size:max(14px,calc(var(--u)*.95));line-height:1.5;color:var(--lv-leise)}
+.lv-haken input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--lv-marke)}
+.lv-haken a{color:var(--lv-text);text-decoration:underline;text-underline-offset:3px}
+.lv-bestellsumme{display:grid;gap:calc(var(--u)*.8);border-top:1px solid var(--lv-linie-2);padding-top:calc(var(--u)*1.8)}
+.lv-bestellsumme p{margin:0}
+.lv-bestellsumme-preis{font:500 max(22px,calc(var(--u)*2.2)) var(--lv-sans)}
+.lv-bestellsumme-preis span{display:block;font:400 max(13px,calc(var(--u)*.9)) var(--lv-sans);color:var(--lv-leise)}
+.lv-schritte{margin:0;padding-left:1.4em;display:grid;gap:calc(var(--u)*.4);font-size:max(14px,calc(var(--u)*.95));color:var(--lv-leise)}
+.lv-kaufleiste{display:none}
+/* Auf der Stückseite mit Direktkauf ersetzt „Direkt kaufen“ die allgemeine Handy-Leiste (nie zwei Leisten übereinander). */
+body:has([data-kaufleiste]) .lv-leiste{display:none!important}
+@media (max-width:760px){.lv-kaufleiste:not([hidden]){display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;justify-content:center;align-items:center;min-height:56px;padding:0 var(--rand);background:var(--lv-text);color:var(--lv-grund);font:600 16px var(--lv-sans);letter-spacing:.02em;text-decoration:none;padding-bottom:env(safe-area-inset-bottom)}}
+.lv-direktkauf{margin-top:calc(var(--u)*2.4)}
+.lv-direktkauf .lv-knopf{justify-self:stretch;min-height:56px;font-size:max(16px,calc(var(--u)*1.1))}
 .lv-fehler{border:1px solid var(--lv-fehler);color:var(--lv-text);padding:12px 14px;font-size:15px}
 .lv-fehler:empty{display:none}
 .lv-falle{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}

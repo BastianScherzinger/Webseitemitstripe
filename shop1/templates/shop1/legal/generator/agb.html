@@ -1,10 +1,13 @@
 {% comment %}
-Allgemeine Geschäftsbedingungen für den Shop Luviq (Luisa Brehler). Stand 30.10.2026.
+Allgemeine Geschäftsbedingungen für den Shop Luviq (Luisa Brehler). Stand 31.10.2026 (Direktkauf).
 Selbst geschrieben nach Agenturregel vom 30.10.2026; jede Klausel ist in
 Analysen\luviq-2026-10-30-recht\BERICHT.md gegen Code und Gesetz belegt. Keine Rechtsberatung.
 Der Ablauf in § 2 entspricht genau dem Code: views/checkout.py (checkout, _bestellung_absenden,
 paypal_capture, send_bank_details_email, send_bestelleingang_email, send_order_confirmation_email).
 Zahlungsarten nur, was angeboten wird: PayPal immer, Überweisung nur mit BANK_IBAN (ueberweisung_moeglich).
+Seit 31.10.2026 gilt mit settings.DIREKTKAUF (Vorgabe an) der Ablauf von views/direktkauf.py (Bestellung ohne Konto,
+Rechnung per E-Mail, Vorkasse per Überweisung); die Texte des Login-Wegs stehen im {% else %}-Zweig, solange der Code bleibt.
+Kontext-Variable direktkauf_aktiv (verkauf.direktkauf_aktiv, Kontextprozessor bzw. mails.vertragsunterlagen).
 {% endcomment %}<h2 id="agb-1">§ 1 Geltungsbereich und Anbieterin</h2>
 <p>(1) Diese Allgemeinen Geschäftsbedingungen gelten für alle Verträge, die über den Onlineshop Luviq Universe unter {{ rechts_basis|default:"dieser Website" }} geschlossen werden, in der bei der Bestellung gültigen Fassung.</p>
 <p>(2) Vertragspartnerin ist {{ anbieterin.name }}, Einzelunternehmerin unter der Geschäftsbezeichnung Luviq, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.land_name }}, E-Mail: <a href="mailto:{{ anbieterin.email }}">{{ anbieterin.email }}</a> (im Folgenden „wir“). Weitere Angaben stehen im <a href="{{ rechts_basis }}{% url 'impressum' %}">Impressum</a>.</p>
@@ -12,7 +15,11 @@ Zahlungsarten nur, was angeboten wird: PayPal immer, Überweisung nur mit BANK_I
 
 <h2 id="agb-2">§ 2 Vertragsschluss</h2>
 <p>(1) Die Darstellung der Stücke im Shop ist kein rechtlich bindendes Angebot, sondern eine Einladung, eine Bestellung abzugeben. Jedes Stück gibt es nur einmal.</p>
-<p>(2) Bestellen kannst du mit einem Kundenkonto, dessen E-Mail-Adresse bestätigt ist. Der Ablauf: Stück in den Warenkorb legen, im Warenkorb „Zur Kasse“ wählen, in der Kasse Lieferanschrift und Zahlungsart angeben. Unmittelbar vor dem Abschluss zeigt die Kasse jedes Stück mit seinen Merkmalen und Preis sowie den Gesamtpreis. Bis dahin kannst du alle Eingaben in den Feldern ändern, Stücke im Warenkorb entfernen („Zurück zum Warenkorb“) oder den Vorgang abbrechen.</p>
+{% if direktkauf_aktiv %}<p>(2) Bestellen kannst du ohne Kundenkonto direkt auf der Seite des Stücks: Du gibst Namen, E-Mail-Adresse und Lieferanschrift an (oder wählst die Übergabe in {{ anbieterin.ort }} nach Absprache). Unmittelbar über dem Bestellknopf zeigt die Seite das Stück mit seinen Merkmalen und den Gesamtpreis einschließlich Versand. Bis zum Klick kannst du alle Eingaben in den Feldern ändern oder den Vorgang abbrechen, indem du die Seite verlässt.</p>
+<p>(3) Mit einem Klick auf die Schaltfläche „Zahlungspflichtig bestellen“ gibst du ein verbindliches Angebot zum Kauf des Stücks ab. Das Stück wird damit für dich reserviert, und wir bestätigen den Eingang deiner Bestellung unmittelbar danach per E-Mail. Diese Eingangsbestätigung ist noch keine Annahme deines Angebots.</p>
+<p>(4) Wir nehmen dein Angebot an, indem wir dir die Rechnung mit den Zahlungsdaten per E-Mail an die angegebene Adresse schicken; mit dieser E-Mail kommt der Vertrag zustande. Schicken wir dir die Rechnung nicht, kommt kein Vertrag zustande, und die Reservierung endet.</p>
+<p>(5) Ist ein Stück zum Zeitpunkt deiner Bestellung schon reserviert oder verkauft, kann es nicht bestellt werden; in diesem Fall zeigt der Shop das an, und es wird nichts berechnet.</p>
+{% else %}<p>(2) Bestellen kannst du mit einem Kundenkonto, dessen E-Mail-Adresse bestätigt ist. Der Ablauf: Stück in den Warenkorb legen, im Warenkorb „Zur Kasse“ wählen, in der Kasse Lieferanschrift und Zahlungsart angeben. Unmittelbar vor dem Abschluss zeigt die Kasse jedes Stück mit seinen Merkmalen und Preis sowie den Gesamtpreis. Bis dahin kannst du alle Eingaben in den Feldern ändern, Stücke im Warenkorb entfernen („Zurück zum Warenkorb“) oder den Vorgang abbrechen.</p>
 <p>(3) Mit einem Klick auf die Schaltfläche „Zahlungspflichtig bestellen“ gibst du ein verbindliches Angebot zum Kauf der Stücke im Warenkorb ab. Den Eingang deiner Bestellung bestätigen wir dir unmittelbar danach per E-Mail. Diese Eingangsbestätigung ist bei Zahlung mit PayPal noch keine Annahme deines Angebots.</p>
 <p>(4) Wann der Vertrag zustande kommt, hängt von der Zahlungsart ab:</p>
 <ul>
@@ -20,31 +27,34 @@ Zahlungsarten nur, was angeboten wird: PayPal immer, Überweisung nur mit BANK_I
     {% if ueberweisung_moeglich %}<li><strong>Vorkasse per Überweisung:</strong> Wir nehmen dein Angebot mit der E-Mail „Bestellbestätigung und Zahlungsinformationen“ an, die wir dir unmittelbar nach der Bestellung schicken; damit kommt der Vertrag zustande. Die Bankverbindung steht in dieser E-Mail und auf der Bestätigungsseite.</li>{% endif %}
 </ul>
 <p>(5) Ist ein Stück zwischen deiner Bestellung und unserer Annahme bereits verkauft, nehmen wir das Angebot für dieses Stück nicht an; du wirst sofort informiert, und es wird nichts berechnet.</p>
+{% endif %}
 
 <h2 id="agb-3">§ 3 Preise und Versandkosten</h2>
 <p>(1) Alle Preise sind Gesamtpreise. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerin), deshalb wird auch keine Umsatzsteuer ausgewiesen.</p>
 <p>(2) Der Versand innerhalb Deutschlands ist im Preis enthalten. Weitere Liefer- oder Versandkosten fallen nicht an.</p>
-<p>(3) Neue Kundenkonten erhalten einmalig 10 % Willkommensrabatt auf die erste Bestellung. Der Rabatt wird in der Kasse vor dem Abschluss angezeigt und vom Gesamtpreis abgezogen; er verfällt mit der ersten bezahlten Bestellung und ist nicht auszahlbar.</p>
+{% if not direktkauf_aktiv %}<p>(3) Neue Kundenkonten erhalten einmalig 10 % Willkommensrabatt auf die erste Bestellung. Der Rabatt wird in der Kasse vor dem Abschluss angezeigt und vom Gesamtpreis abgezogen; er verfällt mit der ersten bezahlten Bestellung und ist nicht auszahlbar.</p>{% endif %}
 
 <h2 id="agb-4">§ 4 Zahlung</h2>
-<p>(1) Wir akzeptieren folgende Zahlungsarten: PayPal{% if ueberweisung_moeglich %} und Vorkasse per Überweisung{% endif %}.</p>
+{% if direktkauf_aktiv %}<p>(1) Bezahlt wird im Voraus (Vorkasse) per Überweisung auf das Konto, das in unserer Rechnung steht. Weitere Zahlungsarten, etwa ein Zahlungslink, bieten wir derzeit nicht an; kommt eine hinzu, nennen wir sie in der Rechnung.</p>
+<p>(2) Der Kaufpreis ist mit Vertragsschluss fällig. Bitte überweise ihn unter Angabe des Verwendungszwecks aus der Rechnung innerhalb von {{ reservierung_tage }} Tagen nach dem Datum der Rechnung. So lange halten wir das Stück für dich zurück; geht die Zahlung bis dahin nicht ein, geben wir es wieder frei. Versendet wird nach Zahlungseingang. Geht die Zahlung nicht rechtzeitig ein, können wir dich per E-Mail erinnern und eine Nachfrist von 7 Tagen setzen; nach deren Ablauf können wir vom Vertrag zurücktreten.</p>
+{% else %}<p>(1) Wir akzeptieren folgende Zahlungsarten: PayPal{% if ueberweisung_moeglich %} und Vorkasse per Überweisung{% endif %}.</p>
 <p>(2) <strong>PayPal:</strong> Die Zahlung wickelt der Zahlungsdienst PayPal (Europe) S.à r.l. et Cie, S.C.A., Luxemburg, ab. Du gibst die Zahlung in deinem PayPal-Konto bzw. im Bezahlfenster von PayPal frei; es gelten zusätzlich die Bedingungen von PayPal. Der Betrag wird mit Vertragsschluss eingezogen.</p>
-{% if ueberweisung_moeglich %}<p>(3) <strong>Vorkasse per Überweisung:</strong> Der Kaufpreis ist mit Vertragsschluss fällig. Bitte überweise ihn innerhalb von 7 Tagen unter Angabe des Verwendungszwecks aus der E-Mail. Bis dahin halten wir das Stück für dich zurück; versendet wird nach Zahlungseingang. Geht die Zahlung nicht innerhalb dieser Frist ein, erinnern wir dich per E-Mail und setzen eine Nachfrist von 7 Tagen; nach deren Ablauf können wir vom Vertrag zurücktreten, und das Stück ist wieder frei.</p>{% endif %}
+{% if ueberweisung_moeglich %}<p>(3) <strong>Vorkasse per Überweisung:</strong> Der Kaufpreis ist mit Vertragsschluss fällig. Bitte überweise ihn innerhalb von 7 Tagen unter Angabe des Verwendungszwecks aus der E-Mail. Bis dahin halten wir das Stück für dich zurück; versendet wird nach Zahlungseingang. Geht die Zahlung nicht innerhalb dieser Frist ein, erinnern wir dich per E-Mail und setzen eine Nachfrist von 7 Tagen; nach deren Ablauf können wir vom Vertrag zurücktreten, und das Stück ist wieder frei.</p>{% endif %}{% endif %}
 
 <h2 id="agb-5">§ 5 Lieferung</h2>
 <p>(1) Wir liefern nur an Lieferanschriften in Deutschland. Ins Ausland wird nicht geliefert.</p>
-<p>(2) Versendet wird als Paket mit einem Versanddienstleister. Die Lieferung erfolgt innerhalb von {{ lieferfrist }} Werktagen. Die Frist beginnt bei Zahlung mit PayPal am Tag nach dem Vertragsschluss{% if ueberweisung_moeglich %}, bei Vorkasse am Tag nach der Erteilung des Zahlungsauftrags an das überweisende Kreditinstitut{% endif %}. Fällt das Fristende auf einen Samstag, Sonntag oder gesetzlichen Feiertag am Lieferort, endet die Frist am nächsten Werktag.</p>
+<p>(2) Versendet wird als Paket mit einem Versanddienstleister. Die Lieferung erfolgt innerhalb von {{ lieferfrist }} Werktagen. Die Frist beginnt {% if direktkauf_aktiv %}am Tag nach der Erteilung des Zahlungsauftrags an das überweisende Kreditinstitut{% else %}bei Zahlung mit PayPal am Tag nach dem Vertragsschluss{% if ueberweisung_moeglich %}, bei Vorkasse am Tag nach der Erteilung des Zahlungsauftrags an das überweisende Kreditinstitut{% endif %}{% endif %}. Fällt das Fristende auf einen Samstag, Sonntag oder gesetzlichen Feiertag am Lieferort, endet die Frist am nächsten Werktag.</p>
 <p>(3) Auf Wunsch ist statt des Versands eine persönliche Übergabe in {{ anbieterin.ort }} nach vorheriger Absprache möglich; der Preis ändert sich dadurch nicht.</p>
 
 <h2 id="agb-6">§ 6 Eigentumsvorbehalt</h2>
 <p>Die Ware bleibt bis zur vollständigen Bezahlung unser Eigentum.</p>
 
 <h2 id="agb-7">§ 7 Beschaffenheit der Stücke</h2>
-<p>(1) Jedes Stück ist ein von Hand bemaltes Einzelstück (Unikat). Ob das Basisteil gebraucht (Second Hand) oder neu ist, steht beim jeweiligen Stück in der Zeile „Stück“ und in der Kasse; Material, Maße und Pflegehinweise stehen, soweit angegeben, ebenfalls beim Stück. Die Fotos zeigen das konkrete Stück, ein als KI-Studiobild gekennzeichnetes Bild ist aus einem echten Foto des Stücks erstellt.</p>
+<p>(1) Jedes Stück ist ein von Hand bemaltes Einzelstück (Unikat). Ob das Basisteil gebraucht (Second Hand) oder neu ist, steht beim jeweiligen Stück in der Zeile „Stück“ und {% if direktkauf_aktiv %}auf der Bestellseite{% else %}in der Kasse{% endif %}; Material, Maße und Pflegehinweise stehen, soweit angegeben, ebenfalls beim Stück. Die Fotos zeigen das konkrete Stück, ein als KI-Studiobild gekennzeichnetes Bild ist aus einem echten Foto des Stücks erstellt.</p>
 <p>(2) Die Bemalung ist Handarbeit mit Bleiche bzw. Textilfarbe: Pinselstriche, Farbverläufe und Bleichkanten sind bei jedem Stück anders und Teil der Gestaltung. Gebrauchsspuren eines gebrauchten Basisteils beschreiben bzw. zeigen wir beim Stück. Deine gesetzlichen Rechte bei Mängeln (§ 10) bleiben davon unberührt.</p>
 
 <h2 id="agb-8">§ 8 Widerrufsrecht</h2>
-<p>(1) Als Verbraucherin oder Verbraucher hast du bei Käufen im Shop ein gesetzliches Widerrufsrecht von vierzehn Tagen; das gilt auch für Einzelstücke. Einzelheiten stehen in der <a href="{{ rechts_basis }}{% url 'agb' %}#widerruf">Widerrufsbelehrung</a>, die wir dir zusammen mit dem Muster-Widerrufsformular auch mit der Bestellbestätigung per E-Mail schicken.</p>
+<p>(1) Als Verbraucherin oder Verbraucher hast du bei Käufen im Shop ein gesetzliches Widerrufsrecht von vierzehn Tagen; das gilt auch für Einzelstücke. Einzelheiten stehen in der <a href="{{ rechts_basis }}{% url 'agb' %}#widerruf">Widerrufsbelehrung</a>, die wir dir zusammen mit dem Muster-Widerrufsformular auch mit der {% if direktkauf_aktiv %}Eingangsbestätigung{% else %}Bestellbestätigung{% endif %} per E-Mail schicken.</p>
 <p>(2) Du kannst den Widerruf auch online über die Schaltfläche „Vertrag widerrufen“ erklären (<a href="{{ rechts_basis }}{% url 'vertrag_widerrufen' %}">{{ rechts_basis }}{% url 'vertrag_widerrufen' %}</a>); du erhältst dann sofort eine Eingangsbestätigung per E-Mail.</p>
 <p>(3) Bei einem Widerruf trägst du die unmittelbaren Kosten der Rücksendung.</p>
 <p>(4) Kein Widerrufsrecht besteht bei Auftragsarbeiten, die nach deinem eigenen Motivwunsch angefertigt werden (§ 312g Abs. 2 Nr. 1 BGB, siehe § 11).</p>
@@ -58,7 +68,7 @@ Zahlungsarten nur, was angeboten wird: PayPal immer, Überweisung nur mit BANK_I
 <p>(3) Eine Garantie geben wir nicht.</p>
 
 <h2 id="agb-11">§ 11 Auftragsarbeiten nach eigenem Motivwunsch</h2>
-<p>(1) Über „Motiv anfragen“ kannst du unverbindlich ein eigenes Motiv anfragen. Die Anfrage ist noch keine Bestellung. Auftragsarbeiten werden nicht über den Warenkorb bestellt, sondern einzeln per E-Mail oder Instagram vereinbart; vor dem Abschluss nennen wir dir Stück, Motiv, Preis, Lieferweg und den Hinweis zum Widerrufsrecht schriftlich.</p>
+<p>(1) Über „Motiv anfragen“ kannst du unverbindlich ein eigenes Motiv anfragen. Die Anfrage ist noch keine Bestellung. Auftragsarbeiten werden nicht über die Bestellseite eines Stücks bestellt, sondern einzeln per E-Mail oder Instagram vereinbart; vor dem Abschluss nennen wir dir Stück, Motiv, Preis, Lieferweg und den Hinweis zum Widerrufsrecht schriftlich.</p>
 <p>(2) Für eine Auftragsarbeit besteht kein Widerrufsrecht, weil das Stück nach deiner individuellen Bestimmung angefertigt wird (§ 312g Abs. 2 Nr. 1 BGB). Deine gesetzlichen Rechte bei Mängeln bleiben bestehen.</p>
 <p>(3) Im Übrigen gelten diese AGB für Auftragsarbeiten entsprechend, wenn wir bei der Vereinbarung auf sie hinweisen.</p>
 
@@ -67,8 +77,8 @@ Zahlungsarten nur, was angeboten wird: PayPal immer, Überweisung nur mit BANK_I
 
 <h2 id="agb-13">§ 13 Vertragssprache und Speicherung des Vertragstextes</h2>
 <p>(1) Vertragssprache ist Deutsch.</p>
-<p>(2) Wir speichern den Vertragstext (deine Bestelldaten) in unserem System. Mit der Bestellbestätigung bekommst du per E-Mail die Bestelldaten, diese AGB und die Widerrufsbelehrung mit dem Muster-Widerrufsformular in der bei Vertragsschluss gültigen Fassung. In deinem Kundenkonto (Profil) siehst du Nummer, Datum, Status und Betrag deiner Bestellungen. Die jeweils aktuellen AGB kannst du jederzeit auf dieser Seite abrufen, ausdrucken oder speichern.</p>
+<p>(2) Wir speichern den Vertragstext (deine Bestelldaten) in unserem System. Mit der {% if direktkauf_aktiv %}Eingangsbestätigung{% else %}Bestellbestätigung{% endif %} bekommst du per E-Mail die Bestelldaten, diese AGB und die Widerrufsbelehrung mit dem Muster-Widerrufsformular in der bei Bestellung gültigen Fassung. {% if not direktkauf_aktiv %}In deinem Kundenkonto (Profil) siehst du Nummer, Datum, Status und Betrag deiner Bestellungen. {% endif %}Die jeweils aktuellen AGB kannst du jederzeit auf dieser Seite abrufen, ausdrucken oder speichern.</p>
 
 <h2 id="agb-14">§ 14 Anwendbares Recht</h2>
 <p>Es gilt das Recht der Bundesrepublik Deutschland. Zwingende Verbraucherschutzvorschriften des Staates, in dem du deinen gewöhnlichen Aufenthalt hast, bleiben unberührt.</p>
-<p class="lv-klein">Stand: 30. Oktober 2026</p>
+<p class="lv-klein">Stand: 31. Oktober 2026</p>

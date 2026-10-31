@@ -47,8 +47,13 @@ class LuviqTestCase(TestCase):
         #    und nie eine echte Mail hinausgeht. ``self.kopie_versand`` zählt.
         self._kopie_patch = mock.patch('shop1.mails.send_brevo_email')
         self.kopie_versand = self._kopie_patch.start()
+        # 5. Die Suite stammt aus der Zeit vor dem Direktkauf und prüft den Login-Weg (Warenkorb, Kasse,
+        #    PayPal). ``DIREKTKAUF`` ist deshalb in der Basis aus; test_direktkauf schaltet ihn ein.
+        self._direktkauf_aus = self.settings(DIREKTKAUF=False)
+        self._direktkauf_aus.enable()
 
     def _post_teardown(self):
+        self._direktkauf_aus.disable()
         self._kopie_patch.stop()
         super()._post_teardown()
 

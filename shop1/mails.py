@@ -255,6 +255,11 @@ def _klartext(html):
     return '\n'.join(ergebnis).strip()
 
 
+def luviq_daten_reservierung():
+    from . import luviq_daten
+    return luviq_daten.RESERVIERUNG_TAGE
+
+
 def vertragsunterlagen(order):
     """``(html, text)``: Vertragsinhalt, Link „Vertrag widerrufen“, AGB, Widerrufsbelehrung
     und Muster-Widerrufsformular für eine Bestellmail (§ 312f Abs. 2 BGB).
@@ -272,6 +277,6 @@ def vertragsunterlagen(order):
     html = rendern(
         '_vertragsunterlagen.html', order=order, posten=posten, anbieterin=ANBIETERIN,
         rechts_basis=live_url(), lieferfrist=VERSAND['lieferfrist_werktage'], ueberweisung_moeglich=bool(os.getenv('BANK_IBAN', '').strip()),
-        bestellt_am=timezone.localtime(order.erstellt_am).strftime('%d.%m.%Y, %H:%M Uhr') if order.erstellt_am else '',
+        abholung=order.adresse.startswith('Abholung'), reservierung_tage=luviq_daten_reservierung(), direktkauf_aktiv=order.user_id is None, bestellt_am=timezone.localtime(order.erstellt_am).strftime('%d.%m.%Y, %H:%M Uhr') if order.erstellt_am else '',
         gesamt=f'{float(order.gesamt_betrag):.2f}', rabatt=f'{float(order.rabatt_betrag or 0):.2f}')
     return html, _klartext(html)

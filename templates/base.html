@@ -93,7 +93,7 @@
 {% if verkauf_aktiv %}
           "priceRange": "€€",
           "currenciesAccepted": "EUR",
-          "paymentAccepted": "PayPal, Banküberweisung",
+          "paymentAccepted": "{% if direktkauf_aktiv %}Banküberweisung{% else %}PayPal, Banküberweisung{% endif %}",
           {% comment %}Runde 3 (30.10.2026): eine Rückgaberegel für den ganzen Shop, auf die jedes Offer verweist (teile/offer_versand_ld.html). Inhalt = gesetzliches Widerrufsrecht: 14 Tage, Deutschland, Rücksendung per Post. Kein returnFees: wer die Rücksendekosten trägt, steht erst in der Widerrufsbelehrung aus dem Generator. Kein freiwilliges Rückgaberecht darüber hinaus (luviq_daten.UMTAUSCH_SATZ).{% endcomment %}
           "hasMerchantReturnPolicy": {
             "@type": "MerchantReturnPolicy",
@@ -296,10 +296,10 @@
         <div class="lv-kopf-rechts">
             <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank">Instagram</a>
             {% if user.is_authenticated %}
-            {% if verkauf_aktiv %}<a class="lv-konto" href="{% url 'warenkorb' %}">Warenkorb{% if cart_count %} ({{ cart_count }}){% endif %}</a>{% endif %}
+            {% if verkauf_aktiv and not direktkauf_aktiv %}<a class="lv-konto" href="{% url 'warenkorb' %}">Warenkorb{% if cart_count %} ({{ cart_count }}){% endif %}</a>{% endif %}
             {% if is_shop_owner %}<a class="lv-konto" href="{% url 'admin_dashboard' %}">Panel</a>{% endif %}
             <a class="lv-konto" href="{% url 'profil' %}">Konto</a>
-            {% else %}
+            {% elif not direktkauf_aktiv %}
             <a class="lv-konto" href="{% url 'login' %}">Anmelden</a>
             {% endif %}
         </div>
@@ -309,11 +309,11 @@
                 {% for weg in navigation %}<a{% if weg.route == 'motiv_anfragen' %} class="lv-nav-anfrage"{% endif %} href="{% url weg.route %}{{ weg.anker }}">{{ weg.name }}</a>{% endfor %}
                 <a class="lv-menue-klein" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank">Instagram</a>
                 {% if user.is_authenticated %}
-                {% if verkauf_aktiv %}<a class="lv-menue-klein" href="{% url 'warenkorb' %}">Warenkorb</a>{% endif %}
+                {% if verkauf_aktiv and not direktkauf_aktiv %}<a class="lv-menue-klein" href="{% url 'warenkorb' %}">Warenkorb</a>{% endif %}
                 {% if is_shop_owner %}<a class="lv-menue-klein" href="{% url 'admin_dashboard' %}">Panel</a>{% endif %}
                 <a class="lv-menue-klein" href="{% url 'profil' %}">Konto</a>
                 <a class="lv-menue-klein" href="{% url 'logout' %}">Abmelden</a>
-                {% else %}
+                {% elif not direktkauf_aktiv %}
                 <a class="lv-menue-klein" href="{% url 'login' %}">Anmelden</a>
                 {% endif %}
             </nav>

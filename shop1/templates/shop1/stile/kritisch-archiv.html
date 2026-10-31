@@ -69,6 +69,8 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-karte:hover img{opacity:.85}
 .lv-karte-kopf{display:flex;justify-content:space-between;gap:1em;font:max(12px,calc(var(--u)*.85)) var(--lv-mono)}
 .lv-karte-kopf span{color:var(--lv-leise);letter-spacing:.08em;text-transform:uppercase}
+.lv-karte-kauf{margin:var(--lv-raum-2) 0 0}
+.lv .lv-karte-kauf .lv-knopf{display:flex;justify-content:center;align-items:center;width:100%;min-height:44px;padding:0 8px;white-space:nowrap;font-size:14px;text-align:center}
 .lv-karte h2,.lv-karte h3{font-size:max(19px,calc(var(--u)*1.7))}
 .lv-karte h2 a,.lv-karte h3 a{display:inline-block;min-height:24px}
 .lv-karte h2 a::after,.lv-karte h3 a::after{content:"";position:absolute;inset:0}
@@ -78,6 +80,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-leiste{display:none}
 .lv-leiste{transition:transform 200ms ease}
 .leiste-zu .lv-leiste{transform:translateY(110%);visibility:hidden}
+body:has([data-kaufleiste]) .lv-leiste{display:none!important}
 .lv-brotkrume{padding:calc(var(--u)*2) var(--rand) 0;font:max(12px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.04em}
 .lv-brotkrume ol{display:flex;flex-wrap:wrap;gap:.6em;list-style:none;padding:0;margin:0}
 .lv-brotkrume li+li::before{content:"/";margin-right:.6em;color:var(--lv-linie-2)}

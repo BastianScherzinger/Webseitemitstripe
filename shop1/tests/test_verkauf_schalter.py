@@ -33,12 +33,14 @@ class SchalterTest(SimpleTestCase):
     def test_aus_ist_aus(self):
         self.assertFalse(verkauf.verkauf_aktiv())
         self.assertEqual(verkauf.verkauf_kontext(None), {'verkauf_aktiv': False, 'shop_oeffnet': verkauf.oeffnungs_satz(),
-                          'verkauf_ab': verkauf.verkauf_ab()})
+                          'verkauf_ab': verkauf.verkauf_ab(),
+                          'direktkauf_aktiv': False})
 
     @override_settings(VERKAUF_AKTIV=True)
     def test_an_ist_an(self):
         self.assertTrue(verkauf.verkauf_aktiv())
-        self.assertEqual(verkauf.verkauf_kontext(None), {'verkauf_aktiv': True, 'shop_oeffnet': '', 'verkauf_ab': ''})
+        self.assertEqual(verkauf.verkauf_kontext(None), {'verkauf_aktiv': True, 'shop_oeffnet': '', 'verkauf_ab': '',
+                          'direktkauf_aktiv': True})
 
     def test_fehlt_die_einstellung_ist_der_verkauf_aus(self):
         """Rechtslage: ohne ausdrückliches Einschalten wird nie verkauft."""
@@ -79,7 +81,7 @@ class MiddlewareTest(SimpleTestCase):
             with self.subTest(route=name):
                 self.assertIsNone(_middleware().process_view(_anfrage(name), mock.Mock(), (), {}))
 
-    @override_settings(VERKAUF_AKTIV=True)
+    @override_settings(VERKAUF_AKTIV=True, DIREKTKAUF=False)
     def test_mit_verkauf_geht_alles_durch(self):
         for name in sorted(verkauf.KAUFROUTEN | verkauf.KAUFROUTEN_JSON):
             with self.subTest(route=name):

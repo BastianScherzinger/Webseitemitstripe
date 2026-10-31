@@ -5,7 +5,7 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
 <fieldset>/<legend>. Honeypot und Zeitfalle wie beim Kontaktformular.
 {% endcomment %}
 
-{% block title %}Motiv anfragen: sag, was du willst – Luviq Universe, Lübeck{% endblock %}
+{% block title %}Kleidung bemalen lassen: sag, was du willst | Luviq Lübeck{% endblock %}
 {% block meta_description %}Sag Luisa Brehler aus Lübeck, welches Motiv du willst: Richtung, Teil, Bedeutung. Du bekommst Vorschläge, kostenlos und ohne Bestellung. Jetzt anfragen.{% endblock %}
 {% block og_title %}Motiv anfragen – Luviq Universe aus Lübeck{% endblock %}
 {% block og_description %}Beschreib dein Motiv, Luisa schickt dir Vorschläge, und ihr entscheidet zusammen. Kostet nichts und ist keine Bestellung.{% endblock %}
@@ -117,7 +117,7 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
         {% for frage, antwort in faq %}<div class="lv-wissen-frage">
             <h2 class="lv-serif">{{ frage }}</h2>
             <div class="lv-wissen-antwort"><p class="lv-wissen-erst">{{ antwort }}</p>{% if forloop.last %}
-                <p>Mehr dazu im Beitrag <a href="{% url 'wissen_pflege' %}">Wie pflege ich handbemalte Kleidung?</a>; zur Größe bei Einzelstücken steht etwas unter <a href="{% url 'wissen_groesse' %}">Die richtige Größe finden</a>.</p>{% endif %}</div>
+                <p>Mehr dazu im Beitrag <a href="{% url 'wissen_pflege' %}">Wie pflege ich handbemalte Kleidung?</a>; zur Größe bei Einzelstücken steht etwas unter <a href="{% url 'wissen_groesse' %}">Die richtige Größe finden</a>. Wie die Technik funktioniert, erklärt <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a>; wenn schon ein Bleichfleck auf einem Teil ist, hilft <a href="{% url 'wissen_bleichfleck' %}">Bleichfleck übermalen: geht das?</a>.</p>{% endif %}</div>
         </div>{% endfor %}
     </section>
 </div>

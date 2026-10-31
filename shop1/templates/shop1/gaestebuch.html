@@ -50,7 +50,7 @@
         </form>
         {% else %}
         <div class="lv-prosa">
-            <p>Beiträge können nur angemeldete Nutzerinnen und Nutzer schreiben. Bitte <a href="{% url 'login' %}">logge dich ein</a>, um einen Beitrag zu schreiben. {% if verkauf_aktiv %}Ein Konto ist bei Luviq Universe ohnehin nötig, um zu bestellen: Warenkorb und Bestellvorgang sind an eine Anmeldung gebunden.{% else %}Für das Gästebuch braucht es ein Konto, damit jeder Beitrag einem Benutzernamen zugeordnet ist.{% endif %} Was hier steht, bleibt auf dieser Seite; eine Bewertung bei Google gibt man, sofern es ein Google-Profil gibt, direkt bei Google ab.</p>
+            <p>Beiträge können nur angemeldete Nutzerinnen und Nutzer schreiben. Bitte <a href="{% url 'login' %}">logge dich ein</a>, um einen Beitrag zu schreiben. {% if verkauf_aktiv and not direktkauf_aktiv %}Ein Konto ist bei Luviq Universe ohnehin nötig, um zu bestellen: Warenkorb und Bestellvorgang sind an eine Anmeldung gebunden.{% else %}Für das Gästebuch braucht es ein Konto, damit jeder Beitrag einem Benutzernamen zugeordnet ist.{% endif %} Was hier steht, bleibt auf dieser Seite; eine Bewertung bei Google gibt man, sofern es ein Google-Profil gibt, direkt bei Google ab.</p>
             <p><a class="lv-knopf" href="{% url 'login' %}">Anmelden <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
         </div>
         {% endif %}

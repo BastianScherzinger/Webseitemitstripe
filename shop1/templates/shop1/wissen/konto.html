@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Konto und Daten im Shop | Luviq Universe, Lübeck{% endblock %}
-{% block meta_description %}Warum der Kauf bei Luviq Universe in Lübeck ein Konto braucht, welche Angaben nötig sind und welche Daten der Shop dabei speichert. Jetzt nachlesen.{% endblock %}
+{% block title %}{% if direktkauf_aktiv %}Ohne Konto bestellen: Daten im Shop | Luviq Universe, Lübeck{% else %}Konto und Daten im Shop | Luviq Universe, Lübeck{% endif %}{% endblock %}
+{% block meta_description %}{% if direktkauf_aktiv %}Bei Luviq Universe in Lübeck braucht der Kauf kein Konto: welche Angaben die Bestellung verlangt und welche Daten der Shop dabei speichert. Jetzt nachlesen.{% else %}Warum der Kauf bei Luviq Universe in Lübeck ein Konto braucht, welche Angaben nötig sind und welche Daten der Shop dabei speichert. Jetzt nachlesen.{% endif %}{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_title %}Konto und Daten – Luviq Universe, Lübeck{% endblock %}
-{% block og_description %}Anmeldepflicht im Warenkorb, Angaben bei der Registrierung, gespeicherte Daten, eingebundene Dienste und wie ein Konto gelöscht wird.{% endblock %}
-{% block twitter_title %}Konto und Daten – Luviq Universe{% endblock %}
-{% block twitter_description %}Warum der Kauf ein Konto braucht, welche Angaben nötig sind und was der Shop speichert.{% endblock %}
+{% block og_title %}{% if direktkauf_aktiv %}Ohne Konto bestellen: Daten im Shop – Luviq Universe, Lübeck{% else %}Konto und Daten – Luviq Universe, Lübeck{% endif %}{% endblock %}
+{% block og_description %}{% if direktkauf_aktiv %}Kauf ohne Konto, gespeicherte Bestelldaten, eingebundene Dienste und wie Daten gelöscht werden.{% else %}Anmeldepflicht im Warenkorb, Angaben bei der Registrierung, gespeicherte Daten, eingebundene Dienste und wie ein Konto gelöscht wird.{% endif %}{% endblock %}
+{% block twitter_title %}{% if direktkauf_aktiv %}Ohne Konto bestellen: Daten im Shop – Luviq Universe{% else %}Konto und Daten – Luviq Universe{% endif %}{% endblock %}
+{% block twitter_description %}{% if direktkauf_aktiv %}Warum der Kauf kein Konto braucht, welche Angaben nötig sind und was der Shop speichert.{% else %}Warum der Kauf ein Konto braucht, welche Angaben nötig sind und was der Shop speichert.{% endif %}{% endblock %}
 {% comment %}Freigabe der Betreiberin: siehe views/wissen.py. Die Bedingung steht IM Block, nicht darum herum (CLAUDE.md).{% endcomment %}
 {% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
 
@@ -20,7 +20,7 @@
   "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
     {"@type": "ListItem", "position": 2, "name": "Wissen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen' %}"},
-    {"@type": "ListItem", "position": 3, "name": "Was speichert der Shop – und warum braucht der Kauf ein Konto?", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen_konto' %}"}
+    {"@type": "ListItem", "position": 3, "name": "Was speichert der Shop – und brauche ich ein Konto?", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen_konto' %}"}
   ]
 }
 </script>
@@ -37,18 +37,18 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Warum brauche ich ein Konto, um zu bestellen?",
+      "name": "{% if direktkauf_aktiv %}Brauche ich ein Konto, um zu bestellen?{% else %}Warum brauche ich ein Konto, um zu bestellen?{% endif %}",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Weil der Warenkorb am Konto hängt und nicht an der Sitzung im Browser. Hinzufügen, Warenkorb, Bestellvorgang, Zahlungsseite und Bestellübersicht sind angemeldeten Kundinnen und Kunden vorbehalten; ohne Anmeldung führt die Detailseite eines Stücks zuerst zur Anmeldung oder zur Registrierung. Eine Gastbestellung ohne Konto gibt es nicht."
+        "text": "{% if direktkauf_aktiv %}Nein. Bestellt wird ohne Konto direkt auf der Seite des Stücks; für eine Bestellung legt der Shop kein Kundenkonto an. Ein Konto mit Benutzername und Passwort gibt es nur für das Gästebuch, weil dort jeder Beitrag einem Benutzernamen zugeordnet wird.{% else %}Weil der Warenkorb am Konto hängt und nicht an der Sitzung im Browser. Hinzufügen, Warenkorb, Bestellvorgang, Zahlungsseite und Bestellübersicht sind angemeldeten Kundinnen und Kunden vorbehalten; ohne Anmeldung führt die Detailseite eines Stücks zuerst zur Anmeldung oder zur Registrierung. Eine Gastbestellung ohne Konto gibt es nicht.{% endif %}"
       }
     },
     {
       "@type": "Question",
-      "name": "Welche Angaben verlangt die Registrierung?",
+      "name": "{% if direktkauf_aktiv %}Was speichert der Shop bei einer Bestellung?{% else %}Welche Angaben verlangt die Registrierung?{% endif %}",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Benutzername, E-Mail-Adresse, Vorname, Nachname und zweimal dasselbe Passwort. Telefonnummer, Straße mit Hausnummer, Postleitzahl, Stadt und Land lassen sich gleich mit eintragen, sind aber freiwillig; gebraucht werden sie erst beim Bestellen. Ein Geburtsdatum ist nirgends Pflicht und kann später im Profil ergänzt werden."
+        "text": "{% if direktkauf_aktiv %}Vor- und Nachname, E-Mail-Adresse, die Lieferanschrift (bei Abholung nur der Vermerk „Abholung in Lübeck nach Absprache“), freiwillig eine Telefonnummer, das bestellte Stück mit Preis, die Zahlungsart (Vorkasse per Überweisung), der Bestellstatus und der Zeitpunkt. Ein Kundenkonto wird dafür nicht angelegt.{% else %}Benutzername, E-Mail-Adresse, Vorname, Nachname und zweimal dasselbe Passwort. Telefonnummer, Straße mit Hausnummer, Postleitzahl, Stadt und Land lassen sich gleich mit eintragen, sind aber freiwillig; gebraucht werden sie erst beim Bestellen. Ein Geburtsdatum ist nirgends Pflicht und kann später im Profil ergänzt werden.{% endif %}"
       }
     },
     {
@@ -80,23 +80,23 @@
       "name": "Welche fremden Dienste sind eingebunden?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Die Seite läuft bei Railway; beim Aufruf werden Inhalte von Cloudinary (Produktbilder) und Google Maps (Karte im Gästebuch) nachgeladen, die dabei die IP-Adresse erhalten. Dazu kommt Gmail (Google) für E-Mails und Newsletter sowie PayPal bei der Zahlung."
+        "text": "Die Seite läuft bei Railway; beim Aufruf werden Inhalte von Cloudinary (Produktbilder) und Google Maps (Karte im Gästebuch) nachgeladen, die dabei die IP-Adresse erhalten. {% if direktkauf_aktiv %}Dazu kommt Gmail (Google) für E-Mails und Newsletter.{% else %}Dazu kommt Gmail (Google) für E-Mails und Newsletter sowie PayPal bei der Zahlung.{% endif %}"
       }
     },
     {
       "@type": "Question",
-      "name": "Was passiert mit meinen Zahlungsdaten?",
+      "name": "{% if direktkauf_aktiv %}Was passiert mit meinen Zahlungsdaten?{% else %}Was passiert mit meinen Zahlungsdaten?{% endif %}",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Bei einer Zahlung über PayPal werden sie verschlüsselt an den Zahlungsdienstleister übertragen; Kreditkarteninformationen speichert der Shop nicht auf seinen Servern. Vom Vorgang selbst bleiben die Bestellung mit Betrag, Artikeln und Lieferanschrift sowie die Kennung der PayPal-Zahlung. Bei der Vorab-Überweisung erfährt der Shop nur, was auf dem Kontoauszug steht."
+        "text": "{% if direktkauf_aktiv %}Bezahlt wird per Überweisung. Der Shop erfährt nur, was auf dem Kontoauszug steht, und speichert keine Kreditkarteninformationen. Von der Bestellung selbst bleiben Betrag, Stück und Lieferanschrift.{% else %}Bei einer Zahlung über PayPal werden sie verschlüsselt an den Zahlungsdienstleister übertragen; Kreditkarteninformationen speichert der Shop nicht auf seinen Servern. Vom Vorgang selbst bleiben die Bestellung mit Betrag, Artikeln und Lieferanschrift sowie die Kennung der PayPal-Zahlung. Bei der Vorab-Überweisung erfährt der Shop nur, was auf dem Kontoauszug steht.{% endif %}"
       }
     },
     {
       "@type": "Question",
-      "name": "Wofür werden die Angaben im Profil verwendet?",
+      "name": "{% if direktkauf_aktiv %}Wie schützt das Formular vor automatisierten Bestellungen?{% else %}Wofür werden die Angaben im Profil verwendet?{% endif %}",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Sie füllen den Bestellvorgang vor, damit Anschrift und Telefonnummer nicht jedes Mal neu eingetippt werden müssen. Abgeschickte Bestellungen ändern sie nicht: Name, Anschrift und E-Mail-Adresse werden bei der Bestellung mitgespeichert, damit eine spätere Änderung im Profil eine alte Bestellung nicht rückwirkend verändert."
+        "text": "{% if direktkauf_aktiv %}Das Formular enthält ein für Menschen unsichtbares Feld und einen Zeitstempel; die Zahl der Bestellungen je IP-Adresse wird kurzzeitig im Arbeitsspeicher gezählt.{% else %}Sie füllen den Bestellvorgang vor, damit Anschrift und Telefonnummer nicht jedes Mal neu eingetippt werden müssen. Abgeschickte Bestellungen ändern sie nicht: Name, Anschrift und E-Mail-Adresse werden bei der Bestellung mitgespeichert, damit eine spätere Änderung im Profil eine alte Bestellung nicht rückwirkend verändert.{% endif %}"
       }
     },
     {
@@ -130,26 +130,26 @@
     <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li><a href="{% url 'wissen' %}">Wissen</a></li><li aria-current="page">Konto und Daten</li></ol></nav>
 
     <header class="lv-wissen-kopf">
-        <h1 class="lv-serif">Was speichert der Shop – und warum braucht der Kauf ein Konto?</h1>
+        <h1 class="lv-serif">Was speichert der Shop – und brauche ich ein Konto?</h1>
         <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
-        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Wer bei Luviq Universe in Lübeck etwas kaufen will, braucht ein Konto: Warenkorb, Bestellvorgang und Bestellübersicht sind an eine Anmeldung gebunden. Die Registrierung verlangt Benutzername, E-Mail-Adresse, Vorname, Nachname und ein Passwort; Anschrift und Telefonnummer sind dabei freiwillig und werden erst beim Bestellen gebraucht. Gespeichert werden außerdem Warenkorb und Anmeldestand in funktionalen Cookies sowie bei jedem Seitenaufruf Pfad, Zeitpunkt, IP-Adresse und Browserkennung. Wer alles nachlesen will, findet es in der Datenschutzerklärung.</p>
+        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Dieser Beitrag beschreibt den Ablauf ab Eröffnung des Shops. Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}{% if direktkauf_aktiv %}Bei Luviq Universe in Lübeck braucht der Kauf kein Konto: Bestellt wird direkt auf der Seite des Stücks mit Name, E-Mail-Adresse und Lieferanschrift. Gespeichert werden dafür die Bestelldaten, außerdem funktionale Cookies für die Sitzung und den Anmeldestand sowie die Daten des Seitenaufrufs, die die Datenschutzerklärung im Einzelnen nennt.{% else %}Wer bei Luviq Universe in Lübeck etwas kaufen will, braucht ein Konto: Warenkorb, Bestellvorgang und Bestellübersicht sind an eine Anmeldung gebunden. Die Registrierung verlangt Benutzername, E-Mail-Adresse, Vorname, Nachname und ein Passwort; Anschrift und Telefonnummer sind dabei freiwillig und werden erst beim Bestellen gebraucht. Gespeichert werden außerdem Warenkorb und Anmeldestand in funktionalen Cookies sowie bei jedem Seitenaufruf Pfad, Zeitpunkt, IP-Adresse und Browserkennung. Wer alles nachlesen will, findet es in der Datenschutzerklärung.{% endif %}</p>
     </header>
 
     <div class="lv-wissen-liste">
         <section class="lv-wissen-frage">
-            <h2 class="lv-serif">Warum brauche ich ein Konto, um zu bestellen?</h2>
+            <h2 class="lv-serif">{% if direktkauf_aktiv %}Brauche ich ein Konto, um zu bestellen?{% else %}Warum brauche ich ein Konto, um zu bestellen?{% endif %}</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Weil der Warenkorb am Konto hängt und nicht an der Sitzung im Browser. Hinzufügen, Warenkorb, Bestellvorgang, Zahlungsseite und Bestellübersicht sind angemeldeten Kundinnen und Kunden vorbehalten; ohne Anmeldung führt die Detailseite eines Stücks zuerst zur Anmeldung oder zur Registrierung. Eine Gastbestellung ohne Konto gibt es nicht.</p>
-                <p>Der praktische Vorteil: Ein Warenkorb überlebt den Wechsel des Geräts und den geschlossenen Browser, und jede Bestellung bleibt im Profil nachvollziehbar – mit Nummer, Datum und Stand. Wie eine Bestellung von dort aus weiterläuft, steht im Beitrag zum Bestellen und Bezahlen in diesem Wissensbereich.</p>
+                <p class="lv-wissen-erst">{% if direktkauf_aktiv %}Nein. Bestellt wird ohne Konto direkt auf der Seite des Stücks; für eine Bestellung legt der Shop kein Kundenkonto an. Ein Konto mit Benutzername und Passwort gibt es nur für das Gästebuch, weil dort jeder Beitrag einem Benutzernamen zugeordnet wird.{% else %}Weil der Warenkorb am Konto hängt und nicht an der Sitzung im Browser. Hinzufügen, Warenkorb, Bestellvorgang, Zahlungsseite und Bestellübersicht sind angemeldeten Kundinnen und Kunden vorbehalten; ohne Anmeldung führt die Detailseite eines Stücks zuerst zur Anmeldung oder zur Registrierung. Eine Gastbestellung ohne Konto gibt es nicht.{% endif %}</p>
+                <p>{% if direktkauf_aktiv %}Wie eine Bestellung abläuft, steht im Beitrag <a href="{% url 'wissen_bestellen' %}">Bestellen und bezahlen</a> in diesem Wissensbereich.{% else %}Der praktische Vorteil: Ein Warenkorb überlebt den Wechsel des Geräts und den geschlossenen Browser, und jede Bestellung bleibt im Profil nachvollziehbar – mit Nummer, Datum und Stand. Wie eine Bestellung von dort aus weiterläuft, steht im Beitrag zum Bestellen und Bezahlen in diesem Wissensbereich.{% endif %}</p>
             
             </div>
         </section>
 
         <section class="lv-wissen-frage">
-            <h2 class="lv-serif">Welche Angaben verlangt die Registrierung?</h2>
+            <h2 class="lv-serif">{% if direktkauf_aktiv %}Was speichert der Shop bei einer Bestellung?{% else %}Welche Angaben verlangt die Registrierung?{% endif %}</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Benutzername, E-Mail-Adresse, Vorname, Nachname und zweimal dasselbe Passwort. Telefonnummer, Straße mit Hausnummer, Postleitzahl, Stadt und Land lassen sich gleich mit eintragen, sind aber freiwillig; gebraucht werden sie erst beim Bestellen. Ein Geburtsdatum ist nirgends Pflicht und kann später im Profil ergänzt werden.</p>
-                <p>Nach der Datenschutzerklärung werden E-Mail-Adresse, Name und Anschrift gespeichert, um Bestellungen abzuwickeln. Alles, was darüber hinaus im Profil steht, steht dort, weil es jemand eingetragen hat – nicht, weil der Shop es verlangt. Zum Nachlesen: <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
+                <p class="lv-wissen-erst">{% if direktkauf_aktiv %}Vor- und Nachname, E-Mail-Adresse, die Lieferanschrift (bei Abholung nur der Vermerk „Abholung in Lübeck nach Absprache“), freiwillig eine Telefonnummer, das bestellte Stück mit Preis, die Zahlungsart (Vorkasse per Überweisung), der Bestellstatus und der Zeitpunkt. Ein Kundenkonto wird dafür nicht angelegt.{% else %}Benutzername, E-Mail-Adresse, Vorname, Nachname und zweimal dasselbe Passwort. Telefonnummer, Straße mit Hausnummer, Postleitzahl, Stadt und Land lassen sich gleich mit eintragen, sind aber freiwillig; gebraucht werden sie erst beim Bestellen. Ein Geburtsdatum ist nirgends Pflicht und kann später im Profil ergänzt werden.{% endif %}</p>
+                <p>{% if direktkauf_aktiv %}Diese Daten braucht Luviq, um den Vertrag zu schließen und zu erfüllen (Art. 6 Abs. 1 lit. b DSGVO); ohne sie lässt sich nicht liefern. Die Bestellung geht als E-Mail an Luisa Brehler, eine Kopie erhält die Webagentur Scherzinger, die die Seite technisch betreut. Der verbindliche Wortlaut steht in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.{% else %}Nach der Datenschutzerklärung werden E-Mail-Adresse, Name und Anschrift gespeichert, um Bestellungen abzuwickeln. Alles, was darüber hinaus im Profil steht, steht dort, weil es jemand eingetragen hat – nicht, weil der Shop es verlangt. Zum Nachlesen: <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.{% endif %}</p>
             
             </div>
         </section>
@@ -176,7 +176,7 @@
             <h2 class="lv-serif">Welche Daten fallen schon beim Besuch der Seite an?</h2>
             <div class="lv-wissen-antwort">
                 <p class="lv-wissen-erst">Die Seite zählt, wie viele Menschen sie an einem Tag aufrufen und welche Seiten sie ansehen – ohne Cookie, ohne gespeicherte IP-Adresse und ohne Weitergabe an Dritte. Gespeichert bleiben Tageszahl, Pfad, Zeitpunkt und die grobe Geräteklasse. Rechtsgrundlage ist das berechtigte Interesse an einer datensparsamen Reichweitenmessung.</p>
-                <p>Dazu kommen funktionale Cookies, die den Warenkorb und den Anmeldestand halten – ohne sie ließe sich der Shop nicht bedienen. Der genaue Wortlaut samt Anbieter, Rechtsgrundlage und Rechten steht in der Datenschutzerklärung; sie ist die verbindliche Fassung, dieser Beitrag fasst sie nur zusammen.</p>
+                <p>{% if direktkauf_aktiv %}Dazu kommen funktionale Cookies, die die Sitzung und den Anmeldestand halten{% else %}Dazu kommen funktionale Cookies, die den Warenkorb und den Anmeldestand halten{% endif %} – ohne sie ließe sich der Shop nicht bedienen. Der genaue Wortlaut samt Anbieter, Rechtsgrundlage und Rechten steht in der Datenschutzerklärung; sie ist die verbindliche Fassung, dieser Beitrag fasst sie nur zusammen.</p>
             
             </div>
         </section>
@@ -184,26 +184,26 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Welche fremden Dienste sind eingebunden?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Die Seite läuft bei Railway; beim Aufruf werden Inhalte von Cloudinary (Produktbilder) und Google Maps (Karte im Gästebuch) nachgeladen, die dabei die IP-Adresse erhalten. Dazu kommt Gmail (Google) für E-Mails und Newsletter sowie PayPal bei der Zahlung.</p>
+                <p class="lv-wissen-erst">Die Seite läuft bei Railway; beim Aufruf werden Inhalte von Cloudinary (Produktbilder) und Google Maps (Karte im Gästebuch) nachgeladen, die dabei die IP-Adresse erhalten. {% if direktkauf_aktiv %}Dazu kommt Gmail (Google) für E-Mails und Newsletter.{% else %}Dazu kommt Gmail (Google) für E-Mails und Newsletter sowie PayPal bei der Zahlung.{% endif %}</p>
                 <p>Auf die Verarbeitung bei diesen Anbietern hat Luviq Universe keinen Einfluss; es gelten deren Datenschutzhinweise. Die Übertragung zwischen Browser und Shop ist verschlüsselt. Ein Werbenetzwerk und ein Analysedienst, die Besucherinnen über fremde Seiten hinweg verfolgen, gehören nicht dazu – die Auswertung der Zugriffe passiert im Shop selbst.</p>
             
             </div>
         </section>
 
         <section class="lv-wissen-frage">
-            <h2 class="lv-serif">Was passiert mit meinen Zahlungsdaten?</h2>
+            <h2 class="lv-serif">{% if direktkauf_aktiv %}Was passiert mit meinen Zahlungsdaten?{% else %}Was passiert mit meinen Zahlungsdaten?{% endif %}</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Bei einer Zahlung über PayPal werden sie verschlüsselt an den Zahlungsdienstleister übertragen; Kreditkarteninformationen speichert der Shop nicht auf seinen Servern. Vom Vorgang selbst bleiben die Bestellung mit Betrag, Artikeln und Lieferanschrift sowie die Kennung der PayPal-Zahlung. Bei der Vorab-Überweisung erfährt der Shop nur, was auf dem Kontoauszug steht.</p>
-                <p>Die Kennung der PayPal-Zahlung wird gespeichert, weil der Shop damit prüft, ob eine Zahlung wirklich abgeschlossen wurde und ob sie nicht schon zu einer anderen Bestellung gehört. Wie diese Prüfung abläuft, steht im Beitrag zum Bestellen und Bezahlen in diesem Wissensbereich.</p>
+                <p class="lv-wissen-erst">{% if direktkauf_aktiv %}Bezahlt wird per Überweisung. Der Shop erfährt nur, was auf dem Kontoauszug steht, und speichert keine Kreditkarteninformationen. Von der Bestellung selbst bleiben Betrag, Stück und Lieferanschrift.{% else %}Bei einer Zahlung über PayPal werden sie verschlüsselt an den Zahlungsdienstleister übertragen; Kreditkarteninformationen speichert der Shop nicht auf seinen Servern. Vom Vorgang selbst bleiben die Bestellung mit Betrag, Artikeln und Lieferanschrift sowie die Kennung der PayPal-Zahlung. Bei der Vorab-Überweisung erfährt der Shop nur, was auf dem Kontoauszug steht.{% endif %}</p>
+                <p>{% if direktkauf_aktiv %}Die Rechnung mit den Zahlungsdaten schickt Luisa Brehler per E-Mail. Wie eine Bestellung abläuft, steht im Beitrag <a href="{% url 'wissen_bestellen' %}">Bestellen und bezahlen</a> in diesem Wissensbereich.{% else %}Die Kennung der PayPal-Zahlung wird gespeichert, weil der Shop damit prüft, ob eine Zahlung wirklich abgeschlossen wurde und ob sie nicht schon zu einer anderen Bestellung gehört. Wie diese Prüfung abläuft, steht im Beitrag zum Bestellen und Bezahlen in diesem Wissensbereich.{% endif %}</p>
             
             </div>
         </section>
 
         <section class="lv-wissen-frage">
-            <h2 class="lv-serif">Wofür werden die Angaben im Profil verwendet?</h2>
+            <h2 class="lv-serif">{% if direktkauf_aktiv %}Wie schützt das Formular vor automatisierten Bestellungen?{% else %}Wofür werden die Angaben im Profil verwendet?{% endif %}</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Sie füllen den Bestellvorgang vor, damit Anschrift und Telefonnummer nicht jedes Mal neu eingetippt werden müssen. Abgeschickte Bestellungen ändern sie nicht: Name, Anschrift und E-Mail-Adresse werden bei der Bestellung mitgespeichert, damit eine spätere Änderung im Profil eine alte Bestellung nicht rückwirkend verändert.</p>
-                <p>Dasselbe gilt für die gekauften Stücke: Name und Preis stehen in der Bestellung selbst und bleiben dort, auch wenn das Stück später aus dem Shop verschwindet – was bei einem verkauften Unikat der Regelfall ist. Eine alte Bestellung bleibt so lesbar, wie sie aufgegeben wurde.</p>
+                <p class="lv-wissen-erst">{% if direktkauf_aktiv %}Das Formular enthält ein für Menschen unsichtbares Feld und einen Zeitstempel; die Zahl der Bestellungen je IP-Adresse wird kurzzeitig im Arbeitsspeicher gezählt.{% else %}Sie füllen den Bestellvorgang vor, damit Anschrift und Telefonnummer nicht jedes Mal neu eingetippt werden müssen. Abgeschickte Bestellungen ändern sie nicht: Name, Anschrift und E-Mail-Adresse werden bei der Bestellung mitgespeichert, damit eine spätere Änderung im Profil eine alte Bestellung nicht rückwirkend verändert.{% endif %}</p>
+                <p>{% if direktkauf_aktiv %}Bots, die das unsichtbare Feld ausfüllen oder zu schnell absenden, werden abgewiesen. Für eine Bestellung entsteht weder ein Konto noch ein Profil.{% else %}Dasselbe gilt für die gekauften Stücke: Name und Preis stehen in der Bestellung selbst und bleiben dort, auch wenn das Stück später aus dem Shop verschwindet – was bei einem verkauften Unikat der Regelfall ist. Eine alte Bestellung bleibt so lesbar, wie sie aufgegeben wurde.{% endif %}</p>
             
             </div>
         </section>

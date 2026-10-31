@@ -123,16 +123,20 @@
             {% comment %}EIG84: Preis und Kaufweg nur für ein Stück, das noch da ist (`Produkt.kaufbar`: aktiv, nicht vergeben, vorrätig); sonst derselbe „vergeben“-Zustand wie ohne Verkauf, statt eines Knopfes, der auf der Startseite endet.{% endcomment %}
             {% if verkauf_aktiv and produkt.kaufbar %}
             {% comment %}Versand innerhalb Deutschlands ist im Preis enthalten (Bastian 30.10.2026, luviq_daten.VERSAND['kosten'] = 0): die Preisangabe sagt das direkt am Preis (PAngV) statt „zuzüglich Versandkosten“.{% endcomment %}
-            <p class="lv-klein">Gesamtpreis, {{ versand_preissatz }}. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. PayPal{% if ueberweisung_moeglich %} oder Vorab-Überweisung{% endif %} · {{ liefer_satz }}</p>
+            <p class="lv-klein">Gesamtpreis, {{ versand_preissatz }}. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. {% if direktkauf_aktiv %}Bezahlt wird im Voraus per Überweisung; die Rechnung kommt per E-Mail{% else %}PayPal{% if ueberweisung_moeglich %} oder Vorab-Überweisung{% endif %}{% endif %} · {{ liefer_satz }}</p>
             {% comment %}GPSR (VO (EU) 2023/988 Art. 19): Herstellerangaben und Kennnummer im Online-Angebot. Luisa verändert die Teile wesentlich und verkauft unter eigener Marke, sie gilt als Herstellerin. Nur mit Verkauf, Werte aus luviq_daten.ANBIETERIN und luviq_daten.PFLEGE.{% endcomment %}
             <p class="lv-klein">Herstellerin: {{ anbieterin.name }} ({{ anbieterin.geschaeft }}), {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.email }} · Kennnummer Nº {{ produkt.archiv_nummer }} · Pflege: {{ pflege }}</p>
             {% elif produkt.verkauft %}
-            <p class="lv-status">Nº {{ produkt.archiv_nummer }} · Archiv · {% if produkt.ist_referenz %}Referenzstück, bereits vergeben{% else %}Bereits vergeben{% endif %} · Neue Stücke mit dem ersten Drop</p>
+            <p class="lv-status">Nº {{ produkt.archiv_nummer }} · Archiv · {% if produkt.ist_referenz %}Referenzstück, bereits vergeben{% else %}Bereits vergeben{% endif %} · {% if verkauf_aktiv %}Das nächste Stück vormerken{% else %}Neue Stücke mit dem ersten Drop{% endif %}</p>
             {% endif %}
             <p class="lv-stueck-knoepfe">
                 {% comment %}Verkaufsschalter: ohne Verkauf kein Warenkorb-Knopf, sondern die Warteliste (Newsletter mit Double-Opt-in auf der Startseite) und die Frage zum Stück.{% endcomment %}
                 {% if not verkauf_aktiv or not produkt.kaufbar %}
-                <a class="lv-knopf" href="{% url 'home' %}#newsletter-form">Auf die Warteliste <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                <a class="lv-knopf" href="{% url 'home' %}#newsletter-form">{% if verkauf_aktiv %}Für das nächste Stück vormerken{% else %}Auf die Warteliste{% endif %} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                <a class="lv-link" href="{% url 'kontakt' %}">Frage zum Stück</a>
+                {% elif direktkauf_aktiv %}
+                {% comment %}Direktkauf ohne Konto (31.10.2026): der Knopf springt zum Formular weiter unten (bzw. zum Hinweis „Reserviert“).{% endcomment %}
+                <a class="lv-knopf" href="#bestellen">{% if direktkauf_zustand == 'reserviert' %}Reserviert – Details{% else %}Direkt kaufen{% endif %} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
                 <a class="lv-link" href="{% url 'kontakt' %}">Frage zum Stück</a>
                 {% elif user.is_authenticated %}
                 {% comment %}„In den Warenkorb" ändert den Korb und läuft deshalb per POST (EIG85). Das Formular steht außerhalb des Absatzes (ein Formular im <p> ist kein gültiges HTML); der Knopf gehört über form="…" dazu.{% endcomment %}
@@ -143,9 +147,27 @@
                 <a class="lv-link" href="{% url 'register' %}">Konto anlegen</a>
                 {% endif %}
             </p>
-            {% if verkauf_aktiv and produkt.kaufbar and user.is_authenticated %}<form id="lv-in-den-warenkorb" method="post" action="{% url 'add_to_cart' produkt.id %}?next=warenkorb" hidden>{% csrf_token %}</form>{% endif %}
+            {% if verkauf_aktiv and produkt.kaufbar and user.is_authenticated and not direktkauf_aktiv %}<form id="lv-in-den-warenkorb" method="post" action="{% url 'add_to_cart' produkt.id %}?next=warenkorb" hidden>{% csrf_token %}</form>{% endif %}
             {% comment %}Hinweistext: die ersten zwei Sätze sichtbar, der Rest in <details> (bleibt für Google lesbar).{% endcomment %}
-            {% if verkauf_aktiv and produkt.kaufbar %}
+            {% if verkauf_aktiv and produkt.kaufbar and direktkauf_aktiv %}
+            {% include 'shop1/teile/direktkauf_formular.html' %}
+            {% if direktkauf_zustand == 'bestellbar' %}<a class="lv-kaufleiste" href="#bestellen" data-kaufleiste hidden>Direkt kaufen · {{ produkt.preis|floatformat:0 }} €</a>
+            <script nonce="{{ csp_nonce }}">
+            (function () {
+                var leiste = document.querySelector('[data-kaufleiste]'), ziel = document.getElementById('bestellen');
+                if (!leiste || !ziel || !('IntersectionObserver' in window)) { return; }
+                var knopf = document.querySelector('.lv-stueck-knoepfe .lv-knopf'), sichtbar = false, oben = false;
+                function zeige() { leiste.hidden = sichtbar || !oben; }
+                new IntersectionObserver(function (e) { sichtbar = e[0].isIntersecting; zeige(); }).observe(ziel);
+                if (knopf) { new IntersectionObserver(function (e) { oben = !e[0].isIntersecting; zeige(); }).observe(knopf); }
+            })();
+            </script>{% endif %}
+            <div class="lv-stueck-hinweis">
+                <p>Bezahlt wird im Voraus per Überweisung nach der Rechnung, die du per E-Mail bekommst; der angezeigte Preis ist ein Endpreis, nach § 19 UStG wird keine Umsatzsteuer berechnet, und der Versand innerhalb Deutschlands ist schon enthalten. Geliefert wird innerhalb von {{ lieferfrist }} Werktagen (AGB § 5). {{ umtausch_satz }}</p>
+                <details class="lv-mehr"><summary>Mehr zum Kauf</summary>
+                <p>Gekauft wird ohne Konto: Du bestellst mit Name, E-Mail-Adresse und Anschrift, das Stück ist danach für dich reserviert, und Luisa Brehler schickt dir die Rechnung mit den Zahlungsdaten. Für die Bestellung gilt das Widerrufsrecht von 14 Tagen ab dem Tag, an dem die Ware angekommen ist (§ 8 der AGB); die unmittelbaren Kosten einer Rücksendung trägst du. Pinselstriche und Bleichkanten sind bei jedem Stück anders und Teil der Gestaltung{% if produkt.zustand and not produkt.ist_neu %}; Gebrauchsspuren eines gebrauchten Basisteils beschreiben oder zeigen wir beim Stück{% endif %} (§ 7 der AGB). Deine gesetzlichen Rechte bei Mängeln bleiben unberührt (§ 10 der AGB). Die Fotos zeigen genau dieses Teil; ein zweites Exemplar zum Vergleich gibt es nicht.</p></details>
+            </div>
+            {% elif verkauf_aktiv and produkt.kaufbar %}
             <div class="lv-stueck-hinweis">
                 <p>Bezahlt wird per PayPal{% if ueberweisung_moeglich %} oder Vorab-Überweisung{% endif %}; der angezeigte Preis ist ein Endpreis, nach § 19 UStG wird keine Umsatzsteuer berechnet, und der Versand innerhalb Deutschlands ist schon enthalten. Geliefert wird innerhalb von {{ lieferfrist }} Werktagen (AGB § 5). {{ umtausch_satz }}</p>
                 <details class="lv-mehr"><summary>Mehr zum Kauf</summary>
@@ -153,7 +175,7 @@
             </div>
             {% elif produkt.verkauft %}
             <div class="lv-stueck-hinweis">
-                <p>{% if produkt.ist_referenz %}Dieses Stück ist eines der ersten Referenzstücke und bereits vergeben.{% else %}Dieses Stück ist bereits vergeben.{% endif %} Neue Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein: Eine E-Mail-Adresse genügt, ein Konto ist dafür nicht nötig, und erst nach der Bestätigung über den Link in der E-Mail kommt Post.</p>
+                <p>{% if produkt.ist_referenz %}Dieses Stück ist eines der ersten Referenzstücke und bereits vergeben.{% else %}Dieses Stück ist bereits vergeben.{% endif %} {% if verkauf_aktiv %}Für das nächste Stück kannst du dich vormerken lassen{% else %}Neue Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein{% endif %}: Eine E-Mail-Adresse genügt, ein Konto ist dafür nicht nötig, und erst nach der Bestätigung über den Link in der E-Mail kommt Post.</p>
                 <details class="lv-mehr"><summary>Mehr zu diesem Stück</summary>
                 <p>Pinselstriche und Bleichkanten sind bei jedem Stück anders und Teil der Gestaltung. Die Fotos zeigen genau dieses Teil; ein zweites Exemplar gibt es nicht, und Fragen zum Stück oder zur Arbeitsweise gehen über das Kontaktformular. Das Motiv entsteht direkt auf dem Stoff, mit Pinsel und Bleiche, und wird nicht wiederholt – darum trägt das Stück den Zusatz 1-of-1. Grundlage ist ein hochwertiges Teil, gebraucht oder neu, das Luisa Brehler selbst ausgesucht hat, weil sich Stoff und Schnitt als Leinwand eignen. Ein Ladengeschäft zum Anschauen gibt es nicht.</p></details>
             </div>
