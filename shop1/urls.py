@@ -27,8 +27,14 @@ urlpatterns = [
     path('motiv-anfragen/', views.motiv_anfragen, name='motiv_anfragen'),
     path('motiv-anfragen/danke/', views.motiv_danke, name='motiv_danke'),
     # Widerrufsfunktion „Vertrag widerrufen“ (§ 356a BGB): ohne Anmeldung, auch ohne laufenden Verkauf erreichbar
+    # Gängige Adressen der Widerrufsbelehrung (liefen ins Leere): 301 auf die Belehrung in den AGB
+    path('widerruf/', RedirectView.as_view(url='/agb/#widerruf', permanent=True)),
+    path('widerrufsbelehrung/', RedirectView.as_view(url='/agb/#widerruf', permanent=True)),
     path('vertrag-widerrufen/', views.vertrag_widerrufen, name='vertrag_widerrufen'),
     path('vertrag-widerrufen/eingang/', views.widerruf_eingang, name='widerruf_eingang'),
+    # Direktkauf ohne Konto (nur mit Verkauf + DIREKTKAUF; sonst Umleitung auf die Warteliste)
+    path('bestellen/danke/', views.direktkauf_danke, name='direktkauf_danke'),
+    path('bestellen/<slug:slug>/', views.direktkauf, name='direktkauf'),
     path('liefergebiet/', views.liefergebiet, name='liefergebiet'),
     # Bewertungsbitte (QR-Code, WhatsApp): beide noindex und nicht in der Sitemap
     path('bewerten/', views.bewerten, name='bewerten'),

@@ -10,6 +10,11 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 ---
 
+
+## 31.10.2026 – Direktkauf ohne Konto (Zweig bau/2026-10-31-direktkauf)
+**Was:** Mit laufendem Verkauf bestellt man auf jeder Stückseite ohne Konto (Name, E-Mail, Anschrift oder Abholung Lübeck, Knopf „Zahlungspflichtig bestellen“, Gesamtpreis darüber); die Bestellung (Order ohne User, Überweisung, pending) reserviert das Unikat sofort, Mails an Kundin und Luisa (+ Kopie Webagentur), Danke-Seite. Login-Kasse, Warenkorb, PayPal und „Anmelden“ sind bei `DIREKTKAUF` (Vorgabe an, Umgebung `DIREKTKAUF=0` schaltet zurück) ausgeblendet und umgeleitet. AGB, Datenschutz, Vertragsmail passend (Zweig `direktkauf_aktiv`). Startsperre rechnet mit Berliner Datum (`heute_berlin`), sonst wäre um 00:00 MEZ auf Railway (UTC) noch der 31.10.
+**Warum:** Bastians Vorgabe 31.10.2026 (keine großen Anmeldesysteme, Rechnung per E-Mail bis es Zahlungslinks gibt). Dazu: `/widerruf/`-Adressen leiten auf die Belehrung, Handy-Leiste „Direkt kaufen“, `RESERVIERUNG_TAGE`. Anleitung: doku/25-NEUES-STUECK.md. Tests: shop1/tests/test_direktkauf_2026_10_31.py.
+
 ## 30.10.2026 — Bewertungsbitte: /bewerten/ und /bewerten/alle/
 
 - **Was:** `/bewerten/` (302 zum Google-Formular) und `/bewerten/alle/` (Knopf je Portal aus `luviq_daten.BEWERTUNGSPORTALE`: Google, ProvenExpert, dazu Gästebuch), noindex, nicht in Sitemap/llms.txt. `GOOGLE_REVIEW_URL` hat als Vorgabe den echten Bewertungslink statt der Kartensuche. Tests `test_bewerten` (5), `test_inhalt` setzt die Kartensuche für den EIG87-Fall jetzt ausdrücklich.

@@ -61,6 +61,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-leiste{display:none}
 .lv-leiste{transition:transform 200ms ease}
 .leiste-zu .lv-leiste{transform:translateY(110%);visibility:hidden}
+body:has([data-kaufleiste]) .lv-leiste{display:none!important}
 .lv-brotkrume{padding:calc(var(--u)*2) var(--rand) 0;font:max(12px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.04em}
 .lv-brotkrume ol{display:flex;flex-wrap:wrap;gap:.6em;list-style:none;padding:0;margin:0}
 .lv-brotkrume li+li::before{content:"/";margin-right:.6em;color:var(--lv-linie-2)}

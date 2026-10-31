@@ -504,6 +504,10 @@ VERKAUF_SPERRGRUENDE = _sperrgruende()
 VERKAUF_AKTIV = VERKAUF_GEWUENSCHT and not VERKAUF_SPERRGRUENDE
 #: Fruehester Verkaufstag fuer den Hinweis „Der Shop oeffnet fruehestens am …".
 VERKAUF_FRUEHESTENS = _fruehester_tag()
+#: Direktkauf ohne Konto (31.10.2026, Bastian): mit laufendem Verkauf bestellt man auf der Stueckseite
+#: mit Name, E-Mail und Anschrift; Luisa schickt die Rechnung per E-Mail. Warenkorb, Login-Kasse und
+#: PayPal bleiben im Code, sind aber ausgeblendet und umgeleitet. Zurueck: Umgebungsvariable DIREKTKAUF=0.
+DIREKTKAUF = os.getenv('DIREKTKAUF', '1').strip().lower() not in ('0', 'false', 'no', 'off', 'nein', 'aus')
 
 # ═══ PFLICHTANGABEN, DIE SPAETER KOMMEN ═══
 # USt-IdNr. (beantragt im ELSTER-Fragebogen am 29.10.2026, kommt per Post vom

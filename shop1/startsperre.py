@@ -14,7 +14,7 @@ prüfen die Sperre hier als Funktion.
 """
 
 import os
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 #: Frühester Verkaufstag: Beginn des Gewerbes laut Anmeldung (22.10.2026).
@@ -50,6 +50,21 @@ VERSANDKOSTEN_IM_BESTELLWEG = True  # Runde 3 (30.10.2026): Versand im Preis ent
 WIDERRUFSFUNKTION_VORHANDEN = True  # 30.10.2026: /vertrag-widerrufen/ (views/widerruf.py, Modell Widerruf, Mails, Tests test_widerruf)
 
 
+def heute_berlin(jetzt=None):
+    """Heutiges Datum in Berlin (Ortszeit), unabhängig von der Serverzeit.
+
+    ``settings.py`` lädt dieses Modul, bevor Django ``TIME_ZONE`` setzt; auf Railway
+    (UTC) wäre um 00:00 MEZ noch der Vortag und der Verkauf bliebe bis 01:00 gesperrt.
+    ``jetzt`` (mit Zeitzone) ist für Tests. Fehlt die Zeitzonen-Datenbank, gilt MEZ (UTC+1)."""
+    jetzt = jetzt or datetime.now(timezone.utc)
+    try:
+        from zoneinfo import ZoneInfo
+        zone = ZoneInfo('Europe/Berlin')
+    except Exception:
+        zone = timezone(timedelta(hours=1))
+    return jetzt.astimezone(zone).date()
+
+
 def fruehester_tag():
     roh = os.getenv('VERKAUF_FRUEHESTENS', VERKAUF_FRUEHESTENS_VORGABE).strip()
     try:
@@ -70,7 +85,7 @@ def generator_text_fehlt(name, ordner=None):
 
 def sperrgruende(heute=None, umgebung=None, ordner=None):
     """Alle Gründe, aus denen der Verkauf noch nicht öffnen darf (leer = startbereit)."""
-    heute = heute or date.today()
+    heute = heute or heute_berlin()
     umgebung = os.environ if umgebung is None else umgebung
     gruende = []
     tag = fruehester_tag()

@@ -361,6 +361,11 @@ LIEFER_SATZ = f"Lieferung innerhalb von {VERSAND['lieferfrist_werktage']} Werkta
 #: Die Preisangabe zum Versand, direkt am Preis (nur mit Verkauf sichtbar).
 VERSAND_PREISSATZ = 'inkl. Versand innerhalb Deutschlands'
 
+#: Wie lange ein bestelltes Stück auf die Überweisung wartet, bevor Luisa es wieder freigibt
+#: (Panel-Fixliste 31.10.2026, Punkt 3; Bastian bestätigt den Wert noch). Die Freigabe ist
+#: Handarbeit im Admin (Bestellung auf „Abgebrochen“); der Code löscht Reservierungen nicht selbst.
+RESERVIERUNG_TAGE = 3
+
 #: Kein freiwilliges Rückgabe- oder Umtauschrecht über das Gesetz hinaus (Bastian 30.10.2026:
 #: Einzelstücke, lange Handarbeit). Das gesetzliche Widerrufsrecht gilt trotzdem (§ 312g BGB;
 #: ein fertiges Unikat ist keine Anfertigung nach Kundenwunsch) – der Satz sagt beides. Wer beim

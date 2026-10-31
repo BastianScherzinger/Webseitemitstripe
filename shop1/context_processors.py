@@ -220,6 +220,7 @@ def luviq(request):
         # M1 (30.10.2026): verbindliche Lieferfrist; Laufzeit im Schema = Frist minus Bearbeitung.
         'lieferfrist': luviq_daten.VERSAND['lieferfrist_werktage'],
         'liefer_satz': luviq_daten.LIEFER_SATZ,
+        'reservierung_tage': luviq_daten.RESERVIERUNG_TAGE,
         'versand_transit_max': max(luviq_daten.VERSAND['lieferfrist_werktage'] - _werktage()[1], 1),
         **_rahmen(),
     }

@@ -1,0 +1,78 @@
+{% comment %}
+Direktkauf ohne Konto (views/direktkauf.py). Kommt aus der Stückseite (#bestellen) und aus /bestellen/<slug>/.
+Braucht: produkt, direktkauf_zustand, werte, fehler, laengen, knopf, formzeit, feld_falle, abholung_adresse.
+§ 312j Abs. 2 BGB: Stück, wesentliche Merkmale und Gesamtpreis (inkl. Versand) stehen unmittelbar über dem Knopf;
+Abs. 3: der Knopf trägt wörtlich „Zahlungspflichtig bestellen“. Der Kaufvertrag entsteht erst mit Luisas Rechnung (AGB § 2).
+{% endcomment %}
+{% if direktkauf_zustand == 'bestellbar' %}
+<form method="post" action="{% url 'direktkauf' produkt.slug %}" class="lv-formular lv-direktkauf" id="bestellen" data-einmal-absenden aria-labelledby="bestellen-titel">
+    <h2 class="lv-serif" id="bestellen-titel">Direkt bestellen</h2>
+    <p class="lv-klein">Zum Kaufen brauchst du kein Konto. Du gibst deine E-Mail-Adresse an, wir schicken dir die Rechnung mit den Zahlungsdaten.</p>
+    <div id="bestellen-fehler" role="alert"{% if fehler %} class="lv-fehler"{% endif %}>{% if fehler %}{{ fehler }}{% endif %}</div>
+    {% csrf_token %}
+    <input type="hidden" name="formzeit" value="{{ formzeit }}">
+    <div class="lv-falle" aria-hidden="true">
+        <label for="bestellen-webseite">Webseite (bitte leer lassen)</label>
+        <input class="lv-falle" type="text" id="bestellen-webseite" name="{{ feld_falle|default:'website' }}" tabindex="-1" autocomplete="off" aria-hidden="true">
+    </div>
+    <div class="lv-feld">
+        <label for="bestellen-name">Vor- und Nachname *</label>
+        <input type="text" id="bestellen-name" name="name" autocomplete="name" maxlength="{{ laengen.name }}" value="{{ werte.name|default:'' }}" required>
+    </div>
+    <div class="lv-feld">
+        <label for="bestellen-email">E-Mail-Adresse *</label>
+        <input type="email" id="bestellen-email" name="email" autocomplete="email" maxlength="{{ laengen.email }}" value="{{ werte.email|default:'' }}" required>
+    </div>
+    <fieldset>
+        <legend>Lieferung</legend>
+        <div class="lv-wahlen">
+            <label class="lv-wahl"><input type="radio" name="lieferart" value="versand"{% if werte.lieferart != 'abholung' %} checked{% endif %} data-lieferart><span>Versand in Deutschland</span></label>
+            <label class="lv-wahl"><input type="radio" name="lieferart" value="abholung"{% if werte.lieferart == 'abholung' %} checked{% endif %} data-lieferart><span>Abholung Lübeck nach Absprache</span></label>
+        </div>
+    </fieldset>
+    <div class="lv-feld">
+        <label for="bestellen-strasse">Straße und Hausnummer</label>
+        <input type="text" id="bestellen-strasse" name="strasse" autocomplete="street-address" maxlength="{{ laengen.strasse }}" value="{{ werte.strasse|default:'' }}" data-anschrift>
+    </div>
+    <div class="lv-feld2">
+        <div class="lv-feld">
+            <label for="bestellen-plz">Postleitzahl</label>
+            <input type="text" id="bestellen-plz" name="plz" inputmode="numeric" autocomplete="postal-code" maxlength="{{ laengen.plz }}" value="{{ werte.plz|default:'' }}" data-anschrift>
+        </div>
+        <div class="lv-feld">
+            <label for="bestellen-stadt">Ort</label>
+            <input type="text" id="bestellen-stadt" name="stadt" autocomplete="address-level2" maxlength="{{ laengen.stadt }}" value="{{ werte.stadt|default:'' }}" data-anschrift>
+        </div>
+    </div>
+    <div class="lv-feld">
+        <label for="bestellen-telefon">Telefon <em>freiwillig, nur für Rückfragen zur Lieferung</em></label>
+        <input type="tel" id="bestellen-telefon" name="telefon" autocomplete="tel" maxlength="{{ laengen.telefon }}" value="{{ werte.telefon|default:'' }}">
+    </div>
+    <label class="lv-haken"><input type="checkbox" name="zustimmung" value="ja" required{% if werte.zustimmung %} checked{% endif %}><span>Ich habe die <a href="{% url 'agb' %}" target="_blank" rel="noopener">AGB</a>, die <a href="{% url 'agb' %}#widerruf" target="_blank" rel="noopener">Widerrufsbelehrung</a> und die <a href="{% url 'datenschutz' %}" target="_blank" rel="noopener">Datenschutzerklärung</a> gelesen. Meine Angaben werden zur Abwicklung der Bestellung verwendet (Art. 6 Abs. 1 lit. b DSGVO).</span></label>
+    <div class="lv-bestellsumme">
+        <p><b>{{ produkt.name }}</b> · Nº {{ produkt.archiv_nummer }}{% if produkt.masse %} · {{ produkt.masse }}{% endif %}{% if produkt.material %} · {{ produkt.material }}{% endif %}</p>
+        <p class="lv-bestellsumme-preis">Gesamtpreis: {{ produkt.preis|floatformat:2 }} € <span>{{ versand_preissatz }}, ohne Umsatzsteuer nach § 19 UStG</span></p>
+        <p class="lv-klein">{{ liefer_satz }}. Anbieterin: {{ anbieterin.name }}, {{ anbieterin.ort }} – <a href="{% url 'impressum' %}">Impressum</a>.</p>
+        <ol class="lv-schritte"><li>Du bestellst hier.</li><li>Du bekommst die Rechnung mit unseren Kontodaten per E-Mail (schau auch im Spam-Ordner).</li><li>Nach deiner Überweisung (innerhalb von {{ reservierung_tage }} Tagen) versenden wir das Stück.</li></ol>
+        <p class="lv-klein">Mit „{{ knopf }}“ gibst du eine verbindliche Bestellung ab und verpflichtest dich zur Zahlung des Kaufpreises, sobald du die Rechnung mit den Zahlungsdaten erhalten hast. Bezahlt wird im Voraus per Überweisung.</p>
+    </div>
+    <button type="submit" class="lv-knopf">{{ knopf }}</button>
+</form>
+<script nonce="{{ csp_nonce }}">
+(function () {
+    var form = document.getElementById('bestellen');
+    if (!form) { return; }
+    var felder = form.querySelectorAll('[data-anschrift]');
+    function setze() {
+        var abholung = form.querySelector('input[name="lieferart"]:checked').value === 'abholung';
+        Array.prototype.forEach.call(felder, function (f) { f.disabled = abholung; f.required = !abholung; });
+    }
+    Array.prototype.forEach.call(form.querySelectorAll('[data-lieferart]'), function (r) { r.addEventListener('change', setze); });
+    setze();
+})();
+</script>
+{% elif direktkauf_zustand == 'reserviert' %}
+<div class="lv-stueck-hinweis" id="bestellen">
+    <p><strong>Reserviert.</strong> Dieses Stück wurde soeben reserviert, für eine andere Bestellung liegt es zurück. Wird sie nicht bezahlt, wird es nach {{ reservierung_tage }} Tagen wieder frei – schau gern später noch einmal vorbei oder <a href="{% url 'kontakt' %}">schreib uns</a>.</p>
+</div>
+{% endif %}

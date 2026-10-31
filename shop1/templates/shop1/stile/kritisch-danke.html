@@ -74,6 +74,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-leiste{display:none}
 .lv-leiste{transition:transform 200ms ease}
 .leiste-zu .lv-leiste{transform:translateY(110%);visibility:hidden}
+body:has([data-kaufleiste]) .lv-leiste{display:none!important}
 .lv-danke{padding:calc(var(--u)*6) var(--rand) calc(var(--u)*8);display:grid;gap:calc(var(--u)*1.8);max-width:calc(900px + 2*var(--rand))}
 .lv-danke h1{font-size:max(40px,calc(var(--u)*5.2))}
 .lv-danke p{color:var(--lv-leise);max-width:58ch}

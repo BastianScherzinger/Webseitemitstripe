@@ -446,7 +446,11 @@ def produkt_detail_slug(request, slug):
         if neu is not None and neu.slug != slug:
             return redirect(neu.get_absolute_url(), permanent=True)
         produkt = get_object_or_404(Produkt, slug=slug, aktiv=True)
+    from .direktkauf import direktkauf_aktiv, formular_kontext
+    # Direktkauf (31.10.2026): Formular bzw. „Reserviert“ auf der Stückseite selbst.
+    direkt = formular_kontext(produkt) if direktkauf_aktiv() and not produkt.verkauft else {}
     return render(request, 'shop1/produkt_detail.html', {
+        **direkt,
         'produkt': produkt,
         'galerie': produkt.galerie(),
         # Technik-Satz nur, wenn das Feld „Technik“ Bleiche nennt (nichts raten).
