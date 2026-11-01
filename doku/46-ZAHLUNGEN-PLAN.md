@@ -77,6 +77,17 @@ Rechnung laufen. Luisa hat nur ein normales Revolut-Konto. Die Anleitung „Pro 
 - Bis dahin gilt Stufe 0: Rechnung + Revolut-Zahlungslink.
 - Quellen: mollie.com/de/pricing · help.revolut.com (Revolut Pro: wer darf, Funktionen) · revolut.com/en-DE/legal/pro
 
+## An Luisa geschickt (Telegram, 01.11.2026, Bastians Auftrag)
+- 15:31 Revolut Pro einschalten + Zahlungslink erstellen (5 Schritte).
+- 15:37 „Bezahlen im Shop: der Plan in 3 Schritten“: Pro → Mollie-Konto (Einzelunternehmen, Website, Ausweis, Pro-IBAN mit
+  Prüf-Überweisung, Zahlarten Karte/Apple Pay/Klarna) → wir bauen ein. Mit Warnung: den API-Schlüssel **nie** per Chat schicken,
+  Bastian trägt ihn am PC ein. Dazu „Warum es sich lohnt“ (Vorkasse-Hürde weg, Klarna trägt Ausfallrisiko, 69-€-Shirt: Karte ~1,50 €, Klarna ~2,40 €).
+- 15:37 Fragen: (1) Pro geklappt? (2) Mailadresse für Mollie? (3) Shirt-Maße in cm je Größe? (4) neues Foto für „Über Luisa“?
+- Bastian schickt ihr zusätzlich eine eigene Zusammenfassung.
+
 ## Offen (Entscheidung/Konto)
 - Gehört das Pro-Konto Luisa (Geld muss auf ihr Gewerbe laufen)? → Annahme: ja.
-- PayPal-Geschäftskonto für Luviq anlegen (nur Luisa/Bastian; Claude legt keine Konten an).
+- Mollie-Konto (Luisa) und Klarna-Freigabe durch Mollie; danach Schlüssel über `key_einrichten.py`/Railway durch Bastian.
+- Steuer: Mollie sitzt in den Niederlanden. Ob für die Gebühren § 13b (Reverse Charge) greift oder sie als Finanzumsatz steuerfrei sind,
+  vor der ersten Mollie-Rechnung in der Buchhaltung klären (vgl. Webagentur BUCHHALTUNG.md §4).
+- PayPal direkt: vorerst nicht (Bastian 01.11.).

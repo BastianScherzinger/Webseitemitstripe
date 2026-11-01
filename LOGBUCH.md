@@ -11,6 +11,17 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 01.11.2026 (nachmittags) – Zahlungsweg Mollie → Revolut Pro, Anleitungen an Luisa, Abschlusscheck
+
+- Bastian: PayPal direkt vorerst nicht; Wunsch „ein Weg für alles“ (Karte, Klarna, Rechnung) über Revolut. Ergebnis der Recherche:
+  Revolut Pro kann nur Karte/Apple Pay/Google Pay, kein Klarna/PayPal/Rechnung → Vorschlag Mollie mit Auszahlung auf die Pro-IBAN
+  (`doku/46-ZAHLUNGEN-PLAN.md`, Nachtrag; 319fbb0). `doku/80-AUFGABEN.md` Zahlungszeile umgestellt.
+- Telegram an Luisa (Bot bestätigt 15:31 und 15:37): Revolut Pro + Zahlungslink, Mollie-Konto Schritt für Schritt, Nutzen, 4 Fragen.
+- Abschlusscheck live: 23 Sitemap-Adressen + 76 Adressen insgesamt 200, je eine H1, Titel und Beschreibung; Weiterleitung ohne www 301;
+  llms.txt/robots 200; keine Konsolenfehler auf Start, Stück, Bestellformular; Startbild in 0,8 s geladen (vorgeladen, AVIF 173 KB).
+  Nicht gemessen: PageSpeed (Tageskontingent leer) und Handy-Ansicht in Chrome (Fenster ließ sich nicht verkleinern) → beim nächsten Lauf.
+  Lokal schlagen `pruefe_seite`/`pruefe_links` nur an fehlender Migration und fehlenden Railway-Variablen an (nicht live).
+
 ## 01.11.2026 (mittags) – AGB: Serie statt „Unikat (1-of-1)“, Zahlungsplan
 
 - AGB § Vertragsschluss: „Jedes Produkt … Unikat (1-of-1)“ → „Jedes Stück wird einzeln von Hand gemalt; Stücke einer Serie sind ähnlich, nie gleich.“

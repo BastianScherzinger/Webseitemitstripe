@@ -1,7 +1,7 @@
 ---
 bereich: aufgaben
 titel: Aufgaben
-stand: 2026-10-30
+stand: 2026-11-01
 status: vollständig
 fortschritt: 90
 zusammenfassung: Stand 02.10.2026, gegen main (7ae67ab) und die Live-Seite geprüft: alle Zweige gemergt, Wissensbeiträge frei, Profile, Antwortzeit und Drop-Termin geklärt, Admin-Aktionen nur per POST, CI grün. Offen sind 14 Zeilen bei Luisa (Beim Kunden: Texte, Rechtstexte, Fotos, Beschreibung je Stück, Produktnamen, Vertrauenssignale, Bewertungen, Fristen u. a.) und 4 Später-Zeilen (Verkauf, erst-mit-Verkauf-Entscheidungen, Bild-Upload, security.txt); Bastians Handgriffe stehen bei ihrem Bereich (10-TECHNIK, 40-SEO, 50-LOCAL-SEO).
@@ -83,7 +83,7 @@ umgelegt, wenn alles darüber erledigt ist — in dieser Reihenfolge:
 - [ ] AGB, Widerrufsbelehrung (samt Muster-Widerrufsformular) und Datenschutzerklärung von einer Anwältin oder einem Rechtstext-Dienst durchsehen lassen; Impressum um Angaben ergänzen, die dann nötig werden (z. B. USt-IdNr., falls vorhanden).
 - [ ] Verpackungsregister LUCID: registriert 29.10.; Systemvertrag vor dem ersten Paket, Datenmeldung, Vertrag 2027 (`LUCID-ANLEITUNG.md`).
 - [ ] Willkommensrabatt entscheiden (10 % für jedes neue Konto, `UserProfile.has_welcome_discount`) — bleibt er, wird er mit dem Schalter wieder beworben.
-- [ ] PayPal Live-App und Live-Client-ID, `BANK_IBAN`/`BANK_INHABER` prüfen; Sandbox-Testkauf nach [`../paypal_sandbox_tutorial.md`](../paypal_sandbox_tutorial.md).
+- [ ] **Zahlungen (Plan [`46-ZAHLUNGEN-PLAN.md`](46-ZAHLUNGEN-PLAN.md), 01.11.2026):** PayPal direkt vorerst **nicht** (Bastian). Ziel: Mollie (Karte, Apple Pay, Klarna/Rechnung) mit Auszahlung auf Revolut Pro. Luisa hat am 01.11. die Anleitungen per Telegram bekommen (Revolut Pro, Mollie-Konto). Offen: Pro aktiv? Mollie-Konto + Klarna-Freigabe → dann Claude baut Mollie ein (~1 Tag, Testmodus zuerst), Rechtstexte § Zahlung (Freigabe), Testkauf. Bis dahin: Rechnung + Revolut-Zahlungslink. `BANK_IBAN`/`BANK_INHABER` weiter prüfen.
 - [x] **Vergebene Stücke kennzeichnen:** seit 02.10.2026 gibt es das Feld `Produkt.vergeben` (Migrationen 0025/0026 setzen es für Nº 001–005). Vergebene Stücke bleiben als Archiv sichtbar und sind auch bei eingeschaltetem Verkauf nie kaufbar (`Produkt.kaufbar`); ein bezahltes Stück wird ebenfalls `vergeben` statt inaktiv (EIG57). Vor dem Umschalten nur prüfen, dass jedes alte Stück den Haken trägt, und die Stücke des ersten Drops neu anlegen.
 - [ ] Kasse, Warenkorb, Zahlung und Profil sprachlich nachziehen: dort stehen seit dem Umbau „Nachtausgabe" (19.09.2026) noch „Orbit/Mission"-Texte („Your Orbit", „Mission Checkout", „Syncing with Orbit") – ohne Verkauf gesperrt, deshalb nicht mitgemacht.
 - [ ] Motivanfrage Stufe 2 (Preis, Anzahlung, Zusage) bauen; Widerrufsbelehrung für Anfertigung nach Kundenwunsch (§ 312g Abs. 2 Nr. 1 BGB) und den Pinterest-Weg (Markenwissen § 10.1) vorher klären.
