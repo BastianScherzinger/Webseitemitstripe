@@ -15,6 +15,7 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 
 - AGB § Vertragsschluss: „Jedes Produkt … Unikat (1-of-1)“ → „Jedes Stück wird einzeln von Hand gemalt; Stücke einer Serie sind ähnlich, nie gleich.“
   Warum: Seit der Engel-Serie (Migration 0034) wird ein Motiv mehrfach verkauft; Wortlaut von Bastian freigegeben 01.11.
+  Nachtrag 14:43 (f7c6cdc): Der erste Eintrag (9f67790) traf nur den alten Entwurf; live gilt `legal/generator/agb.html` § (1) – dort jetzt ersetzt, live geprüft. Lehre: Rechtstext immer auf der Live-Seite gegenprüfen.
 - Neu `doku/46-ZAHLUNGEN-PLAN.md`: Revolut-Zahlungslink (Stufe 0), Zahlungslink-Knopf (Stufe 1), PayPal live mit „Später bezahlen“ (Stufe 2).
   Warum: Kunden wollen nicht nur Vorkasse (Testpanel 11/50); Revolut bietet kein Klarna/Pay-later.
 
