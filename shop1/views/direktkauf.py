@@ -59,8 +59,23 @@ def zustand(produkt):
     return 'bestellbar' if frei(produkt) >= 1 else 'reserviert'
 
 
+def serie_kontext(produkt):
+    """Serienstück (Bastian 01.11.2026): Bearbeitungszeit in Werktagen, dann Versand. Die verbindliche
+    Lieferfrist (AGB § 5, 5 Werktage ab dem Tag nach dem Überweisungsauftrag) schließt die Bearbeitung ein; fürs Schema
+    gilt: Übergabe an den Versand nach ``bearbeitungstage``, Laufzeit = Frist minus Bearbeitung."""
+    if not getattr(produkt, 'serie', False):
+        return {'serie': False}
+    tage = produkt.bearbeitungstage or 0
+    kontext = {'serie': True, 'bearbeitung': tage}
+    if tage:
+        kontext.update({'versand_werktage_min': tage, 'versand_werktage_max': tage,
+                        'versand_transit_max': max(luviq_daten.VERSAND['lieferfrist_werktage'] - tage, 1)})
+    return kontext
+
+
 def formular_kontext(produkt, werte=None, fehler=None):
     return {
+        **serie_kontext(produkt),
         'produkt': produkt, 'werte': werte or {}, 'fehler': fehler, 'laengen': LAENGEN, 'knopf': KNOPF,
         'formzeit': spamschutz.zeitstempel(), 'feld_falle': spamschutz.FELD_FALLE,
         'direktkauf_zustand': zustand(produkt), 'abholung_adresse': ABHOLUNG_ADRESSE,
@@ -142,7 +157,20 @@ def mail_an_kundin(order):
     abholung = order.adresse == ABHOLUNG_ADRESSE
     wo = ('Abholung in Lübeck nach Absprache' if abholung else
           f'{order.vorname} {order.nachname}, {order.adresse}, {order.postleitzahl} {order.stadt}')
-    satz = ('Wir haben deine Bestellung erhalten und das Stück für dich reserviert. Schau bitte auch im Spam-Ordner nach, falls die Rechnung nicht ankommt. Die Rechnung mit den '
+    p0 = posten[0].produkt() if posten else None
+    serie = bool(p0 and p0.serie)
+    tage = (p0.bearbeitungstage if p0 else 0) or 0
+    if serie:
+        satz = ('Wir haben deine Bestellung erhalten. Schau bitte auch im Spam-Ordner nach, falls die Rechnung '
+                'nicht ankommt. Die Rechnung mit den Zahlungsdaten folgt per E-Mail an diese Adresse. Der '
+                'Kaufvertrag kommt zustande, wenn Luisa Brehler deine Bestellung mit dieser Rechnung annimmt '
+                '(AGB § 2). Dein Shirt wird für dich von Hand gemalt und nie 1:1 wie ein anderes. Die '
+                f'Bearbeitungszeit beträgt ca. {tage or 3} Werktage ab dem Tag nach deinem Überweisungsauftrag, danach geht es '
+                'in den Versand; geliefert wird innerhalb von '
+                f'{luviq_daten.VERSAND["lieferfrist_werktage"]} Werktagen ab dem Tag nach deinem Überweisungsauftrag (AGB § 5). Bitte überweise '
+                f'innerhalb von {luviq_daten.RESERVIERUNG_TAGE} Tagen nach Rechnungsdatum.')
+    else:
+      satz = ('Wir haben deine Bestellung erhalten und das Stück für dich reserviert. Schau bitte auch im Spam-Ordner nach, falls die Rechnung nicht ankommt. Die Rechnung mit den '
             'Zahlungsdaten folgt per E-Mail an diese Adresse. Der Kaufvertrag kommt zustande, wenn Luisa '
             'Brehler deine Bestellung mit dieser Rechnung annimmt (AGB § 2). Bitte überweise innerhalb von '
             f'{luviq_daten.RESERVIERUNG_TAGE} Tagen nach Rechnungsdatum; so lange halten wir das Stück für dich zurück.')
@@ -180,7 +208,9 @@ def mail_an_luisa(order):
         '\n\nNächster Schritt: Rechnung mit Zahlungsdaten an die Kundin schicken (Antworten genügt).'
     betreff, html, text = mails.anfrage_an_luisa(
         art='Bestellung', betreff=betreff, felder=felder, text=text, antwort_an=order.email, objekt=order,
-        hinweis='Nächster Schritt: Rechnung mit Zahlungsdaten an die Kundin schicken. Das Stück ist reserviert.')
+        hinweis=('Nächster Schritt: Rechnung mit Zahlungsdaten an die Kundin schicken. '
+                 + ('Serienstück: Das Shirt wird nach dem Überweisungsauftrag neu gemalt (ca. 3 Werktage), nichts ist reserviert.'
+                    if (p and p.produkt() and p.produkt().serie) else 'Das Stück ist reserviert.')))
     send_brevo_email(betreff, html, mails.KONTAKT_EMAIL, recipient_name='Luisa Brehler',
                      text_content=text, reply_to=order.email)
     mails.betreiber_kopie(art='Bestellung', name=f'{order.vorname} {order.nachname}', felder=felder,

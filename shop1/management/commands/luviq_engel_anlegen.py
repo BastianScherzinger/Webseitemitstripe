@@ -45,6 +45,7 @@ class Command(BaseCommand):
                 seo_beschreibung=d['seo_beschreibung'], masse=d['masse'], material=d['material'],
                 technik=d['technik'], zustand=d['zustand'], bild_statisch=d['bild_statisch'],
                 aktiv=True, vergeben=False, lagerbestand=1,
+                serie=d.get('serie', False), bearbeitungstage=d.get('bearbeitungstage', 0),
                 # Kein Newsletter-Versand durch das Anlegen: der läuft nur über das Panel.
                 newsletter_gesendet=True)
             for nr, extra in enumerate(d['zusatzbilder'], start=1):

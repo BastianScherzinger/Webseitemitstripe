@@ -24,7 +24,7 @@ META_BESCHREIBUNG_MAX = 160
 #: probiert und entfällt, wenn er nicht mehr in die Grenze passt – er wird
 #: nie mitten im Wort abgeschnitten.
 META_TITEL_ZUSAETZE = (' kaufen – Luviq Universe, Lübeck', ' – Luviq Universe')
-META_BESCHREIBUNG_ZUSATZ = ' – Einzigartiges 1-of-1 Upcycling-Unikat bei Luviq Universe.'
+META_BESCHREIBUNG_ZUSATZ = ' – von Hand gemaltes Upcycling-Stück bei Luviq Universe.'
 
 #: Dieselben Zusätze ohne Verkauf (``VERKAUF_AKTIV`` aus): kein „kaufen",
 #: das Stück steht im Archiv der bisherigen Stücke (siehe ``shop1/verkauf.py``).
@@ -164,6 +164,17 @@ class Produkt(models.Model):
         'Archiv (vergeben)', default=False,
         help_text='Schon vergeben: wird gezeigt, ist aber nie kaufbar – auch nicht bei laufendem Verkauf.')
 
+    # Serienstück (01.11.2026, Bastian): mehrfach bestellbar. Jedes Stück wird nach Vorlage von Hand neu
+    # gemalt und gleicht nie 1:1 dem anderen. Darum keine Reservierung, kein Verbrauch des Bestands
+    # beim Kauf, kein „vergeben“ nach der Bestellung.
+    serie = models.BooleanField(
+        'Serienstück (mehrfach bestellbar)', default=False,
+        help_text='Das Motiv wird für jede Bestellung neu von Hand gemalt (nie 1:1). Es gibt keine '
+                  'Reservierung, und das Stück wird nach einer Bestellung nicht ausverkauft.')
+    bearbeitungstage = models.PositiveSmallIntegerField(
+        'Bearbeitungszeit (Werktage)', default=0,
+        help_text='Nur bei Serienstücken: Werktage bis zum Versand (z. B. 3). 0 = keine Angabe.')
+
     @property
     def verkauft(self):
         """Für die Anzeige: Archiv (``vergeben``) oder nicht mehr vorrätig – trägt ein Band über dem Bild."""
@@ -205,7 +216,7 @@ class Produkt(models.Model):
     def hauptbild(self):
         """Hauptbild als ``produktbilder.Bild`` (oder ``None``)."""
         from . import produktbilder
-        alt = f'{self.name} – handbemaltes Unikat von Luviq Universe'
+        alt = f'{self.name} – handbemaltes Stück von Luviq Universe'
         if self.bild_ist_ki:
             alt = f'Studiobild (KI) aus dem echten Foto: {alt}'
         return produktbilder.bild_aus(self.bild, self.bild_statisch, self.bild_breite, self.bild_hoehe, alt)
@@ -240,6 +251,13 @@ class Produkt(models.Model):
         else:
             bilder = [replace(b, unterschrift='') for b in bilder]
         return bilder
+
+    @property
+    def groesse(self):
+        """Kurze Größenangabe aus ``masse`` („Größe M …“ -> „M“), sonst leer – fürs Produkt-Schema (size)."""
+        import re
+        treffer = re.match(r'\s*Größe\s+([A-Za-z0-9]{1,4})(?![A-Za-z0-9])', self.masse or '')
+        return treffer.group(1).upper() if treffer else ''
 
     @property
     def pflichtangaben_fehlen(self):

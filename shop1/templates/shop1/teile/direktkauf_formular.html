@@ -53,7 +53,7 @@ Abs. 3: der Knopf trägt wörtlich „Zahlungspflichtig bestellen“. Der Kaufve
         <p><b>{{ produkt.name }}</b> · Nº {{ produkt.archiv_nummer }}{% if produkt.masse %} · {{ produkt.masse }}{% endif %}{% if produkt.material %} · {{ produkt.material }}{% endif %}</p>
         <p class="lv-bestellsumme-preis">Gesamtpreis: {{ produkt.preis|floatformat:2 }} € <span>{{ versand_preissatz }}, ohne Umsatzsteuer nach § 19 UStG</span></p>
         <p class="lv-klein">{{ liefer_satz }}. Anbieterin: {{ anbieterin.name }}, {{ anbieterin.ort }} – <a href="{% url 'impressum' %}">Impressum</a>.</p>
-        <ol class="lv-schritte"><li>Du bestellst hier.</li><li>Du bekommst die Rechnung mit unseren Kontodaten per E-Mail (schau auch im Spam-Ordner).</li><li>Nach deiner Überweisung (innerhalb von {{ reservierung_tage }} Tagen) versenden wir das Stück.</li></ol>
+        <ol class="lv-schritte"><li>Du bestellst hier.</li><li>Du bekommst die Rechnung mit unseren Kontodaten per E-Mail (schau auch im Spam-Ordner).</li>{% if serie %}<li>Nach deiner Überweisung (innerhalb von {{ reservierung_tage }} Tagen) malt Luisa dein Shirt von Hand, Bearbeitungszeit ca. {{ bearbeitung|default:3 }} Werktage, dann geht es in den Versand.</li>{% else %}<li>Nach deiner Überweisung (innerhalb von {{ reservierung_tage }} Tagen) versenden wir das Stück.</li>{% endif %}</ol>
         <p class="lv-klein">Mit „{{ knopf }}“ gibst du eine verbindliche Bestellung ab und verpflichtest dich zur Zahlung des Kaufpreises, sobald du die Rechnung mit den Zahlungsdaten erhalten hast. Bezahlt wird im Voraus per Überweisung.</p>
     </div>
     <button type="submit" class="lv-knopf">{{ knopf }}</button>

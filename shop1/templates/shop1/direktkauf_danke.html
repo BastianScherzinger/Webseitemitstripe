@@ -13,7 +13,7 @@
         <p class="lv-nr">Bestellung{% if order %} #{{ order.pk }}{% endif %}</p>
         <h1 class="lv-serif" id="danke-titel">Danke für deine Bestellung</h1>
         {% if order %}
-        {% for p in order.items.all %}<p><strong>{{ p.produkt_name }}</strong> – {{ order.gesamt_betrag|floatformat:2 }} € inkl. Versand innerhalb Deutschlands. Das Stück ist {{ reservierung_tage }} Tage nach der Rechnung für dich reserviert.</p>{% endfor %}
+        {% for p in order.items.all %}<p><strong>{{ p.produkt_name }}</strong> – {{ order.gesamt_betrag|floatformat:2 }} € inkl. Versand innerhalb Deutschlands. {% if p.produkt.serie %}Dein Shirt wird nach deinem Überweisungsauftrag für dich von Hand gemalt, Bearbeitungszeit ca. {{ p.produkt.bearbeitungstage|default:3 }} Werktage, dann Versand.{% else %}Das Stück ist {{ reservierung_tage }} Tage nach der Rechnung für dich reserviert.{% endif %}</p>{% endfor %}
         <p><strong>Die Rechnung mit den Zahlungsdaten folgt per E-Mail an {{ order.email }}.</strong> Eine Eingangsbestätigung mit AGB und Widerrufsbelehrung ist schon unterwegs; schau auch im Spam-Ordner nach. Der Kaufvertrag kommt zustande, sobald Luisa Brehler deine Bestellung mit der Rechnung annimmt. {% if abholung %}Die Übergabe in Lübeck stimmt Luisa Brehler mit dir per E-Mail ab.{% else %}Versendet wird nach Zahlungseingang; die Lieferung dauert innerhalb Deutschlands bis zu {{ lieferfrist }} Werktage.{% endif %}</p>
         {% else %}
         <p>Deine Bestellung ist eingegangen. Die Rechnung mit den Zahlungsdaten folgt per E-Mail an die Adresse, die du angegeben hast.</p>

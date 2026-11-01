@@ -267,8 +267,11 @@ def vertragsunterlagen(order):
     Dieselben Rechtstexte wie auf der Seite (``legal/generator/``); Links absolut
     auf die Live-Adresse. Eingaben der Kundin escapet die Vorlage selbst."""
     posten = []
+    serie_tage = 0
     for item in order.items.all():
         produkt = item.produkt()
+        if produkt and produkt.serie:
+            serie_tage = max(serie_tage, produkt.bearbeitungstage or 3)
         posten.append({
             'menge': item.menge, 'produkt_name': item.produkt_name,
             'zustand_text': ', '.join(x for x in ((produkt.zustand or '').strip(), (produkt.material or '').strip()) if x) if produkt else '',
@@ -276,7 +279,7 @@ def vertragsunterlagen(order):
         })
     html = rendern(
         '_vertragsunterlagen.html', order=order, posten=posten, anbieterin=ANBIETERIN,
-        rechts_basis=live_url(), lieferfrist=VERSAND['lieferfrist_werktage'], ueberweisung_moeglich=bool(os.getenv('BANK_IBAN', '').strip()),
+        serie_tage=serie_tage, rechts_basis=live_url(), lieferfrist=VERSAND['lieferfrist_werktage'], ueberweisung_moeglich=bool(os.getenv('BANK_IBAN', '').strip()),
         abholung=order.adresse.startswith('Abholung'), reservierung_tage=luviq_daten_reservierung(), direktkauf_aktiv=order.user_id is None, bestellt_am=timezone.localtime(order.erstellt_am).strftime('%d.%m.%Y, %H:%M Uhr') if order.erstellt_am else '',
         gesamt=f'{float(order.gesamt_betrag):.2f}', rabatt=f'{float(order.rabatt_betrag or 0):.2f}')
     return html, _klartext(html)

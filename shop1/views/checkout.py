@@ -192,6 +192,8 @@ def reserviert(produkt, ausser=None):
     könnte dasselbe Einzelstück in der Zwischenzeit ein zweites Mal verkauft werden.
     Eine stornierte oder bezahlte Bestellung reserviert nichts mehr."""
     from django.db.models import Sum
+    if getattr(produkt, 'serie', False):
+        return 0  # Serienstück: wird je Bestellung neu gemalt, nichts ist „reserviert“
     abfrage = OrderItem.objects.filter(produkt_ref=produkt.pk, order__status='pending',
                                        order__payment_method='bank_transfer')
     if ausser is not None:
@@ -479,6 +481,8 @@ def bestellung_abschliessen(order, neuer_status='paid'):
 
         for item in order.items.all():
             db_produkt = item.produkt()
+            if db_produkt and db_produkt.serie:
+                continue  # Serienstück: Bestand und „vergeben“ bleiben, das Motiv wird neu gemalt
             if db_produkt:
                 db_produkt.lagerbestand = max(0, db_produkt.lagerbestand - item.menge)
                 # EIG57: das Stück bleibt als vergebenes Archivstück erreichbar, statt
