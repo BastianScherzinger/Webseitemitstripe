@@ -61,39 +61,41 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 31.10.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 91,2 von 100**, Reifegrad „Referenz“. 337 von 410 Regeln an 21 URLs und 235 Dateien (48.630 Zeilen) geprüft.
+**Messung vom 01.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 90,4 von 100**, Reifegrad „Referenz“. 345 von 410 Regeln an 24 URLs und 246 Dateien (50.239 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Recht & Vertrauen | **69** | Brauchbar |
+| Recht & Vertrauen | **68** | Brauchbar |
 | Erreichbarkeit & Postfach | **72** | Brauchbar |
-| Substanz & Reichweite | **85** | Solide |
-| Konversion | **87** | Solide |
-| SEO — Inhalt | **88** | Solide |
+| SEO — Inhalt | **83** | Solide |
+| Konversion | **85** | Solide |
+| Substanz & Reichweite | **88** | Solide |
 | SEO — Technik | **88** | Solide |
-| Code-Qualität & Projektreife | **94** | Referenz |
-| Sicherheit | **96** | Referenz |
-| GEO — KI-Sichtbarkeit | **96** | Referenz |
-| Vorlagen-Konformität | **97** | Referenz |
-| Formulare & Preisrechner | **97** | Referenz |
+| Code-Qualität & Projektreife | **91** | Referenz |
+| GEO — KI-Sichtbarkeit | **94** | Referenz |
+| Barrierefreiheit | **96** | Referenz |
+| Vorlagen-Konformität | **96** | Referenz |
 | Performance & Core Web Vitals | **97** | Referenz |
-| Barrierefreiheit | **100** | Referenz |
+| Formulare & Preisrechner | **97** | Referenz |
+| Sicherheit | **98** | Referenz |
 | Betrieb & Auslieferung | **100** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 235 Dateien, **17 Befunde**, davon 1 kritisch und 4 wichtig.
+Quelltext: 246 Dateien, **27 Befunde**, davon 2 kritisch und 7 wichtig.
 
 Kritische Befunde:
 
-- **Canonical nennt dieselbe Domain wie die Seite** (`TS05`) — 19 canonical zeigen auf eine fremde Domain: / → www.luviq-luebeck.com, /produkte/ → www.luviq-luebeck.com, /ueber_uns/ → www.luviq-luebeck.com, /kontakt/ → www.luviq-luebeck.com, /datenschutz/ → www.luviq-luebeck.com … (+14)
+- **Canonical nennt dieselbe Domain wie die Seite** (`TS05`) — 23 canonical zeigen auf eine fremde Domain: / → www.luviq-luebeck.com, /produkte/ → www.luviq-luebeck.com, /ueber_uns/ → www.luviq-luebeck.com, /kontakt/ → www.luviq-luebeck.com, /datenschutz/ → www.luviq-luebeck.com … (+18)
 - **Alle Domainvarianten landen auf einer Adresse** (`TS11`) — 0 von 1 Nebenadressen landen dauerhaft auf der Hauptadresse — offen: https://luviq-alsfeld.com: 301 → https://www.luviq-luebeck.com/
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
 - **Die Datenschutzerklärung nennt die tatsächlich eingebundenen Dienste** (`RE06`) — 1 von 1 eingebundenen Diensten stehen nicht in der Datenschutzerklärung: luviq-luebeck.com
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
-- **Das Impressum ist aus jeder Seite verlinkt** (`RE02`) — 18 von 19 Seiten ohne Impressumslink: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /wissen/ … (+13)
-- **Datenschutzerklärung vorhanden und aus jeder Seite verlinkt** (`RE05`) — Datenschutzerklärung unter /datenschutz/ vorhanden, aber 18 von 19 Seiten verlinken sie nicht: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /wissen/ … (+13)
+- **Das Impressum ist aus jeder Seite verlinkt** (`RE02`) — 22 von 23 Seiten ohne Impressumslink: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /agb/ … (+17)
+- **Datenschutzerklärung vorhanden und aus jeder Seite verlinkt** (`RE05`) — Datenschutzerklärung unter /datenschutz/ vorhanden, aber 22 von 23 Seiten verlinken sie nicht: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /agb/ … (+17)
+- **Ausgezeichnete Preise stehen sichtbar auf der Seite** (`GE41`) — 9 von 12 ausgezeichneten Preisen sind nicht sichtbar: /produkte/: 69.99, /produkte/: 59.00, /produkte/: 59.00, /produkte/: 58.96 … (+5)
+- **Es gibt keinen kritischen Datei-Befund** (`PJ05`) — 2 kritische Befunde: shop1/templates/shop1/legal/generator/impressum.html:1 Grundgerüst unvollständig, shop1/wissen_direktkauf.py:23 Unmaskierte Ausgabe
 <!-- messung:ende -->
 
 Gemessen wurde die **Live-Seite (main)**, der Code-Audit lief über den **lokalen
