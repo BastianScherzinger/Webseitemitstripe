@@ -554,11 +554,30 @@ class Order(models.Model):
     # Willkommensrabatt, der im Gesamtbetrag schon abgezogen ist (EIG16, EIG88):
     # Zwischensumme = gesamt_betrag + rabatt_betrag. 0 = kein Rabatt.
     rabatt_betrag = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    # Rabattcode (01.11.2026, ``shop1/rabatt.py``): Verweis plus Klartext und Satz, damit die Bestellung
+    # auch nach Löschen oder Ändern des Codes zeigt, was galt.
+    rabatt_code = models.ForeignKey('Rabattcode', on_delete=models.SET_NULL, null=True, blank=True,
+                                    related_name='bestellungen')
+    rabatt_code_text = models.CharField('Rabattcode', max_length=40, blank=True, default='')
+    rabatt_prozent = models.PositiveSmallIntegerField(default=0)
+    # Abgleich „erste Bestellung“: E-Mail ohne +Zusatz (Gmail auch ohne Punkte) und Straße+PLZ in
+    # Kleinbuchstaben ohne Leer-/Satzzeichen. Gesetzt in ``save()``.
+    email_schluessel = models.CharField(max_length=254, blank=True, default='', db_index=True)
+    anschrift_schluessel = models.CharField(max_length=220, blank=True, default='', db_index=True)
     
     # Zeitstempel
     erstellt_am = models.DateTimeField(auto_now_add=True)
     aktualisiert_am = models.DateTimeField(auto_now=True)
     
+    def save(self, *args, **kwargs):
+        from .rabatt import anschrift_schluessel, email_schluessel
+        self.email_schluessel = email_schluessel(self.email)
+        self.anschrift_schluessel = anschrift_schluessel(self.adresse, self.postleitzahl)
+        felder = kwargs.get('update_fields')
+        if felder is not None and ({'email', 'adresse', 'postleitzahl'} & set(felder)):
+            kwargs['update_fields'] = set(felder) | {'email_schluessel', 'anschrift_schluessel'}
+        super().save(*args, **kwargs)
+
     def __str__(self):
         wer = self.user.username if self.user_id else f'{self.vorname} (Konto gelöscht)'
         return f"Bestellung #{self.id} - {wer}"
@@ -567,6 +586,45 @@ class Order(models.Model):
         verbose_name = "Bestellung"
         verbose_name_plural = "Bestellungen"
         ordering = ['-erstellt_am']
+
+
+class Rabattcode(models.Model):
+    """Rabattcode in Prozent (01.11.2026). Prüfung und Einlösung: ``shop1/rabatt.py``.
+
+    ``oeffentlich`` = wird auf der Website beworben (Hero, Stückseite, FAQ, llms.txt); es zählt der
+    neueste aktive öffentliche Code. ``nur_erstbestellung`` = gilt nur, wenn es unter der E-Mail-Adresse
+    bzw. Lieferanschrift noch keine (nicht stornierte) Bestellung gibt."""
+    code = models.CharField(max_length=40, unique=True,
+                            help_text='Großbuchstaben, Ziffern und Bindestrich, z. B. TRAVEWIND-7KQ4')
+    prozent = models.PositiveSmallIntegerField(help_text='Abzug vom Warenwert in Prozent (1–50)')
+    nur_erstbestellung = models.BooleanField('nur erste Bestellung', default=True)
+    oeffentlich = models.BooleanField('auf der Website zeigen', default=False)
+    aktiv = models.BooleanField(default=True)
+    gueltig_bis = models.DateField('gültig bis (einschließlich)', null=True, blank=True)
+    max_einloesungen = models.PositiveIntegerField('höchstens so oft einlösbar', null=True, blank=True,
+                                                   help_text='leer = unbegrenzt')
+    zweck = models.CharField(max_length=120, blank=True, default='',
+                             help_text='Wofür: Website, Karten, Freunde, Instagram …')
+    erstellt_am = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Rabattcode'
+        verbose_name_plural = 'Rabattcodes'
+        ordering = ['-erstellt_am']
+
+    def __str__(self):
+        return f'{self.code} ({self.prozent} %)'
+
+    def save(self, *args, **kwargs):
+        from .rabatt import normalisiere_code
+        self.code = normalisiere_code(self.code)
+        super().save(*args, **kwargs)
+
+    def einloesungen(self):
+        """Bestellungen mit diesem Code, ohne stornierte und fehlgeschlagene."""
+        from .rabatt import ZAEHLT_NICHT
+        return self.bestellungen.exclude(status__in=ZAEHLT_NICHT).count()
+    einloesungen.short_description = 'eingelöst'
 
 
 class OrderItem(models.Model):

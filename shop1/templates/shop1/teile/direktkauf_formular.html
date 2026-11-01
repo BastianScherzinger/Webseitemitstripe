@@ -48,10 +48,21 @@ Abs. 3: der Knopf trägt wörtlich „Zahlungspflichtig bestellen“. Der Kaufve
         <label for="bestellen-telefon">Telefon <em>freiwillig, nur für Rückfragen zur Lieferung</em></label>
         <input type="tel" id="bestellen-telefon" name="telefon" autocomplete="tel" maxlength="{{ laengen.telefon }}" value="{{ werte.telefon|default:'' }}">
     </div>
+    <div class="lv-feld lv-rabattcode">
+        <label for="bestellen-rabattcode">Rabattcode <em>falls vorhanden</em></label>
+        <div class="lv-rabattcode-zeile">
+            <input type="text" id="bestellen-rabattcode" name="rabattcode" maxlength="{{ laengen.rabattcode }}" autocomplete="off" autocapitalize="characters" spellcheck="false" value="{{ rabattcode_wert|default:'' }}"{% if rabatt_fehler %} aria-invalid="true" aria-describedby="bestellen-rabatt-hinweis"{% endif %}>
+            <button type="submit" class="lv-knopf linie" name="aktion" value="rabattcode" formnovalidate>Einlösen</button>
+        </div>
+        {% if rabatt_fehler %}<p class="lv-rabatt-hinweis lv-rabatt-fehler" id="bestellen-rabatt-hinweis" role="alert">{{ rabatt_fehler }}</p>
+        {% elif rabatt %}<p class="lv-rabatt-hinweis" id="bestellen-rabatt-hinweis">Code {{ rabatt.text }}: {{ rabatt.prozent }} % weniger{% if rabatt.code.nur_erstbestellung %}, gilt für deine erste Bestellung (wir prüfen das beim Absenden){% endif %}.</p>
+        {% elif willkommenscode %}<p class="lv-rabatt-hinweis">Erste Bestellung? Mit dem Code {{ willkommenscode.code }} sparst du {{ willkommenscode.prozent }} %. <a href="{% url 'rabatt_einloesen' willkommenscode.code %}?weiter={{ request.path|urlencode }}%23bestellen" data-ereignis="formular_rabatt">Code eintragen</a></p>{% endif %}
+    </div>
     <label class="lv-haken"><input type="checkbox" name="zustimmung" value="ja" required{% if werte.zustimmung %} checked{% endif %}><span>Ich habe die <a href="{% url 'agb' %}" target="_blank" rel="noopener">AGB</a>, die <a href="{% url 'agb' %}#widerruf" target="_blank" rel="noopener">Widerrufsbelehrung</a> und die <a href="{% url 'datenschutz' %}" target="_blank" rel="noopener">Datenschutzerklärung</a> gelesen. Meine Angaben werden zur Abwicklung der Bestellung verwendet (Art. 6 Abs. 1 lit. b DSGVO).</span></label>
     <div class="lv-bestellsumme">
         <p><b>{{ produkt.name }}</b> · Nº {{ produkt.archiv_nummer }}{% if produkt.masse %} · {{ produkt.masse }}{% endif %}{% if produkt.material %} · {{ produkt.material }}{% endif %}</p>
-        <p class="lv-bestellsumme-preis">Gesamtpreis: {{ produkt.preis|floatformat:2 }} € <span>{{ versand_preissatz }}, ohne Umsatzsteuer nach § 19 UStG</span></p>
+        {% if rabatt %}<p class="lv-bestellsumme-rabatt">Preis {{ produkt.preis|floatformat:2 }} € · Rabatt {{ rabatt.prozent }} % (Code {{ rabatt.text }}) −{{ rabatt.abzug|floatformat:2 }} €</p>{% endif %}
+        <p class="lv-bestellsumme-preis">Gesamtpreis: {{ gesamtpreis|floatformat:2 }} € <span>{{ versand_preissatz }}, ohne Umsatzsteuer nach § 19 UStG</span></p>
         <p class="lv-klein">{{ liefer_satz }}. Anbieterin: {{ anbieterin.name }}, {{ anbieterin.ort }} – <a href="{% url 'impressum' %}">Impressum</a>.</p>
         <ol class="lv-schritte"><li>Du bestellst hier.</li><li>Du bekommst die Rechnung mit unseren Kontodaten per E-Mail (schau auch im Spam-Ordner).</li>{% if serie %}<li>Nach deiner Überweisung (innerhalb von {{ reservierung_tage }} Tagen) malt Luisa dein Shirt von Hand, Bearbeitungszeit ca. {{ bearbeitung|default:3 }} Werktage, dann geht es in den Versand.</li>{% else %}<li>Nach deiner Überweisung (innerhalb von {{ reservierung_tage }} Tagen) versenden wir das Stück.</li>{% endif %}</ol>
         <p class="lv-klein">Mit „{{ knopf }}“ gibst du eine verbindliche Bestellung ab und verpflichtest dich zur Zahlung des Kaufpreises, sobald du die Rechnung mit den Zahlungsdaten erhalten hast. Bezahlt wird im Voraus per Überweisung.</p>

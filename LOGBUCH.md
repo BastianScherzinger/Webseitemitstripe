@@ -11,6 +11,19 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 01.11.2026 (abends) – Rabattcodes für die erste Bestellung + Fixes aus der Bug-Prüfung
+
+- Neu: Modell `Rabattcode` (Migration 0035), Prüfung in `shop1/rabatt.py`, Feld „Rabattcode“ + „Einlösen“ im Direktkauf,
+  Link `/rabatt/<CODE>/` (Hero-Knopf „Jetzt bestellen · 10 % sparen“, QR auf Karten), FAQ + FAQ-Schema, llms.txt, AGB § 3 (3),
+  Datenschutz (Abgleich, Sitzungs-Cookie), Mails/Danke/Admin zeigen den Rabatt, Befehl `rabattcode`. Warum: Bastian will
+  Erstkäufe mit 10 % anlocken, ohne Geld zu verschenken – deshalb gilt ein Erstbestell-Code nur ohne frühere Bestellung
+  unter E-Mail (vereinheitlicht) **oder** Anschrift, geprüft in der Bestell-Transaktion. Plan: `doku/47-RABATTCODES.md`.
+- Fix: Doppelklick/zweiter Tab legte bei Serienstücken eine zweite Bestellung an (Cache-Sperre nur je Gunicorn-Prozess) →
+  Abgleich über die Datenbank (gleiche E-Mail + Stück, offen, < 120 s). Fix: Namensteil über 100 Zeichen ergab Speicherfehler.
+- Weitere Funde der Bug-Prüfung (Storno nach „bezahlt“ gibt Bestand nicht frei, Reservierung läuft nie ab u. a.) in `doku/80-AUFGABEN.md`.
+- Tests: `test_rabatt_2026_11_01` (22), ganze Suite 960 grün.
+
+
 ## 01.11.2026 (nachmittags) – Zahlungsweg Mollie → Revolut Pro, Anleitungen an Luisa, Abschlusscheck
 
 - Bastian: PayPal direkt vorerst nicht; Wunsch „ein Weg für alles“ (Karte, Klarna, Rechnung) über Revolut. Ergebnis der Recherche:

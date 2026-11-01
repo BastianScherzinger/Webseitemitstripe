@@ -73,7 +73,7 @@ KAUFROUTEN = frozenset({
     'warenkorb', 'add_to_cart', 'remove_from_cart', 'update_cart',
     'checkout', 'payment', 'payment_success', 'payment_cancel',
     # Direktkauf ohne Konto (31.10.2026)
-    'direktkauf', 'direktkauf_danke',
+    'direktkauf', 'direktkauf_danke', 'rabatt_einloesen',
 })
 
 #: Der Login-Weg (Warenkorb, Kasse, PayPal) ist bei ``settings.DIREKTKAUF`` ausgeblendet:

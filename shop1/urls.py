@@ -35,6 +35,7 @@ urlpatterns = [
     # Direktkauf ohne Konto (nur mit Verkauf + DIREKTKAUF; sonst Umleitung auf die Warteliste)
     path('bestellen/danke/', views.direktkauf_danke, name='direktkauf_danke'),
     path('bestellen/<slug:slug>/', views.direktkauf, name='direktkauf'),
+    path('rabatt/<str:code>/', views.rabatt_einloesen, name='rabatt_einloesen'),
     path('liefergebiet/', views.liefergebiet, name='liefergebiet'),
     # Bewertungsbitte (QR-Code, WhatsApp): beide noindex und nicht in der Sitemap
     path('bewerten/', views.bewerten, name='bewerten'),

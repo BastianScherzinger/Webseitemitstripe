@@ -4,7 +4,7 @@ Das eigene Verwaltungspanel unter ``/shop-admin/`` steht in
 ``admin_views.py``; hier geht es nur um die Standardoberfläche von Django.
 """
 from django.contrib import admin
-from .models import UserProfile, Produkt, ProduktBild, Cart, CartItem, Order, OrderItem, Subscriber, KontaktAnfrage, Motivanfrage, Widerruf
+from .models import Rabattcode, UserProfile, Produkt, ProduktBild, Cart, CartItem, Order, OrderItem, Subscriber, KontaktAnfrage, Motivanfrage, Widerruf
 
 
 @admin.register(UserProfile)
@@ -127,13 +127,22 @@ class OrderAdmin(admin.ModelAdmin):
             'fields': ('vorname', 'nachname', 'email', 'adresse', 'postleitzahl', 'stadt', 'land', 'telefon')
         }),
         ('Zahlung', {
-            'fields': ('gesamt_betrag', 'rabatt_betrag')
+            'fields': ('gesamt_betrag', 'rabatt_betrag', 'rabatt_code', 'rabatt_code_text', 'rabatt_prozent')
         }),
         ('Zeitstempel', {
             'fields': ('erstellt_am', 'aktualisiert_am'),
             'classes': ('collapse',)
         }),
     )
+
+
+@admin.register(Rabattcode)
+class RabattcodeAdmin(admin.ModelAdmin):
+    """Rabattcodes (shop1/rabatt.py). „eingelöst“ zählt Bestellungen ohne stornierte."""
+    list_display = ('code', 'prozent', 'nur_erstbestellung', 'oeffentlich', 'aktiv', 'gueltig_bis',
+                    'max_einloesungen', 'einloesungen', 'zweck')
+    list_filter = ('aktiv', 'oeffentlich', 'nur_erstbestellung')
+    search_fields = ('code', 'zweck')
 
 
 @admin.register(Motivanfrage)

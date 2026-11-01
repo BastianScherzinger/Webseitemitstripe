@@ -458,7 +458,7 @@ def produkt_detail_slug(request, slug):
         produkt = get_object_or_404(Produkt, slug=slug, aktiv=True)
     from .direktkauf import direktkauf_aktiv, formular_kontext
     # Direktkauf (31.10.2026): Formular bzw. „Reserviert“ auf der Stückseite selbst.
-    direkt = formular_kontext(produkt) if direktkauf_aktiv() and not produkt.verkauft else {}
+    direkt = formular_kontext(produkt, request=request) if direktkauf_aktiv() and not produkt.verkauft else {}
     from .direktkauf import serie_kontext
     return render(request, 'shop1/produkt_detail.html', {
         **serie_kontext(produkt),

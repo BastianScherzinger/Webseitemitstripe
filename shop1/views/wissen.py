@@ -289,7 +289,8 @@ def wissen_beitrag(request, slug):
     from ..verkauf import direktkauf_aktiv
     if slug == 'bestellen-und-bezahlen' and direktkauf_aktiv():
         from .. import wissen_direktkauf
-        kontext['faq_direkt'] = wissen_direktkauf.bestellen_faq()
+        from ..rabatt import oeffentlicher_code
+        kontext['faq_direkt'] = wissen_direktkauf.bestellen_faq(oeffentlicher_code())
     return render(request, beitrag['template'], kontext)
 
 

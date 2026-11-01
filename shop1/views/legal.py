@@ -327,6 +327,22 @@ def _llms_motiv_fragen():
     return zeilen
 
 
+def _llms_rabatt_frage():
+    """Frage zum öffentlichen Rabattcode (wie im Bestellbeitrag), nur wenn es einen gibt."""
+    from ..rabatt import oeffentlicher_code
+    code = oeffentlicher_code() if direktkauf_aktiv() else None
+    if code is None:
+        return []
+    erst = " auf die erste Bestellung" if code.nur_erstbestellung else ""
+    return [
+        "### Gibt es einen Rabattcode für die erste Bestellung?",
+        f"Ja: Mit dem Code {code.code} gibt es {code.prozent} Prozent{erst}. Er wird im",
+        "Bestellformular ins Feld „Rabattcode“ eingetragen; der Abzug steht vor dem Absenden",
+        "im Gesamtpreis. Ein Code je Bestellung, nicht auszahlbar (AGB § 3).",
+        "",
+    ]
+
+
 def _llms_fragen_mit_verkauf(basis):
     """Häufige Fragen, Rechtliches und Verweise der llms.txt bei eingeschaltetem Verkauf."""
     return [
@@ -362,6 +378,7 @@ def _llms_fragen_mit_verkauf(basis):
            "in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder",
            "Vorab-Überweisung."]),
         "",
+        *_llms_rabatt_frage(),
         "### Was hat Upcycling mit der Umwelt zu tun?",
         "Wo ein gebrauchtes Teil die Grundlage ist, wird vorhandene Kleidung",
         "weiterverwendet und von Hand bemalt statt neu produziert.",

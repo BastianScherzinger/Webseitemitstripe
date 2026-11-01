@@ -23,12 +23,32 @@ def _link(name, text, **zusatz):
     return format_html('<a href="{}"{}>{}</a>', reverse(name), mark_safe(zusatz.get('attr', '')), text)
 
 
-def bestellen_faq():
-    """Fragen und Antworten des Bestellbeitrags: Liste aus ``{'frage', 'antwort', 'mehr'}``."""
+def rabatt_faq(code):
+    """FAQ-Eintrag zum öffentlichen Rabattcode (``rabatt.oeffentlicher_code``); Fragen wie „Luviq Rabattcode“ oder
+    „Gutschein erste Bestellung“ sollen in Suche und KI-Antworten eine wörtliche Antwort finden."""
+    erst = ' auf deine erste Bestellung' if code.nur_erstbestellung else ''
+    bis = f' Der Code gilt bis {code.gueltig_bis:%d.%m.%Y}.' if code.gueltig_bis else ''
+    return {
+        'frage': 'Gibt es einen Rabattcode für die erste Bestellung?',
+        'antwort': (f'Ja. Mit dem Code {code.code} bekommst du {code.prozent} Prozent{erst} bei Luviq Universe. Du trägst '
+                    'ihn im Bestellformular auf der Seite des Stücks ins Feld „Rabattcode“ ein und tippst auf „Einlösen“; '
+                    'der Knopf „Jetzt bestellen“ oben auf der Startseite trägt ihn automatisch ein. Der Abzug steht vor '
+                    f'dem Absenden im Gesamtpreis, und die Rechnung lautet auf den reduzierten Betrag.{bis}'),
+        'mehr': format_html(
+            'Ein Code für die erste Bestellung gilt nur, wenn es unter deiner E-Mail-Adresse und deiner Lieferanschrift '
+            'noch keine Bestellung gibt; stornierte Bestellungen zählen nicht. Je Bestellung gilt ein Code, er wird nicht '
+            'ausgezahlt. Die Bedingungen stehen in § 3 der {}.', _link('agb', 'AGB', attr='')),
+    }
+
+
+def bestellen_faq(code=None):
+    """Fragen und Antworten des Bestellbeitrags: Liste aus ``{'frage', 'antwort', 'mehr'}``.
+
+    ``code``: öffentlicher Rabattcode oder ``None``; mit Code kommt eine Frage dazu (nach „Wie bezahle ich“)."""
     tage = luviq_daten.RESERVIERUNG_TAGE
     frist = luviq_daten.VERSAND['lieferfrist_werktage']
     produkte = _link('produkte', 'Übersicht')
-    return [
+    liste = [
         {
             'frage': 'Brauche ich ein Konto, um bei Luviq Universe zu bestellen?',
             'antwort': ('Nein. Bestellt wird direkt auf der Seite des Stücks, ohne Konto und ohne Passwort: '
@@ -116,3 +136,7 @@ def bestellen_faq():
                      'Größe ist bei einem Einzelstück nicht möglich.'),
         },
     ]
+    if code is not None:
+        stelle = next(i for i, f in enumerate(liste) if f['frage'].startswith('Wie bezahle ich')) + 1
+        liste.insert(stelle, rabatt_faq(code))
+    return liste

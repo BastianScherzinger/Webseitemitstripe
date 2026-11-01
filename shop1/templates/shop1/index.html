@@ -102,7 +102,8 @@ View und Kontextprozessor), kein Datum hier.
             <h1 class="lv-serif lv-satz" id="markensatz">{{ hero_h1 }}</h1>
             <p class="lv-lead">{{ lead }}</p>
             <div class="lv-hero-knoepfe">
-                {% if hero.kaufbar %}<a class="lv-knopf" href="{{ hero.url }}#bestellen" data-ereignis="hero_bestellen">Jetzt bestellen · {{ hero.preis|floatformat:0 }} € <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                {% if hero.kaufbar and willkommenscode %}<a class="lv-knopf" href="{% url 'rabatt_einloesen' willkommenscode.code %}" data-ereignis="hero_rabatt">Jetzt bestellen · {{ willkommenscode.prozent }} % sparen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                {% elif hero.kaufbar %}<a class="lv-knopf" href="{{ hero.url }}#bestellen" data-ereignis="hero_bestellen">Jetzt bestellen · {{ hero.preis|floatformat:0 }} € <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
                 {% else %}<a class="lv-knopf" href="{{ hero.url }}" data-ereignis="hero_engel">{{ hero.kurzname }} ansehen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endif %}
                 {% if motivanfrage_aktiv %}
                 <a class="lv-knopf linie" href="{% url 'motiv_anfragen' %}" data-ereignis="hero_motiv">Eigenes Motiv anfragen</a>
@@ -110,6 +111,7 @@ View und Kontextprozessor), kein Datum hier.
                 <a class="lv-knopf linie" href="#warteliste" data-ereignis="hero_motiv">Vormerken</a>
                 {% endif %}
             </div>
+            {% if hero.kaufbar and willkommenscode %}<p class="lv-hero-rabatt">{{ willkommenscode.prozent }} % auf {% if willkommenscode.nur_erstbestellung %}deine erste Bestellung{% else %}deine Bestellung{% endif %} mit dem Code <b>{{ willkommenscode.code }}</b>, der Knopf trägt ihn automatisch ein. <a href="{% url 'agb' %}#agb-3">Bedingungen</a></p>{% endif %}
         </div>
     </section>
 

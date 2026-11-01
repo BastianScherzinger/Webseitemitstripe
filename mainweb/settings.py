@@ -197,6 +197,7 @@ TEMPLATES = [
                 'shop1.verkauf.verkauf_kontext',
                 'shop1.context_processors.luviq',
                 'shop1.context_processors.anbieterin',
+                'shop1.rabatt.kontext',
             ],
         },
     },

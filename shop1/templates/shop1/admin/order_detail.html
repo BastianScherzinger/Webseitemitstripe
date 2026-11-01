@@ -69,6 +69,7 @@
                         <div class="text-white/30 text-[10px] font-black uppercase tracking-widest">Total Mission Value</div>
                         <div class="text-4xl font-black text-white heading-font">{{ order.gesamt_betrag }} €</div>
                     </div>
+                    {% if order.rabatt_betrag %}<p class="mt-4 text-right text-sm text-white/60">Darin Rabatt {% if order.rabatt_prozent %}{{ order.rabatt_prozent }} % {% endif %}{% if order.rabatt_code_text %}(Code {{ order.rabatt_code_text }}) {% endif %}−{{ order.rabatt_betrag }} € – Rechnung über {{ order.gesamt_betrag }} €</p>{% endif %}
                 </div>
             </div>
 

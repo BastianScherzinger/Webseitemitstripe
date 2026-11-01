@@ -18,6 +18,7 @@ Rechnung mit den Zahlungsdaten, bis es Zahlungslinks gibt. Der Code bildet das a
 
 import hashlib
 import logging
+from datetime import timedelta
 
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -26,9 +27,10 @@ from django.db import DatabaseError, transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.html import escape
+from django.utils import timezone
 from django.views.decorators.cache import never_cache
 
-from .. import luviq_daten, mails, spamschutz
+from .. import luviq_daten, mails, rabatt, spamschutz
 from ..models import Order, OrderItem, Produkt
 from ..utils import send_brevo_email
 from ._helpers import zu_viele_anfragen
@@ -39,7 +41,7 @@ _log = logging.getLogger('shop1')
 #: Wörtlich der Knopf nach § 312j Abs. 3 BGB.
 KNOPF = 'Zahlungspflichtig bestellen'
 ABHOLUNG_ADRESSE = 'Abholung in Lübeck nach Absprache'
-LAENGEN = {'name': 200, 'email': 254, 'strasse': 200, 'plz': 10, 'stadt': 100, 'telefon': 20}
+LAENGEN = {'name': 200, 'email': 254, 'strasse': 200, 'plz': 10, 'stadt': 100, 'telefon': 20, 'rabattcode': 40}
 SITZUNG = 'direktkauf_bestellung'
 DOPPELT_FENSTER = 120
 
@@ -73,9 +75,30 @@ def serie_kontext(produkt):
     return kontext
 
 
-def formular_kontext(produkt, werte=None, fehler=None):
+def rabatt_kontext(produkt, werte=None, request=None, ergebnis=None):
+    """Rabattcode fürs Formular: eingegebener Code, sonst der über ``/rabatt/<code>/`` gemerkte.
+
+    Ohne E-Mail lässt sich „erste Bestellung“ noch nicht prüfen; der Abzug wird dann vorläufig gezeigt und beim
+    Absenden endgültig geprüft (gilt er nicht, wird nicht bestellt, sondern der Preis ohne Code gezeigt)."""
+    werte = werte or {}
+    text = werte.get('rabattcode')
+    if text is None and request is not None:
+        text = request.session.get(rabatt.SITZUNG, '')
+    if ergebnis is None:
+        ergebnis = rabatt.pruefe(text or '', produkt.preis, werte.get('email', ''),
+                                 werte.get('strasse', ''), werte.get('plz', ''))
+    return {
+        'rabattcode_wert': ergebnis.text,
+        'rabatt': ergebnis if ergebnis.gilt else None,
+        'rabatt_fehler': ergebnis.fehler,
+        'gesamtpreis': ergebnis.gesamt if ergebnis.gilt else produkt.preis,
+    }
+
+
+def formular_kontext(produkt, werte=None, fehler=None, request=None, ergebnis=None):
     return {
         **serie_kontext(produkt),
+        **rabatt_kontext(produkt, werte, request, ergebnis),
         'produkt': produkt, 'werte': werte or {}, 'fehler': fehler, 'laengen': LAENGEN, 'knopf': KNOPF,
         'formzeit': spamschutz.zeitstempel(), 'feld_falle': spamschutz.FELD_FALLE,
         'direktkauf_zustand': zustand(produkt), 'abholung_adresse': ABHOLUNG_ADRESSE,
@@ -83,7 +106,8 @@ def formular_kontext(produkt, werte=None, fehler=None):
 
 
 def _werte(post):
-    w = {k: (post.get(k) or '').strip() for k in ('name', 'email', 'strasse', 'plz', 'stadt', 'telefon')}
+    w = {k: (post.get(k) or '').strip() for k in ('name', 'email', 'strasse', 'plz', 'stadt', 'telefon', 'rabattcode')}
+    w['rabattcode'] = rabatt.normalisiere_code(w['rabattcode'])
     w['lieferart'] = 'abholung' if post.get('lieferart') == 'abholung' else 'versand'
     w['zustimmung'] = post.get('zustimmung') == 'ja'
     return w
@@ -98,6 +122,10 @@ def pruefe(w):
     for feld, grenze in LAENGEN.items():
         if len(w[feld]) > grenze:
             return f'Eine Eingabe ist zu lang (höchstens {grenze} Zeichen). Bitte kürze sie.'
+    teile = w['name'].split()
+    if len(' '.join(teile[:-1])) > 100 or len(teile[-1]) > 100:
+        # Order.vorname/nachname fassen je 100 Zeichen (Bug-Prüfung 01.11.2026: sonst Speicherfehler).
+        return 'Vor- oder Nachname ist zu lang (höchstens 100 Zeichen). Bitte kürze ihn.'
     try:
         validate_email(w['email'])
     except ValidationError:
@@ -122,14 +150,37 @@ def _spam(post, w):
     return False
 
 
+class RabattGiltNicht(Exception):
+    """Der Code galt beim Absenden nicht (mehr) – es wird nicht bestellt, die Kundin sieht den Preis ohne Code."""
+
+    def __init__(self, ergebnis):
+        super().__init__(ergebnis.fehler)
+        self.ergebnis = ergebnis
+
+
 def _bestellung_anlegen(produkt_id, w):
-    """Order samt Posten; ``None``, wenn das Stück inzwischen weg ist."""
+    """Order samt Posten; ``None``, wenn das Stück inzwischen weg ist. Wirft ``RabattGiltNicht``."""
     with transaction.atomic():
         produkt = Produkt.objects.select_for_update().get(pk=produkt_id)
+        # Doppelklick/zweiter Tab (Bug-Prüfung 01.11.2026): Die Cache-Sperre gilt nur je Gunicorn-Prozess. Gibt es
+        # dieselbe Bestellung (E-Mail, Stück) schon aus den letzten Minuten, ist es dieselbe – keine zweite Order,
+        # keine zweite Mail, und ein Rabattcode scheitert nicht an „schon bestellt“.
+        doppelt = (Order.objects.filter(
+            email_schluessel=rabatt.email_schluessel(w['email']), status='pending', items__produkt_ref=produkt.pk,
+            erstellt_am__gte=timezone.now() - timedelta(seconds=DOPPELT_FENSTER)).order_by('-erstellt_am').first())
+        if doppelt:
+            doppelt.doppelt = True
+            return doppelt
         if zustand(produkt) != 'bestellbar':
             return None
         teile = w['name'].split()
         abholung = w['lieferart'] == 'abholung'
+        # Code in derselben Transaktion prüfen und seine Zeile sperren: zwei gleichzeitige Bestellungen können
+        # weder die Höchstzahl noch „nur erste Bestellung“ gemeinsam unterlaufen.
+        ergebnis = rabatt.pruefe(w.get('rabattcode', ''), produkt.preis, w['email'],
+                                 '' if abholung else w['strasse'], '' if abholung else w['plz'], sperren=True)
+        if ergebnis.text and not ergebnis.gilt:
+            raise RabattGiltNicht(ergebnis)
         order = Order.objects.create(
             user=None, status='pending', payment_method='bank_transfer',
             vorname=' '.join(teile[:-1]), nachname=teile[-1], email=w['email'],
@@ -137,7 +188,11 @@ def _bestellung_anlegen(produkt_id, w):
             stadt='Lübeck' if abholung else w['stadt'],
             postleitzahl='' if abholung else w['plz'],
             land='Deutschland',
-            telefon=w['telefon'], gesamt_betrag=produkt.preis)
+            telefon=w['telefon'], gesamt_betrag=ergebnis.gesamt if ergebnis.gilt else produkt.preis,
+            rabatt_betrag=ergebnis.abzug if ergebnis.gilt else 0,
+            rabatt_code=ergebnis.code if ergebnis.gilt else None,
+            rabatt_code_text=ergebnis.text if ergebnis.gilt else '',
+            rabatt_prozent=ergebnis.prozent if ergebnis.gilt else 0)
         OrderItem.objects.create(order=order, produkt_name=produkt.name, produkt_preis=produkt.preis,
                                  produkt_ref=produkt.pk, menge=1)
     return order
@@ -178,6 +233,10 @@ def mail_an_kundin(order):
     zeilen_text = '\n'.join(f'- {p.menge}x {p.produkt_name}: {float(p.produkt_preis) * p.menge:.2f} €' for p in posten)
     zeilen_html = ''.join(f'<li>{p.menge}x {escape(p.produkt_name)}: {float(p.produkt_preis) * p.menge:.2f} €</li>'
                           for p in posten)
+    rz = rabatt_zeile(order)
+    if rz:
+        zeilen_text += f'\n- {rz}'
+        zeilen_html += f'<li>{escape(rz)}</li>'
     text = (f'Eingang deiner Bestellung #{order.id}\n\nHallo {order.vorname},\n\n{satz}\n\n{zeilen_text}\n'
             f'Gesamt: {gesamt} (inkl. Versand innerhalb Deutschlands, gemäß § 19 UStG ohne Umsatzsteuer)\n'
             f'Lieferung: {wo}\n\nViele Grüße\nLuisa Brehler\n\n---\n{unterlagen_text}')
@@ -190,13 +249,22 @@ def mail_an_kundin(order):
                      reply_to=mails.KONTAKT_EMAIL)
 
 
+def rabatt_zeile(order):
+    """„Rabatt 10 % (Code ABC): -6.90 €“ oder leer."""
+    if not order.rabatt_betrag:
+        return ''
+    code = f' (Code {order.rabatt_code_text})' if order.rabatt_code_text else ''
+    return f'Rabatt {order.rabatt_prozent} %{code}: -{float(order.rabatt_betrag):.2f} €'
+
+
 def mail_an_luisa(order):
     """Alle Daten der Bestellung an Luisa (Antworten geht an die Kundin) plus Kopie an die Webagentur."""
     p = order.items.first()
     felder = [
         ('Bestellung', f'#{order.id}'),
         ('Stück', p.produkt_name if p else '–'),
-        ('Gesamtpreis', f'{float(order.gesamt_betrag):.2f} € (inkl. Versand)'),
+        ('Gesamtpreis', f'{float(order.gesamt_betrag):.2f} € (inkl. Versand)'
+                        + (f' – {rabatt_zeile(order)}, Rechnung über diesen Betrag' if order.rabatt_betrag else '')),
         ('Name', f'{order.vorname} {order.nachname}'),
         ('E-Mail', order.email, 'mail'),
         ('Lieferung', order.adresse if order.adresse == ABHOLUNG_ADRESSE else
@@ -228,7 +296,18 @@ def direktkauf(request, slug):
     if not direktkauf_aktiv():
         raise Http404
     if request.method != 'POST':
-        return render(request, 'shop1/direktkauf.html', formular_kontext(produkt))
+        return render(request, 'shop1/direktkauf.html', formular_kontext(produkt, request=request))
+    if request.POST.get('aktion') == 'rabattcode':
+        # „Einlösen“: nur den Code prüfen und den neuen Gesamtpreis zeigen, nichts bestellen.
+        w = _werte(request.POST)
+        if zu_viele_anfragen(request, 'rabattcode', grenze=20):
+            return render(request, 'shop1/direktkauf.html', formular_kontext(
+                produkt, {**w, 'rabattcode': ''}, 'Zu viele Versuche mit Rabattcodes. Bitte versuch es in einer '
+                'Viertelstunde noch einmal.'), status=429)
+        kontext = formular_kontext(produkt, w)
+        if kontext['rabatt']:
+            request.session[rabatt.SITZUNG] = w['rabattcode']
+        return render(request, 'shop1/direktkauf.html', kontext)
     if zu_viele_anfragen(request, 'direktkauf', grenze=8):
         return render(request, 'shop1/direktkauf.html', formular_kontext(
             produkt, dict(request.POST.items()),
@@ -246,6 +325,11 @@ def direktkauf(request, slug):
             return redirect('direktkauf_danke')
     try:
         order = _bestellung_anlegen(produkt.pk, w)
+    except RabattGiltNicht as fall:
+        cache.delete(_doppelt_schluessel(produkt, w))
+        request.session.pop(rabatt.SITZUNG, None)
+        return render(request, 'shop1/direktkauf.html', formular_kontext(
+            produkt, {**w, 'rabattcode': ''}, f'{fall.ergebnis.fehler} Es wurde noch nichts bestellt.'), status=400)
     except DatabaseError:
         _log.exception('Direktkauf: Bestellung nicht gespeichert')
         cache.delete(_doppelt_schluessel(produkt, w))
@@ -256,6 +340,9 @@ def direktkauf(request, slug):
         cache.delete(_doppelt_schluessel(produkt, w))
         return render(request, 'shop1/direktkauf.html', formular_kontext(produkt, w), status=409)
     request.session[SITZUNG] = order.pk
+    request.session.pop(rabatt.SITZUNG, None)
+    if getattr(order, 'doppelt', False):
+        return redirect('direktkauf_danke')
     for versand in (mail_an_kundin, mail_an_luisa):
         try:
             versand(order)
@@ -272,3 +359,29 @@ def direktkauf_danke(request):
     return render(request, 'shop1/direktkauf_danke.html', {
         'order': order, 'abholung': bool(order and order.adresse == ABHOLUNG_ADRESSE),
     })
+
+
+@never_cache
+def rabatt_einloesen(request, code):
+    """``/rabatt/<CODE>/`` (Hero-Knopf, QR-Code auf Karten): merkt einen gültigen Code in der Sitzung und führt
+    zum Bestellformular. Ob es die erste Bestellung ist, prüft erst das Absenden (dann kennen wir die E-Mail)."""
+    from django.contrib import messages
+    from django.urls import reverse
+    from django.utils.http import url_has_allowed_host_and_scheme
+
+    gefunden = rabatt.gueltiger_code(code)
+    if gefunden:
+        request.session[rabatt.SITZUNG] = gefunden.code
+        bedingung = ' auf deine erste Bestellung' if gefunden.nur_erstbestellung else ''
+        messages.success(request, f'Rabattcode {gefunden.code} ist eingetragen: {gefunden.prozent} %{bedingung}. '
+                                  'Du siehst den Preis im Bestellformular.')
+    else:
+        messages.info(request, 'Dieser Rabattcode gilt leider nicht (mehr). Bestellen kannst du trotzdem.')
+    weiter = request.GET.get('weiter', '')
+    if weiter and url_has_allowed_host_and_scheme(weiter, allowed_hosts={request.get_host()},
+                                                  require_https=request.is_secure()):
+        return redirect(weiter)
+    engel = Produkt.objects.filter(aktiv=True, slug=luviq_daten.ENGEL_STUECK['slug']).first()
+    if engel and engel.kaufbar:
+        return redirect(engel.get_absolute_url() + '#bestellen')
+    return redirect(reverse('produkte'))
