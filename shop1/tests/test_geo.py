@@ -712,7 +712,7 @@ class LlmsVolltextTest(LuviqTestCase):
         kurz = self.hole('/llms.txt').content.decode().rstrip('\n')
         voll = self.hole('/llms-full.txt').content.decode()
         self.assertTrue(voll.startswith(kurz))
-        self.assertIn('### Alle Unikate', voll)
+        self.assertIn('### Shop', voll)
 
 
 class VolltextLeserTest(LuviqTestCase):

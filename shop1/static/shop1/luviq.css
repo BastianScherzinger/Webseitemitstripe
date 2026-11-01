@@ -107,7 +107,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-nav{display:flex;align-items:center;gap:calc(var(--u)*2.6);margin-left:auto;color:var(--lv-leise);font-size:max(13px,calc(var(--u)*1))}
 .lv-nav a{padding:.3em 0}
 .lv-nav a:hover,.lv-nav a[aria-current="page"]{color:var(--lv-text)}
-.lv-nav .lv-nav-anfrage{color:var(--lv-text)}
+.lv-nav a[aria-current=page]{color:var(--lv-text)}
 .lv-nav a[aria-current="page"]{border-bottom:1px solid var(--lv-marke)}
 .lv-kopf-rechts{display:flex;align-items:center;gap:calc(var(--u)*1.6);padding-left:calc(var(--u)*2.4);border-left:1px solid var(--lv-linie);font-size:max(13px,calc(var(--u)*1))}
 .lv-ig{display:inline-flex;align-items:center;gap:.5em;font-weight:600}
@@ -498,7 +498,7 @@ body:has([data-kaufleiste]) .lv-leiste{display:none!important}
   .lv-menue[open] summary i::after{content:"";position:absolute;left:0;right:0;top:-2px;border-top:2px solid var(--lv-text);transform:rotate(-90deg)}
   .lv-menue nav{position:absolute;left:0;right:0;top:100%;background:var(--lv-grund);border-bottom:1px solid var(--lv-linie-2);padding:8px var(--rand) 20px;display:grid;max-height:calc(100vh - 70px);overflow:auto}
   .lv-menue nav a{min-height:48px;display:flex;align-items:center;border-bottom:1px solid var(--lv-linie);font-size:17px}
-  .lv-menue nav .lv-nav-anfrage{color:var(--lv-akzent)}
+  .lv-menue nav a[aria-current=page]{color:var(--lv-akzent)}
   .lv-menue nav .lv-menue-klein{font-size:14px;color:var(--lv-leise)}
   .lv-satz{font-size:40px}
   .lv-lead{font-size:16px}

@@ -291,7 +291,7 @@
         {% comment %}Wortmarke als Bild mit Alpha (P0). alt leer + aria-label am Link: ein wiederholter Alternativtext auf jeder Seite gilt als Schablone.{% endcomment %}
         <a class="lv-logo" href="{% url 'home' %}" aria-label="Luviq, zur Startseite"><img src="{% static 'shop1/images/marke/luviq-wortmarke-420.webp' %}" srcset="{% static 'shop1/images/marke/luviq-wortmarke-210.webp' %} 210w, {% static 'shop1/images/marke/luviq-wortmarke-420.webp' %} 420w, {% static 'shop1/images/marke/luviq-wortmarke-840.webp' %} 840w" sizes="75px" width="420" height="180" alt="" loading="eager"></a>
         <nav class="lv-nav" aria-label="Hauptnavigation">
-            {% for weg in navigation %}<a{% if weg.route == 'motiv_anfragen' %} class="lv-nav-anfrage"{% endif %} href="{% url weg.route %}{{ weg.anker }}"{% if seitenname == weg.route %} aria-current="page"{% endif %}>{{ weg.name }}</a>{% endfor %}
+            {% for weg in navigation %}<a href="{% url weg.route %}{{ weg.anker }}"{% if seitenname == weg.route %} aria-current="page"{% endif %}>{{ weg.name }}</a>{% endfor %}
         </nav>
         <div class="lv-kopf-rechts">
             <a class="lv-ig" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank">Instagram</a>
@@ -306,7 +306,7 @@
         <details class="lv-menue">
             <summary aria-label="Menü öffnen"><i></i></summary>
             <nav aria-label="Menü">
-                {% for weg in navigation %}<a{% if weg.route == 'motiv_anfragen' %} class="lv-nav-anfrage"{% endif %} href="{% url weg.route %}{{ weg.anker }}">{{ weg.name }}</a>{% endfor %}
+                {% for weg in navigation %}<a href="{% url weg.route %}{{ weg.anker }}"{% if seitenname == weg.route %} aria-current="page"{% endif %}>{{ weg.name }}</a>{% endfor %}
                 <a class="lv-menue-klein" href="{{ instagram_url|default:'https://www.instagram.com/luviq.archive/' }}" rel="noopener" target="_blank">Instagram</a>
                 {% if user.is_authenticated %}
                 {% if verkauf_aktiv and not direktkauf_aktiv %}<a class="lv-menue-klein" href="{% url 'warenkorb' %}">Warenkorb</a>{% endif %}

@@ -499,7 +499,7 @@ def hinweis(verkauf_aktiv, shop_oeffnet=''):
 #: Verkauf, nur wenn die Motivanfrage aktiv ist). „Drop“ und „Entstehung“ gibt es
 #: nicht mehr (Design-Analyse Befund #12).
 NAVIGATION = [
-    ('produkte', 'Stücke', 'Unikate', False),
+    ('produkte', 'Stücke', 'Shop', False),
     ('motiv_anfragen', 'Motiv anfragen', 'Motiv anfragen', True),
     ('wissen', 'Wissen', 'Wissen', False),
     ('ueber_uns', 'Luisa', 'Luisa', False),
@@ -512,7 +512,7 @@ NAVIGATION = [
 #: ``liefergebiet`` heißt jetzt „Versand & Abholung“, bleibt aber ``/liefergebiet/``.
 FUSS = [
     ('Stücke', [
-        ('produkte', '', 'Archiv', 'Unikate', False),
+        ('produkte', '', 'Archiv', 'Shop', False),
         ('motiv_anfragen', '', 'Motiv anfragen', 'Motiv anfragen', True),
         ('home', '#warteliste', 'Warteliste', 'Für das nächste Stück vormerken', False),
     ]),

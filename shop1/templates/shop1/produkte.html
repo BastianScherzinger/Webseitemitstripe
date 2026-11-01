@@ -6,7 +6,7 @@
 {% block og_title %}Handbemalte Stücke | Luviq Universe Lübeck{% endblock %}
 {% block og_description %}Handbemalte Stücke aus Lübeck, gebraucht oder neu, immer hochwertig. Von Hand mit Bleiche gemalt, keins gleicht dem anderen. Jetzt bei Luviq Universe entdecken.{% endblock %}
 {% block twitter_title %}{% if verkauf_aktiv %}Handbemalte Stücke – Luviq Universe{% else %}Archiv: handbemalte Stücke – Luviq Universe{% endif %}{% endblock %}
-{% block twitter_description %}{% if verkauf_aktiv %}Handbemalte Stücke aus Lübeck, gebraucht oder neu, jedes Stück nur einmal.{% else %}Bisherige handbemalte Stücke aus Lübeck als Referenz. Neue Stücke gibt es mit dem ersten Drop.{% endif %}{% endblock %}
+{% block twitter_description %}{% if verkauf_aktiv %}Handbemalte Stücke aus Lübeck, gebraucht oder neu, jedes Stück von Hand gemalt, keins gleicht dem anderen.{% else %}Bisherige handbemalte Stücke aus Lübeck als Referenz. Neue Stücke gibt es mit dem ersten Drop.{% endif %}{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">
@@ -75,7 +75,7 @@
     <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">{{ krume }}</li></ol></nav>
     <section class="lv-abschnitt lv-ohne-linie" aria-labelledby="archiv-titel">
         <div class="lv-abschnittskopf">
-            <h1 class="lv-serif" id="archiv-titel">{% if krume == 'Unikate' %}Unikate{% else %}Das Archiv{% endif %}</h1>
+            <h1 class="lv-serif" id="archiv-titel">{% if krume == 'Shop' %}Shop{% else %}Das Archiv{% endif %}</h1>
             <p>{% if verkauf_aktiv %}Luviq Universe ist der Online-Shop von Luisa Brehler aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig; auf dieser Seite stehen zurzeit {{ verfuegbare_liste|length }} Einzelstück{{ verfuegbare_liste|length|pluralize:"e" }} zum Kauf, darunter die ersten Stücke als Referenz.{% elif verfuegbare_liste %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig; jedes Stück ist von Hand gemalt und keins gleicht dem anderen. Oben steht das neue Stück, darunter die ersten Stücke als Referenz.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig; auf dieser Seite stehen zurzeit {{ produkte_liste|length }} Einzelstück{{ produkte_liste|length|pluralize:"e" }} aus dem Archiv – bisherige Arbeiten als Referenz, nicht zu kaufen.{% endif %}</p>
         </div>
         {% if verfuegbare_liste %}

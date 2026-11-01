@@ -501,7 +501,7 @@ def llms_full_txt(request):
 
     verkauf = verkauf_aktiv()
     seiten = [
-        ('Alle Unikate' if verkauf else 'Archiv', reverse('produkte'), shop.produkte, ()),
+        ('Shop' if verkauf else 'Archiv', reverse('produkte'), shop.produkte, ()),
         ('Über Luisa Brehler', reverse('ueber_uns'), shop.ueber_uns, ()),
         ('Liefergebiet' if verkauf else 'Herkunft', reverse('liefergebiet'), shop.liefergebiet, ()),
         ('Motiv anfragen', reverse('motiv_anfragen'), motiv.motiv_anfragen, ()),

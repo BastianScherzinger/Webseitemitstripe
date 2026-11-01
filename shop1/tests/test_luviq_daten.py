@@ -176,7 +176,7 @@ class RahmenTest(SimpleTestCase):
         self.assertEqual([w['route'] for w in wege],
                          ['produkte', 'motiv_anfragen', 'wissen', 'ueber_uns', 'kontakt'])
         self.assertEqual([w['name'] for w in wege], ['Stücke', 'Motiv anfragen', 'Wissen', 'Luisa', 'Kontakt'])
-        self.assertEqual(luviq_daten.navigation(True, True)[0]['name'], 'Unikate')
+        self.assertEqual(luviq_daten.navigation(True, True)[0]['name'], 'Shop')
         self.assertNotIn('motiv_anfragen', [w['route'] for w in luviq_daten.navigation(False, False)])
 
     def test_der_fuss_hat_zwei_datengruppen_und_heisst_versand_und_abholung(self):

@@ -3,7 +3,7 @@
 
 {% block meta_robots %}noindex, follow{% endblock %}
 {% block title %}Gästebuch lesen und schreiben – Luviq Universe, Lübeck{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Gästebuch von Luviq Universe aus Lübeck: Rückmeldungen aus der Community zu den handbemalten Einzelstücken. Jetzt lesen oder selbst einen Beitrag schreiben.{% else %}Gästebuch von Luviq Universe: Eindrücke, Fragen und Ideen aus der Community rund um die handbemalten Einzelstücke. Jetzt lesen oder selbst schreiben.{% endif %}{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Gästebuch von Luviq Universe aus Lübeck: Rückmeldungen aus der Community zu den handbemalten Stücken. Jetzt lesen oder selbst einen Beitrag schreiben.{% else %}Gästebuch von Luviq Universe: Eindrücke, Fragen und Ideen aus der Community rund um die handbemalten Einzelstücke. Jetzt lesen oder selbst schreiben.{% endif %}{% endblock %}
 {% block og_title %}Gästebuch – Luviq Universe Community{% endblock %}
 {% block og_description %}{% if verkauf_aktiv %}Was die Community über die handbemalte Upcycling-Mode von Luviq Universe aus Lübeck sagt. Ob jemand gekauft hat, wird nicht geprüft.{% else %}Was die Community über die handbemalte Upcycling-Mode von Luviq Universe aus Lübeck sagt – Eindrücke, Fragen und Ideen.{% endif %}{% endblock %}
 {% block twitter_title %}Gästebuch lesen und schreiben – Luviq Universe{% endblock %}
@@ -44,7 +44,7 @@
             {% csrf_token %}
             <div class="lv-feld">
                 <label for="gaestebuch-text">Dein Beitrag *</label>
-                <textarea id="gaestebuch-text" name="text" rows="4" required maxlength="2000" placeholder="Wie gefällt dir dein Unikat?"></textarea>
+                <textarea id="gaestebuch-text" name="text" rows="4" required maxlength="2000" placeholder="Wie gefällt dir dein Stück?"></textarea>
             </div>
             <button type="submit" class="lv-knopf">Beitrag senden <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </form>
