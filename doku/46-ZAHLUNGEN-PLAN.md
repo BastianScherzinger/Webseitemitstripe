@@ -1,7 +1,7 @@
 ---
 stand: 2026-11-01
 status: plan
-zusammenfassung: Zahlungswege für Luviq in drei Stufen – Revolut-Zahlungslink sofort, Zahlungslink-Knopf im Shop, PayPal live mit „Später bezahlen“; Klarna nur über einen weiteren Anbieter.
+zusammenfassung: Revolut-Zahlungslink sofort (Anleitung an Luisa 01.11.), Ziel ein Anbieter für Karte/Apple Pay/Klarna mit Auszahlung auf Revolut Pro (Vorschlag Mollie); PayPal direkt vorerst nicht.
 ---
 
 # Zahlungen Luviq: Plan (Auftrag Bastian 01.11.2026)
@@ -52,6 +52,30 @@ Die Namen können je nach App-Version leicht abweichen. Im Zweifel in der App-Su
 4. **Teilen** → per Mail oder WhatsApp an die Kundin schicken (oder Link in die Rechnung kopieren).
 5. Bei Zahlungseingang kommt eine Mitteilung in der App → im Shop-Admin die Bestellung auf „bezahlt“ setzen und dann malen.
 Gebühr pro Zahlung: in der App unter Pro → Gebühren ablesen und hier nachtragen.
+
+## Nachtrag 01.11.2026 nachmittags: Bastians Wunsch „ein Weg für alles“
+Bastian: PayPal-Konto direkt **erst mal nicht**. Am liebsten eine Zahlungsquelle (Revolut Pro), über die auch Klarna, PayPal und
+Rechnung laufen. Luisa hat nur ein normales Revolut-Konto. Die Anleitung „Pro einschalten + Zahlungslink“ ging ihr am 01.11. um 15:31 per Telegram zu.
+
+- **Revolut allein kann das nicht.** Pro (kostenlos, nur für Selbstständige, Antrag in der App: Konto-Auswahl → „+ Neu hinzufügen“ → Pro)
+  nimmt Karte, Apple Pay und Google Pay an, aber kein Klarna, kein PayPal und keinen Rechnungskauf.
+- **So kommt man am nächsten heran:** ein Zahlungsanbieter für die Kasse, der alles bündelt und auf das Revolut-Pro-Konto auszahlt.
+  Das Geld landet dann gesammelt bei Revolut. Vorschlag **Mollie** (Preisliste DE, abgerufen 01.11.):
+
+| Zahlart | Gebühr |
+|---|---|
+| Karte (EU, privat), Apple Pay | 1,80 % + 0,25 € |
+| Klarna (Rechnung/später bezahlen) | 2,99 % + 0,35 € |
+| PayPal | PayPal-Gebühr + 0,10 € (braucht trotzdem ein verknüpftes PayPal-Konto, kann also später dazukommen) |
+| SEPA-Überweisung | 0,25 € |
+
+  Keine Monatsgebühr; bis 5 Auszahlungen im Monat kostenlos, auf ein eigenes Konto (Revolut-Pro-IBAN).
+  Alternative wäre Stripe (ähnlicher Umfang). Mollie ist für deutsche Shops üblicher.
+- **Ablauf:** (1) Luisa macht Revolut Pro an. (2) Luisa legt ein Mollie-Konto an und hinterlegt die Pro-IBAN als Auszahlungskonto;
+  Claude legt keine Konten an. (3) Claude baut Mollie in die Kasse ein: Zahlarten Karte/Apple Pay/Klarna, Rückmeldung „bezahlt“
+  automatisch, Testmodus zuerst. Aufwand ~1 Tag + Tests. (4) Rechtstexte § Zahlung anpassen (Freigabe). (5) Testkauf.
+- Bis dahin gilt Stufe 0: Rechnung + Revolut-Zahlungslink.
+- Quellen: mollie.com/de/pricing · help.revolut.com (Revolut Pro: wer darf, Funktionen) · revolut.com/en-DE/legal/pro
 
 ## Offen (Entscheidung/Konto)
 - Gehört das Pro-Konto Luisa (Geld muss auf ihr Gewerbe laufen)? → Annahme: ja.
