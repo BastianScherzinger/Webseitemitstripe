@@ -45,13 +45,13 @@ PROFILE = {
     # Vertrauensleiste und der Abschnitt „Motiv anfragen“ (auf hohen Tablets noch im ersten Bildschirm).
     "start": {"lv-start", "lv-hero", "lv-hero-figur", "lv-hero-bild", "lv-hero-text", "lv-hero-knoepfe",
               "lv-satz", "lv-lead", "linie", "lv-vertrauen-leiste", "lv-vertrauen",
-              "lv-anfragen", "lv-ablauf", "lv-anfragekasten", "lv-frage", "lv-chips", "lv-chip"},
+              "lv-anfragen", "lv-ablauf", "lv-anfragekasten", "lv-frage", "lv-chips", "lv-chip",},
     # Archiv: Raster aus Karten.
     "archiv": {"lv-raster", "lv-karte", "lv-karte-kauf", "lv-karte-kopf", "lv-material", "lv-preis", "lv-leer"},
     # Stückseite: Bild, Nummer, Datenliste, Knöpfe.
     "stueck": {"lv-stueck", "lv-stueck-bild", "lv-stueck-nummer", "lv-stueck-text",
                "lv-stueck-preis", "lv-status", "lv-daten", "lv-stueck-knoepfe",
-               "lv-stueck-lead", "lv-stueck-beschreibung", "lv-stueck-hinweis"},
+               "lv-stueck-lead", "lv-stueck-beschreibung", "lv-stueck-hinweis", "lv-fakten"},
     # Luisa (Über uns): Fließtext, Zitat, Ablauf.
     "luisa": {"lv-luisa", "lv-luisa-text", "lv-ablauf", "lv-prosa"},
     # Wissen (Übersicht und Beiträge): Kopf, Fragen als Abschnitte, nummerierte Beitragsliste.

@@ -1,0 +1,20 @@
+{% load custom_tags %}{% comment %}
+Große Kaufkarte direkt unter dem Hero (Redesign 01.11.2026, Bastian: „keinen Artikel, den ich direkt anklicken kann“).
+Ein kaufbares Stück: Bild (ganze Karte führt auf die Stückseite), Name, Preis, Kurzfakten, Knopf „Jetzt bestellen“
+(Sprung zum Bestellformular #bestellen). `produkt` kommt aus der Schleife. Nur mit Verkauf + Direktkauf + kaufbar;
+sonst bleibt es bei archiv_karte.html. Serienstück: Bearbeitungszeit aus `produkt.bearbeitungstage`.
+{% endcomment %}{% with bild=produkt.hauptbild %}<li class="lv-kaufkarte">
+    {% if bild %}<a class="lv-kaufkarte-bild" href="{{ produkt.get_absolute_url }}" tabindex="-1" aria-hidden="true"><img src="{{ bild.src }}" srcset="{{ bild.srcset }}" sizes="(min-width: 900px) 40vw, 92vw" width="{{ bild.breite }}" height="{{ bild.hoehe }}" alt="" loading="eager" decoding="async"></a>{% endif %}
+    <div class="lv-kaufkarte-text">
+        <p class="lv-nr">Nº {{ produkt.archiv_nummer }} · Jetzt im Shop</p>
+        <h3 class="lv-serif"><a href="{{ produkt.get_absolute_url }}">{{ produkt.name }}</a></h3>
+        <p class="lv-kaufkarte-preis">{{ produkt.preis|floatformat:0 }} € <span>{{ versand_preissatz }}</span></p>
+        <ul class="lv-kaufkarte-fakten">
+            {% if produkt.masse %}<li>{{ produkt.masse }}</li>{% endif %}
+            {% if produkt.material %}<li>{{ produkt.material }}</li>{% endif %}
+            {% if produkt.serie and produkt.bearbeitungstage %}<li>Bearbeitung ca. {{ produkt.bearbeitungstage }} Werktage, dann Versand</li>{% endif %}
+            {% if produkt.serie %}<li>Jedes Shirt neu von Hand gemalt, keins gleicht dem anderen</li>{% endif %}
+        </ul>
+        <p class="lv-kaufkarte-knoepfe"><a class="lv-knopf" href="{{ produkt.get_absolute_url }}#bestellen" data-ereignis="karte_bestellen">Jetzt bestellen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a> <a class="lv-link" href="{{ produkt.get_absolute_url }}">Details und Fotos</a></p>
+    </div>
+</li>{% endwith %}

@@ -97,12 +97,19 @@ def startseite(request):
     engel = Produkt.objects.filter(aktiv=True, slug=luviq_daten.ENGEL_STUECK['slug']).first()
     hero['url'] = engel.get_absolute_url() if engel else reverse('produkte')
     hero['bildunterschrift'] = luviq_daten.HERO_BILDUNTERSCHRIFT
+    from .direktkauf import direktkauf_aktiv as _dk
+    hero['kaufbar'] = bool(engel and engel.kaufbar and _dk())
+    hero['preis'] = engel.preis if engel else None
 
     # Mit Verkauf stehen die verfügbaren Stücke in einem eigenen Abschnitt, das
     # Archiv zeigt dann nur die vergebenen; ohne Verkauf zeigt das Archiv alles.
     alle = list(Produkt.objects.filter(aktiv=True).order_by('nummer', 'erstellt_am')
                 .prefetch_related('zusatzbilder'))
     verfuegbare = [p for p in alle if not p.verkauft][:8]
+    # Redesign 01.11.2026: kaufbare Stücke bekommen die große Kaufkarte, alle anderen die ruhige Karte.
+    from .direktkauf import direktkauf_aktiv as _dk0
+    kaufkarten = [p for p in verfuegbare if p.kaufbar] if _dk0() else []
+    karten_ruhig = [p for p in verfuegbare if p not in kaufkarten]
     vergebene = [p for p in alle if p.verkauft][:10]
 
     echt = []
@@ -117,6 +124,8 @@ def startseite(request):
         'produkte_galerie': produkte_galerie,
         # P4: das verfügbare Stück steht auch vor dem Verkaufsstart da (ohne Preis, ohne Kaufweg).
         'verfuegbare': verfuegbare,
+        'kaufkarten': kaufkarten,
+        'karten_ruhig': karten_ruhig,
         'archiv_liste': vergebene,
         'echt_titel': luviq_daten.ECHT_TITEL,
         'echt_text': luviq_daten.ECHT_TEXT,
@@ -124,6 +133,7 @@ def startseite(request):
         'wege': luviq_daten.WEGE,
         'vertrauen': luviq_daten.VERTRAUEN,
         'filme': luviq_daten.FILME,
+        'startfilm': luviq_daten.STARTFILM,
         'hero': hero,
         'lead': luviq_daten.LEAD,
         'markensatz': luviq_daten.MARKENSATZ,
@@ -449,7 +459,9 @@ def produkt_detail_slug(request, slug):
     from .direktkauf import direktkauf_aktiv, formular_kontext
     # Direktkauf (31.10.2026): Formular bzw. „Reserviert“ auf der Stückseite selbst.
     direkt = formular_kontext(produkt) if direktkauf_aktiv() and not produkt.verkauft else {}
+    from .direktkauf import serie_kontext
     return render(request, 'shop1/produkt_detail.html', {
+        **serie_kontext(produkt),
         **direkt,
         'produkt': produkt,
         'galerie': produkt.galerie(),

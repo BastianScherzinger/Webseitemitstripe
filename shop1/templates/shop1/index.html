@@ -9,10 +9,10 @@ FILME) · Luisa · Archiv · Warteliste. Alle Texte aus shop1/luviq_daten.py (ü
 View und Kontextprozessor), kein Datum hier.
 {% endcomment %}
 
-{% block title %}Luviq: Second-Hand-Unikate mit Bleiche gemalt, aus Lübeck{% endblock %}
-{% block meta_description %}Handbemalte Unikate aus Lübeck, gebraucht oder neu: von Luisa mit Bleiche gemalt, die Farbe kommt aus dem Stoff. Versand deutschlandweit. Eigenes Motiv anfragen.{% endblock %}
+{% block title %}Luviq: Second-Hand-Mode mit Bleiche gemalt, aus Lübeck{% endblock %}
+{% block meta_description %}Handbemalte Stücke aus Lübeck, gebraucht oder neu: von Luisa mit Bleiche gemalt, die Farbe kommt aus dem Stoff. Versand deutschlandweit. Eigenes Motiv anfragen.{% endblock %}
 {% block og_title %}Luviq Universe – Sag mir, was du willst, ich mal’s dir{% endblock %}
-{% block og_description %}Handbemalte Unikate aus Lübeck, gebraucht oder neu, immer hochwertig. Du sagst Luisa, was drauf soll, sie schickt dir Vorschläge, und dann entsteht dein Stück. Jedes Motiv gibt es einmal.{% endblock %}
+{% block og_description %}Handbemalte Stücke aus Lübeck, gebraucht oder neu, immer hochwertig. Du sagst Luisa, was drauf soll, sie schickt dir Vorschläge, und dann entsteht dein Stück. Jedes Stück ist von Hand gemalt, keins gleicht dem anderen.{% endblock %}
 {% block og_image_tag %}
 {% comment %}Vorschaubild 1200 × 630 als JPEG (IS39): aus dem Engel-Shirt-Foto zugeschnitten (P0); WhatsApp, LinkedIn und Facebook lesen JPEG sicherer als WebP.{% endcomment %}
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/luviq/og-start-1200x630.jpg">
@@ -20,7 +20,7 @@ View und Kontextprozessor), kein Datum hier.
 <meta property="og:image:height" content="630">
 {% endblock %}
 {% block twitter_title %}Luviq Universe – Handbemalte Mode aus Lübeck{% endblock %}
-{% block twitter_description %}Handbemalte Unikate aus Lübeck, gebraucht oder neu. Motiv anfragen, Vorschläge bekommen, Einzelstück tragen.{% endblock %}
+{% block twitter_description %}Handbemalte Stücke aus Lübeck, gebraucht oder neu. Motiv anfragen, Vorschläge bekommen, dein Stück tragen.{% endblock %}
 {% block twitter_image_tag %}
 <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/luviq/og-start-1200x630.jpg">
 {% endblock %}
@@ -31,14 +31,29 @@ View und Kontextprozessor), kein Datum hier.
   "@context": "https://schema.org",
   "@type": "ItemList",
   "@id": "{{ request.scheme }}://{{ request.get_host }}/#archiv",
-  "name": "{% if verkauf_aktiv %}Aktuelle Unikate – Luviq Universe Lübeck{% else %}Bisherige Unikate – Archiv von Luviq Universe Lübeck{% endif %}",
-  "description": "{% if verkauf_aktiv %}Handbemalte 1-of-1 Upcycling-Mode aus Lübeck – exklusive Einzelstücke.{% else %}Handbemalte 1-of-1 Upcycling-Mode aus Lübeck – bisherige Einzelstücke als Referenz.{% endif %}",
+  "name": "{% if verkauf_aktiv %}Aktuelle Stücke – Luviq Universe Lübeck{% else %}Bisherige Stücke – Archiv von Luviq Universe Lübeck{% endif %}",
+  "description": "{% if verkauf_aktiv %}Handbemalte Upcycling-Mode aus Lübeck – von Hand mit Bleiche gemalt, keins gleicht dem anderen.{% else %}Handbemalte Upcycling-Mode aus Lübeck – bisherige Stücke als Referenz.{% endif %}",
   "url": "{{ request.scheme }}://{{ request.get_host }}/",
   "itemListElement": [{% for produkt in produkte_galerie %}
     {"@type": "ListItem", "position": {{ forloop.counter }}, "name": "{{ produkt.name|escapejs }}", "url": "{{ request.scheme }}://{{ request.get_host }}{{ produkt.get_absolute_url }}"}{% if not forloop.last %},{% endif %}{% endfor %}
   ]
 }
 </script>
+{% if startfilm %}<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "@id": "{{ request.scheme }}://{{ request.get_host }}/#startfilm",
+  "name": "Luviq: {{ startfilm.titel|escapejs }} ({{ startfilm.datum }})",
+  "description": "{{ startfilm.beschreibung|escapejs }}",
+  "thumbnailUrl": ["{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/luviq/'|add:startfilm.poster_jpg %}"],
+  "uploadDate": "2026-11-01",
+  "duration": "{{ startfilm.dauer_iso }}",
+  "contentUrl": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/video/'|add:startfilm.datei %}",
+  "inLanguage": "de",
+  "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
+}
+</script>{% endif %}
 {% endblock %}
 
 {% block alte_stile %}{% endblock %}
@@ -87,7 +102,8 @@ View und Kontextprozessor), kein Datum hier.
             <h1 class="lv-serif lv-satz" id="markensatz">{{ hero_h1 }}</h1>
             <p class="lv-lead">{{ lead }}</p>
             <div class="lv-hero-knoepfe">
-                <a class="lv-knopf" href="{{ hero.url }}" data-ereignis="hero_engel">{{ hero.kurzname }} ansehen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                {% if hero.kaufbar %}<a class="lv-knopf" href="{{ hero.url }}#bestellen" data-ereignis="hero_bestellen">Jetzt bestellen · {{ hero.preis|floatformat:0 }} € <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                {% else %}<a class="lv-knopf" href="{{ hero.url }}" data-ereignis="hero_engel">{{ hero.kurzname }} ansehen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endif %}
                 {% if motivanfrage_aktiv %}
                 <a class="lv-knopf linie" href="{% url 'motiv_anfragen' %}" data-ereignis="hero_motiv">Eigenes Motiv anfragen</a>
                 {% else %}
@@ -97,6 +113,24 @@ View und Kontextprozessor), kein Datum hier.
         </div>
     </section>
 
+    {% if verfuegbare %}
+    <!-- ═══ Kaufbare Stücke direkt unter dem Hero (Redesign 01.11.2026): große Karte mit Bild, Name, Preis, „Jetzt bestellen“; ohne Verkauf die ruhige Archivkarte ═══ -->
+    <section class="lv-abschnitt lv-kauf" id="stuecke" aria-labelledby="stuecke-titel">
+        <div class="lv-abschnittskopf">
+            <h2 class="lv-serif" id="stuecke-titel">{% if verkauf_aktiv %}Jetzt im Shop{% elif verfuegbare|length == 1 %}Das erste Stück{% else %}Die ersten Stücke{% endif %}</h2>
+            <div class="lv-abschnittskopf-r">
+                <p>{% if not verkauf_aktiv %}{{ shop_oeffnet }} {% endif %}Jedes Stück ist von Hand mit Bleiche gemalt – keins gleicht dem anderen.</p>
+                <a class="lv-link" href="{% url 'produkte' %}">Alle Stücke</a>
+            </div>
+        </div>
+        {% if kaufkarten %}<ol class="lv-kaufliste">
+            {% for produkt in kaufkarten %}{% include 'shop1/teile/kaufkarte.html' %}{% endfor %}
+        </ol>{% endif %}
+        {% if karten_ruhig %}<ol class="lv-raster lv-raster-stuecke">
+            {% for produkt in karten_ruhig %}{% include 'shop1/teile/archiv_karte.html' %}{% endfor %}
+        </ol>{% endif %}
+    </section>
+    {% endif %}
     {% if echt_fotos %}
     <!-- ═══ So sieht es in echt aus: echte Handyfotos neben dem Studiobild; weitere Fotos kommen über ECHT_FOTOS ═══ -->
     <section class="lv-echt" id="echt" aria-labelledby="echt-titel">
@@ -124,36 +158,24 @@ View und Kontextprozessor), kein Datum hier.
     </section>
     {% endif %}
 
-    {% if verfuegbare %}
-    <!-- ═══ Verfügbare Stücke vor dem Archiv (P4): auch vor dem Verkaufsstart, dann ohne Preis; Karten aus teile/archiv_karte.html ═══ -->
-    <section class="lv-abschnitt" id="stuecke" aria-labelledby="stuecke-titel">
-        <div class="lv-abschnittskopf">
-            <h2 class="lv-serif" id="stuecke-titel">{% if verfuegbare|length == 1 %}Das erste Stück{% else %}Die ersten Stücke{% endif %}</h2>
-            <div class="lv-abschnittskopf-r">
-                <p>{% if not verkauf_aktiv %}{{ shop_oeffnet }} {% endif %}Jedes Stück gibt es genau einmal.</p>
-                <a class="lv-link" href="{% url 'produkte' %}">Alle Stücke</a>
-            </div>
+    {% if startfilm %}
+    <!-- ═══ Startfilm: erst nach Klick abspielen (preload=none), Poster als Bild, Ton nur auf Wunsch ═══ -->
+    <section class="lv-startfilm" id="startfilm" aria-labelledby="startfilm-titel">
+        <div class="lv-startfilm-text">
+            <p class="lv-nr">{{ startfilm.datum }}</p>
+            <h2 class="lv-serif" id="startfilm-titel">{{ startfilm.titel }}</h2>
+            <p>{{ startfilm.text }}</p>
+            <p class="lv-klein">{{ startfilm.hinweis }}</p>
         </div>
-        <ol class="lv-raster lv-raster-stuecke">
-            {% for produkt in verfuegbare %}{% include 'shop1/teile/archiv_karte.html' %}{% endfor %}
-        </ol>
+        <figure class="lv-startfilm-rahmen">
+            <video controls preload="none" playsinline width="960" height="540" poster="{% static 'shop1/images/luviq/'|add:startfilm.poster %}" aria-label="{{ startfilm.titel }}">
+                <source src="{% static 'shop1/video/'|add:startfilm.datei %}" type="video/mp4">
+                Dein Browser kann das Video nicht abspielen.
+            </video>
+            <figcaption>{{ startfilm.laenge }}, mit Ton. Startet erst, wenn du auf Abspielen drückst.</figcaption>
+        </figure>
     </section>
     {% endif %}
-
-    <!-- ═══ Wege: Unikate oder dein eigenes Teil (Linktexte beschreiben das Ziel) ═══ -->
-    <section class="lv-wege" id="wege" aria-labelledby="wege-titel">
-        <h2 class="lv-serif" id="wege-titel">Unikate oder dein eigenes Teil</h2>
-        <ul class="lv-wege-liste">
-            {% for titel, text, route, anker in wege %}{% if route != 'motiv_anfragen' or motivanfrage_aktiv %}
-            <li>
-                <h3 class="lv-serif">{{ titel }}</h3>
-                <p>{{ text }}</p>
-                <a class="lv-link" href="{% url route %}">{{ anker }}</a>
-            </li>
-            {% endif %}{% endfor %}
-        </ul>
-    </section>
-
     <!-- ═══ Motiv anfragen: Luisas Anfrage-System ═══ -->
     <section class="lv-anfragen" id="anfragen" aria-labelledby="anfragen-titel">
         <div>
@@ -228,10 +250,10 @@ View und Kontextprozessor), kein Datum hier.
     <!-- ═══ Archiv: eine wischbare Reihe kleiner Karten ═══ -->
     <section class="lv-abschnitt" id="archiv" aria-labelledby="archiv-titel">
         <div class="lv-abschnittskopf">
-            <h2 class="lv-serif" id="archiv-titel">Das Archiv</h2>
+            <h2 class="lv-serif" id="archiv-titel">Frühere Stücke</h2>
             <div class="lv-abschnittskopf-r">
-                <p>{% if verkauf_aktiv %}Alles, was bisher entstanden ist. Jedes Stück gibt es genau einmal.{% else %}Alles, was bisher entstanden ist. Diese ersten Stücke zeigen als Referenz, wie Luviq aussieht; sie sind bereits vergeben.{% endif %}</p>
-                {% if archiv_liste %}<a class="lv-link" href="{% url 'produkte' %}">Das ganze Archiv</a>{% endif %}
+                <p>Die ersten Stücke Nº 001–005 zeigen als Referenz, wie Luviq aussieht. Sie sind bereits vergeben und nicht mehr kaufbar.</p>
+                {% if archiv_liste %}<a class="lv-link" href="{% url 'produkte' %}">Alle früheren Stücke</a>{% endif %}
             </div>
         </div>
         {% if archiv_liste %}
