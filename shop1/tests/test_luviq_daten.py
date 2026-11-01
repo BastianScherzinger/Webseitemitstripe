@@ -237,8 +237,9 @@ class StartseiteP3Test(LuviqTestCase):
 
     def test_ohne_filme_steht_kein_video_im_dom(self):
         html = self.hole('/').content.decode()
-        self.assertNotIn('<video', html)
+        self.assertNotIn('<video data-film', html)  # kein Hintergrundfilm; der Startfilm (id="startfilm") ist ein eigener Abschnitt mit preload="none"
         self.assertNotIn('id="film"', html)
+        self.assertNotIn('autoplay', html)
 
     def test_mit_filmen_steht_ein_video_mit_poster_und_ohne_vorladen(self):
         # Das Manifest kennt nur vorhandene Dateien; für den noch nicht vorhandenen Film

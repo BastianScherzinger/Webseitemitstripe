@@ -50,7 +50,7 @@ HERKUNFT = {'ort': 'Alsfeld', 'region': 'Hessen', 'kreis': 'Vogelsbergkreis'}
 MARKENSATZ = 'Sag mir, was du willst — ich mal’s dir.'
 
 #: H1 der Startseite (P5b, Kundenpanel-Sieger B, 30.10.2026): nennt die Technik und das Unikat.
-HERO_H1 = 'Mit Bleiche gemalt. Jedes Stück gibt es nur einmal.'
+HERO_H1 = 'Mit Bleiche gemalt. Keins gleicht dem anderen.'
 
 #: Erfahrungswert von Luisa, **nie als Zusage** schreiben („meistens").
 DAUER = '2 bis 5 Tage'
@@ -137,9 +137,9 @@ FAQ_MOTIV = [
     ('Wie lange dauert es von der Anfrage bis zum fertigen Stück?',
      f'Meistens {DAUER}, je nach Motiv. Das ist ein Erfahrungswert und keine feste Zusage.'),
     ('Bekomme ich dasselbe Motiv zweimal?',
-     'Nein. Jedes Stück ist ein handbemaltes Einzelstück, und weil jedes Motiv frei von Hand '
-     'gemalt wird, entsteht kein zweites genauso. Ein Strich mit der Bleiche lässt sich '
-     'außerdem nicht zurücknehmen.'),
+     'Nicht 1:1. Jedes Stück ist von Hand mit Bleiche gemalt, und ein Strich mit der Bleiche '
+     'lässt sich nicht zurücknehmen. Bei einer Serie wie dem Engel-Shirt ist das Motiv immer '
+     'derselbe Engel, nur minimal anders. Dein eigenes Motiv entsteht als eigenes Stück.'),
     ('Wie pflege ich ein handbemaltes Stück?',
      PFLEGE + ' So bleibt die Bemalung lange schön.'),
     # Runde 3 (30.10.2026): Rechtslage bei Auftragsarbeiten, § 312g Abs. 2 Nr. 1 BGB.
@@ -234,7 +234,7 @@ _MONATE = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August
 #: ``status`` steht rechts in der Bildunterschrift: „Unikat“, kein Preis, kein Datum.
 HERO_STUECK = {'nummer': None, 'suche': ('engel',), 'name': 'Shirt mit Engel-Motiv',
                'alt': 'Studiobild (KI) aus dem echten Foto: Rückenansicht eines schwarzen T-Shirts auf einem Holzbügel vor dunkler Betonwand; darauf ein handgebleichtes Linienmotiv: ein Engel mit Flügeln hält eine Rose, rechts daneben ein kleiner Stern',
-               'status': 'Unikat'}
+               'status': 'Handarbeit'}
 
 #: Teaser vor dem Drop: (Datum, Titel, Bildadresse, Alternativtext). Leer ⇒
 #: der Abschnitt „Nº …, in Teilen" entfällt ganz – keine leeren Kacheln.
@@ -370,7 +370,7 @@ RESERVIERUNG_TAGE = 3
 #: Einzelstücke, lange Handarbeit). Das gesetzliche Widerrufsrecht gilt trotzdem (§ 312g BGB;
 #: ein fertiges Unikat ist keine Anfertigung nach Kundenwunsch) – der Satz sagt beides. Wer beim
 #: Widerruf die Rücksendekosten trägt (die Kundin, § 357 Abs. 5 BGB), steht in legal/generator/widerruf.html.
-UMTAUSCH_SATZ = ('Weil jedes Teil ein Einzelstück in langer Handarbeit ist, gibt es keinen Umtausch. '
+UMTAUSCH_SATZ = ('Weil jedes Teil in langer Handarbeit entsteht, gibt es über das Gesetz hinaus keinen Umtausch. '
                  'Dein gesetzliches Widerrufsrecht (14 Tage) bleibt davon unberührt.')
 
 
@@ -425,8 +425,8 @@ VERTRAUEN = _vertrauen()
 #: beschreibt das Ziel (SEO-Analyse § 4.2). ``motiv_anfragen`` erscheint nur, wenn
 #: die Motivanfrage läuft (Vorlage prüft ``motivanfrage_aktiv``).
 WEGE = [
-    ('Handbemalte Unikate',
-     'Hochwertige Hoodies, Pullover und Shirts, gebraucht oder neu, jedes Motiv nur einmal.',
+    ('Handbemalte Stücke',
+     'Hochwertige Hoodies, Pullover und Shirts, gebraucht oder neu, jedes von Hand gemalt, keins gleicht dem anderen.',
      'produkte', 'alle Stücke im Archiv'),
     ('Dein eigenes Teil',
      'Du beschreibst dein Motiv, bekommst Vorschläge, erst dann wird gemalt.',
@@ -437,6 +437,22 @@ WEGE = [
 #: ``static/shop1/video/``, Poster unter ``static/shop1/images/luviq/``, Titel,
 #: Untertitel). Leer ⇒ der Abschnitt wird nicht ausgegeben, kein Platzhalter.
 FILME = []
+
+#: Startfilm auf der Startseite (01.11.2026, Bastian: „1.11. Gewerbsstart, Fullgas“). Dateien liegen unter
+#: static/shop1/video/ und static/shop1/images/luviq/. Wird erst nach Klick geladen (preload="none").
+#: ``None`` ⇒ der Abschnitt entfällt. Der Film hat Ton; der Mittelteil („3 Monate später“) ist eine
+#: Vorstellung der Zukunft, keine echten Zahlen – das sagt der Hinweis ehrlich.
+STARTFILM = {
+    'datei': 'luviq-start.mp4', 'poster': 'luviq-start-poster.webp', 'poster_jpg': 'luviq-start-poster.jpg',
+    'datum': '01.11.2026', 'laenge': '72 Sekunden',
+    'titel': 'Verkaufsstart. Vollgas.',
+    'text': ('Heute geht Luviq an den Start: Gewerbe angemeldet, Shop offen, das erste Stück ist da. '
+             'Der Film zeigt, wie es los geht: vom Countdown bis zum Paket.'),
+    'hinweis': 'Die Szenen „3 Monate später“ sind eine Vorstellung, keine echten Verkaufszahlen.',
+    'beschreibung': ('Startfilm von Luviq: Countdown zum Verkaufsstart am 01.11.2026, die ersten Stücke, '
+                     'Luisa beim Malen mit Bleiche, Verpacken und Versand. Luviq-luebeck.com ist online.'),
+    'dauer_iso': 'PT1M12S',
+}
 
 #: Luviq-Shirts mit Logo: noch keine Daten, deshalb kein Abschnitt. Hook für später.
 LINIE_SHIRTS = None
@@ -450,7 +466,7 @@ LINIE_SHIRTS = None
 #: Leer ⇒ der Abschnitt entfällt.
 ECHT_TITEL = 'So sieht es in echt aus'
 ECHT_TEXT = ('So sieht das Shirt wirklich aus: Handyfoto vom echten Stück. Das Bild oben ist daraus '
-             'als Studiobild erstellt (KI). Jedes Unikat ist von Hand gemalt und sieht deshalb '
+             'als Studiobild erstellt (KI). Jedes Stück ist von Hand gemalt und sieht deshalb '
              'ein bisschen anders aus.')
 #: Kleine Bildunterschrift am Hero-Bild (P5b): sagt ehrlich, dass es ein KI-Studiobild ist.
 HERO_BILDUNTERSCHRIFT = 'Studiobild (KI) aus dem echten Foto'
@@ -541,7 +557,7 @@ def leiste(verkauf_aktiv, tag=None, heute=None):
     „frühestens“ bleibt dabei, wie im abgestimmten Satz ``verkauf.oeffnungs_satz``. Liegt der
     Tag hinter uns und der Verkauf ist noch aus, steht kein Datum mehr da."""
     if verkauf_aktiv:
-        return ('Jedes Stück nur einmal', 'Stücke ansehen', 'produkte', '')
+        return ('Jedes Stück von Hand gemalt', 'Stücke ansehen', 'produkte', '')
     heute = heute or timezone.localdate()
     if tag and heute < tag:
         satz = f'Shop öffnet frühestens am {tag.day}. {_MONATE[tag.month - 1]}'
@@ -593,19 +609,23 @@ ENGEL_STUECK = {
     'slug': 'engel-shirt-handgebleicht',
     'name': 'Engel-Shirt, mit Bleiche gemalt',
     'preis': '69.00',
-    'masse': 'Größe M',
+    'masse': 'Größe M (Second-Hand-Shirt), Maße auf Anfrage',  # Bastian 01.11.2026: Second Hand, ca. M; keine Maße erfunden
     'material': '100 % Baumwolle',
     'technik': 'Mit Bleiche von Hand gemalt',
-    'zustand': 'Neu',  # Bastian 30.10.2026: „eigentlich komplett neu“
+    'zustand': 'Gebraucht (Second Hand), von Hand mit Bleiche gemalt',  # Bastian 01.11.2026 (vorher „Neu“)
+    # Serienstück (Bastian 01.11.2026): mehrfach bestellbar, jedes Shirt wird neu von Hand gemalt, nie 1:1.
+    'serie': True,
+    'bearbeitungstage': 3,
     'seo_titel': 'Engel-Shirt mit Bleiche gemalt – Luviq Lübeck',
-    'seo_beschreibung': ('Unikat Nº 006: T-Shirt mit Engel, Rose und Stern, von Hand mit Bleiche '
-                         'gemalt. 100 % Baumwolle, Größe M. Luviq, Lübeck.'),
+    'seo_beschreibung': ('Engel-Shirt Nº 006: Second-Hand-T-Shirt mit Engel, Rose und Stern, von Hand '
+                         'mit Bleiche gemalt. 100 % Baumwolle, Größe M. Luviq, Lübeck.'),
     # Mit Verkauf (models.Produkt._seo_mit_verkauf, SEO-Analyse N2): Preis im Snippet erst, wenn die Seite ihn zeigt.
-    'seo_titel_verkauf': 'Engel-Shirt Nº 006: handbemaltes Unikat, {preis} € | Luviq',
-    'seo_beschreibung_verkauf': ('Engel-Shirt Nº 006: Unikat, von Hand mit Bleiche gemalt. 100 % Baumwolle, '
-                                 'Größe M, {preis} €, Versand deutschlandweit. Nur einmal vorhanden: jetzt ansehen.'),
-    'beschreibung': ('Ein T-Shirt aus 100 % Baumwolle in Größe M. Auf dem Rücken steht ein Engel mit '
-                     'Rose und einem Stern, von Hand gemalt – viel Handarbeit, genau einmal. '
+    'seo_titel_verkauf': 'Engel-Shirt Nº 006, mit Bleiche gemalt – {preis} € | Luviq',
+    'seo_beschreibung_verkauf': ('Engel-Shirt Nº 006: Second-Hand-Shirt, von Hand mit Bleiche gemalt, jedes '
+                                 'Stück neu. Größe M, {preis} €, Versand inklusive, Bearbeitung ca. 3 Werktage.'),
+    'beschreibung': ('Ein Second-Hand-T-Shirt aus 100 % Baumwolle in Größe M. Auf dem Rücken steht ein '
+                     'Engel mit Rose und einem Stern, von Hand mit Bleiche gemalt. Jedes Shirt dieser '
+                     'Serie male ich neu, das Motiv ist immer derselbe Engel und doch nie genau gleich. '
                      'Vorne ein kleines Luviq-Zeichen auf Herzhöhe.'),
     # Galerie (Runde 3, Bastian 30.10.2026): Rücken KI → Rücken echt → Vorne KI → Vorne echt →
     # Arbeitsplatz. Das Hauptbild ist das Studiobild (KI) des Rückens. Die Zusatzbilder tragen eine

@@ -5,7 +5,7 @@
 {% block meta_description %}Die passende Größe bei Einzelstücken ohne Anprobe finden: Maße mit eigener Kleidung vergleichen, Vintage-Schnitte einordnen, vorab bei Luviq anfragen.{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_title %}Wie finde ich bei Einzelstücken die richtige Größe? – Luviq Universe{% endblock %}
-{% block og_description %}Kein zweites Exemplar, keine zweite Größe: wie man Maße mit der eigenen Kleidung vergleicht, Vintage-Schnitte einordnet und vorab nachfragt.{% endblock %}
+{% block og_description %}Keine zweite Größe desselben Stücks: wie man Maße mit der eigenen Kleidung vergleicht, Vintage-Schnitte einordnet und vorab nachfragt.{% endblock %}
 {% block twitter_title %}Die richtige Größe bei Einzelstücken – Luviq Universe{% endblock %}
 {% block twitter_description %}Maße vergleichen statt Etikett lesen: Größenwahl bei handbemalten Vintage-Einzelstücken.{% endblock %}
 {% comment %}Freigabe der Betreiberin: siehe views/wissen.py. Die Bedingung steht IM Block, nicht darum herum (CLAUDE.md).{% endcomment %}
@@ -40,7 +40,7 @@
       "name": "Warum gibt es das Stück nur in einer Größe?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Weil jedes Stück von Luviq Universe ein handbemaltes Einzelstück auf einem bestimmten getragenen Kleidungsstück ist. Das Basisteil hat die Größe, die es hat; das Motiv wird von Hand für genau dieses Teil gemalt und nicht wiederholt. Eine zweite Größe hieße ein zweites Basisteil und ein zweites Motiv – also ein anderes Stück, nicht dasselbe."
+        "text": "Weil jedes Stück von Luviq Universe ein handbemaltes Einzelstück auf einem bestimmten getragenen Kleidungsstück ist. Das Basisteil hat die Größe, die es hat; das Motiv wird von Hand für genau dieses Teil gemalt und nie genau gleich wiederholt. Eine zweite Größe hieße ein zweites Basisteil und ein zweites Motiv – also ein anderes Stück, nicht dasselbe."
       }
     },
     {
@@ -100,14 +100,14 @@
     <header class="lv-wissen-kopf">
         <h1 class="lv-serif">Wie finde ich bei Einzelstücken die richtige Größe?</h1>
         <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
-        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt; was hier zu Kauf, Versand oder Widerruf steht, gilt erst ab Eröffnung des Shops. {% endif %}Bei einem Einzelstück gibt es keine zweite Größe – deshalb entscheidet der Vergleich mit der eigenen Kleidung: ein gut passendes Teil derselben Art flach hinlegen, Brustweite, Länge und Ärmellänge messen und mit den Maßen des gewünschten Stücks vergleichen. Das ist zuverlässiger als das Größenetikett, weil Vintage-Schnitte und ältere Konfektionsgrößen von heutigen Größen abweichen. {% if verkauf_aktiv %}Luviq Universe aus Lübeck verkauft handbemalte Second-Hand- und Vintage-Kleidung, jedes Stück genau einmal (1-of-1); die Maße eines bestimmten Teils lassen sich vor dem Kauf über das Kontaktformular erfragen.{% else %}Luviq Universe aus Lübeck ist eine Marke für handbemalte Second-Hand- und Vintage-Kleidung, jedes Stück genau einmal (1-of-1); die Maße eines bestimmten Teils lassen sich über das Kontaktformular erfragen.{% endif %} Eine Größentabelle mit Zentimeterwerten gibt es auf dieser Seite bewusst nicht – sie würde Stücke beschreiben, die es so nur einmal gibt.</p>
+        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt; was hier zu Kauf, Versand oder Widerruf steht, gilt erst ab Eröffnung des Shops. {% endif %}Bei einem Einzelstück gibt es keine zweite Größe – deshalb entscheidet der Vergleich mit der eigenen Kleidung: ein gut passendes Teil derselben Art flach hinlegen, Brustweite, Länge und Ärmellänge messen und mit den Maßen des gewünschten Stücks vergleichen. Das ist zuverlässiger als das Größenetikett, weil Vintage-Schnitte und ältere Konfektionsgrößen von heutigen Größen abweichen. {% if verkauf_aktiv %}Luviq Universe aus Lübeck verkauft handbemalte Second-Hand- und Vintage-Kleidung, jedes Stück von Hand gemalt, keins gleicht dem anderen; die Maße eines bestimmten Teils lassen sich vor dem Kauf über das Kontaktformular erfragen.{% else %}Luviq Universe aus Lübeck ist eine Marke für handbemalte Second-Hand- und Vintage-Kleidung, jedes Stück von Hand gemalt, keins gleicht dem anderen; die Maße eines bestimmten Teils lassen sich über das Kontaktformular erfragen.{% endif %} Eine Größentabelle mit Zentimeterwerten gibt es auf dieser Seite bewusst nicht – sie würde Stücke beschreiben, die so nie genau gleich wiederkommen.</p>
     </header>
 
     <div class="lv-wissen-liste">
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Warum gibt es das Stück nur in einer Größe?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Weil jedes Stück von Luviq Universe ein handbemaltes Einzelstück auf einem bestimmten getragenen Kleidungsstück ist. Das Basisteil hat die Größe, die es hat; das Motiv wird von Hand für genau dieses Teil gemalt und nicht wiederholt. Eine zweite Größe hieße ein zweites Basisteil und ein zweites Motiv – also ein anderes Stück, nicht dasselbe.</p>
+                <p class="lv-wissen-erst">Weil jedes Stück von Luviq Universe ein handbemaltes Einzelstück auf einem bestimmten getragenen Kleidungsstück ist. Das Basisteil hat die Größe, die es hat; das Motiv wird von Hand für genau dieses Teil gemalt und nie genau gleich wiederholt. Eine zweite Größe hieße ein zweites Basisteil und ein zweites Motiv – also ein anderes Stück, nicht dasselbe.</p>
                 <p>Das ist der Unterschied zu Kleidung aus der Serie, bei der dasselbe Modell in mehreren Größen produziert wird. {% if verkauf_aktiv %}Wer ein bestimmtes Stück unter <a href="{% url 'produkte' %}">Alle Unikate</a> möchte, kauft genau dieses Stück in genau dieser Größe.{% else %}Jedes Stück im <a href="{% url 'produkte' %}">Archiv</a> gibt es genau in der einen Größe seines Basisteils.{% endif %} Umso wichtiger ist es, die Größe vor dem Kauf zu klären – und dafür reicht ein Maßband und ein Teil aus dem eigenen Schrank.</p>
             
             </div>

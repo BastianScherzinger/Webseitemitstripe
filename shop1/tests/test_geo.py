@@ -440,7 +440,7 @@ class AntwortCrawlerTest(LuviqTestCase):
             z.lstrip('> ') for z in text.splitlines() if z.startswith('>')
         )
         self.assertGreater(len(einleitung), 150)
-        for begriff in ('Alsfeld', 'Luisa Brehler', 'Einzelstück'):
+        for begriff in ('Alsfeld', 'Luisa Brehler', 'von Hand gemalt'):
             with self.subTest(begriff=begriff):
                 self.assertIn(begriff, einleitung)
 

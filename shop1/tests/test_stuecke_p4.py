@@ -141,7 +141,7 @@ class EngelAnlegenTest(LuviqTestCase):
         self.assertEqual(stuecke.count(), 1)
         p = stuecke.get()
         self.assertEqual(p.preis, Decimal('69.00'))
-        self.assertEqual((p.nummer, p.masse, p.material), (6, 'Größe M', '100 % Baumwolle'))
+        self.assertEqual((p.nummer, p.masse, p.material), (6, 'Größe M (Second-Hand-Shirt), Maße auf Anfrage', '100 % Baumwolle'))
         self.assertTrue(p.aktiv and not p.vergeben and p.kaufbar)
         # Runde 3: Rücken echt, Vorderseite echt, Arbeitstisch (Platz 2 für das KI-Bild vorne frei).
         self.assertEqual(p.zusatzbilder.count(), 3)
@@ -163,21 +163,22 @@ class EngelAnlegenTest(LuviqTestCase):
         engel = Produkt.objects.get(slug=luviq_daten.ENGEL_STUECK['slug'])
         self.assertNotEqual(engel.nummer, 6)
 
-    def test_engel_ist_neu(self):
-        """Bastian 30.10.2026: das Engel-Shirt ist neu – „Neu“, nie „Gebraucht“."""
+    def test_engel_ist_second_hand_und_serie(self):
+        """Bastian 01.11.2026 (ersetzt „Neu“ vom 30.10.): Second-Hand-Shirt, ca. M, Serienstück."""
         self.anlegen()
         engel = Produkt.objects.get(slug='engel-shirt-handgebleicht')
-        self.assertEqual(engel.zustand, 'Neu')
-        self.assertTrue(engel.ist_neu)
+        self.assertEqual(engel.zustand, 'Gebraucht (Second Hand), von Hand mit Bleiche gemalt')
+        self.assertFalse(engel.ist_neu)
+        self.assertTrue(engel.serie)
+        self.assertEqual(engel.bearbeitungstage, 3)
         html = self.hole('/produkt/engel-shirt-handgebleicht/').content.decode()
-        self.assertNotIn('Gebraucht', html)
-        self.assertIn('<dt>Stück</dt><dd>Neu</dd>', html)
+        self.assertIn('<dt>Stück</dt><dd>Gebraucht (Second Hand), von Hand mit Bleiche gemalt</dd>', html)
 
     def test_leerer_zustand_wird_nachgetragen(self):
         self.anlegen()
         Produkt.objects.filter(slug='engel-shirt-handgebleicht').update(zustand='')
         self.anlegen()
-        self.assertEqual(Produkt.objects.get(slug='engel-shirt-handgebleicht').zustand, 'Neu')
+        self.assertEqual(Produkt.objects.get(slug='engel-shirt-handgebleicht').zustand, 'Gebraucht (Second Hand), von Hand mit Bleiche gemalt')
 
     def test_altstueck_behaelt_den_zustand(self):
         p = erzeuge_produkt('Alt')

@@ -368,8 +368,8 @@ class ArchivOhneVerkaufTest(_Grundlage):
 
     def test_ueberschriften_heissen_archiv(self):
         self.assertContains(self.hole('/produkte/'), 'id="archiv-titel">Das Archiv</h1>')
-        self.assertContains(self.hole('/'), 'id="archiv-titel">Das Archiv</h2>')
-        self.assertContains(self.hole('/'), 'Diese ersten Stücke zeigen als Referenz')
+        self.assertContains(self.hole('/'), 'id="archiv-titel">Frühere Stücke</h2>')
+        self.assertContains(self.hole('/'), 'zeigen als Referenz, wie Luviq aussieht')
 
     def test_llms_txt_nennt_das_archiv(self):
         llms = self.hole('/llms.txt').content.decode()
@@ -397,12 +397,12 @@ class ArchivMitVerkaufTest(_Grundlage):
                 self.assertNotIn('· Archiv', html)
                 self.assertNotIn('<span>vergeben</span>', html)
                 self.assertRegex(html, r'87[.,]50 €')
-        self.assertContains(self.hole('/'), 'Jedes Stück gibt es genau einmal.')
+        self.assertContains(self.hole('/'), 'Jedes Stück ist von Hand mit Bleiche gemalt – keins gleicht dem anderen.')
 
     def test_titel_mit_kaufen_und_antwortsatz_mit_preis(self):
         html = self.hole(self.produktseite).content.decode()
         self.assertIn('Schalterstueck kaufen – Luviq Universe, Lübeck', html)
-        self.assertIn('„Schalterstueck“ ist ein von Hand gemaltes Unikat von Luisa Brehler aus '
+        self.assertIn('„Schalterstueck“ ist ein von Hand gemaltes Stück von Luisa Brehler aus '
                       'Lübeck und kostet 87,50 €', html)
         self.assertNotIn('Archiv', self.produkt.meta_description)
 

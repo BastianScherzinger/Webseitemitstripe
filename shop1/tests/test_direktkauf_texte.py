@@ -80,7 +80,7 @@ class DirektkaufTexteTest(LuviqTestCase):
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
                 self.assertIn(f'href="/produkt/{self.stueck.slug}/#bestellen"', html)
-                self.assertIn('Direkt kaufen · 69 €', html)
+                self.assertIn('Jetzt bestellen', html)
 
     def test_stueckkarten_ohne_direktkauf_ohne_kaufknopf(self):
         with self.settings(DIREKTKAUF=False):
@@ -107,8 +107,9 @@ class DirektkaufTexteTest(LuviqTestCase):
         engel = erzeuge_produkt(name='Engel-Shirt, mit Bleiche gemalt', slug=d['slug'], preis=Decimal('69.00'),
                                 seo_titel=d['seo_titel'], seo_beschreibung=d['seo_beschreibung'],
                                 lagerbestand=1, aktiv=True, vergeben=False)
-        self.assertEqual(engel.meta_title, 'Engel-Shirt Nº 006: handbemaltes Unikat, 69 € | Luviq')
+        self.assertEqual(engel.meta_title, 'Engel-Shirt Nº 006, mit Bleiche gemalt – 69 € | Luviq')
         self.assertIn('Größe M, 69 €', engel.meta_description)
+        self.assertNotIn('nur einmal', engel.meta_description)
         self.assertLessEqual(len(engel.meta_description), 160)
         with self.settings(VERKAUF_AKTIV=False):
             self.assertEqual(engel.meta_title, d['seo_titel'])

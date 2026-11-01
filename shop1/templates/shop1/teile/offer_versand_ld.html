@@ -2,8 +2,7 @@
 Versand innerhalb Deutschlands ist im Preis enthalten (luviq_daten.VERSAND['kosten'] = 0),
 Bearbeitungszeit 1–2 Werktage (VERSAND['werktage']), Laufzeit so, dass die verbindliche
 Lieferfrist aus AGB § 5 (VERSAND['lieferfrist_werktage'], 5 Werktage) eingehalten ist:
-transitTime 1 bis Frist minus Bearbeitung (Gegenprüfung M1, 30.10.2026). Die Rückgabe verweist
-auf die eine MerchantReturnPolicy der Organization (base.html, #rueckgabe): gesetzliches
+transitTime 1 bis Frist minus Bearbeitung (Gegenprüfung M1, 30.10.2026). Die Rückgabe steht seit 01.11.2026 vollständig im Offer (Google liest @id-Verweise über getrennte Skriptblöcke nicht sicher), inhaltlich gleich der MerchantReturnPolicy der Organization (base.html, #rueckgabe): gesetzliches
 Widerrufsrecht 14 Tage, Rücksendung per Post; Rücksendekosten trägt laut Widerrufsbelehrung die
 Kundin, ein fester Betrag steht nicht fest – deshalb noch kein returnFees. Beginnt mit Komma: wird hinter das letzte Feld des Offer gesetzt.{% endcomment %},
         "shippingDetails": {
@@ -17,4 +16,12 @@ Kundin, ein fester Betrag steht nicht fest – deshalb noch kein returnFees. Beg
             "transitTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": {{ versand_transit_max }}, "unitCode": "DAY"}
           }
         },
-        "hasMerchantReturnPolicy": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#rueckgabe"}
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "DE",
+          "returnPolicyCountry": "DE",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 14,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "merchantReturnLink": "{{ request.scheme }}://{{ request.get_host }}{% url 'agb' %}#widerruf"
+        }

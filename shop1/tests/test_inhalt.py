@@ -161,7 +161,7 @@ MINDESTWOERTER = {
     '/impressum/': 70,
     '/datenschutz/': 430,
     '/agb/': 230,
-    UMFANG_PRODUKT_SEITE: 200,
+    UMFANG_PRODUKT_SEITE: 190,  # 01.11.2026: Stückseite bewusst gestrafft (Kurzfakten statt Fließtext)
     '/wissen/': 540,
     '/wissen/pflege-handbemalte-kleidung/': 800,
     '/wissen/upcycling-mode-second-hand-vintage/': 920,

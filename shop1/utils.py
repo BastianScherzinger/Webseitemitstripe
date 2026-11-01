@@ -164,7 +164,7 @@ def send_newsletter_email(produkt, subscribers):
         )
         text_content = (
             'Hallo,\n\n'
-            f'ein neues Stück ist da: „{produkt.name}“. Handbemalt, ein Einzelstück.\n\n'
+            f'ein neues Stück ist da: „{produkt.name}“. Von Hand mit Bleiche gemalt.\n\n'
             f'{knopf}: {produkt_url}\n\n'
             'Viele Grüße\nLuisa\n\n'
             'Du bekommst diese Mail, weil du dich für den Newsletter angemeldet und die Anmeldung '

@@ -5,9 +5,9 @@
 {% block meta_description %}Upcycling-Mode, Second Hand, Vintage: was die Begriffe bedeuten, wie sie sich unterscheiden und warum Einzelstücke nicht nachbestellbar sind. Jetzt erfahren.{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_title %}Was ist Upcycling-Mode? – Luviq Universe, Lübeck{% endblock %}
-{% block og_description %}Upcycling, Second Hand, Vintage: Begriffsklärung und Abgrenzung – und warum ein handbemaltes Einzelstück genau einmal existiert.{% endblock %}
+{% block og_description %}Upcycling, Second Hand, Vintage: Begriffsklärung und Abgrenzung – und warum ein handbemaltes Stück nicht 1:1 nachbestellbar ist.{% endblock %}
 {% block twitter_title %}Was ist Upcycling-Mode? – Luviq Universe{% endblock %}
-{% block twitter_description %}Begriffsklärung Upcycling, Second Hand und Vintage; warum ein 1-of-1 nicht nachbestellbar ist.{% endblock %}
+{% block twitter_description %}Begriffsklärung Upcycling, Second Hand und Vintage; warum ein handbemaltes Stück nicht 1:1 nachbestellbar ist.{% endblock %}
 {% comment %}Freigabe der Betreiberin: siehe views/wissen.py. Die Bedingung steht IM Block, nicht darum herum (CLAUDE.md).{% endcomment %}
 {% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
 
@@ -64,7 +64,7 @@
       "name": "Warum ist ein Einzelstück nicht nachbestellbar?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Weil beides nur einmal existiert: das Basisteil und das Motiv. Das Basisteil ist ein bestimmtes getragenes Kleidungsstück in einer bestimmten Größe mit eigenem Stoff und eigenen Spuren; das Motiv wird von Hand für genau dieses Teil gemalt und nicht wiederholt. {% if verkauf_aktiv %}Ist ein Stück verkauft, gibt es kein zweites Exemplar{% else %}Ist ein Stück vergeben, gibt es kein zweites Exemplar{% endif %}, keine andere Größe und keine zweite Auflage."
+        "text": "Weil beides nur einmal existiert: das Basisteil und das Motiv. Das Basisteil ist ein bestimmtes getragenes Kleidungsstück in einer bestimmten Größe mit eigenem Stoff und eigenen Spuren; das Motiv wird von Hand für genau dieses Teil gemalt und nie genau gleich wiederholt. {% if verkauf_aktiv %}Ist ein Stück verkauft, gibt es kein zweites Exemplar{% else %}Ist ein Stück vergeben, gibt es kein zweites Exemplar{% endif %}, keine andere Größe und keine zweite Auflage."
       }
     },
     {
@@ -108,7 +108,7 @@
     <header class="lv-wissen-kopf">
         <h1 class="lv-serif">Was ist Upcycling-Mode – und was unterscheidet sie von Second Hand?</h1>
         <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
-        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt; was hier zu Kauf, Versand oder Widerruf steht, gilt erst ab Eröffnung des Shops. {% endif %}Upcycling-Mode ist Kleidung, die schon getragen wurde und durch eine handwerkliche Bearbeitung zu einem neuen, höherwertigen Stück wird – bei Luviq Universe aus Lübeck durch Bemalung von Hand mit Pinsel und Bleiche. Second Hand ist dieselbe Kleidung ohne diese Bearbeitung: gebraucht, weiterverkauft, unverändert. Vintage bezeichnet Alter und Stil eines Stücks, nicht seinen Zustand; als Vintage gelten üblicherweise Stücke, die mindestens etwa 20 Jahre alt sind. Ein handbemaltes Upcycling-Stück gibt es genau einmal (1-of-1) – deshalb lässt es sich weder nachbestellen noch in einer zweiten Größe liefern.</p>
+        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt; was hier zu Kauf, Versand oder Widerruf steht, gilt erst ab Eröffnung des Shops. {% endif %}Upcycling-Mode ist Kleidung, die schon getragen wurde und durch eine handwerkliche Bearbeitung zu einem neuen, höherwertigen Stück wird – bei Luviq Universe aus Lübeck durch Bemalung von Hand mit Pinsel und Bleiche. Second Hand ist dieselbe Kleidung ohne diese Bearbeitung: gebraucht, weiterverkauft, unverändert. Vintage bezeichnet Alter und Stil eines Stücks, nicht seinen Zustand; als Vintage gelten üblicherweise Stücke, die mindestens etwa 20 Jahre alt sind. Ein handbemaltes Upcycling-Stück ist von Hand gemalt und gleicht keinem anderen – deshalb lässt es sich weder 1:1 nachbestellen noch in einer zweiten Größe liefern.</p>
     </header>
 
     <div class="lv-wissen-liste">
@@ -130,7 +130,7 @@
                     <li><strong>Vintage:</strong> ältere Kleidung, üblicherweise mindestens etwa 20 Jahre alt, mit dem Schnitt ihrer Zeit.</li>
                     <li><strong>Upcycling:</strong> vorhandene Kleidung, die durch handwerkliche Bearbeitung einen neuen Wert bekommt – bei Luviq Universe durch Bemalung mit Pinsel und Bleiche.</li>
                 </ul>
-                <p>Für die Käuferin bedeutet der Unterschied vor allem zweierlei. Erstens: Ein Second-Hand-Teil gibt es in ähnlicher Form oft mehrfach, ein Upcycling-Stück mit handgemaltem Motiv nur einmal. Zweitens: Ein Second-Hand-Teil trägt nur die Spuren seines früheren Lebens, ein Upcycling-Stück zusätzlich die Arbeit, die hineingesteckt wurde. Beides ist gebraucht; das Basisteil wird bei Luviq bewusst als getragene Kleidung ausgesucht, deren Stoff und Schnitt sich als Leinwand eignen.</p>
+                <p>Für die Käuferin bedeutet der Unterschied vor allem zweierlei. Erstens: Ein Second-Hand-Teil gibt es in ähnlicher Form oft mehrfach, ein Upcycling-Stück mit handgemaltem Motiv nie zweimal gleich. Zweitens: Ein Second-Hand-Teil trägt nur die Spuren seines früheren Lebens, ein Upcycling-Stück zusätzlich die Arbeit, die hineingesteckt wurde. Beides ist gebraucht; das Basisteil wird bei Luviq bewusst als getragene Kleidung ausgesucht, deren Stoff und Schnitt sich als Leinwand eignen.</p>
             
             </div>
         </section>
@@ -147,7 +147,7 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Warum ist ein Einzelstück nicht nachbestellbar?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Weil beides nur einmal existiert: das Basisteil und das Motiv. Das Basisteil ist ein bestimmtes getragenes Kleidungsstück in einer bestimmten Größe mit eigenem Stoff und eigenen Spuren; das Motiv wird von Hand für genau dieses Teil gemalt und nicht wiederholt. {% if verkauf_aktiv %}Ist ein Stück verkauft, gibt es kein zweites Exemplar{% else %}Ist ein Stück vergeben, gibt es kein zweites Exemplar{% endif %}, keine andere Größe und keine zweite Auflage.</p>
+                <p class="lv-wissen-erst">Weil beides nur einmal existiert: das Basisteil und das Motiv. Das Basisteil ist ein bestimmtes getragenes Kleidungsstück in einer bestimmten Größe mit eigenem Stoff und eigenen Spuren; das Motiv wird von Hand für genau dieses Teil gemalt und nie genau gleich wiederholt. {% if verkauf_aktiv %}Ist ein Stück verkauft, gibt es kein zweites Exemplar{% else %}Ist ein Stück vergeben, gibt es kein zweites Exemplar{% endif %}, keine andere Größe und keine zweite Auflage.</p>
                 <p>Das unterscheidet ein 1-of-1 von Kleidung aus der Serie, bei der dasselbe Modell in mehreren Größen und Farben nachproduziert wird. Wer ein bestimmtes Stück möchte, kauft genau dieses Stück – und prüft vorher, ob die Größe passt. {% if verkauf_aktiv %}Wie das ohne Anprobe geht, erklärt der Beitrag zur Größenwahl in diesem Wissensbereich. Das gesetzliche Widerrufsrecht von vierzehn Tagen gilt auch für Einzelstücke; die Einzelheiten stehen in den <a href="{% url 'agb' %}">AGB</a>.{% else %}Wie das ohne Anprobe geht, erklärt der <a href="{% url 'wissen_groesse' %}">Beitrag zur Größenwahl</a> in diesem Wissensbereich. Bei einem Kauf im Fernabsatz gilt allgemein ein <a href="https://www.gesetze-im-internet.de/bgb/__355.html" target="_blank" rel="noopener">gesetzliches Widerrufsrecht</a> von vierzehn Tagen, auch für Einzelstücke; Luviq Universe verkauft derzeit nichts.{% endif %}</p>
             
             </div>
@@ -157,7 +157,7 @@
             <h2 class="lv-serif">Ist Upcycling-Mode nachhaltiger als neue Kleidung?</h2>
             <div class="lv-wissen-antwort">
                 <p class="lv-wissen-erst">Upcycling vermeidet, dass für ein Kleidungsstück ein neues produziert wird, weil ein vorhandenes weiterverwendet wird. Wie groß die Ersparnis an Wasser, Energie oder Emissionen im Einzelfall ist, hängt vom jeweiligen Teil ab und lässt sich für ein einzelnes handbemaltes Stück nicht seriös beziffern; Zahlen dazu nennt diese Seite deshalb nicht.</p>
-                <p>Was sich ohne Zahl sagen lässt: Ein Teil, das weitergetragen wird, muss nicht entsorgt werden, und für sein Motiv wird kein neuer Stoff gewebt, gefärbt und zugeschnitten. Dazu kommt die Haltung, die ein Unikat mit sich bringt – ein Stück, das es nur einmal gibt, wird eher gepflegt und länger getragen als eines, das jederzeit ersetzbar ist. Wie man handbemalte Kleidung pflegt, damit sie lange hält, steht im Beitrag zur Pflege in diesem Wissensbereich.</p>
+                <p>Was sich ohne Zahl sagen lässt: Ein Teil, das weitergetragen wird, muss nicht entsorgt werden, und für sein Motiv wird kein neuer Stoff gewebt, gefärbt und zugeschnitten. Dazu kommt die Haltung, die ein Unikat mit sich bringt – ein Stück, das keinem anderen gleicht, wird eher gepflegt und länger getragen als eines, das jederzeit ersetzbar ist. Wie man handbemalte Kleidung pflegt, damit sie lange hält, steht im Beitrag zur Pflege in diesem Wissensbereich.</p>
             
             </div>
         </section>

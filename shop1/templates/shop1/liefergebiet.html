@@ -9,11 +9,11 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
 {% endcomment %}
 
 {% block title %}Versand &amp; Abholung: Lübeck und ganz Deutschland | Luviq{% endblock %}
-{% block meta_description %}Versand nach ganz Deutschland, persönliche Übergabe in Lübeck nach Absprache: So läuft es bei Luviq, dem Label für handbemalte Unikate. Hier nachlesen.{% endblock %}
+{% block meta_description %}Versand nach ganz Deutschland, persönliche Übergabe in Lübeck nach Absprache: So läuft es bei Luviq, dem Label für handbemalte Stücke. Hier nachlesen.{% endblock %}
 {% block og_title %}Versand &amp; Abholung | Luviq, Lübeck{% endblock %}
 {% block og_description %}Versand nach ganz Deutschland, Übergabe in Lübeck nach Absprache. Angefangen in Alsfeld, heute bemalt in Lübeck.{% endblock %}
 {% block twitter_title %}Versand &amp; Abholung | Luviq, Lübeck{% endblock %}
-{% block twitter_description %}Versand nach ganz Deutschland, Übergabe in Lübeck nach Absprache: handbemalte Unikate von Luviq.{% endblock %}
+{% block twitter_description %}Versand nach ganz Deutschland, Übergabe in Lübeck nach Absprache: handbemalte Stücke von Luviq.{% endblock %}
 
 {% block brotkrume_ld %}
 <script type="application/ld+json">
@@ -43,7 +43,7 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
           "name": "Gibt es einen Luviq-Laden in Lübeck oder Alsfeld, mit Öffnungszeiten?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Nein. Luviq ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% else %}Nein. Luviq ist ein Label im Aufbau mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% endif %}{% if abholung.text %} {{ abholung.text }}{% endif %} Luisa erreichst du über das Kontaktformular oder per E-Mail."
+            "text": "{% if verkauf_aktiv %}Nein. Luviq ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Stück wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% else %}Nein. Luviq ist ein Label im Aufbau mit Sitz in Lübeck. Jedes Stück wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% endif %}{% if abholung.text %} {{ abholung.text }}{% endif %} Luisa erreichst du über das Kontaktformular oder per E-Mail."
           }
         },
         {
@@ -97,7 +97,7 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
     <section class="lv-seitenkopf" aria-labelledby="versand-titel">
         <p class="lv-nr">Versand &amp; Abholung</p>
         <h1 class="lv-serif lv-satz" id="versand-titel">Versand nach ganz Deutschland{% if abholung.text %}, Übergabe in Lübeck{% endif %}</h1>
-        <p class="lv-lead">Luviq verschickt handbemalte Unikate nach {{ versand.gebiet }}{% if verkauf_aktiv %}, Lieferung innerhalb von {{ lieferfrist }} Werktagen{% endif %}.{% if abholung.text %} In Lübeck ist die persönliche Übergabe nach Absprache möglich.{% endif %} Die ersten Stücke, Nº 001 bis 005, sind noch in Alsfeld entstanden, heute malt Luisa Brehler in Lübeck.</p>
+        <p class="lv-lead">Luviq verschickt handbemalte Stücke nach {{ versand.gebiet }}{% if verkauf_aktiv %}, Lieferung innerhalb von {{ lieferfrist }} Werktagen{% endif %}.{% if abholung.text %} In Lübeck ist die persönliche Übergabe nach Absprache möglich.{% endif %} Die ersten Stücke, Nº 001 bis 005, sind noch in Alsfeld entstanden, heute malt Luisa Brehler in Lübeck.</p>
     </section>
 
     <section class="lv-abschnitt" aria-labelledby="versand-ganz-deutschland">
@@ -136,7 +136,7 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
         <div class="lv-faq">
             <div>
                 <h3>Gibt es einen Luviq-Laden in Lübeck oder Alsfeld, mit Öffnungszeiten?</h3>
-                <p>{% if verkauf_aktiv %}Nein. Luviq ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% else %}Nein. Luviq ist ein Label im Aufbau mit Sitz in Lübeck. Jedes Unikat wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% endif %}{% if abholung.text %} {{ abholung.text }}{% endif %} Luisa erreichst du über das Kontaktformular oder per E-Mail.</p>
+                <p>{% if verkauf_aktiv %}Nein. Luviq ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Stück wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% else %}Nein. Luviq ist ein Label im Aufbau mit Sitz in Lübeck. Jedes Stück wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% endif %}{% if abholung.text %} {{ abholung.text }}{% endif %} Luisa erreichst du über das Kontaktformular oder per E-Mail.</p>
             </div>
             <div>
                 <h3>{% if verkauf_aktiv %}Wie schnell kommt eine Bestellung an?{% else %}Kann ich schon bestellen?{% endif %}</h3>

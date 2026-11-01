@@ -26,7 +26,7 @@ class HeroSiegerTest(LuviqTestCase):
 
     def test_hero_text_knoepfe_und_ereignisse(self):
         html = self.text()
-        self.assertIn('Mit Bleiche gemalt. Jedes Stück gibt es nur einmal.', html)
+        self.assertIn('Mit Bleiche gemalt. Keins gleicht dem anderen.', html)
         self.assertIn('Nº 006 · Engel-Shirt', html)
         self.assertIn('Luisa Brehler aus Lübeck zieht die Farbe mit Bleiche aus dem Stoff', html)
         self.assertIn('data-ereignis="hero_engel"', html)

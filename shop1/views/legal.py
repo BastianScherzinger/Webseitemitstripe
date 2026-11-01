@@ -243,13 +243,16 @@ def _llms_produktzeilen(basis, mit_preis):
         beschreibung = ' '.join(produkt.beschreibung.split())[:160]
         adresse = f"- [{produkt.name}]({basis}{produkt.get_absolute_url()})"
         if mit_preis:
+            if produkt.serie:
+                beschreibung = (f"Serienstück, {produkt.masse or 'Größe M'}, Bearbeitung ca. "
+                                f"{produkt.bearbeitungstage or 3} Werktage – ") + beschreibung
             zeilen.append(f"{adresse}: {produkt.preis} EUR"
                           + (f" – {beschreibung}" if beschreibung else ""))
         else:
             zeilen.append(adresse + (f": {beschreibung}" if beschreibung else ""))
     if not zeilen:
-        zeilen.append("- Zurzeit ist kein Einzelstück verfügbar." if mit_preis
-                      else "- Zurzeit ist kein Einzelstück eingestellt.")
+        zeilen.append("- Zurzeit ist kein Stück verfügbar." if mit_preis
+                      else "- Zurzeit ist kein Stück eingestellt.")
     return zeilen
 
 
@@ -276,7 +279,7 @@ def _llms_kopf_mit_verkauf(basis):
         "> angefangen in Alsfeld (Hessen), heute in Lübeck. Luisa Brehler malt",
         "> hochwertige Teile, gebraucht oder neu, von Hand mit Bleiche",
         "> (die Farbe wird aus dem Stoff gezogen, nichts ist aufgedruckt); jedes",
-        "> Stück ist ein Einzelstück (1-of-1). Lieferung deutschlandweit innerhalb",
+        "> Stück ist von Hand gemalt, keins gleicht dem anderen. Lieferung deutschlandweit innerhalb",
         f"> von {LIEFERFRIST} Werktagen.",
         "> Einen Laden zum Reinschauen gibt es nicht, der Verkauf läuft",
         "> ausschließlich über diese Seite.",
@@ -293,11 +296,15 @@ def _llms_kopf_mit_verkauf(basis):
         "- Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer",
         "  berechnet (Kleinunternehmerstatus)",
         f"- Lieferung: innerhalb von {LIEFERFRIST} Werktagen, deutschlandweit (AGB, § 5)",
+        "- Serienstück Engel-Shirt: Second-Hand-Shirt, Größe M (Maße auf Anfrage), von Hand mit Bleiche gemalt;",
+        "  jedes Shirt wird für die Bestellung neu gemalt und gleicht nie 1:1 dem anderen; Bearbeitungszeit ca. 3 Werktage, dann Versand",
+        "- Rückgabe: gesetzliches Widerrufsrecht von 14 Tagen für Verbraucher (§ 312g BGB), Details in AGB und Widerrufsbelehrung",
+        f"- Startfilm zum Verkaufsstart am 01.11.2026 (72 Sekunden, mit Ton): {basis}{reverse('home')}#startfilm",
         "",
         "## Seiten",
         "",
-        f"- [Startseite]({basis}{reverse('home')}): Überblick, aktuelle Einzelstücke",
-        f"- [Alle Unikate]({basis}{reverse('produkte')}): jedes verfügbare Einzelstück",
+        f"- [Startseite]({basis}{reverse('home')}): Überblick, aktuelle Stücke",
+        f"- [Alle Stücke]({basis}{reverse('produkte')}): jedes verfügbare Stück",
         f"- [Über uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
         f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
         "Vorschläge bekommen - kostenlos, keine Bestellung",
@@ -305,7 +312,7 @@ def _llms_kopf_mit_verkauf(basis):
         "Versand deutschlandweit",
         f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
         "",
-        "## Einzelstücke",
+        "## Stücke",
         "",
     ]
 
@@ -327,9 +334,9 @@ def _llms_fragen_mit_verkauf(basis):
         "## Häufige Fragen",
         "",
         "### Was ist Luviq Universe?",
-        "Ein Online-Shop aus Lübeck für handbemalte Unikate, gebraucht oder neu,",
+        "Ein Online-Shop aus Lübeck für handbemalte Stücke, gebraucht oder neu,",
         "immer hochwertig, angefangen in Alsfeld. Gründerin Luisa Brehler malt die",
-        "Teile von Hand zu 1-of-1 Kunstwerken. Jedes Stück ist ein Unikat.",
+        "Teile von Hand zu handbemalten Stücken. Jedes Stück ist von Hand gemalt, keins gleicht dem anderen.",
         "",
         "### Wo sitzt Luviq Universe?",
         "In Lübeck (Schleswig-Holstein); dort malt Luisa Brehler heute.",
@@ -342,16 +349,16 @@ def _llms_fragen_mit_verkauf(basis):
         f"{LIEFERFRIST} Werktagen.",
         "",
         "### Was verkauft Luviq Universe?",
-        "Handbemalte Unikate, gebraucht oder neu, immer hochwertig, zum Beispiel",
-        "Shirts, Hoodies und Pullover. Jedes Stück ist ein Einzelstück und nur",
-        "einmal zu haben.",
+        "Handbemalte Stücke, gebraucht oder neu, immer hochwertig, zum Beispiel",
+        "Shirts, Hoodies und Pullover. Jedes Stück ist von Hand gemalt, keins gleicht",
+        "dem anderen; eine Serie wie das Engel-Shirt wird für jede Bestellung neu gemalt.",
         "",
         "### Wie bestellt man?",
         *([f"Ohne Konto, direkt auf der Seite des Stücks ({basis}{reverse('produkte')}): Name, E-Mail-Adresse",
-           "und Anschrift angeben, das Stück ist dann reserviert. Die Rechnung mit den Zahlungsdaten kommt",
+           "und Anschrift angeben (ein Serienstück wie das Engel-Shirt bleibt weiter bestellbar, ein Einzelstück ist dann reserviert). Die Rechnung mit den Zahlungsdaten kommt",
            "per E-Mail; bezahlt wird im Voraus per Überweisung."]
           if direktkauf_aktiv() else
-          [f"Über diese Seite: Einzelstück auf {basis}{reverse('produkte')} auswählen,",
+          [f"Über diese Seite: Stück auf {basis}{reverse('produkte')} auswählen,",
            "in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder",
            "Vorab-Überweisung."]),
         "",
@@ -394,7 +401,7 @@ def _llms_kopf_ohne_verkauf(basis):
         "> Luviq Universe ist eine Modemarke im Aufbau, angefangen in Alsfeld",
         "> (Hessen), heute in Lübeck. Luisa Brehler malt hochwertige Teile,",
         "> gebraucht oder neu, von Hand mit Bleiche (die Farbe wird aus dem Stoff",
-        "> gezogen, nichts ist aufgedruckt); jedes Stück ist ein Einzelstück (1-of-1).",
+        "> gezogen, nichts ist aufgedruckt); jedes Stück ist von Hand gemalt, keins gleicht dem anderen.",
         "> Die bisherigen Stücke sind bereits vergeben und stehen im Archiv. Das erste",
         "> neue Stück ist das Engel-Shirt Nº 006 (Größe M, 100 % Baumwolle).",
         f"> {oeffnungs_satz()} Wer davon erfahren will, trägt sich auf der Startseite",
@@ -432,8 +439,8 @@ def _llms_fragen_ohne_verkauf(basis):
         "",
         "### Was ist Luviq Universe?",
         "Eine Modemarke im Aufbau aus Lübeck, angefangen in Alsfeld. Gründerin Luisa Brehler",
-        "malt hochwertige Teile, gebraucht oder neu, von Hand zu 1-of-1",
-        "Kunstwerken. Jedes Stück ist ein Unikat.",
+        "malt hochwertige Teile, gebraucht oder neu, von Hand mit Bleiche zu handbemalten",
+        "Stücken. Jedes Stück ist von Hand gemalt, keins gleicht dem anderen.",
         "",
         "### Wo sitzt Luviq Universe?",
         "In Lübeck (Schleswig-Holstein); dort malt Luisa Brehler heute.",
@@ -684,7 +691,7 @@ def _produkt_xml(produkt, base_url):
         ki = 'Studiobild (KI) aus dem echten Foto: ' if produkt.bild_ist_ki else ''
         xml += (f'      <image:title>{ki}{name_esc} (Nº {produkt.archiv_nummer}) – Luviq Universe'
                 '</image:title>\n')
-        xml += f'      <image:caption>{ki}Handbemaltes 1-of-1-Unikat: {name_esc}</image:caption>\n'
+        xml += f'      <image:caption>{ki}Handbemaltes Stück: {name_esc}</image:caption>\n'
         xml += '    </image:image>\n'
 
     return xml + '  </url>\n'

@@ -23,7 +23,7 @@
             {% comment %}§ 312j Abs. 2 BGB / Art. 246a EGBGB: wesentliche Merkmale und Preis jedes Stücks unmittelbar vor dem Bestellknopf.{% endcomment %}
             <dl class="lv-daten">
                 {% for p in posten %}
-                <dt>{{ p.produkt_name }} · {% if p.zustand_text %}{{ p.zustand_text }}{% else %}Unikat, von Hand bemalt{% endif %}{% if p.menge > 1 %} · {{ p.menge }}×{% endif %}</dt><dd>{{ p.produkt_preis|floatformat:2 }} €</dd>
+                <dt>{{ p.produkt_name }} · {% if p.zustand_text %}{{ p.zustand_text }}{% else %}von Hand bemalt{% endif %}{% if p.menge > 1 %} · {{ p.menge }}×{% endif %}</dt><dd>{{ p.produkt_preis|floatformat:2 }} €</dd>
                 {% endfor %}
                 <dt>Zwischensumme</dt><dd>{{ gesamt_betrag_original|floatformat:2 }} €</dd>
                 {% if hat_rabatt %}

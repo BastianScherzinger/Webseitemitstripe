@@ -33,7 +33,7 @@ def bestellen_faq():
             'frage': 'Brauche ich ein Konto, um bei Luviq Universe zu bestellen?',
             'antwort': ('Nein. Bestellt wird direkt auf der Seite des Stücks, ohne Konto und ohne Passwort: '
                         'Du gibst deinen Namen, deine E-Mail-Adresse und die Lieferanschrift an, mehr braucht es nicht. '
-                        'Einen Warenkorb gibt es nicht; jedes Stück ist ein Einzelstück und wird einzeln bestellt.'),
+                        'Einen Warenkorb gibt es nicht; jedes Stück wird einzeln bestellt.'),
             'mehr': format_html(
                 'Ein Konto mit Benutzername und Passwort gibt es nur für das {}. Was der Shop bei einer Bestellung '
                 'speichert, steht im Beitrag {} in diesem Wissensbereich und in der {}.',

@@ -174,15 +174,16 @@ class VersandUndRueckgabeTest(_MitEngel):
         self.assertNotIn('returnFees', regel)  # nicht belegt (Widerrufsbelehrung fehlt)
         produkt = next(k for k in knoten if k.get('@type') == 'Product')
         angebot = produkt['offers']
-        self.assertEqual(angebot['hasMerchantReturnPolicy'], {'@id': regel['@id']})
+        self.assertEqual(angebot['hasMerchantReturnPolicy']['merchantReturnDays'], 14)
+        self.assertEqual(angebot['hasMerchantReturnPolicy']['returnPolicyCategory'], regel['returnPolicyCategory'])
         versand = angebot['shippingDetails']
         self.assertEqual(versand['shippingRate'], {'@type': 'MonetaryAmount', 'value': '0.00', 'currency': 'EUR'})
         self.assertEqual(versand['shippingDestination']['addressCountry'], 'DE')
         zeit = versand['deliveryTime']['handlingTime']
-        self.assertEqual((zeit['minValue'], zeit['maxValue'], zeit['unitCode']), (1, 2, 'DAY'))
+        self.assertEqual((zeit['minValue'], zeit['maxValue'], zeit['unitCode']), (3, 3, 'DAY'))  # Serienstück: Bearbeitung ca. 3 Werktage
         # Seit der Gegenprüfung (M1, 30.10.2026) gilt eine verbindliche Lieferfrist von 5 Werktagen:
         # Laufzeit = Frist minus Bearbeitung (höchstens 3 Tage).
-        self.assertEqual(versand['deliveryTime']['transitTime']['maxValue'], 3)
+        self.assertEqual(versand['deliveryTime']['transitTime']['maxValue'], 2)
         # Produktübersicht: dieselben Angaben je Offer.
         uebersicht = _knoten(self.hole('/produkte/').content.decode())
         for k in uebersicht:

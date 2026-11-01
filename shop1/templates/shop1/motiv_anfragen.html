@@ -54,7 +54,7 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
             <p class="lv-lead">Gerade nehme ich keine neuen Motivanfragen an. Trag dich auf der Startseite in die Warteliste ein, dann erfährst du als Erstes, wann es wieder geht.</p>
             <p><a class="lv-knopf" href="{% url 'home' %}#warteliste">Zur Warteliste</a></p>
             {% else %}
-            <p class="lv-lead">Beschreib mir kurz, was dir vorschwebt. Ich bin Luisa aus Lübeck, ich schick dir Vorschläge, und wir entscheiden zusammen. Das kostet nichts und ist keine Bestellung. Jedes Stück ist ein handbemaltes Einzelstück, kein zweites entsteht genauso. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.</p>
+            <p class="lv-lead">Beschreib mir kurz, was dir vorschwebt. Ich bin Luisa aus Lübeck, ich schick dir Vorschläge, und wir entscheiden zusammen. Das kostet nichts und ist keine Bestellung. Jedes Stück ist von Hand gemalt, keins gleicht dem anderen. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.</p>
             <ol class="lv-stationen" aria-label="So geht es weiter">
                 {% for titel, beschreibung in stationen %}<li><span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span>{{ titel }} — {{ beschreibung }}</li>{% endfor %}
             </ol>

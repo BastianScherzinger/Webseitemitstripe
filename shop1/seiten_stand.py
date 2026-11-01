@@ -18,29 +18,31 @@ Modul wird bei jedem Request aus dem Kontextprozessor gelesen.
 
 #: Routenname → Datum der letzten inhaltlichen Änderung (ISO 8601).
 SEITEN_STAND = {
+    # 01.11.2026: Redesign (Kaufkarte, Startfilm), Engel-Shirt als Serienstück – Texte „nur einmal“ umformuliert;
+    # agb nur in der Lieferklausel (Bearbeitungszeit Serienstück).
     # 31.10.2026: Direktkauf ohne Konto – Texte zu Bestellung, Zahlung, Vormerken und Verlinkung
     # (home, produkte, ueber_uns, liefergebiet, kontakt, motiv_anfragen, wissen*, agb, datenschutz).
     # 23.10.2026: Sitz Lübeck laut Gewerbeanmeldung, Alsfeld als Herkunft – Titel,
     # Beschreibungen und Texte aller Seiten; deshalb tragen alle dieses Datum.
-    'home':         '2026-10-31',
-    'produkte':     '2026-10-31',
-    'gaestebuch':   '2026-10-31',
-    'ueber_uns':    '2026-10-31',
-    'liefergebiet': '2026-10-31',
-    'kontakt':      '2026-10-31',
+    'home':         '2026-11-01',
+    'produkte':     '2026-11-01',
+    'gaestebuch':   '2026-11-01',
+    'ueber_uns':    '2026-11-01',
+    'liefergebiet': '2026-11-01',
+    'kontakt':      '2026-11-01',
     'impressum':    '2026-10-30',  # VSBG-Satz (Rechts-Runde 30.10.)
     'datenschutz':  '2026-10-31',  # vollständige Erklärung (Rechts-Runde 30.10.)
-    'agb':          '2026-10-31',  # AGB §§ 1–14 + Widerrufsbelehrung (Rechts-Runde 30.10.)
+    'agb':          '2026-11-01',  # AGB §§ 1–14 + Widerrufsbelehrung (Rechts-Runde 30.10.)
     # IS19 (27.09.2026): Erklärsätze der Stationen, Dauer, Bestätigungshinweis.
     # 02.10.2026 (L1-B1): Titel, Beschreibung, Vorschaubild und Twitter-Angaben neu
     # (IS03/06/07/09/10/11/13/36/39, EIG137) — home, produkte, gaestebuch, ueber_uns,
     # liefergebiet, kontakt, datenschutz und motiv_anfragen tragen deshalb dieses Datum.
-    'motiv_anfragen': '2026-10-31',
+    'motiv_anfragen': '2026-11-01',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
-    'wissen':           '2026-10-31',
-    'wissen_pflege':    '2026-10-30',
-    'wissen_upcycling': '2026-10-31',
-    'wissen_groesse':   '2026-10-30',
+    'wissen':           '2026-11-01',
+    'wissen_pflege':    '2026-11-01',
+    'wissen_upcycling': '2026-11-01',
+    'wissen_groesse':   '2026-11-01',
     'wissen_motiv':     '2026-10-23',  # Entwurf, noindex
     # Ratgeber (30.10.2026, C8), seit Runde 3 veröffentlicht; ISO 8601 mit Uhrzeit und Zone:
     'wissen_bleach':      '2026-10-30T14:15:00+01:00',  # veröffentlicht, Runde 3
@@ -48,7 +50,7 @@ SEITEN_STAND = {
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
     'wissen_bestellen': '2026-10-31',
-    'wissen_widerruf':  '2026-10-30',
+    'wissen_widerruf':  '2026-11-01',
     'wissen_konto':     '2026-10-31',
 }
 
