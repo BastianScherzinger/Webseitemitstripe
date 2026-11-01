@@ -11,6 +11,13 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 01.11.2026 (mittags) – AGB: Serie statt „Unikat (1-of-1)“, Zahlungsplan
+
+- AGB § Vertragsschluss: „Jedes Produkt … Unikat (1-of-1)“ → „Jedes Stück wird einzeln von Hand gemalt; Stücke einer Serie sind ähnlich, nie gleich.“
+  Warum: Seit der Engel-Serie (Migration 0034) wird ein Motiv mehrfach verkauft; Wortlaut von Bastian freigegeben 01.11.
+- Neu `doku/46-ZAHLUNGEN-PLAN.md`: Revolut-Zahlungslink (Stufe 0), Zahlungslink-Knopf (Stufe 1), PayPal live mit „Später bezahlen“ (Stufe 2).
+  Warum: Kunden wollen nicht nur Vorkasse (Testpanel 11/50); Revolut bietet kein Klarna/Pay-later.
+
 ## 01.11.2026 (morgens) – Menü „Shop“, Navigation ohne Sonderfarbe
 
 - Menüpunkt „Unikate“ heißt jetzt „Shop“ (Kopf, Handy-Menü, Fuß, Brotkrume, Wissen-Verweise, Kontakt-/Bewertungs-Danke). Sichtbare Texte, die das Engel-Shirt „Unikat/Einzelstück/nur einmal“ nannten, auf Serienstück-Sinn gebracht. `legal/agb.html` Z. 64 bewusst unberührt (Entscheidung Luisa/Bastian).
