@@ -1,8 +1,8 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-11-01
-stand: 2026-11-01
+stand: 2026-11-02
+stand: 2026-11-02
 status: vollständig
 fortschritt: 97
 zusammenfassung: 01.11.2026 abends – Rabattcodes live (168942e): 10 % Erstbestellung im Hero (BLEICHENGEL-…), Karten- und Freunde-Code, FAQ/llms.txt/AGB § 3, Plan doku/47-RABATTCODES.md; Bug-Prüfung mit 2 Fixes, Rest in 80-AUFGABEN. 01.11.2026 nachts – Umbau Startseite/Stückseite (Kaufkarte, engere Abstände), Engel-Shirt als Serienstück (mehrfach bestellbar), Startfilm, Produkt-Schema für Händlereinträge (siehe LOGBUCH, doku/45-MERCHANT-CENTER.md). 29.10.2026 – Gewerbe LUVIQ angemeldet (Beginn 01.11.2026, § 19 UStG, USt-IdNr. beantragt). Zweig recht/2026-10-29-verkaufsstart (nicht gepusht) - Startsperre für den Verkauf, Hinweis „Shop öffnet frühestens am 01.11.2026“, Generator-Ablagen, USt-IdNr.-Platzhalter, Einwilligungs-Gerüst; Prüfbericht in Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29. Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
@@ -61,14 +61,14 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 01.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 90,4 von 100**, Reifegrad „Referenz“. 345 von 410 Regeln an 24 URLs und 246 Dateien (50.239 Zeilen) geprüft.
+**Messung vom 02.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 90,3 von 100**, Reifegrad „Referenz“. 345 von 410 Regeln an 24 URLs und 251 Dateien (51.103 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
 | Recht & Vertrauen | **68** | Brauchbar |
 | Erreichbarkeit & Postfach | **72** | Brauchbar |
+| Konversion | **82** | Solide |
 | SEO — Inhalt | **83** | Solide |
-| Konversion | **85** | Solide |
 | Substanz & Reichweite | **88** | Solide |
 | SEO — Technik | **88** | Solide |
 | Code-Qualität & Projektreife | **91** | Referenz |
@@ -82,7 +82,7 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 
 Keine Sperre greift.
 
-Quelltext: 246 Dateien, **27 Befunde**, davon 2 kritisch und 7 wichtig.
+Quelltext: 251 Dateien, **32 Befunde**, davon 2 kritisch und 9 wichtig.
 
 Kritische Befunde:
 
