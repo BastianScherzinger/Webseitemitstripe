@@ -41,7 +41,7 @@ def rabatt_faq(code):
     }
 
 
-def bestellen_faq(code=None):
+def bestellen_faq(code=None, engel_url=''):
     """Fragen und Antworten des Bestellbeitrags: Liste aus ``{'frage', 'antwort', 'mehr'}``.
 
     ``code``: öffentlicher Rabattcode oder ``None``; mit Code kommt eine Frage dazu (nach „Wie bezahle ich“)."""
@@ -68,7 +68,9 @@ def bestellen_faq(code=None):
                         'solange das Formular nicht im Bild ist.'),
             'mehr': format_html(
                 'Die {} zeigt jedes verfügbare Stück mit Preis. Ein Stück, das dort nicht mehr auftaucht, ist verkauft '
-                '– Luviq legt kein Motiv ein zweites Mal auf.', produkte),
+                '– Luviq legt kein Motiv ein zweites Mal auf.', produkte)
+            + (format_html(' Das <a href="{}">Engel-Shirt</a> ist das aktuelle Stück zum direkten Bestellen.', engel_url)
+               if engel_url else ''),
         },
         {
             'frage': 'Welche Angaben verlangt die Bestellung?',

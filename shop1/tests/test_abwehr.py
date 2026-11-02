@@ -234,7 +234,8 @@ class NewsletterOhneSkriptTest(LuviqTestCase):
         html = self.hole('/').content.decode()
         self.assertIn('über den Link in jeder Mail', html)
         self.assertNotIn('mit einem Klick', html)  # der Link führt auf eine Seite mit Bestätigungsknopf
-        self.assertIn('brehlerluisa@gmail.com', html)
+        # SEO-Upgrade 02.11.2026 (A1): die Adresse steht nicht mehr im Schema der Startseite (stand nur dort).
+        self.assertNotIn('brehlerluisa@gmail.com', html)
         # ohne gültiges Token führt der Link zurück zur Startseite – es gibt ihn aber
         self.assertEqual(self.hole('/newsletter/abmelden/').status_code, 302)
 

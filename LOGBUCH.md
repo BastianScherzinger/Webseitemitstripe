@@ -11,6 +11,19 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 02.11.2026 – SEO/GEO-Upgrade (Zweig `seo/2026-11-02-luviq`, Plan A1–A5, A7–A10, B1)
+
+- **A1/A3 Schema:** Organization ohne Straße, PLZ und E-Mail (Ort, Region, Land bleiben), Typ `OnlineStore` statt `ClothingStore`/`LocalBusiness`, `areaServed` Deutschland, kein `priceRange`; `contactPoint` nur mit URL der Kontaktseite (der eigene Knoten in `kontakt.html` mit Gmail entfällt). *Warum:* Die Anschrift ist eine Wohnung, es gibt keinen Laden. Rechtstexte, GPSR-Zeile und llms-full-Auszüge bleiben unverändert (Entscheidung der Leitung).
+- **A2 Archiv:** Stücke mit `vergeben=True` sind `VisualArtwork` ohne `offers`, nie `SoldOut`. *Warum:* kein sichtbarer Preis, nie verkauft.
+- **A4 Links:** acht Seiten verlinken das Engel-Shirt im Fließtext (Pflege, Größe, Upcycling, Bleichfleck, Bestellen, Luisa, Versand, Motiv anfragen), die Engel-Seite verlinkt Pflege, Größe, Versand.
+- **A5:** Engel-Seite mit sichtbarer FAQ „T-Shirt mit Engel“ + FAQPage (`luviq_daten.engel_faq`, vier Fragen aus belegten Angaben, kein Rabattcode).
+- **A7:** `/wissen/bleichfleck-uebermalen/` mit Abschnitt „Lassen sich Bleichflecken aus Kleidung entfernen?“ (Antwort zuerst, BfR und Verbraucherzentrale NRW als Quellen).
+- **A8:** `llms.txt` trennt bestellbare Stücke (mit Preis) vom Archiv (ohne Preis).
+- **A9:** Startseite: ein Satz „Einen Laden zum Anschauen gibt es nicht …“ im Luisa-Absatz (keine neue Sektion).
+- **A10/B1:** neue Seite `/wissen/bleach-painting-anleitung/`, verlinkt von Bleach-Painting-, Bleichfleck- und Pflegeseite sowie der Übersicht. Quellen am 02.11.2026 abgerufen und gelesen: BfR-Verbraucherinfo „Risiko Vergiftungsunfälle bei Kindern“ (2017), BfR-Presseinformation 07/2005, Verbraucherzentrale NRW „Wie viel Chemie im Haushalt muss sein?“.
+- **Nicht umgesetzt:** A6/A11 (Archivtexte und Bild-Alt liegen in der Datenbank, Pflege durch Luisa), B2, C, D.
+- **Tests:** neu `test_seo_upgrade_2026_11_02`; angepasst `_basis`, `test_geo`, `test_inhalt`, `test_seo` (neue Seite in den Listen, Feed 5 → 6 Beiträge); Aufbau-Referenz gezielt für `/wissen/`, Bleach-Painting-, Bleichfleck-, Pflegeseite ergänzt (zusätzliche Links bzw. Überschrift) und für die neue Seite angelegt.
+
 ## 01.11.2026 (abends) – Rabattcodes für die erste Bestellung + Fixes aus der Bug-Prüfung
 
 - Neu: Modell `Rabattcode` (Migration 0035), Prüfung in `shop1/rabatt.py`, Feld „Rabattcode“ + „Einlösen“ im Direktkauf,

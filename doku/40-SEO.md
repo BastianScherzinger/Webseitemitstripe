@@ -1,7 +1,7 @@
 ---
 bereich: seo
 titel: SEO und GEO
-stand: 2026-10-23
+stand: 2026-11-02
 status: vollständig
 fortschritt: 98
 zusammenfassung: Stand 02.10.2026: Wissensbereich frei und indexierbar (17 Sitemap-URLs), llms.txt und llms-full.txt, Feed, sameAs mit Instagram, TikTok und Google-Profil, @id-Schema mit speakable, Apex-301; gemessen SEO-Inhalt 94, SEO-Technik 99, GEO 100. Offen: Indexierung beantragen (Bastian, TS46), zwei Entscheidungen (Stückseiten noindex, Pfad /ueber_uns/) und die Alt-Texte je Stück (später).
@@ -186,3 +186,6 @@ Stand 02.10.2026, gegen `origin/main` und die Live-Seite geprüft. Erledigt und 
 | Bei Bastian: Entscheidung, ob `/ueber_uns/` auf `/ueber-uns/` mit 301 umzieht (Bindestrich ist Googles Empfehlung). Gegen: die Adresse ist live und vermutlich indexiert, jede Umbenennung kostet Zeit bis zum Umzug bei Google; dass `VL11` die Seite nicht als Über-uns-Seite erkennt, ist ein Messfehler des Musters (an das Overview-Team gemeldet). Bei Ja: neuer Pfad in `shop1/urls.py`, 301 vom alten, Pfade in Tests und `aufbau_referenz.json` | VL11 | `shop1/urls.py` |
 | Später: Alt-Texte der Stückbilder je Stück beschreiben statt „Foto: <Name>, handbemaltes Einzelstück von Luviq Universe“. Grund: die zwei Stücke „Custom print hoodie“ tragen denselben Alt-Text; ein eigener Text braucht die Beschreibung je Stück von Luisa (siehe „Beim Kunden“); die Bilder der Startseite haben beschreibende Alt-Texte | IS25 | Templates |
 
+## Update 02.11.2026 (SEO/GEO-Upgrade, Zweig `seo/2026-11-02-luviq`)
+
+Schema ohne Privatdaten (Organization: Ort/Land, `OnlineStore`, `contactPoint` mit Kontakt-URL), Archivstücke als `VisualArtwork` ohne Angebot, `llms.txt` mit getrenntem Archiv, Engel-Seite mit FAQ + FAQPage, acht zusätzliche Inhaltslinks auf das Engel-Shirt, neuer Abschnitt „Bleichflecken entfernen“, neue Seite `/wissen/bleach-painting-anleitung/` (Quellen BfR, Verbraucherzentrale NRW). Offen für Luisa: Archivtexte und Bild-Alt (Datenbank). Details: `LOGBUCH.md` 02.11.2026.

@@ -597,6 +597,29 @@ VERKAUFT_WORT = 'Verkauft'
 BLEICHE_SATZ = ('Mit Bleiche gemalt: Die Farbe wird aus dem Stoff gezogen, nichts ist aufgedruckt. '
                 'Deshalb steht das Motiv in Bleich-Beige auf dem schwarzen Stoff.')
 
+def engel_faq(bearbeitung, lieferfrist):
+    """Vier Fragen zum Engel-Shirt für die Stückseite (SEO-Upgrade 02.11.2026, A5): sichtbar und als FAQPage.
+
+    Nur, was die Seite und diese Datei schon belegen: Größe und Material (``ENGEL_STUECK``), Technik
+    (``BLEICHE_SATZ``), Pflege (``PFLEGE``), Bearbeitungszeit und Lieferfrist (AGB § 5). Kein Rabattcode, keine
+    neue Zahl."""
+    bearbeitung_satz = (f'Die Bearbeitung dauert ca. {bearbeitung} Werktage, dann geht das Shirt in den Versand. '
+                        if bearbeitung else '')
+    return [
+        ('Welche Größe hat das Engel-Shirt?',
+         f'Das Engel-Shirt ist ein Second-Hand-Shirt in Größe M aus {ENGEL_STUECK["material"]}. Die genauen '
+         'Maße nennt Luisa auf Anfrage über das Kontaktformular.'),
+        ('Ist der Engel auf das Shirt gedruckt?',
+         'Nein, der Engel ist von Hand mit Bleiche gemalt. Die Farbe wird aus dem Stoff gezogen, nichts ist '
+         'aufgedruckt; deshalb steht das Motiv in Bleich-Beige auf dem schwarzen Stoff.'),
+        ('Wie pflege ich das Engel-Shirt?', PFLEGE),
+        ('Wie lange dauert es bis zur Lieferung?',
+         f'Jedes Engel-Shirt wird für deine Bestellung neu von Hand gemalt. {bearbeitung_satz}Geliefert wird '
+         f'innerhalb von {lieferfrist} Werktagen ab deiner Überweisung; der Versand innerhalb Deutschlands ist '
+         'im Preis enthalten.'),
+    ]
+
+
 #: Statische Bilder, die KI-Studiobilder aus einem echten Foto sind (Präfixe). Ihr Alt-Text,
 #: der Sitemap-Bildtitel und die Bildunterschrift nennen das ehrlich (Analyse 30.10.2026, C7).
 KI_BILD_PRAEFIXE = ('shop1/images/luviq/hero-engel',)

@@ -38,11 +38,11 @@
       "hasPart": [{% for p in produkte_liste %}{"@id": "{{ request.scheme }}://{{ request.get_host }}{{ p.get_absolute_url }}#product"}{% if not forloop.last %}, {% endif %}{% endfor %}]
     }{% for p in produkte_liste %},
     {
-      "@type": "{% if verkauf_aktiv %}Product{% else %}VisualArtwork{% endif %}",
+      "@type": "{% if verkauf_aktiv and not p.vergeben %}Product{% else %}VisualArtwork{% endif %}",
       "@id": "{{ request.scheme }}://{{ request.get_host }}{{ p.get_absolute_url }}#product",
       "name": "{{ p.name|escapejs }}",
       "url": "{{ request.scheme }}://{{ request.get_host }}{{ p.get_absolute_url }}",
-      "{% if verkauf_aktiv %}brand{% else %}creator{% endif %}": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}{% if verkauf_aktiv %},
+      "{% if verkauf_aktiv and not p.vergeben %}brand{% else %}creator{% endif %}": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}{% if verkauf_aktiv and not p.vergeben %},
       "offers": {
         "@type": "Offer",
         "@id": "{{ request.scheme }}://{{ request.get_host }}{{ p.get_absolute_url }}#offer",

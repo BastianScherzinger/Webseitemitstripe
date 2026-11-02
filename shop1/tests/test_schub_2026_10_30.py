@@ -109,8 +109,9 @@ class EntwurfsartikelTest(LuviqTestCase):
     def test_artikelschema_mit_uhrzeit_und_zone(self):
         for pfad in ENTWUERFE:
             artikel = next(k for k in _schema(self.hole(pfad).content.decode()) if k.get('@type') == 'Article')
-            for feld in ('datePublished', 'dateModified'):
-                self.assertRegex(artikel[feld], r'^2026-10-30T\d{2}:\d{2}:\d{2}\+01:00$', f'{pfad} {feld}')
+            self.assertRegex(artikel['datePublished'], r'^2026-10-30T\d{2}:\d{2}:\d{2}\+01:00$', f'{pfad} datePublished')
+            # dateModified: Runde 3 (30.10.) oder das echte Änderungsdatum des SEO-Upgrades (02.11.2026).
+            self.assertRegex(artikel['dateModified'], r'^2026-(10-30T\d{2}:\d{2}:\d{2}\+01:00|11-02)$', f'{pfad} dateModified')
             self.assertTrue(artikel['author']['@id'].endswith('#luisa'))
 
     def test_antwortsatz_steht_in_den_ersten_40_woertern(self):

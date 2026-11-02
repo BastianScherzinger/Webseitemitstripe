@@ -44,6 +44,7 @@ FAQ_SEITEN = (
     '/wissen/groesse-bei-einzelstuecken/',
     '/wissen/so-entsteht-dein-motiv/',
     '/wissen/bleach-painting/',
+    '/wissen/bleach-painting-anleitung/',
     '/wissen/bleichfleck-uebermalen/',
     '/wissen/bestellen-und-bezahlen/',
     '/wissen/widerruf-und-ruecksendung/',

@@ -35,15 +35,6 @@
       "description": "Kontaktformular für Luviq Universe – handbemalte Stücke, gebraucht oder neu, immer hochwertig.",
       "mainEntity": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
     },
-    {
-      "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer service",
-        "availableLanguage": {"@type": "Language", "name": "German"},
-        "email": "brehlerluisa@gmail.com"
-      }
-    },
     {% comment %}Beide Fragen und beide Antworten stehen woertlich im sichtbaren Text weiter unten. Wer hier etwas aendert, muss es dort mitaendern - der Test test_jede_frage_im_schema_steht_auch_auf_der_seite schlaegt sonst an.{% endcomment %}
     {
       "@type": "FAQPage",

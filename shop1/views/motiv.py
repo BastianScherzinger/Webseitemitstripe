@@ -30,6 +30,7 @@ from .. import luviq_daten, mails, spamschutz
 from ..models import Motivanfrage
 from ..utils import send_brevo_email
 from ._helpers import mail_ergebnis_vermerken, zu_viele_anfragen
+from .wissen import engel_url
 
 _log = logging.getLogger('shop1')
 
@@ -139,6 +140,7 @@ def _seite(request, werte=None, fehler=None, status=200):
         'stationen': luviq_daten.ANFRAGE_STATIONEN,
         'faq': luviq_daten.FAQ_MOTIV,
         'dauer': luviq_daten.DAUER,
+        'engel_url': engel_url(),
         'laengen': LAENGEN,
     }, status=status)
 

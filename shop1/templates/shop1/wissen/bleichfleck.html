@@ -45,6 +45,14 @@
     },
     {
       "@type": "Question",
+      "name": "Lassen sich Bleichflecken aus Kleidung entfernen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nein, ein Bleichfleck lässt sich nicht entfernen, denn die Bleiche hat den Farbstoff im Stoff abgebaut, und was fehlt, kommt durch Waschen nicht zurück. Möglich ist nur, die Stelle zu überdecken: ausmalen, das Teil nachfärben oder aus dem Fleck ein Motiv machen."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "Warum bleibt ein Bleichfleck sichtbar?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -105,10 +113,19 @@
         </section>
 
         <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Lassen sich Bleichflecken aus Kleidung entfernen?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Nein, ein Bleichfleck lässt sich nicht entfernen, denn die Bleiche hat den Farbstoff im Stoff abgebaut, und was fehlt, kommt durch Waschen nicht zurück. Möglich ist nur, die Stelle zu überdecken: ausmalen, das Teil nachfärben oder aus dem Fleck ein Motiv machen.</p>
+                <p>Das gilt für Flecken auf schwarzer und auf anderer dunkler Kleidung und auch nach dem Waschen: Die helle Stelle bleibt, weil dort kein Farbstoff mehr sitzt. Ein weiteres Behandeln mit Bleiche oder bleichenden Reinigern hilft nicht, es kann den Fleck vergrößern. Welche Wege es zum Überdecken gibt, steht weiter unten unter „Wie kann man einen Bleichfleck kaschieren?“.</p>
+                <p>Wer zu Hause mit Chlorreiniger arbeitet, sollte ihn nie mit anderen Reinigern mischen: Das Bundesinstitut für Risikobewertung schreibt in seiner <a href="https://www.bfr.bund.de/cm/350/risiko-vergiftungsunfaelle-bei-kindern.pdf" target="_blank" rel="noopener">Verbraucherinfo zu Vergiftungsunfällen bei Kindern</a> (2017): „Nie ein chlorhaltiges Produkt mit anderen Reinigern mischen. Es kann gefährliches Chlorgas entstehen!“ Die <a href="https://www.verbraucherzentrale.de/sites/default/files/2018-10/chemie_im_haushalt.pdf" target="_blank" rel="noopener">Verbraucherzentrale NRW</a> warnt ebenso vor der Kombination von Chlorreiniger mit sauren Badreinigern.</p>
+            </div>
+        </section>
+
+        <section class="lv-wissen-frage">
             <h2 class="lv-serif">Warum bleibt ein Bleichfleck sichtbar?</h2>
             <div class="lv-wissen-antwort">
                 <p class="lv-wissen-erst">Weil Bleiche den Farbstoff nicht nur verdeckt, sondern abbaut. Die Stelle ist danach heller und hat oft einen eigenen Farbton, auf schwarzem Stoff häufig ein warmes Beige oder einen rötlichen Ton.</p>
-                <p>Dieselbe Wirkung nutzt das Bleach Painting absichtlich: Dort ist der Bleichstrich das Motiv. Was das ist und wie Luisa Brehler dabei vorgeht, steht im Beitrag <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a>.</p>
+                <p>Dieselbe Wirkung nutzt das Bleach Painting absichtlich: Dort ist der Bleichstrich das Motiv. Was das ist und wie Luisa Brehler dabei vorgeht, steht im Beitrag <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a>.{% if engel_url %} Wie ein gewollter Bleichauftrag am Ende aussieht, zeigt das <a href="{{ engel_url }}">Engel-Shirt</a>.{% endif %}</p>
             </div>
         </section>
 
@@ -135,7 +152,7 @@
             <h2 class="lv-serif">Wie entsteht ein Bleichfleck überhaupt?</h2>
             <div class="lv-wissen-antwort">
                 <p class="lv-wissen-erst">Meist durch Spritzer bleichmittelhaltiger Produkte: Reiniger für Bad und WC, Desinfektionsmittel oder Waschmittel mit Bleichzusatz, manchmal auch Hautpflegeprodukte mit bleichenden Wirkstoffen wie Benzoylperoxid.</p>
-                <p>Auf dunklen Textilien fallen die hellen Stellen besonders deutlich auf.</p>
+                <p>Auf dunklen Textilien fallen die hellen Stellen besonders deutlich auf. Wer die helle Farbe bewusst als Motiv malen möchte, findet die Schritte in der <a href="{% url 'wissen_bleach_anleitung' %}">Bleach Painting Anleitung für T-Shirts</a>.</p>
             </div>
         </section>
     </div>

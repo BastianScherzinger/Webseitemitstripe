@@ -134,6 +134,16 @@ WISSEN_BEITRAEGE = {
         },
         'veroeffentlicht': '2026-10-30T11:45:00+01:00',
     },
+    # SEO-Upgrade 02.11.2026 (B1): die Anleitung zum Selbermachen; „Was ist Bleach Painting?“ bleibt das Was.
+    # Sicherheitsangaben aus abgerufenen Quellen (BfR, Verbraucherzentrale NRW), siehe Vorlage.
+    'bleach-painting-anleitung': {
+        'url_name': 'wissen_bleach_anleitung',
+        'template': 'shop1/wissen/bleach_anleitung.html',
+        'titel': 'Bleach Painting Anleitung: T-Shirt mit Bleiche bemalen',
+        'kurz': 'Bleach Painting selbst machen: was man braucht, welches T-Shirt passt, wie man sicher arbeitet, die Schritte vom Unterlegen bis zum Waschen und die typischen Fehler.',
+        'freigegeben': True,
+        'veroeffentlicht': '2026-11-02',
+    },
     'bleichfleck-uebermalen': {
         'url_name': 'wissen_bleichfleck',
         'template': 'shop1/wissen/bleichfleck.html',
@@ -290,7 +300,7 @@ def wissen_beitrag(request, slug):
     if slug == 'bestellen-und-bezahlen' and direktkauf_aktiv():
         from .. import wissen_direktkauf
         from ..rabatt import oeffentlicher_code
-        kontext['faq_direkt'] = wissen_direktkauf.bestellen_faq(oeffentlicher_code())
+        kontext['faq_direkt'] = wissen_direktkauf.bestellen_faq(oeffentlicher_code(), engel_url())
     return render(request, beitrag['template'], kontext)
 
 
