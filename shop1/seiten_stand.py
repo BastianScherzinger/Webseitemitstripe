@@ -24,11 +24,11 @@ SEITEN_STAND = {
     # (home, produkte, ueber_uns, liefergebiet, kontakt, motiv_anfragen, wissen*, agb, datenschutz).
     # 23.10.2026: Sitz Lübeck laut Gewerbeanmeldung, Alsfeld als Herkunft – Titel,
     # Beschreibungen und Texte aller Seiten; deshalb tragen alle dieses Datum.
-    'home':         '2026-11-01',
+    'home':         '2026-11-02',  # + Satz „Online-Shop, kein Laden“ (SEO-Upgrade)
     'produkte':     '2026-11-01',
     'gaestebuch':   '2026-11-01',
-    'ueber_uns':    '2026-11-01',
-    'liefergebiet': '2026-11-01',
+    'ueber_uns':    '2026-11-02',
+    'liefergebiet': '2026-11-02',
     'kontakt':      '2026-11-01',
     'impressum':    '2026-10-30',  # VSBG-Satz (Rechts-Runde 30.10.)
     'datenschutz':  '2026-11-01',  # + Rabattcode-Abgleich (01.11.)
@@ -37,19 +37,20 @@ SEITEN_STAND = {
     # 02.10.2026 (L1-B1): Titel, Beschreibung, Vorschaubild und Twitter-Angaben neu
     # (IS03/06/07/09/10/11/13/36/39, EIG137) — home, produkte, gaestebuch, ueber_uns,
     # liefergebiet, kontakt, datenschutz und motiv_anfragen tragen deshalb dieses Datum.
-    'motiv_anfragen': '2026-11-01',
+    'motiv_anfragen': '2026-11-02',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
-    'wissen':           '2026-11-01',
-    'wissen_pflege':    '2026-11-01',
-    'wissen_upcycling': '2026-11-01',
-    'wissen_groesse':   '2026-11-01',
+    'wissen':           '2026-11-02',
+    'wissen_pflege':    '2026-11-02',
+    'wissen_upcycling': '2026-11-02',
+    'wissen_groesse':   '2026-11-02',
     'wissen_motiv':     '2026-10-23',  # Entwurf, noindex
     # Ratgeber (30.10.2026, C8), seit Runde 3 veröffentlicht; ISO 8601 mit Uhrzeit und Zone:
-    'wissen_bleach':      '2026-10-30T14:15:00+01:00',  # veröffentlicht, Runde 3
-    'wissen_bleichfleck': '2026-10-30T14:15:00+01:00',  # veröffentlicht, Runde 3
+    'wissen_bleach':      '2026-11-02',  # + Link auf die Anleitung (SEO-Upgrade)
+    'wissen_bleichfleck': '2026-11-02',  # + Abschnitt „Bleichflecken entfernen“ (SEO-Upgrade)
+    'wissen_bleach_anleitung': '2026-11-02',  # neu (SEO-Upgrade B1)
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
-    'wissen_bestellen': '2026-11-01',
+    'wissen_bestellen': '2026-11-02',
     'wissen_widerruf':  '2026-11-01',
     'wissen_konto':     '2026-10-31',
 }
@@ -78,6 +79,7 @@ SEITEN_NAME = {
     'wissen_motiv':     'Wie entsteht aus meiner Idee ein handbemaltes Stück?',
     'wissen_bleach':      'Was ist Bleach Painting?',
     'wissen_bleichfleck': 'Bleichfleck übermalen: geht das?',
+    'wissen_bleach_anleitung': 'Bleach Painting Anleitung: T-Shirt mit Bleiche bemalen',
     'wissen_bestellen': 'Wie bestelle und bezahle ich bei Luviq Universe?',
     'wissen_widerruf':  'Widerruf und Rücksendung: was gilt bei einem Einzelstück?',
     'wissen_konto':     'Was speichert der Shop – und brauche ich ein Konto?',

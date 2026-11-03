@@ -168,6 +168,7 @@ MINDESTWOERTER = {
     '/wissen/groesse-bei-einzelstuecken/': 855,
     '/wissen/so-entsteht-dein-motiv/': 380,  # Entwurf; gemessen siehe Logbuch
     '/wissen/bleach-painting/': 500,  # Entwurf 30.10.2026
+    '/wissen/bleach-painting-anleitung/': 800,  # B1 02.11.2026
     '/wissen/bleichfleck-uebermalen/': 450,  # Entwurf 30.10.2026
     '/wissen/bestellen-und-bezahlen/': 1110,
     '/wissen/widerruf-und-ruecksendung/': 1015,
@@ -680,7 +681,7 @@ class Widersprueche02102026Test(LuviqTestCase):
         """EIG128: Der Feed führt die drei freigegebenen Beiträge, nicht die
         Kaufweg-Beiträge, solange der Verkauf aus ist."""
         xml = self.hole('/feed/').content.decode()
-        self.assertEqual(xml.count('<item>'), 5)  # seit Runde 3 (30.10.2026) mit Bleach und Bleichfleck
+        self.assertEqual(xml.count('<item>'), 6)  # + Bleach-Anleitung (02.11.2026)
         self.assertNotIn('/wissen/bestellen-und-bezahlen/', xml)
 
     # EIG78 --------------------------------------------------------------

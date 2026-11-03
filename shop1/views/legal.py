@@ -135,6 +135,8 @@ WISSEN_SEITEN = [
      'Richtung nennen, Vorschläge bekommen, gemeinsam entscheiden, Bleiche mit dem Pinsel; Dauer meist 2 bis 5 Tage'),
     ('wissen_bleach', 'Was ist Bleach Painting?',
      'Malen mit Bleiche auf dunklem Stoff, Unterschied zu Druck, geeignete Stoffe, Sicherheitsregeln, Ablauf bei Luviq'),
+    ('wissen_bleach_anleitung', 'Bleach Painting Anleitung: T-Shirt mit Bleiche bemalen',
+     'Material, passendes T-Shirt, Sicherheit mit Quellen (BfR, Verbraucherzentrale), sechs Schritte, typische Fehler, Pflege'),
     ('wissen_bleichfleck', 'Bleichfleck übermalen: geht das?',
      'Warum ein Bleichfleck bleibt, Fleck ausmalen, nachfärben oder zum Motiv machen, worauf man vorher achtet'),
     ('wissen_bestellen', 'Wie bestelle und bezahle ich bei Luviq Universe?',
@@ -236,23 +238,37 @@ def _llms_txt_ohne_verkauf(basis):
 
 
 def _llms_produktzeilen(basis, mit_preis):
-    """Die Einzelstücke der llms.txt: mit Verkauf samt Preis, sonst als Archiv."""
+    """Die Einzelstücke der llms.txt: mit Verkauf nur kaufbare Stücke samt Preis, das Archiv
+    (vergeben, nicht bestellbar) getrennt und ohne Preis; ohne Verkauf alle als Archiv."""
+    def beschrieben(produkt):
+        return ' '.join(produkt.beschreibung.split())[:160]
+
+    produkte = list(Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am')[:50])
     zeilen = []
-    produkte = Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am')[:50]
-    for produkt in produkte:
-        beschreibung = ' '.join(produkt.beschreibung.split())[:160]
-        adresse = f"- [{produkt.name}]({basis}{produkt.get_absolute_url()})"
-        if mit_preis:
-            if produkt.serie:
-                beschreibung = (f"Serienstück, {produkt.masse or 'Größe M'}, Bearbeitung ca. "
-                                f"{produkt.bearbeitungstage or 3} Werktage – ") + beschreibung
-            zeilen.append(f"{adresse}: {produkt.preis} EUR"
-                          + (f" – {beschreibung}" if beschreibung else ""))
-        else:
-            zeilen.append(adresse + (f": {beschreibung}" if beschreibung else ""))
+    if not mit_preis:
+        for produkt in produkte:
+            beschreibung = beschrieben(produkt)
+            zeilen.append(f"- [{produkt.name}]({basis}{produkt.get_absolute_url()})"
+                          + (f": {beschreibung}" if beschreibung else ""))
+        if not zeilen:
+            zeilen.append("- Zurzeit ist kein Stück eingestellt.")
+        return zeilen
+    for produkt in (p for p in produkte if p.kaufbar):
+        beschreibung = beschrieben(produkt)
+        if produkt.serie:
+            beschreibung = (f"Serienstück, {produkt.masse or 'Größe M'}, Bearbeitung ca. "
+                            f"{produkt.bearbeitungstage or 3} Werktage – ") + beschreibung
+        zeilen.append(f"- [{produkt.name}]({basis}{produkt.get_absolute_url()}): {produkt.preis} EUR"
+                      + (f" – {beschreibung}" if beschreibung else ""))
     if not zeilen:
-        zeilen.append("- Zurzeit ist kein Stück verfügbar." if mit_preis
-                      else "- Zurzeit ist kein Stück eingestellt.")
+        zeilen.append("- Zurzeit ist kein Stück verfügbar.")
+    archiv = [p for p in produkte if not p.kaufbar]
+    if archiv:
+        zeilen += ["", "### Archiv (vergeben, nicht bestellbar, ohne Preis)", ""]
+        for produkt in archiv:
+            beschreibung = beschrieben(produkt)
+            zeilen.append(f"- [{produkt.name}]({basis}{produkt.get_absolute_url()})"
+                          + (f": {beschreibung}" if beschreibung else ""))
     return zeilen
 
 
@@ -304,7 +320,7 @@ def _llms_kopf_mit_verkauf(basis):
         "## Seiten",
         "",
         f"- [Startseite]({basis}{reverse('home')}): Überblick, aktuelle Stücke",
-        f"- [Alle Stücke]({basis}{reverse('produkte')}): jedes verfügbare Stück",
+        f"- [Alle Stücke]({basis}{reverse('produkte')}): bestellbare Stücke und Archiv der vergebenen",
         f"- [Über uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
         f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
         "Vorschläge bekommen - kostenlos, keine Bestellung",

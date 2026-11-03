@@ -117,7 +117,7 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
         {% for frage, antwort in faq %}<div class="lv-wissen-frage">
             <h2 class="lv-serif">{{ frage }}</h2>
             <div class="lv-wissen-antwort"><p class="lv-wissen-erst">{{ antwort }}</p>{% if forloop.last %}
-                <p>Mehr dazu im Beitrag <a href="{% url 'wissen_pflege' %}">Wie pflege ich handbemalte Kleidung?</a>; zur Größe bei Einzelstücken steht etwas unter <a href="{% url 'wissen_groesse' %}">Die richtige Größe finden</a>. Wie die Technik funktioniert, erklärt <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a>; wenn schon ein Bleichfleck auf einem Teil ist, hilft <a href="{% url 'wissen_bleichfleck' %}">Bleichfleck übermalen: geht das?</a>.</p>{% endif %}</div>
+                <p>Mehr dazu im Beitrag <a href="{% url 'wissen_pflege' %}">Wie pflege ich handbemalte Kleidung?</a>; zur Größe bei Einzelstücken steht etwas unter <a href="{% url 'wissen_groesse' %}">Die richtige Größe finden</a>. Wie die Technik funktioniert, erklärt <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a>; wenn schon ein Bleichfleck auf einem Teil ist, hilft <a href="{% url 'wissen_bleichfleck' %}">Bleichfleck übermalen: geht das?</a>.{% if verkauf_aktiv and engel_url %} Wer kein eigenes Motiv will: das <a href="{{ engel_url }}">Engel-Shirt</a> gibt es fertig.{% endif %}</p>{% endif %}</div>
         </div>{% endfor %}
     </section>
 </div>

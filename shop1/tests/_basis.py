@@ -105,6 +105,7 @@ OEFFENTLICHE_SEITEN = [
     '/wissen/groesse-bei-einzelstuecken/',
     '/wissen/so-entsteht-dein-motiv/',  # Entwurf (noindex)
     '/wissen/bleach-painting/',  # Entwurf (noindex)
+    '/wissen/bleach-painting-anleitung/',  # SEO-Upgrade 02.11.2026 (B1)
     '/wissen/bleichfleck-uebermalen/',  # Entwurf (noindex)
     '/wissen/bestellen-und-bezahlen/',
     '/wissen/widerruf-und-ruecksendung/',
@@ -161,6 +162,7 @@ INHALTSSEITEN = [
     '/wissen/groesse-bei-einzelstuecken/',
     '/wissen/so-entsteht-dein-motiv/',  # Entwurf (noindex)
     '/wissen/bleach-painting/',  # Entwurf (noindex)
+    '/wissen/bleach-painting-anleitung/',  # SEO-Upgrade 02.11.2026 (B1)
     '/wissen/bleichfleck-uebermalen/',  # Entwurf (noindex)
     # Belegte Beiträge ohne Freigabevorbehalt (SU04): von Anfang an
     # indexierbar, weil sie nur wiedergeben, was AGB, Datenschutzerklärung,

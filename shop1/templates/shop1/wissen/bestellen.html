@@ -165,7 +165,7 @@
             <h2 class="lv-serif">Wie kommt ein Unikat in den Warenkorb?</h2>
             <div class="lv-wissen-antwort">
                 <p class="lv-wissen-erst">Über die Detailseite des Stücks. Die Übersicht Shop zeigt jedes verfügbare Teil und führt von dort auf seine eigene Seite; erst dort stehen die beiden Schaltflächen, die das Stück in den Warenkorb legen – die eine bleibt auf der Produktseite, die andere führt gleich zum Warenkorb. Über den vorhandenen Bestand hinaus lässt sich die Menge nicht erhöhen, und bei einem Einzelstück ist das genau ein Exemplar.</p>
-                <p>Auf der <a href="{% url 'produkte' %}">Übersicht</a> selbst gibt es bewusst keinen Warenkorb-Knopf: Sie führt zu jedem Stück, und die Entscheidung fällt auf der Detailseite, wo Beschreibung, Preis und Bild stehen. Ein Stück, das dort nicht mehr auftaucht, ist verkauft – Luviq legt kein Motiv ein zweites Mal auf.</p>
+                <p>Auf der <a href="{% url 'produkte' %}">Übersicht</a> selbst gibt es bewusst keinen Warenkorb-Knopf: Sie führt zu jedem Stück, und die Entscheidung fällt auf der Detailseite, wo Beschreibung, Preis und Bild stehen. Ein Stück, das dort nicht mehr auftaucht, ist verkauft – Luviq legt kein Motiv ein zweites Mal auf. {% if engel_url %}Das <a href="{{ engel_url }}">Engel-Shirt</a> ist das aktuelle Stück zum direkten Bestellen.{% endif %}</p>
             
             </div>
         </section>

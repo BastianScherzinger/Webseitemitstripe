@@ -485,10 +485,11 @@ class FeedTest(LuviqTestCase):
         # Seit Runde 3 (30.10.2026) auch die zwei Ratgeber zur Bleiche.
         self.assertEqual(set(freigegebene_beitraege()), {
             'pflege-handbemalte-kleidung', 'upcycling-mode-second-hand-vintage',
-            'groesse-bei-einzelstuecken', 'bleach-painting', 'bleichfleck-uebermalen'})
+            'groesse-bei-einzelstuecken', 'bleach-painting', 'bleach-painting-anleitung',
+            'bleichfleck-uebermalen'})
         self.assertIn('Feed:', self.hole('/llms.txt').content.decode())
         feed = ElementTree.fromstring(self.hole('/feed/').content)
-        self.assertEqual(len(list(feed.iter('item'))), 5)
+        self.assertEqual(len(list(feed.iter('item'))), 6)
 
     def test_jede_seite_verlinkt_den_feed_im_kopfbereich(self):
         """Ohne den Verweis im ``<head>`` findet ihn niemand, der ihn nicht
@@ -520,7 +521,7 @@ class FeedVerweisTest(LuviqTestCase):
         html = self.hole('/').content.decode()
         self.assertRegex(html, self.VERWEIS)
         wurzel = ElementTree.fromstring(self.hole('/feed/').content)
-        self.assertEqual(len(list(wurzel.iter('item'))), 5)  # seit Runde 3 mit den zwei Ratgebern
+        self.assertEqual(len(list(wurzel.iter('item'))), 6)  # + Bleach-Anleitung (02.11.2026)
 
     def test_mit_freigegebenem_beitrag_wird_der_feed_beworben(self):
         beitrag = {'titel': 'T', 'kurz': 'K', 'freigegeben': True,

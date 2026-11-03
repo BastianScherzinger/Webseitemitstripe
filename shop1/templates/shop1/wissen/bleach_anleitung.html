@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% comment %}SEO-Upgrade 02.11.2026 (B1): Anleitung zum Selbermachen, getrennt von „Was ist Bleach Painting?“ (dort das Was, hier das Wie). Sicherheitsangaben nur aus abgerufenen Quellen (BfR-Verbraucherinfo 2017 und Presseinformation 07/2005, Verbraucherzentrale NRW „Wie viel Chemie im Haushalt muss sein?“, am 02.11.2026 gelesen) und aus dem, was /wissen/bleach-painting/ schon sagt; zu Luisas Arbeitsweise nur luviq_daten.SCHRITTE, DAUER, PFLEGE. Keine Zeitangabe zur Einwirkzeit, kein Gesundheits- oder Wirkversprechen. Jede Frage steht wortgleich als h2, jede Antwort wortgleich als erster Absatz (test_geo).{% endcomment %}
+{% block title %}Bleach Painting Anleitung: T-Shirt bemalen | Luviq Lübeck{% endblock %}
+{% block meta_description %}Bleach Painting Anleitung für T-Shirts: Material, Sicherheit mit Quellen, Schritte und typische Fehler von Luviq aus Lübeck. Jetzt nachlesen.{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}Bleach Painting Anleitung: T-Shirt mit Bleiche bemalen – Luviq Universe{% endblock %}
+{% block og_description %}Material, Sicherheit, Schritte und typische Fehler beim Bleach Painting auf dem T-Shirt, mit Quellen zu Bleiche und Reinigern.{% endblock %}
+{% block twitter_title %}Bleach Painting Anleitung: T-Shirt mit Bleiche bemalen – Luviq Universe{% endblock %}
+{% block twitter_description %}Bleach Painting selbst machen: was man braucht, wie man sicher arbeitet und welche Fehler typisch sind.{% endblock %}
+{% block meta_robots %}{% if beitrag.freigegeben %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "@id": "{{ seiten_url }}#breadcrumb",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Wissen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen' %}"},
+    {"@type": "ListItem", "position": 3, "name": "Bleach Painting Anleitung: T-Shirt mit Bleiche bemalen", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'wissen_bleach_anleitung' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block schema_ld %}
+{% include 'shop1/teile/wissen_article_ld.html' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "{{ seiten_url }}#faq",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Was braucht man für Bleach Painting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Für Bleach Painting braucht man ein dunkles T-Shirt aus Baumwolle, Haushaltsbleiche, einen Pinsel, Gummihandschuhe, eine Schutzbrille und einen gut gelüfteten Platz. Dazu kommen eine Unterlage, die Bleiche abfängt, und Wasser zum Ausspülen."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Welches T-Shirt eignet sich für Bleach Painting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Am besten eignet sich ein dunkel gefärbtes T-Shirt aus Baumwolle, weil sich der Farbstoff dort gut herauslösen lässt und das helle Motiv deutlich absticht. Welche Faser im Shirt steckt, steht auf dem Pflegeetikett; ein durchgestrichenes Dreieck heißt, dass nicht gebleicht werden darf."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Worauf muss ich bei der Sicherheit achten?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Mit Handschuhen und Schutzbrille arbeiten, gut lüften und Bleiche nie mit anderen Reinigern mischen. Das Bundesinstitut für Risikobewertung schreibt: „Nie ein chlorhaltiges Produkt mit anderen Reinigern mischen. Es kann gefährliches Chlorgas entstehen!“"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie malt man mit Bleiche auf ein T-Shirt, Schritt für Schritt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In sechs Schritten: das Shirt unterlegen, das Motiv auf Papier entwerfen und auf dem Shirt vorzeichnen, die Bleiche mit dem Pinsel auftragen, das Ergebnis im Blick behalten und zum Schluss gründlich ausspülen und waschen. Ein Strich lässt sich nicht zurücknehmen, deshalb wird vorher getestet."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Welche Fehler passieren bei Bleach Painting am häufigsten?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Am häufigsten passieren drei Dinge: zu viel Bleiche auf dem Pinsel, kein Test an einem Probestück und Bleiche, die nicht gründlich ausgespült wird. Die Folgen sind ein verlaufenes Motiv, ein unerwarteter Farbton oder ein Stoff, der mit der Zeit schwächer wird."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie pflege ich ein selbst gebleichtes T-Shirt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Auf links bei 30 °C waschen, nicht in den Trockner, keinen Weichspüler nehmen und nur von links bügeln: So pflegt Luviq die eigenen Stücke, und es ist auch für ein selbst gebleichtes Shirt ein guter Anhaltspunkt."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kann ich ein Bleach-Painting-Shirt auch malen lassen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja, wer nicht selbst mit Bleiche arbeiten möchte, lässt sich ein Stück von Luisa Brehler in Lübeck malen. Sie malt jedes Stück von Hand mit Pinsel und Bleiche."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='wissen' %}{% endblock %}
+
+{% block content %}
+<div class="lv-seite lv-wissen">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li><a href="{% url 'wissen' %}">Wissen</a></li><li aria-current="page">Bleach Painting Anleitung</li></ol></nav>
+
+    <header class="lv-wissen-kopf">
+        <h1 class="lv-serif">Bleach Painting Anleitung: T-Shirt mit Bleiche bemalen</h1>
+        <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
+        <p class="lv-wissen-lead">Luviq aus Lübeck erklärt hier, wie Bleach Painting auf dem T-Shirt geht: Man braucht ein dunkles Baumwoll-Shirt, Haushaltsbleiche, einen Pinsel und Schutzausrüstung; das Wichtigste sind ein Test vorab, frische Luft und gründliches Ausspülen. Dazu kommen die Schritte, die Sicherheitsregeln mit Quellen und die typischen Fehler.</p>
+    </header>
+
+    <div class="lv-wissen-liste">
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Was braucht man für Bleach Painting?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Für Bleach Painting braucht man ein dunkles T-Shirt aus Baumwolle, Haushaltsbleiche, einen Pinsel, Gummihandschuhe, eine Schutzbrille und einen gut gelüfteten Platz. Dazu kommen eine Unterlage, die Bleiche abfängt, und Wasser zum Ausspülen.</p>
+                <p>Als Bleiche dient in der Regel Haushaltsbleiche mit Chlor, deren Wirkstoff Natriumhypochlorit ist; das Bundesinstitut für Risikobewertung nennt Natriumhypochlorit und Wasserstoffperoxid als Inhaltsstoffe von Bleichmitteln (<a href="https://www.bfr.bund.de/cm/350/risiko-vergiftungsunfaelle-bei-kindern.pdf" target="_blank" rel="noopener">BfR-Verbraucherinfo „Risiko Vergiftungsunfälle bei Kindern“ (2017)</a>). Sauerstoffbleiche wirkt auf die meisten Farbstoffe deutlich schwächer und eignet sich dafür kaum.</p>
+                <p>Wer zum ersten Mal malt, nimmt dafür ein Teil, das nicht mehr gebraucht wird. So lässt sich üben, ohne dass ein Lieblingsstück riskiert wird.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Welches T-Shirt eignet sich für Bleach Painting?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Am besten eignet sich ein dunkel gefärbtes T-Shirt aus Baumwolle, weil sich der Farbstoff dort gut herauslösen lässt und das helle Motiv deutlich absticht. Welche Faser im Shirt steckt, steht auf dem Pflegeetikett; ein durchgestrichenes Dreieck heißt, dass nicht gebleicht werden darf.</p>
+                <p>Wolle, Seide und Elasthan werden von Chlorbleiche angegriffen, und Kunstfasern wie Polyester lassen sich meist kaum aufhellen. Die Symbole auf dem Pflegeetikett erklärt der Verband <a href="https://www.ginetex.net/" target="_blank" rel="noopener">GINETEX</a>, der internationale Verband für Textilpflegekennzeichnung.</p>
+                <p>Auf schwarzem Stoff wird das Motiv meist nicht weiß, sondern geht in einen warmen Beige- bis Rostton über; bei anderen Farben fällt der Ton anders aus. Mehr dazu steht im Beitrag <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a>.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Worauf muss ich bei der Sicherheit achten?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Mit Handschuhen und Schutzbrille arbeiten, gut lüften und Bleiche nie mit anderen Reinigern mischen. Das Bundesinstitut für Risikobewertung schreibt: „Nie ein chlorhaltiges Produkt mit anderen Reinigern mischen. Es kann gefährliches Chlorgas entstehen!“</p>
+                <p>Die Verbraucherzentrale NRW warnt in derselben Richtung: Wenn Chlorreiniger mit sauren Badreinigern gemeinsam verwendet werden, entsteht giftiges, stechend riechendes Chlorgas, das schwere Schäden an den Atemwegen verursachen kann. Essig ist ebenfalls eine Säure, deshalb gehört er nicht in die Nähe der Bleiche. Quellen: <a href="https://www.bfr.bund.de/cm/350/risiko-vergiftungsunfaelle-bei-kindern.pdf" target="_blank" rel="noopener">BfR-Verbraucherinfo „Risiko Vergiftungsunfälle bei Kindern“ (2017)</a> und <a href="https://www.verbraucherzentrale.de/sites/default/files/2018-10/chemie_im_haushalt.pdf" target="_blank" rel="noopener">Verbraucherzentrale NRW, „Wie viel Chemie im Haushalt muss sein?“</a>.</p>
+                <p>Bleiche bleibt in der Originalverpackung, nicht in Getränkeflaschen oder Tassen, und außerhalb der Reichweite von Kindern: Das Bundesinstitut für Risikobewertung rät, giftige Substanzen stets in den Originalverpackungen aufzubewahren (<a href="https://www.bfr.bund.de/presseinformation/vorsicht-vor-vergiftungen-im-haushalt-und-hobbybereich/" target="_blank" rel="noopener">BfR-Presseinformation 07/2005</a>), und die Verbraucherzentrale NRW empfiehlt, Putzmittel und andere Chemikalien für Kinder unerreichbar zu lagern. Was bei Hautkontakt, Augenkontakt oder Atemnot zu tun ist, steht im Beitrag <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a>. Maßgeblich bleiben immer die Angaben auf der Verpackung und im Sicherheitsdatenblatt des Produkts, und wer selbst probiert, tut das auf eigene Verantwortung.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Wie malt man mit Bleiche auf ein T-Shirt, Schritt für Schritt?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">In sechs Schritten: das Shirt unterlegen, das Motiv auf Papier entwerfen und auf dem Shirt vorzeichnen, die Bleiche mit dem Pinsel auftragen, das Ergebnis im Blick behalten und zum Schluss gründlich ausspülen und waschen. Ein Strich lässt sich nicht zurücknehmen, deshalb wird vorher getestet.</p>
+                <ul><li><strong>1. Unterlegen:</strong> Pappe oder eine dicke Folie zwischen Vorder- und Rückseite legen, damit nichts durchschlägt, und den Tisch abdecken.</li><li><strong>2. Motiv festlegen:</strong> erst mit Bleistift auf Papier skizzieren, dann direkt auf dem Shirt vorzeichnen. So geht auch Luisa Brehler bei Luviq vor.</li><li><strong>3. Testen:</strong> an einer unauffälligen Stelle oder an einem Probestück prüfen, wie der Stoff reagiert. Wie schnell und wie hell die Stelle wird, hängt vom Farbstoff und vom Gewebe ab; eine pauschale Zeit lässt sich deshalb nicht nennen.</li><li><strong>4. Auftragen:</strong> mit dem Pinsel malen und wenig Flüssigkeit aufnehmen, damit die Linie nicht verläuft.</li><li><strong>5. Beobachten und stoppen:</strong> sobald die Stelle hell genug ist, die Bleiche mit reichlich Wasser auswaschen.</li><li><strong>6. Waschen:</strong> das ganze Teil gründlich waschen, damit keine Bleiche im Stoff bleibt. Bei Luviq ist das der letzte Schritt vor dem Foto.</li></ul>
+                <p>Wer zusätzlich neutralisieren will, nimmt ein dafür gemachtes Mittel nach Herstellerangabe und nie Essig; die Einzelheiten stehen im Beitrag <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a>.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Welche Fehler passieren bei Bleach Painting am häufigsten?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Am häufigsten passieren drei Dinge: zu viel Bleiche auf dem Pinsel, kein Test an einem Probestück und Bleiche, die nicht gründlich ausgespült wird. Die Folgen sind ein verlaufenes Motiv, ein unerwarteter Farbton oder ein Stoff, der mit der Zeit schwächer wird.</p>
+                <p>Bleiche, die im Stoff bleibt, arbeitet weiter und kann die Fasern mit der Zeit schwächen; deshalb zählt das Ausspülen und Waschen. Ein weiterer Klassiker ist die falsche Faser: Auf Wolle, Seide oder Elasthan gehört keine Chlorbleiche.</p>
+                <p>Ist ein Fleck dort entstanden, wo keiner hin sollte, hilft der Beitrag <a href="{% url 'wissen_bleichfleck' %}">Bleichfleck übermalen: geht das?</a>: Er erklärt, warum ein Bleichfleck bleibt und wie er sich überdecken lässt.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Wie pflege ich ein selbst gebleichtes T-Shirt?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Auf links bei 30 °C waschen, nicht in den Trockner, keinen Weichspüler nehmen und nur von links bügeln: So pflegt Luviq die eigenen Stücke, und es ist auch für ein selbst gebleichtes Shirt ein guter Anhaltspunkt.</p>
+                <p>Vor dem ersten Tragen sollte das Shirt gründlich gewaschen sein. Die ausführlichen Regeln stehen im Beitrag <a href="{% url 'wissen_pflege' %}">Wie pflege ich handbemalte Kleidung?</a> Wie lange ein Motiv schön bleibt, hängt von Stoff, Farbe und Pflege ab; eine Zahl dafür nennt diese Seite bewusst nicht.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Kann ich ein Bleach-Painting-Shirt auch malen lassen?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Ja, wer nicht selbst mit Bleiche arbeiten möchte, lässt sich ein Stück von Luisa Brehler in Lübeck malen. Sie malt jedes Stück von Hand mit Pinsel und Bleiche.</p>
+                <p>{% if verkauf_aktiv and engel_url %}Das <a href="{{ engel_url }}">Engel-Shirt</a> gibt es fertig zum Bestellen: ein Second-Hand-Shirt in Größe M aus 100 % Baumwolle, für jede Bestellung neu gemalt.{% elif engel_url %}Wie ein fertiges Stück aussieht, zeigt das <a href="{{ engel_url }}">Engel-Shirt</a>.{% endif %}{% if motivanfrage_aktiv %} Wer ein eigenes Motiv möchte, beschreibt es unter <a href="{% url 'motiv_anfragen' %}">Motiv anfragen</a>; von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv. Das ist ein Erfahrungswert und keine feste Zusage.{% endif %}</p>
+            </div>
+        </section>
+    </div>
+
+    <nav class="lv-wissen-ende" aria-label="Weiterlesen">
+        <a class="lv-link" href="{% url 'wissen_bleach' %}">Was ist Bleach Painting? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="lv-link" href="{% url 'wissen' %}">Alle Wissensbeiträge <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        {% for w in weiter %}<a class="lv-link" href="{% url w.url_name %}">{{ w.titel }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endfor %}
+        {% if motivanfrage_aktiv %}<a class="lv-link" href="{% url 'motiv_anfragen' %}">Motiv anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endif %}
+    </nav>
+</div>
+{% endblock %}

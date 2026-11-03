@@ -22,7 +22,7 @@ from .. import luviq_daten, mails, spamschutz, verkauf
 from ..utils import send_brevo_email
 from ..middleware import ist_bot
 from ._helpers import mail_ergebnis_vermerken, zu_viele_anfragen
-from .wissen import freigegebene_beitraege
+from .wissen import engel_url, freigegebene_beitraege
 
 _log = logging.getLogger('shop1')
 
@@ -391,6 +391,7 @@ def ueber_uns(request):
         'zitat_quelle': luviq_daten.ZITAT_QUELLE,
         'schritte': luviq_daten.SCHRITTE,
         'dauer': luviq_daten.DAUER,
+        'engel_url': engel_url(),
     })
 
 
@@ -401,7 +402,7 @@ def liefergebiet(request):
         'Alsfeld', 'Romrod', 'Antrifttal', 'Kirtorf', 'Homberg (Efze)',
         'Neustadt (Hessen)', 'Schwalmstadt', 'Mücke', 'Grünberg', 'Laubach', 'Gießen',
     ]
-    return render(request, 'shop1/liefergebiet.html', {'orte': orte})
+    return render(request, 'shop1/liefergebiet.html', {'orte': orte, 'engel_url': engel_url()})
 
 
 def produkte(request):
@@ -460,8 +461,15 @@ def produkt_detail_slug(request, slug):
     # Direktkauf (31.10.2026): Formular bzw. „Reserviert“ auf der Stückseite selbst.
     direkt = formular_kontext(produkt, request=request) if direktkauf_aktiv() and not produkt.verkauft else {}
     from .direktkauf import serie_kontext
+    serie = serie_kontext(produkt)
+    # Häufige Fragen nur beim Engel-Shirt, solange es bestellbar ist (sichtbar + FAQPage, A5 02.11.2026).
+    faq = []
+    if (produkt.slug == luviq_daten.ENGEL_STUECK['slug'] and verkauf.verkauf_aktiv() and produkt.kaufbar):
+        faq = luviq_daten.engel_faq(serie.get('bearbeitung', 0),
+                                    luviq_daten.VERSAND['lieferfrist_werktage'])
     return render(request, 'shop1/produkt_detail.html', {
-        **serie_kontext(produkt),
+        **serie,
+        'faq_engel': faq,
         **direkt,
         'produkt': produkt,
         'galerie': produkt.galerie(),

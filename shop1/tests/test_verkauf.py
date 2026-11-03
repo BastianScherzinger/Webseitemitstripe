@@ -275,7 +275,7 @@ class MitVerkaufTest(_Grundlage):
 
     def test_angebot_im_schema_und_agb_im_fuss(self):
         self.assertIn('"Offer"', _json_ld(self.hole(self.produktseite).content.decode()))
-        self.assertIn('LocalBusiness', _json_ld(self.hole('/').content.decode()))
+        self.assertIn('OnlineStore', _json_ld(self.hole('/').content.decode()))  # 02.11.2026: Online-Shop statt LocalBusiness
         self.assertContains(self.hole('/'), 'href="/agb/"')
         self.assertContains(self.hole('/agb/'), 'index, follow')
         self.assertIn('/agb/', self.hole('/sitemap.xml').content.decode())

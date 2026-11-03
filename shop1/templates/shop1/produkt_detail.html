@@ -36,21 +36,22 @@
 {% endblock %}
 
 {% block schema_ld %}
-{% comment %}Vor dem Verkaufsstart (VERKAUF_AKTIV aus) steht kein Preis auf der Seite, darum kein Product mit Offer, sondern VisualArtwork (Vorgabe 07.10.2026): ein Offer ohne sichtbaren Preis widerspräche der Seite. Mit Verkauf: Product mit Offer (Preis aus dem Datensatz); die Verfügbarkeit folgt `kaufbar` – ein vergebenes Stück ist SoldOut, nie InStock.{% endcomment %}
+{% comment %}Vor dem Verkaufsstart (VERKAUF_AKTIV aus) steht kein Preis auf der Seite, darum kein Product mit Offer, sondern VisualArtwork (Vorgabe 07.10.2026): ein Offer ohne sichtbaren Preis widerspräche der Seite. Mit Verkauf: Product mit Offer (Preis aus dem Datensatz); die Verfügbarkeit folgt `kaufbar` – ein vergebenes Stück ist SoldOut, nie InStock.
+SEO-Upgrade 02.11.2026 (A2): Archiv-/Referenzstücke (`vergeben`) sind nie verkauft worden und zeigen keinen Preis: VisualArtwork ohne offers, nie SoldOut. SoldOut nur für ein Stück, das nicht vergeben, aber ausverkauft ist.{% endcomment %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "{% if verkauf_aktiv %}Product{% else %}VisualArtwork{% endif %}",
+  "@type": "{% if verkauf_aktiv and not produkt.vergeben %}Product{% else %}VisualArtwork{% endif %}",
   "@id": "{{ seiten_url }}#product",
   "name": "{{ produkt.name|escapejs }}",
   "description": "{{ produkt.beschreibung|escapejs }}",{% if galerie %}
   "image": [{% for bild in galerie %}"{% if bild.original|slice:':4' == 'http' %}{{ bild.original }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ bild.original }}{% endif %}"{% if not forloop.last %}, {% endif %}{% endfor %}],{% endif %}{% if produkt.material %}
   "material": "{{ produkt.material|escapejs }}",{% endif %}
-  {% if verkauf_aktiv %}"brand": {"@type": "Brand", "name": "Luviq"},{% if produkt.groesse %}
+  {% if verkauf_aktiv and not produkt.vergeben %}"brand": {"@type": "Brand", "name": "Luviq"},{% if produkt.groesse %}
   "size": "{{ produkt.groesse|escapejs }}",{% endif %}
   "sku": "LUVIQ-{{ produkt.id }}",{% else %}"creator": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},{% endif %}
   "dateModified": "{{ produkt.aktualisiert_am|date:'c' }}",
-  "datePublished": "{{ produkt.erstellt_am|date:'c' }}"{% if verkauf_aktiv %},
+  "datePublished": "{{ produkt.erstellt_am|date:'c' }}"{% if verkauf_aktiv and not produkt.vergeben %},
   "offers": {
     "@type": "Offer",
     "@id": "{{ seiten_url }}#offer",
@@ -63,6 +64,17 @@
   }{% endif %}
 }
 </script>
+{% if faq_engel %}{% comment %}A5 (02.11.2026): Fragen und Antworten stehen wortgleich sichtbar unten auf der Seite (Abschnitt „T-Shirt mit Engel“); beide kommen aus luviq_daten.engel_faq.{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "{{ seiten_url }}#faq",
+  "mainEntity": [{% for frage, antwort in faq_engel %}
+    {"@type": "Question", "name": "{{ frage|escapejs }}", "acceptedAnswer": {"@type": "Answer", "text": "{{ antwort|escapejs }}"}}{% if not forloop.last %},{% endif %}{% endfor %}
+  ]
+}
+</script>{% endif %}
 {% endblock %}
 
 {% block alte_stile %}{% endblock %}
@@ -199,6 +211,20 @@
             {% if motivanfrage_aktiv %}{% include 'shop1/teile/motivanfrage.html' with klasse='lv-klein' frage='So eins, aber mit deinem Motiv?' %}{% endif %}
         </div>
     </article>
+    {% if faq_engel %}
+    <section class="lv-abschnitt" aria-labelledby="engel-faq">
+        <h2 class="lv-serif lv-abschnittstitel" id="engel-faq">T-Shirt mit Engel: häufige Fragen</h2>
+        <div class="lv-faq">
+            {% for frage, antwort in faq_engel %}
+            <div>
+                <h3>{{ frage }}</h3>
+                <p>{{ antwort }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <p class="lv-klein">Pflege, Größe und Versand erklärt Luviq ausführlich: <a href="{% url 'wissen_pflege' %}">Wie pflege ich handbemalte Kleidung?</a> · <a href="{% url 'wissen_groesse' %}">Wie finde ich bei Einzelstücken die richtige Größe?</a> · <a href="{% url 'liefergebiet' %}">Versand &amp; Abholung</a></p>
+    </section>
+    {% endif %}
 </div>
 {% endblock %}
 
