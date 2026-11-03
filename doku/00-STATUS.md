@@ -1,8 +1,8 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-11-02
-stand: 2026-11-02
+stand: 2026-11-03
+stand: 2026-11-03
 status: vollständig
 fortschritt: 97
 zusammenfassung: 01.11.2026 abends – Rabattcodes live (168942e): 10 % Erstbestellung im Hero (BLEICHENGEL-…), Karten- und Freunde-Code, FAQ/llms.txt/AGB § 3, Plan doku/47-RABATTCODES.md; Bug-Prüfung mit 2 Fixes, Rest in 80-AUFGABEN. 01.11.2026 nachts – Umbau Startseite/Stückseite (Kaufkarte, engere Abstände), Engel-Shirt als Serienstück (mehrfach bestellbar), Startfilm, Produkt-Schema für Händlereinträge (siehe LOGBUCH, doku/45-MERCHANT-CENTER.md). 29.10.2026 – Gewerbe LUVIQ angemeldet (Beginn 01.11.2026, § 19 UStG, USt-IdNr. beantragt). Zweig recht/2026-10-29-verkaufsstart (nicht gepusht) - Startsperre für den Verkauf, Hinweis „Shop öffnet frühestens am 01.11.2026“, Generator-Ablagen, USt-IdNr.-Platzhalter, Einwilligungs-Gerüst; Prüfbericht in Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29. Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
@@ -61,7 +61,7 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 02.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 90,3 von 100**, Reifegrad „Referenz“. 345 von 410 Regeln an 24 URLs und 251 Dateien (51.103 Zeilen) geprüft.
+**Messung vom 03.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 90,2 von 100**, Reifegrad „Referenz“. 344 von 410 Regeln an 25 URLs und 253 Dateien (51.896 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
@@ -69,12 +69,12 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 | Erreichbarkeit & Postfach | **72** | Brauchbar |
 | Konversion | **82** | Solide |
 | SEO — Inhalt | **83** | Solide |
-| Substanz & Reichweite | **88** | Solide |
+| Substanz & Reichweite | **87** | Solide |
 | SEO — Technik | **88** | Solide |
 | Code-Qualität & Projektreife | **91** | Referenz |
-| GEO — KI-Sichtbarkeit | **94** | Referenz |
-| Barrierefreiheit | **96** | Referenz |
+| GEO — KI-Sichtbarkeit | **95** | Referenz |
 | Vorlagen-Konformität | **96** | Referenz |
+| Barrierefreiheit | **96** | Referenz |
 | Performance & Core Web Vitals | **97** | Referenz |
 | Formulare & Preisrechner | **97** | Referenz |
 | Sicherheit | **98** | Referenz |
@@ -82,19 +82,18 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 
 Keine Sperre greift.
 
-Quelltext: 251 Dateien, **32 Befunde**, davon 2 kritisch und 9 wichtig.
+Quelltext: 253 Dateien, **32 Befunde**, davon 2 kritisch und 9 wichtig.
 
 Kritische Befunde:
 
-- **Canonical nennt dieselbe Domain wie die Seite** (`TS05`) — 23 canonical zeigen auf eine fremde Domain: / → www.luviq-luebeck.com, /produkte/ → www.luviq-luebeck.com, /ueber_uns/ → www.luviq-luebeck.com, /kontakt/ → www.luviq-luebeck.com, /datenschutz/ → www.luviq-luebeck.com … (+18)
+- **Canonical nennt dieselbe Domain wie die Seite** (`TS05`) — 24 canonical zeigen auf eine fremde Domain: / → www.luviq-luebeck.com, /produkte/ → www.luviq-luebeck.com, /ueber_uns/ → www.luviq-luebeck.com, /kontakt/ → www.luviq-luebeck.com, /datenschutz/ → www.luviq-luebeck.com … (+19)
 - **Alle Domainvarianten landen auf einer Adresse** (`TS11`) — 0 von 1 Nebenadressen landen dauerhaft auf der Hauptadresse — offen: https://luviq-alsfeld.com: 301 → https://www.luviq-luebeck.com/
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
 - **Die Datenschutzerklärung nennt die tatsächlich eingebundenen Dienste** (`RE06`) — 1 von 1 eingebundenen Diensten stehen nicht in der Datenschutzerklärung: luviq-luebeck.com
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
-- **Das Impressum ist aus jeder Seite verlinkt** (`RE02`) — 22 von 23 Seiten ohne Impressumslink: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /agb/ … (+17)
-- **Datenschutzerklärung vorhanden und aus jeder Seite verlinkt** (`RE05`) — Datenschutzerklärung unter /datenschutz/ vorhanden, aber 22 von 23 Seiten verlinken sie nicht: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /agb/ … (+17)
-- **Ausgezeichnete Preise stehen sichtbar auf der Seite** (`GE41`) — 9 von 12 ausgezeichneten Preisen sind nicht sichtbar: /produkte/: 69.99, /produkte/: 59.00, /produkte/: 59.00, /produkte/: 58.96 … (+5)
+- **Das Impressum ist aus jeder Seite verlinkt** (`RE02`) — 23 von 24 Seiten ohne Impressumslink: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /agb/ … (+18)
+- **Datenschutzerklärung vorhanden und aus jeder Seite verlinkt** (`RE05`) — Datenschutzerklärung unter /datenschutz/ vorhanden, aber 23 von 24 Seiten verlinken sie nicht: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /agb/ … (+18)
 - **Es gibt keinen kritischen Datei-Befund** (`PJ05`) — 2 kritische Befunde: shop1/templates/shop1/legal/generator/impressum.html:1 Grundgerüst unvollständig, shop1/wissen_direktkauf.py:23 Unmaskierte Ausgabe
 <!-- messung:ende -->
 
