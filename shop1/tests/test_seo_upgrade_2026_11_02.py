@@ -112,7 +112,7 @@ class EngelSeiteTest(_Daten):
         sichtbar = ' '.join(re.sub(r'<[^>]+>', ' ', re.sub(r'<script.*?</script>', '', html, flags=re.S)).split())
         import html as h
         sichtbar = h.unescape(sichtbar)
-        self.assertEqual(len(faq['mainEntity']), 4)
+        self.assertEqual(len(faq['mainEntity']), 6)
         for frage in faq['mainEntity']:
             with self.subTest(frage=frage['name']):
                 self.assertIn(frage['name'], sichtbar)

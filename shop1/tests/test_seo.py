@@ -55,6 +55,8 @@ HANDLUNGSVERBEN = {
 ORT_ODER_NUTZEN = (
     'lübeck', 'alsfeld', 'hessen', 'fulda', 'gießen',
     'handbemalt', 'vintage', 'unikat', 'upcycling', 'second hand', 'second-hand',
+    # Deutschland-Runde 04.11.2026: die Technik ist der Nutzen, der Luviq von anderen Shops abhebt.
+    'bleach', 'bleich', 'bemalen',
 )
 
 
@@ -956,7 +958,8 @@ class KopfangabenUnterscheidbarTest(LuviqTestCase):
             titel = self._kopf(pfad)[0]
             if pfad == '/':
                 # P3: Startseite = Marke vorn („Luviq: …“, SEO-Analyse C1), kein Abschluss mit Trennstrich.
-                self.assertTrue(titel.startswith('Luviq'), titel)
+                # Deutschland-Runde 04.11.2026: Marke am Ende wie bei allen Seiten, vorn steht der Kaufbegriff.
+                self.assertTrue(titel.startswith('Luviq') or titel.endswith('| Luviq'), titel)
                 continue
             with self.subTest(pfad=pfad):
                 self.assertTrue(_TRENNER.search(titel), titel)
