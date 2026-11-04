@@ -11,6 +11,13 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 04.11.2026 – SEO/GEO Deutschland-Runde (Zweig `seo/2026-11-04-deutschland`)
+
+- **Was:** Titel/Descriptions, Startseiten-Lead, Engel-Stückdaten und -FAQ, Titel der vergebenen Stücke, Schema (`brand`, `eligibleRegion`/`areaServed`), Sitemap-Priorität der Archivstücke, `llms.txt`, Korrektur der Reservierungs-Antwort im Bestellbeitrag. Einzelheiten `doku/40-SEO.md`.
+- **Warum:** Die alte Domain wurde fast nur für Ladensuchen gefunden; Luviq ist ein deutschlandweiter Online-Shop. Vergebene Stücke trugen „kaufen“ im Titel, zwei Stücke denselben Titel; die Reservierungs-Antwort widersprach dem Serienstück.
+- **Tests:** Wortlaut-Tests, die den alten Engel-Titel und die alte Reservierungs-Antwort festhielten, bewusst nachgezogen (siehe Commit).
+
+
 ## 04.11.2026 – Revolut-Zahlungslink als Hauptweg (Zweig `bau/2026-11-04-zahlungslink`, Auftrag Bastian)
 
 - **Ablauf:** Kundin bestellt im Direktkauf, das Stück ist reserviert; Luisa schickt innerhalb von 1 bis 2 Werktagen die Rechnung (Lexware) mit persönlichem Revolut-Zahlungslink (Karte, Apple Pay, Google Pay, Revolut Pay), Überweisung auf die Rechnungs-IBAN bleibt zweiter Weg; nach der Zahlung wird das Shirt gemalt und verschickt. *Warum:* Vorkasse per Überweisung war die größte Kaufhürde (Plan `doku/46-ZAHLUNGEN-PLAN.md`, Stufe 0/1). Kein Klarna, kein PayPal, kein „Pay by bank“ versprochen.
