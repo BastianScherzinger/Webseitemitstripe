@@ -1,0 +1,27 @@
+{% extends 'emails/basis.html' %}
+{% comment %}
+Mail an die Kundin nach dem Direktkauf (views/direktkauf.mail_an_kundin, 04.11.2026): Bestellung ist reserviert,
+Zahlungslink und Rechnung kommen separat, wie bezahlt wird, was danach passiert, Übersicht, Vertragsunterlagen.
+Alle Werte kommen aus luviq_daten; der Vertragsteil (unterlagen_html) ist vertrauenswürdiges HTML aus mails.vertragsunterlagen.
+{% endcomment %}
+{% block kopf_label %}Bestellung #{{ bestellnummer }}{% endblock %}
+{% block inhalt %}
+<h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-style:italic;font-size:26px;line-height:1.25;color:#0A0A0A;">Deine Bestellung ist reserviert</h1>
+<p style="margin:0 0 16px;">Hallo {{ vorname }},</p>
+<p style="margin:0 0 22px;">danke für deine Bestellung! {{ kopf|capfirst }}</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="lv-kasten" style="margin:0 0 24px;background:#F2EEE6;border:1px solid #DDD6CA;">
+  <tr><td style="padding:18px 20px;font-size:15px;line-height:1.55;">
+    <p style="margin:0 0 12px;font-family:Consolas,'SFMono-Regular',Menlo,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#5E5850;">So geht es weiter</p>
+    {% for titel, text in schritte %}<p style="margin:0 0 12px;"><strong>{{ forloop.counter }}. {{ titel }}</strong><br>{{ text }}</p>
+    {% endfor %}
+  </td></tr>
+</table>
+<p style="margin:0 0 6px;"><strong>Deine Bestellung</strong></p>
+<ul style="margin:0 0 10px;padding-left:20px;">{% for z in zeilen %}<li>{{ z }}</li>{% endfor %}</ul>
+<p style="margin:0 0 6px;"><strong>Gesamt: {{ gesamt }}</strong> {{ preis_hinweis }}</p>
+<p style="margin:0 0 20px;">Lieferung: {{ wo }}</p>
+<p style="margin:0 0 20px;font-size:14px;">{{ vertrag }}</p>
+<p style="margin:0 0 4px;">Fragen? Antworte einfach auf diese Mail oder schreib an <a href="mailto:{{ kontakt_email }}" class="lv-link" style="color:#8A4A22;">{{ kontakt_email }}</a>.</p>
+<p style="margin:20px 0 0;">Viele Grüße<br>Luisa Brehler</p>
+{{ unterlagen_html|safe }}
+{% endblock %}

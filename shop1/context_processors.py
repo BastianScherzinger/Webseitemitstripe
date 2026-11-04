@@ -129,6 +129,12 @@ def anbieterin(request):
             # (Überweisung nur mit hinterlegter IBAN, views/checkout._bank_konfiguriert).
             'ueberweisung_moeglich': bool(os.getenv('BANK_IBAN', '').strip()),
             'pflege': luviq_daten.PFLEGE,
+            # Zahlung (04.11.2026): Revolut-Zahlungslink als Hauptweg; alle Zahlungstexte lesen diese Werte.
+            'zahlung': luviq_daten.ZAHLUNG,
+            'zahlung_satz': luviq_daten.ZAHLUNG_SATZ,
+            'rechnung_frist': luviq_daten.RECHNUNG_FRIST,
+            'frist_beginn': luviq_daten.FRIST_BEGINN,
+            'frist_beginn_erklaert': luviq_daten.FRIST_BEGINN_ERKLAERT,
             # Einwilligungs-Banner nur, wenn ein nicht notwendiger Dienst eingestellt ist.
             'einwilligung': ({'dienst': settings.EINWILLIGUNG_DIENST,
                               'skript': getattr(settings, 'EINWILLIGUNG_SKRIPT', ''),

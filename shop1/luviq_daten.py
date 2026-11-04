@@ -345,7 +345,8 @@ SCHRITTE = [
 #: Regel“, § 308 Nr. 1 BGB). Entscheidung der Leitung 30.10.2026 nach der Gegenprüfung
 #: (M1), Bastian und Luisa können die Zahl ändern – sie wirkt überall, wo Lieferzeit steht
 #: (AGB, Kasse, Mails, Stück-, Kontakt-, Versand- und Wissensseiten, Schema, llms.txt).
-#: Fristbeginn: PayPal am Tag nach Vertragsschluss, Vorkasse am Tag nach dem
+#: Fristbeginn (Direktkauf, seit 04.11.2026): am Tag nach der Zahlung (``FRIST_BEGINN``);
+#: Login-Weg: PayPal am Tag nach Vertragsschluss, Vorkasse am Tag nach dem
 #: Überweisungsauftrag. ``werktage`` ist nur noch die interne Bearbeitungszeit bis zur
 #: Übergabe an den Versanddienst (Schema ``handlingTime``), kein Text für Kundinnen.
 #: Alles wird nur mit Verkauf gezeigt. ``kosten``: Versand innerhalb Deutschlands ist im
@@ -360,6 +361,35 @@ LIEFER_SATZ = f"Lieferung innerhalb von {VERSAND['lieferfrist_werktage']} Werkta
 
 #: Die Preisangabe zum Versand, direkt am Preis (nur mit Verkauf sichtbar).
 VERSAND_PREISSATZ = 'inkl. Versand innerhalb Deutschlands'
+
+# ── Zahlung: Revolut-Zahlungslink (Bastian 04.11.2026) ──────────────────────
+
+#: Hauptweg im Direktkauf: Luisa schickt innerhalb von 1–2 Werktagen die Rechnung (Lexware) mit einem
+#: persönlichen Zahlungslink von Revolut; die Kundin zahlt dort mit Karte, Apple Pay, Google Pay oder
+#: Revolut Pay. Überweisung auf die Rechnungs-IBAN bleibt zweiter Weg. Kein Klarna, kein PayPal, kein
+#: „Pay by bank“ versprechen. Alle sichtbaren Zahlungstexte kommen aus diesen Werten.
+ZAHLUNG = {
+    'anbieter': 'Revolut',
+    'anbieter_firma': 'Revolut Bank UAB',
+    'anbieter_sitz': 'Litauen',
+    'wege': 'Karte (Visa, Mastercard), Apple Pay, Google Pay oder Revolut Pay',
+    'wege_kurz': 'Karte, Apple Pay, Google Pay oder Revolut Pay',
+    'rechnung_werktage': '1 bis 2',
+    'zahlart_name': 'Zahlungslink (Karte, Apple Pay, Google Pay)',
+}
+
+#: Wann die Rechnung mit dem Zahlungslink kommt (Satzteil: „… kommen in <diesem Zeitraum> per E-Mail“).
+RECHNUNG_FRIST = f"{ZAHLUNG['rechnung_werktage']} Werktagen"
+
+#: Fristbeginn der Lieferfrist (AGB § 5): einheitlich für Zahlungslink und Überweisung.
+FRIST_BEGINN = 'ab dem Tag nach deiner Zahlung'
+FRIST_BEGINN_ERKLAERT = ('bei Überweisung gilt als Zahlung die Erteilung des Zahlungsauftrags an dein Kreditinstitut, '
+                         'bei Zahlung per Zahlungslink die Zahlung selbst')
+
+#: Der eine Satz zum Bezahlen für Kurztexte (Stückseite, Versand, Kontakt, Über uns, Schema).
+ZAHLUNG_SATZ = (f"Bezahlt wird im Voraus über einen persönlichen Zahlungslink von {ZAHLUNG['anbieter']} "
+                f"({ZAHLUNG['wege_kurz']}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von "
+                f"{RECHNUNG_FRIST} per E-Mail")
 
 #: Wie lange ein bestelltes Stück auf die Überweisung wartet, bevor Luisa es wieder freigibt
 #: (Panel-Fixliste 31.10.2026, Punkt 3; Bastian bestätigt den Wert noch). Die Freigabe ist
@@ -615,7 +645,7 @@ def engel_faq(bearbeitung, lieferfrist):
         ('Wie pflege ich das Engel-Shirt?', PFLEGE),
         ('Wie lange dauert es bis zur Lieferung?',
          f'Jedes Engel-Shirt wird für deine Bestellung neu von Hand gemalt. {bearbeitung_satz}Geliefert wird '
-         f'innerhalb von {lieferfrist} Werktagen ab deiner Überweisung; der Versand innerhalb Deutschlands ist '
+         f'innerhalb von {lieferfrist} Werktagen {FRIST_BEGINN}; der Versand innerhalb Deutschlands ist '
          'im Preis enthalten.'),
     ]
 

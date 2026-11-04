@@ -528,6 +528,9 @@ class Order(models.Model):
     PAYMENT_METHODS = [
         ('paypal', 'PayPal'),
         ('bank_transfer', 'Überweisung'),
+        # Direktkauf seit 04.11.2026: Rechnung mit persönlichem Revolut-Zahlungslink (Karte, Apple Pay, Google Pay,
+        # Revolut Pay); Überweisung auf die Rechnungs-IBAN bleibt möglich. Vorkasse wie ``bank_transfer``.
+        ('zahlungslink', 'Zahlungslink (Karte, Apple Pay, Google Pay)'),
         ('pickup', 'Abholung (Lokal)'),
     ]
     
@@ -537,6 +540,9 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     paypal_order_id = models.CharField(max_length=255, unique=True, blank=True, null=True)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS, default='paypal')
+    # Revolut-Zahlungslink dieser Bestellung (04.11.2026): Luisa legt ihn hier zur Übersicht ab. Der Shop
+    # verschickt damit nichts; der Link geht mit der Rechnung aus Lexware an die Kundin.
+    zahlungslink = models.URLField('Zahlungslink (Revolut)', max_length=500, blank=True, default='')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     
     # Lieferdaten

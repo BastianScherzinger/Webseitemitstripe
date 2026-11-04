@@ -53,7 +53,7 @@
           "name": "{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus per Überweisung nach der Rechnung, die per E-Mail kommt{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
           }
         }{% if abholung.text %},
         {
@@ -173,7 +173,7 @@
             </div>
             <div>
                 <h3>{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h3>
-                <p>{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus per Überweisung nach der Rechnung, die per E-Mail kommt{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
+                <p>{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
             </div>
             {% if abholung.text %}
             <div>

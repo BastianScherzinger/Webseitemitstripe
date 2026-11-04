@@ -374,6 +374,10 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-hero-rabatt b{font-family:var(--lv-mono);font-weight:500;letter-spacing:.06em;color:var(--lv-text)}
 .lv-hero-rabatt a{text-decoration:underline;text-underline-offset:.2em}
 .lv-schritte{margin:0;padding-left:1.4em;display:grid;gap:calc(var(--u)*.4);font-size:max(14px,calc(var(--u)*.95));color:var(--lv-leise)}
+.lv-bezahlen{display:grid;gap:calc(var(--u)*.8);border:1px solid var(--lv-linie-2);padding:calc(var(--u)*1.4) calc(var(--u)*1.6)}
+.lv-bezahlen h3{margin:0;font:500 max(12px,calc(var(--u)*.8)) var(--lv-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--lv-leise)}
+.lv-bezahlen .lv-schritte{gap:calc(var(--u)*.6);color:var(--lv-text)}
+.lv-bezahlen .lv-schritte b{font-weight:600}
 .lv-kaufleiste{display:none}
 /* Auf der Stückseite mit Direktkauf ersetzt „Direkt kaufen“ die allgemeine Handy-Leiste (nie zwei Leisten übereinander). */
 body:has([data-kaufleiste]) .lv-leiste{display:none!important}

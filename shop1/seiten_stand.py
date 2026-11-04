@@ -18,6 +18,9 @@ Modul wird bei jedem Request aus dem Kontextprozessor gelesen.
 
 #: Routenname → Datum der letzten inhaltlichen Änderung (ISO 8601).
 SEITEN_STAND = {
+    # 04.11.2026: Revolut-Zahlungslink als Hauptweg - Zahlungstexte, Lieferfrist „ab dem Tag nach deiner Zahlung“
+    # (produkte, ueber_uns, liefergebiet, kontakt, datenschutz, agb, wissen, wissen_upcycling, wissen_bestellen,
+    # wissen_widerruf, wissen_konto; Kauf- und Stückseite sind nicht im Register).
     # 01.11.2026: Redesign (Kaufkarte, Startfilm), Engel-Shirt als Serienstück – Texte „nur einmal“ umformuliert;
     # agb nur in der Lieferklausel (Bearbeitungszeit Serienstück).
     # 31.10.2026: Direktkauf ohne Konto – Texte zu Bestellung, Zahlung, Vormerken und Verlinkung
@@ -25,23 +28,23 @@ SEITEN_STAND = {
     # 23.10.2026: Sitz Lübeck laut Gewerbeanmeldung, Alsfeld als Herkunft – Titel,
     # Beschreibungen und Texte aller Seiten; deshalb tragen alle dieses Datum.
     'home':         '2026-11-02',  # + Satz „Online-Shop, kein Laden“ (SEO-Upgrade)
-    'produkte':     '2026-11-01',
+    'produkte':     '2026-11-04',
     'gaestebuch':   '2026-11-01',
-    'ueber_uns':    '2026-11-02',
-    'liefergebiet': '2026-11-02',
-    'kontakt':      '2026-11-01',
+    'ueber_uns':    '2026-11-04',
+    'liefergebiet': '2026-11-04',
+    'kontakt':      '2026-11-04',
     'impressum':    '2026-10-30',  # VSBG-Satz (Rechts-Runde 30.10.)
-    'datenschutz':  '2026-11-01',  # + Rabattcode-Abgleich (01.11.)
-    'agb':          '2026-11-01',  # AGB §§ 1–14 + Widerrufsbelehrung (Rechts-Runde 30.10.)
+    'datenschutz':  '2026-11-04',  # + Rabattcode-Abgleich (01.11.)
+    'agb':          '2026-11-04',  # AGB §§ 1–14 + Widerrufsbelehrung (Rechts-Runde 30.10.)
     # IS19 (27.09.2026): Erklärsätze der Stationen, Dauer, Bestätigungshinweis.
     # 02.10.2026 (L1-B1): Titel, Beschreibung, Vorschaubild und Twitter-Angaben neu
     # (IS03/06/07/09/10/11/13/36/39, EIG137) — home, produkte, gaestebuch, ueber_uns,
     # liefergebiet, kontakt, datenschutz und motiv_anfragen tragen deshalb dieses Datum.
     'motiv_anfragen': '2026-11-02',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
-    'wissen':           '2026-11-02',
+    'wissen':           '2026-11-04',
     'wissen_pflege':    '2026-11-02',
-    'wissen_upcycling': '2026-11-02',
+    'wissen_upcycling': '2026-11-04',
     'wissen_groesse':   '2026-11-02',
     'wissen_motiv':     '2026-10-23',  # Entwurf, noindex
     # Ratgeber (30.10.2026, C8), seit Runde 3 veröffentlicht; ISO 8601 mit Uhrzeit und Zone:
@@ -50,9 +53,9 @@ SEITEN_STAND = {
     'wissen_bleach_anleitung': '2026-11-02',  # neu (SEO-Upgrade B1)
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
-    'wissen_bestellen': '2026-11-02',
-    'wissen_widerruf':  '2026-11-01',
-    'wissen_konto':     '2026-10-31',
+    'wissen_bestellen': '2026-11-04',
+    'wissen_widerruf':  '2026-11-04',
+    'wissen_konto':     '2026-11-04',
 }
 
 #: Routenname → Bezeichnung der Seite, wörtlich so, wie sie in der Navigation

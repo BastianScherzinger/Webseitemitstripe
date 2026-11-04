@@ -71,7 +71,8 @@ class DirektkaufTexteTest(LuviqTestCase):
         best = sichtbarer_text(self.hole('/wissen/bestellen-und-bezahlen/').content.decode())
         self.assertIn('ohne Konto', best)
         self.assertIn('Zahlungspflichtig bestellen', best)
-        self.assertIn('Voraus per Überweisung', best)
+        self.assertIn('Zahlungslink von Revolut', best)  # Hauptweg seit 04.11.2026
+        self.assertIn('Alternativ kannst du auf das Konto überweisen', best)
         konto = sichtbarer_text(self.hole('/wissen/konto-und-daten/').content.decode())
         self.assertIn('Nein. Bestellt wird ohne Konto', konto)
 

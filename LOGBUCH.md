@@ -11,6 +11,16 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 04.11.2026 – Revolut-Zahlungslink als Hauptweg (Zweig `bau/2026-11-04-zahlungslink`, Auftrag Bastian)
+
+- **Ablauf:** Kundin bestellt im Direktkauf, das Stück ist reserviert; Luisa schickt innerhalb von 1 bis 2 Werktagen die Rechnung (Lexware) mit persönlichem Revolut-Zahlungslink (Karte, Apple Pay, Google Pay, Revolut Pay), Überweisung auf die Rechnungs-IBAN bleibt zweiter Weg; nach der Zahlung wird das Shirt gemalt und verschickt. *Warum:* Vorkasse per Überweisung war die größte Kaufhürde (Plan `doku/46-ZAHLUNGEN-PLAN.md`, Stufe 0/1). Kein Klarna, kein PayPal, kein „Pay by bank“ versprochen.
+- **Eine Quelle:** `luviq_daten.ZAHLUNG`, `RECHNUNG_FRIST`, `FRIST_BEGINN`, `FRIST_BEGINN_ERKLAERT`, `ZAHLUNG_SATZ`; im Kontextprozessor `anbieterin` und in `mails.vertragsunterlagen` verfügbar (`zahlung`, `rechnung_frist`, `frist_beginn`). Lieferfrist einheitlich „ab dem Tag nach deiner Zahlung“ (bei Überweisung gilt der Zahlungsauftrag als Zahlung) in AGB § 5, Mails, FAQ, Versand-, Stück- und Wissensseiten.
+- **Zahlart:** neue Choice `zahlungslink` („Zahlungslink (Karte, Apple Pay, Google Pay)“) und Feld `Order.zahlungslink` (URL, nur zur Übersicht, Migration `0036`). Direktkauf legt `zahlungslink` an; `checkout.VORKASSE_ARTEN = ('bank_transfer', 'zahlungslink')` hält Reservierung (`reserviert()`), Bezahlt-Ablauf im Panel und Bestätigungsmail gleich. `ZAHLARTEN` des Login-Checkouts unverändert. Alte Direktkauf-Bestellungen bleiben `bank_transfer`.
+- **Mails:** Kundin „Deine Bestellung #… ist reserviert – Luviq“ (eigene Vorlage `emails/bestellung_kundin.html`: reserviert, Zahlungslink und Rechnung separat in 1 bis 2 Werktagen, Bezahlwege, Shirt wird von Hand gemalt, Übersicht, Vertragsunterlagen). Luisa: Checkliste (Revolut-Pro-Link über genau den Betrag, Lexware-Rechnung, nach Zahlung auf „bezahlt“). Die Kopie an die Webagentur geht jetzt auch dann hinaus, wenn die Mail an Luisa scheitert. Nach „bezahlt“ sagt die Bestätigung „Deine Zahlung ist eingegangen“.
+- **Seiten:** Block „So bezahlst du“ (`.lv-bezahlen` in `luviq.css`, Critical CSS neu) im Kaufformular (Kaufseite und Stückseite), Danke-Seite, Kontakt, Versand, Archiv, Luisa, Wissen (Bestellen, Konto, Widerruf, Upcycling, Übersicht), `llms.txt`, Schema `paymentAccepted`. Knopf bleibt „Zahlungspflichtig bestellen“ (§ 312j Abs. 3 BGB; Vertrag erst mit Luisas Rechnung, AGB § 2).
+- **Recht:** AGB § 2 (Rechnung mit Zahlungslink in 1 bis 2 Werktagen), § 4 (Revolut, Zahlwege, Überweisung), § 5 (Fristbeginn); Datenschutz Abschnitt 6 (Revolut Bank UAB, Litauen, Art. 6 Abs. 1 lit. b DSGVO). Offene Prüfung durch Bastian: siehe Rückmeldung.
+- **Tests:** neu `test_zahlungslink_2026_11_04`; angepasst `test_direktkauf_2026_10_31`, `test_direktkauf_texte`.
+
 ## 02.11.2026 – SEO/GEO-Upgrade (Zweig `seo/2026-11-02-luviq`, Plan A1–A5, A7–A10, B1)
 
 - **A1/A3 Schema:** Organization ohne Straße, PLZ und E-Mail (Ort, Region, Land bleiben), Typ `OnlineStore` statt `ClothingStore`/`LocalBusiness`, `areaServed` Deutschland, kein `priceRange`; `contactPoint` nur mit URL der Kontaktseite (der eigene Knoten in `kontakt.html` mit Gmail entfällt). *Warum:* Die Anschrift ist eine Wohnung, es gibt keinen Laden. Rechtstexte, GPSR-Zeile und llms-full-Auszüge bleiben unverändert (Entscheidung der Leitung).

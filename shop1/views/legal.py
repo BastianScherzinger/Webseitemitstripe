@@ -307,7 +307,7 @@ def _llms_kopf_mit_verkauf(basis):
         "- Instagram: https://www.instagram.com/luviq.archive/",
         "- TikTok: https://www.tiktok.com/@luviq.archive",
         "- Google-Unternehmensprofil: https://www.google.com/maps?cid=13899750731019902000",
-        *(["- Zahlungsarten: Vorkasse per Überweisung nach Rechnung per E-Mail (AGB, § 4)"]
+        *([f"- Zahlungsarten: Vorkasse über Revolut-Zahlungslink ({luviq_daten.ZAHLUNG['wege_kurz']}) oder Überweisung, Rechnung und Zahlungslink per E-Mail (AGB, § 4)"]
           if direktkauf_aktiv() else ["- Zahlungsarten: PayPal oder Vorab-Überweisung (AGB, § 4)"]),
         "- Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer",
         "  berechnet (Kleinunternehmerstatus)",
@@ -387,8 +387,8 @@ def _llms_fragen_mit_verkauf(basis):
         "",
         "### Wie bestellt man?",
         *([f"Ohne Konto, direkt auf der Seite des Stücks ({basis}{reverse('produkte')}): Name, E-Mail-Adresse",
-           "und Anschrift angeben (ein Serienstück wie das Engel-Shirt bleibt weiter bestellbar, ein Einzelstück ist dann reserviert). Die Rechnung mit den Zahlungsdaten kommt",
-           "per E-Mail; bezahlt wird im Voraus per Überweisung."]
+           "und Anschrift angeben (ein Serienstück wie das Engel-Shirt bleibt weiter bestellbar, ein Einzelstück ist dann reserviert). Rechnung und Zahlungslink kommen",
+           f"innerhalb von {luviq_daten.RECHNUNG_FRIST} per E-Mail; bezahlt wird im Voraus mit dem Zahlungslink von Revolut ({luviq_daten.ZAHLUNG['wege_kurz']}) oder per Überweisung."]
           if direktkauf_aktiv() else
           [f"Über diese Seite: Stück auf {basis}{reverse('produkte')} auswählen,",
            "in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder",
