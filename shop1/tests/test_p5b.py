@@ -33,7 +33,7 @@ class HeroSiegerTest(LuviqTestCase):
         html = self.text()
         self.assertIn('Mit Bleiche gemalt. Keins gleicht dem anderen.', html)
         self.assertIn('Nº 006 · Engel-Shirt', html)
-        self.assertIn('Luisa Brehler aus Lübeck zieht die Farbe mit Bleiche aus dem Stoff', html)
+        self.assertIn('Luviq ist die Marke von Luisa Brehler aus Lübeck für handbemalte Second-Hand-Shirts und Unikate', html)
         self.assertIn('data-ereignis="hero_engel"', html)
         self.assertIn('data-ereignis="hero_motiv"', html)
         self.assertIn('Engel-Shirt ansehen', html)

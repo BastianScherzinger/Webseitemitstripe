@@ -85,11 +85,13 @@ def bestellen_faq(code=None, engel_url=''):
         },
         {
             'frage': 'Wann ist das Stück für mich reserviert?',
-            'antwort': ('Sobald du die Bestellung abgeschickt hast. Ein zweiter Besucher sieht das Stück dann als '
-                        '„reserviert“ und kann es nicht bestellen. Die Reservierung endet, wenn Luisa Brehler keine Rechnung '
-                        f'schickt oder die Zahlung nicht innerhalb von {tage} Tagen nach Rechnungsdatum eingeht.'),
-            'mehr': ('Wird das Stück wieder frei, nimmt Luisa Brehler die Freigabe von Hand vor; sie geschieht nicht '
-                     'automatisch. Ein reserviertes Stück ist bis dahin für andere gesperrt.'),
+            'antwort': ('Das hängt vom Stück ab. Ein Einzelstück ist reserviert, sobald du die Bestellung abgeschickt hast: Ein '
+                        'zweiter Besucher sieht es dann als „reserviert“ und kann es nicht bestellen. Ein Serienstück wie das '
+                        'Engel-Shirt wird nicht reserviert, weil Luisa Brehler es für jede Bestellung neu von Hand malt; es bleibt '
+                        'für andere bestellbar. Die Reservierung eines Einzelstücks endet, wenn keine Rechnung kommt oder die '
+                        f'Zahlung nicht innerhalb von {tage} Tagen nach Rechnungsdatum eingeht.'),
+            'mehr': ('Wird ein Einzelstück wieder frei, nimmt Luisa Brehler die Freigabe von Hand vor; sie geschieht nicht '
+                     'automatisch. Bei einem Serienstück gibt es nichts freizugeben: Gemalt wird erst nach deiner Zahlung.'),
         },
         {
             'frage': 'Wann kommt der Kaufvertrag zustande?',

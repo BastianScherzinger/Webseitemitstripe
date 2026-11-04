@@ -5,6 +5,8 @@ Lieferfrist aus AGB § 5 (VERSAND['lieferfrist_werktage'], 5 Werktage) eingehalt
 transitTime 1 bis Frist minus Bearbeitung (Gegenprüfung M1, 30.10.2026). Die Rückgabe steht seit 01.11.2026 vollständig im Offer (Google liest @id-Verweise über getrennte Skriptblöcke nicht sicher), inhaltlich gleich der MerchantReturnPolicy der Organization (base.html, #rueckgabe): gesetzliches
 Widerrufsrecht 14 Tage, Rücksendung per Post; Rücksendekosten trägt laut Widerrufsbelehrung die
 Kundin, ein fester Betrag steht nicht fest – deshalb noch kein returnFees. Beginnt mit Komma: wird hinter das letzte Feld des Offer gesetzt.{% endcomment %},
+        "eligibleRegion": {"@type": "Country", "name": "Deutschland"},
+        "areaServed": {"@type": "Country", "name": "Deutschland"},
         "shippingDetails": {
           "@type": "OfferShippingDetails",
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#versand",

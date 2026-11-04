@@ -26,6 +26,11 @@ META_BESCHREIBUNG_MAX = 160
 META_TITEL_ZUSAETZE = (' kaufen – Luviq Universe, Lübeck', ' – Luviq Universe')
 META_BESCHREIBUNG_ZUSATZ = ' – von Hand gemaltes Upcycling-Stück bei Luviq Universe.'
 
+#: Vergebenes Stück bei laufendem Verkauf (SEO-Runde 04.11.2026): nie „kaufen“, deutsch, mit Weg zur Anfrage.
+META_BESCHREIBUNG_ZUSATZ_VERGEBEN = (
+    ' – Nº {nr}: vergebenes, von Hand gemaltes Unikat im Archiv von Luviq. Ein ähnliches Motiv oder ein eigenes '
+    'Stück jetzt anfragen.')
+
 #: Dieselben Zusätze ohne Verkauf (``VERKAUF_AKTIV`` aus): kein „kaufen",
 #: das Stück steht im Archiv der bisherigen Stücke (siehe ``shop1/verkauf.py``).
 META_TITEL_ZUSAETZE_OHNE_VERKAUF = (' – Luviq Universe, Lübeck', ' – Luviq Universe')
@@ -333,17 +338,43 @@ class Produkt(models.Model):
         Der Zusatz mit Ort entfällt, wenn er nicht mehr passt; dann der
         kürzere ohne Ort; zuletzt bleibt der Name allein, an einer Wortgrenze
         gekürzt. So wird der Zusatz nie mitten im Wort abgeschnitten."""
-        if self.seo_titel:
+        if self.seo_titel and not self._seo_ist_verkaufstitel():
             verkauf = self._seo_mit_verkauf('seo_titel')
-            return verkauf or self.seo_titel
+            return verkauf or self._seo_neu('seo_titel')
         from .verkauf import verkauf_aktiv
         name = ' '.join(self.name.split())
         if not verkauf_aktiv():
             return self._meta_title_archiv(name)
+        if self.vergeben:
+            return self._meta_title_vergeben(name)
         for zusatz in META_TITEL_ZUSAETZE:
             if len(name) + len(zusatz) <= META_TITEL_MAX:
                 return f"{name}{zusatz}"
         return _kuerze_an_wortgrenze(name, META_TITEL_MAX)
+
+    def _seo_ist_verkaufstitel(self):
+        """True bei einem vergebenen Stück, dessen gepflegter Titel noch „kaufen“ trägt (SEO-Runde 04.11.2026):
+        vergeben heißt nicht bestellbar, der Titel darf es nicht versprechen. Dann gilt die abgeleitete Fassung."""
+        return self.vergeben and 'kaufen' in (self.seo_titel or '').lower()
+
+    def _meta_title_vergeben(self, name):
+        """Titel eines vergebenen Stücks bei laufendem Verkauf: ``<Name> – Nº 003, vergeben | Luviq``.
+        Ohne „kaufen“, mit der Archivnummer (zwei gleich benannte Stücke bekommen zwei Titel); die Marke bleibt
+        am Ende, der Name wird an einer Wortgrenze gekürzt, wenn er nicht passt."""
+        zusatz = f' – Nº {self.archiv_nummer}, vergeben | Luviq'
+        if len(name) + len(zusatz) <= META_TITEL_MAX:
+            return f'{name}{zusatz}'
+        return f'{_kuerze_an_wortgrenze(name, META_TITEL_MAX - len(zusatz))}{zusatz}'
+
+    def _seo_neu(self, feld):
+        """Gepflegter Wert des Feldes; steht noch eine frühere Standardfassung des Engel-Shirts darin,
+        die heutige (``luviq_daten.ENGEL_STUECK``). Luisas eigene Texte bleiben unverändert."""
+        wert = getattr(self, feld)
+        from . import luviq_daten
+        d = luviq_daten.ENGEL_STUECK
+        if self.slug == d['slug'] and wert in d.get(feld + '_frueher', ()):
+            return d[feld]
+        return wert
 
     def _meta_title_archiv(self, name):
         """Titel ohne Verkauf: ``Archiv Nº 003: <Name> – Luviq Universe, Lübeck``.
@@ -366,7 +397,9 @@ class Produkt(models.Model):
         from . import luviq_daten
         from .verkauf import verkauf_aktiv
         d = luviq_daten.ENGEL_STUECK
-        if not verkauf_aktiv() or self.slug != d['slug'] or getattr(self, feld) != d[feld]:
+        wert = getattr(self, feld)
+        if (not verkauf_aktiv() or self.slug != d['slug']
+                or wert not in (d[feld], *d.get(feld + '_frueher', ()))):
             return ''
         return d[feld + '_verkauf'].format(preis=f'{self.preis:.0f}')
 
@@ -382,10 +415,12 @@ class Produkt(models.Model):
         der Name vor dem Nachsatz, damit kein Text mit „–" beginnt."""
         if self.seo_beschreibung:
             verkauf = self._seo_mit_verkauf('seo_beschreibung')
-            return verkauf or self.seo_beschreibung
+            return verkauf or self._seo_neu('seo_beschreibung')
         from django.conf import settings
         from .verkauf import verkauf_aktiv
-        if verkauf_aktiv():
+        if verkauf_aktiv() and self.vergeben:
+            zusatz = META_BESCHREIBUNG_ZUSATZ_VERGEBEN.format(nr=self.archiv_nummer)
+        elif verkauf_aktiv():
             zusatz = META_BESCHREIBUNG_ZUSATZ
         elif getattr(settings, 'MOTIVANFRAGE_AKTIV', True):
             zusatz = META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF.format(nr=self.archiv_nummer)
