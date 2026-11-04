@@ -455,7 +455,7 @@ body:has([data-kaufleiste]) .lv-leiste{display:none!important}
 .lv-mehr summary::after{content:"+";font-size:18px}
 .lv-mehr[open] summary::after{content:"–"}
 .lv-mehr>p{margin:0 0 var(--lv-raum-3);color:var(--lv-leise)}
-.lv-stueck-versand{font-size:max(13px,calc(var(--u)*.9));max-width:64ch}
+.lv-stueck-versand{font-size:max(13px,calc(var(--u)*.9));width:100%;max-width:64ch}
 .lv-stueck-versand a{color:var(--lv-text);text-decoration:underline;text-underline-offset:.2em}
 
 /* ── Übrige Seiten: Übersetzungsschicht für das alte Markup ──

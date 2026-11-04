@@ -72,7 +72,7 @@ Abs. 3: der Knopf trägt wörtlich „Zahlungspflichtig bestellen“. Der Kaufve
                 <li><b>Erst nach der Zahlung</b> {% if serie %}malt Luisa dein Shirt von Hand (Bearbeitung ca. {{ bearbeitung|default:3 }} Werktage) und verschickt es.{% else %}verschicken wir das Stück.{% endif %}</li>
             </ol>
         </div>
-        <p class="lv-klein">Mit „{{ knopf }}“ gibst du eine verbindliche Bestellung ab und verpflichtest dich zur Zahlung des Kaufpreises, sobald du die Rechnung mit dem Zahlungslink erhalten hast. Bezahlt wird im Voraus, mit dem Zahlungslink von {{ zahlung.anbieter }} oder per Überweisung.</p>
+        <p class="lv-klein">Mit „{{ knopf }}“ gibst du eine verbindliche Bestellung ab und verpflichtest dich zur Zahlung des Kaufpreises, sobald du die Rechnung mit dem Zahlungslink erhalten hast.</p>
     </div>
     <button type="submit" class="lv-knopf">{{ knopf }}</button>
 </form>
