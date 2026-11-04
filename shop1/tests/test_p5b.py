@@ -17,6 +17,11 @@ from .test_zahlung import LIEFERADRESSE
 
 class HeroSiegerTest(LuviqTestCase):
     def setUp(self):
+        # Die Tests meinen die Zeit VOR dem Verkaufsstart (01.11.2026): ein festes Datum, sonst kippen sie
+        # am Starttag, weil „ab 01.11.“ dann nicht mehr erscheint.
+        patcher = mock.patch('shop1.verkauf.heute_berlin', return_value=__import__('datetime').date(2026, 10, 30))
+        patcher.start()
+        self.addCleanup(patcher.stop)
         self.engel = erzeuge_produkt(
             'Engel-Shirt, mit Bleiche gemalt', slug='engel-shirt-handgebleicht', nummer=6,
             masse='Größe M', material='100 % Baumwolle')

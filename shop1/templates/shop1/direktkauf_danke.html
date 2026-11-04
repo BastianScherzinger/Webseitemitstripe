@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% comment %}Danke-Seite nach dem Direktkauf: zeigt die eigene Bestellung aus der Sitzung. noindex.{% endcomment %}
 {% block title %}Bestellung eingegangen – Luviq Universe{% endblock %}
-{% block meta_description %}Deine Bestellung bei Luviq Universe ist reserviert. Rechnung und Zahlungslink folgen innerhalb von {{ rechnung_frist }} per E-Mail.{% endblock %}
+{% block meta_description %}Deine Bestellung bei Luviq Universe ist eingegangen. Rechnung und Zahlungslink folgen innerhalb von {{ rechnung_frist }} per E-Mail.{% endblock %}
 {% block meta_robots %}noindex, follow{% endblock %}
 {% block alte_stile %}{% endblock %}
 {% block alpine %}{% endblock %}
@@ -11,12 +11,12 @@
 <div class="lv-seite">
     <section class="lv-danke" aria-labelledby="danke-titel">
         <p class="lv-nr">Bestellung{% if order %} #{{ order.pk }}{% endif %}</p>
-        <h1 class="lv-serif" id="danke-titel">Danke für deine Bestellung</h1>
+        <h1 class="lv-serif" id="danke-titel">{% if order %}Danke für deine Bestellung{% else %}Hier erscheint deine Bestellung{% endif %}</h1>
         {% if order %}
         {% for p in order.items.all %}<p><strong>{{ p.produkt_name }}</strong> – {{ order.gesamt_betrag|floatformat:2 }} € inkl. Versand innerhalb Deutschlands{% if order.rabatt_betrag %}, darin {{ order.rabatt_prozent }} % Rabatt mit dem Code {{ order.rabatt_code_text }} (−{{ order.rabatt_betrag|floatformat:2 }} €){% endif %}. {% if p.produkt.serie %}Dein Shirt wird für dich gemacht: Nach deiner Zahlung malt Luisa es von Hand, Bearbeitungszeit ca. {{ p.produkt.bearbeitungstage|default:3 }} Werktage, dann Versand.{% else %}Das Stück ist {{ reservierung_tage }} Tage nach der Rechnung für dich reserviert.{% endif %}</p>{% endfor %}
-        <p><strong>Deine Bestellung ist reserviert. Zahlungslink und Rechnung kommen separat innerhalb von {{ rechnung_frist }} per E-Mail an {{ order.email }}.</strong> Bezahlen kannst du dann mit {{ zahlung.wege_kurz }} oder per Überweisung. Eine Eingangsbestätigung mit AGB und Widerrufsbelehrung ist schon unterwegs; schau auch im Spam-Ordner nach. Der Kaufvertrag kommt zustande, sobald Luisa Brehler deine Bestellung mit der Rechnung annimmt. {% if abholung %}Die Übergabe in Lübeck stimmt Luisa Brehler mit dir per E-Mail ab.{% else %}Versendet wird nach Zahlungseingang; die Lieferung dauert innerhalb Deutschlands bis zu {{ lieferfrist }} Werktage {{ frist_beginn }}.{% endif %}</p>
+        <p><strong>{% if serie %}Deine Bestellung ist vorgemerkt{% else %}Deine Bestellung ist reserviert{% endif %}. Zahlungslink und Rechnung kommen separat innerhalb von {{ rechnung_frist }} per E-Mail an {{ order.email }}.</strong> Bezahlen kannst du dann mit {{ zahlung.wege_kurz }} oder per Überweisung. Eine Eingangsbestätigung mit AGB und Widerrufsbelehrung ist schon unterwegs; schau auch im Spam-Ordner nach. Der Kaufvertrag kommt zustande, sobald Luisa Brehler deine Bestellung mit der Rechnung annimmt. {% if abholung %}Die Übergabe in Lübeck stimmt Luisa Brehler mit dir per E-Mail ab.{% else %}Versendet wird nach Zahlungseingang; die Lieferung dauert innerhalb Deutschlands bis zu {{ lieferfrist }} Werktage {{ frist_beginn }}.{% endif %}</p>
         {% else %}
-        <p>Deine Bestellung ist eingegangen und reserviert. Zahlungslink und Rechnung folgen innerhalb von {{ rechnung_frist }} per E-Mail an die Adresse, die du angegeben hast.</p>
+        <p>Diese Seite zeigt deine Bestellung direkt nach dem Abschicken. Gerade ist keine Bestellung zu sehen. Hast du eben bestellt, schau in dein Postfach (auch im Spam-Ordner): Die Eingangsbestätigung ist unterwegs, Rechnung und Zahlungslink folgen innerhalb von {{ rechnung_frist }}. Du suchst ein Stück? <a href="{% url 'produkte' %}">Zu den Stücken</a>.</p>
         {% endif %}
         <p>Fragen? Schreib an <a href="mailto:brehlerluisa@gmail.com">brehlerluisa@gmail.com</a>. Deine Bestellung kannst du auch online <a href="{% url 'vertrag_widerrufen' %}">widerrufen</a>.</p>
         <a class="lv-knopf" href="{% url 'produkte' %}">Weitere Stücke ansehen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>

@@ -11,6 +11,17 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 04.11.2026 – Feinschliff aus der Komplettprüfung (Zweig `bau/2026-11-04-zahlungslink`)
+
+- **Tippflächen (Handy):** `.lv-haken` mindestens 44 px hoch, Links darin (AGB, Widerruf, Datenschutz), „Code eintragen“ und Links in `.lv-formular .lv-klein` als `inline-block` mit Polster und gleichem Minus-Rand (Muster der Brotkrume) – Bild unverändert, Tippfläche ≥ 44 px. Galerie-Punkte 44 px breit, sichtbare Linie bleibt 30 px (`left/right:7px`); am PC bleibt der Abstand der Vorschaubilder.
+- **Cookie-Hinweis:** am Handy ohne den langen Zusatzsatz (steht weiter in der Datenschutzerklärung und im Fuß „Cookie-Einstellungen“), Wortlaut „Nur für unsere Statistik: keine Werbung, wir verkaufen keine Daten.“ bleibt; beide Knöpfe gleich groß nebeneinander. Solange der Hinweis offen ist, bekommt `body` unten Polster (`:has`), damit Formular und Knopf nicht verdeckt bleiben.
+- **Reservierung:** Danke-Seite, Meta-Beschreibung und AGB § 3 unterscheiden Einzelstück (reserviert) und Serienstück (vorgemerkt/gemalt). Die Mail an die Kundin sagt weiter „Deine Bestellung ist reserviert“ (Wunsch Betreiber).
+- **Domain in Texten:** Fallback `mails.live_url()` und Motivanfrage-Mail nennen `www.luviq-luebeck.com`. Absender-Vorgabe `noreply@luviq-alsfeld.com`, Spamschutz und Host-Einstellungen bleiben (Mail-Domain, Weiterleitung).
+- **`/bestellen/danke/` ohne Bestellung:** eigener Text mit Link zu den Stücken statt „Danke … reserviert“.
+- **Kontaktfoto:** weiche Randmaske (`mask-image`) in `.lv-luisa-foto img`, damit der zackige Freistellungsrand nicht sichtbar ist.
+- **Menü:** Escape schließt das Handy-Menü (`base.html`).
+- **Test:** `test_p5b.HeroSiegerTest` setzt ein festes Datum (30.10.2026) für die „vor dem Verkaufsstart“-Fälle; sie kippten, weil „ab 01.11.“ ab dem Starttag nicht mehr erscheint.
+
 ## 04.11.2026 – Revolut-Zahlungslink als Hauptweg (Zweig `bau/2026-11-04-zahlungslink`, Auftrag Bastian)
 
 - **Ablauf:** Kundin bestellt im Direktkauf, das Stück ist reserviert; Luisa schickt innerhalb von 1 bis 2 Werktagen die Rechnung (Lexware) mit persönlichem Revolut-Zahlungslink (Karte, Apple Pay, Google Pay, Revolut Pay), Überweisung auf die Rechnungs-IBAN bleibt zweiter Weg; nach der Zahlung wird das Shirt gemalt und verschickt. *Warum:* Vorkasse per Überweisung war die größte Kaufhürde (Plan `doku/46-ZAHLUNGEN-PLAN.md`, Stufe 0/1). Kein Klarna, kein PayPal, kein „Pay by bank“ versprochen.

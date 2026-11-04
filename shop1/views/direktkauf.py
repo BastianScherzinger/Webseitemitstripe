@@ -418,6 +418,7 @@ def direktkauf_danke(request):
     order = Order.objects.filter(pk=pk).prefetch_related('items').first() if pk else None
     return render(request, 'shop1/direktkauf_danke.html', {
         'order': order, 'abholung': bool(order and order.adresse == ABHOLUNG_ADRESSE),
+        'serie': bool(order and any(getattr(i.produkt(), 'serie', False) for i in order.items.all())),
     })
 
 

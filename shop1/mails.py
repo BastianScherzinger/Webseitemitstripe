@@ -53,7 +53,7 @@ def live_url():
     ``CANONICAL_HOST`` ist die gepflegte Hauptadresse; ``SITE_URL`` zeigt in
     der Vorgabe noch auf die Railway-Adresse und taugt deshalb nicht für Links
     in Mails an die Betreuung."""
-    host = getattr(settings, 'CANONICAL_HOST', '') or 'www.luviq-alsfeld.com'
+    host = getattr(settings, 'CANONICAL_HOST', '') or 'www.luviq-luebeck.com'
     return f'https://{host}'
 
 

@@ -425,6 +425,11 @@
                 if (menue) { menue.removeAttribute('open'); }
             });
         });
+        document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape') { return; }
+            var offen = document.querySelector('details.lv-menue[open]');
+            if (offen) { offen.removeAttribute('open'); }
+        });
     })();
     </script>
     {% comment %}Einwilligungs-Gerüst (29.10.2026): nur mit EINWILLIGUNG_DIENST, sonst kein Element und kein Skript.{% endcomment %}

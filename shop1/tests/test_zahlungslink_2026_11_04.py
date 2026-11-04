@@ -197,7 +197,7 @@ class ZahlungslinkTest(LuviqTestCase):
     def test_danke_seite_sagt_reserviert_und_zahlungslink(self):
         self.bestelle(self.shirt)
         antwort = self.hole('/bestellen/danke/')
-        for satz in ('Deine Bestellung ist reserviert', 'Zahlungslink und Rechnung kommen separat innerhalb von 1 bis 2 Werktagen',
+        for satz in ('Deine Bestellung ist vorgemerkt', 'Zahlungslink und Rechnung kommen separat innerhalb von 1 bis 2 Werktagen',
                      'kundin@example.org', 'für dich gemacht', 'ab dem Tag nach deiner Zahlung'):
             self.assertContains(antwort, satz)
         self.assertNotRegex(antwort.content.decode(), _ALT)
@@ -254,3 +254,13 @@ class ZahlungslinkTest(LuviqTestCase):
         from shop1.views.checkout import VORKASSE_ARTEN, ZAHLARTEN
         self.assertEqual(ZAHLARTEN, ('paypal', 'bank_transfer'))
         self.assertEqual(VORKASSE_ARTEN, ('bank_transfer', 'zahlungslink'))
+
+
+@override_settings(VERKAUF_AKTIV=True, DIREKTKAUF=True)
+class DankeOhneBestellungTest(LuviqTestCase):
+    def test_danke_ohne_bestellung_zeigt_hinweis_statt_leerem_rahmen(self):
+        antwort = self.hole('/bestellen/danke/')
+        self.assertEqual(antwort.status_code, 200)
+        self.assertContains(antwort, 'Gerade ist keine Bestellung zu sehen')
+        self.assertContains(antwort, 'href="/produkte/"')
+        self.assertNotContains(antwort, 'Danke für deine Bestellung')
