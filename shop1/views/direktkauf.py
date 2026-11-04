@@ -1,19 +1,20 @@
 """Direktkauf ohne Konto (31.10.2026): Name, E-Mail, Anschrift (oder Abholung) -> Bestellung.
 
-Bastians Vorgabe: keine großen Anmeldesysteme, der Kauf läuft über E-Mail; Luisa schickt die
-Rechnung mit den Zahlungsdaten, bis es Zahlungslinks gibt. Der Code bildet das ab:
+Bastians Vorgabe: keine großen Anmeldesysteme, der Kauf läuft über E-Mail; Luisa schickt innerhalb von
+1 bis 2 Werktagen die Rechnung (Lexware) mit einem persönlichen Revolut-Zahlungslink (Karte, Apple Pay,
+Google Pay, Revolut Pay; Überweisung bleibt zweiter Weg). Seit 04.11.2026 ist das der Hauptweg. Der Code bildet das ab:
 
 * Nur sichtbar und erreichbar, wenn ``verkauf_aktiv()`` **und** ``settings.DIREKTKAUF`` (die
   Routen stehen in ``verkauf.KAUFROUTEN``; Warenkorb, Login-Checkout und PayPal bleiben im Code
   und sind bei ``DIREKTKAUF`` ausgeblendet bzw. über ``verkauf.DIREKTKAUF_GESPERRT`` umgeleitet).
-* Eine Bestellung (``Order``, ohne ``user``) mit Zahlart „Überweisung“ und Status „pending“:
+* Eine Bestellung (``Order``, ohne ``user``) mit Zahlart „Zahlungslink“ (``zahlungslink``, Vorkasse wie ``bank_transfer``) und Status „pending“:
   Das ist dieselbe Reservierung wie im Login-Checkout (``checkout.reserviert``). Das Unikat gilt
   damit sofort als reserviert; ein zweiter Käufer sieht „reserviert“. Storniert Luisa die
   Bestellung im Admin (Status „Abgebrochen“), ist das Stück wieder frei.
 * Schutz: CSRF, Honigtopf + Zeitfalle (``spamschutz``), Ratenbegrenzung je IP, Sperre gegen
   Doppelklick (Cache), Sperrung der Zeile des Stücks in der Transaktion (kein Doppelverkauf).
-* Mails: Eingang an die Kundin (Gesamtpreis, „Rechnung mit Zahlungsdaten folgt“, AGB,
-  Widerrufsbelehrung), Bestellung an Luisa, Kopie an die Webagentur.
+* Mails: „Deine Bestellung ist reserviert“ an die Kundin (Zahlungslink und Rechnung kommen separat in 1 bis 2
+  Werktagen, Gesamtpreis, AGB, Widerrufsbelehrung), Bestellung mit Checkliste an Luisa, Kopie an die Webagentur.
 """
 
 import hashlib
@@ -63,7 +64,7 @@ def zustand(produkt):
 
 def serie_kontext(produkt):
     """Serienstück (Bastian 01.11.2026): Bearbeitungszeit in Werktagen, dann Versand. Die verbindliche
-    Lieferfrist (AGB § 5, 5 Werktage ab dem Tag nach dem Überweisungsauftrag) schließt die Bearbeitung ein; fürs Schema
+    Lieferfrist (AGB § 5, 5 Werktage ab dem Tag nach der Zahlung) schließt die Bearbeitung ein; fürs Schema
     gilt: Übergabe an den Versand nach ``bearbeitungstage``, Laufzeit = Frist minus Bearbeitung."""
     if not getattr(produkt, 'serie', False):
         return {'serie': False}
@@ -182,7 +183,7 @@ def _bestellung_anlegen(produkt_id, w):
         if ergebnis.text and not ergebnis.gilt:
             raise RabattGiltNicht(ergebnis)
         order = Order.objects.create(
-            user=None, status='pending', payment_method='bank_transfer',
+            user=None, status='pending', payment_method='zahlungslink',
             vorname=' '.join(teile[:-1]), nachname=teile[-1], email=w['email'],
             adresse=ABHOLUNG_ADRESSE if abholung else w['strasse'],
             stadt='Lübeck' if abholung else w['stadt'],
@@ -205,10 +206,43 @@ def _doppelt_schluessel(produkt, w):
 
 # ─── Mails ──────────────────────────────────────────────────────────────────
 
+def _euro(betrag):
+    """69.0 -> „69,00 €“."""
+    return f'{float(betrag):.2f}'.replace('.', ',') + ' €'
+
+
+def kundin_schritte(serie, tage):
+    """Die drei Schritte „So geht es weiter“ der Mail an die Kundin (Zahlungslink als Hauptweg, 04.11.2026).
+
+    Alle Werte kommen aus ``luviq_daten``. Nur ein Serienstück wird erst nach der Zahlung gemalt; ein Einzelstück
+    liegt fertig bereit und ist reserviert."""
+    z = luviq_daten.ZAHLUNG
+    frist = luviq_daten.VERSAND['lieferfrist_werktage']
+    reserviert = luviq_daten.RESERVIERUNG_TAGE
+    if serie:
+        danach = (f'Sobald deine Zahlung da ist, malt Luisa dein Shirt von Hand für dich (Bearbeitung ca. {tage or 3} '
+                  f'Werktage), danach geht es in den Versand. Geliefert wird innerhalb von {frist} Werktagen '
+                  f'{luviq_daten.FRIST_BEGINN} (AGB § 5).')
+    else:
+        danach = ('Sobald deine Zahlung da ist, machen wir dein Stück versandfertig und schicken es los. Geliefert wird '
+                  f'innerhalb von {frist} Werktagen {luviq_daten.FRIST_BEGINN} (AGB § 5).')
+    return [
+        ('Zahlungslink und Rechnung',
+         f'Beides kommt separat innerhalb von {luviq_daten.RECHNUNG_FRIST} per E-Mail an diese Adresse. Schau bitte '
+         'auch im Spam-Ordner nach.'),
+        ('Bezahlen',
+         f'Mit dem persönlichen Zahlungslink zahlst du auf der sicheren Bezahlseite von {z["anbieter"]}: '
+         f'{z["wege"]}. Alternativ kannst du auf die IBAN aus der Rechnung überweisen. Bitte zahle innerhalb von '
+         f'{reserviert} Tagen nach Rechnungsdatum.'),
+        ('Danach wird dein Stück fertig gemacht', danach),
+    ]
+
+
 def mail_an_kundin(order):
-    """Eingang der Bestellung, Gesamtpreis, Hinweis auf die Rechnung, Vertragsunterlagen."""
+    """Mail an die Kundin: Bestellung ist reserviert, Zahlungslink und Rechnung kommen separat (1 bis 2 Werktage),
+    wie bezahlt wird, was danach passiert, Bestellübersicht, Vertragsunterlagen."""
     posten = list(order.items.all())
-    gesamt = f'{float(order.gesamt_betrag):.2f} €'
+    gesamt = _euro(order.gesamt_betrag)
     abholung = order.adresse == ABHOLUNG_ADRESSE
     wo = ('Abholung in Lübeck nach Absprache' if abholung else
           f'{order.vorname} {order.nachname}, {order.adresse}, {order.postleitzahl} {order.stadt}')
@@ -216,37 +250,40 @@ def mail_an_kundin(order):
     serie = bool(p0 and p0.serie)
     tage = (p0.bearbeitungstage if p0 else 0) or 0
     if serie:
-        satz = ('Wir haben deine Bestellung erhalten. Schau bitte auch im Spam-Ordner nach, falls die Rechnung '
-                'nicht ankommt. Die Rechnung mit den Zahlungsdaten folgt per E-Mail an diese Adresse. Der '
-                'Kaufvertrag kommt zustande, wenn Luisa Brehler deine Bestellung mit dieser Rechnung annimmt '
-                '(AGB § 2). Dein Shirt wird für dich von Hand gemalt und nie 1:1 wie ein anderes. Die '
-                f'Bearbeitungszeit beträgt ca. {tage or 3} Werktage ab dem Tag nach deinem Überweisungsauftrag, danach geht es '
-                'in den Versand; geliefert wird innerhalb von '
-                f'{luviq_daten.VERSAND["lieferfrist_werktage"]} Werktagen ab dem Tag nach deinem Überweisungsauftrag (AGB § 5). Bitte überweise '
-                f'innerhalb von {luviq_daten.RESERVIERUNG_TAGE} Tagen nach Rechnungsdatum.')
+        kopf = ('deine Bestellung ist reserviert, und dein Shirt wird jetzt für dich gemacht: Luisa malt es von Hand, '
+                'sobald deine Zahlung eingegangen ist. Kein Shirt gleicht einem anderen.')
     else:
-      satz = ('Wir haben deine Bestellung erhalten und das Stück für dich reserviert. Schau bitte auch im Spam-Ordner nach, falls die Rechnung nicht ankommt. Die Rechnung mit den '
-            'Zahlungsdaten folgt per E-Mail an diese Adresse. Der Kaufvertrag kommt zustande, wenn Luisa '
-            'Brehler deine Bestellung mit dieser Rechnung annimmt (AGB § 2). Bitte überweise innerhalb von '
-            f'{luviq_daten.RESERVIERUNG_TAGE} Tagen nach Rechnungsdatum; so lange halten wir das Stück für dich zurück.')
+        kopf = ('deine Bestellung ist reserviert, und dein Stück wird jetzt für dich zurückgehalten und nach deiner '
+                'Zahlung für den Versand vorbereitet.')
+    schritte = kundin_schritte(serie, tage)
+    vertrag = ('Der Kaufvertrag kommt zustande, wenn Luisa Brehler deine Bestellung mit der Rechnung annimmt (AGB § 2). '
+               'AGB, Widerrufsbelehrung und Muster-Widerrufsformular findest du unten in dieser Mail.')
     unterlagen_html, unterlagen_text = mails.vertragsunterlagen(order)
-    zeilen_text = '\n'.join(f'- {p.menge}x {p.produkt_name}: {float(p.produkt_preis) * p.menge:.2f} €' for p in posten)
-    zeilen_html = ''.join(f'<li>{p.menge}x {escape(p.produkt_name)}: {float(p.produkt_preis) * p.menge:.2f} €</li>'
-                          for p in posten)
+    zeilen = [f'{p.menge}x {p.produkt_name}: {_euro(float(p.produkt_preis) * p.menge)}' for p in posten]
     rz = rabatt_zeile(order)
     if rz:
-        zeilen_text += f'\n- {rz}'
-        zeilen_html += f'<li>{escape(rz)}</li>'
-    text = (f'Eingang deiner Bestellung #{order.id}\n\nHallo {order.vorname},\n\n{satz}\n\n{zeilen_text}\n'
-            f'Gesamt: {gesamt} (inkl. Versand innerhalb Deutschlands, gemäß § 19 UStG ohne Umsatzsteuer)\n'
-            f'Lieferung: {wo}\n\nViele Grüße\nLuisa Brehler\n\n---\n{unterlagen_text}')
-    html = (f'<html><body><h2>Hallo {escape(order.vorname)},</h2><p>{escape(satz)}</p><ul>{zeilen_html}</ul>'
-            f'<p><strong>Gesamt: {gesamt}</strong> (inkl. Versand innerhalb Deutschlands, gemäß § 19 UStG ohne '
-            f'Umsatzsteuer)</p><p>Lieferung: {escape(wo)}</p><p>Viele Grüße,<br>Luisa Brehler</p>'
-            f'{unterlagen_html}</body></html>')
-    send_brevo_email(f'Eingang deiner Bestellung #{order.id} bei Luviq', html, order.email,
-                     recipient_name=f'{order.vorname} {order.nachname}', text_content=text,
-                     reply_to=mails.KONTAKT_EMAIL)
+        zeilen.append(rz)
+    betreff = f'Deine Bestellung #{order.id} ist reserviert – Luviq'
+    preis_hinweis = '(inkl. Versand innerhalb Deutschlands, gemäß § 19 UStG ohne Umsatzsteuer)'
+    text = (f'Deine Bestellung #{order.id} ist reserviert\n\nHallo {order.vorname},\n\n{kopf[0].upper() + kopf[1:]}\n\n'
+            'So geht es weiter:\n' +
+            '\n'.join(f'{i}. {t}: {b}' for i, (t, b) in enumerate(schritte, 1)) +
+            '\n\nDeine Bestellung:\n' + '\n'.join(f'- {z}' for z in zeilen) +
+            f'\nGesamt: {gesamt} {preis_hinweis}\nLieferung: {wo}\n\n{vertrag}\n\n'
+            f'Fragen? Antworte einfach auf diese Mail oder schreib an {mails.KONTAKT_EMAIL}.\n\n'
+            f'Viele Grüße\nLuisa Brehler\n\n---\n{unterlagen_text}')
+    try:
+        html = mails.rendern(
+            'bestellung_kundin.html', titel=betreff,
+            preheader=f'Reserviert. Zahlungslink und Rechnung folgen in {luviq_daten.RECHNUNG_FRIST}.',
+            vorname=order.vorname, bestellnummer=order.id, kopf=kopf, schritte=schritte, zeilen=zeilen,
+            gesamt=gesamt, preis_hinweis=preis_hinweis, wo=wo, vertrag=vertrag, unterlagen_html=unterlagen_html)
+    except Exception:
+        _log.exception('Mail an die Kundin: Gestaltung gescheitert, einfache Fassung geht hinaus')
+        html = ('<html><body><h2>Hallo ' + escape(order.vorname) + ',</h2><pre style="white-space:pre-wrap">'
+                + escape(text) + '</pre></body></html>')
+    send_brevo_email(betreff, html, order.email, recipient_name=f'{order.vorname} {order.nachname}',
+                     text_content=text, reply_to=mails.KONTAKT_EMAIL)
 
 
 def rabatt_zeile(order):
@@ -257,33 +294,56 @@ def rabatt_zeile(order):
     return f'Rabatt {order.rabatt_prozent} %{code}: -{float(order.rabatt_betrag):.2f} €'
 
 
+def luisa_checkliste(order):
+    """Die drei Schritte für Luisa (Mail „Neue Bestellung“): Zahlungslink, Rechnung, nach Zahlung auf „bezahlt“."""
+    betrag = _euro(order.gesamt_betrag)
+    return [
+        f'In Revolut Pro einen Zahlungslink über genau {betrag} erstellen. Beschreibung: „Luviq Bestellung Nr. {order.id}“; '
+        '„Mehrmals bezahlen“ ausgeschaltet.',
+        f'Rechnung in Lexware mit dem Link und der IBAN an {order.email} schicken, innerhalb von '
+        f'{luviq_daten.RECHNUNG_FRIST}. Den Link kannst du zur Übersicht auch in der Bestellung im Shop-Admin eintragen '
+        '(der Shop verschickt damit nichts).',
+        'Nach dem Zahlungseingang die Bestellung im Shop-Admin auf „bezahlt“ setzen, dann das Shirt malen.',
+    ]
+
+
 def mail_an_luisa(order):
     """Alle Daten der Bestellung an Luisa (Antworten geht an die Kundin) plus Kopie an die Webagentur."""
     p = order.items.first()
     felder = [
         ('Bestellung', f'#{order.id}'),
         ('Stück', p.produkt_name if p else '–'),
-        ('Gesamtpreis', f'{float(order.gesamt_betrag):.2f} € (inkl. Versand)'
+        ('Gesamtpreis', f'{_euro(order.gesamt_betrag)} (inkl. Versand)'
                         + (f' – {rabatt_zeile(order)}, Rechnung über diesen Betrag' if order.rabatt_betrag else '')),
+        ('Zahlart', order.get_payment_method_display()),
         ('Name', f'{order.vorname} {order.nachname}'),
         ('E-Mail', order.email, 'mail'),
         ('Lieferung', order.adresse if order.adresse == ABHOLUNG_ADRESSE else
          f'{order.adresse}, {order.postleitzahl} {order.stadt}'),
         ('Telefon', order.telefon, 'tel'),
     ]
+    produkt = p.produkt() if p else None
+    serie = bool(produkt and produkt.serie)
+    tage = (produkt.bearbeitungstage if serie else 0) or 3
+    checkliste = luisa_checkliste(order)
     betreff = f'[Luviq] Neue Bestellung #{order.id} – {p.produkt_name if p else ""}'
-    text = '\n'.join(f'{f[0]}: {f[1] or "–"}' for f in felder) + \
-        '\n\nNächster Schritt: Rechnung mit Zahlungsdaten an die Kundin schicken (Antworten genügt).'
+    text = ('\n'.join(f'{f[0]}: {f[1] or "–"}' for f in felder) + '\n\nNächster Schritt:\n' +
+            '\n'.join(f'({i}) {t}' for i, t in enumerate(checkliste, 1)))
+    hinweis = (f'Serienstück: Das Shirt wird nach dem Zahlungseingang neu gemalt (ca. {tage} Werktage); '
+               'ein Stück ist nicht vergeben, weitere Bestellungen sind möglich.' if serie else
+               'Das Stück ist reserviert, bis die Zahlung da ist oder du die Bestellung im Shop-Admin auf '
+               '„Abgebrochen“ setzt.')
     betreff, html, text = mails.anfrage_an_luisa(
         art='Bestellung', betreff=betreff, felder=felder, text=text, antwort_an=order.email, objekt=order,
-        hinweis=('Nächster Schritt: Rechnung mit Zahlungsdaten an die Kundin schicken. '
-                 + ('Serienstück: Das Shirt wird nach dem Überweisungsauftrag neu gemalt (ca. 3 Werktage), nichts ist reserviert.'
-                    if (p and p.produkt() and p.produkt().serie) else 'Das Stück ist reserviert.')))
-    send_brevo_email(betreff, html, mails.KONTAKT_EMAIL, recipient_name='Luisa Brehler',
-                     text_content=text, reply_to=order.email)
-    mails.betreiber_kopie(art='Bestellung', name=f'{order.vorname} {order.nachname}', felder=felder,
-                          antwort_an=order.email, objekt=order, admin_mail=True,
-                          kunden_mail='Eingangsmail angestoßen', schon=(mails.KONTAKT_EMAIL,))
+        hinweis=hinweis, checkliste_titel='Nächster Schritt', checkliste=checkliste)
+    try:
+        send_brevo_email(betreff, html, mails.KONTAKT_EMAIL, recipient_name='Luisa Brehler',
+                         text_content=text, reply_to=order.email)
+    finally:
+        # Die Kopie an die Webagentur geht auch dann hinaus, wenn die Mail an Luisa nicht gestartet werden konnte.
+        mails.betreiber_kopie(art='Bestellung', name=f'{order.vorname} {order.nachname}', felder=felder,
+                              antwort_an=order.email, objekt=order, admin_mail=True,
+                              kunden_mail='Eingangsmail angestoßen', schon=(mails.KONTAKT_EMAIL,))
 
 
 # ─── Views ──────────────────────────────────────────────────────────────────
@@ -358,6 +418,7 @@ def direktkauf_danke(request):
     order = Order.objects.filter(pk=pk).prefetch_related('items').first() if pk else None
     return render(request, 'shop1/direktkauf_danke.html', {
         'order': order, 'abholung': bool(order and order.adresse == ABHOLUNG_ADRESSE),
+        'serie': bool(order and any(getattr(i.produkt(), 'serie', False) for i in order.items.all())),
     })
 
 

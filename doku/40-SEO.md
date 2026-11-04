@@ -1,7 +1,7 @@
 ---
 bereich: seo
 titel: SEO und GEO
-stand: 2026-11-02
+stand: 2026-11-04
 status: vollständig
 fortschritt: 98
 zusammenfassung: Stand 02.10.2026: Wissensbereich frei und indexierbar (17 Sitemap-URLs), llms.txt und llms-full.txt, Feed, sameAs mit Instagram, TikTok und Google-Profil, @id-Schema mit speakable, Apex-301; gemessen SEO-Inhalt 94, SEO-Technik 99, GEO 100. Offen: Indexierung beantragen (Bastian, TS46), zwei Entscheidungen (Stückseiten noindex, Pfad /ueber_uns/) und die Alt-Texte je Stück (später).
@@ -189,3 +189,18 @@ Stand 02.10.2026, gegen `origin/main` und die Live-Seite geprüft. Erledigt und 
 ## Update 02.11.2026 (SEO/GEO-Upgrade, Zweig `seo/2026-11-02-luviq`)
 
 Schema ohne Privatdaten (Organization: Ort/Land, `OnlineStore`, `contactPoint` mit Kontakt-URL), Archivstücke als `VisualArtwork` ohne Angebot, `llms.txt` mit getrenntem Archiv, Engel-Seite mit FAQ + FAQPage, acht zusätzliche Inhaltslinks auf das Engel-Shirt, neuer Abschnitt „Bleichflecken entfernen“, neue Seite `/wissen/bleach-painting-anleitung/` (Quellen BfR, Verbraucherzentrale NRW). Offen für Luisa: Archivtexte und Bild-Alt (Datenbank). Details: `LOGBUCH.md` 02.11.2026.
+
+
+## 04.11.2026 Deutschland-Runde (Zweig `seo/2026-11-04-deutschland`)
+
+**Anlass:** Die alte Domain bekam fast nur Ladensuchen („second hand alsfeld“, „öffnungszeiten“, „in der nähe“); Luviq hat keinen Laden und liefert nur innerhalb Deutschlands. Ziel: deutschlandweite Online-Suchabsicht (handbemaltes Shirt, Bleach-Shirt, Unikat-Kleidung, Second-Hand-Shirt online, Engel-Shirt, Shirt mit eigenem Motiv). Begriffe und Seitenzuordnung: `Webagentur Scherzinger\Analysen\luviq-2026-11-04-seo-BEGRIFFSLANDKARTE.md`, Umsetzung und Messplan dort in `02-UMSETZUNG.md`.
+
+- **Titel/Descriptions** aller indexierbaren Seiten neu: ein Hauptbegriff je Seite, Marke am Ende, ohne „Lübeck“ im Titel (Sitz bleibt im Text, Impressum, Schema). Startseite, Archiv, Versand, Kontakt, Motivanfrage und alle Wissensbeiträge.
+- **Stückseiten:** Engel-Shirt „Engel-Shirt handbemalt, mit Bleiche gemalt – 69 € | Luviq“ (`luviq_daten.ENGEL_STUECK`; frühere Fassungen in der Datenbank werden über `*_frueher` erkannt, Luisas eigene Texte bleiben). Vergebene Archivstücke: Titel „<Name> – Nº 00x, vergeben | Luviq“ ohne „kaufen“, deutsche Description 140–160 Zeichen mit Weg zur Anfrage (`Produkt._meta_title_vergeben`, `META_BESCHREIBUNG_ZUSATZ_VERGEBEN`); ein gepflegter `seo_titel` mit „kaufen“ bei einem vergebenen Stück wird ignoriert. Beide Hoodie-Seiten haben so verschiedene Titel (Archivnummer).
+- **Startseiten-Lead** (`luviq_daten._lead`): zitierfähiger Antwortsatz (Luviq, Online-Shop, handbemalte Second-Hand-Shirts und Unikate, Bleiche, Versand Deutschland).
+- **Engel-FAQ** um zwei Fragen erweitert (Versand in ganz Deutschland, Bezahlung per Zahlungslink); sichtbar und als FAQPage.
+- **Korrektur** `/wissen/bestellen-und-bezahlen/`: Reservierung gilt nur für Einzelstücke, das Serienstück Engel-Shirt wird nicht reserviert (`wissen_direktkauf.py`). Offen, Rechtstext: AGB § 2 (3) sagt weiter „das Stück wird damit für dich reserviert“ - nur mit Freigabe/Generator ändern.
+- **Schema:** Organization trägt `brand` (Brand-Knoten `#brand`); jedes Offer trägt `eligibleRegion` und `areaServed` Deutschland (neben `shippingDetails` DE und Rückgaberegel); sonst unverändert (OnlineStore, Product, FAQPage, Article).
+- **Sitemap:** vergebene Archivstücke `monthly`, Priorität 0.4 (statt weekly/0.8).
+- **`llms.txt`:** deutschlandweit formuliert, zwei neue Fragen (handbemaltes Shirt online kaufen, Bleach-Shirt), Seitenliste „Versand & Abholung“.
+- **Nicht gemacht:** neue Ortsseiten, neuer Wissensbeitrag (Dopplung; erst mit Material von Luisa), Änderungen an Layout/CSS.

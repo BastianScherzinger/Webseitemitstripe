@@ -697,6 +697,18 @@ def admin_order_detail(request, order_id):
         _bestellstatus_setzen(request, order, request.POST.get('status'))
         return redirect('admin_order_detail', order_id=order.id)
 
+    if request.method == 'POST' and request.POST.get('action') == 'zahlungslink':
+        # Nur zur Übersicht: Der Shop verschickt mit dem Link nichts (er geht mit der Rechnung aus Lexware raus).
+        from django import forms
+        link = (request.POST.get('zahlungslink') or '').strip()
+        try:
+            order.zahlungslink = forms.URLField(max_length=500, required=False).clean(link)
+            order.save(update_fields=['zahlungslink', 'aktualisiert_am'])
+            messages.success(request, f'Zahlungslink für Bestellung #{order.id} gespeichert.')
+        except forms.ValidationError:
+            messages.error(request, 'Das ist kein gültiger Link (er muss mit https:// beginnen).')
+        return redirect('admin_order_detail', order_id=order.id)
+
     # Produkte in der DB finden für Bilder
     items_with_products = []
     for item in order.items.all():
@@ -726,7 +738,7 @@ def _bestellstatus_setzen(request, order, new_status):
         # Stücks, nicht über den Namen (EIG08). Eine Überweisung
         # bekommt jetzt ihre zugesagte Bestätigung (EIG66).
         bestellung_abschliessen(order, new_status)
-        if order.payment_method == 'bank_transfer':
+        if order.payment_method in ('bank_transfer', 'zahlungslink'):
             try:
                 send_order_confirmation_email(order)
             except Exception:

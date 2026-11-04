@@ -39,6 +39,9 @@ LIEFERLAENDER = frozenset({'deutschland', 'de', 'germany', 'brd', 'bundesrepubli
 
 #: Zahlarten, die der Bestellvorgang anbietet.
 ZAHLARTEN = ('paypal', 'bank_transfer')
+#: Zahlarten, bei denen das Stück schon mit der Bestellung reserviert ist (Vorkasse): Überweisung und, seit
+#: 04.11.2026, der Revolut-Zahlungslink des Direktkaufs. Nur ``ZAHLARTEN`` darf der Login-Checkout anbieten.
+VORKASSE_ARTEN = ('bank_transfer', 'zahlungslink')
 
 _log = logging.getLogger('shop1')
 
@@ -195,7 +198,7 @@ def reserviert(produkt, ausser=None):
     if getattr(produkt, 'serie', False):
         return 0  # Serienstück: wird je Bestellung neu gemalt, nichts ist „reserviert“
     abfrage = OrderItem.objects.filter(produkt_ref=produkt.pk, order__status='pending',
-                                       order__payment_method='bank_transfer')
+                                       order__payment_method__in=VORKASSE_ARTEN)
     if ausser is not None:
         abfrage = abfrage.exclude(order=ausser)
     return abfrage.aggregate(n=Sum('menge'))['n'] or 0
@@ -563,7 +566,7 @@ def payment_success(request, order_id):
         messages.error(request, 'Bestellung nicht gefunden.')
         return redirect('warenkorb')
 
-    ueberweisung_offen = order.status == 'pending' and order.payment_method == 'bank_transfer'
+    ueberweisung_offen = order.status == 'pending' and order.payment_method in VORKASSE_ARTEN
     if order.status not in BEZAHLT_STATI and not ueberweisung_offen:
         messages.warning(request, 'Diese Bestellung ist noch nicht bezahlt.')
         if order.status == 'pending':
@@ -608,7 +611,10 @@ def send_order_confirmation_email(order):
                        f'\nWillkommensrabatt: -{float(order.rabatt_betrag):.2f} €')
     from ..mails import vertragsunterlagen
     unterlagen_html, unterlagen_text = vertragsunterlagen(order)
-    if order.payment_method == 'bank_transfer':
+    if order.payment_method == 'zahlungslink':
+        einleitung = ('vielen Dank! Deine Zahlung ist eingegangen. Dein Stück wird jetzt für den Versand '
+                      'vorbereitet, ein Serienstück malt Luisa jetzt für dich von Hand.')
+    elif order.payment_method == 'bank_transfer':
         einleitung = ('vielen Dank! Deine Überweisung ist eingegangen, dein Stück wird jetzt für den '
                       'Versand vorbereitet.')
     else:

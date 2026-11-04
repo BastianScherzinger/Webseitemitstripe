@@ -31,7 +31,8 @@ from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
 from django.utils.html import escape
 
-from .luviq_daten import ANBIETERIN, VERSAND
+from .luviq_daten import (ANBIETERIN, FRIST_BEGINN, FRIST_BEGINN_ERKLAERT, RECHNUNG_FRIST, VERSAND, ZAHLUNG,
+                          ZAHLUNG_SATZ)
 from .utils import send_brevo_email
 
 _log = logging.getLogger('shop1')
@@ -52,7 +53,7 @@ def live_url():
     ``CANONICAL_HOST`` ist die gepflegte Hauptadresse; ``SITE_URL`` zeigt in
     der Vorgabe noch auf die Railway-Adresse und taugt deshalb nicht für Links
     in Mails an die Betreuung."""
-    host = getattr(settings, 'CANONICAL_HOST', '') or 'www.luviq-alsfeld.com'
+    host = getattr(settings, 'CANONICAL_HOST', '') or 'www.luviq-luebeck.com'
     return f'https://{host}'
 
 
@@ -127,7 +128,7 @@ def betreiber_empfaenger(schon=()):
 # ─── Mail an Luisa ──────────────────────────────────────────────────────────
 
 def anfrage_an_luisa(*, art, betreff, felder, text, antwort_an='', langtext_titel='',
-                     langtext='', objekt=None, hinweis=''):
+                     langtext='', objekt=None, hinweis='', checkliste_titel='', checkliste=()):
     """Betreff, HTML und Text der Mail an Luisa.
 
     ``felder``: Liste ``(Bezeichnung, Wert[, Typ])`` mit Typ ``mail``, ``tel``,
@@ -136,14 +137,16 @@ def anfrage_an_luisa(*, art, betreff, felder, text, antwort_an='', langtext_tite
     Scheitert die Gestaltung, geht die Mail mit dem Text als HTML hinaus –
     eine Vorlage darf nie eine Anfrage kosten."""
     try:
-        html = _anfrage_html(art, betreff, felder, antwort_an, langtext_titel, langtext, objekt, hinweis)
+        html = _anfrage_html(art, betreff, felder, antwort_an, langtext_titel, langtext, objekt, hinweis,
+                             checkliste_titel, checkliste)
     except Exception:
         _log.exception('Mail an Luisa: Gestaltung gescheitert, Textfassung geht hinaus')
         html = '<pre style="white-space:pre-wrap">' + escape(text) + '</pre>'
     return einzeilig(betreff), html, text
 
 
-def _anfrage_html(art, betreff, felder, antwort_an, langtext_titel, langtext, objekt, hinweis):
+def _anfrage_html(art, betreff, felder, antwort_an, langtext_titel, langtext, objekt, hinweis,
+                  checkliste_titel='', checkliste=()):
     return rendern(
         'anfrage_admin.html',
         art=art,
@@ -157,6 +160,8 @@ def _anfrage_html(art, betreff, felder, antwort_an, langtext_titel, langtext, ob
         admin_url=admin_link(objekt),
         zeitpunkt=zeitpunkt(),
         hinweis=hinweis,
+        checkliste_titel=checkliste_titel,
+        checkliste=list(checkliste),
     )
 
 
@@ -279,7 +284,8 @@ def vertragsunterlagen(order):
         })
     html = rendern(
         '_vertragsunterlagen.html', order=order, posten=posten, anbieterin=ANBIETERIN,
-        serie_tage=serie_tage, rechts_basis=live_url(), lieferfrist=VERSAND['lieferfrist_werktage'], ueberweisung_moeglich=bool(os.getenv('BANK_IBAN', '').strip()),
+        serie_tage=serie_tage, rechts_basis=live_url(), lieferfrist=VERSAND['lieferfrist_werktage'], zahlung=ZAHLUNG, frist_beginn=FRIST_BEGINN, frist_beginn_erklaert=FRIST_BEGINN_ERKLAERT,
+        rechnung_frist=RECHNUNG_FRIST, zahlung_satz=ZAHLUNG_SATZ, ueberweisung_moeglich=bool(os.getenv('BANK_IBAN', '').strip()),
         abholung=order.adresse.startswith('Abholung'), reservierung_tage=luviq_daten_reservierung(), direktkauf_aktiv=order.user_id is None, bestellt_am=timezone.localtime(order.erstellt_am).strftime('%d.%m.%Y, %H:%M Uhr') if order.erstellt_am else '',
         gesamt=f'{float(order.gesamt_betrag):.2f}', rabatt=f'{float(order.rabatt_betrag or 0):.2f}')
     return html, _klartext(html)

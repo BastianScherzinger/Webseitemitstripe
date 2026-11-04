@@ -345,7 +345,8 @@ SCHRITTE = [
 #: Regel“, § 308 Nr. 1 BGB). Entscheidung der Leitung 30.10.2026 nach der Gegenprüfung
 #: (M1), Bastian und Luisa können die Zahl ändern – sie wirkt überall, wo Lieferzeit steht
 #: (AGB, Kasse, Mails, Stück-, Kontakt-, Versand- und Wissensseiten, Schema, llms.txt).
-#: Fristbeginn: PayPal am Tag nach Vertragsschluss, Vorkasse am Tag nach dem
+#: Fristbeginn (Direktkauf, seit 04.11.2026): am Tag nach der Zahlung (``FRIST_BEGINN``);
+#: Login-Weg: PayPal am Tag nach Vertragsschluss, Vorkasse am Tag nach dem
 #: Überweisungsauftrag. ``werktage`` ist nur noch die interne Bearbeitungszeit bis zur
 #: Übergabe an den Versanddienst (Schema ``handlingTime``), kein Text für Kundinnen.
 #: Alles wird nur mit Verkauf gezeigt. ``kosten``: Versand innerhalb Deutschlands ist im
@@ -360,6 +361,35 @@ LIEFER_SATZ = f"Lieferung innerhalb von {VERSAND['lieferfrist_werktage']} Werkta
 
 #: Die Preisangabe zum Versand, direkt am Preis (nur mit Verkauf sichtbar).
 VERSAND_PREISSATZ = 'inkl. Versand innerhalb Deutschlands'
+
+# ── Zahlung: Revolut-Zahlungslink (Bastian 04.11.2026) ──────────────────────
+
+#: Hauptweg im Direktkauf: Luisa schickt innerhalb von 1–2 Werktagen die Rechnung (Lexware) mit einem
+#: persönlichen Zahlungslink von Revolut; die Kundin zahlt dort mit Karte, Apple Pay, Google Pay oder
+#: Revolut Pay. Überweisung auf die Rechnungs-IBAN bleibt zweiter Weg. Kein Klarna, kein PayPal, kein
+#: „Pay by bank“ versprechen. Alle sichtbaren Zahlungstexte kommen aus diesen Werten.
+ZAHLUNG = {
+    'anbieter': 'Revolut',
+    'anbieter_firma': 'Revolut Bank UAB',
+    'anbieter_sitz': 'Litauen',
+    'wege': 'Karte (Visa, Mastercard), Apple Pay, Google Pay oder Revolut Pay',
+    'wege_kurz': 'Karte, Apple Pay, Google Pay oder Revolut Pay',
+    'rechnung_werktage': '1 bis 2',
+    'zahlart_name': 'Zahlungslink (Karte, Apple Pay, Google Pay)',
+}
+
+#: Wann die Rechnung mit dem Zahlungslink kommt (Satzteil: „… kommen in <diesem Zeitraum> per E-Mail“).
+RECHNUNG_FRIST = f"{ZAHLUNG['rechnung_werktage']} Werktagen"
+
+#: Fristbeginn der Lieferfrist (AGB § 5): einheitlich für Zahlungslink und Überweisung.
+FRIST_BEGINN = 'ab dem Tag nach deiner Zahlung'
+FRIST_BEGINN_ERKLAERT = ('bei Überweisung gilt als Zahlung die Erteilung des Zahlungsauftrags an dein Kreditinstitut, '
+                         'bei Zahlung per Zahlungslink die Zahlung selbst')
+
+#: Der eine Satz zum Bezahlen für Kurztexte (Stückseite, Versand, Kontakt, Über uns, Schema).
+ZAHLUNG_SATZ = (f"Bezahlt wird im Voraus über einen persönlichen Zahlungslink von {ZAHLUNG['anbieter']} "
+                f"({ZAHLUNG['wege_kurz']}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von "
+                f"{RECHNUNG_FRIST} per E-Mail")
 
 #: Wie lange ein bestelltes Stück auf die Überweisung wartet, bevor Luisa es wieder freigibt
 #: (Panel-Fixliste 31.10.2026, Punkt 3; Bastian bestätigt den Wert noch). Die Freigabe ist
@@ -392,8 +422,9 @@ def _lead():
 
     Der letzte Satz setzt sich aus ``VERSAND`` und ``ABHOLUNG`` zusammen; ohne
     Übergabetext (``ABHOLUNG['text']`` leer) bleibt nur der Versand."""
-    teile = ['Luisa Brehler aus Lübeck zieht die Farbe mit Bleiche aus dem Stoff – nichts ist '
-             'aufgedruckt. Das Engel-Shirt ist das erste Stück']
+    teile = ['Luviq ist die Marke von Luisa Brehler aus Lübeck für handbemalte Second-Hand-Shirts und '
+             'Unikate: Die Farbe wird mit Bleiche aus dem Stoff gezogen, nichts ist aufgedruckt. Das '
+             'Engel-Shirt ist das erste Stück']
     if VERSAND.get('gebiet'):
         letzter = f'Versand in {VERSAND["gebiet"]}'
         if ABHOLUNG.get('text'):
@@ -615,8 +646,18 @@ def engel_faq(bearbeitung, lieferfrist):
         ('Wie pflege ich das Engel-Shirt?', PFLEGE),
         ('Wie lange dauert es bis zur Lieferung?',
          f'Jedes Engel-Shirt wird für deine Bestellung neu von Hand gemalt. {bearbeitung_satz}Geliefert wird '
-         f'innerhalb von {lieferfrist} Werktagen ab deiner Überweisung; der Versand innerhalb Deutschlands ist '
+         f'innerhalb von {lieferfrist} Werktagen {FRIST_BEGINN}; der Versand innerhalb Deutschlands ist '
          'im Preis enthalten.'),
+        ('Wird das Engel-Shirt in ganz Deutschland verschickt?',
+         'Ja. Luviq versendet innerhalb von ganz Deutschland, der Versand ist im Preis enthalten. Ins Ausland '
+         f'wird nicht verschickt. In {ABHOLUNG["ort"]} ist die persönliche Übergabe nach Absprache möglich.'
+         if ABHOLUNG.get('text') else
+         'Ja. Luviq versendet innerhalb von ganz Deutschland, der Versand ist im Preis enthalten. Ins Ausland '
+         'wird nicht verschickt.'),
+        ('Wie bezahle ich das Engel-Shirt?',
+         f"Im Voraus über einen persönlichen Zahlungslink von {ZAHLUNG['anbieter']} ({ZAHLUNG['wege_kurz']}) oder "
+         f"per Überweisung. Rechnung und Zahlungslink kommen innerhalb von {RECHNUNG_FRIST} per E-Mail, bestellt "
+         'wird ohne Konto.'),
     ]
 
 
@@ -639,13 +680,22 @@ ENGEL_STUECK = {
     # Serienstück (Bastian 01.11.2026): mehrfach bestellbar, jedes Shirt wird neu von Hand gemalt, nie 1:1.
     'serie': True,
     'bearbeitungstage': 3,
-    'seo_titel': 'Engel-Shirt mit Bleiche gemalt – Luviq Lübeck',
-    'seo_beschreibung': ('Engel-Shirt Nº 006: Second-Hand-T-Shirt mit Engel, Rose und Stern, von Hand '
-                         'mit Bleiche gemalt. 100 % Baumwolle, Größe M. Luviq, Lübeck.'),
+    # SEO-Runde 04.11.2026 (Deutschland): Hauptbegriff „Engel-Shirt handbemalt“. Die ``*_frueher`` sind die
+    # bisherigen Fassungen, wie sie in der Datenbank stehen können (``luviq_engel_anlegen`` überschreibt nie):
+    # steht noch eine davon im Feld, gilt die neue Fassung; Luisas eigener Text bleibt unangetastet.
+    'seo_titel': 'Engel-Shirt handbemalt, mit Bleiche gemalt – Luviq',
+    'seo_titel_frueher': ('Engel-Shirt mit Bleiche gemalt – Luviq Lübeck',),
+    'seo_beschreibung': ('Engel-Shirt Nº 006: Second-Hand-T-Shirt mit Engel, Rose und Stern, von Hand mit '
+                         'Bleiche gemalt. 100 % Baumwolle, Größe M. Unikat von Luviq aus Lübeck.'),
+    'seo_beschreibung_frueher': ('Engel-Shirt Nº 006: Second-Hand-T-Shirt mit Engel, Rose und Stern, von Hand '
+                                 'mit Bleiche gemalt. 100 % Baumwolle, Größe M. Luviq, Lübeck.',),
     # Mit Verkauf (models.Produkt._seo_mit_verkauf, SEO-Analyse N2): Preis im Snippet erst, wenn die Seite ihn zeigt.
-    'seo_titel_verkauf': 'Engel-Shirt Nº 006, mit Bleiche gemalt – {preis} € | Luviq',
-    'seo_beschreibung_verkauf': ('Engel-Shirt Nº 006: Second-Hand-Shirt, von Hand mit Bleiche gemalt, jedes '
-                                 'Stück neu. Größe M, {preis} €, Versand inklusive, Bearbeitung ca. 3 Werktage.'),
+    'seo_titel_verkauf': 'Engel-Shirt handbemalt, mit Bleiche gemalt – {preis} € | Luviq',
+    'seo_beschreibung_verkauf': ('Engel-Shirt Nº 006: handbemaltes Second-Hand-Shirt mit Bleiche, jedes neu von '
+                                 'Hand gemalt. Größe M, {preis} €, Versand inklusive, deutschlandweit geliefert.'),
+    'seo_titel_verkauf_frueher': ('Engel-Shirt Nº 006, mit Bleiche gemalt – {preis} € | Luviq',),
+    'seo_beschreibung_verkauf_frueher': ('Engel-Shirt Nº 006: Second-Hand-Shirt, von Hand mit Bleiche gemalt, jedes '
+                                         'Stück neu. Größe M, {preis} €, Versand inklusive, Bearbeitung ca. 3 Werktage.',),
     'beschreibung': ('Ein Second-Hand-T-Shirt aus 100 % Baumwolle in Größe M. Auf dem Rücken steht ein '
                      'Engel mit Rose und einem Stern, von Hand mit Bleiche gemalt. Jedes Shirt dieser '
                      'Serie male ich neu, das Motiv ist immer derselbe Engel und doch nie genau gleich. '

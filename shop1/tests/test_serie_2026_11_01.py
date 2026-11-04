@@ -121,8 +121,8 @@ class SerieTest(LuviqTestCase):
         self.sende(pfad, self.daten())
         kundenmail = next(a for a in self.mail.call_args_list if a.args[2] == 'kundin@example.org')
         text = kundenmail.kwargs.get('text_content', '').split('---')[0]  # nur der persönliche Teil, ohne Vertragsunterlagen
-        self.assertIn('Bearbeitungszeit beträgt ca. 3 Werktage', text)
-        self.assertNotIn('reserviert', text)
+        self.assertIn('Bearbeitung ca. 3 Werktage', text)
+        self.assertNotIn('Stück ist für dich reserviert', text)
         self.assertNotIn('nur einmal', text)
 
     @override_settings(VERKAUF_AKTIV=True, DIREKTKAUF=True)

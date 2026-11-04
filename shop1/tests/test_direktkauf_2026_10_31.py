@@ -83,7 +83,7 @@ class DirektkaufTest(LuviqTestCase):
         bestellung = Order.objects.get()
         self.assertIsNone(bestellung.user)
         self.assertEqual(bestellung.status, 'pending')
-        self.assertEqual(bestellung.payment_method, 'bank_transfer')
+        self.assertEqual(bestellung.payment_method, 'zahlungslink')  # seit 04.11.2026 (vorher bank_transfer)
         self.assertEqual(bestellung.gesamt_betrag, Decimal('69.00'))
         self.assertEqual(OrderItem.objects.count(), 1)
         posten = bestellung.items.get()
@@ -95,7 +95,7 @@ class DirektkaufTest(LuviqTestCase):
             [aufruf.args[2] for aufruf in self.mail.call_args_list],
             ['kundin@example.org', 'brehlerluisa@gmail.com'],
         )
-        self.assertContains(self.hole('/bestellen/danke/'), 'Rechnung mit den Zahlungsdaten')
+        self.assertContains(self.hole('/bestellen/danke/'), 'Zahlungslink und Rechnung kommen separat')
 
     @override_settings(VERKAUF_AKTIV=True, DIREKTKAUF=True)
     def test_reservierung_verhindert_doppelkauf_stornierung_gibt_stueck_frei(self):

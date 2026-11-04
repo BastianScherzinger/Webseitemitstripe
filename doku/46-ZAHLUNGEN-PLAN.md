@@ -1,6 +1,6 @@
 ---
-stand: 2026-11-01
-status: plan
+stand: 2026-11-04
+status: umgesetzt (Zahlungslink); Mollie offen
 zusammenfassung: Revolut-Zahlungslink sofort (Anleitung an Luisa 01.11.), Ziel ein Anbieter für Karte/Apple Pay/Klarna mit Auszahlung auf Revolut Pro (Vorschlag Mollie); PayPal direkt vorerst nicht.
 ---
 
@@ -91,3 +91,10 @@ Rechnung laufen. Luisa hat nur ein normales Revolut-Konto. Die Anleitung „Pro 
 - Steuer: Mollie sitzt in den Niederlanden. Ob für die Gebühren § 13b (Reverse Charge) greift oder sie als Finanzumsatz steuerfrei sind,
   vor der ersten Mollie-Rechnung in der Buchhaltung klären (vgl. Webagentur BUCHHALTUNG.md §4).
 - PayPal direkt: vorerst nicht (Bastian 01.11.).
+
+## Nachtrag 04.11.2026: Zahlungslink ist Hauptweg
+Bastian: „Wir bezahlen über Revolut-Zahlungslinks, und das geben wir auf der Website an.“ Umgesetzt (Zweig `bau/2026-11-04-zahlungslink`, Stufe 0/1 des Plans, ohne Mollie):
+- **Ablauf:** Bestellung im Direktkauf (Stück reserviert) → Luisa schickt innerhalb von 1 bis 2 Werktagen Rechnung (Lexware) mit persönlichem Revolut-Zahlungslink → Kundin zahlt mit Karte (Visa, Mastercard), Apple Pay, Google Pay oder Revolut Pay, alternativ Überweisung auf die Rechnungs-IBAN → nach Zahlungseingang wird gemalt (Engel-Shirt, 3 Werktage) und verschickt. Kein Klarna, kein PayPal, kein „Pay by bank“ versprochen.
+- **Shop:** Zahlart `zahlungslink` (Direktkauf-Vorgabe), Feld `Order.zahlungslink` nur zur Übersicht im Shop-Admin (kein automatischer Mailversand). Mails: Kundin „reserviert“ (Zahlungslink und Rechnung separat), Luisa-Checkliste. Reservierung weiter 3 Tage ab Rechnungsdatum (`RESERVIERUNG_TAGE`). Lieferfrist einheitlich „ab dem Tag nach deiner Zahlung“.
+- **Werte an einer Stelle:** `shop1/luviq_daten.py` (`ZAHLUNG`, `RECHNUNG_FRIST`, `FRIST_BEGINN`).
+- **Weiter offen:** PayPal-Code bleibt, aber ohne sichtbare Zahlungsbehauptung. Mollie/Klarna nur bei Nachfrage. Gebühr pro Zahlungslink in Luisas Revolut-App ablesen und hier nachtragen. Für Revolut-Gebühren gilt weiter die Steuerfrage aus dem Abschnitt „Offen“.

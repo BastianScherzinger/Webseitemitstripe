@@ -23,3 +23,9 @@
    Nach „Ablehnen“ oder „Akzeptieren“ ist der Hinweis zu, und die Leisten kommen wieder. */
 body:has(.lv-einwilligung:not([hidden])) .lv-leiste,
 body:has(.lv-einwilligung:not([hidden])) .lv-kaufleiste{display:none!important}
+/* Handy (04.11.2026): Hinweis einzeilig kompakt, die lange Zeile entfällt (steht im Fuß und in der Datenschutzerklärung);
+   beide Knöpfe bleiben gleich groß nebeneinander. Solange der Hinweis offen ist, bekommt die Seite unten Platz,
+   damit nichts dauerhaft verdeckt bleibt (Formular, Absende-Knopf). */
+@media (max-width:639px){.lv-einwilligung .lv-einwilligung-mehr{display:none}.lv-einwilligung p.lv-einwilligung-titel+p::after{height:4px}.lv-einwilligung-knopf{min-height:44px}}
+body:has(.lv-einwilligung:not([hidden])){padding-bottom:104px}
+@media (min-width:640px){body:has(.lv-einwilligung:not([hidden])){padding-bottom:130px}}

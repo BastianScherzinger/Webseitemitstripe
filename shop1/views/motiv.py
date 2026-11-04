@@ -100,7 +100,7 @@ def _mail(anfrage):
         ('Instagram', f'@{anfrage.instagram}' if anfrage.instagram else '–'),
         ('E-Mail', anfrage.email or '–'),
     ]
-    text = 'Neue Motivanfrage über luviq-alsfeld.com\n\n'
+    text = 'Neue Motivanfrage über www.luviq-luebeck.com\n\n'
     text += '\n'.join(f'{k}: {v}' for k, v in zeilen)
     text += '\n\nWas es bedeuten soll:\n' + (anfrage.bedeutung or '–')
     text += '\n\nAlle Anfragen stehen im Admin-Panel unter „Motivanfragen".'

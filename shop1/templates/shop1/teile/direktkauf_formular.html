@@ -7,7 +7,7 @@ Abs. 3: der Knopf trägt wörtlich „Zahlungspflichtig bestellen“. Der Kaufve
 {% if direktkauf_zustand == 'bestellbar' %}
 <form method="post" action="{% url 'direktkauf' produkt.slug %}" class="lv-formular lv-direktkauf" id="bestellen" data-einmal-absenden aria-labelledby="bestellen-titel">
     <h2 class="lv-serif" id="bestellen-titel">Direkt bestellen</h2>
-    <p class="lv-klein">Zum Kaufen brauchst du kein Konto. Du gibst deine E-Mail-Adresse an, wir schicken dir die Rechnung mit den Zahlungsdaten.</p>
+    <p class="lv-klein">Zum Kaufen brauchst du kein Konto. Du gibst deine E-Mail-Adresse an, wir schicken dir Rechnung und Zahlungslink.</p>
     <div id="bestellen-fehler" role="alert"{% if fehler %} class="lv-fehler"{% endif %}>{% if fehler %}{{ fehler }}{% endif %}</div>
     {% csrf_token %}
     <input type="hidden" name="formzeit" value="{{ formzeit }}">
@@ -64,8 +64,15 @@ Abs. 3: der Knopf trägt wörtlich „Zahlungspflichtig bestellen“. Der Kaufve
         {% if rabatt %}<p class="lv-bestellsumme-rabatt">Preis {{ produkt.preis|floatformat:2 }} € · Rabatt {{ rabatt.prozent }} % (Code {{ rabatt.text }}) −{{ rabatt.abzug|floatformat:2 }} €</p>{% endif %}
         <p class="lv-bestellsumme-preis">Gesamtpreis: {{ gesamtpreis|floatformat:2 }} € <span>{{ versand_preissatz }}, ohne Umsatzsteuer nach § 19 UStG</span></p>
         <p class="lv-klein">{{ liefer_satz }}. Anbieterin: {{ anbieterin.name }}, {{ anbieterin.ort }} – <a href="{% url 'impressum' %}">Impressum</a>.</p>
-        <ol class="lv-schritte"><li>Du bestellst hier.</li><li>Du bekommst die Rechnung mit unseren Kontodaten per E-Mail (schau auch im Spam-Ordner).</li>{% if serie %}<li>Nach deiner Überweisung (innerhalb von {{ reservierung_tage }} Tagen) malt Luisa dein Shirt von Hand, Bearbeitungszeit ca. {{ bearbeitung|default:3 }} Werktage, dann geht es in den Versand.</li>{% else %}<li>Nach deiner Überweisung (innerhalb von {{ reservierung_tage }} Tagen) versenden wir das Stück.</li>{% endif %}</ol>
-        <p class="lv-klein">Mit „{{ knopf }}“ gibst du eine verbindliche Bestellung ab und verpflichtest dich zur Zahlung des Kaufpreises, sobald du die Rechnung mit den Zahlungsdaten erhalten hast. Bezahlt wird im Voraus per Überweisung.</p>
+        <div class="lv-bezahlen" role="group" aria-labelledby="bezahlen-titel">
+            <h3 id="bezahlen-titel">So bezahlst du</h3>
+            <ol class="lv-schritte">
+                <li><b>Zahlungslink per E-Mail.</b> Rechnung und persönlicher Zahlungslink von {{ zahlung.anbieter }} kommen innerhalb von {{ rechnung_frist }} per E-Mail (schau auch im Spam-Ordner).</li>
+                <li><b>Sicher bezahlen.</b> Mit {{ zahlung.wege }} – oder per Überweisung auf die IBAN aus der Rechnung, innerhalb von {{ reservierung_tage }} Tagen nach Rechnungsdatum.</li>
+                <li><b>Erst nach der Zahlung</b> {% if serie %}malt Luisa dein Shirt von Hand (Bearbeitung ca. {{ bearbeitung|default:3 }} Werktage) und verschickt es.{% else %}verschicken wir das Stück.{% endif %}</li>
+            </ol>
+        </div>
+        <p class="lv-klein">Mit „{{ knopf }}“ gibst du eine verbindliche Bestellung ab und verpflichtest dich zur Zahlung des Kaufpreises, sobald du die Rechnung mit dem Zahlungslink erhalten hast.</p>
     </div>
     <button type="submit" class="lv-knopf">{{ knopf }}</button>
 </form>

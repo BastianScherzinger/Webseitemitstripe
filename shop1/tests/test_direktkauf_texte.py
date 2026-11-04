@@ -71,7 +71,8 @@ class DirektkaufTexteTest(LuviqTestCase):
         best = sichtbarer_text(self.hole('/wissen/bestellen-und-bezahlen/').content.decode())
         self.assertIn('ohne Konto', best)
         self.assertIn('Zahlungspflichtig bestellen', best)
-        self.assertIn('Voraus per Überweisung', best)
+        self.assertIn('Zahlungslink von Revolut', best)  # Hauptweg seit 04.11.2026
+        self.assertIn('Alternativ kannst du auf das Konto überweisen', best)
         konto = sichtbarer_text(self.hole('/wissen/konto-und-daten/').content.decode())
         self.assertIn('Nein. Bestellt wird ohne Konto', konto)
 
@@ -97,7 +98,7 @@ class DirektkaufTexteTest(LuviqTestCase):
 
     def test_motiv_anfragen_titel_und_links(self):
         html = self.hole('/motiv-anfragen/').content.decode()
-        self.assertIn('<title>Kleidung bemalen lassen: sag, was du willst | Luviq Lübeck</title>', html)
+        self.assertIn('<title>Shirt bemalen lassen: sag, was du willst | Luviq</title>', html)
         self.assertIn('href="/wissen/bleach-painting/"', html)
         self.assertIn('href="/wissen/bleichfleck-uebermalen/"', html)
 
@@ -107,7 +108,7 @@ class DirektkaufTexteTest(LuviqTestCase):
         engel = erzeuge_produkt(name='Engel-Shirt, mit Bleiche gemalt', slug=d['slug'], preis=Decimal('69.00'),
                                 seo_titel=d['seo_titel'], seo_beschreibung=d['seo_beschreibung'],
                                 lagerbestand=1, aktiv=True, vergeben=False)
-        self.assertEqual(engel.meta_title, 'Engel-Shirt Nº 006, mit Bleiche gemalt – 69 € | Luviq')
+        self.assertEqual(engel.meta_title, 'Engel-Shirt handbemalt, mit Bleiche gemalt – 69 € | Luviq')
         self.assertIn('Größe M, 69 €', engel.meta_description)
         self.assertNotIn('nur einmal', engel.meta_description)
         self.assertLessEqual(len(engel.meta_description), 160)

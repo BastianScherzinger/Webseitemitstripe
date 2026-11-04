@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Kontakt und Fragen an Luisa | Luviq Lübeck{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Kontakt zu Luviq aus Lübeck: Fragen zu handbemalten Stücken, zu Bestellung oder Versand über das Formular oder per E-Mail. Jetzt Luisa schreiben.{% else %}Kontakt zu Luviq aus Lübeck: Fragen zu handbemalten Stücken, zum eigenen Motiv oder zum Verkaufsstart über das Formular oder per E-Mail. Jetzt Luisa schreiben.{% endif %}{% endblock %}
+{% block title %}Kontakt und Fragen zu Shirts und Unikaten | Luviq{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Fragen zu handbemalten Shirts, Größe, Bestellung oder Versand? Luisa von Luviq antwortet persönlich über das Formular oder per E-Mail. Jetzt schreiben.{% else %}Fragen zu handbemalten Stücken, zum eigenen Motiv oder zum Verkaufsstart? Luisa von Luviq antwortet persönlich über Formular oder E-Mail. Jetzt schreiben.{% endif %}{% endblock %}
 {% block og_title %}Kontakt – Luviq, Lübeck{% endblock %}
 {% block og_description %}{% if verkauf_aktiv %}Fragen zu deiner Bestellung oder unseren handbemalten Upcycling-Stücken? Schreib uns – Luviq Universe antwortet schnell.{% else %}Fragen zu unseren handbemalten Upcycling-Stücken oder zum ersten Drop? Schreib uns.{% endif %}{% endblock %}
 {% block twitter_title %}Kontakt und Fragen – Luviq Universe{% endblock %}
@@ -53,7 +53,7 @@
           "name": "{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus per Überweisung nach der Rechnung, die per E-Mail kommt{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
           }
         }{% if abholung.text %},
         {
@@ -173,7 +173,7 @@
             </div>
             <div>
                 <h3>{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h3>
-                <p>{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus per Überweisung nach der Rechnung, die per E-Mail kommt{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
+                <p>{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
             </div>
             {% if abholung.text %}
             <div>

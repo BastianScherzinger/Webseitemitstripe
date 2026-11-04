@@ -48,7 +48,7 @@ class KopieBeiAnfragenTest(LuviqTestCase):
         self.assertEqual(empfaenger, mails.BETREIBER_VORGABE)
         self.assertEqual(kwargs['reply_to'], KONTAKT['email'])
         self.assertIn('Kopie für die Webagentur Scherzinger', html)
-        self.assertIn('https://www.luviq-alsfeld.com/', html)
+        self.assertIn('https://www.luviq-luebeck.com/', html)
         anfrage = KontaktAnfrage.objects.get()
         self.assertIn(f'/kontaktanfrage/{anfrage.pk}/change/', html)
         self.assertIn('Kopie für die Webagentur Scherzinger', kwargs['text_content'])
@@ -183,7 +183,7 @@ class HtmlTeilTest(LuviqTestCase):
 
     def test_besuchermails_ohne_preis_und_bestellwort(self):
         html = mails.rendern('besucher.html', titel='Bitte bestätige deine Anmeldung', kopf_label='Newsletter',
-                             preheader='x', absaetze=['Absatz'], link='https://www.luviq-alsfeld.com/x',
+                             preheader='x', absaetze=['Absatz'], link='https://www.luviq-luebeck.com/x',
                              knopf='Anmeldung bestätigen', nachsatz='')
         for wort in ('€', 'Bestellung', 'Kleinunternehmer', 'verkauft'):
             self.assertNotIn(wort, html)

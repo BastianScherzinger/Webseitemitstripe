@@ -291,8 +291,9 @@ def _llms_kopf_mit_verkauf(basis):
     return [
         "# Luviq Universe",
         "",
-        "> Luviq Universe ist ein Online-Shop aus Lübeck (Schleswig-Holstein),",
-        "> angefangen in Alsfeld (Hessen), heute in Lübeck. Luisa Brehler malt",
+        "> Luviq Universe ist ein Online-Shop aus Lübeck (Schleswig-Holstein) für",
+        "> handbemalte Second-Hand-Shirts und Unikate, angefangen in Alsfeld (Hessen),",
+        "> heute in Lübeck. Luisa Brehler malt",
         "> hochwertige Teile, gebraucht oder neu, von Hand mit Bleiche",
         "> (die Farbe wird aus dem Stoff gezogen, nichts ist aufgedruckt); jedes",
         "> Stück ist von Hand gemalt, keins gleicht dem anderen. Lieferung deutschlandweit innerhalb",
@@ -307,7 +308,7 @@ def _llms_kopf_mit_verkauf(basis):
         "- Instagram: https://www.instagram.com/luviq.archive/",
         "- TikTok: https://www.tiktok.com/@luviq.archive",
         "- Google-Unternehmensprofil: https://www.google.com/maps?cid=13899750731019902000",
-        *(["- Zahlungsarten: Vorkasse per Überweisung nach Rechnung per E-Mail (AGB, § 4)"]
+        *([f"- Zahlungsarten: Vorkasse über Revolut-Zahlungslink ({luviq_daten.ZAHLUNG['wege_kurz']}) oder Überweisung, Rechnung und Zahlungslink per E-Mail (AGB, § 4)"]
           if direktkauf_aktiv() else ["- Zahlungsarten: PayPal oder Vorab-Überweisung (AGB, § 4)"]),
         "- Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer",
         "  berechnet (Kleinunternehmerstatus)",
@@ -324,8 +325,8 @@ def _llms_kopf_mit_verkauf(basis):
         f"- [Über uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
         f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
         "Vorschläge bekommen - kostenlos, keine Bestellung",
-        f"- [Liefergebiet]({basis}{reverse('liefergebiet')}): von Alsfeld nach Lübeck, "
-        "Versand deutschlandweit",
+        f"- [Versand & Abholung]({basis}{reverse('liefergebiet')}): Versand deutschlandweit, "
+        "Lieferzeit, Zahlung, Übergabe in Lübeck nach Absprache",
         f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
         "",
         "## Stücke",
@@ -376,9 +377,20 @@ def _llms_fragen_mit_verkauf(basis):
         "zum Reinschauen gibt es nicht, der Verkauf läuft ausschließlich über",
         "diese Seite.",
         "",
-        "### Liefert Luviq nach Lübeck, Alsfeld und in andere Städte?",
-        "Ja, geliefert wird deutschlandweit innerhalb von",
-        f"{LIEFERFRIST} Werktagen.",
+        "### Liefert Luviq in ganz Deutschland?",
+        "Ja, geliefert wird in jede Stadt in Deutschland (nicht ins Ausland) innerhalb von",
+        f"{LIEFERFRIST} Werktagen; der Versand ist im Preis enthalten. Eine persönliche Übergabe in",
+        "Lübeck ist nach Absprache möglich.",
+        "",
+        "### Wo kann ich ein handbemaltes Shirt online kaufen?",
+        "Bei Luviq Universe: Das Engel-Shirt ist ein Second-Hand-T-Shirt in Größe M, von Hand mit Bleiche",
+        "gemalt (Bleach Painting). Es wird für jede Bestellung neu gemalt, bestellt wird ohne Konto direkt",
+        f"auf der Stückseite ({basis}{reverse('produkte')}).",
+        "",
+        "### Was ist ein Bleach-Shirt?",
+        "Ein Shirt, auf das mit Bleiche ein Motiv gemalt wurde: Die Bleiche nimmt die Farbe aus dem Stoff,",
+        "nichts ist aufgedruckt. Mehr dazu:",
+        f"{basis}{reverse('wissen_bleach')}",
         "",
         "### Was verkauft Luviq Universe?",
         "Handbemalte Stücke, gebraucht oder neu, immer hochwertig, zum Beispiel",
@@ -387,8 +399,8 @@ def _llms_fragen_mit_verkauf(basis):
         "",
         "### Wie bestellt man?",
         *([f"Ohne Konto, direkt auf der Seite des Stücks ({basis}{reverse('produkte')}): Name, E-Mail-Adresse",
-           "und Anschrift angeben (ein Serienstück wie das Engel-Shirt bleibt weiter bestellbar, ein Einzelstück ist dann reserviert). Die Rechnung mit den Zahlungsdaten kommt",
-           "per E-Mail; bezahlt wird im Voraus per Überweisung."]
+           "und Anschrift angeben (ein Serienstück wie das Engel-Shirt bleibt weiter bestellbar, ein Einzelstück ist dann reserviert). Rechnung und Zahlungslink kommen",
+           f"innerhalb von {luviq_daten.RECHNUNG_FRIST} per E-Mail; bezahlt wird im Voraus mit dem Zahlungslink von Revolut ({luviq_daten.ZAHLUNG['wege_kurz']}) oder per Überweisung."]
           if direktkauf_aktiv() else
           [f"Über diese Seite: Stück auf {basis}{reverse('produkte')} auswählen,",
            "in den Warenkorb legen und bestellen. Bezahlt wird per PayPal oder",
@@ -705,8 +717,14 @@ def _produkt_xml(produkt, base_url):
     xml = '  <url>\n'
     xml += f'    <loc>{base_url}{loc}</loc>\n'
     xml += f'    <lastmod>{produkt.aktualisiert_am.strftime("%Y-%m-%d")}</lastmod>\n'
-    xml += '    <changefreq>weekly</changefreq>\n'
-    xml += '    <priority>0.8</priority>\n'
+    # SEO-Runde 04.11.2026: vergebene Archivstücke sind nicht kaufbar und ändern sich nicht mehr,
+    # sie stehen niedriger als die bestellbaren Stücke.
+    if produkt.vergeben:
+        xml += '    <changefreq>monthly</changefreq>\n'
+        xml += '    <priority>0.4</priority>\n'
+    else:
+        xml += '    <changefreq>weekly</changefreq>\n'
+        xml += '    <priority>0.8</priority>\n'
 
     # Alle Bilder der Galerie (Runde 3): das Hauptbild mit Titel und Bildunterschrift wie bisher,
     # jedes weitere mit seinem Alt-Text als Titel – KI-Bilder sagen das darin ehrlich.

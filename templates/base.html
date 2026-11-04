@@ -5,9 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Luviq: handbemalte Second-Hand-Mode aus Lübeck{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}{% if verkauf_aktiv %}Luviq Universe aus Lübeck: mit Bleiche von Hand gemalte Stücke von Luisa Brehler, angefangen in Alsfeld, heute in Lübeck. Handbemalte Stücke, gebraucht oder neu, immer hochwertig – deutschlandweit bestellen.{% else %}Luviq Universe aus Lübeck: mit Bleiche von Hand gemalte Stücke von Luisa Brehler, angefangen in Alsfeld, heute in Lübeck. Marke im Aufbau – jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}">
-    <meta name="keywords" content="Luviq, Luviq Universe, handbemalte Stücke Lübeck, handbemalte Mode Alsfeld, handbemalte Kleidung{% if verkauf_aktiv %} kaufen{% endif %}, Upcycling Mode Deutschland, Second Hand handbemalt, handbemalte Hoodies Lübeck, Upcycling Lübeck">
+    <title>{% block title %}Luviq: handbemalte Second-Hand-Shirts &amp; Unikate{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{% if verkauf_aktiv %}Luviq aus Lübeck: handbemalte Second-Hand-Shirts und Unikate, von Luisa Brehler mit Bleiche von Hand gemalt. Versand inklusive, Lieferung in ganz Deutschland.{% else %}Luviq Universe aus Lübeck: mit Bleiche von Hand gemalte Stücke von Luisa Brehler, angefangen in Alsfeld, heute in Lübeck. Marke im Aufbau – jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}">
+    <meta name="keywords" content="Luviq, Luviq Universe, handbemaltes Shirt{% if verkauf_aktiv %} kaufen{% endif %}, Bleach Shirt, Unikat Kleidung, Second Hand Shirt online, Upcycling Mode Deutschland, Engel Shirt, Shirt mit eigenem Motiv">
     <meta name="author" content="Luisa Brehler">
 
     <!-- Geo / Local SEO -->
@@ -34,8 +34,8 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
     <meta property="og:url" content="{{ seiten_url }}">
-    <meta property="og:title" content="{% block og_title %}Luviq Universe – Handbemalte Stücke{% if verkauf_aktiv %} kaufen{% endif %}{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Entdecke handbemalte Stücke bei Luviq Universe: gebraucht oder neu, immer hochwertig und von Hand mit Bleiche gemalt – jedes Stück ein Kunstwerk.{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Luviq – Handbemalte Shirts &amp; Unikate{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Handbemalte Second-Hand-Shirts und Unikate von Luviq: von Hand mit Bleiche gemalt, Versand in ganz Deutschland.{% endblock %}">
     <meta property="og:locale" content="de_DE">
     <meta property="og:site_name" content="Luviq Universe">
     {% block og_image_tag %}
@@ -71,7 +71,7 @@
           },
           "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/logo-luviq-512.png' %}",
           "founder": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
-          "description": "{% if verkauf_aktiv %}Luviq Universe ist ein Online-Shop aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig, angefangen in Alsfeld (Hessen), heute in Lübeck. Gründerin Luisa Brehler malt hochwertige Teile mit Bleiche von Hand (Farbe aus dem Stoff gezogen, nichts aufgedruckt) zu handgemalten Stücken. Versand deutschlandweit.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig, angefangen in Alsfeld (Hessen), heute in Lübeck. Gründerin Luisa Brehler malt hochwertige Teile mit Bleiche von Hand (Farbe aus dem Stoff gezogen, nichts aufgedruckt) zu handgemalten Stücken. Derzeit findet kein Verkauf statt.{% endif %}",
+          "description": "{% if verkauf_aktiv %}Luviq Universe ist ein Online-Shop aus Lübeck für handbemalte Second-Hand-Shirts und Unikate, gebraucht oder neu, immer hochwertig, angefangen in Alsfeld (Hessen), heute in Lübeck. Gründerin Luisa Brehler malt hochwertige Teile mit Bleiche von Hand (Farbe aus dem Stoff gezogen, nichts aufgedruckt) zu handgemalten Stücken. Versand deutschlandweit.{% else %}Luviq Universe ist eine Modemarke im Aufbau aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig, angefangen in Alsfeld (Hessen), heute in Lübeck. Gründerin Luisa Brehler malt hochwertige Teile mit Bleiche von Hand (Farbe aus dem Stoff gezogen, nichts aufgedruckt) zu handgemalten Stücken. Derzeit findet kein Verkauf statt.{% endif %}",
           {% comment %}SEO-Upgrade 02.11.2026 (A1): keine Strasse, keine PLZ, keine E-Mail im Schema - die Anschrift ist eine Wohnung, kein Laden. Ort, Region und Land bleiben (stehen sichtbar auf der Seite); Kontakt laeuft ueber die Kontaktseite. Alsfeld bleibt als Herkunft (foundingLocation).{% endcomment %}
           "address": {
             "@type": "PostalAddress",
@@ -80,6 +80,7 @@
             "addressCountry": "{{ anbieterin.land }}"
           },
           "foundingLocation": {"@type": "Place", "name": "{{ herkunft.ort }}, {{ herkunft.region }}"},
+          "brand": {"@type": "Brand", "@id": "{{ request.scheme }}://{{ request.get_host }}/#brand", "name": "Luviq", "alternateName": "Luviq Universe", "slogan": "Mit Bleiche gemalt. Keins gleicht dem anderen."},
 {% if verkauf_aktiv %}
           "areaServed": {"@type": "Country", "name": "Deutschland"},
 {% endif %}
@@ -91,7 +92,7 @@
           },
 {% if verkauf_aktiv %}
           "currenciesAccepted": "EUR",
-          "paymentAccepted": "{% if direktkauf_aktiv %}Banküberweisung{% else %}PayPal, Banküberweisung{% endif %}",
+          "paymentAccepted": "{% if direktkauf_aktiv %}Zahlungslink ({{ zahlung.wege_kurz }}), Banküberweisung{% else %}PayPal, Banküberweisung{% endif %}",
           {% comment %}Runde 3 (30.10.2026): eine Rückgaberegel für den ganzen Shop, auf die jedes Offer verweist (teile/offer_versand_ld.html). Inhalt = gesetzliches Widerrufsrecht: 14 Tage, Deutschland, Rücksendung per Post. Kein returnFees: wer die Rücksendekosten trägt, steht erst in der Widerrufsbelehrung aus dem Generator. Kein freiwilliges Rückgaberecht darüber hinaus (luviq_daten.UMTAUSCH_SATZ).{% endcomment %}
           "hasMerchantReturnPolicy": {
             "@type": "MerchantReturnPolicy",
@@ -424,6 +425,11 @@
                 var menue = a.closest('details');
                 if (menue) { menue.removeAttribute('open'); }
             });
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape') { return; }
+            var offen = document.querySelector('details.lv-menue[open]');
+            if (offen) { offen.removeAttribute('open'); }
         });
     })();
     </script>

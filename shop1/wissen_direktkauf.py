@@ -1,6 +1,6 @@
 """Texte des Beitrags „Wie bestelle und bezahle ich bei Luviq Universe?“ für den Direktkauf ohne Konto.
 
-Stand 31.10.2026. Gilt nur, wenn ``verkauf.direktkauf_aktiv()`` wahr ist; sonst bleibt
+Stand 04.11.2026 (Zahlung per Revolut-Zahlungslink). Gilt nur, wenn ``verkauf.direktkauf_aktiv()`` wahr ist; sonst bleibt
 ``wissen/bestellen.html`` bei seinem bisherigen Text (Konto, Warenkorb, PayPal).
 
 Eine Quelle, zwei Orte: Dieselbe Liste speist das FAQ-Schema im ``<head>`` und die sichtbaren
@@ -46,6 +46,8 @@ def bestellen_faq(code=None, engel_url=''):
 
     ``code``: öffentlicher Rabattcode oder ``None``; mit Code kommt eine Frage dazu (nach „Wie bezahle ich“)."""
     tage = luviq_daten.RESERVIERUNG_TAGE
+    z = luviq_daten.ZAHLUNG
+    rechnung = luviq_daten.RECHNUNG_FRIST
     frist = luviq_daten.VERSAND['lieferfrist_werktage']
     produkte = _link('produkte', 'Übersicht')
     liste = [
@@ -78,22 +80,24 @@ def bestellen_faq(code=None, engel_url=''):
                         'und Datenschutzerklärung. Für den Versand kommen Straße mit Hausnummer, Postleitzahl und Ort dazu; '
                         f'wer die Übergabe in {luviq_daten.ABHOLUNG["ort"]} nach Absprache wählt, gibt keine Anschrift an. '
                         'Die Telefonnummer ist freiwillig und dient nur Rückfragen zur Lieferung.'),
-            'mehr': ('Die E-Mail-Adresse ist wichtig, weil alles darüber läuft: Eingangsbestätigung und Rechnung gehen '
+            'mehr': ('Die E-Mail-Adresse ist wichtig, weil alles darüber läuft: Eingangsbestätigung, Rechnung und Zahlungslink gehen '
                      'an diese Adresse. Tippfehler daher vor dem Absenden prüfen.'),
         },
         {
             'frage': 'Wann ist das Stück für mich reserviert?',
-            'antwort': ('Sobald du die Bestellung abgeschickt hast. Ein zweiter Besucher sieht das Stück dann als '
-                        '„reserviert“ und kann es nicht bestellen. Die Reservierung endet, wenn Luisa Brehler keine Rechnung '
-                        f'schickt oder die Zahlung nicht innerhalb von {tage} Tagen nach Rechnungsdatum eingeht.'),
-            'mehr': ('Wird das Stück wieder frei, nimmt Luisa Brehler die Freigabe von Hand vor; sie geschieht nicht '
-                     'automatisch. Ein reserviertes Stück ist bis dahin für andere gesperrt.'),
+            'antwort': ('Das hängt vom Stück ab. Ein Einzelstück ist reserviert, sobald du die Bestellung abgeschickt hast: Ein '
+                        'zweiter Besucher sieht es dann als „reserviert“ und kann es nicht bestellen. Ein Serienstück wie das '
+                        'Engel-Shirt wird nicht reserviert, weil Luisa Brehler es für jede Bestellung neu von Hand malt; es bleibt '
+                        'für andere bestellbar. Die Reservierung eines Einzelstücks endet, wenn keine Rechnung kommt oder die '
+                        f'Zahlung nicht innerhalb von {tage} Tagen nach Rechnungsdatum eingeht.'),
+            'mehr': ('Wird ein Einzelstück wieder frei, nimmt Luisa Brehler die Freigabe von Hand vor; sie geschieht nicht '
+                     'automatisch. Bei einem Serienstück gibt es nichts freizugeben: Gemalt wird erst nach deiner Zahlung.'),
         },
         {
             'frage': 'Wann kommt der Kaufvertrag zustande?',
             'antwort': ('Mit „Zahlungspflichtig bestellen“ gibst du ein verbindliches Angebot ab (§ 2 der AGB). Direkt danach '
                         'bekommst du eine Eingangsbestätigung per E-Mail; sie ist noch keine Annahme. Luisa Brehler nimmt '
-                        'dein Angebot an, indem sie dir die Rechnung mit den Zahlungsdaten per E-Mail schickt, und damit kommt '
+                        'dein Angebot an, indem sie dir die Rechnung mit dem Zahlungslink per E-Mail schickt, und damit kommt '
                         'der Vertrag zustande. Schickt sie keine Rechnung, kommt kein Vertrag zustande, und die Reservierung endet.'),
             'mehr': format_html(
                 'Mit der Eingangsbestätigung kommen die AGB und die Widerrufsbelehrung samt Muster-Widerrufsformular per E-Mail. '
@@ -104,25 +108,28 @@ def bestellen_faq(code=None, engel_url=''):
         },
         {
             'frage': 'Wie bezahle ich meine Bestellung?',
-            'antwort': ('Im Voraus per Überweisung auf das Konto, das in der Rechnung steht, mit dem Verwendungszweck aus der '
-                        f'Rechnung, innerhalb von {tage} Tagen nach Rechnungsdatum. Andere Zahlungsarten gibt es derzeit nicht; '
-                        'kommt eine hinzu, steht sie in der Rechnung. Alle Preise sind Endpreise, nach § 19 UStG wird keine '
-                        'Umsatzsteuer berechnet.'),
-            'mehr': ('Eine Zahlung nach der Lieferung, per Lastschrift oder bei Abholung gibt es nicht. Wer die Rechnung '
-                     'nicht findet, schaut zuerst im Spam-Ordner und schreibt sonst kurz über das Kontaktformular.'),
+            'antwort': (f'Im Voraus, mit einem persönlichen Zahlungslink von {z["anbieter"]}: Rechnung und Zahlungslink kommen '
+                        f'innerhalb von {rechnung} per E-Mail, und auf der Bezahlseite von {z["anbieter"]} zahlst du mit {z["wege"]}. '
+                        'Alternativ kannst du auf das Konto überweisen, das in der Rechnung steht. Bitte zahle '
+                        f'innerhalb von {tage} Tagen nach Rechnungsdatum. Weitere Zahlungsarten gibt es derzeit '
+                        'nicht. Alle Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet.'),
+            'mehr': (f'Eine Zahlung nach der Lieferung, per Lastschrift oder bei Abholung gibt es nicht. Die Zahlungsdaten gibst du '
+                     f'nur auf der Bezahlseite von {z["anbieter"]} ein; der Shop sieht und speichert sie nicht. Wer Rechnung und '
+                     'Link nicht findet, schaut zuerst im Spam-Ordner und schreibt sonst kurz über das Kontaktformular.'),
         },
         {
             'frage': 'Was passiert nach der Zahlung?',
-            'antwort': ('Versendet wird nach Zahlungseingang (§ 4 der AGB). Das Stück ist dann verkauft und kommt nicht '
-                        'zurück in die Übersicht; ein Motiv wird nicht zweimal gemalt.'),
+            'antwort': ('Versendet wird nach Zahlungseingang (§ 4 der AGB). Ein Serienstück wie das Engel-Shirt malt Luisa Brehler '
+                        'jetzt für dich von Hand; ein Einzelstück ist dann verkauft und kommt nicht zurück in die Übersicht, ein '
+                        'Motiv wird nicht zweimal gemalt.'),
             'mehr': format_html(
                 'Kommt die Rechnung oder später die Sendung nicht wie erwartet, hilft eine kurze Nachricht über das {}.',
                 _link('kontakt', 'Kontaktformular')),
         },
         {
             'frage': 'Wie lange dauert der Versand?',
-            'antwort': (f'Geliefert wird innerhalb von {frist} Werktagen, nur innerhalb Deutschlands; die Frist beginnt am Tag '
-                        'nach der Erteilung des Zahlungsauftrags an die überweisende Bank. Der Versand innerhalb Deutschlands '
+            'antwort': (f'Geliefert wird innerhalb von {frist} Werktagen, nur innerhalb Deutschlands; die Frist läuft '
+                        f'{luviq_daten.FRIST_BEGINN}. Der Versand innerhalb Deutschlands '
                         'ist im Preis enthalten. Einen Laden zum Anprobieren gibt es nicht; wer in Lübeck wohnt, kann die '
                         'Übergabe nach Absprache wählen.'),
             'mehr': format_html(
@@ -130,7 +137,7 @@ def bestellen_faq(code=None, engel_url=''):
                 'Shop keinen Versandbetrag auf.', _link('liefergebiet', 'Versand & Abholung')),
         },
         {
-            'frage': 'Was passiert, wenn ich nicht überweise oder es mir anders überlege?',
+            'frage': 'Was passiert, wenn ich nicht zahle oder es mir anders überlege?',
             'antwort': ('Geht die Zahlung nicht rechtzeitig ein, kann Luisa Brehler dich per E-Mail erinnern und eine Nachfrist '
                         'von 7 Tagen setzen; danach kann sie vom Vertrag zurücktreten, und das Stück wird wieder frei (§ 4 der AGB). '
                         'Wer die Bestellung nicht ausführen möchte, gibt am besten kurz über das Kontaktformular Bescheid.'),

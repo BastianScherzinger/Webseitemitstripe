@@ -166,7 +166,7 @@ WISSEN_BEITRAEGE = {
         'kurz': 'Konto, Warenkorb, Pflichtangaben im Bestellvorgang, PayPal oder '
                 'Vorab-Überweisung, Prüfung der Zahlung, Bestätigung und Versand.',
         'kurz_direktkauf': 'Bestellung ohne Konto direkt beim Stück, Pflichtangaben, Reservierung, '
-                           'Rechnung per E-Mail, Vorkasse per Überweisung und Versand.',
+                           'Rechnung mit Zahlungslink per E-Mail, Vorkasse und Versand.',
         'freigegeben': True,
         # Beschreibt den Kaufweg: ohne Verkauf (VERKAUF_AKTIV aus) noindex
         # und nicht in Sitemap, llms.txt und Feed, siehe _sichtbar().

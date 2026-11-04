@@ -17,6 +17,11 @@ from .test_zahlung import LIEFERADRESSE
 
 class HeroSiegerTest(LuviqTestCase):
     def setUp(self):
+        # Die Tests meinen die Zeit VOR dem Verkaufsstart (01.11.2026): ein festes Datum, sonst kippen sie
+        # am Starttag, weil „ab 01.11.“ dann nicht mehr erscheint.
+        patcher = mock.patch('shop1.verkauf.heute_berlin', return_value=__import__('datetime').date(2026, 10, 30))
+        patcher.start()
+        self.addCleanup(patcher.stop)
         self.engel = erzeuge_produkt(
             'Engel-Shirt, mit Bleiche gemalt', slug='engel-shirt-handgebleicht', nummer=6,
             masse='Größe M', material='100 % Baumwolle')
@@ -28,7 +33,7 @@ class HeroSiegerTest(LuviqTestCase):
         html = self.text()
         self.assertIn('Mit Bleiche gemalt. Keins gleicht dem anderen.', html)
         self.assertIn('Nº 006 · Engel-Shirt', html)
-        self.assertIn('Luisa Brehler aus Lübeck zieht die Farbe mit Bleiche aus dem Stoff', html)
+        self.assertIn('Luviq ist die Marke von Luisa Brehler aus Lübeck für handbemalte Second-Hand-Shirts und Unikate', html)
         self.assertIn('data-ereignis="hero_engel"', html)
         self.assertIn('data-ereignis="hero_motiv"', html)
         self.assertIn('Engel-Shirt ansehen', html)

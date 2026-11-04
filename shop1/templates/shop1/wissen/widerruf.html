@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Widerruf und Rücksendung beim Unikat | Luviq Lübeck{% endblock %}
-{% block meta_description %}Widerruf bei Luviq Universe in Lübeck: vierzehn Tage Frist, wohin eine Rücksendung geht, was bei Farb- und Gebrauchsspuren gilt. Jetzt nachlesen.{% endblock %}
+{% block title %}Widerruf und Rücksendung beim Unikat | Luviq{% endblock %}
+{% block meta_description %}Widerruf bei Luviq: vierzehn Tage Frist, wohin eine Rücksendung geht, was bei Farb- und Gebrauchsspuren gilt und was bei Mängeln. Jetzt nachlesen.{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_title %}Widerruf und Rücksendung – Luviq Universe, Lübeck{% endblock %}
 {% block og_description %}Vierzehn Tage Widerrufsrecht, auch für handbemalte Einzelstücke: Frist, Anschrift, Reklamation und was vorab zu klären ist.{% endblock %}
@@ -101,10 +101,10 @@
     },
     {
       "@type": "Question",
-      "name": "Gilt das Widerrufsrecht auch bei Vorab-Überweisung?",
+      "name": "{% if direktkauf_aktiv %}Gilt das Widerrufsrecht auch, wenn ich per Zahlungslink bezahle?{% else %}Gilt das Widerrufsrecht auch bei Vorab-Überweisung?{% endif %}",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Ja, das Widerrufsrecht hängt nicht von der Zahlungsart ab. Bei Vorkasse ist der Vertrag mit der E-Mail „Bestellbestätigung und Zahlungsinformationen“ geschlossen (§ 2 der AGB); das Stück wird für dich zurückgehalten und nach Zahlungseingang verschickt. Die Frist beginnt auch hier erst mit der Zustellung, widerrufen kannst du aber schon vorher."
+        "text": "Ja, das Widerrufsrecht hängt nicht von der Zahlungsart ab. {% if direktkauf_aktiv %}Der Vertrag kommt mit der Rechnung samt Zahlungslink zustande, die du per E-Mail bekommst (§ 2 der AGB); das Stück wird für dich zurückgehalten und nach Zahlungseingang verschickt.{% else %}Bei Vorkasse ist der Vertrag mit der E-Mail „Bestellbestätigung und Zahlungsinformationen“ geschlossen (§ 2 der AGB); das Stück wird für dich zurückgehalten und nach Zahlungseingang verschickt.{% endif %} Die Frist beginnt auch hier erst mit der Zustellung, widerrufen kannst du aber schon vorher."
       }
     },
     {
@@ -209,9 +209,9 @@
         </section>
 
         <section class="lv-wissen-frage">
-            <h2 class="lv-serif">Gilt das Widerrufsrecht auch bei Vorab-Überweisung?</h2>
+            <h2 class="lv-serif">{% if direktkauf_aktiv %}Gilt das Widerrufsrecht auch, wenn ich per Zahlungslink bezahle?{% else %}Gilt das Widerrufsrecht auch bei Vorab-Überweisung?{% endif %}</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Ja, das Widerrufsrecht hängt nicht von der Zahlungsart ab. Bei Vorkasse ist der Vertrag mit der E-Mail „Bestellbestätigung und Zahlungsinformationen“ geschlossen (§ 2 der AGB); das Stück wird für dich zurückgehalten und nach Zahlungseingang verschickt. Die Frist beginnt auch hier erst mit der Zustellung, widerrufen kannst du aber schon vorher.</p>
+                <p class="lv-wissen-erst">Ja, das Widerrufsrecht hängt nicht von der Zahlungsart ab. {% if direktkauf_aktiv %}Der Vertrag kommt mit der Rechnung samt Zahlungslink zustande, die du per E-Mail bekommst (§ 2 der AGB); das Stück wird für dich zurückgehalten und nach Zahlungseingang verschickt.{% else %}Bei Vorkasse ist der Vertrag mit der E-Mail „Bestellbestätigung und Zahlungsinformationen“ geschlossen (§ 2 der AGB); das Stück wird für dich zurückgehalten und nach Zahlungseingang verschickt.{% endif %} Die Frist beginnt auch hier erst mit der Zustellung, widerrufen kannst du aber schon vorher.</p>
                 <p>Bis zur vollständigen Bezahlung bleibt die Ware nach § 6 der AGB Eigentum von Luisa Brehler. Wie eine Bestellung von der Auswahl bis zur Bestätigung abläuft und welche Zahlungswege es gibt, steht im Beitrag zum Bestellen und Bezahlen in diesem Wissensbereich.</p>
             
             </div>
