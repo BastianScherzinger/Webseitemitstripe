@@ -1,7 +1,7 @@
 ---
 bereich: aufgaben
 titel: Aufgaben
-stand: 2026-11-01
+stand: 2026-11-04
 status: vollständig
 fortschritt: 90
 zusammenfassung: Stand 02.10.2026, gegen main (7ae67ab) und die Live-Seite geprüft: alle Zweige gemergt, Wissensbeiträge frei, Profile, Antwortzeit und Drop-Termin geklärt, Admin-Aktionen nur per POST, CI grün. Offen sind 14 Zeilen bei Luisa (Beim Kunden: Texte, Rechtstexte, Fotos, Beschreibung je Stück, Produktnamen, Vertrauenssignale, Bewertungen, Fristen u. a.) und 4 Später-Zeilen (Verkauf, erst-mit-Verkauf-Entscheidungen, Bild-Upload, security.txt); Bastians Handgriffe stehen bei ihrem Bereich (10-TECHNIK, 40-SEO, 50-LOCAL-SEO).
@@ -121,6 +121,10 @@ Weitere Lübeck-Punkte (23.10.2026, Schub 2):
 
 ## Offen
 
+- **Nach dem Livegang 04.11.2026 (`da2c351`):** Testbestellung **#15** („TEST Zahlungslink-bitte-ignorieren“) im Shop-Admin auf „Abgebrochen“ setzen (Luisa; Claude hat keinen Admin-Zugang). Indexierung der geänderten Seiten beantragen (Startseite, `/produkte/`, Engel-Shirt, `/liefergebiet/`, `/motiv-anfragen/`). SEO nachmessen am **18.11.** und **02.12.2026** (Messplan: `Webagentur Scherzinger\Analysen\luviq-2026-11-04-seo\02-UMSETZUNG.md`).
+- **Entscheidung Bastian:** Kontaktfoto mit weicher Randmaske (seit 04.11. live) behalten oder neues, sauber freigestelltes Foto; Kontaktseite „Antwort in der Regel innerhalb von 2 Stunden“ eventuell auf „meist innerhalb eines Tages“.
+- **Rechtliche Prüfpunkte aus dem Zahlungsumbau:** AGB § 2 sagt jetzt verbindlich „Rechnung mit Zahlungslink innerhalb von 1 bis 2 Werktagen“ (Luisa muss das halten); Datenschutz Abschnitt 6 (Revolut Bank UAB, Litauen) selbst geschrieben, Anbietergesellschaft und Datenschutzlink von Revolut nicht verifiziert; Einzelstück ist zwischen Bestellung und Rechnung ohne Frist reserviert.
+
 - **Umbau 30.10.2026 (Zweig `design/2026-10-29-luviq-start`):** Merge nach `main`, Push, Live-Prüfung PC und Handy; danach `llms.txt`/Sitemap prüfen und Indexierung der geänderten Seiten beantragen.
 - **GA4-Messung** der Hero-Knöpfe (`data-ereignis="hero_engel"` / `"hero_motiv"`): erst mit Einwilligungs-Banner und Luisas eigener Property; A/B-Ergebnis bis dahin nur Simulation (Kundenpanel).
 - ~~Vorderseiten-Fotos des Engel-Shirts~~ erledigt in Runde 3 (30.10.2026): Vorne echt und Arbeitstisch in der Galerie (Migration 0031). **Offen:** KI-Studiobild der Vorderseite (Galerieplatz 2, Anleitung `20-DESIGN.md` „Stückbilder und Luisas Foto tauschen“); besseres Foto von Luisa (Bastian liefert nach).
@@ -232,6 +236,7 @@ Braucht Zuarbeit von **Luisa Brehler**. Nichts davon darf erfunden oder geschät
 
 | Datum | Was | Beleg |
 |---|---|---|
+| 2026-11-04 | Revolut-Zahlungslink als Hauptweg (Kasse, Mails an Kundin/Luisa/Bastian, AGB §§ 2/4/5, Datenschutz, FAQ, llms.txt, Zahlart + Feld `zahlungslink` im Admin), Feinschliff aus der Komplettprüfung (Tippflächen, Cookie-Hinweis, Serienstück-Texte, Danke-Seite, Domain in Mails), SEO/GEO-Runde Deutschland (Titel/Descriptions aller Seiten, Engel-FAQ 6 Fragen, Brand-Schema), Archivstücke Nº 001–005 auf Deutsch (Migration 0037), Shop-IBAN in Railway = Revolut Pro; live, 995 Tests grün, Testkauf #15: Kundenmail + Kopie im Posteingang | `6805ccc`, `831060a`, `28dae9c`, `163dc90`, Merge `da2c351` |
 | 02.10.2026 | **Wissensbereich live:** die drei Wissensbeiträge (Pflege, Upcycling, Größe) sind freigegeben, indexierbar und in Sitemap und Feed (frühere Zeilen „Beim Kunden“ Nr. 1 bis 3, EIG127). Live belegt (curl 02.10.2026): Sitemap mit 17 Adressen samt der drei Beiträge, `<time>` „Aktualisiert am“, `/feed/` 200 | `3073388`, `c943006`, `f03bf61` |
 | 02.10.2026 | **Antwortzeit** „in der Regel innerhalb von 2 Stunden“ im Fuß und auf `/kontakt/`, keine Telefonnummer (frühere Zeile Nr. 5; Nr. 4 bewusst so); **Profile** Google-Unternehmensprofil „Luviq“, TikTok `@luviq.archive`, Instagram `luviq.archive` in `sameAs` und `llms.txt` (frühere Zeilen Nr. 6 und 15, GE11, GE46); **kein Drop-Termin** und kein Countdown (`DROP_TERMIN_VORGABE` leer, frühere Zeile Nr. 22 und EIG116); `security.txt` bis 01.10.2027 | `3073388` (live `llms.txt` und Startseite am 02.10.2026 abgerufen) |
 | 02.10.2026 | **Search Console:** die Property `sc-domain:luviq-alsfeld.com` liegt im Konto von Luisa (Bastian, 02.10.2026; frühere Zeile Nr. 7, EIG20); Apex `luviq-alsfeld.com` und die Railway-Adresse leiten per 301 auf `www` (live 02.10.2026 geprüft) | Angabe Bastian; `feeb95e` |

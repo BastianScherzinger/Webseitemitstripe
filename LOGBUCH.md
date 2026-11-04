@@ -11,6 +11,13 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 04.11.2026 abends – Livegang Zahlungslink, Feinschliff, SEO (Merge `da2c351`, gepusht)
+
+- **Was:** Die drei Stränge des Tages (Zahlungslink `6805ccc`, Feinschliff `831060a`, SEO `28dae9c`/`edb8de4`) plus `163dc90`: Archivstücke Nº 001–005 auf Deutsch (Migration 0037, Slugs unverändert, nur wo noch der englische Text stand), Zahlungssatz auf der Stückseite nur noch einmal (Block „So bezahlst du“), „Versand & Abholung“ in voller Breite.
+- **Railway:** `BANK_IBAN` = Revolut Pro von Luisa (`DE92 1001 0178 0592 4509 50`, gegen `Buero\luisa\arbeitsplatz\buchhaltung\LIESMICH.md` geprüft); vorher stand ein altes Konto (`DE05 5185 …`) drin.
+- **Prüfung:** 995 Tests grün; live nach ~1 Min.; alle Hauptseiten 200 unter 1 s; Testkauf #15 („TEST Zahlungslink-bitte-ignorieren“, Abholung) → Danke-Seite, Kundenmail „Deine Bestellung #15 ist reserviert – Luviq“ und Kopie „[Luviq] Neue Bestellung“ im Posteingang von Bastian (nicht Spam), Absender Luisas Gmail. Storno von #15 im Shop-Admin macht Luisa.
+- **Warum:** Auftrag Bastian 04.11.: Revolut-Zahlungslinks angeben, sauber bestellen am PC und Handy, Mails „reserviert, Link und Rechnung separat in 1–2 Tagen“, alles auf Deutsch, deutschlandweit gefunden werden.
+
 ## 04.11.2026 – Feinschliff aus der Komplettprüfung (Zweig `bau/2026-11-04-zahlungslink`)
 
 - **Tippflächen (Handy):** `.lv-haken` mindestens 44 px hoch, Links darin (AGB, Widerruf, Datenschutz), „Code eintragen“ und Links in `.lv-formular .lv-klein` als `inline-block` mit Polster und gleichem Minus-Rand (Muster der Brotkrume) – Bild unverändert, Tippfläche ≥ 44 px. Galerie-Punkte 44 px breit, sichtbare Linie bleibt 30 px (`left/right:7px`); am PC bleibt der Abstand der Vorschaubilder.
