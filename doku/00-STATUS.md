@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-11-04
+stand: 2026-11-06
 status: vollständig
 fortschritt: 97
 zusammenfassung: 04.11.2026 – live da2c351: Bezahlen per Revolut-Zahlungslink (Rechnung + Link in 1–2 Werktagen, Karte/Apple Pay/Google Pay/Revolut Pay, Überweisung als zweiter Weg), neue Bestellmails, Feinschliff Handy, SEO/GEO-Runde Deutschland, Archivstücke auf Deutsch, Shop-IBAN = Revolut Pro. 01.11.2026 abends – Rabattcodes live (168942e): 10 % Erstbestellung im Hero (BLEICHENGEL-…), Karten- und Freunde-Code, FAQ/llms.txt/AGB § 3, Plan doku/47-RABATTCODES.md; Bug-Prüfung mit 2 Fixes, Rest in 80-AUFGABEN. 01.11.2026 nachts – Umbau Startseite/Stückseite (Kaufkarte, engere Abstände), Engel-Shirt als Serienstück (mehrfach bestellbar), Startfilm, Produkt-Schema für Händlereinträge (siehe LOGBUCH, doku/45-MERCHANT-CENTER.md). 29.10.2026 – Gewerbe LUVIQ angemeldet (Beginn 01.11.2026, § 19 UStG, USt-IdNr. beantragt). Zweig recht/2026-10-29-verkaufsstart (nicht gepusht) - Startsperre für den Verkauf, Hinweis „Shop öffnet frühestens am 01.11.2026“, Generator-Ablagen, USt-IdNr.-Platzhalter, Einwilligungs-Gerüst; Prüfbericht in Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29. Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
@@ -62,35 +62,34 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 03.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-10-23a) — **Gesamtstand 90,2 von 100**, Reifegrad „Referenz“. 344 von 410 Regeln an 25 URLs und 253 Dateien (51.896 Zeilen) geprüft.
+**Messung vom 06.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-11-03a) — **Gesamtstand 91,0 von 100**, Reifegrad „Referenz“. 367 von 414 Regeln an 25 URLs und 255 Dateien (52.521 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Recht & Vertrauen | **68** | Brauchbar |
-| Erreichbarkeit & Postfach | **72** | Brauchbar |
-| Konversion | **82** | Solide |
-| SEO — Inhalt | **83** | Solide |
+| Erreichbarkeit & Postfach | **74** | Brauchbar |
+| Recht & Vertrauen | **78** | Solide |
+| Konversion | **84** | Solide |
+| SEO — Inhalt | **86** | Solide |
 | Substanz & Reichweite | **87** | Solide |
 | SEO — Technik | **88** | Solide |
 | Code-Qualität & Projektreife | **91** | Referenz |
+| Barrierefreiheit | **94** | Referenz |
 | GEO — KI-Sichtbarkeit | **95** | Referenz |
 | Vorlagen-Konformität | **96** | Referenz |
-| Barrierefreiheit | **96** | Referenz |
 | Performance & Core Web Vitals | **97** | Referenz |
-| Formulare & Preisrechner | **97** | Referenz |
 | Sicherheit | **98** | Referenz |
+| Formulare & Preisrechner | **98** | Referenz |
 | Betrieb & Auslieferung | **100** | Referenz |
 
 Keine Sperre greift.
 
-Quelltext: 253 Dateien, **32 Befunde**, davon 2 kritisch und 9 wichtig.
+Quelltext: 255 Dateien, **35 Befunde**, davon 2 kritisch und 10 wichtig.
 
 Kritische Befunde:
 
 - **Canonical nennt dieselbe Domain wie die Seite** (`TS05`) — 24 canonical zeigen auf eine fremde Domain: / → www.luviq-luebeck.com, /produkte/ → www.luviq-luebeck.com, /ueber_uns/ → www.luviq-luebeck.com, /kontakt/ → www.luviq-luebeck.com, /datenschutz/ → www.luviq-luebeck.com … (+19)
 - **Alle Domainvarianten landen auf einer Adresse** (`TS11`) — 0 von 1 Nebenadressen landen dauerhaft auf der Hauptadresse — offen: https://luviq-alsfeld.com: 301 → https://www.luviq-luebeck.com/
-- **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 100%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (100%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie/ (99%), /produkt/custom-print-ho
-- **Die Datenschutzerklärung nennt die tatsächlich eingebundenen Dienste** (`RE06`) — 1 von 1 eingebundenen Diensten stehen nicht in der Datenschutzerklärung: luviq-luebeck.com
+- **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 96%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (96%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-jacke/ (93%), /produkt/custom-print-hoodi
 - **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
 - **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
 - **Das Impressum ist aus jeder Seite verlinkt** (`RE02`) — 23 von 24 Seiten ohne Impressumslink: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /agb/ … (+18)
