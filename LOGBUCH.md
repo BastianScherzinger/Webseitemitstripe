@@ -11,6 +11,12 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 08.11.2026 – Unikat/Serie angleichen (Zweig `recht/unikat-serie-2026-11-08`, nicht gepusht)
+
+- **Was:** „Unikat“, „1-of-1“, „zweite Auflage“, „nicht nachbestellbar“ nur noch dort, wo sie stimmen (Archiv, Einzelstücke, Motiv-Anfragen): Über uns, Manifest, `/produkte/` (Titel, Meta, Text), Produktseite ohne Verkauf, Engel-Shirt-Meta (Code + Migration 0038), Wissen (Bestellen, Upcycling, Größe, Pflege, Widerruf); `seiten_stand` nachgezogen; Aufbau-Referenz gezielt nur für die Überschrift „Wie kommt ein Stück in den Warenkorb?“ angepasst. Commits `9abfa52` bis `b5da42f`.
+- **Warum:** Rechtscheck 07.11. W1 (§ 5 UWG): Das Engel-Shirt ist eine Serie, die Seite nannte es an mehreren Stellen Unikat. AGB und Widerrufsbelehrung bewusst nicht angefasst; Befund in Buero/luisa/arbeitsplatz/recht/UNIKAT-SERIE-2026-11-08.md.
+- **Prüfung:** `manage.py test shop1`: 998 Tests, einziger Fehler war die Aufbau-Referenz (behoben; test_aufbau, test_seo, test_geo danach grün); `pruefe_seite` 0 Fehler.
+
 ## 04.11.2026 abends – Livegang Zahlungslink, Feinschliff, SEO (Merge `da2c351`, gepusht)
 
 - **Was:** Die drei Stränge des Tages (Zahlungslink `6805ccc`, Feinschliff `831060a`, SEO `28dae9c`/`edb8de4`) plus `163dc90`: Archivstücke Nº 001–005 auf Deutsch (Migration 0037, Slugs unverändert, nur wo noch der englische Text stand), Zahlungssatz auf der Stückseite nur noch einmal (Block „So bezahlst du“), „Versand & Abholung“ in voller Breite.
