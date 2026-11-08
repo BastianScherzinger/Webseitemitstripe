@@ -1269,6 +1269,7 @@
    "p",
    "p",
    "a",
+   "p",
    "figure",
    "img",
    "figcaption",
@@ -3377,7 +3378,7 @@
  },
  "/ueber_uns/": {
   "anzahl": {
-   "a": 40,
+   "a": 41,
    "button": 0,
    "form": 0,
    "iframe": 0,
@@ -3538,6 +3539,8 @@
    "p",
    "a",
    "a",
+   "a",
+   "p",
    "a",
    "footer",
    "div",
