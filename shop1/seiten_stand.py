@@ -32,7 +32,7 @@ SEITEN_STAND = {
     'home':         '2026-11-04',  # + Satz „Online-Shop, kein Laden“ (SEO-Upgrade)
     'produkte':     '2026-11-04',
     'gaestebuch':   '2026-11-01',
-    'ueber_uns':    '2026-11-04',
+    'ueber_uns':    '2026-11-08',  # Unikat/Serie: keine zweite Auflage nur für Einzelstücke
     'liefergebiet': '2026-11-04',
     'kontakt':      '2026-11-04',
     'impressum':    '2026-10-30',  # VSBG-Satz (Rechts-Runde 30.10.)
