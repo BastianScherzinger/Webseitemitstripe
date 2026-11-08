@@ -1,7 +1,7 @@
 ---
 bereich: status
 titel: Stand der Seite
-stand: 2026-11-07
+stand: 2026-11-08
 status: vollständig
 fortschritt: 97
 zusammenfassung: 04.11.2026 – live da2c351: Bezahlen per Revolut-Zahlungslink (Rechnung + Link in 1–2 Werktagen, Karte/Apple Pay/Google Pay/Revolut Pay, Überweisung als zweiter Weg), neue Bestellmails, Feinschliff Handy, SEO/GEO-Runde Deutschland, Archivstücke auf Deutsch, Shop-IBAN = Revolut Pro. 01.11.2026 abends – Rabattcodes live (168942e): 10 % Erstbestellung im Hero (BLEICHENGEL-…), Karten- und Freunde-Code, FAQ/llms.txt/AGB § 3, Plan doku/47-RABATTCODES.md; Bug-Prüfung mit 2 Fixes, Rest in 80-AUFGABEN. 01.11.2026 nachts – Umbau Startseite/Stückseite (Kaufkarte, engere Abstände), Engel-Shirt als Serienstück (mehrfach bestellbar), Startfilm, Produkt-Schema für Händlereinträge (siehe LOGBUCH, doku/45-MERCHANT-CENTER.md). 29.10.2026 – Gewerbe LUVIQ angemeldet (Beginn 01.11.2026, § 19 UStG, USt-IdNr. beantragt). Zweig recht/2026-10-29-verkaufsstart (nicht gepusht) - Startsperre für den Verkauf, Hinweis „Shop öffnet frühestens am 01.11.2026“, Generator-Ablagen, USt-IdNr.-Platzhalter, Einwilligungs-Gerüst; Prüfbericht in Buero\luisa\arbeitsplatz\webseite\recht-2026-10-29. Stand 02.10.2026: main = origin/main = 7ae67ab und live, alle Arbeitszweige gemergt, CI grün; Gesamtstand 96,5 (Messung 02.10.2026). Verkauf aus (Marke im Aufbau). Wissensbereich, Profile, Antwortzeit und Drop-Termin sind geklärt. Offen sind Angaben von Luisa (80-AUFGABEN, Beim Kunden), Bastians Railway- und Search-Console-Handgriffe und die Entscheidung über eine eigene Mail-Domain; im Code liegt nichts aus.
@@ -62,7 +62,7 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 07.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-11-03a) — **Gesamtstand 91,0 von 100**, Reifegrad „Referenz“. 367 von 414 Regeln an 25 URLs und 255 Dateien (52.520 Zeilen) geprüft.
+**Messung vom 08.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-11-03a) — **Gesamtstand 91,0 von 100**, Reifegrad „Referenz“. 367 von 414 Regeln an 25 URLs und 255 Dateien (52.520 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
