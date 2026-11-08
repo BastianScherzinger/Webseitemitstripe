@@ -123,6 +123,7 @@ SEO-Upgrade 02.11.2026 (A2): Archiv-/Referenzstücke (`vergeben`) sind nie verka
             {% elif verkauf_aktiv and produkt.kaufbar %}<p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} € <span class="lv-stueck-preis-zusatz">{{ versand_preissatz }}</span></p>
             {% else %}<p class="lv-stueck-zustand">Unikat · {{ shop_oeffnet }}</p>{% endif %}
             {% if verkauf_aktiv and produkt.kaufbar %}<ul class="lv-fakten" aria-label="Das Wichtigste zum Kauf">
+                {% if direktkauf_aktiv %}<li><b>So bezahlst du</b> Nach der Bestellung bekommst du in {{ rechnung_frist }} Rechnung und Zahlungslink per Mail. Zahlen kannst du mit Karte, Apple Pay, Google Pay, Revolut Pay oder per Überweisung.{% if serie %} Gemalt wird, sobald die Zahlung da ist.{% endif %}</li>{% endif %}
                 {% if produkt.masse %}<li><b>Größe</b> {{ produkt.masse }}</li>{% endif %}
                 {% if serie and bearbeitung %}<li><b>Lieferzeit</b> Bearbeitung ca. {{ bearbeitung }} Werktage, dann Versand · innerhalb von {{ lieferfrist }} Werktagen {{ frist_beginn }}</li>{% else %}<li><b>Lieferzeit</b> innerhalb von {{ lieferfrist }} Werktagen {{ frist_beginn }}</li>{% endif %}
                 {% if serie %}<li><b>Serie</b> Derselbe Engel, für dich neu von Hand gemalt. Die Fotos zeigen ein fertiges Shirt dieser Serie; deins sieht ihm sehr ähnlich, nie genau gleich. Ein Einzelstück, das nur einmal existiert, ist das Engel-Shirt nicht, dafür gibt es die Motiv-Anfrage.</li>{% endif %}
