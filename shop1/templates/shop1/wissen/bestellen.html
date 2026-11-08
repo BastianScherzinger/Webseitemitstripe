@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{% if direktkauf_aktiv %}Unikat-Shirt online bestellen &amp; bezahlen | Luviq{% else %}Bestellen und bezahlen im Shop | Luviq{% endif %}{% endblock %}
+{% block title %}{% if direktkauf_aktiv %}Handbemaltes Shirt online bestellen &amp; bezahlen | Luviq{% else %}Bestellen und bezahlen im Shop | Luviq{% endif %}{% endblock %}
 {% block meta_description %}{% if direktkauf_aktiv %}So bestellst du bei Luviq ohne Konto: direkt beim Stück, Zahlungslink per E-Mail, Zahlung per Karte, Apple Pay oder Überweisung, Versand in ganz Deutschland.{% else %}Wie eine Bestellung bei Luviq Universe in Lübeck abläuft: Konto, Warenkorb, Pflichtangaben, PayPal oder Vorab-Überweisung und Versand. Jetzt nachlesen.{% endif %}{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_title %}{% if direktkauf_aktiv %}Direkt bestellen und bezahlen bei Luviq Universe, Lübeck{% else %}Bestellen und bezahlen bei Luviq Universe, Lübeck{% endif %}{% endblock %}
@@ -53,7 +53,7 @@
     },
     {
       "@type": "Question",
-      "name": "Wie kommt ein Unikat in den Warenkorb?",
+      "name": "Wie kommt ein Stück in den Warenkorb?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Über die Detailseite des Stücks. Die Übersicht Shop zeigt jedes verfügbare Teil und führt von dort auf seine eigene Seite; erst dort stehen die beiden Schaltflächen, die das Stück in den Warenkorb legen – die eine bleibt auf der Produktseite, die andere führt gleich zum Warenkorb. Über den vorhandenen Bestand hinaus lässt sich die Menge nicht erhöhen, und bei einem Einzelstück ist das genau ein Exemplar."
@@ -96,7 +96,7 @@
       "name": "Was passiert nach der Zahlung?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Die Bestellung wechselt auf bezahlt, das gekaufte Stück wird im Shop abgeschaltet – ein verkauftes Unikat kommt nicht zurück in die Übersicht –, und an die im Bestellvorgang angegebene E-Mail-Adresse geht eine Bestätigung mit Bestellnummer, Artikeln, Gesamtbetrag und Lieferanschrift. Der Warenkorb ist danach leer, und im Profil steht die Bestellung mit ihrem Stand in der Übersicht."
+        "text": "Die Bestellung wechselt auf bezahlt, das gekaufte Stück wird im Shop abgeschaltet – ein verkauftes Einzelstück kommt nicht zurück in die Übersicht (das Engel-Shirt als Serie bleibt bestellbar) –, und an die im Bestellvorgang angegebene E-Mail-Adresse geht eine Bestätigung mit Bestellnummer, Artikeln, Gesamtbetrag und Lieferanschrift. Der Warenkorb ist danach leer, und im Profil steht die Bestellung mit ihrem Stand in der Übersicht."
       }
     },
     {
@@ -162,10 +162,10 @@
         </section>
 
         <section class="lv-wissen-frage">
-            <h2 class="lv-serif">Wie kommt ein Unikat in den Warenkorb?</h2>
+            <h2 class="lv-serif">Wie kommt ein Stück in den Warenkorb?</h2>
             <div class="lv-wissen-antwort">
                 <p class="lv-wissen-erst">Über die Detailseite des Stücks. Die Übersicht Shop zeigt jedes verfügbare Teil und führt von dort auf seine eigene Seite; erst dort stehen die beiden Schaltflächen, die das Stück in den Warenkorb legen – die eine bleibt auf der Produktseite, die andere führt gleich zum Warenkorb. Über den vorhandenen Bestand hinaus lässt sich die Menge nicht erhöhen, und bei einem Einzelstück ist das genau ein Exemplar.</p>
-                <p>Auf der <a href="{% url 'produkte' %}">Übersicht</a> selbst gibt es bewusst keinen Warenkorb-Knopf: Sie führt zu jedem Stück, und die Entscheidung fällt auf der Detailseite, wo Beschreibung, Preis und Bild stehen. Ein Stück, das dort nicht mehr auftaucht, ist verkauft – Luviq legt kein Motiv ein zweites Mal auf. {% if engel_url %}Das <a href="{{ engel_url }}">Engel-Shirt</a> ist das aktuelle Stück zum direkten Bestellen.{% endif %}</p>
+                <p>Auf der <a href="{% url 'produkte' %}">Übersicht</a> selbst gibt es bewusst keinen Warenkorb-Knopf: Sie führt zu jedem Stück, und die Entscheidung fällt auf der Detailseite, wo Beschreibung, Preis und Bild stehen. Ein Stück, das dort nicht mehr auftaucht, ist verkauft – Luviq legt kein Einzelstück ein zweites Mal auf. {% if engel_url %}Das <a href="{{ engel_url }}">Engel-Shirt</a> ist eine Serie und das aktuelle Stück zum direkten Bestellen: Jedes Shirt malt Luisa nach der Bestellung neu.{% endif %}</p>
             
             </div>
         </section>
@@ -209,7 +209,7 @@
         <section class="lv-wissen-frage">
             <h2 class="lv-serif">Was passiert nach der Zahlung?</h2>
             <div class="lv-wissen-antwort">
-                <p class="lv-wissen-erst">Die Bestellung wechselt auf bezahlt, das gekaufte Stück wird im Shop abgeschaltet – ein verkauftes Unikat kommt nicht zurück in die Übersicht –, und an die im Bestellvorgang angegebene E-Mail-Adresse geht eine Bestätigung mit Bestellnummer, Artikeln, Gesamtbetrag und Lieferanschrift. Der Warenkorb ist danach leer, und im Profil steht die Bestellung mit ihrem Stand in der Übersicht.</p>
+                <p class="lv-wissen-erst">Die Bestellung wechselt auf bezahlt, das gekaufte Stück wird im Shop abgeschaltet – ein verkauftes Einzelstück kommt nicht zurück in die Übersicht (das Engel-Shirt als Serie bleibt bestellbar) –, und an die im Bestellvorgang angegebene E-Mail-Adresse geht eine Bestätigung mit Bestellnummer, Artikeln, Gesamtbetrag und Lieferanschrift. Der Warenkorb ist danach leer, und im Profil steht die Bestellung mit ihrem Stand in der Übersicht.</p>
                 <p>Kommt die Bestätigung nicht an, ist die Bestellung trotzdem angelegt: Der Versand der E-Mail läuft getrennt von der Zahlung, ein Fehler dort lässt die Bestellung bestehen. Im Zweifel hilft ein Blick ins Profil, wo jede Bestellung mit Nummer, Datum und Stand steht, oder eine kurze Nachricht über das <a href="{% url 'kontakt' %}">Kontaktformular</a>.</p>
             
             </div>

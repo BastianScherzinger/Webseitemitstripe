@@ -45,9 +45,9 @@ SEITEN_STAND = {
     'motiv_anfragen': '2026-11-04',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
     'wissen':           '2026-11-04',
-    'wissen_pflege':    '2026-11-04',
-    'wissen_upcycling': '2026-11-04',
-    'wissen_groesse':   '2026-11-04',
+    'wissen_pflege':    '2026-11-08',
+    'wissen_upcycling': '2026-11-08',
+    'wissen_groesse':   '2026-11-08',
     'wissen_motiv':     '2026-10-23',  # Entwurf, noindex
     # Ratgeber (30.10.2026, C8), seit Runde 3 veröffentlicht; ISO 8601 mit Uhrzeit und Zone:
     'wissen_bleach':      '2026-11-04',  # + Link auf die Anleitung (SEO-Upgrade)
@@ -55,8 +55,8 @@ SEITEN_STAND = {
     'wissen_bleach_anleitung': '2026-11-04',  # neu (SEO-Upgrade B1)
     # Belegte Beiträge ohne Freigabevorbehalt (SU04, 2026-09-07).
     # Quellenverweise im Fliesstext (GE43, 2026-09-17).
-    'wissen_bestellen': '2026-11-04',
-    'wissen_widerruf':  '2026-11-04',
+    'wissen_bestellen': '2026-11-08',
+    'wissen_widerruf':  '2026-11-08',
     'wissen_konto':     '2026-11-04',
 }
 
