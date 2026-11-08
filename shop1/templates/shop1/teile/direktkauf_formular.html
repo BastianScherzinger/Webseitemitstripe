@@ -74,6 +74,8 @@ Abs. 3: der Knopf trägt wörtlich „Zahlungspflichtig bestellen“. Der Kaufve
         </div>
         <p class="lv-klein">Mit „{{ knopf }}“ gibst du eine verbindliche Bestellung ab und verpflichtest dich zur Zahlung des Kaufpreises, sobald du die Rechnung mit dem Zahlungslink erhalten hast.</p>
     </div>
+    <p class="lv-klein">Für alle Stücke gilt die gesetzliche Gewährleistung von zwei Jahren, auch für gebrauchte Stücke. Das Wichtigste dazu steht im EU-Hinweis:</p>
+    {% include 'shop1/teile/eu_gewaehrleistung.html' %}
     <button type="submit" class="lv-knopf">{{ knopf }}</button>
 </form>
 <script nonce="{{ csp_nonce }}">
