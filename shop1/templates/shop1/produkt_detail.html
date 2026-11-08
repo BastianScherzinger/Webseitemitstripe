@@ -121,7 +121,7 @@ SEO-Upgrade 02.11.2026 (A2): Archiv-/Referenzstücke (`vergeben`) sind nie verka
             <h1 class="lv-serif">{{ produkt.name }}</h1>
             {% if produkt.verkauft %}<p class="lv-stueck-zustand"><b>{{ produkt.band_wort }}</b> · Archiv</p>
             {% elif verkauf_aktiv and produkt.kaufbar %}<p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} € <span class="lv-stueck-preis-zusatz">{{ versand_preissatz }}{% if direktkauf_aktiv %}<br>So bezahlst du: Nach der Bestellung bekommst du in {{ rechnung_frist }} Rechnung und Zahlungslink per Mail. Zahlen kannst du mit Karte, Apple Pay, Google Pay, Revolut Pay oder per Überweisung.{% if serie %} Gemalt wird, sobald die Zahlung da ist.{% endif %}{% endif %}</span></p>
-            {% else %}<p class="lv-stueck-zustand">Unikat · {{ shop_oeffnet }}</p>{% endif %}
+            {% else %}<p class="lv-stueck-zustand">{% if serie %}Serie{% else %}Unikat{% endif %} · {{ shop_oeffnet }}</p>{% endif %}
             {% if verkauf_aktiv and produkt.kaufbar %}<ul class="lv-fakten" aria-label="Das Wichtigste zum Kauf">
                 {% if produkt.masse %}<li><b>Größe</b> {{ produkt.masse }}</li>{% endif %}
                 {% if serie and motivanfrage_aktiv %}<li><b>Passt nicht?</b><span>M passt nicht, oder du willst den Engel auf deinem eigenen Shirt oder Hoodie? <a href="{% url 'motiv_anfragen' %}">Frag ein eigenes Stück an.</a> Kostet nichts, ist keine Bestellung, ich melde mich persönlich.</span></li>{% endif %}
@@ -203,7 +203,7 @@ SEO-Upgrade 02.11.2026 (A2): Archiv-/Referenzstücke (`vergeben`) sind nie verka
             <div class="lv-stueck-hinweis">
                 <p>Dieses Stück ist noch nicht im Verkauf. {{ shop_oeffnet }} Trag dich in die Warteliste ein, dann erfährst du es zuerst: Eine E-Mail-Adresse genügt, ein Konto ist dafür nicht nötig, und erst nach der Bestätigung über den Link in der E-Mail kommt Post.</p>
                 <details class="lv-mehr"><summary>Mehr zu diesem Stück</summary>
-                <p>Die Fotos zeigen genau dieses Teil; ein zweites Exemplar gibt es nicht, und Fragen zum Stück oder zur Arbeitsweise gehen über das Kontaktformular. Das Motiv entsteht direkt auf dem Stoff und wird nicht wiederholt – darum trägt das Stück den Zusatz 1-of-1. Ein Ladengeschäft zum Anschauen gibt es nicht.</p></details>
+                <p>{% if serie %}Die Fotos zeigen ein fertiges Shirt dieser Serie; dein Shirt malt Luisa für dich neu, es sieht ihm sehr ähnlich, nie genau gleich. Fragen zum Stück oder zur Arbeitsweise gehen über das Kontaktformular. Das Motiv entsteht direkt auf dem Stoff, mit Pinsel und Bleiche.{% else %}Die Fotos zeigen genau dieses Teil; ein zweites Exemplar gibt es nicht, und Fragen zum Stück oder zur Arbeitsweise gehen über das Kontaktformular. Das Motiv entsteht direkt auf dem Stoff und wird nicht wiederholt – darum trägt das Stück den Zusatz 1-of-1.{% endif %} Ein Ladengeschäft zum Anschauen gibt es nicht.</p></details>
             </div>
             {% endif %}
             {% if not produkt.verkauft %}

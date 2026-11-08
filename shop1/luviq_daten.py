@@ -686,9 +686,11 @@ ENGEL_STUECK = {
     'seo_titel': 'Engel-Shirt handbemalt, mit Bleiche gemalt – Luviq',
     'seo_titel_frueher': ('Engel-Shirt mit Bleiche gemalt – Luviq Lübeck',),
     'seo_beschreibung': ('Engel-Shirt Nº 006: Second-Hand-T-Shirt mit Engel, Rose und Stern, von Hand mit '
-                         'Bleiche gemalt. 100 % Baumwolle, Größe M. Unikat von Luviq aus Lübeck.'),
+                         'Bleiche gemalt. 100 % Baumwolle, Größe M. Jedes Shirt neu gemalt.'),
     'seo_beschreibung_frueher': ('Engel-Shirt Nº 006: Second-Hand-T-Shirt mit Engel, Rose und Stern, von Hand '
-                                 'mit Bleiche gemalt. 100 % Baumwolle, Größe M. Luviq, Lübeck.',),
+                                 'mit Bleiche gemalt. 100 % Baumwolle, Größe M. Luviq, Lübeck.',
+                                 'Engel-Shirt Nº 006: Second-Hand-T-Shirt mit Engel, Rose und Stern, von Hand mit '
+                                 'Bleiche gemalt. 100 % Baumwolle, Größe M. Unikat von Luviq aus Lübeck.'),
     # Mit Verkauf (models.Produkt._seo_mit_verkauf, SEO-Analyse N2): Preis im Snippet erst, wenn die Seite ihn zeigt.
     'seo_titel_verkauf': 'Engel-Shirt handbemalt, mit Bleiche gemalt – {preis} € | Luviq',
     'seo_beschreibung_verkauf': ('Engel-Shirt Nº 006: handbemaltes Second-Hand-Shirt mit Bleiche, jedes neu von '
