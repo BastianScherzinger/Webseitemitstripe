@@ -30,7 +30,7 @@ SEITEN_STAND = {
     # 23.10.2026: Sitz Lübeck laut Gewerbeanmeldung, Alsfeld als Herkunft – Titel,
     # Beschreibungen und Texte aller Seiten; deshalb tragen alle dieses Datum.
     'home':         '2026-11-04',  # + Satz „Online-Shop, kein Laden“ (SEO-Upgrade)
-    'produkte':     '2026-11-04',
+    'produkte':     '2026-11-08',  # Titel/Beschreibung: Unikate und Engel-Serie
     'gaestebuch':   '2026-11-01',
     'ueber_uns':    '2026-11-08',  # Unikat/Serie: keine zweite Auflage nur für Einzelstücke
     'liefergebiet': '2026-11-04',
