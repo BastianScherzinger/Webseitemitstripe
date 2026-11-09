@@ -85,6 +85,7 @@
             <h1 class="lv-serif lv-satz" id="kontakt-titel">Kontakt</h1>
             <p class="lv-lead">Luviq ist {% if verkauf_aktiv %}ein reiner Online-Shop{% else %}ein Label im Aufbau{% endif %} aus Lübeck. Ein Ladengeschäft gibt es nicht, deshalb auch keine Öffnungszeiten.</p>
             <p class="lv-lead">Luisa Brehler erreichst du über das Formular oder per E-Mail an brehlerluisa@gmail.com; geantwortet wird in der Regel {{ antwort }}{% if motivanfrage_aktiv %}; wer ein eigenes Motiv möchte, fragt es über die <a href="{% url 'motiv_anfragen' %}">Motivanfrage</a> an, von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv{% endif %}.</p>
+            <p>Kooperation, Laden, Presse? Schreib mir über das Kontaktformular, gleiche Adresse wie für alles andere.</p>
 
             {% include 'shop1/teile/luisa_foto.html' %}
             <dl class="lv-daten lv-kontaktdaten">
