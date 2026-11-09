@@ -6,9 +6,9 @@ status: vollständig
 fortschritt: 99
 zusammenfassung: Stand 02.10.2026 (live, main = 7ae67ab): Produktbilder in mehreren Größen mit srcset und Bildmaßen, LCP-Bild mit fetchpriority und Preload, vier eigene Schriftdateien, Critical CSS, gepackte Stildateien, kein Fremdskript; Lighthouse Desktop 100, mobil 89 (LCP 3,76 s), Serverzeit 3–4 ms. Offen sind vier Später-Punkte mit Begründung (Besuchsprotokoll im Request, ein großes Original-Bild, mobil ein Punkt unter dem Ziel, Nachmessung mit Verkauf).
 offen: 4
-pagespeed_mobil: 97
+pagespeed_mobil: 98
 pagespeed_desktop: 100
-antwortzeit_ms: 4
+antwortzeit_ms: 6
 quellen: DOCUMENTATION.md, LOGBUCH.md, start.sh
 antwortzeit_quelle: PageSpeed server-response-time
 ---
@@ -21,28 +21,28 @@ Gemessen wird die **Live-Seite**, also der Stand `main`. Seit dem 02.10.2026 ist
 ## Messwerte
 
 <!-- tempo:anfang -->
-**Messung vom 08.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-11-03a). Bereich „Performance & Core Web Vitals“: **97,1 von 100**, Reifegrad „Referenz“.
+**Messung vom 09.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-11-03a). Bereich „Performance & Core Web Vitals“: **97,1 von 100**, Reifegrad „Referenz“.
 
 ### Lighthouse je Seite
 
 | Seite | Gerät | Leistung | LCP | CLS | TBT | Serverzeit |
 |---|---|---:|---:|---:|---:|---:|
-| `/datenschutz/` | mobile | **99** | 1,69 s | 0,000 | 0 ms | 4 ms |
-| `/datenschutz/` | desktop | **100** | 0,49 s | 0,000 | 0 ms | 5 ms |
-| `/kontakt/` | mobile | **99** | 1,67 s | 0,006 | 0 ms | 5 ms |
-| `/kontakt/` | desktop | **100** | 0,49 s | 0,000 | 0 ms | 3 ms |
-| `/produkte/` | mobile | **94** | 2,86 s | 0,010 | 2 ms | 5 ms |
-| `/produkte/` | desktop | **100** | 0,63 s | 0,009 | 0 ms | 4 ms |
+| `/datenschutz/` | mobile | **99** | 1,66 s | 0,000 | 0 ms | 7 ms |
+| `/datenschutz/` | desktop | **100** | 0,48 s | 0,000 | 0 ms | 5 ms |
+| `/kontakt/` | mobile | **99** | 1,70 s | 0,007 | 0 ms | 14 ms |
+| `/kontakt/` | desktop | **100** | 0,45 s | 0,000 | 0 ms | 3 ms |
+| `/produkte/` | mobile | **96** | 2,67 s | 0,000 | 0 ms | 3 ms |
+| `/produkte/` | desktop | **100** | 0,63 s | 0,011 | 0 ms | 5 ms |
 
 6 Abrufe, davon 0 wiederholt und **0 endgültig ohne Ergebnis**. Ein Abruf ohne Ergebnis steht oben als „nicht gemessen“ — bei CLS und TBT wäre eine Null der Bestwert und damit ein Lob für etwas, das niemand gemessen hat.
 
-**Serverzeit (`server-response-time` aus PageSpeed): 4,3 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
+**Serverzeit (`server-response-time` aus PageSpeed): 6,2 ms** im Mittel. Das ist die Zahl, an der `PF09` und `PF10` hängen. Die Sekundenwerte, die der eigene Prüfstand je Seite notiert, sind Wanduhrzeiten bei sechs gleichzeitigen Abrufen samt Kaltstart — sie messen den Prüfstand, nicht den Server.
 
 ### Tempo-Regeln, die offen sind
 
 | Regel | Titel | Ergebnis | Beleg |
 |---|---|---|---|
-| `PF17` | Lazy-Loading unterhalb des Falzes, nicht auf dem LCP-Bild | teilweise | 42 von 43 Bildern unterhalb des ersten sind lazy; 3 von 24 Seiten laden ihr erstes Bild lazy: /ueber_uns/ → luisa-brustbild-420.3b991e7e4f38.webp, /kontakt/ → luisa-brustbild-420.3b991e7e4f38.webp, /wissen/bleach-paintin |
+| `PF17` | Lazy-Loading unterhalb des Falzes, nicht auf dem LCP-Bild | teilweise | 42 von 44 Bildern unterhalb des ersten sind lazy; 3 von 24 Seiten laden ihr erstes Bild lazy: /ueber_uns/ → luisa-brustbild-420.3b991e7e4f38.webp, /kontakt/ → luisa-brustbild-420.3b991e7e4f38.webp, /wissen/bleach-paintin |
 | `PF18` | Das Hero-Bild trägt fetchpriority=high | teilweise | 3 von 11 Seiten ohne fetchpriority=high am ersten Bild: /ueber_uns/ → luisa-brustbild-420.3b991e7e4f38.webp, /kontakt/ → luisa-brustbild-420.3b991e7e4f38.webp, /wissen/bleach-painting/ → engel-arbeitsplatz-45-900.5b61228 |
 | `PF19` | Das LCP-Bild wird vorgeladen, und nur dort, wo es eins gibt | teilweise | 1 von 3 Schlüsselseiten mit Bild laden es nicht vor: /kontakt/ |
 | `PF20` | Inline-CSS und Inline-JS bleiben im Rahmen | teilweise | im Mittel 14 kB Inline-CSS und 7 kB Inline-JS je Seite über 24 Seiten |
