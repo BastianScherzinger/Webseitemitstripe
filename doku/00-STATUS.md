@@ -62,23 +62,23 @@ Aus den Köpfen der zehn Bereichsdateien, alle am 02.10.2026 gegen Code und Live
 ## Messung
 
 <!-- messung:anfang -->
-**Messung vom 09.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-11-03a) — **Gesamtstand 91,0 von 100**, Reifegrad „Referenz“. 367 von 414 Regeln an 25 URLs und 257 Dateien (52.601 Zeilen) geprüft.
+**Messung vom 09.11.2026** (Webagentur Scherzinger Overview, Regelstand 2026-11-03a) — **Gesamtstand 94,1 von 100**, Reifegrad „Referenz“. 365 von 414 Regeln an 25 URLs und 257 Dateien (52.601 Zeilen) geprüft.
 
 | Bereich | Wert | Reifegrad |
 |---|---:|---|
-| Erreichbarkeit & Postfach | **74** | Brauchbar |
-| Recht & Vertrauen | **78** | Solide |
+| Erreichbarkeit & Postfach | **69** | Brauchbar |
 | Konversion | **84** | Solide |
-| SEO — Inhalt | **86** | Solide |
-| Substanz & Reichweite | **87** | Solide |
-| SEO — Technik | **88** | Solide |
 | Code-Qualität & Projektreife | **91** | Referenz |
+| SEO — Inhalt | **92** | Referenz |
+| Substanz & Reichweite | **92** | Referenz |
 | Barrierefreiheit | **94** | Referenz |
 | GEO — KI-Sichtbarkeit | **95** | Referenz |
-| Vorlagen-Konformität | **96** | Referenz |
-| Performance & Core Web Vitals | **97** | Referenz |
-| Sicherheit | **98** | Referenz |
+| Vorlagen-Konformität | **97** | Referenz |
+| Performance & Core Web Vitals | **98** | Referenz |
 | Formulare & Preisrechner | **98** | Referenz |
+| Recht & Vertrauen | **98** | Referenz |
+| SEO — Technik | **100** | Referenz |
+| Sicherheit | **100** | Referenz |
 | Betrieb & Auslieferung | **100** | Referenz |
 
 Keine Sperre greift.
@@ -87,13 +87,10 @@ Quelltext: 257 Dateien, **35 Befunde**, davon 2 kritisch und 10 wichtig.
 
 Kritische Befunde:
 
-- **Canonical nennt dieselbe Domain wie die Seite** (`TS05`) — 24 canonical zeigen auf eine fremde Domain: / → www.luviq-luebeck.com, /produkte/ → www.luviq-luebeck.com, /ueber_uns/ → www.luviq-luebeck.com, /kontakt/ → www.luviq-luebeck.com, /datenschutz/ → www.luviq-luebeck.com … (+19)
-- **Alle Domainvarianten landen auf einer Adresse** (`TS11`) — 0 von 1 Nebenadressen landen dauerhaft auf der Hauptadresse — offen: https://luviq-alsfeld.com: 301 → https://www.luviq-luebeck.com/
 - **Keine Beinahe-Duplikate zwischen Seiten** (`IS21`) — 10 Seitenpaare über 60 Prozent Textgleichheit, höchster Wert 96%: /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-hoodie-1/ (96%), /produkt/custom-hoodie-mit-print/ = /produkt/custom-print-jacke/ (93%), /produkt/custom-print-hoodi
-- **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-alsfeld.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
-- **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-alsfeld.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
-- **Das Impressum ist aus jeder Seite verlinkt** (`RE02`) — 23 von 24 Seiten ohne Impressumslink: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /agb/ … (+18)
-- **Datenschutzerklärung vorhanden und aus jeder Seite verlinkt** (`RE05`) — Datenschutzerklärung unter /datenschutz/ vorhanden, aber 23 von 24 Seiten verlinken sie nicht: /produkte/, /ueber_uns/, /kontakt/, /datenschutz/, /agb/ … (+18)
+- **Die Domain nimmt überhaupt E-Mail an** (`MW01`) — Für luviq-luebeck.com ist **kein MX-Eintrag** gesetzt. Eine Mail an eine Adresse dieser Domain kommt nirgends an.
+- **Ein SPF-Eintrag sagt, wer im Namen der Domain schreiben darf** (`MW04`) — Kein SPF-Eintrag auf luviq-luebeck.com. Jede Mail im Namen dieser Domain ist für einen Empfänger ununterscheidbar von einer gefälschten.
+- **Ein DMARC-Eintrag ist gesetzt** (`MW06`) — Kein DMARC-Eintrag auf `_dmarc.luviq-luebeck.com`.
 - **Es gibt keinen kritischen Datei-Befund** (`PJ05`) — 2 kritische Befunde: shop1/templates/shop1/legal/generator/impressum.html:1 Grundgerüst unvollständig, shop1/wissen_direktkauf.py:23 Unmaskierte Ausgabe
 <!-- messung:ende -->
 
