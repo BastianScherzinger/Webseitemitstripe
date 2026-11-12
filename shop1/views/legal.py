@@ -325,6 +325,7 @@ def _llms_kopf_mit_verkauf(basis):
         f"- [Über uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
         f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
         "Vorschläge bekommen - kostenlos, keine Bestellung",
+        *_llms_haustier_seite(basis),
         f"- [Versand & Abholung]({basis}{reverse('liefergebiet')}): Versand deutschlandweit, "
         "Lieferzeit, Zahlung, Übergabe in Lübeck nach Absprache",
         f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
@@ -340,6 +341,25 @@ def _llms_motiv_fragen():
     from .. import luviq_daten
     zeilen = []
     for frage, antwort in luviq_daten.FAQ_MOTIV:
+        zeilen += [f"### {frage}", *textwrap.wrap(antwort, 78), ""]
+    return zeilen
+
+
+def _llms_haustier_seite(basis):
+    """Seitenzeile für ``/haustier-shirt/`` – nur, wenn die Seite freigeschaltet ist (``HAUSTIER_SEITE_AKTIV``)."""
+    if not settings.HAUSTIER_SEITE_AKTIV:
+        return []
+    return [f"- [Haustier aufs Shirt]({basis}{reverse('haustier_shirt')}): dein Haustier nach Foto von Hand mit "
+            "Bleiche auf ein Shirt gemalt, kein Druck - Anfrage kostenlos"]
+
+
+def _llms_haustier_fragen():
+    """Die ersten drei Fragen von ``/haustier-shirt/``, wortgleich (``luviq_daten.FAQ_HAUSTIER``) – nur bei freigeschalteter Seite."""
+    import textwrap
+    if not settings.HAUSTIER_SEITE_AKTIV:
+        return []
+    zeilen = []
+    for frage, antwort in luviq_daten.FAQ_HAUSTIER[:3]:
         zeilen += [f"### {frage}", *textwrap.wrap(antwort, 78), ""]
     return zeilen
 
@@ -412,6 +432,7 @@ def _llms_fragen_mit_verkauf(basis):
         "weiterverwendet und von Hand bemalt statt neu produziert.",
         "",
         *_llms_motiv_fragen(),
+        *_llms_haustier_fragen(),
         "## Rechtliches",
         "",
         f"- [Impressum]({basis}{reverse('impressum')})",
@@ -468,6 +489,7 @@ def _llms_kopf_ohne_verkauf(basis):
         f"- [Über uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
         f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
         "Vorschläge bekommen - kostenlos, keine Bestellung",
+        *_llms_haustier_seite(basis),
         f"- [Herkunft und Übergabe]({basis}{reverse('liefergebiet')}): von Alsfeld nach Lübeck, Übergabe nach Absprache",
         f"- [Kontakt]({basis}{reverse('kontakt')}): Anfrageformular",
         "",
@@ -515,6 +537,7 @@ def _llms_fragen_ohne_verkauf(basis):
         "keine Bestellung.",
         "",
         *_llms_motiv_fragen(),
+        *_llms_haustier_fragen(),
         "## Rechtliches",
         "",
         f"- [Impressum]({basis}{reverse('impressum')})",
@@ -551,6 +574,8 @@ def llms_full_txt(request):
         ('Liefergebiet' if verkauf else 'Herkunft', reverse('liefergebiet'), shop.liefergebiet, ()),
         ('Motiv anfragen', reverse('motiv_anfragen'), motiv.motiv_anfragen, ()),
     ]
+    if settings.HAUSTIER_SEITE_AKTIV:
+        seiten.append(('Haustier aufs Shirt', reverse('haustier_shirt'), motiv.haustier_shirt, ()))
     for produkt in Produkt.objects.filter(aktiv=True).order_by('nummer', 'id')[:50]:
         if produkt.slug:
             seiten.append((produkt.name, produkt.get_absolute_url(),
@@ -684,6 +709,11 @@ def _sitemap_seiten():
             'name': beitrag['url_name'], 'loc': reverse(beitrag['url_name']),
             'priority': '0.6', 'changefreq': 'monthly',
         })
+    # Haustier aufs Shirt: nur mit Schalter (Vorgabe aus, dann 404) - eine Adresse, die 404 liefert, gehört nicht
+    # in die Sitemap.
+    if settings.HAUSTIER_SEITE_AKTIV:
+        static_pages.append({'name': 'haustier_shirt', 'loc': reverse('haustier_shirt'),
+                             'priority': '0.8', 'changefreq': 'monthly'})
     # /impressum/ steht bewusst NICHT in dieser Liste: impressum.html setzt
     # meta robots auf "noindex, follow". Eine Adresse gleichzeitig zur
     # Aufnahme anzumelden und die Aufnahme zu verbieten, meldet die Search

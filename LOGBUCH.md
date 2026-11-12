@@ -11,6 +11,11 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 12.11.2026 – Haustier aufs Shirt als Entwurf (Zweig `seo/2026-11-12-haustier`, nicht gepusht)
+
+- **Was:** Neue Seite `/haustier-shirt/` (View `motiv.haustier_shirt`, Vorlage `haustier_shirt.html`, Texte in `luviq_daten`: `HAUSTIER_SCHRITTE`, `HAUSTIER_FOTO`, `FAQ_HAUSTIER`) hinter dem Schalter `HAUSTIER_SEITE_AKTIV` (Vorgabe aus: 404, nicht in Sitemap, `llms.txt`, `llms-full.txt`). Schema Service + FAQPage + BreadcrumbList, kein Preis, kein Bild. Dazu im Product-Schema des Engel-Shirts `color` (`ENGEL_STUECK['farbe']`) und in beiden Rückgabe-Angaben `returnFees: ReturnFeesCustomerResponsibility`. Tests: `test_haustier_seite`, Listen in `_basis`, `test_geo`, `test_inhalt`, Aufbau-Referenz gezielt nur um die neue Seite ergänzt.
+- **Warum:** Analyse 04-LUVIQ-SEO-GEO-AEO.md (Cluster C, W3): Lücke „Haustier von Hand gemalt“; Rückgabekosten belegt durch AGB § 8 Abs. 3 und Widerrufsbelehrung. Livegang erst nach Luisas Antworten (Tiere, Preis, Beispielstück) und Bastians OK; bestehende URLs, Titel, H1 und Startseite unverändert (Sperre bis mindestens 29.11.).
+
 ## 08.11.2026 – Unikat/Serie angleichen (Zweig `recht/unikat-serie-2026-11-08`, nicht gepusht)
 
 - **Was:** „Unikat“, „1-of-1“, „zweite Auflage“, „nicht nachbestellbar“ nur noch dort, wo sie stimmen (Archiv, Einzelstücke, Motiv-Anfragen): Über uns, Manifest, `/produkte/` (Titel, Meta, Text), Produktseite ohne Verkauf, Engel-Shirt-Meta (Code + Migration 0038), Wissen (Bestellen, Upcycling, Größe, Pflege, Widerruf); `seiten_stand` nachgezogen; Aufbau-Referenz gezielt nur für die Überschrift „Wie kommt ein Stück in den Warenkorb?“ angepasst. Commits `9abfa52` bis `b5da42f`.

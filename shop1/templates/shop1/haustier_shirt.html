@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% comment %}
+Haustier aufs Shirt, von Hand gemalt (Entwurf 12.11.2026, Analyse 04-LUVIQ-SEO-GEO-AEO.md § 4).
+Nur erreichbar mit HAUSTIER_SEITE_AKTIV (Vorgabe aus, sonst 404). Kein Formular, kein Upload, kein Beispielbild:
+Es gibt noch kein echtes Beispielstück. Kein Preis außer dem belegten Vergleich mit dem Engel-Shirt
+(luviq_daten.engel_preis_text, nur solange der Verkauf läuft). Texte und Fragen aus luviq_daten
+(HAUSTIER_SCHRITTE, HAUSTIER_FOTO, FAQ_HAUSTIER). Die Bedingung steht in jedem Block, nie um einen Block herum.
+{% endcomment %}
+
+{% block title %}Haustier aufs Shirt: nach Foto mit Bleiche gemalt | Luviq{% endblock %}
+{% block meta_description %}Dein Hund, deine Katze oder dein Pferd auf dem Shirt: von Luisa in Lübeck nach deinem Foto mit Bleiche von Hand gemalt, kein Druck. Jetzt kostenlos anfragen.{% endblock %}
+{% block og_title %}Haustier aufs Shirt, von Hand mit Bleiche gemalt – Luviq{% endblock %}
+{% block og_description %}Luisa malt dein Haustier nach deinem Foto von Hand mit Bleiche auf ein dunkles Shirt oder einen Hoodie. Kein Druck, jedes Stück ein Einzelstück.{% endblock %}
+{% block twitter_title %}Haustier aufs Shirt, von Hand gemalt – Luviq{% endblock %}
+{% block twitter_description %}Dein Tier nach Foto mit Bleiche von Hand auf dunkle Baumwolle gemalt. Anfrage kostenlos.{% endblock %}
+
+{% block brotkrume_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "@id": "{{ seiten_url }}#breadcrumb",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Haustier aufs Shirt", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'haustier_shirt' %}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block schema_ld %}
+{% comment %}Service ohne offers: den Preis legt Luisa fest, und ein erfundener Preis oder eine Preisspanne wäre ein Verkaufsversprechen. Kein image, solange es kein echtes Beispielfoto gibt. Der WebPage-Knoten kommt aus base.html (Register seiten_stand). FAQPage wortgleich mit den sichtbaren Fragen unten.{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": "{{ seiten_url }}#service",
+  "name": "Haustier aufs Shirt, von Hand mit Bleiche gemalt",
+  "serviceType": "Haustierporträt auf Kleidung, von Hand nach Foto gemalt",
+  "description": "Luisa Brehler malt dein Haustier nach einem Foto von Hand mit Bleiche auf ein dunkles Baumwoll-Shirt oder einen Hoodie. Kein Druck, jedes Stück ein Einzelstück.",
+  "provider": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
+  "areaServed": {"@type": "Country", "name": "Deutschland"},
+  "audience": {"@type": "Audience", "audienceType": "Haustierbesitzer"},
+  "url": "{{ seiten_url }}"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "{{ seiten_url }}#faq",
+  "mainEntity": [{% for frage, antwort in faq %}
+    {"@type": "Question", "name": "{{ frage|escapejs }}", "acceptedAnswer": {"@type": "Answer", "text": "{{ antwort|escapejs }}"}}{% if not forloop.last %},{% endif %}{% endfor %}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block alte_stile %}{% endblock %}
+{% block alpine %}{% endblock %}
+{% block seitenart %}lv-seite{% endblock %}
+{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='wissen' %}{% endblock %}
+
+{% block content %}
+<div class="lv-seite lv-wissen">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">Haustier aufs Shirt</li></ol></nav>
+
+    <header class="lv-wissen-kopf">
+        <h1 class="lv-serif">Dein Haustier aufs Shirt – von Hand mit Bleiche gemalt</h1>
+        <div class="lv-wissen-meta">Sag mir, was du willst — ich mal’s dir.</div>
+        <p class="lv-wissen-lead">Bei Luviq malt Luisa Brehler in Lübeck dein Haustier von Hand auf ein Shirt oder einen Hoodie: Du schickst ein Foto von deinem Hund, deiner Katze oder deinem Pferd, sie zeichnet ein Motiv daraus und malt es mit Bleiche auf dunkle Baumwolle. Gedruckt wird nichts, und jedes Stück gibt es nur einmal.</p>
+        <p>{% if motivanfrage_aktiv %}<a class="lv-knopf" href="{% url 'motiv_anfragen' %}?richtung=tier">Haustier-Motiv anfragen</a>{% else %}<a class="lv-knopf" href="{% url 'home' %}#warteliste">Zur Warteliste</a>{% endif %}</p>
+    </header>
+
+    <div class="lv-wissen-liste">
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">So sieht ein Haustier-Motiv mit Bleiche aus</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Bleiche zieht die Farbe aus dem Stoff. Deshalb steht dein Tier in hellen, bleich-beigen Linien auf schwarzem oder dunklem Stoff, als gemaltes Linienporträt und nicht als Foto. Fell, Ohren, Blick und die typische Zeichnung kommen als Linien auf den Stoff, so wie Luisa sie sieht.</p>
+                <p>Ein Strich lässt sich nicht zurücknehmen, und kein Motiv wird wiederholt. Mehr zur Technik steht im Beitrag <a href="{% url 'wissen_bleach' %}">Was ist Bleach Painting?</a>.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">So läuft es ab: vom Foto zum fertigen Shirt</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">In vier Schritten: Du fragst an, schickst Luisa dein Foto, bekommst einen Vorschlag, und erst wenn er passt, fängt sie an zu malen.</p>
+                <ul>{% for titel, beschreibung in schritte %}<li><strong>{{ forloop.counter }}. {{ titel }}:</strong> {{ beschreibung }}</li>{% endfor %}</ul>
+                <p>Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv. Das ist ein Erfahrungswert und keine feste Zusage.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">So sollte dein Foto sein</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Am besten eignet sich ein scharfes Foto bei Tageslicht, auf dem dein Tier gut zu sehen ist, am liebsten von vorne oder schräg von vorne und mit ruhigem Hintergrund. Du kannst auch mehrere Fotos schicken.</p>
+                <ul>{% for stichwort, erklaerung in foto_hinweise %}<li><strong>{{ stichwort }}:</strong> {{ erklaerung }}</li>{% endfor %}</ul>
+                <p>Das Foto schickst du nach deiner Anfrage per Instagram oder E-Mail an Luisa, im Formular selbst lädst du nichts hoch.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Hund, Katze, Pferd: was geht</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Luisa malt Hunde, Katzen und Pferde nach Foto. Bei anderen Tieren wie Kaninchen oder Vögeln frag einfach an: Sie sagt dir ehrlich, ob es mit Bleiche gut wird.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Auf welches Teil? Shirt, Hoodie oder dein eigenes</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Im Formular wählst du zwischen {{ teile_text }} oder „{{ eigenes_teil }}“, wenn du ein eigenes Teil hast. Luisa malt auf dunkle Baumwolle.</p>
+                <p>Wichtig ist der Stoff: Dunkle Baumwolle lässt sich gut bleichen, Polyester kaum, Wolle, Seide und Elasthan werden von Bleiche angegriffen. Wie du bei Einzelstücken die passende Größe findest, steht unter <a href="{% url 'wissen_groesse' %}">Die richtige Größe finden</a>.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Was kostet ein Haustier-Shirt?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Den Preis legt Luisa fest und schickt ihn dir mit den Vorschlägen, bevor etwas gemalt wird. Die Anfrage selbst kostet nichts.</p>
+                {% if engel_preis %}<p>Zum Vergleich: Das fertige <a href="{% url 'produkte' %}">Engel-Shirt</a> gibt es für {{ engel_preis }} {{ versand_preissatz }}. Ein Haustier-Motiv ist Auftragsarbeit nach deinem Foto und wird einzeln berechnet.</p>{% endif %}
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Als Geschenk für Hundemenschen, Katzenfans und Reiterinnen</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Ein Shirt mit dem eigenen Tier ist ein Geschenk, das es nur einmal gibt. Wenn du überraschen willst, reicht ein gutes Foto aus dem Handy der Person, und die Größe findest du über ein Lieblingsshirt.</p>
+                <p>Frag früh an, denn jedes Stück wird von Hand gemalt.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Zur Erinnerung an ein Tier, das nicht mehr da ist</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Viele wünschen sich ein Stück, das an ein verstorbenes Tier erinnert. Schreib Luisa einfach, was dir das Tier bedeutet hat, dafür gibt es im Formular das Feld „Was soll es für dich bedeuten?“.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Gemalt, nicht gedruckt: der Unterschied</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Haustier-Shirts im Netz sind meist gedruckt oder gestickt: Ein Foto wird hochgeladen und maschinell auf den Stoff gebracht. Bei Luviq malt ein Mensch dein Tier von Hand, Strich für Strich mit Bleiche.</p>
+                <p>Die Bleiche zieht die Farbe aus dem Stoff, nichts ist aufgedruckt. Darum sieht jedes Stück ein bisschen anders aus.</p>
+            </div>
+        </section>
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Pflege</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">{{ pflege }}</p>
+                <p>Mehr dazu im Beitrag <a href="{% url 'wissen_pflege' %}">Wie pflege ich handbemalte Kleidung?</a>.</p>
+            </div>
+        </section>
+        {% for frage, antwort in faq %}<section class="lv-wissen-frage">
+            <h2 class="lv-serif">{{ frage }}</h2>
+            <div class="lv-wissen-antwort"><p class="lv-wissen-erst">{{ antwort }}</p></div>
+        </section>{% endfor %}
+        <section class="lv-wissen-frage">
+            <h2 class="lv-serif">Wer malt dein Tier?</h2>
+            <div class="lv-wissen-antwort">
+                <p class="lv-wissen-erst">Luisa Brehler malt jedes Stück selbst, angefangen hat Luviq in Alsfeld, heute entsteht jedes Stück in Lübeck. Mehr über sie steht auf der Seite <a href="{% url 'ueber_uns' %}">Luisa</a>.</p>
+                <p>Auf <a href="{{ instagram_url }}" target="_blank" rel="noopener">Instagram</a> und <a href="{{ tiktok_url }}" target="_blank" rel="noopener">TikTok</a> unter {{ instagram_name }} zeigt sie, wie ihre Stücke entstehen.</p>
+                <p>{% if motivanfrage_aktiv %}<a class="lv-knopf" href="{% url 'motiv_anfragen' %}?richtung=tier">Haustier-Motiv anfragen – kostenlos und unverbindlich</a>{% else %}<a class="lv-knopf" href="{% url 'home' %}#warteliste">Zur Warteliste</a>{% endif %}</p>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

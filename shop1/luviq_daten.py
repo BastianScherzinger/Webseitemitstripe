@@ -675,6 +675,7 @@ ENGEL_STUECK = {
     'preis': '69.00',
     'masse': 'Größe M (Second-Hand-Shirt), Maße auf Anfrage',  # Bastian 01.11.2026: Second Hand, ca. M; keine Maße erfunden
     'material': '100 % Baumwolle',
+    'farbe': 'Schwarz',  # belegt: BLEICHE_SATZ und Alt-Texte „schwarzes T-Shirt“; Product-Schema ``color``
     'technik': 'Mit Bleiche von Hand gemalt',
     'zustand': 'Gebraucht (Second Hand), von Hand mit Bleiche gemalt',  # Bastian 01.11.2026 (vorher „Neu“)
     # Serienstück (Bastian 01.11.2026): mehrfach bestellbar, jedes Shirt wird neu von Hand gemalt, nie 1:1.
@@ -746,3 +747,73 @@ LUISA_FOTO = {
     'masse': (570, 570),
     'alt': 'Luisa Brehler, die Malerin hinter Luviq',
 }
+
+
+# ── Haustier aufs Shirt (Entwurf 12.11.2026, hinter dem Schalter HAUSTIER_SEITE_AKTIV) ──────────────────────────
+
+#: Die vier Schritte auf ``/haustier-shirt/``: Anfrage, Foto, Vorschlag, Malen (inhaltlich die Stationen von
+#: ``ANFRAGE_STATIONEN``, mit dem Schritt „Foto schicken“ dazwischen, den es nur beim Haustier gibt).
+HAUSTIER_SCHRITTE = [
+    ('Anfrage', 'Du wählst die Richtung „Tier“, dein Teil und die Stelle: groß auf dem Rücken oder kleiner '
+                'vorne. Die Anfrage kostet nichts.'),
+    ('Foto schicken', 'Luisa meldet sich per Instagram oder E-Mail, je nachdem, was du angegeben hast. '
+                      'Dann schickst du ihr ein bis drei Fotos von deinem Tier.'),
+    ('Vorschlag', 'Du bekommst einen Entwurf und den Preis. Erst wenn beides passt, fängt Luisa an.'),
+    ('Malen', 'Luisa zeichnet vor, malt mit Pinsel und Bleiche, wäscht das Stück und fotografiert es für dich.'),
+]
+
+#: „So sollte dein Foto sein“: (Stichwort, Erklärung). Allgemeine Foto-Hinweise; für Bleiche zählen ruhige
+#: Konturen besonders. Luisa bestätigt sie vor dem Livegang.
+HAUSTIER_FOTO = [
+    ('Scharf', 'Ein verwackeltes Foto lässt Luisa raten, wo Fell, Ohren und Blick verlaufen.'),
+    ('Tageslicht', 'Am besten am Fenster oder draußen, ohne Blitz.'),
+    ('Auf Augenhöhe', 'Von vorne oder schräg von vorne, der ganze Kopf im Bild.'),
+    ('Ruhiger Hintergrund', 'Dann sieht Luisa die Umrisse deines Tieres klar.'),
+    ('Mehrere Fotos', 'Zwei oder drei Fotos helfen, Zeichnung, Ohren und Blick besser zu sehen.'),
+]
+
+#: Häufige Fragen zur Haustier-Seite, wortgleich als Text und als ``FAQPage`` (ohne Anführungszeichen und
+#: Backslashes, wie ``FAQ_MOTIV``). Die ersten drei kommen auch in ``llms.txt``. Kein Preis: den legt Luisa
+#: fest und schickt ihn mit den Vorschlägen. Mit [Luisa] markierte Aussagen in der Übergabe sind ihr Vorschlag
+#: aus der Analyse vom 12.11.2026 und brauchen ihr Ja, bevor der Schalter angeht.
+FAQ_HAUSTIER = [
+    ('Kann ich meinen Hund auf ein T-Shirt malen lassen?',
+     'Ja. Du schickst Luisa ein Foto von deinem Hund, sie macht dir einen Vorschlag und malt ihn dann von Hand '
+     'mit Bleiche auf ein dunkles Shirt oder einen Hoodie. Gedruckt wird nichts.'),
+    ('Geht das auch mit Katze, Pferd oder anderen Tieren?',
+     'Ja, Katzen und Pferde sind genauso möglich. Bei anderen Tieren frag einfach an, Luisa sagt dir ehrlich, ob '
+     'es mit Bleiche gut wird.'),
+    ('Was kostet ein Shirt mit meinem Haustier?',
+     'Die Anfrage kostet nichts. Den Preis für dein Stück legt Luisa fest und schickt ihn dir mit ihren '
+     'Vorschlägen, bevor etwas gemalt wird.'),
+    ('Wie schicke ich das Foto?',
+     'Nach deiner Anfrage meldet sich Luisa per Instagram oder E-Mail, je nachdem, was du angegeben hast. Dort '
+     'schickst du ihr ein bis drei Fotos. Im Formular selbst lädst du nichts hoch.'),
+    ('Welches Foto ist am besten?',
+     'Ein scharfes Foto bei Tageslicht, auf dem dein Tier von vorne oder schräg von vorne gut zu sehen ist, mit '
+     'ruhigem Hintergrund. Mehrere Fotos helfen.'),
+    ('Ist das ein Druck?',
+     'Nein. Das Motiv wird von Hand mit Pinsel und Bleiche gemalt: Die Bleiche zieht die Farbe aus dem Stoff, '
+     'nichts ist aufgedruckt. Deshalb ist jedes Stück ein Einzelstück.'),
+    ('Wird mein Tier bunt?',
+     'Nein. Bleiche malt hell auf dunklem Stoff: Das Motiv steht in Bleich-Beige auf Schwarz oder einer anderen '
+     'dunklen Farbe. Es entsteht ein gemaltes Linienporträt und kein Foto.'),
+    ('Wie lange dauert es?',
+     f'Meistens {DAUER} von der Anfrage bis zum fertigen Stück, je nach Motiv. Das ist ein Erfahrungswert und '
+     'keine feste Zusage.'),
+    ('Kann ich mein eigenes Shirt oder meinen eigenen Hoodie schicken?',
+     'Im Formular gibt es die Auswahl Hab ich selbst. Wichtig ist dunkle Baumwolle: Polyester lässt sich kaum '
+     'bleichen, Wolle, Seide und Elasthan werden von Bleiche angegriffen.'),
+    ('Kann ich das Shirt zurückgeben?', AUFTRAG_WIDERRUF_SATZ),
+    ('Eignet sich das als Geschenk oder zur Erinnerung an ein verstorbenes Tier?',
+     'Ja, beides. Für ein Geschenk reicht ein gutes Handyfoto. Für ein Erinnerungsstück kannst du im Formular '
+     'schreiben, was dir das Tier bedeutet hat.'),
+    ('Wie wasche ich ein handbemaltes Haustier-Shirt?', PFLEGE + ' So bleibt die Bemalung lange schön.'),
+]
+
+
+def engel_preis_text():
+    """Der belegte Preis des Engel-Shirts als Text („69 €“), aus ``ENGEL_STUECK['preis']`` – nie abgetippt."""
+    from decimal import Decimal
+    preis = Decimal(ENGEL_STUECK['preis'])
+    return (f'{preis:.0f}' if preis == preis.to_integral_value() else f'{preis:.2f}'.replace('.', ',')) + ' €'

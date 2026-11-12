@@ -183,6 +183,9 @@ MINDESTWOERTER = {p: n for p, n in MINDESTWOERTER.items() if ohne_kaufweg([p])}
 # mit VERKAUF_AKTIV=1, wo der Wortlaut zurückkommt.
 if not settings.VERKAUF_AKTIV:
     MINDESTWOERTER['/agb/'] = 100
+# Haustier aufs Shirt (nur mit Schalter HAUSTIER_SEITE_AKTIV, sonst 404); Schwelle nach Messung gesetzt.
+if settings.HAUSTIER_SEITE_AKTIV:
+    MINDESTWOERTER['/haustier-shirt/'] = 600
 
 #: Seiten, deren erstes Drittel noch keine Zahl nennt. Die Menge ist seit
 #: GE23 (2026-09-08) leer: ``/liefergebiet/`` war die letzte Ausnahme und

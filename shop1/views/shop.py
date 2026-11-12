@@ -470,6 +470,8 @@ def produkt_detail_slug(request, slug):
     return render(request, 'shop1/produkt_detail.html', {
         **serie,
         'faq_engel': faq,
+        # Farbe fürs Product-Schema (``color``): nur beim Engel-Shirt belegt, sonst leer (nichts raten).
+        'produkt_farbe': luviq_daten.ENGEL_STUECK['farbe'] if produkt.slug == luviq_daten.ENGEL_STUECK['slug'] else '',
         **direkt,
         'produkt': produkt,
         'galerie': produkt.galerie(),

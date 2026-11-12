@@ -93,7 +93,7 @@
 {% if verkauf_aktiv %}
           "currenciesAccepted": "EUR",
           "paymentAccepted": "{% if direktkauf_aktiv %}Zahlungslink ({{ zahlung.wege_kurz }}), Banküberweisung{% else %}PayPal, Banküberweisung{% endif %}",
-          {% comment %}Runde 3 (30.10.2026): eine Rückgaberegel für den ganzen Shop, auf die jedes Offer verweist (teile/offer_versand_ld.html). Inhalt = gesetzliches Widerrufsrecht: 14 Tage, Deutschland, Rücksendung per Post. Kein returnFees: wer die Rücksendekosten trägt, steht erst in der Widerrufsbelehrung aus dem Generator. Kein freiwilliges Rückgaberecht darüber hinaus (luviq_daten.UMTAUSCH_SATZ).{% endcomment %}
+          {% comment %}Runde 3 (30.10.2026): eine Rückgaberegel für den ganzen Shop, auf die jedes Offer verweist (teile/offer_versand_ld.html). Inhalt = gesetzliches Widerrufsrecht: 14 Tage, Deutschland, Rücksendung per Post. returnFees seit 12.11.2026: die Kundin trägt die unmittelbaren Rücksendekosten (AGB § 8 Abs. 3, Widerrufsbelehrung, § 357 Abs. 5 BGB). Kein freiwilliges Rückgaberecht darüber hinaus (luviq_daten.UMTAUSCH_SATZ).{% endcomment %}
           "hasMerchantReturnPolicy": {
             "@type": "MerchantReturnPolicy",
             "@id": "{{ request.scheme }}://{{ request.get_host }}/#rueckgabe",
@@ -101,7 +101,8 @@
             "returnPolicyCountry": "DE",
             "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
             "merchantReturnDays": 14,
-            "returnMethod": "https://schema.org/ReturnByMail"
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/ReturnFeesCustomerResponsibility"
           },
 {% endif %}
           "sameAs": [{% for url in profile_urls %}

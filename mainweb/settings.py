@@ -550,6 +550,11 @@ if GA_MESSUNG_ID:
 MOTIVANFRAGE_AKTIV = os.getenv('MOTIVANFRAGE_AKTIV', '1').strip().lower() in ('1', 'true', 'yes', 'on', 'ja', 'an')
 MOTIV_EMPFAENGER = os.getenv('MOTIV_EMPFAENGER', '').strip()
 
+# ═══ HAUSTIER-SEITE ═══
+# /haustier-shirt/ („Haustier aufs Shirt, von Hand gemalt“, Entwurf 12.11.2026): erst nach Luisas Ja.
+# Vorgabe AUS: dann 404, nicht in Sitemap, llms.txt und llms-full.txt. HAUSTIER_SEITE_AKTIV=1 schaltet ein.
+HAUSTIER_SEITE_AKTIV = os.getenv('HAUSTIER_SEITE_AKTIV', '0').strip().lower() in ('1', 'true', 'yes', 'on', 'ja', 'an')
+
 # ═══ PAYPAL ═══
 
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', 'sb')

@@ -8,7 +8,7 @@ from .checkout import checkout, payment, paypal_create, paypal_capture, payment_
 from .legal import (impressum, datenschutz, agb, robots_txt, sitemap_xml, llms_txt, llms_full_txt, newsletter_subscribe,
                     newsletter_bestaetigen, newsletter_abmelden, produkt_uebersicht_redirect, indexnow_schluessel)
 from .gaestebuch import gaestebuch, comment_add, comment_like, comment_delete
-from .motiv import motiv_anfragen, motiv_danke
+from .motiv import motiv_anfragen, motiv_danke, haustier_shirt
 from .direktkauf import direktkauf, direktkauf_danke, rabatt_einloesen
 from .widerruf import vertrag_widerrufen, widerruf_eingang
 from .betrieb import gesundheit, security_txt
@@ -28,7 +28,7 @@ __all__ = [
     'impressum', 'datenschutz', 'agb', 'robots_txt', 'sitemap_xml', 'llms_txt', 'llms_full_txt', 'newsletter_subscribe',
     'newsletter_bestaetigen', 'newsletter_abmelden', 'produkt_uebersicht_redirect', 'indexnow_schluessel',
     # motiv (Umbau „Nachtausgabe“, 19.09.2026)
-    'motiv_anfragen', 'motiv_danke',
+    'motiv_anfragen', 'motiv_danke', 'haustier_shirt',
     # direktkauf (31.10.2026)
     'direktkauf', 'direktkauf_danke', 'rabatt_einloesen',
     # widerruf (§ 356a BGB, 30.10.2026)

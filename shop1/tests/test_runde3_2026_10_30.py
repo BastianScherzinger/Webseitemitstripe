@@ -171,11 +171,14 @@ class VersandUndRueckgabeTest(_MitEngel):
         self.assertEqual(regel['merchantReturnDays'], 14)
         self.assertEqual(regel['returnMethod'], 'https://schema.org/ReturnByMail')
         self.assertEqual(regel['applicableCountry'], 'DE')
-        self.assertNotIn('returnFees', regel)  # nicht belegt (Widerrufsbelehrung fehlt)
+        # Seit 12.11.2026: AGB § 8 Abs. 3 und Widerrufsbelehrung belegen, dass die Kundin die Rücksendekosten trägt.
+        self.assertEqual(regel['returnFees'], 'https://schema.org/ReturnFeesCustomerResponsibility')
         produkt = next(k for k in knoten if k.get('@type') == 'Product')
         angebot = produkt['offers']
         self.assertEqual(angebot['hasMerchantReturnPolicy']['merchantReturnDays'], 14)
         self.assertEqual(angebot['hasMerchantReturnPolicy']['returnPolicyCategory'], regel['returnPolicyCategory'])
+        self.assertEqual(angebot['hasMerchantReturnPolicy']['returnFees'], regel['returnFees'])
+        self.assertEqual(produkt['color'], 'Schwarz')  # ENGEL_STUECK['farbe'], belegt durch BLEICHE_SATZ und Alt-Texte
         versand = angebot['shippingDetails']
         self.assertEqual(versand['shippingRate'], {'@type': 'MonetaryAmount', 'value': '0.00', 'currency': 'EUR'})
         self.assertEqual(versand['shippingDestination']['addressCountry'], 'DE')

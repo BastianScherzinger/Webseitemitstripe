@@ -23,12 +23,14 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import DatabaseError, transaction
+from django.http import Http404
 from django.shortcuts import redirect, render
 from django.views.decorators.cache import never_cache
 
 from .. import luviq_daten, mails, spamschutz
 from ..models import Motivanfrage
 from ..utils import send_brevo_email
+from ..verkauf import verkauf_aktiv
 from ._helpers import mail_ergebnis_vermerken, zu_viele_anfragen
 from .wissen import engel_url
 
@@ -241,6 +243,32 @@ def _mail_an_luisa(anfrage, gespeichert):
         except DatabaseError:
             _log.exception('Motivanfrage: Versandvermerk nicht gespeichert')
     return True
+
+
+def haustier_seite_aktiv():
+    """``True``, wenn ``/haustier-shirt/`` ausgeliefert werden darf (Schalter ``HAUSTIER_SEITE_AKTIV``, Vorgabe aus)."""
+    return bool(getattr(settings, 'HAUSTIER_SEITE_AKTIV', False))
+
+
+def haustier_shirt(request):
+    """Leistungsseite „Haustier aufs Shirt, von Hand gemalt“ (Entwurf 12.11.2026).
+
+    Erst nach Luisas Ja erreichbar: ohne ``HAUSTIER_SEITE_AKTIV`` ist die Adresse 404 und steht in keiner
+    Sitemap und keiner ``llms.txt``. Kein Formular, kein Upload (das Foto kommt nach der Anfrage per Instagram
+    oder Mail): der Knopf führt zu ``/motiv-anfragen/?richtung=tier``. Preise: keiner außer dem belegten Vergleich
+    mit dem Engel-Shirt aus ``luviq_daten.ENGEL_STUECK``, und der nur, solange der Verkauf läuft."""
+    if not haustier_seite_aktiv():
+        raise Http404('Seite nicht freigegeben')
+    return render(request, 'shop1/haustier_shirt.html', {
+        'schritte': luviq_daten.HAUSTIER_SCHRITTE,
+        'foto_hinweise': luviq_daten.HAUSTIER_FOTO,
+        'faq': luviq_daten.FAQ_HAUSTIER,
+        'teile_text': ', '.join(name for schluessel, name in luviq_daten.TEILE if schluessel != 'eigenes'),
+        'eigenes_teil': dict(luviq_daten.TEILE)['eigenes'],
+        'pflege': luviq_daten.PFLEGE,
+        'engel_preis': luviq_daten.engel_preis_text() if verkauf_aktiv() else '',
+        'tiktok_url': luviq_daten.TIKTOK,
+    })
 
 
 @never_cache

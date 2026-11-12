@@ -3,8 +3,8 @@ Versand innerhalb Deutschlands ist im Preis enthalten (luviq_daten.VERSAND['kost
 Bearbeitungszeit 1–2 Werktage (VERSAND['werktage']), Laufzeit so, dass die verbindliche
 Lieferfrist aus AGB § 5 (VERSAND['lieferfrist_werktage'], 5 Werktage) eingehalten ist:
 transitTime 1 bis Frist minus Bearbeitung (Gegenprüfung M1, 30.10.2026). Die Rückgabe steht seit 01.11.2026 vollständig im Offer (Google liest @id-Verweise über getrennte Skriptblöcke nicht sicher), inhaltlich gleich der MerchantReturnPolicy der Organization (base.html, #rueckgabe): gesetzliches
-Widerrufsrecht 14 Tage, Rücksendung per Post; Rücksendekosten trägt laut Widerrufsbelehrung die
-Kundin, ein fester Betrag steht nicht fest – deshalb noch kein returnFees. Beginnt mit Komma: wird hinter das letzte Feld des Offer gesetzt.{% endcomment %},
+Widerrufsrecht 14 Tage, Rücksendung per Post; Rücksendekosten trägt laut AGB § 8 Abs. 3 und Widerrufsbelehrung die
+Kundin (returnFees seit 12.11.2026: ReturnFeesCustomerResponsibility, ohne festen Betrag). Beginnt mit Komma: wird hinter das letzte Feld des Offer gesetzt.{% endcomment %},
         "eligibleRegion": {"@type": "Country", "name": "Deutschland"},
         "areaServed": {"@type": "Country", "name": "Deutschland"},
         "shippingDetails": {
@@ -25,5 +25,6 @@ Kundin, ein fester Betrag steht nicht fest – deshalb noch kein returnFees. Beg
           "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
           "merchantReturnDays": 14,
           "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/ReturnFeesCustomerResponsibility",
           "merchantReturnLink": "{{ request.scheme }}://{{ request.get_host }}{% url 'agb' %}#widerruf"
         }

@@ -173,6 +173,13 @@ INHALTSSEITEN = [
 ]
 INHALTSSEITEN = ohne_kaufweg(INHALTSSEITEN)
 
+#: Haustier aufs Shirt (Entwurf 12.11.2026): die Seite gibt es nur mit dem Schalter ``HAUSTIER_SEITE_AKTIV``
+#: (Vorgabe aus, dann 404). Mit Schalter gehört sie in alle Seitenlisten; ohne ihn prüft
+#: ``test_haustier_seite`` die 404 und das Fehlen in Sitemap und llms.txt.
+if settings.HAUSTIER_SEITE_AKTIV:
+    OEFFENTLICHE_SEITEN.append('/haustier-shirt/')
+    INHALTSSEITEN.append('/haustier-shirt/')
+
 
 def _nicht_indexierbare_wissensseiten():
     """Aus dem Register abgeleitet, damit die Tests von selbst umschalten,

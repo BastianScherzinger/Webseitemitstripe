@@ -14,6 +14,7 @@ from html.parser import HTMLParser
 from urllib.parse import urlsplit
 from xml.etree import ElementTree
 
+from django.conf import settings
 from django.test import override_settings
 from django.utils import timezone
 
@@ -52,6 +53,9 @@ FAQ_SEITEN = (
 )
 # Ohne Verkauf leiten die Kaufweg-Beiträge um (siehe _basis.KAUFWEG_WISSENSSEITEN).
 FAQ_SEITEN = tuple(ohne_kaufweg(FAQ_SEITEN))
+# Haustier aufs Shirt: nur mit Schalter HAUSTIER_SEITE_AKTIV (sonst 404), siehe _basis.
+if settings.HAUSTIER_SEITE_AKTIV:
+    FAQ_SEITEN += ('/haustier-shirt/',)
 
 
 class _Textleser(HTMLParser):

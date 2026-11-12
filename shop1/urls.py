@@ -26,6 +26,8 @@ urlpatterns = [
     # Motiv anfragen (Stufe 1: ohne Preis, ohne Zahlung, Mail nur an Luisa)
     path('motiv-anfragen/', views.motiv_anfragen, name='motiv_anfragen'),
     path('motiv-anfragen/danke/', views.motiv_danke, name='motiv_danke'),
+    # Haustier aufs Shirt (Entwurf 12.11.2026): hinter dem Schalter HAUSTIER_SEITE_AKTIV, aus = 404
+    path('haustier-shirt/', views.haustier_shirt, name='haustier_shirt'),
     # Widerrufsfunktion „Vertrag widerrufen“ (§ 356a BGB): ohne Anmeldung, auch ohne laufenden Verkauf erreichbar
     # Gängige Adressen der Widerrufsbelehrung (liefen ins Leere): 301 auf die Belehrung in den AGB
     path('widerruf/', RedirectView.as_view(url='/agb/#widerruf', permanent=True)),
