@@ -363,6 +363,26 @@ def _besuche_30_tage():
         return json.dumps({'labels': [], 'data': []})
 
 
+def _kaufquote_30_tage():
+    """Besucher und Bestellungen der letzten 30 Tage samt Kaufquote.
+
+    Besucher = Summe der ``PageVisit``-Tageswerte (cookielose Zählung der
+    ``PageVisitMiddleware``). Bestellungen = alle nicht gescheiterten,
+    bezahlt = Status ``paid``. Quote in Prozent mit einer Nachkommastelle,
+    ``None`` ohne Besucher (keine Division durch null).
+    """
+    try:
+        start = timezone.localdate() - timedelta(days=29)
+        besucher = sum(v.visits for v in PageVisit.objects.filter(date__gte=start))
+        bestellt = Order.objects.filter(erstellt_am__date__gte=start).exclude(status='failed').count()
+        bezahlt = Order.objects.filter(erstellt_am__date__gte=start, status='paid').count()
+    except Exception as e:
+        _log.error("Error in Kaufquote calculation: %s", e)
+        return {'besucher': 0, 'bestellt': 0, 'bezahlt': 0, 'quote': None}
+    quote = round(bezahlt * 100 / besucher, 1) if besucher else None
+    return {'besucher': besucher, 'bestellt': bestellt, 'bezahlt': bezahlt, 'quote': quote}
+
+
 def _umsatz_und_rabatte(orders_paid):
     """``(Umsatz, Rabatte)`` der bezahlten Bestellungen; Rabatt = Postensumme minus Bezahltes."""
     total_revenue = 0
@@ -419,6 +439,7 @@ def admin_stats(request):
         'total_revenue': total_revenue,
         'total_discounts': total_discounts,
         'chart_data_json': chart_data_json,
+        'kaufquote': _kaufquote_30_tage(),
         'recent_visitors': recent_visitors,
         'total_visitor_logs': total_visitor_logs,
     }

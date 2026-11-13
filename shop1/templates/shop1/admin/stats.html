@@ -52,6 +52,26 @@
             </div>
         </div>
 
+        <!-- Kaufquote: Besucher (cookielos gezählt) und Käufe der letzten 30 Tage -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 scroll-reveal" id="kaufquote">
+            <div class="glass-card p-8 rounded-[2rem] border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Besucher (30 Tage)</p>
+                <h4 class="text-3xl font-black text-white">{{ kaufquote.besucher }}</h4>
+            </div>
+            <div class="glass-card p-8 rounded-[2rem] border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Bestellungen (30 Tage)</p>
+                <h4 class="text-3xl font-black text-white">{{ kaufquote.bestellt }}</h4>
+            </div>
+            <div class="glass-card p-8 rounded-[2rem] border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Davon bezahlt</p>
+                <h4 class="text-3xl font-black text-white">{{ kaufquote.bezahlt }}</h4>
+            </div>
+            <div class="glass-card p-8 rounded-[2rem] border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-glow-orange mb-2">Kaufquote</p>
+                <h4 class="text-3xl font-black text-white">{% if kaufquote.quote is None %}–{% else %}{{ kaufquote.quote|floatformat:1 }} %{% endif %}</h4>
+            </div>
+        </div>
+
         <!-- User Management -->
         <div class="scroll-reveal mb-12" style="transition-delay: 0.2s;">
             <div class="glass-card rounded-[3rem] overflow-hidden">

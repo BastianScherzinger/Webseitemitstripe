@@ -143,3 +143,27 @@ class StatistikBausteineTest(LuviqTestCase):
         for pfad in ('/shop-admin/stats/', '/shop-admin/werbung/'):
             with self.subTest(pfad=pfad):
                 self.assertEqual(self.hole(pfad).status_code, 200)
+
+
+class KaufquoteTest(LuviqTestCase):
+    """Besucher und Käufe der letzten 30 Tage: Quote ohne Division durch null."""
+
+    def test_ohne_besucher_keine_quote(self):
+        from .. import admin_views
+        self.assertEqual(admin_views._kaufquote_30_tage(),
+                         {'besucher': 0, 'bestellt': 0, 'bezahlt': 0, 'quote': None})
+
+    def test_quote_aus_besuchern_und_bezahlten_bestellungen(self):
+        from django.utils import timezone
+
+        from .. import admin_views
+        from ..models import Order, PageVisit
+
+        PageVisit.objects.create(date=timezone.localdate(), visits=40)
+        nutzer = User.objects.create_user('kaeufer', 'k@example.invalid', 'ein-langes-testpasswort')
+        Order.objects.create(user=nutzer, status='paid', gesamt_betrag=50)
+        Order.objects.create(user=nutzer, status='pending', gesamt_betrag=50)
+        Order.objects.create(user=nutzer, status='failed', gesamt_betrag=50)
+        werte = admin_views._kaufquote_30_tage()
+        self.assertEqual((werte['besucher'], werte['bestellt'], werte['bezahlt'], werte['quote']),
+                         (40, 2, 1, 2.5))
