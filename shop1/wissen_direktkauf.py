@@ -14,13 +14,12 @@ Die Sachangaben kommen aus ``luviq_daten`` und nicht aus einer Abschrift; der zw
 
 from django.urls import reverse
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 
 from . import luviq_daten
 
 
 def _link(name, text, **zusatz):
-    return format_html('<a href="{}"{}>{}</a>', reverse(name), mark_safe(zusatz.get('attr', '')), text)
+    return format_html('<a href="{}"{}>{}</a>', reverse(name), zusatz.get('attr', ''), text)
 
 
 def rabatt_faq(code):
