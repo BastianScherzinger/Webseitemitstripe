@@ -44,6 +44,9 @@ Abs. 3: der Knopf trägt wörtlich „Zahlungspflichtig bestellen“. Der Kaufve
             <input type="text" id="bestellen-stadt" name="stadt" autocomplete="address-level2" maxlength="{{ laengen.stadt }}" value="{{ werte.stadt|default:'' }}" data-anschrift>
         </div>
     </div>
+    {% comment %}Entwurf 13.11.2026 (Karte luviq-ceo-2026-11-12-m2): Telefon und Rabattcode sind freiwillig und stehen eingeklappt, das Pflichtformular wird auf dem Handy um zwei Felder kürzer. Offen, sobald etwas drinsteht oder ein Code-Hinweis da ist.{% endcomment %}
+    <details class="lv-optional"{% if rabatt or rabatt_fehler or rabattcode_wert or willkommenscode or werte.telefon %} open{% endif %}>
+    <summary>Rabattcode oder Telefonnummer (freiwillig)</summary>
     <div class="lv-feld">
         <label for="bestellen-telefon">Telefon <em>freiwillig, nur für Rückfragen zur Lieferung</em></label>
         <input type="tel" id="bestellen-telefon" name="telefon" autocomplete="tel" maxlength="{{ laengen.telefon }}" value="{{ werte.telefon|default:'' }}">
@@ -58,6 +61,7 @@ Abs. 3: der Knopf trägt wörtlich „Zahlungspflichtig bestellen“. Der Kaufve
         {% elif rabatt %}<p class="lv-rabatt-hinweis" id="bestellen-rabatt-hinweis">Code {{ rabatt.text }}: {{ rabatt.prozent }} % weniger{% if rabatt.code.nur_erstbestellung %}, gilt für deine erste Bestellung (wir prüfen das beim Absenden){% endif %}.</p>
         {% elif willkommenscode %}<p class="lv-rabatt-hinweis">Erste Bestellung? Mit dem Code {{ willkommenscode.code }} sparst du {{ willkommenscode.prozent }} %. <a href="{% url 'rabatt_einloesen' willkommenscode.code %}?weiter={{ request.path|urlencode }}%23bestellen" data-ereignis="formular_rabatt">Code eintragen</a></p>{% endif %}
     </div>
+    </details>
     <label class="lv-haken"><input type="checkbox" name="zustimmung" value="ja" required{% if werte.zustimmung %} checked{% endif %}><span>Ich habe die <a href="{% url 'agb' %}" target="_blank" rel="noopener">AGB</a>, die <a href="{% url 'agb' %}#widerruf" target="_blank" rel="noopener">Widerrufsbelehrung</a> und die <a href="{% url 'datenschutz' %}" target="_blank" rel="noopener">Datenschutzerklärung</a> gelesen. Meine Angaben werden zur Abwicklung der Bestellung verwendet (Art. 6 Abs. 1 lit. b DSGVO).</span></label>
     <div class="lv-bestellsumme">
         <p><b>{{ produkt.name }}</b> · Nº {{ produkt.archiv_nummer }}{% if produkt.masse %} · {{ produkt.masse }}{% endif %}{% if produkt.material %} · {{ produkt.material }}{% endif %}</p>
