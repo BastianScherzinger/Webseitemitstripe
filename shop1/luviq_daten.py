@@ -694,7 +694,7 @@ ENGEL_STUECK = {
     # Mit Verkauf (models.Produkt._seo_mit_verkauf, SEO-Analyse N2): Preis im Snippet erst, wenn die Seite ihn zeigt.
     'seo_titel_verkauf': 'Engel-Shirt handbemalt, mit Bleiche gemalt – {preis} € | Luviq',
     'seo_beschreibung_verkauf': ('Engel-Shirt Nº 006: handbemaltes Second-Hand-Shirt mit Bleiche, jedes neu von '
-                                 'Hand gemalt. Größe M, {preis} €, Versand inklusive, deutschlandweit geliefert.'),
+                                 'Hand gemalt. Größe M, {preis} €, Versand inklusive, deutschlandweit. Jetzt bestellen.'),
     'seo_titel_verkauf_frueher': ('Engel-Shirt Nº 006, mit Bleiche gemalt – {preis} € | Luviq',),
     'seo_beschreibung_verkauf_frueher': ('Engel-Shirt Nº 006: Second-Hand-Shirt, von Hand mit Bleiche gemalt, jedes '
                                          'Stück neu. Größe M, {preis} €, Versand inklusive, Bearbeitung ca. 3 Werktage.',),

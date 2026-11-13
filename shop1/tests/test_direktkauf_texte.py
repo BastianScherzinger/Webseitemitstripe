@@ -98,7 +98,7 @@ class DirektkaufTexteTest(LuviqTestCase):
 
     def test_motiv_anfragen_titel_und_links(self):
         html = self.hole('/motiv-anfragen/').content.decode()
-        self.assertIn('<title>Shirt bemalen lassen: sag, was du willst | Luviq</title>', html)
+        self.assertIn('<title>Shirt bemalen lassen: sag, was du willst, kostenlos anfragen | Luviq</title>', html)
         self.assertIn('href="/wissen/bleach-painting/"', html)
         self.assertIn('href="/wissen/bleichfleck-uebermalen/"', html)
 

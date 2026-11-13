@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}AGB & Widerrufsrecht – Luviq Universe, Lübeck{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Allgemeine Geschäftsbedingungen von Luviq Universe aus Lübeck: Vertragsschluss, Preise, Zahlungsarten, Lieferung und Widerrufsrecht. Vor dem Kauf nachlesen.{% else %}Luviq Universe aus Lübeck verkauft derzeit nichts, AGB gibt es deshalb noch nicht. Den Hinweis dazu hier nachlesen.{% endif %}{% endblock %}
+{% block meta_description %}{% if verkauf_aktiv %}Allgemeine Geschäftsbedingungen von Luviq Universe aus Lübeck: Vertragsschluss, Preise, Zahlungsarten, Lieferung und Widerrufsrecht. Jetzt vor dem Kauf nachlesen.{% else %}Luviq Universe aus Lübeck verkauft derzeit nichts, AGB gibt es deshalb noch nicht. Den Hinweis dazu hier nachlesen.{% endif %}{% endblock %}
 {% comment %}Verkaufsschalter: ohne Verkauf gelten die AGB noch nicht - Seite bleibt erreichbar, aber noindex, nicht im Fuss verlinkt und nicht in Sitemap und llms.txt.{% endcomment %}
 {% block meta_robots %}{% if verkauf_aktiv %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
 {% block brotkrume_ld %}

@@ -5832,7 +5832,7 @@
  },
  "/wissen/upcycling-mode-second-hand-vintage/": {
   "anzahl": {
-   "a": 43,
+   "a": 44,
    "button": 0,
    "form": 0,
    "iframe": 0,
@@ -5992,6 +5992,8 @@
    "div",
    "p",
    "p",
+   "p",
+   "a",
    "section",
    "h2",
    "div",
