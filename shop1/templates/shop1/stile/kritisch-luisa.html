@@ -20,7 +20,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .sr-only,.lv-versteckt{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .lv-sprung{position:absolute;left:8px;top:-60px;z-index:100;min-height:44px;display:inline-flex;align-items:center;padding:10px 14px;background:var(--lv-text);color:var(--lv-grund);font-weight:700}
 .lv-sprung:focus{top:8px}
-.lv a:focus-visible,.lv button:focus-visible,.lv summary:focus-visible,.lv input:focus-visible,.lv textarea:focus-visible,.lv select:focus-visible{outline:3px solid var(--lv-akzent);outline-offset:3px}
+.lv a:focus-visible,.lv button:focus-visible,.lv summary:focus-visible,.lv input:focus-visible,.lv textarea:focus-visible,.lv select:focus-visible,.lv video:focus-visible,.lv video:focus-within{outline:3px solid var(--lv-akzent);outline-offset:3px}
 .lv-knopf{display:inline-flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*1.6);min-height:48px;padding:calc(var(--u)*1.1) calc(var(--u)*1.6);background:var(--lv-text);color:var(--lv-grund);border:0;border-radius:0;font:700 max(14px,calc(var(--u)*1.1)) var(--lv-sans);letter-spacing:.02em;cursor:pointer;text-decoration:none}
 .lv .lv-knopf,.lv .lv-sprung{color:var(--lv-grund)}
 .lv-knopf svg{width:1.1em;height:1.1em}
@@ -53,7 +53,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .lv-meldung button{background:none;border:0;color:var(--lv-leise);font-size:22px;line-height:1;min-width:44px;min-height:44px;cursor:pointer}
 .lv .lv-ablauf{list-style:none;margin:calc(var(--u)*2.6) 0 0;padding:0;counter-reset:s;border-top:1px solid var(--lv-linie-2)}
 .lv-ablauf li{counter-increment:s;display:grid;grid-template-columns:calc(var(--u)*3.4) minmax(0,1fr);gap:calc(var(--u)*.2) calc(var(--u)*1);padding:calc(var(--u)*1.2) 0;border-bottom:1px solid var(--lv-linie)}
-.lv-ablauf li::before{content:counter(s,decimal-leading-zero);grid-row:span 2;font:max(11px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-akzent);padding-top:.35em}
+.lv-ablauf li::before{content:counter(s,decimal-leading-zero);grid-row:span 2;font:max(12px,calc(var(--u)*.85)) var(--lv-mono);color:var(--lv-akzent);padding-top:.35em}
 .lv-ablauf b{font-weight:600}
 .lv-ablauf span{color:var(--lv-leise);font-size:max(14px,calc(var(--u)*1))}
 .lv-abschnitt{padding:calc(var(--u)*7) var(--rand);border-top:1px solid var(--lv-linie)}
@@ -73,7 +73,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .ist-verkauft img{filter:brightness(.55) saturate(.85)}
 .lv-luisa{padding:calc(var(--u)*8) var(--rand);border-top:1px solid var(--lv-linie);display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:calc(var(--u)*5);align-items:end}
 .lv-luisa blockquote p{font-size:calc(var(--u)*6.4);line-height:1.02}
-.lv-luisa blockquote footer{margin-top:calc(var(--u)*1.6);font:max(11px,calc(var(--u)*.8)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.06em}
+.lv-luisa blockquote footer{margin-top:calc(var(--u)*1.6);font:max(12px,calc(var(--u)*.8)) var(--lv-mono);color:var(--lv-leise);letter-spacing:.06em}
 .lv-luisa-text{display:grid;gap:calc(var(--u)*1.6);color:var(--lv-leise)}
 .lv-luisa-text .lv-link{justify-self:start}
 .lv-luisa-text p a{text-decoration:underline;text-underline-offset:.2em;color:var(--lv-text)}

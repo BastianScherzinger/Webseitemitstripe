@@ -20,7 +20,7 @@ body.lv{margin:0;min-height:100vh;display:flex;flex-direction:column;background:
 .sr-only,.lv-versteckt{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .lv-sprung{position:absolute;left:8px;top:-60px;z-index:100;min-height:44px;display:inline-flex;align-items:center;padding:10px 14px;background:var(--lv-text);color:var(--lv-grund);font-weight:700}
 .lv-sprung:focus{top:8px}
-.lv a:focus-visible,.lv button:focus-visible,.lv summary:focus-visible,.lv input:focus-visible,.lv textarea:focus-visible,.lv select:focus-visible{outline:3px solid var(--lv-akzent);outline-offset:3px}
+.lv a:focus-visible,.lv button:focus-visible,.lv summary:focus-visible,.lv input:focus-visible,.lv textarea:focus-visible,.lv select:focus-visible,.lv video:focus-visible,.lv video:focus-within{outline:3px solid var(--lv-akzent);outline-offset:3px}
 .lv-knopf{display:inline-flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*1.6);min-height:48px;padding:calc(var(--u)*1.1) calc(var(--u)*1.6);background:var(--lv-text);color:var(--lv-grund);border:0;border-radius:0;font:700 max(14px,calc(var(--u)*1.1)) var(--lv-sans);letter-spacing:.02em;cursor:pointer;text-decoration:none}
 .lv .lv-knopf,.lv .lv-sprung{color:var(--lv-grund)}
 .lv-knopf svg{width:1.1em;height:1.1em}
@@ -95,7 +95,7 @@ body:has([data-kaufleiste]) .lv-leiste{display:none!important}
 .lv-karte h2,.lv-karte h3{font-size:max(18px,calc(var(--u)*1.5));font-weight:700;letter-spacing:-.015em;line-height:1.2}
 .lv-karte-kopf{font-variant-numeric:tabular-nums;align-items:baseline}
 .lv-karte-kopf b{font-weight:600}
-.lv-karte-kopf span{letter-spacing:.08em;font-weight:600;font-size:max(11px,calc(var(--u)*.8))}
+.lv-karte-kopf span{letter-spacing:.08em;font-weight:600;font-size:max(12px,calc(var(--u)*.8))}
 .lv-karte .lv-preis{font-weight:700;letter-spacing:0}
 .lv-abschnittskopf{margin-bottom:var(--lv-raum-5);gap:var(--lv-raum-4) var(--lv-raum-6)}
 .lv-abschnittskopf h1,.lv-abschnittskopf h2{font-size:clamp(30px,3.6vw,52px);line-height:1.02}

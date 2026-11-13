@@ -222,7 +222,11 @@ def _seite(request, werte=None, fehler=None, status=200):
 # wird ein Widerruf erst nach Drosselung je IP, Feldprüfung und Doppelsperre.
 @never_cache
 def vertrag_widerrufen(request):
-    """„Vertrag widerrufen“: Formular anzeigen, Erklärung speichern, Eingang bestätigen."""
+    """„Vertrag widerrufen“: Formular anzeigen, Erklärung speichern, Eingang bestätigen.
+
+    Nach dem Absenden folgt die Danke-Seite (``widerruf_eingang``, „Widerruf eingegangen“); der
+    Anfrageweg endet damit zählbar auf einer eigenen Adresse.
+    """
     if request.method != 'POST':
         return _seite(request)
     if zu_viele_anfragen(request, 'widerruf'):
