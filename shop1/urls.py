@@ -33,6 +33,9 @@ urlpatterns = [
     path('vertrag-widerrufen/', views.vertrag_widerrufen, name='vertrag_widerrufen'),
     path('vertrag-widerrufen/eingang/', views.widerruf_eingang, name='widerruf_eingang'),
     # Direktkauf ohne Konto (nur mit Verkauf + DIREKTKAUF; sonst Umleitung auf die Warteliste)
+    # Anfrage-Shop (14.11.2026): Stück anfragen statt kaufen; Mail nur an Luisa
+    path('anfragen/danke/', views.stueck_anfrage_danke, name='stueck_anfrage_danke'),
+    path('anfragen/<slug:slug>/', views.stueck_anfragen, name='stueck_anfragen'),
     path('bestellen/danke/', views.direktkauf_danke, name='direktkauf_danke'),
     path('bestellen/<slug:slug>/', views.direktkauf, name='direktkauf'),
     path('rabatt/<str:code>/', views.rabatt_einloesen, name='rabatt_einloesen'),

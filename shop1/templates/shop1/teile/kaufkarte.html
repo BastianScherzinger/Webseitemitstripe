@@ -15,6 +15,6 @@ sonst bleibt es bei archiv_karte.html. Serienstück: Bearbeitungszeit aus `produ
             {% if produkt.serie and produkt.bearbeitungstage %}<li>Bearbeitung ca. {{ produkt.bearbeitungstage }} Werktage, dann Versand</li>{% endif %}
             {% if produkt.serie %}<li>Jedes Shirt neu von Hand gemalt, keins gleicht dem anderen</li>{% endif %}
         </ul>
-        <p class="lv-kaufkarte-knoepfe"><a class="lv-knopf" href="{{ produkt.get_absolute_url }}#bestellen" data-ereignis="karte_bestellen">Jetzt bestellen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a> <a class="lv-link" href="{{ produkt.get_absolute_url }}">Details und Fotos</a></p>
+        <p class="lv-kaufkarte-knoepfe">{% if anfrage_shop %}<a class="lv-knopf" href="{{ produkt.get_absolute_url }}#anfragen" data-ereignis="karte_anfragen">Stück anfragen <svg{% else %}<a class="lv-knopf" href="{{ produkt.get_absolute_url }}#bestellen" data-ereignis="karte_bestellen">Jetzt bestellen <svg{% endif %} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a> <a class="lv-link" href="{{ produkt.get_absolute_url }}">Details und Fotos</a></p>
     </div>
 </li>{% endwith %}

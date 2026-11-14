@@ -509,6 +509,12 @@ VERKAUF_FRUEHESTENS = _fruehester_tag()
 #: mit Name, E-Mail und Anschrift; Luisa schickt die Rechnung per E-Mail. Warenkorb, Login-Kasse und
 #: PayPal bleiben im Code, sind aber ausgeblendet und umgeleitet. Zurueck: Umgebungsvariable DIREKTKAUF=0.
 DIREKTKAUF = os.getenv('DIREKTKAUF', '1').strip().lower() not in ('0', 'false', 'no', 'off', 'nein', 'aus')
+#: Anfrage-Shop (14.11.2026, Bastian: „einfacher Shop mit Anfragen wie Rümpelwerk, Mollie später“): mit laufendem
+#: Verkauf zeigt die Seite Stücke und Preise, aber keinen Kauf-, Konto- und Rabattweg mehr. Statt „Jetzt bestellen“
+#: steht auf jeder Stückseite ein Anfrageformular; die Anfrage geht nur an Luisa (Kopie an die Webagentur), es
+#: wird nichts bezahlt und nichts reserviert. Warenkorb, Direktkauf, Rabattcodes und PayPal bleiben im Code und sind
+#: nur ausgeblendet und umgeleitet. Zurück zum Direktkauf (später mit Mollie): Umgebungsvariable ANFRAGESHOP=0.
+ANFRAGESHOP = os.getenv('ANFRAGESHOP', '1').strip().lower() not in ('0', 'false', 'no', 'off', 'nein', 'aus')
 
 # ═══ PFLICHTANGABEN, DIE SPAETER KOMMEN ═══
 # USt-IdNr. (beantragt im ELSTER-Fragebogen am 29.10.2026, kommt per Post vom

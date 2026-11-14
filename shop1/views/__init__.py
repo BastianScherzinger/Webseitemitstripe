@@ -10,6 +10,7 @@ from .legal import (impressum, datenschutz, agb, robots_txt, sitemap_xml, llms_t
 from .gaestebuch import gaestebuch, comment_add, comment_like, comment_delete
 from .motiv import motiv_anfragen, motiv_danke
 from .direktkauf import direktkauf, direktkauf_danke, rabatt_einloesen
+from .stueckanfrage import stueck_anfragen, stueck_anfrage_danke
 from .widerruf import vertrag_widerrufen, widerruf_eingang
 from .betrieb import gesundheit, security_txt
 from .wissen import wissen, wissen_beitrag, WissenFeed, WISSEN_BEITRAEGE, freigegebene_beitraege, uebersicht_indexierbar
@@ -31,6 +32,8 @@ __all__ = [
     'motiv_anfragen', 'motiv_danke',
     # direktkauf (31.10.2026)
     'direktkauf', 'direktkauf_danke', 'rabatt_einloesen',
+    # Anfrage-Shop (14.11.2026)
+    'stueck_anfragen', 'stueck_anfrage_danke',
     # widerruf (§ 356a BGB, 30.10.2026)
     'vertrag_widerrufen', 'widerruf_eingang',
     # betrieb (Gesundheitsadresse, security.txt)

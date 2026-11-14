@@ -4,7 +4,7 @@ Das eigene Verwaltungspanel unter ``/shop-admin/`` steht in
 ``admin_views.py``; hier geht es nur um die Standardoberfläche von Django.
 """
 from django.contrib import admin
-from .models import Rabattcode, UserProfile, Produkt, ProduktBild, Cart, CartItem, Order, OrderItem, Subscriber, KontaktAnfrage, Motivanfrage, Widerruf
+from .models import Rabattcode, UserProfile, Produkt, ProduktBild, Cart, CartItem, Order, OrderItem, Subscriber, KontaktAnfrage, Motivanfrage, Stueckanfrage, Widerruf
 
 
 @admin.register(UserProfile)
@@ -154,6 +154,23 @@ class MotivanfrageAdmin(admin.ModelAdmin):
     list_editable = ('status',)
     search_fields = ('instagram', 'email', 'bedeutung')
     readonly_fields = ('richtung', 'teil', 'platzierung', 'bedeutung', 'instagram', 'email', 'mail_gestartet', 'erstellt_am')
+    ordering = ('-erstellt_am',)
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(Stueckanfrage)
+class StueckanfrageAdmin(admin.ModelAdmin):
+    """Anfragen zu einem Stück (Anfrage-Shop). Personenbezogene Daten – jede Anfrage lässt sich einzeln
+    löschen; änderbar ist nur der Status."""
+    list_display = ('erstellt_am', 'produkt_nummer', 'produkt_name', 'anzahl', 'groesse', 'name', 'email', 'status',
+                    'mail_gestartet')
+    list_filter = ('status', 'erstellt_am')
+    list_editable = ('status',)
+    search_fields = ('produkt_name', 'name', 'email', 'nachricht')
+    readonly_fields = ('produkt', 'produkt_name', 'produkt_nummer', 'anzahl', 'groesse', 'name', 'email',
+                       'nachricht', 'mail_gestartet', 'erstellt_am')
     ordering = ('-erstellt_am',)
 
     def has_add_permission(self, request):

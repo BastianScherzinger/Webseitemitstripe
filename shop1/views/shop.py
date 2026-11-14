@@ -460,11 +460,16 @@ def produkt_detail_slug(request, slug):
     from .direktkauf import direktkauf_aktiv, formular_kontext
     # Direktkauf (31.10.2026): Formular bzw. „Reserviert“ auf der Stückseite selbst.
     direkt = formular_kontext(produkt, request=request) if direktkauf_aktiv() and not produkt.verkauft else {}
+    # Anfrage-Shop (14.11.2026): statt des Direktkauf-Formulars das Anfrageformular, ohne Reservierungsprüfung.
+    if verkauf.anfrageshop_aktiv():
+        from .stueckanfrage import formular_kontext as anfrage_kontext
+        direkt = anfrage_kontext(produkt) if not produkt.verkauft else {}
     from .direktkauf import serie_kontext
     serie = serie_kontext(produkt)
     # Häufige Fragen nur beim Engel-Shirt, solange es bestellbar ist (sichtbar + FAQPage, A5 02.11.2026).
     faq = []
-    if (produkt.slug == luviq_daten.ENGEL_STUECK['slug'] and verkauf.verkauf_aktiv() and produkt.kaufbar):
+    if (produkt.slug == luviq_daten.ENGEL_STUECK['slug'] and verkauf.verkauf_aktiv() and produkt.kaufbar
+            and not verkauf.anfrageshop_aktiv()):
         faq = luviq_daten.engel_faq(serie.get('bearbeitung', 0),
                                     luviq_daten.VERSAND['lieferfrist_werktage'])
     return render(request, 'shop1/produkt_detail.html', {

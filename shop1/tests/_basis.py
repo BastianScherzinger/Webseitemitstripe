@@ -49,7 +49,9 @@ class LuviqTestCase(TestCase):
         self.kopie_versand = self._kopie_patch.start()
         # 5. Die Suite stammt aus der Zeit vor dem Direktkauf und prüft den Login-Weg (Warenkorb, Kasse,
         #    PayPal). ``DIREKTKAUF`` ist deshalb in der Basis aus; test_direktkauf schaltet ihn ein.
-        self._direktkauf_aus = self.settings(DIREKTKAUF=False)
+        #    Gleiches gilt für den Anfrage-Shop (14.11.2026): ``ANFRAGESHOP`` ist in der Basis aus,
+        #    ``test_anfrageshop_2026_11_14`` schaltet ihn ein.
+        self._direktkauf_aus = self.settings(DIREKTKAUF=False, ANFRAGESHOP=False)
         self._direktkauf_aus.enable()
 
     def _post_teardown(self):

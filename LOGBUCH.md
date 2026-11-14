@@ -11,6 +11,13 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 14.11.2026 – Anfrage-Shop statt Direktkauf (Zweig `luviq/2026-11-14-anfrage-shop`, nicht gepusht)
+
+- **Was:** Neuer Schalter `ANFRAGESHOP` (Vorgabe an, nur mit `VERKAUF_AKTIV`). Stückseiten zeigen Preis und das Formular „Dieses Stück anfragen“ (`/anfragen/<slug>/`, Modell `Stueckanfrage`, Migration 0039, Mail nur an Luisa + Kopie an die Webagentur) statt Direktkauf; Kopfzeile ohne Konto/Anmelden/Panel/Warenkorb; Startseite, Karten und `/produkte/` ohne „Jetzt bestellen“ und Rabatt-Knopf; Kaufrouten, Rabattlinks und `/register/` leiten um; Kaufweg-Wissensbeiträge ausgeblendet; Stück-Schema ohne `Offer`.
+- **Nicht gelöscht:** Warenkorb, Direktkauf, Rabattcodes, PayPal, Mails, Django-Admin und `/shop-admin/` (Luisa) bleiben im Code. `ANFRAGESHOP=0` bringt den Direktkauf unverändert zurück (für Mollie später).
+- **Warum:** Bastian 14.11.2026: „mollie aber später, aber das ganze admin zeug da muss raus, wir wollen einen einfachen shop mit anfragen wie rümpelwerk erstmal“.
+- **Offen (nicht angefasst, Rechtstexte):** AGB, Widerrufsbelehrung, Datenschutz, Impressum, Versand-/Zahlungssätze in FAQ, Kontakt, Liefergebiet, `llms-full.txt`, Meta-Texte. Liste im Bericht `Bueroerichte6-11-14_LUVIQ-ANFRAGESHOP.md`.
+
 ## 08.11.2026 – Unikat/Serie angleichen (Zweig `recht/unikat-serie-2026-11-08`, nicht gepusht)
 
 - **Was:** „Unikat“, „1-of-1“, „zweite Auflage“, „nicht nachbestellbar“ nur noch dort, wo sie stimmen (Archiv, Einzelstücke, Motiv-Anfragen): Über uns, Manifest, `/produkte/` (Titel, Meta, Text), Produktseite ohne Verkauf, Engel-Shirt-Meta (Code + Migration 0038), Wissen (Bestellen, Upcycling, Größe, Pflege, Widerruf); `seiten_stand` nachgezogen; Aufbau-Referenz gezielt nur für die Überschrift „Wie kommt ein Stück in den Warenkorb?“ angepasst. Commits `9abfa52` bis `b5da42f`.

@@ -84,6 +84,10 @@ DIREKTKAUF_GESPERRT = frozenset({
 })
 DIREKTKAUF_GESPERRT_JSON = frozenset({'paypal_create', 'paypal_capture'})
 
+#: Im Anfrage-Shop zusätzlich gesperrt: der Direktkauf selbst und die Rabattlinks (Weiterleitung auf das Archiv).
+#: ``register`` führt auf die Startseite – ein Konto braucht niemand mehr; ``login`` bleibt für Luisas Panel offen.
+ANFRAGESHOP_GESPERRT = frozenset({'direktkauf', 'direktkauf_danke', 'rabatt_einloesen'})
+
 #: Routen, die per ``fetch`` aufgerufen werden und JSON erwarten. Eine
 #: Weiterleitung auf eine HTML-Seite wäre für das aufrufende Skript ein
 #: unlesbarer Fehler; sie bekommen eine JSON-Antwort mit Status 409.
@@ -102,7 +106,17 @@ def verkauf_aktiv():
 def verkauf_kontext(request):
     """Kontextprozessor: ``verkauf_aktiv`` für jede Vorlage."""
     return {'verkauf_aktiv': verkauf_aktiv(), 'shop_oeffnet': oeffnungs_satz(),
-            'verkauf_ab': verkauf_ab(), 'direktkauf_aktiv': direktkauf_aktiv()}
+            'verkauf_ab': verkauf_ab(), 'direktkauf_aktiv': direktkauf_aktiv(),
+            'anfrage_shop': anfrageshop_aktiv()}
+
+
+def anfrageshop_aktiv():
+    """True, wenn verkauft wird **und** der Anfrage-Shop den Kaufweg ersetzt (``settings.ANFRAGESHOP``).
+
+    Stücke und Preise bleiben sichtbar; Kaufen, Konto und Rabattcodes sind ausgeblendet, statt
+    „Jetzt bestellen“ gibt es die Stückanfrage (``views/stueckanfrage.py``). Nur mit Verkauf: ohne Verkauf
+    gilt weiter „Marke im Aufbau“ mit Warteliste."""
+    return verkauf_aktiv() and bool(getattr(settings, 'ANFRAGESHOP', False))
 
 
 def direktkauf_aktiv():
@@ -126,6 +140,16 @@ class VerkaufsschalterMiddleware:
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         if verkauf_aktiv():
+            if anfrageshop_aktiv():
+                treffer = getattr(request, 'resolver_match', None)
+                name = treffer.url_name if treffer else None
+                if name in KAUFROUTEN_JSON:
+                    return JsonResponse({'error': 'Stücke werden angefragt, nicht gekauft.'}, status=409)
+                if name in KAUFROUTEN or name in ANFRAGESHOP_GESPERRT:
+                    return redirect(reverse('produkte'))
+                if name == 'register':
+                    return redirect(reverse('home'))
+                return None
             if direktkauf_aktiv():
                 treffer = getattr(request, 'resolver_match', None)
                 name = treffer.url_name if treffer else None

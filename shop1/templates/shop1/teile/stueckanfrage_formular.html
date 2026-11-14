@@ -1,0 +1,41 @@
+{% comment %}
+Stückanfrage (views/stueckanfrage.py), Anfrage-Shop seit 14.11.2026. Kommt aus der Stückseite (#anfragen) und aus dem Fehlerfall von /anfragen/<slug>/.
+Braucht: produkt, werte, fehler, laengen, anfrage_knopf, anzahlen, formzeit, feld_falle.
+Keine Bestellung, keine Zahlung, keine Reservierung: Der Text über dem Knopf sagt das. Mail nur an Luisa, nie an die eingetippte Adresse.
+{% endcomment %}
+<form method="post" action="{% url 'stueck_anfragen' produkt.slug %}" class="lv-formular lv-direktkauf" id="anfragen" data-einmal-absenden aria-labelledby="anfragen-titel">
+    <h2 class="lv-serif" id="anfragen-titel">Dieses Stück anfragen</h2>
+    <p class="lv-klein">Das ist keine Bestellung. Du schreibst mir, ich antworte dir persönlich per E-Mail und wir klären Größe, Preis und Lieferung. Bezahlt wird nichts, reserviert auch nicht.</p>
+    <div id="anfragen-fehler" role="alert"{% if fehler %} class="lv-fehler"{% endif %}>{% if fehler %}{{ fehler }}{% endif %}</div>
+    {% csrf_token %}
+    <input type="hidden" name="formzeit" value="{{ formzeit }}">
+    <div class="lv-falle" aria-hidden="true">
+        <label for="anfragen-webseite">Webseite (bitte leer lassen)</label>
+        <input class="lv-falle" type="text" id="anfragen-webseite" name="{{ feld_falle|default:'website' }}" tabindex="-1" autocomplete="off" aria-hidden="true">
+    </div>
+    <div class="lv-feld">
+        <label for="anfragen-name">Name *</label>
+        <input type="text" id="anfragen-name" name="name" autocomplete="name" maxlength="{{ laengen.name }}" value="{{ werte.name|default:'' }}" required>
+    </div>
+    <div class="lv-feld">
+        <label for="anfragen-email">E-Mail-Adresse *</label>
+        <input type="email" id="anfragen-email" name="email" autocomplete="email" maxlength="{{ laengen.email }}" value="{{ werte.email|default:'' }}" required>
+    </div>
+    <div class="lv-feld2">
+        <div class="lv-feld">
+            <label for="anfragen-anzahl">Stückzahl</label>
+            <select id="anfragen-anzahl" name="anzahl">{% for n in anzahlen %}<option value="{{ n }}"{% if werte.anzahl == n|stringformat:"s" %} selected{% endif %}>{{ n }}</option>{% endfor %}</select>
+        </div>
+        <div class="lv-feld">
+            <label for="anfragen-groesse">Gewünschte Größe <em>freiwillig</em></label>
+            <input type="text" id="anfragen-groesse" name="groesse" maxlength="{{ laengen.groesse }}" value="{{ werte.groesse|default:'' }}"{% if produkt.masse %} placeholder="{{ produkt.masse }}"{% endif %}>
+        </div>
+    </div>
+    <div class="lv-feld">
+        <label for="anfragen-nachricht">Nachricht <em>freiwillig</em></label>
+        <textarea id="anfragen-nachricht" name="nachricht" rows="4" maxlength="{{ laengen.nachricht }}">{{ werte.nachricht|default:'' }}</textarea>
+    </div>
+    <label class="lv-haken"><input type="checkbox" name="zustimmung" value="ja" required{% if werte.zustimmung %} checked{% endif %}><span>Ich habe die <a href="{% url 'datenschutz' %}" target="_blank" rel="noopener">Datenschutzerklärung</a> gelesen und bin einverstanden, dass meine Angaben für die Antwort gespeichert werden. *</span></label>
+    <p class="lv-klein">Nº {{ produkt.archiv_nummer }} · {{ produkt.name }}{% if produkt.masse %} · {{ produkt.masse }}{% endif %}. Deine Angaben gehen als Mail an Luisa und in Kopie an die Webagentur, die diese Seite technisch betreut. Eine automatische Bestätigung schicke ich bewusst nicht, ich melde mich persönlich bei dir.</p>
+    <button type="submit" class="lv-knopf">{{ anfrage_knopf }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+</form>

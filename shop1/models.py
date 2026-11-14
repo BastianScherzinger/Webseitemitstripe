@@ -1003,6 +1003,38 @@ class Motivanfrage(models.Model):
         return ' · '.join(teile)
 
 
+class Stueckanfrage(models.Model):
+    """Eine Anfrage zu einem Stück (Anfrage-Shop, 14.11.2026, ``views/stueckanfrage.py``).
+
+    Keine Bestellung: nichts wird bezahlt, nichts reserviert, kein Vertrag. Gespeichert, **bevor** die
+    Mail an Luisa hinausgeht (wie ``Motivanfrage``); an die eingetippte Adresse geht nie eine Mail.
+    Stückname und Nummer stehen als eigene Felder (wie bei ``OrderItem``), damit eine Anfrage nach dem
+    Löschen oder Umbenennen des Stücks lesbar bleibt.
+    """
+    STATUS = [('neu', 'neu'), ('in_arbeit', 'in Arbeit'), ('erledigt', 'erledigt')]
+
+    produkt = models.ForeignKey('Produkt', null=True, blank=True, on_delete=models.SET_NULL,
+                                related_name='anfragen', verbose_name='Stück')
+    produkt_name = models.CharField(max_length=200, verbose_name='Stück (Name)')
+    produkt_nummer = models.CharField(max_length=20, blank=True, verbose_name='Archivnummer')
+    anzahl = models.PositiveSmallIntegerField(default=1, verbose_name='Stück')
+    groesse = models.CharField(max_length=40, blank=True, verbose_name='Größe')
+    name = models.CharField(max_length=200, verbose_name='Name')
+    email = models.EmailField(max_length=254, verbose_name='E-Mail')
+    nachricht = models.TextField(blank=True, verbose_name='Nachricht')
+    status = models.CharField(max_length=12, choices=STATUS, default='neu', verbose_name='Status')
+    mail_gestartet = models.BooleanField(default=False, verbose_name='Mailversand angestoßen')
+    erstellt_am = models.DateTimeField(auto_now_add=True, verbose_name='Eingegangen am')
+
+    class Meta:
+        verbose_name = 'Stückanfrage'
+        verbose_name_plural = 'Stückanfragen'
+        ordering = ['-erstellt_am']
+
+    def __str__(self):
+        return f"{self.produkt_name} – {self.name} ({self.email})"
+
+
 class Widerruf(models.Model):
     """Eine Widerrufserklärung über die Widerrufsfunktion „Vertrag widerrufen“ (§ 356a BGB).
 

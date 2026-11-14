@@ -16,5 +16,5 @@ Das Bild kommt aus `produkt.hauptbild` (Upload über Cloudinary oder statische D
     </div>
     {% if not verkauf_aktiv and not produkt.verkauft %}<p class="lv-groesse lv-vorpreis">{% if produkt.masse %}{{ produkt.masse }} · {% endif %}{% if produkt.material %}{{ produkt.material }} · {% endif %}{% if verkauf_ab %}Preis ab {{ verkauf_ab }}{% else %}Preis folgt{% endif %}</p>{% endif %}
     <p class="lv-karte-kopf"><b>Nº {{ produkt.archiv_nummer }}</b>{% if produkt.verkauft %}<span>Archiv</span>{% elif verkauf_aktiv and produkt.kaufbar %}<span class="lv-preis">{{ produkt.preis|floatformat:2 }} € inkl. Versand</span>{% else %}<span>Unikat</span>{% endif %}</p>
-    {% if verkauf_aktiv and direktkauf_aktiv and not produkt.verkauft and produkt.kaufbar %}<p class="lv-karte-kauf"><a class="lv-knopf" href="{{ produkt.get_absolute_url }}#bestellen">Direkt kaufen · {{ produkt.preis|floatformat:0 }} €</a></p>{% endif %}
+    {% if verkauf_aktiv and direktkauf_aktiv and not anfrage_shop and not produkt.verkauft and produkt.kaufbar %}<p class="lv-karte-kauf"><a class="lv-knopf" href="{{ produkt.get_absolute_url }}#bestellen">Direkt kaufen · {{ produkt.preis|floatformat:0 }} €</a></p>{% endif %}
 </li>{% endwith %}

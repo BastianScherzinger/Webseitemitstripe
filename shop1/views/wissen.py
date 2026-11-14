@@ -202,6 +202,13 @@ WISSEN_BEITRAEGE = {
 }
 
 
+def _kaufweg_offen():
+    """True, wenn der Kaufweg (Bestellen, Zahlen, Konto) existiert: mit Verkauf, aber nicht im Anfrage-Shop
+    (14.11.2026) – dort gibt es nichts zu bestellen, und die Beiträge dazu beschrieben einen Weg, den es nicht gibt."""
+    from ..verkauf import anfrageshop_aktiv
+    return verkauf_aktiv() and not anfrageshop_aktiv()
+
+
 def _sichtbar(beitrag):
     """Freigegeben – und, wenn der Beitrag den Kaufweg beschreibt
     (``nur_mit_verkauf``), nur bei eingeschaltetem Verkauf.
@@ -212,7 +219,7 @@ def _sichtbar(beitrag):
     seit 18.09.2026 abends; vorher erreichbar mit Hinweis und ``noindex``).
     """
     return bool(beitrag.get('freigegeben')) and (
-        verkauf_aktiv() or not beitrag.get('nur_mit_verkauf'))
+        _kaufweg_offen() or not beitrag.get('nur_mit_verkauf'))
 
 
 def _aktuell(beitrag):
@@ -247,7 +254,7 @@ def nur_mit_verkauf_ausgeblendet(beitrag):
     über Warenkorb, PayPal und Versand passt nicht zu einer Seite, die nichts
     verkauft. 302 statt 301: die Adresse kommt mit ``VERKAUF_AKTIV=1`` zurück.
     """
-    return bool(beitrag.get('nur_mit_verkauf')) and not verkauf_aktiv()
+    return bool(beitrag.get('nur_mit_verkauf')) and not _kaufweg_offen()
 
 
 def weiterlesen(slug, anzahl=2):
