@@ -7,11 +7,13 @@ Adresse), Spam wird still verworfen, ``ANFRAGESHOP=0`` bringt den Direktkauf unv
 Prüfbefehl: python manage.py test shop1.tests.test_anfrageshop_2026_11_14
 """
 
+import re
 import time
 from decimal import Decimal
 from unittest import mock
 
 from django.core import signing
+from django.core.cache import cache
 from django.test import override_settings
 
 from shop1 import spamschutz
@@ -66,8 +68,9 @@ class AnfrageShopTest(LuviqTestCase):
     def test_navigation_ohne_konto_panel_warenkorb(self):
         admin = erzeuge_benutzer('admin', is_superuser=True, is_staff=True)
         self.client.force_login(admin)
-        html = self.hole('/').content.decode()
-        for wort in ('lv-konto', 'lv-menue-klein" href="/profil/', '/shop-admin/dashboard/', '/warenkorb/'):
+        # HTML-Kommentare (Entwicklernotizen im Quelltext) zählen nicht als sichtbarer Text.
+        html = re.sub(r'<!--.*?-->', '', self.hole('/').content.decode(), flags=re.S)
+        for wort in ('class="lv-konto"', 'lv-menue-klein" href="/profil/', '/shop-admin/dashboard/', '/warenkorb/'):
             with self.subTest(wort=wort):
                 self.assertNotIn(wort, html)
         self.assertNotIn('Jetzt bestellen', html)
@@ -100,6 +103,7 @@ class AnfrageShopTest(LuviqTestCase):
         for feld, wert in (('name', ''), ('email', ''), ('email', 'kein-mail'), ('anzahl', '0'), ('anzahl', '9'),
                            ('anzahl', 'x'), ('zustimmung', '')):
             with self.subTest(feld=feld, wert=wert):
+                cache.clear()  # die Drosselung je IP soll die Feldprüfung nicht verdecken
                 antwort = self.sende(self.anfrage, self.daten(**{feld: wert}))
                 self.assertEqual(antwort.status_code, 200)
                 self.assertContains(antwort, 'role="alert"')
