@@ -29,14 +29,14 @@ SEITEN_STAND = {
     # (home, produkte, ueber_uns, liefergebiet, kontakt, motiv_anfragen, wissen*, agb, datenschutz).
     # 23.10.2026: Sitz Lübeck laut Gewerbeanmeldung, Alsfeld als Herkunft – Titel,
     # Beschreibungen und Texte aller Seiten; deshalb tragen alle dieses Datum.
-    'home':         '2026-11-04',  # + Satz „Online-Shop, kein Laden“ (SEO-Upgrade)
-    'produkte':     '2026-11-08',  # Titel/Beschreibung: Unikate und Engel-Serie
+    'home':         '2026-11-15',  # Wisch-Band mit echtem Status, kompakter Hero, Startfilm raus
+    'produkte':     '2026-11-15',  # Wisch-Band, Titel/Beschreibung für den Anfrage-Shop
     'gaestebuch':   '2026-11-01',
-    'ueber_uns':    '2026-11-08',  # Unikat/Serie: keine zweite Auflage nur für Einzelstücke
-    'liefergebiet': '2026-11-04',
-    'kontakt':      '2026-11-04',
+    'ueber_uns':    '2026-11-15',  # H1 mit Name und Ort;  # Unikat/Serie: keine zweite Auflage nur für Einzelstücke
+    'liefergebiet': '2026-11-15',  # Versand im Preis, Lieferzeit nennt Luisa
+    'kontakt':      '2026-11-15',  # Beschreibung ohne Verkaufsstart
     'impressum':    '2026-10-30',  # VSBG-Satz (Rechts-Runde 30.10.)
-    'datenschutz':  '2026-11-04',  # + Rabattcode-Abgleich (01.11.)
+    'datenschutz':  '2026-11-15',  # + Abschnitt 8a Stückanfrage;  # + Rabattcode-Abgleich (01.11.)
     'agb':          '2026-11-04',  # AGB §§ 1–14 + Widerrufsbelehrung (Rechts-Runde 30.10.)
     # IS19 (27.09.2026): Erklärsätze der Stationen, Dauer, Bestätigungshinweis.
     # 02.10.2026 (L1-B1): Titel, Beschreibung, Vorschaubild und Twitter-Angaben neu
@@ -47,7 +47,7 @@ SEITEN_STAND = {
     'wissen':           '2026-11-04',
     'wissen_pflege':    '2026-11-08',
     'wissen_upcycling': '2026-11-08',
-    'wissen_groesse':   '2026-11-08',
+    'wissen_groesse':   '2026-11-15',
     'wissen_motiv':     '2026-10-23',  # Entwurf, noindex
     # Ratgeber (30.10.2026, C8), seit Runde 3 veröffentlicht; ISO 8601 mit Uhrzeit und Zone:
     'wissen_bleach':      '2026-11-04',  # + Link auf die Anleitung (SEO-Upgrade)

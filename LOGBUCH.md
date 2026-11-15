@@ -11,6 +11,12 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 15.11.2026 – Durchstarten: Wisch-Band, SEO/GEO, Datenschutz 8a (Zweig `luviq/2026-11-15-durchstarten`, nicht gepusht)
+
+- **Was:** Wisch-Band „Stücke“ (CSS Scroll-Snap, ohne Bibliothek) direkt unter dem Hero auf Start und `/produkte/` (Partials `teile/stueckband.html`, `teile/reihe_karte.html`; Klassen `lv-reihe*`): offenes Stück zuerst, dann vergebene; Status nur aus den Daten (`Produkt.status_wort`, `status_klasse`, `band_hinweis`). `VERKAUFT_WORT` heißt jetzt „Vergeben“. Hero am Handy kompakter (Preis und Knopf im ersten Bildschirm). Startfilm „Verkaufsstart“ aus (`STARTFILM = None`, alter Eintrag in `STARTFILM_ARCHIV`). `llms.txt` und `llms-full.txt` im Anfrage-Shop neu (`_llms_txt_anfrage`), Organization-Schema ohne „kein Verkauf“, FAQ der Engel-Stückseite im Anfrage-Shop (`engel_faq_anfrage`), Titel/Metas, Über-uns-H1, Versand-im-Preis-Sätze, Datenschutz Abschnitt 8a und Hinweis zu Abschnitt 5–7, `seiten_stand`.
+- **Warum:** Bastian 15.11.2026 (Traffic, mobil, mehrere Stücke nebeneinander, seriös) und Rechtscheck/Design-Audit/SEO-Recherche vom selben Tag.
+- **Nicht angefasst:** AGB-Kernklauseln, Impressum (USt-IdNr.-Zeile), Widerruf, Löschfrist, Mailvorlage – brauchen Luisa/Bastian (Bericht `2026-11-15_LUVIQ-DURCHSTARTEN.md`).
+
 ## 14.11.2026 – Anfrage-Shop statt Direktkauf (Zweig `luviq/2026-11-14-anfrage-shop`, nicht gepusht)
 
 - **Was:** Neuer Schalter `ANFRAGESHOP` (Vorgabe an, nur mit `VERKAUF_AKTIV`). Stückseiten zeigen Preis und das Formular „Dieses Stück anfragen“ (`/anfragen/<slug>/`, Modell `Stueckanfrage`, Migration 0039, Mail nur an Luisa + Kopie an die Webagentur) statt Direktkauf; Kopfzeile ohne Konto/Anmelden/Panel/Warenkorb; Startseite, Karten und `/produkte/` ohne „Jetzt bestellen“ und Rabatt-Knopf; Kaufrouten, Rabattlinks und `/register/` leiten um; Kaufweg-Wissensbeiträge ausgeblendet; Stück-Schema ohne `Offer`.

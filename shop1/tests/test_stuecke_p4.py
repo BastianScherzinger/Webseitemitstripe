@@ -40,14 +40,17 @@ class VerkauftBandTest(LuviqTestCase):
     def test_band_auf_uebersicht_und_startseite(self):
         for pfad in ('/produkte/', '/'):
             html = self.hole(pfad).content.decode()
-            self.assertEqual(html.count('class="lv-verkauft"'), 1, pfad)
+            # 15.11.2026: Karten im Wisch-Band tragen das Statusschild statt des Schrägbands.
+            self.assertEqual(html.count('lv-reihestatus vergeben'), 1, pfad)
             self.assertIn('Vergeben', html)
 
     def test_verfuegbares_stueck_steht_vor_dem_archiv(self):
         html = self.hole('/').content.decode()
         self.assertIn('id="stuecke"', html)
-        self.assertLess(html.index('id="stuecke"'), html.index('id="archiv"'))
-        self.assertNotIn('Neues Stück</a></h3>', html.split('id="archiv"', 1)[1])
+        # 15.11.2026: ein Band, offene Stücke zuerst, dann die vergebenen (Archiv-Abschnitt unten entfällt).
+        band = html.split('id="stuecke"', 1)[1]
+        self.assertLess(band.index('Neues Stück'), band.index('Custom Hoodie'))
+        self.assertNotIn('id="archiv"', html)
 
     def test_ausverkauftes_stueck_zaehlt_als_verkauft(self):
         self.neu.lagerbestand = 0

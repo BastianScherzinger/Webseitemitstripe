@@ -198,6 +198,35 @@ class Produkt(models.Model):
         return luviq_daten.VERGEBEN_WORT if self.vergeben else luviq_daten.VERKAUFT_WORT
 
     @property
+    def status_klasse(self):
+        """``vergeben`` oder ``offen`` für die Karten (Wisch-Band): nur aus den Daten, nie getippt (15.11.2026).
+
+        „Vergeben“ steht ausschließlich, wenn das Stück als Archiv markiert ist (``vergeben``) oder nach
+        einer echten Bestellung Bestand 0 hat; alles andere ist „offen“ (UWG § 5: keine erfundene Knappheit)."""
+        return 'vergeben' if self.verkauft else 'offen'
+
+    @property
+    def status_wort(self):
+        """Das Statuswort der Karte: „Vergeben“ oder „Offen“ (nie „Verkauft“)."""
+        from . import luviq_daten
+        return luviq_daten.VERGEBEN_WORT if self.verkauft else luviq_daten.OFFEN_WORT
+
+    @property
+    def band_hinweis(self):
+        """Ehrliche Kurzzeile unter dem Namen auf der Karte.
+
+        Serienstück: „Serie“, kein „Unikat“ und kein „nur 1×“ (jedes Shirt wird neu gemalt). „Unikat · 1×“
+        nur bei einem offenen Nicht-Serienstück mit genau einem Stück auf Lager. Archivstücke Nº 001–005:
+        „Archiv · Referenzstück“. Sonst leer."""
+        if self.verkauft:
+            return 'Archiv · Referenzstück' if self.ist_referenz else 'Archiv'
+        if self.serie:
+            return 'Serie · jedes Shirt neu von Hand gemalt'
+        if self.lagerbestand == 1:
+            return 'Unikat · 1×'
+        return 'Unikat'
+
+    @property
     def ist_referenz(self):
         """Eines der fünf ersten Stücke (Nº 001–005): Beispiel/Referenz, nie verkauft (Bastian 30.10.2026)."""
         from . import luviq_daten

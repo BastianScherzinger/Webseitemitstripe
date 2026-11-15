@@ -126,16 +126,14 @@ class SerieTest(LuviqTestCase):
         self.assertNotIn('nur einmal', text)
 
     @override_settings(VERKAUF_AKTIV=True, DIREKTKAUF=True)
-    def test_startseite_hat_kaufkarte_cta_und_startfilm_ohne_autoplay(self):
+    def test_startseite_hat_reihenkarte_cta_und_keinen_startfilm(self):
+        # 15.11.2026: Wisch-Band statt Kaufkarte; der Startfilm „Verkaufsstart“ ist weg (Anfrage-Shop).
         html = self.hole('/').content.decode()
-        self.assertIn('lv-kaufkarte', html)
+        self.assertIn('lv-reihekarte', html)
         self.assertIn(f'/produkt/{self.serie.slug}/#bestellen', html)
         self.assertIn('Jetzt bestellen', html)
-        video = re.search(r'<video[^>]*>', html).group(0)
-        self.assertIn('preload="none"', video)
-        self.assertNotIn('autoplay', video)
-        self.assertIn('"VideoObject"', html)
-        self.assertIn('Frühere Stücke', html)
+        self.assertNotIn('<video', html)
+        self.assertNotIn('"VideoObject"', html)
         self.assertNotIn('Jedes Stück gibt es nur einmal', html)
 
     @override_settings(VERKAUF_AKTIV=True, DIREKTKAUF=True)

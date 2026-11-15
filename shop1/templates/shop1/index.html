@@ -10,7 +10,7 @@ View und Kontextprozessor), kein Datum hier.
 {% endcomment %}
 
 {% block title %}{% if anfrage_shop %}Handbemalte Shirts &amp; Unikate aus Lübeck anfragen | Luviq{% else %}Handbemalte Shirts &amp; Unikate online kaufen in Lübeck | Luviq{% endif %}{% endblock %}
-{% block meta_description %}{% if shop_sichtbar %}Luviq aus Lübeck: handbemalte Second-Hand-Shirts und Unikate, von Hand mit Bleiche gemalt. Versand inklusive, Lieferung in ganz Deutschland. Jetzt ansehen.{% else %}Luviq aus Lübeck: handbemalte Second-Hand-Shirts und Unikate, von Hand mit Bleiche gemalt. Versand deutschlandweit. Eigenes Motiv jetzt anfragen.{% endif %}{% endblock %}
+{% block meta_description %}{% if anfrage_shop %}Handbemalte Shirts aus Lübeck: Luisa malt jedes Stück von Hand mit Bleiche. Das Engel-Shirt ist zur Anfrage offen, frühere Stücke stehen im Archiv. Versand deutschlandweit.{% elif shop_sichtbar %}Luviq aus Lübeck: handbemalte Second-Hand-Shirts und Unikate, von Hand mit Bleiche gemalt. Versand inklusive, Lieferung in ganz Deutschland. Jetzt ansehen.{% else %}Luviq aus Lübeck: handbemalte Second-Hand-Shirts und Unikate, von Hand mit Bleiche gemalt. Versand deutschlandweit. Eigenes Motiv jetzt anfragen.{% endif %}{% endblock %}
 {% block og_title %}Luviq Universe – Sag mir, was du willst, ich mal’s dir{% endblock %}
 {% block og_description %}Handbemalte Stücke aus Lübeck, gebraucht oder neu, immer hochwertig. Du sagst Luisa, was drauf soll, sie schickt dir Vorschläge, und dann entsteht dein Stück. Jedes Stück ist von Hand gemalt, keins gleicht dem anderen.{% endblock %}
 {% block og_image_tag %}
@@ -116,26 +116,20 @@ View und Kontextprozessor), kein Datum hier.
         </div>
     </section>
 
-    {% if verfuegbare %}
-    <!-- ═══ Kaufbare Stücke direkt unter dem Hero (Redesign 01.11.2026): große Karte mit Bild, Name, Preis, „Jetzt bestellen“; ohne Verkauf die ruhige Archivkarte ═══ -->
-    <section class="lv-abschnitt lv-kauf" id="stuecke" aria-labelledby="stuecke-titel">
-        <div class="lv-abschnittskopf">
-            <h2 class="lv-serif" id="stuecke-titel">{% if shop_sichtbar %}Jetzt im Shop{% elif verfuegbare|length == 1 %}Das erste Stück{% else %}Die ersten Stücke{% endif %}</h2>
-            <div class="lv-abschnittskopf-r">
-                <p>{% if not shop_sichtbar %}{{ shop_oeffnet }} {% endif %}Jedes Stück ist von Hand mit Bleiche gemalt – keins gleicht dem anderen.</p>
-                <a class="lv-link" href="{% url 'produkte' %}">Alle Stücke</a>
-            </div>
-        </div>
-        {% if kaufkarten %}<ol class="lv-kaufliste">
-            {% for produkt in kaufkarten %}{% include 'shop1/teile/kaufkarte.html' %}{% endfor %}
-        </ol>{% endif %}
-        {% if karten_ruhig %}<ol class="lv-raster lv-raster-stuecke">
-            {% for produkt in karten_ruhig %}{% include 'shop1/teile/archiv_karte.html' %}{% endfor %}
-        </ol>{% endif %}
+    <!-- ═══ Wisch-Band direkt unter dem Hero (15.11.2026): offenes Stück zuerst, dann die vergebenen; Handyfoto "So sieht es in echt aus" folgt weiter unten ═══ -->
+    {% include 'shop1/teile/stueckband.html' %}
+
+    {% if vertrauen %}
+    <!-- ═══ Vertrauensleiste: nur belegte Aussagen aus luviq_daten ═══ -->
+    <section class="lv-vertrauen-leiste" id="vertrauen" aria-label="Das Wichtigste in Kürze">
+        <ul class="lv-vertrauen">
+            {% for aussage in vertrauen %}<li><span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span><span>{{ aussage }}</span></li>{% endfor %}
+        </ul>
     </section>
     {% endif %}
+
     {% if echt_fotos %}
-    <!-- ═══ So sieht es in echt aus: echte Handyfotos neben dem Studiobild; weitere Fotos kommen über ECHT_FOTOS ═══ -->
+    <!-- ═══ Echtes Handyfoto (jetzt unter dem Stück-Band, nicht mehr dreimal hintereinander): echte Handyfotos neben dem Studiobild; weitere Fotos kommen über ECHT_FOTOS ═══ -->
     <section class="lv-echt" id="echt" aria-labelledby="echt-titel">
         <div class="lv-echt-text">
             <h2 class="lv-serif" id="echt-titel">{{ echt_titel }}</h2>
@@ -149,15 +143,6 @@ View und Kontextprozessor), kein Datum hier.
             </figure>
             {% endfor %}
         </div>
-    </section>
-    {% endif %}
-
-    {% if vertrauen %}
-    <!-- ═══ Vertrauensleiste: nur belegte Aussagen aus luviq_daten ═══ -->
-    <section class="lv-vertrauen-leiste" id="vertrauen" aria-label="Das Wichtigste in Kürze">
-        <ul class="lv-vertrauen">
-            {% for aussage in vertrauen %}<li><span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span><span>{{ aussage }}</span></li>{% endfor %}
-        </ul>
     </section>
     {% endif %}
 
@@ -248,27 +233,6 @@ View und Kontextprozessor), kein Datum hier.
             <p>Luviq ist ein Ein-Personen-Atelier, <a href="{% url 'liefergebiet' %}#alsfeld">angefangen in Alsfeld, heute in Lübeck</a>. Einen Laden zum Anschauen gibt es nicht{% if shop_sichtbar and not anfrage_shop %}: Luviq ist ein Online-Shop, bestellt wird auf dieser Seite, geliefert wird in ganz Deutschland{% elif anfrage_shop %}: Stücke werden auf dieser Seite angefragt, Luisa meldet sich persönlich{% endif %}. Die Teile sind hochwertig, gebraucht oder neu, die Motive freihand, mit Pinsel und Bleiche, bald auch mit Textilfarbe.</p>
             <a class="lv-link" href="{% url 'ueber_uns' %}">Mehr über Luisa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-    </section>
-
-    <!-- ═══ Archiv: eine wischbare Reihe kleiner Karten ═══ -->
-    <section class="lv-abschnitt" id="archiv" aria-labelledby="archiv-titel">
-        <div class="lv-abschnittskopf">
-            <h2 class="lv-serif" id="archiv-titel">Frühere Stücke</h2>
-            <div class="lv-abschnittskopf-r">
-                <p>Die ersten Stücke Nº 001–005 zeigen als Referenz, wie Luviq aussieht. Sie sind bereits vergeben und nicht mehr kaufbar.</p>
-                {% if archiv_liste %}<a class="lv-link" href="{% url 'produkte' %}">Alle früheren Stücke</a>{% endif %}
-            </div>
-        </div>
-        {% if archiv_liste %}
-        <div class="lv-archivreihe">
-            <ol class="lv-raster">
-                {% for produkt in archiv_liste %}{% include 'shop1/teile/archiv_karte.html' %}{% endfor %}
-            </ol>
-        </div>
-        <p class="lv-wischen" aria-hidden="true">Seitlich wischen</p>
-        {% else %}
-        <p class="lv-leer">Das Archiv ist gerade leer.</p>
-        {% endif %}
     </section>
 
     <!-- ═══ Warteliste = Newsletter mit Double-Opt-in, das einzige Formular der Seite ═══ -->

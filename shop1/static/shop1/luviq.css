@@ -938,3 +938,59 @@ body:has([data-kaufleiste]) .lv-leiste{display:none!important}
   .lv-brotkrume li:last-child{overflow:hidden;text-overflow:ellipsis}
 }
 @media (max-width:767px){.lv-stueck-bild{width:100%;align-self:stretch}.lv-stueck-bild .lv-galerie{width:100%;position:static}.lv-stueck-text>.lv-stueck-nummer{margin-top:var(--lv-raum-2)}}
+
+/* ── Wisch-Band „Stücke“ und kompakter Hero am Handy (15.11.2026, Design-Audit M1 M2 M4 M6 M8 M9) ──────────────
+   Ein scrollbarer Bereich mit Scroll-Snap, keine Bibliothek. Offenes Stück zuerst, vergebene daneben; das Foto in voller
+   Helligkeit (kein Grauschleier, kein Schrägband), der Status als kleines Schild oben links. Ab 900 px ein Raster. */
+.lv-reiheabschnitt{padding:var(--lv-raum-6) 0 var(--lv-raum-5);border-top:1px solid var(--lv-linie)}
+.lv-reihekopf{display:flex;justify-content:space-between;align-items:baseline;gap:var(--lv-raum-3);padding:0 var(--rand);margin-bottom:var(--lv-raum-4)}
+.lv-reihekopf h2{font-size:clamp(26px,3.2vw,44px);line-height:1.05;margin:0}
+.lv-reihe-rahmen{overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:var(--rand);overscroll-behavior-x:contain;scrollbar-width:none;padding-inline:var(--rand);-webkit-overflow-scrolling:touch}
+.lv-reihe-rahmen::-webkit-scrollbar{display:none}
+.lv-reihe-rahmen:focus-visible{outline:2px solid var(--lv-akzent);outline-offset:-2px}
+.lv-reihe{display:grid;grid-auto-flow:column;grid-auto-columns:76%;gap:var(--lv-raum-4);list-style:none;margin:0;padding:0 0 var(--lv-raum-2)}
+.lv-reihe>li{scroll-snap-align:start;min-width:0}
+.lv-reihekarte{display:grid;align-content:start;position:relative;border:1px solid var(--lv-linie-2);background:var(--lv-grund-2)}
+.lv-reihekarte figure{margin:0;position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--lv-wand)}
+.lv-reihekarte figure>a{display:block;height:100%}
+.lv-reihekarte figure img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 25%;filter:none;opacity:1}
+.lv-reihekarte figure[data-ohne-foto]{display:grid;place-items:center}
+.lv-reihekarte figure[data-ohne-foto]::after{content:"Foto folgt";color:var(--lv-leise);font:12px var(--lv-mono);letter-spacing:.08em;text-transform:uppercase}
+.lv-reihestatus{position:absolute;top:10px;left:10px;font:600 12px/1 var(--lv-mono);letter-spacing:.12em;text-transform:uppercase;padding:6px 8px;border:1px solid var(--lv-linie-2);background:rgba(10,10,10,.8);color:var(--lv-text)}
+.lv-reihestatus.offen{border-color:var(--lv-akzent)}
+.lv-reihetext{display:grid;gap:var(--lv-raum-2);align-content:start;padding:var(--lv-raum-4)}
+.lv-reihetext h2,.lv-reihetext h3{font-size:clamp(20px,2vw,28px);line-height:1.15;font-weight:700;letter-spacing:-.015em;margin:0}
+.lv-reihetext h2 a,.lv-reihetext h3 a{color:var(--lv-text)}
+.lv-reihehinweis{margin:0;color:var(--lv-leise);font-size:14px;line-height:1.4}
+.lv-reihepreis{margin:0;font:700 26px/1 var(--lv-sans);color:var(--lv-text)}
+.lv-reihepreis span{display:block;margin-top:6px;font:500 13px/1.3 var(--lv-sans);color:var(--lv-leise)}
+.lv-reiheknopf,.lv-reihelink{margin:var(--lv-raum-2) 0 0}
+.lv-reihefuss{padding:var(--lv-raum-4) var(--rand) 0;margin:0;display:flex;flex-wrap:wrap;gap:var(--lv-raum-3);align-items:center}
+.lv-reihekarte.ist-vergeben .lv-reihetext{padding-bottom:var(--lv-raum-4)}
+@media (min-width:900px){
+  .lv-reiheabschnitt{padding:var(--lv-raum-7) 0 var(--lv-raum-6)}
+  .lv-reihe-rahmen{overflow:visible;scroll-snap-type:none}
+  .lv-reihe{grid-auto-flow:row;grid-template-columns:repeat(10,minmax(0,1fr));grid-auto-columns:auto;gap:var(--lv-raum-5)}
+  .lv-reihe>li{grid-column:span 2}
+  .lv-reihe>li:first-child{grid-column:1/-1}
+  .lv-reihe>li:first-child .lv-reihekarte,.lv-reihe>li:first-child.lv-reihekarte{grid-template-columns:minmax(0,5fr) minmax(0,7fr);align-items:center}
+  .lv-reihe>li:first-child figure{aspect-ratio:4/3;height:100%}
+  .lv-reihe>li:first-child .lv-reihetext{padding:var(--lv-raum-6)}
+  .lv-reihe>li:first-child .lv-reihetext h2,.lv-reihe>li:first-child .lv-reihetext h3{font-size:clamp(30px,3vw,44px)}
+  .lv-reihe>li:first-child .lv-reihepreis{font-size:36px}
+}
+@media (prefers-reduced-motion:reduce){.lv-reihe-rahmen{scroll-behavior:auto}}
+/* Hero am Handy: kürzer, Preis und Knopf im ersten Bildschirm, der lange Lead rutscht unter den Knopf (bleibt im Text). */
+@media (max-width:899px){
+  .lv-hero-bild{max-height:44svh}
+  .lv-hero .lv-satz{font-size:32px}
+  .lv-hero-text{gap:var(--lv-raum-3);padding-top:var(--lv-raum-4)}
+  .lv-hero-text .lv-lead{order:5}
+  .lv-hero-text .lv-hero-rabatt{order:6}
+  .lv-hero-knoepfe .linie{display:none}
+}
+.lv-abschnittskopf.lv-kopf-eins{grid-template-columns:minmax(0,1fr)}
+.lv-abschnittskopf.lv-kopf-eins p{justify-self:start;max-width:62ch}
+.lv-reiheabschnitt+.lv-reiheabschnitt{border-top:0}
+.lv-abschnitt .lv-reihe-rahmen{margin-inline:calc(var(--rand)*-1)}
+.lv-reihe-lead{margin:0;padding:0 var(--rand);margin-bottom:var(--lv-raum-4);color:var(--lv-leise);max-width:62ch}

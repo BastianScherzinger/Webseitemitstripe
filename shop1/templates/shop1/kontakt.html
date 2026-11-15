@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}Kontakt und Fragen zu Shirts und Unikaten in Lübeck | Luviq{% endblock %}
-{% block meta_description %}{% if kaufweg %}Fragen zu handbemalten Shirts, Größe, Bestellung oder Versand? Luisa von Luviq antwortet persönlich über das Formular oder per E-Mail. Jetzt schreiben.{% else %}Fragen zu handbemalten Stücken, zum eigenen Motiv oder zum Verkaufsstart? Luisa von Luviq antwortet persönlich über Formular oder E-Mail. Jetzt schreiben.{% endif %}{% endblock %}
+{% block meta_description %}{% if kaufweg %}Fragen zu handbemalten Shirts, Größe, Bestellung oder Versand? Luisa von Luviq antwortet persönlich über das Formular oder per E-Mail. Jetzt schreiben.{% elif anfrage_shop %}Fragen zu einem Stück, zum eigenen Motiv oder zum Versand? Luisa von Luviq antwortet persönlich über Formular oder E-Mail. Jetzt schreiben.{% else %}Fragen zu handbemalten Stücken, zum eigenen Motiv oder zum Verkaufsstart? Luisa von Luviq antwortet persönlich über Formular oder E-Mail. Jetzt schreiben.{% endif %}{% endblock %}
 {% block og_title %}Kontakt – Luviq, Lübeck{% endblock %}
 {% block og_description %}{% if kaufweg %}Fragen zu deiner Bestellung oder unseren handbemalten Upcycling-Stücken? Schreib uns – Luviq Universe antwortet schnell.{% else %}Fragen zu unseren handbemalten Upcycling-Stücken oder zum ersten Drop? Schreib uns.{% endif %}{% endblock %}
 {% block twitter_title %}Kontakt und Fragen – Luviq Universe{% endblock %}
@@ -53,7 +53,7 @@
           "name": "{% if kaufweg %}Zahlungsmethoden?{% elif anfrage_shop %}Wie geht es nach der Anfrage weiter?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if kaufweg %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% elif anfrage_shop %}Luisa Brehler antwortet persönlich per E-Mail und klärt mit dir Größe, Zahlung und Versand. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
+            "text": "{% if kaufweg %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% elif anfrage_shop %}Luisa Brehler antwortet persönlich per E-Mail und klärt mit dir Größe, Zahlung und Lieferzeit. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
           }
         }{% if abholung.text %},
         {
@@ -174,7 +174,7 @@
             </div>
             <div>
                 <h3>{% if kaufweg %}Zahlungsmethoden?{% elif anfrage_shop %}Wie geht es nach der Anfrage weiter?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h3>
-                <p>{% if kaufweg %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% elif anfrage_shop %}Luisa Brehler antwortet persönlich per E-Mail und klärt mit dir Größe, Zahlung und Versand. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
+                <p>{% if kaufweg %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% elif anfrage_shop %}Luisa Brehler antwortet persönlich per E-Mail und klärt mit dir Größe, Zahlung und Lieferzeit. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
             </div>
             {% if abholung.text %}
             <div>

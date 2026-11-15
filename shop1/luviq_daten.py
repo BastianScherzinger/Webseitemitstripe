@@ -473,7 +473,11 @@ FILME = []
 #: static/shop1/video/ und static/shop1/images/luviq/. Wird erst nach Klick geladen (preload="none").
 #: ``None`` ⇒ der Abschnitt entfällt. Der Film hat Ton; der Mittelteil („3 Monate später“) ist eine
 #: Vorstellung der Zukunft, keine echten Zahlen – das sagt der Hinweis ehrlich.
-STARTFILM = {
+#: Seit 15.11.2026 aus (Anfrage-Shop): der Film ruft den „Verkaufsstart“ aus und zeigt erfundene Szenen
+#: („3 Monate später“); das passt nicht zu einem Anfrage-Shop. Der Eintrag steht in ``STARTFILM_ARCHIV``,
+#: falls Luisa später einen Film „Wie ein Stück entsteht“ mit echten Aufnahmen will.
+STARTFILM = None
+STARTFILM_ARCHIV = {
     'datei': 'luviq-start.mp4', 'poster': 'luviq-start-poster.webp', 'poster_jpg': 'luviq-start-poster.jpg',
     'datum': '01.11.2026', 'laenge': '72 Sekunden',
     'titel': 'Verkaufsstart. Vollgas.',
@@ -622,7 +626,10 @@ VERGEBEN_WORT = 'Vergeben'
 #: verkauft, als Beispiele drin, kommen später raus“; sie wurden verschenkt, deshalb „Vergeben“.
 REFERENZ_WORT = 'Vergeben'
 REFERENZ_NUMMERN = range(1, 6)
-VERKAUFT_WORT = 'Verkauft'
+#: Seit 15.11.2026 („nie verkauft, nur vergeben“): auch ein Stück, das nach einer Bestellung Bestand 0 hat,
+#: heißt „Vergeben“. Der Name der Konstante bleibt, damit nichts anderes bricht.
+VERKAUFT_WORT = 'Vergeben'
+OFFEN_WORT = 'Offen'
 
 #: Die Technik in einem Satz, auf Stückseite und Luisa-Seite gleich (Bastian 29.10.2026).
 BLEICHE_SATZ = ('Mit Bleiche gemalt: Die Farbe wird aus dem Stoff gezogen, nichts ist aufgedruckt. '
@@ -658,6 +665,38 @@ def engel_faq(bearbeitung, lieferfrist):
          f"Im Voraus über einen persönlichen Zahlungslink von {ZAHLUNG['anbieter']} ({ZAHLUNG['wege_kurz']}) oder "
          f"per Überweisung. Rechnung und Zahlungslink kommen innerhalb von {RECHNUNG_FRIST} per E-Mail, bestellt "
          'wird ohne Konto.'),
+    ]
+
+
+def engel_faq_anfrage(bearbeitung, preis_euro):
+    """Fragen zum Engel-Shirt im Anfrage-Shop (15.11.2026): sichtbar und als FAQPage, Antwort zuerst.
+
+    Nur, was die Seite schon belegt: Größe und Material (``ENGEL_STUECK``), Technik, Pflege (``PFLEGE``), der Preis
+    mit Versand innerhalb Deutschlands, die Bearbeitungszeit (``bearbeitungstage``) und der Ablauf der Anfrage.
+    Keine Lieferfrist in Tagen (die nennt Luisa in ihrer Antwort), keine Zahlungsart, kein Kaufweg."""
+    bearbeitung_satz = (f'Die Bearbeitung dauert ca. {bearbeitung} Werktage, dann geht das Shirt in den Versand. '
+                        if bearbeitung else '')
+    return [
+        ('Wie bekomme ich das Engel-Shirt?',
+         'Du fragst es auf dieser Seite an: Name, E-Mail-Adresse und gewünschte Größe eintragen und absenden. '
+         'Luisa antwortet dir persönlich per E-Mail, danach klärt ihr Zahlung und Lieferzeit. Die Anfrage kostet '
+         'nichts und ist keine Bestellung; nichts wird bezahlt oder reserviert.'),
+        ('Was kostet das Engel-Shirt?',
+         f'{preis_euro} €. Der Versand innerhalb Deutschlands ist im Preis enthalten; nach § 19 UStG wird keine '
+         'Umsatzsteuer berechnet.'),
+        ('Welche Größe hat das Engel-Shirt?',
+         f'Das Engel-Shirt ist ein Second-Hand-Shirt in Größe M aus {ENGEL_STUECK["material"]}. Die genauen '
+         'Maße nennt Luisa auf Anfrage über das Kontaktformular.'),
+        ('Ist der Engel auf das Shirt gedruckt?',
+         'Nein, der Engel ist von Hand mit Bleiche gemalt. Die Farbe wird aus dem Stoff gezogen, nichts ist '
+         'aufgedruckt; deshalb steht das Motiv in Bleich-Beige auf dem schwarzen Stoff.'),
+        ('Gibt es das Engel-Shirt nur einmal?',
+         'Nein, es ist ein Serienstück: Luisa malt jedes Engel-Shirt für eine Anfrage neu von Hand, deshalb '
+         'gleicht keins dem anderen. ' + bearbeitung_satz.strip()),
+        ('Wie pflege ich das Engel-Shirt?', PFLEGE),
+        ('Wird das Engel-Shirt in ganz Deutschland verschickt?',
+         'Ja, innerhalb von ganz Deutschland; ins Ausland wird nicht verschickt.'
+         + (f' In {ABHOLUNG["ort"]} ist die persönliche Übergabe nach Absprache möglich.' if ABHOLUNG.get('text') else '')),
     ]
 
 

@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% load static custom_tags %}
 
-{% block title %}{% if shop_sichtbar %}Shop: handbemalte Shirts und Unikate online aus Lübeck | Luviq{% else %}Archiv: handbemalte Unikate aus Lübeck | Luviq{% endif %}{% endblock %}
-{% block meta_description %}{% if shop_sichtbar %}Handbemalte Shirts von Luviq: Unikate und die Engel-Serie, mit Bleiche von Hand gemalt. Versand inklusive, deutschlandweit. {% if anfrage_shop %}Jetzt Stück anfragen.{% else %}Jetzt bestellen.{% endif %}{% else %}Archiv von Luviq aus Lübeck: bisherige handbemalte Unikate als Referenz. Jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}
+{% block title %}{% if anfrage_shop %}Handbemalte Stücke auf Anfrage aus Lübeck | Luviq{% elif shop_sichtbar %}Shop: handbemalte Shirts und Unikate online aus Lübeck | Luviq{% else %}Archiv: handbemalte Unikate aus Lübeck | Luviq{% endif %}{% endblock %}
+{% block meta_description %}{% if anfrage_shop %}Handbemalte Stücke von Luviq aus Lübeck: das Engel-Shirt zum Anfragen, frühere Stücke als Referenz. Mit Bleiche von Hand gemalt, Versand deutschlandweit.{% elif shop_sichtbar %}Handbemalte Shirts von Luviq: Unikate und die Engel-Serie, mit Bleiche von Hand gemalt. Versand inklusive, deutschlandweit. Jetzt bestellen.{% else %}Archiv von Luviq aus Lübeck: bisherige handbemalte Unikate als Referenz. Jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}
 {% block og_title %}Handbemalte Stücke | Luviq Universe Lübeck{% endblock %}
 {% block og_description %}Handbemalte Stücke aus Lübeck, gebraucht oder neu, immer hochwertig. Von Hand mit Bleiche gemalt, keins gleicht dem anderen. Jetzt bei Luviq Universe entdecken.{% endblock %}
 {% block twitter_title %}{% if shop_sichtbar %}Handbemalte Stücke – Luviq Universe{% else %}Archiv: handbemalte Stücke – Luviq Universe{% endif %}{% endblock %}
@@ -65,7 +65,7 @@
 {# Das erste Bild im Hauptbereich ist das LCP-Bild: Vorladen wörtlich wie srcset/sizes der ersten Karte (teile/archiv_karte.html). #}
 <link rel="preload" as="image" fetchpriority="high" href="{{ bild.karte_src }}"
       imagesrcset="{{ bild.karte_srcset }}"
-      imagesizes="(min-width: 1024px) 18vw, (min-width: 640px) 30vw, 92vw">
+      imagesizes="(min-width: 1024px) 24vw, (min-width: 640px) 40vw, 78vw">
 {% endif %}{% endwith %}{% endblock %}
 {% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='archiv' %}{% endblock %}
 
@@ -74,22 +74,18 @@
 <div class="lv-seite">
     <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">{{ krume }}</li></ol></nav>
     <section class="lv-abschnitt lv-ohne-linie" aria-labelledby="archiv-titel">
-        <div class="lv-abschnittskopf">
-            <h1 class="lv-serif" id="archiv-titel">{% if krume == 'Shop' %}Shop{% else %}Das Archiv{% endif %}</h1>
-            <p>{% if shop_sichtbar %}Luviq Universe ist die Marke von Luisa Brehler aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig; auf dieser Seite stehen zurzeit {{ verfuegbare_liste|length }} Stück{{ verfuegbare_liste|length|pluralize:"e" }}{% if anfrage_shop %} zur Anfrage{% else %} zum Kauf{% endif %}, darunter die ersten Stücke als Referenz.{% elif verfuegbare_liste %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig; jedes Stück ist von Hand gemalt und keins gleicht dem anderen. Oben steht das neue Stück, darunter die ersten Stücke als Referenz.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig; auf dieser Seite stehen zurzeit {{ produkte_liste|length }} Einzelstück{{ produkte_liste|length|pluralize:"e" }} aus dem Archiv – bisherige Arbeiten als Referenz, nicht zu kaufen.{% endif %}</p>
+        <div class="lv-abschnittskopf lv-kopf-eins">
+            <h1 class="lv-serif" id="archiv-titel">{% if anfrage_shop %}Stücke von Luviq{% elif krume == 'Shop' %}Shop{% else %}Das Archiv{% endif %}</h1>
+            <p>{% if anfrage_shop %}Luviq Universe ist die Marke von Luisa Brehler aus Lübeck für handbemalte Stücke. {% if verfuegbare_liste|length == 1 %}Zurzeit ist ein Stück offen für deine Anfrage{% elif verfuegbare_liste %}Zurzeit sind {{ verfuegbare_liste|length }} Stücke offen für deine Anfrage{% else %}Zurzeit ist kein Stück offen{% endif %}, daneben stehen frühere Stücke als Referenz.{% elif shop_sichtbar %}Luviq Universe ist die Marke von Luisa Brehler aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig; auf dieser Seite stehen zurzeit {{ verfuegbare_liste|length }} Stück{{ verfuegbare_liste|length|pluralize:"e" }} zum Kauf, darunter die ersten Stücke als Referenz.{% elif verfuegbare_liste %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig; jedes Stück ist von Hand gemalt und keins gleicht dem anderen. Oben steht das neue Stück, darunter die ersten Stücke als Referenz.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig; auf dieser Seite stehen zurzeit {{ produkte_liste|length }} Einzelstück{{ produkte_liste|length|pluralize:"e" }} aus dem Archiv – bisherige Arbeiten als Referenz, nicht zu kaufen.{% endif %}</p>
         </div>
-        {% if verfuegbare_liste %}
-        <h2 class="lv-serif lv-raster-titel" id="verfuegbar-titel">Neue Stücke</h2>
-        {% if not shop_sichtbar %}<p class="lv-raster-hinweis">{{ shop_oeffnet }} Bis dahin kannst du dich vormerken.</p>{% endif %}
-        <ol class="lv-raster" aria-labelledby="verfuegbar-titel">
-            {% for produkt in verfuegbare_liste %}{% include 'shop1/teile/archiv_karte.html' with stufe=3 erstes=forloop.first %}{% endfor %}
-        </ol>
-        {% endif %}
-        {% if vergebene_liste %}
-        {% if verfuegbare_liste %}<h2 class="lv-serif lv-raster-titel" id="archiv-raster-titel">Archiv: Referenzstücke</h2>{% endif %}
-        <ol class="lv-raster"{% if verfuegbare_liste %} aria-labelledby="archiv-raster-titel"{% endif %}>
-            {% for produkt in vergebene_liste %}{% if verfuegbare_liste %}{% include 'shop1/teile/archiv_karte.html' with stufe=3 %}{% else %}{% include 'shop1/teile/archiv_karte.html' with stufe=2 erstes=forloop.first %}{% endif %}{% endfor %}
-        </ol>
+        {% if not shop_sichtbar and verfuegbare_liste %}<p class="lv-raster-hinweis">{{ shop_oeffnet }} Bis dahin kannst du dich vormerken.</p>{% endif %}
+        {% if band_stuecke %}
+        {% comment %}15.11.2026: dieselben Karten wie auf der Startseite (teile/reihe_karte.html), offene zuerst, dann die vergebenen; am PC ein Raster, am Handy ein Wisch-Band.{% endcomment %}
+        <div class="lv-reihe-rahmen" role="region" aria-label="Stücke von Luviq, seitlich wischen" tabindex="0">
+            <ol class="lv-reihe">
+                {% for produkt in band_stuecke %}{% include 'shop1/teile/reihe_karte.html' with stufe=2 erstes=forloop.first %}{% endfor %}
+            </ol>
+        </div>
         {% endif %}
         {% if not produkte_liste %}
         <p class="lv-leer">Das Archiv ist gerade leer. Die nächste Ausgabe ist in Arbeit.</p>

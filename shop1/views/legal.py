@@ -34,7 +34,7 @@ from ..seiten_stand import SEITEN_STAND  # noqa: F401 – Re-Export
 from .wissen import freigegebene_beitraege, uebersicht_indexierbar
 from ._helpers import zu_viele_anfragen
 from .. import spamschutz
-from ..verkauf import direktkauf_aktiv, kaufweg_aktiv, oeffnungs_satz, verkauf_aktiv
+from ..verkauf import anfrageshop_aktiv, direktkauf_aktiv, kaufweg_aktiv, oeffnungs_satz, verkauf_aktiv
 
 _log = logging.getLogger('shop1')
 
@@ -212,6 +212,10 @@ def llms_txt(request):
     basis = oeffentliche_basis(request)
     # Verkaufsschalter: ohne Verkauf keine Kauf-, Zahlungs-, Versand- oder
     # Steuerangaben, keine Preise und kein Verweis auf die AGB.
+    # Anfrage-Shop (seit 14.11.2026): Preise stehen auf der Seite, gekauft wird aber nicht – Stücke werden angefragt.
+    # Diese Fassung sagt weder „noch nicht kaufbar/Warteliste“ noch nennt sie einen Kaufweg (Rechtscheck 15.11., W5).
+    if anfrageshop_aktiv():
+        return _llms_txt_anfrage(basis)
     if not kaufweg_aktiv():
         return _llms_txt_ohne_verkauf(basis)
     zeilen = (_llms_kopf_mit_verkauf(basis)
@@ -220,6 +224,114 @@ def llms_txt(request):
               + _llms_fragen_mit_verkauf(basis))
     return HttpResponse("\n".join(zeilen) + "\n",
                         content_type="text/plain; charset=utf-8")
+
+
+def _llms_txt_anfrage(basis):
+    """llms.txt im Anfrage-Shop (15.11.2026): Stücke werden angefragt, nichts wird auf der Seite bestellt.
+
+    Nur Angaben, die auch auf der Seite stehen: offene Stücke mit Preis (Versand innerhalb Deutschlands im Preis),
+    vergebene Stücke als Archiv ohne Preis, der Ablauf einer Anfrage. Keine Lieferfrist in Tagen (die Zahl bestätigt
+    Luisa), keine Zahlungsarten, keine Warteliste."""
+    zeilen = (_llms_kopf_anfrage(basis)
+              + _llms_produktzeilen(basis, mit_preis=True)
+              + _llms_wissenzeilen(basis)
+              + _llms_fragen_anfrage(basis))
+    return HttpResponse("\n".join(zeilen) + "\n",
+                        content_type="text/plain; charset=utf-8")
+
+
+def _llms_kopf_anfrage(basis):
+    """Kopf, Eckdaten und Seitenliste der llms.txt im Anfrage-Shop."""
+    return [
+        "# Luviq Universe",
+        "",
+        "> Luviq Universe ist eine Marke für handbemalte Second-Hand-Kleidung aus Lübeck",
+        "> (Schleswig-Holstein), angefangen in Alsfeld (Hessen). Luisa Brehler malt jedes Stück von Hand",
+        "> mit Bleiche; die Bleiche zieht die Farbe aus dem Stoff, nichts ist aufgedruckt. Stücke werden",
+        "> auf Anfrage vergeben: Eine Anfrage ist kostenlos und keine Bestellung, nichts wird bezahlt",
+        "> oder reserviert. Luisa antwortet persönlich per E-Mail. Versand innerhalb Deutschlands,",
+        "> Übergabe in Lübeck nach Absprache. Einen Laden zum Reinschauen gibt es nicht.",
+        "",
+        "## Eckdaten",
+        "",
+        _betreiber_zeile("Betreiberin"),
+        "- Sitz: Lübeck · Herkunft: Alsfeld (Hessen)",
+        "- Angebot: Stücke auf Anfrage; offene Stücke stehen mit Preis auf der Stückseite, vergebene im Archiv",
+        "- Engel-Shirt: Serienstück, Second-Hand-Shirt in Größe M, von Hand mit Bleiche gemalt; jedes Shirt wird neu",
+        "  gemalt und gleicht nie 1:1 dem anderen",
+        "- Preise sind Endpreise, der Versand innerhalb Deutschlands ist im Preis enthalten; nach § 19 UStG wird",
+        "  keine Umsatzsteuer berechnet (Kleinunternehmerstatus)",
+        "- Instagram: https://www.instagram.com/luviq.archive/",
+        "- TikTok: https://www.tiktok.com/@luviq.archive",
+        "- Google-Unternehmensprofil: https://www.google.com/maps?cid=13899750731019902000",
+        "",
+        "## Seiten",
+        "",
+        f"- [Startseite]({basis}{reverse('home')}): Überblick, offenes Stück und Archiv",
+        f"- [Stücke ansehen]({basis}{reverse('produkte')}): offene Stücke zur Anfrage, vergebene Stücke als Archiv",
+        f"- [Über uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
+        f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
+        "Vorschläge bekommen - kostenlos, keine Bestellung",
+        f"- [Versand und Übergabe]({basis}{reverse('liefergebiet')}): Versand innerhalb Deutschlands, Übergabe in Lübeck nach Absprache",
+        f"- [Kontakt]({basis}{reverse('kontakt')}): Fragen an Luisa",
+        "",
+        "## Stücke",
+        "",
+    ]
+
+
+def _llms_fragen_anfrage(basis):
+    """Häufige Fragen, Rechtliches und Verweise der llms.txt im Anfrage-Shop (Antwort zuerst)."""
+    return [
+        "",
+        "## Häufige Fragen",
+        "",
+        "### Kann ich ein handbemaltes Shirt von Luviq bekommen?",
+        "Ja, auf Anfrage. Auf der Seite des Stücks steht das Formular „Dieses Stück anfragen“ (Name, E-Mail-Adresse,",
+        "gewünschte Größe). Luisa Brehler antwortet persönlich per E-Mail; erst dann werden Zahlung und Lieferung",
+        "geklärt. Eine Anfrage kostet nichts und ist keine Bestellung.",
+        f"Stücke: {basis}{reverse('produkte')}",
+        "",
+        "### Was kostet ein Stück?",
+        "Der Preis steht auf der Seite des Stücks (zum Beispiel das Engel-Shirt, siehe oben). Es sind Endpreise;",
+        "der Versand innerhalb Deutschlands ist im Preis enthalten, nach § 19 UStG wird keine Umsatzsteuer berechnet.",
+        "",
+        "### Was ist Luviq Universe?",
+        "Eine Marke für handbemalte Second-Hand-Kleidung aus Lübeck. Gründerin Luisa Brehler malt jedes Stück von Hand",
+        "mit Bleiche; keins gleicht dem anderen. Eine Serie wie das Engel-Shirt wird für jede Anfrage neu gemalt.",
+        "",
+        "### Wo sitzt Luviq Universe?",
+        "In Lübeck (Schleswig-Holstein); dort malt Luisa Brehler heute. Angefangen hat Luviq in Alsfeld im Vogelsbergkreis,",
+        "Hessen. Einen Laden zum Reinschauen gibt es nicht.",
+        "",
+        "### Wohin liefert Luviq?",
+        "Innerhalb Deutschlands. Eine persönliche Übergabe in Lübeck ist nach Absprache möglich. Die voraussichtliche",
+        "Lieferzeit nennt Luisa in ihrer Antwort auf die Anfrage.",
+        "",
+        "### Was ist ein Bleach-Shirt?",
+        "Ein Shirt, auf das mit Bleiche ein Motiv gemalt wurde: Die Bleiche nimmt die Farbe aus dem Stoff,",
+        "nichts ist aufgedruckt. Mehr dazu:",
+        f"{basis}{reverse('wissen_bleach')}",
+        "",
+        "### Was bedeutet „vergeben“?",
+        "Stücke, die im Archiv als vergeben stehen, sind nicht mehr erhältlich und zeigen, wie Luviq aussieht.",
+        "Wer so ein Stück mit eigenem Motiv möchte, fragt es über „Motiv anfragen“ an.",
+        "",
+        "### Was hat Upcycling mit der Umwelt zu tun?",
+        "Wo ein gebrauchtes Teil die Grundlage ist, wird vorhandene Kleidung",
+        "weiterverwendet und von Hand bemalt statt neu produziert.",
+        "",
+        *_llms_motiv_fragen(),
+        "## Rechtliches",
+        "",
+        f"- [Impressum]({basis}{reverse('impressum')})",
+        f"- [Datenschutzerklärung]({basis}{reverse('datenschutz')})",
+        f"- [AGB und Widerrufsrecht]({basis}{reverse('agb')})",
+        "",
+        f"Sitemap: {basis}/sitemap.xml",
+        *_feed_zeile(basis),
+        f"Volltext: {basis}{reverse('llms_full_txt')}",
+    ]
 
 
 def _llms_txt_ohne_verkauf(basis):
@@ -546,7 +658,7 @@ def llms_full_txt(request):
 
     verkauf = kaufweg_aktiv()
     seiten = [
-        ('Shop' if verkauf else 'Archiv', reverse('produkte'), shop.produkte, ()),
+        ('Shop' if verkauf else ('Stücke' if anfrageshop_aktiv() else 'Archiv'), reverse('produkte'), shop.produkte, ()),
         ('Über Luisa Brehler', reverse('ueber_uns'), shop.ueber_uns, ()),
         ('Liefergebiet' if verkauf else 'Herkunft', reverse('liefergebiet'), shop.liefergebiet, ()),
         ('Motiv anfragen', reverse('motiv_anfragen'), motiv.motiv_anfragen, ()),

@@ -1,0 +1,18 @@
+{% comment %}
+Wisch-Band „Stücke“ (15.11.2026, Bastian: mehrere Stücke nebeneinander, das offene vorne, damit es seriös aussieht).
+Ohne JavaScript-Bibliothek: ein scrollbarer Bereich mit CSS Scroll-Snap, per Tastatur erreichbar (Rahmen hat tabindex,
+jede Karte ihre Links). Am PC (ab 900 px) wird daraus ein Raster. `band_stuecke` und `band_offen` kommen aus dem View.
+Reihenfolge: offene Stücke zuerst, dann die vergebenen (Archiv). Statuswörter nur aus den Daten.
+{% endcomment %}{% if band_stuecke %}<section class="lv-reiheabschnitt" id="stuecke" aria-labelledby="{% if shop_sichtbar %}stuecke-titel{% else %}archiv-titel{% endif %}">
+    <div class="lv-reihekopf">
+        <h2 class="lv-serif" id="{% if shop_sichtbar %}stuecke-titel{% else %}archiv-titel{% endif %}">{% if shop_sichtbar %}Stücke von Luviq{% else %}Frühere Stücke{% endif %}</h2>
+        <p class="lv-nr">{{ band_offen }} offen · {{ band_stuecke|length }} gezeigt</p>
+    </div>
+    <p class="lv-reihe-lead">Jedes Stück ist von Hand mit Bleiche gemalt – keins gleicht dem anderen.{% if not shop_sichtbar %} Die ersten Stücke Nº 001–005 zeigen als Referenz, wie Luviq aussieht. Sie sind bereits vergeben und nicht mehr kaufbar.{% endif %}</p>
+    <div class="lv-reihe-rahmen" role="region" aria-label="Stücke von Luviq, seitlich wischen" tabindex="0">
+        <ol class="lv-reihe">
+            {% for produkt in band_stuecke %}{% include 'shop1/teile/reihe_karte.html' %}{% endfor %}
+        </ol>
+    </div>
+    <p class="lv-reihefuss"><a class="lv-link" href="{% url 'produkte' %}">Alle Stücke ansehen</a>{% if motivanfrage_aktiv %} <a class="lv-link" href="{% url 'motiv_anfragen' %}">Eigenes Motiv anfragen</a>{% endif %}</p>
+</section>{% endif %}

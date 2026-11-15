@@ -1,0 +1,23 @@
+{% load custom_tags %}{% comment %}
+Karte im Wisch-Band (Start direkt unter dem Hero, /produkte/), 15.11.2026. Ein Stück, ein Bild (4:5, volle Helligkeit),
+oben links das Statusschild („Offen“ oder „Vergeben“, Wort und Klasse aus produkt.status_wort bzw. status_klasse – nie getippt),
+darunter Nº, Name, ehrliche Kurzzeile (produkt.band_hinweis: Serie, „Unikat · 1×“ nur bei genau einem Stück auf Lager,
+„Archiv · Referenzstück“). Offenes Stück: Preis und Knopf. Vergebenes Stück: Link auf die Archivseite und „Motiv anfragen“.
+`produkt`, `forloop` aus der Schleife; `erstes` = erste Karte lädt sofort (LCP), alle anderen lazy.
+{% endcomment %}{% with bild=produkt.hauptbild %}<li class="lv-reihekarte ist-{{ produkt.status_klasse }}">
+    <figure{% if not bild %} data-ohne-foto{% endif %}>{% if bild %}<a href="{{ produkt.get_absolute_url }}" tabindex="-1" aria-hidden="true"><img src="{{ bild.karte_src }}" srcset="{{ bild.karte_srcset }}" sizes="(min-width: 1024px) 24vw, (min-width: 640px) 40vw, 78vw" alt="{{ bild.alt }}" width="600" height="750"{% if erstes %} loading="eager" fetchpriority="high"{% else %} loading="lazy"{% endif %} decoding="async"></a>{% endif %}<span class="lv-reihestatus {{ produkt.status_klasse }}">{{ produkt.status_wort }}</span></figure>
+    <div class="lv-reihetext">
+        <p class="lv-nr">Nº {{ produkt.archiv_nummer }}</p>
+        <h{{ stufe|default:"3" }} class="lv-serif"><a href="{{ produkt.get_absolute_url }}">{{ produkt.name }}</a></h{{ stufe|default:"3" }}>
+        {% if produkt.band_hinweis %}<p class="lv-reihehinweis">{{ produkt.band_hinweis }}</p>{% endif %}
+        {% if not produkt.verkauft %}
+        {% if not shop_sichtbar %}<p class="lv-reihehinweis">{% if produkt.masse %}{{ produkt.masse }} · {% endif %}{% if produkt.material %}{{ produkt.material }} · {% endif %}{% if verkauf_ab %}Preis ab {{ verkauf_ab }}{% else %}Preis folgt{% endif %}</p>{% endif %}
+        {% if shop_sichtbar and produkt.kaufbar %}<p class="lv-reihepreis">{{ produkt.preis|floatformat:2 }} € <span>{{ versand_preissatz }}</span></p>{% endif %}
+        {% if anfrage_shop %}<p class="lv-reiheknopf"><a class="lv-knopf" href="{{ produkt.get_absolute_url }}#anfragen" data-ereignis="band_anfragen">Stück anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+        {% elif shop_sichtbar and direktkauf_aktiv and produkt.kaufbar %}<p class="lv-reiheknopf"><a class="lv-knopf" href="{{ produkt.get_absolute_url }}#bestellen" data-ereignis="band_bestellen">Jetzt bestellen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+        {% else %}<p class="lv-reiheknopf"><a class="lv-knopf linie" href="{{ produkt.get_absolute_url }}">Ansehen</a></p>{% endif %}
+        {% else %}
+        <p class="lv-reihelink">{% if motivanfrage_aktiv %}<a class="lv-link" href="{% url 'motiv_anfragen' %}">So ein Stück mit deinem Motiv</a>{% else %}<a class="lv-link" href="{{ produkt.get_absolute_url }}">Ansehen</a>{% endif %}</p>
+        {% endif %}
+    </div>
+</li>{% endwith %}

@@ -98,7 +98,7 @@ def startseite(request):
     hero['url'] = engel.get_absolute_url() if engel else reverse('produkte')
     hero['bildunterschrift'] = luviq_daten.HERO_BILDUNTERSCHRIFT
     from .direktkauf import direktkauf_aktiv as _dk
-    hero['kaufbar'] = bool(engel and engel.kaufbar and _dk())
+    hero['kaufbar'] = bool(engel and engel.kaufbar and (_dk() or verkauf.anfrageshop_aktiv()))
     hero['preis'] = engel.preis if engel else None
 
     # Mit Verkauf stehen die verfügbaren Stücke in einem eigenen Abschnitt, das
@@ -111,6 +111,9 @@ def startseite(request):
     kaufkarten = [p for p in verfuegbare if p.kaufbar] if _dk0() else []
     karten_ruhig = [p for p in verfuegbare if p not in kaufkarten]
     vergebene = [p for p in alle if p.verkauft][:10]
+    # 15.11.2026: Wisch-Band direkt unter dem Hero – offene Stücke zuerst, dann die vergebenen (Archiv).
+    # Der Status kommt aus den Daten (Produkt.status_klasse), nie aus dem Template.
+    band_stuecke = [p for p in alle if not p.verkauft][:8] + vergebene
 
     echt = []
     for name, breiten, (breite, hoehe), alt, unterschrift in luviq_daten.ECHT_FOTOS:
@@ -127,6 +130,8 @@ def startseite(request):
         'kaufkarten': kaufkarten,
         'karten_ruhig': karten_ruhig,
         'archiv_liste': vergebene,
+        'band_stuecke': band_stuecke,
+        'band_offen': len([p for p in band_stuecke if not p.verkauft]),
         'echt_titel': luviq_daten.ECHT_TITEL,
         'echt_text': luviq_daten.ECHT_TEXT,
         'echt_fotos': echt,
@@ -415,6 +420,8 @@ def produkte(request):
         'produkte_liste': produkte_liste,
         'verfuegbare_liste': verfuegbare,
         'vergebene_liste': vergebene,
+        'band_stuecke': verfuegbare + vergebene,
+        'band_offen': len(verfuegbare),
         # Erste Karte in der Anzeigereihenfolge = LCP-Bild (Preload in produkte.html).
         'erstes_stueck': (verfuegbare or vergebene or [None])[0],
         'krume': 'Shop' if (verfuegbare or verkauf.shop_sichtbar()) else 'Archiv',
@@ -468,7 +475,10 @@ def produkt_detail_slug(request, slug):
     serie = serie_kontext(produkt)
     # Häufige Fragen nur beim Engel-Shirt, solange es bestellbar ist (sichtbar + FAQPage, A5 02.11.2026).
     faq = []
-    if (produkt.slug == luviq_daten.ENGEL_STUECK['slug'] and verkauf.verkauf_aktiv() and produkt.kaufbar
+    if (produkt.slug == luviq_daten.ENGEL_STUECK['slug'] and verkauf.anfrageshop_aktiv() and produkt.kaufbar):
+        # Anfrage-Shop (15.11.2026): eigene Fassung ohne Kaufweg, Zahlungsart und Lieferfrist in Tagen.
+        faq = luviq_daten.engel_faq_anfrage(serie.get('bearbeitung', 0), f'{produkt.preis:.0f}')
+    elif (produkt.slug == luviq_daten.ENGEL_STUECK['slug'] and verkauf.verkauf_aktiv() and produkt.kaufbar
             and not verkauf.anfrageshop_aktiv()):
         faq = luviq_daten.engel_faq(serie.get('bearbeitung', 0),
                                     luviq_daten.VERSAND['lieferfrist_werktage'])
