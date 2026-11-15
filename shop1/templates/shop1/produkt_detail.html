@@ -41,17 +41,17 @@ SEO-Upgrade 02.11.2026 (A2): Archiv-/Referenzstücke (`vergeben`) sind nie verka
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "{% if verkauf_aktiv and not anfrage_shop and not produkt.vergeben %}Product{% else %}VisualArtwork{% endif %}",
+  "@type": "{% if shop_sichtbar and not anfrage_shop and not produkt.vergeben %}Product{% else %}VisualArtwork{% endif %}",
   "@id": "{{ seiten_url }}#product",
   "name": "{{ produkt.name|escapejs }}",
   "description": "{{ produkt.beschreibung|escapejs }}",{% if galerie %}
   "image": [{% for bild in galerie %}"{% if bild.original|slice:':4' == 'http' %}{{ bild.original }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ bild.original }}{% endif %}"{% if not forloop.last %}, {% endif %}{% endfor %}],{% endif %}{% if produkt.material %}
   "material": "{{ produkt.material|escapejs }}",{% endif %}
-  {% if verkauf_aktiv and not anfrage_shop and not produkt.vergeben %}"brand": {"@type": "Brand", "name": "Luviq"},{% if produkt.groesse %}
+  {% if shop_sichtbar and not anfrage_shop and not produkt.vergeben %}"brand": {"@type": "Brand", "name": "Luviq"},{% if produkt.groesse %}
   "size": "{{ produkt.groesse|escapejs }}",{% endif %}
   "sku": "LUVIQ-{{ produkt.id }}",{% else %}"creator": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},{% endif %}
   "dateModified": "{{ produkt.aktualisiert_am|date:'c' }}",
-  "datePublished": "{{ produkt.erstellt_am|date:'c' }}"{% if verkauf_aktiv and not anfrage_shop and not produkt.vergeben %},
+  "datePublished": "{{ produkt.erstellt_am|date:'c' }}"{% if shop_sichtbar and not anfrage_shop and not produkt.vergeben %},
   "offers": {
     "@type": "Offer",
     "@id": "{{ seiten_url }}#offer",
@@ -120,9 +120,9 @@ SEO-Upgrade 02.11.2026 (A2): Archiv-/Referenzstücke (`vergeben`) sind nie verka
             <p class="lv-stueck-nummer">Nº {{ produkt.archiv_nummer }}</p>
             <h1 class="lv-serif">{{ produkt.name }}</h1>
             {% if produkt.verkauft %}<p class="lv-stueck-zustand"><b>{{ produkt.band_wort }}</b> · Archiv</p>
-            {% elif verkauf_aktiv and produkt.kaufbar %}<p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} € <span class="lv-stueck-preis-zusatz">{{ versand_preissatz }}{% if anfrage_shop %}<br>Das ist eine Anfrage, keine Bestellung: Größe und Lieferung klären wir persönlich. <a href="#anfragen">Zur Anfrage</a>{% elif direktkauf_aktiv %}<br>Bezahlt wird nach der Bestellung per Zahlungslink aus deiner Mail{% if serie %}, gemalt wird nach der Zahlung{% endif %}. <a href="#bezahlen-titel">So bezahlst du</a>{% endif %}</span></p>
+            {% elif shop_sichtbar and produkt.kaufbar %}<p class="lv-stueck-preis">{{ produkt.preis|floatformat:2 }} € <span class="lv-stueck-preis-zusatz">{{ versand_preissatz }}{% if anfrage_shop %}<br>Das ist eine Anfrage, keine Bestellung: Größe und Lieferung klären wir persönlich. <a href="#anfragen">Zur Anfrage</a>{% elif direktkauf_aktiv %}<br>Bezahlt wird nach der Bestellung per Zahlungslink aus deiner Mail{% if serie %}, gemalt wird nach der Zahlung{% endif %}. <a href="#bezahlen-titel">So bezahlst du</a>{% endif %}</span></p>
             {% else %}<p class="lv-stueck-zustand">{% if serie %}Serie{% else %}Unikat{% endif %} · {{ shop_oeffnet }}</p>{% endif %}
-            {% if verkauf_aktiv and produkt.kaufbar and not anfrage_shop %}<ul class="lv-fakten" aria-label="Das Wichtigste zum Kauf">
+            {% if shop_sichtbar and produkt.kaufbar and not anfrage_shop %}<ul class="lv-fakten" aria-label="Das Wichtigste zum Kauf">
                 {% if produkt.masse %}<li><b>Größe</b> {{ produkt.masse }}</li>{% endif %}
                 {% if serie and motivanfrage_aktiv %}<li><b>Passt nicht?</b><span>M passt nicht, oder du willst den Engel auf deinem eigenen Shirt oder Hoodie? <a href="{% url 'motiv_anfragen' %}">Frag ein eigenes Stück an.</a> Kostet nichts, ist keine Bestellung, ich melde mich persönlich.</span></li>{% endif %}
                 {% if serie and bearbeitung %}<li><b>Lieferzeit</b> Bearbeitung ca. {{ bearbeitung }} Werktage, dann Versand · innerhalb von {{ lieferfrist }} Werktagen {{ frist_beginn }}</li>{% else %}<li><b>Lieferzeit</b> innerhalb von {{ lieferfrist }} Werktagen {{ frist_beginn }}</li>{% endif %}
@@ -131,8 +131,8 @@ SEO-Upgrade 02.11.2026 (A2): Archiv-/Referenzstücke (`vergeben`) sind nie verka
             </ul>{% endif %}
             <p class="lv-stueck-knoepfe">
                 {% comment %}Verkaufsschalter: ohne Verkauf kein Warenkorb-Knopf, sondern die Warteliste (Newsletter mit Double-Opt-in auf der Startseite) und die Frage zum Stück.{% endcomment %}
-                {% if not verkauf_aktiv or not produkt.kaufbar %}
-                <a class="lv-knopf" href="{% url 'home' %}#newsletter-form">{% if verkauf_aktiv %}Für das nächste Stück vormerken{% else %}Auf die Warteliste{% endif %} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                {% if not shop_sichtbar or not produkt.kaufbar %}
+                <a class="lv-knopf" href="{% url 'home' %}#newsletter-form">{% if shop_sichtbar %}Für das nächste Stück vormerken{% else %}Auf die Warteliste{% endif %} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
                 <a class="lv-link" href="{% url 'kontakt' %}">Frage zum Stück</a>
                 {% elif anfrage_shop %}
                 {% comment %}Anfrage-Shop (14.11.2026): der Knopf springt zum Anfrageformular weiter unten.{% endcomment %}
@@ -163,22 +163,22 @@ SEO-Upgrade 02.11.2026 (A2): Archiv-/Referenzstücke (`vergeben`) sind nie verka
                 {% if produkt.zustand %}<dt>Stück</dt><dd>{{ produkt.zustand }}</dd>{% endif %}
             </dl>
             {% comment %}EIG84: Preis und Kaufweg nur für ein Stück, das noch da ist (`Produkt.kaufbar`: aktiv, nicht vergeben, vorrätig); sonst derselbe „vergeben“-Zustand wie ohne Verkauf, statt eines Knopfes, der auf der Startseite endet.{% endcomment %}
-            {% if verkauf_aktiv and produkt.kaufbar %}
+            {% if shop_sichtbar and produkt.kaufbar %}
             {% comment %}Versand innerhalb Deutschlands ist im Preis enthalten (Bastian 30.10.2026, luviq_daten.VERSAND['kosten'] = 0): die Preisangabe sagt das direkt am Preis (PAngV) statt „zuzüglich Versandkosten“.{% endcomment %}
-            <p class="lv-klein">Gesamtpreis, {{ versand_preissatz }}. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. {% if anfrage_shop %}Das ist eine Anfrage, keine Bestellung; Zahlung und Versand klärt Luisa persönlich mit dir.{% elif direktkauf_aktiv %}Bezahlt wird im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}PayPal{% if ueberweisung_moeglich %} oder Vorab-Überweisung{% endif %}{% endif %} · {{ liefer_satz }}</p>
+            <p class="lv-klein">Gesamtpreis, {{ versand_preissatz }}. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. {% if anfrage_shop %}Das ist eine Anfrage, keine Bestellung; Zahlung und Versand klärt Luisa persönlich mit dir.{% elif direktkauf_aktiv %}Bezahlt wird im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}PayPal{% if ueberweisung_moeglich %} oder Vorab-Überweisung{% endif %}{% endif %}{% if not anfrage_shop %} · {{ liefer_satz }}{% endif %}</p>
             {% comment %}GPSR (VO (EU) 2023/988 Art. 19): Herstellerangaben und Kennnummer im Online-Angebot. Luisa verändert die Teile wesentlich und verkauft unter eigener Marke, sie gilt als Herstellerin. Nur mit Verkauf, Werte aus luviq_daten.ANBIETERIN und luviq_daten.PFLEGE.{% endcomment %}
             <p class="lv-klein">Herstellerin: {{ anbieterin.name }} ({{ anbieterin.geschaeft }}), {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.email }} · Kennnummer Nº {{ produkt.archiv_nummer }} · Pflege: {{ pflege }}</p>
             {% elif produkt.verkauft %}
-            <p class="lv-status">Nº {{ produkt.archiv_nummer }} · Archiv · {% if produkt.ist_referenz %}Referenzstück, bereits vergeben{% else %}Bereits vergeben{% endif %} · {% if verkauf_aktiv %}Das nächste Stück vormerken{% else %}Neue Stücke mit dem ersten Drop{% endif %}</p>
+            <p class="lv-status">Nº {{ produkt.archiv_nummer }} · Archiv · {% if produkt.ist_referenz %}Referenzstück, bereits vergeben{% else %}Bereits vergeben{% endif %} · {% if shop_sichtbar %}Das nächste Stück vormerken{% else %}Neue Stücke mit dem ersten Drop{% endif %}</p>
             {% endif %}
-            {% if verkauf_aktiv and produkt.kaufbar and user.is_authenticated and not direktkauf_aktiv and not anfrage_shop %}<form id="lv-in-den-warenkorb" method="post" action="{% url 'add_to_cart' produkt.id %}?next=warenkorb" hidden>{% csrf_token %}</form>{% endif %}
+            {% if shop_sichtbar and produkt.kaufbar and user.is_authenticated and not direktkauf_aktiv and not anfrage_shop %}<form id="lv-in-den-warenkorb" method="post" action="{% url 'add_to_cart' produkt.id %}?next=warenkorb" hidden>{% csrf_token %}</form>{% endif %}
             {% comment %}Hinweistext: die ersten zwei Sätze sichtbar, der Rest in <details> (bleibt für Google lesbar).{% endcomment %}
             {% if anfrage_shop and produkt.kaufbar %}
             {% include 'shop1/teile/stueckanfrage_formular.html' %}
             <div class="lv-stueck-hinweis">
                 <p>Die Preise sind Endpreise, nach § 19 UStG wird keine Umsatzsteuer berechnet. Nach deiner Anfrage melde ich mich persönlich bei dir; erst danach entscheiden wir gemeinsam, ob und wie es weitergeht. Fragen zu Größe, Zustand und Lieferung beantworte ich dir dabei.</p>
             </div>
-            {% elif verkauf_aktiv and produkt.kaufbar and direktkauf_aktiv %}
+            {% elif shop_sichtbar and produkt.kaufbar and direktkauf_aktiv %}
             {% include 'shop1/teile/direktkauf_formular.html' %}
             {% if direktkauf_zustand == 'bestellbar' %}<a class="lv-kaufleiste" href="#bestellen" data-kaufleiste hidden>Jetzt bestellen · {{ produkt.preis|floatformat:0 }} €</a>
             <script nonce="{{ csp_nonce }}">
@@ -196,7 +196,7 @@ SEO-Upgrade 02.11.2026 (A2): Archiv-/Referenzstücke (`vergeben`) sind nie verka
                 <details class="lv-mehr"><summary>Mehr zum Kauf</summary>
                 <p>Gekauft wird ohne Konto: Du bestellst mit Name, E-Mail-Adresse und Anschrift, {% if serie %}Luisa Brehler schickt dir die Rechnung mit dem Zahlungslink und malt dein Shirt nach deiner Zahlung neu von Hand{% else %}das Stück ist danach für dich reserviert, und Luisa Brehler schickt dir die Rechnung mit dem Zahlungslink{% endif %}. Für die Bestellung gilt das Widerrufsrecht von 14 Tagen ab dem Tag, an dem die Ware angekommen ist (§ 8 der AGB); die unmittelbaren Kosten einer Rücksendung trägst du. Pinselstriche und Bleichkanten sind bei jedem Stück anders und Teil der Gestaltung{% if produkt.zustand and not produkt.ist_neu %}; Gebrauchsspuren eines gebrauchten Basisteils beschreiben oder zeigen wir beim Stück{% endif %} (§ 7 der AGB). Deine gesetzlichen Rechte bei Mängeln bleiben unberührt (§ 10 der AGB). {% if serie %}Die Fotos zeigen ein fertiges Shirt dieser Serie; deins sieht ihm sehr ähnlich, nie genau gleich.{% else %}Die Fotos zeigen genau dieses Teil; ein zweites Exemplar zum Vergleich gibt es nicht.{% endif %}</p></details>
             </div>
-            {% elif verkauf_aktiv and produkt.kaufbar %}
+            {% elif shop_sichtbar and produkt.kaufbar %}
             <div class="lv-stueck-hinweis">
                 <p>Bezahlt wird per PayPal{% if ueberweisung_moeglich %} oder Vorab-Überweisung{% endif %}; der angezeigte Preis ist ein Endpreis, nach § 19 UStG wird keine Umsatzsteuer berechnet, und der Versand innerhalb Deutschlands ist schon enthalten. Geliefert wird innerhalb von {{ lieferfrist }} Werktagen (AGB § 5). {{ umtausch_satz }}</p>
                 <details class="lv-mehr"><summary>Mehr zum Kauf</summary>
@@ -204,7 +204,7 @@ SEO-Upgrade 02.11.2026 (A2): Archiv-/Referenzstücke (`vergeben`) sind nie verka
             </div>
             {% elif produkt.verkauft %}
             <div class="lv-stueck-hinweis">
-                <p>{% if produkt.ist_referenz %}Dieses Stück ist eines der ersten Referenzstücke und bereits vergeben.{% else %}Dieses Stück ist bereits vergeben.{% endif %} {% if verkauf_aktiv %}Für das nächste Stück kannst du dich vormerken lassen{% else %}Neue Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein{% endif %}: Eine E-Mail-Adresse genügt, ein Konto ist dafür nicht nötig, und erst nach der Bestätigung über den Link in der E-Mail kommt Post.</p>
+                <p>{% if produkt.ist_referenz %}Dieses Stück ist eines der ersten Referenzstücke und bereits vergeben.{% else %}Dieses Stück ist bereits vergeben.{% endif %} {% if shop_sichtbar %}Für das nächste Stück kannst du dich vormerken lassen{% else %}Neue Stücke gibt es mit dem ersten Drop – trag dich in die Warteliste ein{% endif %}: Eine E-Mail-Adresse genügt, ein Konto ist dafür nicht nötig, und erst nach der Bestätigung über den Link in der E-Mail kommt Post.</p>
                 <details class="lv-mehr"><summary>Mehr zu diesem Stück</summary>
                 <p>Pinselstriche und Bleichkanten sind bei jedem Stück anders und Teil der Gestaltung. Die Fotos zeigen genau dieses Teil; ein zweites Exemplar gibt es nicht, und Fragen zum Stück oder zur Arbeitsweise gehen über das Kontaktformular. Das Motiv entsteht direkt auf dem Stoff, mit Pinsel und Bleiche, und wird nicht wiederholt – darum trägt das Stück den Zusatz 1-of-1. Grundlage ist ein hochwertiges Teil, gebraucht oder neu, das Luisa Brehler selbst ausgesucht hat, weil sich Stoff und Schnitt als Leinwand eignen. Ein Ladengeschäft zum Anschauen gibt es nicht.</p></details>
             </div>

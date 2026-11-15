@@ -417,7 +417,7 @@ def produkte(request):
         'vergebene_liste': vergebene,
         # Erste Karte in der Anzeigereihenfolge = LCP-Bild (Preload in produkte.html).
         'erstes_stueck': (verfuegbare or vergebene or [None])[0],
-        'krume': 'Shop' if (verfuegbare or verkauf.verkauf_aktiv()) else 'Archiv',
+        'krume': 'Shop' if (verfuegbare or verkauf.shop_sichtbar()) else 'Archiv',
     })
 
 

@@ -105,18 +105,25 @@ def verkauf_aktiv():
 
 def verkauf_kontext(request):
     """Kontextprozessor: ``verkauf_aktiv`` für jede Vorlage."""
-    return {'verkauf_aktiv': verkauf_aktiv(), 'shop_oeffnet': oeffnungs_satz(),
+    anfrage_ohne_verkauf = anfrageshop_aktiv() and not verkauf_aktiv()
+    return {'verkauf_aktiv': verkauf_aktiv(), 'shop_oeffnet': '' if anfrage_ohne_verkauf else oeffnungs_satz(),
             'verkauf_ab': verkauf_ab(), 'direktkauf_aktiv': direktkauf_aktiv(),
-            'anfrage_shop': anfrageshop_aktiv()}
+            'anfrage_shop': anfrageshop_aktiv(), 'shop_sichtbar': shop_sichtbar()}
 
 
 def anfrageshop_aktiv():
-    """True, wenn verkauft wird **und** der Anfrage-Shop den Kaufweg ersetzt (``settings.ANFRAGESHOP``).
+    """True, wenn der Anfrage-Shop läuft (``settings.ANFRAGESHOP``) – **unabhängig** von ``VERKAUF_AKTIV``.
 
-    Stücke und Preise bleiben sichtbar; Kaufen, Konto und Rabattcodes sind ausgeblendet, statt
-    „Jetzt bestellen“ gibt es die Stückanfrage (``views/stueckanfrage.py``). Nur mit Verkauf: ohne Verkauf
-    gilt weiter „Marke im Aufbau“ mit Warteliste."""
-    return verkauf_aktiv() and bool(getattr(settings, 'ANFRAGESHOP', False))
+    Stücke und Preise sind sichtbar; Kaufen, Konto und Rabattcodes sind ausgeblendet, statt „Jetzt bestellen“
+    gibt es die Stückanfrage (``views/stueckanfrage.py``). Die Startsperre (Rechtstexte, LUCID, Versand,
+    Widerruf) gilt nur für den Kaufweg; der Kaufweg bleibt bei aktivem Anfrage-Shop immer gesperrt.
+    Ohne Verkauf erscheinen weder AGB-, Widerrufs- noch Zahlungs-Fußzeilen (die hängen an ``verkauf_aktiv``)."""
+    return bool(getattr(settings, 'ANFRAGESHOP', False))
+
+
+def shop_sichtbar():
+    """True, wenn Stücke und Preise gezeigt werden: Verkauf läuft oder Anfrage-Shop (Vorlagen: ``shop_sichtbar``)."""
+    return verkauf_aktiv() or anfrageshop_aktiv()
 
 
 def direktkauf_aktiv():
@@ -139,17 +146,18 @@ class VerkaufsschalterMiddleware:
         return self.get_response(request)
 
     def process_view(self, request, view_func, view_args, view_kwargs):
+        if anfrageshop_aktiv():
+            # Kaufweg immer gesperrt, auch ohne VERKAUF_AKTIV (Bastian 14.11.2026).
+            treffer = getattr(request, 'resolver_match', None)
+            name = treffer.url_name if treffer else None
+            if name in KAUFROUTEN_JSON:
+                return JsonResponse({'error': 'Stücke werden angefragt, nicht gekauft.'}, status=409)
+            if name in KAUFROUTEN or name in ANFRAGESHOP_GESPERRT:
+                return redirect(reverse('produkte'))
+            if name == 'register':
+                return redirect(reverse('home'))
+            return None
         if verkauf_aktiv():
-            if anfrageshop_aktiv():
-                treffer = getattr(request, 'resolver_match', None)
-                name = treffer.url_name if treffer else None
-                if name in KAUFROUTEN_JSON:
-                    return JsonResponse({'error': 'Stücke werden angefragt, nicht gekauft.'}, status=409)
-                if name in KAUFROUTEN or name in ANFRAGESHOP_GESPERRT:
-                    return redirect(reverse('produkte'))
-                if name == 'register':
-                    return redirect(reverse('home'))
-                return None
             if direktkauf_aktiv():
                 treffer = getattr(request, 'resolver_match', None)
                 name = treffer.url_name if treffer else None

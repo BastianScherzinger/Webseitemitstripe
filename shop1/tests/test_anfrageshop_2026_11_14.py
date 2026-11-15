@@ -32,7 +32,7 @@ def _formzeit_alt():
 class AnfrageShopTest(LuviqTestCase):
     def setUp(self):
         super().setUp()
-        einstellungen = self.settings(VERKAUF_AKTIV=True, DIREKTKAUF=True, ANFRAGESHOP=True,
+        einstellungen = self.settings(VERKAUF_AKTIV=False, DIREKTKAUF=True, ANFRAGESHOP=True,
                                       MOTIV_EMPFAENGER='luisa@example.invalid')
         einstellungen.enable()
         self.addCleanup(einstellungen.disable)
@@ -136,14 +136,53 @@ class AnfrageShopTest(LuviqTestCase):
         self.assertRedirects(self.hole('/wissen/bestellen-und-bezahlen/'), '/wissen/', fetch_redirect_response=False)
 
     def test_schalter_aus_bringt_direktkauf_zurueck(self):
-        with override_settings(ANFRAGESHOP=False):
+        with override_settings(ANFRAGESHOP=False, VERKAUF_AKTIV=True):
             html = self.hole(self.stueck).content.decode()
             self.assertIn('Zahlungspflichtig bestellen', html)
             self.assertNotIn('id="anfragen"', html)
             self.assertEqual(self.hole(f'/bestellen/{self.produkt.slug}/').status_code, 200)
 
-    def test_ohne_verkauf_bleibt_die_warteliste(self):
-        with override_settings(VERKAUF_AKTIV=False):
+    def test_ohne_anfrageshop_und_ohne_verkauf_bleibt_die_warteliste(self):
+        with override_settings(ANFRAGESHOP=False, VERKAUF_AKTIV=False):
             html = self.hole(self.stueck).content.decode()
             self.assertNotIn('id="anfragen"', html)
+            self.assertIn('Warteliste', html)
             self.assertRedirects(self.sende(self.anfrage, self.daten()), self.stueck, fetch_redirect_response=False)
+
+    def test_anfrageshop_hangt_nicht_am_verkauf(self):
+        from shop1 import verkauf
+        self.assertFalse(verkauf.verkauf_aktiv())
+        self.assertTrue(verkauf.anfrageshop_aktiv())
+        with override_settings(ANFRAGESHOP=False):
+            self.assertFalse(verkauf.anfrageshop_aktiv())
+
+    def test_kaufrouten_bleiben_ohne_verkauf_gesperrt(self):
+        for pfad in (f'/bestellen/{self.produkt.slug}/', '/warenkorb/', '/checkout/', '/register/'):
+            with self.subTest(pfad=pfad):
+                antwort = self.hole(pfad)
+                self.assertEqual(antwort.status_code, 302, pfad)
+                self.assertNotIn('/login', antwort['Location'])
+
+    def test_seiten_ohne_verkauf_haben_keine_kaufsaetze_und_keine_kauf_fusszeilen(self):
+        verboten = ('Zahlungspflichtig', 'Jetzt bestellen', 'In den Warenkorb', 'Rabattcode', 'Zur Kasse',
+                    'Widerrufsbelehrung', 'Muster-Widerrufsformular', 'Vertrag widerrufen', 'PayPal',
+                    'Vorab-Überweisung', 'Zahlungslink', 'zum Kauf', 'Bestellvorgang', 'Der Shop öffnet',
+                    'noch nicht geöffnet', 'Auf die Warteliste', 'nicht zu kaufen', 'kaufen', 'AGB',
+                    'noch nicht im Verkauf', 'ersten Drop', 'im Aufbau', 'Werktage')
+        for pfad in ('/', '/produkte/', self.stueck, '/kontakt/', '/liefergebiet/', '/ueber_uns/', '/wissen/',
+                     '/gaestebuch/'):
+            antwort = self.hole(pfad)
+            if antwort.status_code != 200:
+                continue
+            html = re.sub(r'<script.*?</script>|<style.*?</style>|<!--.*?-->', '', antwort.content.decode(),
+                          flags=re.S)
+            text = re.sub(r'<[^>]+>', ' ', html)
+            for wort in verboten:
+                with self.subTest(pfad=pfad, wort=wort):
+                    self.assertNotIn(wort, text)
+
+    def test_schema_ohne_offer_ohne_verkauf(self):
+        html = self.hole(self.stueck).content.decode()
+        self.assertNotIn('"Offer"', html)
+        self.assertNotIn('"@type": "Product"', html)
+        self.assertNotIn('"Offer"', self.hole('/produkte/').content.decode())

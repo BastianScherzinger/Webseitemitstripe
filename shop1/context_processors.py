@@ -266,12 +266,15 @@ def _rahmen():
     nennt den abgestimmten Öffnungssatz wörtlich (``verkauf.oeffnungs_satz``)."""
     from . import luviq_daten, verkauf
     aktiv = verkauf.verkauf_aktiv()
+    anfrage = verkauf.anfrageshop_aktiv()
     motiv = settings.MOTIVANFRAGE_AKTIV
-    satz, knopf, route, anker = luviq_daten.leiste(aktiv, getattr(settings, 'VERKAUF_FRUEHESTENS', None))
+    # Anfrage-Shop (ohne Verkauf): Stücke ansehen statt Vormerken; Kopfzeile sagt „auf Anfrage“, nicht „Shop ist offen“.
+    satz, knopf, route, anker = luviq_daten.leiste(aktiv or anfrage, getattr(settings, 'VERKAUF_FRUEHESTENS', None))
     return {
-        'hinweis': luviq_daten.hinweis(aktiv, verkauf.oeffnungs_satz()),
-        'navigation': luviq_daten.navigation(aktiv, motiv),
-        'fuss_gruppen': luviq_daten.fuss(aktiv, motiv),
+        'hinweis': (['Stücke auf Anfrage'] + luviq_daten.hinweis(aktiv, verkauf.oeffnungs_satz())[1:]
+                    if anfrage and not aktiv else luviq_daten.hinweis(aktiv, verkauf.oeffnungs_satz())),
+        'navigation': luviq_daten.navigation(aktiv or anfrage, motiv),
+        'fuss_gruppen': luviq_daten.fuss(aktiv or anfrage, motiv),
         'leiste': {'satz': satz, 'knopf': knopf, 'route': route, 'anker': anker},
         'leiste_aus': sorted(luviq_daten.LEISTE_AUS),
     }

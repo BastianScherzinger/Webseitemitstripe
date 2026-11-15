@@ -42,18 +42,18 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "{% if verkauf_aktiv %}Wie lange dauert die Lieferung?{% else %}Kann ich schon bestellen?{% endif %}",
+          "name": "{% if verkauf_aktiv %}Wie lange dauert die Lieferung?{% elif anfrage_shop %}Wie komme ich an ein Stück?{% else %}Kann ich schon bestellen?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Geliefert wird innerhalb von {{ lieferfrist }} Werktagen, nur innerhalb Deutschlands; der Versand ist im Preis enthalten.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten als Referenz und nicht zu kaufen; Fragen dazu gehen über dieses Formular.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Geliefert wird innerhalb von {{ lieferfrist }} Werktagen, nur innerhalb Deutschlands; der Versand ist im Preis enthalten.{% elif anfrage_shop %}Über die Stückanfrage auf der Seite des Stücks: Name, E-Mail-Adresse und gewünschte Größe angeben und absenden. Luisa Brehler meldet sich persönlich. Eine Anfrage ist keine Bestellung; nichts wird bezahlt oder reserviert.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten als Referenz und nicht zu kaufen; Fragen dazu gehen über dieses Formular.{% endif %}"
           }
         },
         {
           "@type": "Question",
-          "name": "{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}",
+          "name": "{% if verkauf_aktiv %}Zahlungsmethoden?{% elif anfrage_shop %}Wie geht es nach der Anfrage weiter?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
+            "text": "{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% elif anfrage_shop %}Luisa Brehler antwortet persönlich per E-Mail und klärt mit dir Größe, Zahlung und Versand. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
           }
         }{% if abholung.text %},
         {
@@ -83,7 +83,7 @@
     <section class="lv-kontaktseite" aria-labelledby="kontakt-titel">
         <div class="lv-kontakt-text">
             <h1 class="lv-serif lv-satz" id="kontakt-titel">Kontakt</h1>
-            <p class="lv-lead">Luviq ist {% if verkauf_aktiv %}ein reiner Online-Shop{% else %}ein Label im Aufbau{% endif %} aus Lübeck. Ein Ladengeschäft gibt es nicht, deshalb auch keine Öffnungszeiten.</p>
+            <p class="lv-lead">Luviq ist {% if verkauf_aktiv %}ein reiner Online-Shop{% elif anfrage_shop %}ein kleines Label{% else %}ein Label im Aufbau{% endif %} aus Lübeck. Ein Ladengeschäft gibt es nicht, deshalb auch keine Öffnungszeiten.</p>
             <p class="lv-lead">Luisa Brehler erreichst du über das Formular oder per E-Mail an brehlerluisa@gmail.com; geantwortet wird in der Regel {{ antwort }}{% if motivanfrage_aktiv %}; wer ein eigenes Motiv möchte, fragt es über die <a href="{% url 'motiv_anfragen' %}">Motivanfrage</a> an, von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv{% endif %}.</p>
             <p>Kooperation, Laden, Presse? Schreib mir über das Kontaktformular, gleiche Adresse wie für alles andere.</p>
 
@@ -169,12 +169,12 @@
         <h2 class="lv-serif lv-abschnittstitel" id="kontakt-faq">Häufige Fragen</h2>
         <div class="lv-faq">
             <div>
-                <h3>{% if verkauf_aktiv %}Wie lange dauert die Lieferung?{% else %}Kann ich schon bestellen?{% endif %}</h3>
-                <p>{% if verkauf_aktiv %}Geliefert wird innerhalb von {{ lieferfrist }} Werktagen, nur innerhalb Deutschlands; der Versand ist im Preis enthalten.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten als Referenz und nicht zu kaufen; Fragen dazu gehen über dieses Formular.{% endif %}</p>
+                <h3>{% if verkauf_aktiv %}Wie lange dauert die Lieferung?{% elif anfrage_shop %}Wie komme ich an ein Stück?{% else %}Kann ich schon bestellen?{% endif %}</h3>
+                <p>{% if verkauf_aktiv %}Geliefert wird innerhalb von {{ lieferfrist }} Werktagen, nur innerhalb Deutschlands; der Versand ist im Preis enthalten.{% elif anfrage_shop %}Über die Stückanfrage auf der Seite des Stücks: Name, E-Mail-Adresse und gewünschte Größe angeben und absenden. Luisa Brehler meldet sich persönlich. Eine Anfrage ist keine Bestellung; nichts wird bezahlt oder reserviert.{% else %}Noch nicht. Luviq Universe ist eine Marke im Aufbau, der Shop öffnet mit dem ersten Drop. Die Stücke auf dieser Seite sind bisherige Arbeiten als Referenz und nicht zu kaufen; Fragen dazu gehen über dieses Formular.{% endif %}</p>
             </div>
             <div>
-                <h3>{% if verkauf_aktiv %}Zahlungsmethoden?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h3>
-                <p>{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
+                <h3>{% if verkauf_aktiv %}Zahlungsmethoden?{% elif anfrage_shop %}Wie geht es nach der Anfrage weiter?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h3>
+                <p>{% if verkauf_aktiv %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% elif anfrage_shop %}Luisa Brehler antwortet persönlich per E-Mail und klärt mit dir Größe, Zahlung und Versand. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
             </div>
             {% if abholung.text %}
             <div>

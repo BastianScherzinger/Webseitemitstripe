@@ -9,8 +9,8 @@ FILME) · Luisa · Archiv · Warteliste. Alle Texte aus shop1/luviq_daten.py (ü
 View und Kontextprozessor), kein Datum hier.
 {% endcomment %}
 
-{% block title %}Handbemalte Shirts &amp; Unikate online kaufen in Lübeck | Luviq{% endblock %}
-{% block meta_description %}{% if verkauf_aktiv %}Luviq aus Lübeck: handbemalte Second-Hand-Shirts und Unikate, von Hand mit Bleiche gemalt. Versand inklusive, Lieferung in ganz Deutschland. Jetzt ansehen.{% else %}Luviq aus Lübeck: handbemalte Second-Hand-Shirts und Unikate, von Hand mit Bleiche gemalt. Versand deutschlandweit. Eigenes Motiv jetzt anfragen.{% endif %}{% endblock %}
+{% block title %}{% if anfrage_shop %}Handbemalte Shirts &amp; Unikate aus Lübeck anfragen | Luviq{% else %}Handbemalte Shirts &amp; Unikate online kaufen in Lübeck | Luviq{% endif %}{% endblock %}
+{% block meta_description %}{% if shop_sichtbar %}Luviq aus Lübeck: handbemalte Second-Hand-Shirts und Unikate, von Hand mit Bleiche gemalt. Versand inklusive, Lieferung in ganz Deutschland. Jetzt ansehen.{% else %}Luviq aus Lübeck: handbemalte Second-Hand-Shirts und Unikate, von Hand mit Bleiche gemalt. Versand deutschlandweit. Eigenes Motiv jetzt anfragen.{% endif %}{% endblock %}
 {% block og_title %}Luviq Universe – Sag mir, was du willst, ich mal’s dir{% endblock %}
 {% block og_description %}Handbemalte Stücke aus Lübeck, gebraucht oder neu, immer hochwertig. Du sagst Luisa, was drauf soll, sie schickt dir Vorschläge, und dann entsteht dein Stück. Jedes Stück ist von Hand gemalt, keins gleicht dem anderen.{% endblock %}
 {% block og_image_tag %}
@@ -31,8 +31,8 @@ View und Kontextprozessor), kein Datum hier.
   "@context": "https://schema.org",
   "@type": "ItemList",
   "@id": "{{ request.scheme }}://{{ request.get_host }}/#archiv",
-  "name": "{% if verkauf_aktiv %}Aktuelle Stücke – Luviq Universe Lübeck{% else %}Bisherige Stücke – Archiv von Luviq Universe Lübeck{% endif %}",
-  "description": "{% if verkauf_aktiv %}Handbemalte Upcycling-Mode aus Lübeck – von Hand mit Bleiche gemalt, keins gleicht dem anderen.{% else %}Handbemalte Upcycling-Mode aus Lübeck – bisherige Stücke als Referenz.{% endif %}",
+  "name": "{% if shop_sichtbar %}Aktuelle Stücke – Luviq Universe Lübeck{% else %}Bisherige Stücke – Archiv von Luviq Universe Lübeck{% endif %}",
+  "description": "{% if shop_sichtbar %}Handbemalte Upcycling-Mode aus Lübeck – von Hand mit Bleiche gemalt, keins gleicht dem anderen.{% else %}Handbemalte Upcycling-Mode aus Lübeck – bisherige Stücke als Referenz.{% endif %}",
   "url": "{{ request.scheme }}://{{ request.get_host }}/",
   "itemListElement": [{% for produkt in produkte_galerie %}
     {"@type": "ListItem", "position": {{ forloop.counter }}, "name": "{{ produkt.name|escapejs }}", "url": "{{ request.scheme }}://{{ request.get_host }}{{ produkt.get_absolute_url }}"}{% if not forloop.last %},{% endif %}{% endfor %}
@@ -120,9 +120,9 @@ View und Kontextprozessor), kein Datum hier.
     <!-- ═══ Kaufbare Stücke direkt unter dem Hero (Redesign 01.11.2026): große Karte mit Bild, Name, Preis, „Jetzt bestellen“; ohne Verkauf die ruhige Archivkarte ═══ -->
     <section class="lv-abschnitt lv-kauf" id="stuecke" aria-labelledby="stuecke-titel">
         <div class="lv-abschnittskopf">
-            <h2 class="lv-serif" id="stuecke-titel">{% if verkauf_aktiv %}Jetzt im Shop{% elif verfuegbare|length == 1 %}Das erste Stück{% else %}Die ersten Stücke{% endif %}</h2>
+            <h2 class="lv-serif" id="stuecke-titel">{% if shop_sichtbar %}Jetzt im Shop{% elif verfuegbare|length == 1 %}Das erste Stück{% else %}Die ersten Stücke{% endif %}</h2>
             <div class="lv-abschnittskopf-r">
-                <p>{% if not verkauf_aktiv %}{{ shop_oeffnet }} {% endif %}Jedes Stück ist von Hand mit Bleiche gemalt – keins gleicht dem anderen.</p>
+                <p>{% if not shop_sichtbar %}{{ shop_oeffnet }} {% endif %}Jedes Stück ist von Hand mit Bleiche gemalt – keins gleicht dem anderen.</p>
                 <a class="lv-link" href="{% url 'produkte' %}">Alle Stücke</a>
             </div>
         </div>
@@ -245,7 +245,7 @@ View und Kontextprozessor), kein Datum hier.
             <footer>{{ zitat_quelle }}</footer>
         </blockquote>
         <div class="lv-luisa-text">
-            <p>Luviq ist ein Ein-Personen-Atelier, <a href="{% url 'liefergebiet' %}#alsfeld">angefangen in Alsfeld, heute in Lübeck</a>. Einen Laden zum Anschauen gibt es nicht{% if verkauf_aktiv %}: Luviq ist ein Online-Shop, bestellt wird auf dieser Seite, geliefert wird in ganz Deutschland{% endif %}. Die Teile sind hochwertig, gebraucht oder neu, die Motive freihand, mit Pinsel und Bleiche, bald auch mit Textilfarbe.</p>
+            <p>Luviq ist ein Ein-Personen-Atelier, <a href="{% url 'liefergebiet' %}#alsfeld">angefangen in Alsfeld, heute in Lübeck</a>. Einen Laden zum Anschauen gibt es nicht{% if shop_sichtbar and not anfrage_shop %}: Luviq ist ein Online-Shop, bestellt wird auf dieser Seite, geliefert wird in ganz Deutschland{% elif anfrage_shop %}: Stücke werden auf dieser Seite angefragt, Luisa meldet sich persönlich{% endif %}. Die Teile sind hochwertig, gebraucht oder neu, die Motive freihand, mit Pinsel und Bleiche, bald auch mit Textilfarbe.</p>
             <a class="lv-link" href="{% url 'ueber_uns' %}">Mehr über Luisa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
     </section>
@@ -273,7 +273,7 @@ View und Kontextprozessor), kein Datum hier.
 
     <!-- ═══ Warteliste = Newsletter mit Double-Opt-in, das einzige Formular der Seite ═══ -->
     <section class="lv-warteliste" id="warteliste" aria-labelledby="warteliste-titel">
-        <h2 class="lv-serif" id="warteliste-titel">{% if verkauf_aktiv %}Für das nächste Stück vormerken{% else %}Neue Stücke zuerst per Mail{% endif %}</h2>
+        <h2 class="lv-serif" id="warteliste-titel">{% if shop_sichtbar %}Für das nächste Stück vormerken{% else %}Neue Stücke zuerst per Mail{% endif %}</h2>
         {% comment %}Ohne JavaScript schickt das Formular klassisch per POST (EIG89/EIG129); mit JavaScript übernimmt das Skript unten. Honigtopf und Zeitfalle wie beim Kontaktformular (shop1/spamschutz.py). Der Datenschutzhinweis gehört zum Formular (KV05). Die Sprungmarke #newsletter-form sitzt auf der Feldzeile.{% endcomment %}
         <form class="lv-warteliste-form" method="post" action="{% url 'newsletter_subscribe' %}" data-newsletter novalidate>
             {% csrf_token %}
