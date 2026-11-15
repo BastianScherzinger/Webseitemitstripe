@@ -993,4 +993,7 @@ body:has([data-kaufleiste]) .lv-leiste{display:none!important}
 .lv-abschnittskopf.lv-kopf-eins p{justify-self:start;max-width:62ch}
 .lv-reiheabschnitt+.lv-reiheabschnitt{border-top:0}
 .lv-abschnitt .lv-reihe-rahmen{margin-inline:calc(var(--rand)*-1)}
-.lv-reihe-lead{margin:0;padding:0 var(--rand);margin-bottom:var(--lv-raum-4);color:var(--lv-leise);max-width:62ch}
+.lv-reihe-lead{margin:0 0 var(--lv-raum-4);padding:0 var(--rand);color:var(--lv-leise);max-width:calc(62ch + 2 * var(--rand));box-sizing:border-box}
+/* Stückseite (Anfrage-Shop): Knopf direkt unter dem Preis, nur am Handy; unten bleibt der Knopf nur für große Bildschirme */
+.lv-stueck-direkt{display:none;margin:0 0 16px}
+@media (max-width:760px){.lv-stueck-direkt{display:block}.lv-stueck-direkt .lv-knopf{display:flex;justify-content:center;width:100%}.lv-stueck-knoepfe .lv-knopf-nur-desktop{display:none}}

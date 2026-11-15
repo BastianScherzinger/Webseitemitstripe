@@ -276,5 +276,5 @@ def _rahmen():
         'navigation': luviq_daten.navigation(aktiv or anfrage, motiv),
         'fuss_gruppen': luviq_daten.fuss(aktiv or anfrage, motiv),
         'leiste': {'satz': satz, 'knopf': knopf, 'route': route, 'anker': anker},
-        'leiste_aus': sorted(luviq_daten.LEISTE_AUS),
+        'leiste_aus': sorted(luviq_daten.LEISTE_AUS | ({'produkte'} if anfrage else set())),
     }

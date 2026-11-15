@@ -99,7 +99,7 @@
     <header class="lv-wissen-kopf">
         <h1 class="lv-serif">Wie entsteht aus meiner Idee ein handbemaltes Stück?</h1>
         <div class="lv-wissen-meta">Wissen{% if seite %} · Aktualisiert am <time datetime="{{ seite.stand }}">{{ seite.stand_anzeige }}</time>{% endif %}</div>
-        <p class="lv-wissen-lead">{% if not verkauf_aktiv %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Du sagst Luisa, was du willst, sie schickt dir Vorschläge, ihr entscheidet zusammen – und erst dann malt sie dein Motiv mit Bleiche und Pinsel auf ein Einzelstück. Hier steht, was dabei in welcher Reihenfolge passiert.</p>
+        <p class="lv-wissen-lead">{% if not verkauf_aktiv and not anfrage_shop %}Hinweis: Luviq Universe ist eine Marke im Aufbau, derzeit findet kein Verkauf statt. {% endif %}Du sagst Luisa, was du willst, sie schickt dir Vorschläge, ihr entscheidet zusammen – und erst dann malt sie dein Motiv mit Bleiche und Pinsel auf ein Einzelstück. Hier steht, was dabei in welcher Reihenfolge passiert.</p>
     </header>
 
     <div class="lv-wissen-liste">

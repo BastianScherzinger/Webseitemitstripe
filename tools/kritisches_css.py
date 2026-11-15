@@ -47,11 +47,11 @@ PROFILE = {
               "lv-satz", "lv-lead", "linie", "lv-vertrauen-leiste", "lv-vertrauen",
               "lv-anfragen", "lv-ablauf", "lv-anfragekasten", "lv-frage", "lv-chips", "lv-chip",},
     # Archiv: Raster aus Karten.
-    "archiv": {"lv-kopf-eins", "lv-reiheabschnitt", "lv-reihekopf", "lv-reihe-rahmen", "lv-reihe", "lv-reihekarte", "lv-reihestatus", "lv-reihetext", "lv-reihehinweis", "lv-reihepreis", "lv-reiheknopf", "lv-reihelink", "lv-reihefuss", "lv-raster", "lv-karte", "lv-karte-kauf", "lv-karte-kopf", "lv-material", "lv-preis", "lv-leer"},
+    "archiv": {"lv-kopf-eins", "lv-reiheabschnitt", "lv-reihekopf", "lv-reihe-lead", "lv-reihe-rahmen", "lv-reihe", "lv-reihekarte", "lv-reihestatus", "lv-reihetext", "lv-reihehinweis", "lv-reihepreis", "lv-reiheknopf", "lv-reihelink", "lv-reihefuss", "lv-raster", "lv-karte", "lv-karte-kauf", "lv-karte-kopf", "lv-material", "lv-preis", "lv-leer"},
     # Stückseite: Bild, Nummer, Datenliste, Knöpfe.
     "stueck": {"lv-stueck", "lv-stueck-bild", "lv-stueck-nummer", "lv-stueck-text",
                "lv-stueck-preis", "lv-status", "lv-daten", "lv-stueck-knoepfe",
-               "lv-stueck-lead", "lv-stueck-beschreibung", "lv-stueck-hinweis", "lv-fakten"},
+               "lv-stueck-direkt", "lv-knopf-nur-desktop", "lv-kaufleiste", "lv-stueck-lead", "lv-stueck-beschreibung", "lv-stueck-hinweis", "lv-fakten"},
     # Luisa (Über uns): Fließtext, Zitat, Ablauf.
     "luisa": {"lv-luisa", "lv-luisa-text", "lv-ablauf", "lv-prosa"},
     # Wissen (Übersicht und Beiträge): Kopf, Fragen als Abschnitte, nummerierte Beitragsliste.
