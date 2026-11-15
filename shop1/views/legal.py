@@ -34,7 +34,7 @@ from ..seiten_stand import SEITEN_STAND  # noqa: F401 – Re-Export
 from .wissen import freigegebene_beitraege, uebersicht_indexierbar
 from ._helpers import zu_viele_anfragen
 from .. import spamschutz
-from ..verkauf import direktkauf_aktiv, oeffnungs_satz, verkauf_aktiv
+from ..verkauf import direktkauf_aktiv, kaufweg_aktiv, oeffnungs_satz, verkauf_aktiv
 
 _log = logging.getLogger('shop1')
 
@@ -212,7 +212,7 @@ def llms_txt(request):
     basis = oeffentliche_basis(request)
     # Verkaufsschalter: ohne Verkauf keine Kauf-, Zahlungs-, Versand- oder
     # Steuerangaben, keine Preise und kein Verweis auf die AGB.
-    if not verkauf_aktiv():
+    if not kaufweg_aktiv():
         return _llms_txt_ohne_verkauf(basis)
     zeilen = (_llms_kopf_mit_verkauf(basis)
               + _llms_produktzeilen(basis, mit_preis=True)
@@ -544,7 +544,7 @@ def llms_full_txt(request):
     basis = oeffentliche_basis(request)
     kurz = llms_txt.__wrapped__(request).content.decode('utf-8').rstrip('\n')
 
-    verkauf = verkauf_aktiv()
+    verkauf = kaufweg_aktiv()
     seiten = [
         ('Shop' if verkauf else 'Archiv', reverse('produkte'), shop.produkte, ()),
         ('Über Luisa Brehler', reverse('ueber_uns'), shop.ueber_uns, ()),
@@ -670,7 +670,7 @@ def _sitemap_seiten():
     ]
     # Verkaufsschalter: ohne Verkauf gelten die AGB noch nicht, die Seite
     # meldet noindex (agb.html) und gehört deshalb nicht in die Sitemap.
-    if not verkauf_aktiv():
+    if not kaufweg_aktiv():
         static_pages = [p for p in static_pages if p['name'] != 'agb']
     # Wissensbereich: Redaktionsinhalt, lastmod aus demselben Register. Nur
     # freigegebene Beiträge (und die Übersicht, sobald einer freigegeben ist);

@@ -108,7 +108,8 @@ def verkauf_kontext(request):
     anfrage_ohne_verkauf = anfrageshop_aktiv() and not verkauf_aktiv()
     return {'verkauf_aktiv': verkauf_aktiv(), 'shop_oeffnet': '' if anfrage_ohne_verkauf else oeffnungs_satz(),
             'verkauf_ab': verkauf_ab(), 'direktkauf_aktiv': direktkauf_aktiv(),
-            'anfrage_shop': anfrageshop_aktiv(), 'shop_sichtbar': shop_sichtbar()}
+            'anfrage_shop': anfrageshop_aktiv(), 'shop_sichtbar': shop_sichtbar(),
+            'kaufweg': kaufweg_aktiv()}
 
 
 def anfrageshop_aktiv():
@@ -117,8 +118,14 @@ def anfrageshop_aktiv():
     Stücke und Preise sind sichtbar; Kaufen, Konto und Rabattcodes sind ausgeblendet, statt „Jetzt bestellen“
     gibt es die Stückanfrage (``views/stueckanfrage.py``). Die Startsperre (Rechtstexte, LUCID, Versand,
     Widerruf) gilt nur für den Kaufweg; der Kaufweg bleibt bei aktivem Anfrage-Shop immer gesperrt.
-    Ohne Verkauf erscheinen weder AGB-, Widerrufs- noch Zahlungs-Fußzeilen (die hängen an ``verkauf_aktiv``)."""
+    Kauf-, AGB- und Zahlungstexte hängen an ``kaufweg_aktiv()``."""
     return bool(getattr(settings, 'ANFRAGESHOP', False))
+
+
+def kaufweg_aktiv():
+    """True, wenn der Kaufweg läuft: Verkauf an und kein Anfrage-Shop (Vorlagen: ``kaufweg``).
+    Kauf-, Zahlungs- und Lieferfristsätze stehen nur dann auf der Seite."""
+    return verkauf_aktiv() and not anfrageshop_aktiv()
 
 
 def shop_sichtbar():

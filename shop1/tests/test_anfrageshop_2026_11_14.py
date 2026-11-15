@@ -164,6 +164,18 @@ class AnfrageShopTest(LuviqTestCase):
                 self.assertNotIn('/login', antwort['Location'])
 
     def test_seiten_ohne_verkauf_haben_keine_kaufsaetze_und_keine_kauf_fusszeilen(self):
+        self._pruefe_seiten_ohne_kaufsaetze()
+
+    def test_seiten_mit_verkauf_und_anfrageshop_haben_keine_kaufsaetze_und_keine_kauf_fusszeilen(self):
+        """So läuft es live: VERKAUF_AKTIV wirkt, trotzdem steht nur die Anfrage auf der Seite."""
+        with override_settings(VERKAUF_AKTIV=True, DIREKTKAUF=True, ANFRAGESHOP=True):
+            self._pruefe_seiten_ohne_kaufsaetze()
+            html = self.hole(self.stueck).content.decode()
+            self.assertNotIn('Jetzt bestellen', html)
+            self.assertNotIn('"Offer"', html)
+            self.assertIn('id="anfragen"', html)
+
+    def _pruefe_seiten_ohne_kaufsaetze(self):
         verboten = ('Zahlungspflichtig', 'Jetzt bestellen', 'In den Warenkorb', 'Rabattcode', 'Zur Kasse',
                     'Widerrufsbelehrung', 'Muster-Widerrufsformular', 'Vertrag widerrufen', 'PayPal',
                     'Vorab-Überweisung', 'Zahlungslink', 'zum Kauf', 'Bestellvorgang', 'Der Shop öffnet',

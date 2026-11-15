@@ -25,6 +25,9 @@ META_BESCHREIBUNG_MAX = 160
 #: nie mitten im Wort abgeschnitten.
 META_TITEL_ZUSAETZE = (' kaufen – Luviq Universe, Lübeck', ' – Luviq Universe')
 META_BESCHREIBUNG_ZUSATZ = ' – von Hand gemaltes Upcycling-Stück bei Luviq Universe.'
+#: Anfrage-Shop (14.11.2026): Stück mit Preis, aber kein Kaufweg – „anfragen“ statt „kaufen“.
+META_TITEL_ZUSAETZE_ANFRAGE = (' anfragen – Luviq Universe, Lübeck', ' – Luviq Universe')
+META_BESCHREIBUNG_ZUSATZ_ANFRAGE = ' – von Hand gemaltes Upcycling-Stück bei Luviq Universe. Jetzt anfragen.'
 
 #: Vergebenes Stück bei laufendem Verkauf (SEO-Runde 04.11.2026): nie „kaufen“, deutsch, mit Weg zur Anfrage.
 META_BESCHREIBUNG_ZUSATZ_VERGEBEN = (
@@ -341,13 +344,14 @@ class Produkt(models.Model):
         if self.seo_titel and not self._seo_ist_verkaufstitel():
             verkauf = self._seo_mit_verkauf('seo_titel')
             return verkauf or self._seo_neu('seo_titel')
-        from .verkauf import verkauf_aktiv
+        from .verkauf import anfrageshop_aktiv, kaufweg_aktiv
         name = ' '.join(self.name.split())
-        if not verkauf_aktiv():
+        anfrage = anfrageshop_aktiv() and not self.vergeben
+        if not kaufweg_aktiv() and not anfrage:
             return self._meta_title_archiv(name)
         if self.vergeben:
             return self._meta_title_vergeben(name)
-        for zusatz in META_TITEL_ZUSAETZE:
+        for zusatz in (META_TITEL_ZUSAETZE_ANFRAGE if anfrage else META_TITEL_ZUSAETZE):
             if len(name) + len(zusatz) <= META_TITEL_MAX:
                 return f"{name}{zusatz}"
         return _kuerze_an_wortgrenze(name, META_TITEL_MAX)
@@ -395,10 +399,10 @@ class Produkt(models.Model):
         Preis. Gilt nur, solange im Feld noch der ursprünglich angelegte Text steht (Luisas eigene Fassung
         bleibt unangetastet); der Preis kommt aus dem Stück, nie aus einer Abschrift. Sonst ``''``."""
         from . import luviq_daten
-        from .verkauf import verkauf_aktiv
+        from .verkauf import kaufweg_aktiv
         d = luviq_daten.ENGEL_STUECK
         wert = getattr(self, feld)
-        if (not verkauf_aktiv() or self.slug != d['slug']
+        if (not kaufweg_aktiv() or self.slug != d['slug']
                 or wert not in (d[feld], *d.get(feld + '_frueher', ()))):
             return ''
         return d[feld + '_verkauf'].format(preis=f'{self.preis:.0f}')
@@ -417,10 +421,12 @@ class Produkt(models.Model):
             verkauf = self._seo_mit_verkauf('seo_beschreibung')
             return verkauf or self._seo_neu('seo_beschreibung')
         from django.conf import settings
-        from .verkauf import verkauf_aktiv
-        if verkauf_aktiv() and self.vergeben:
+        from .verkauf import anfrageshop_aktiv, kaufweg_aktiv, verkauf_aktiv
+        if (verkauf_aktiv() or anfrageshop_aktiv()) and self.vergeben:
             zusatz = META_BESCHREIBUNG_ZUSATZ_VERGEBEN.format(nr=self.archiv_nummer)
-        elif verkauf_aktiv():
+        elif anfrageshop_aktiv():
+            zusatz = META_BESCHREIBUNG_ZUSATZ_ANFRAGE
+        elif kaufweg_aktiv():
             zusatz = META_BESCHREIBUNG_ZUSATZ
         elif getattr(settings, 'MOTIVANFRAGE_AKTIV', True):
             zusatz = META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF.format(nr=self.archiv_nummer)

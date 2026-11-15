@@ -166,8 +166,8 @@ WIDERRUF_NACHLAUF_TAGE = 90
 def widerruf_knopf_zeigen():
     """True bei laufendem Verkauf oder wenn die letzte Bestellung weniger als
     ``WIDERRUF_NACHLAUF_TAGE`` alt ist (eine Abfrage, 10 Minuten zwischengespeichert)."""
-    from .verkauf import verkauf_aktiv
-    if verkauf_aktiv():
+    from .verkauf import kaufweg_aktiv
+    if kaufweg_aktiv():
         return True
     wert = cache.get('widerruf_knopf')
     if wert is None:
@@ -271,8 +271,8 @@ def _rahmen():
     # Anfrage-Shop (ohne Verkauf): Stücke ansehen statt Vormerken; Kopfzeile sagt „auf Anfrage“, nicht „Shop ist offen“.
     satz, knopf, route, anker = luviq_daten.leiste(aktiv or anfrage, getattr(settings, 'VERKAUF_FRUEHESTENS', None))
     return {
-        'hinweis': (['Stücke auf Anfrage'] + luviq_daten.hinweis(aktiv, verkauf.oeffnungs_satz())[1:]
-                    if anfrage and not aktiv else luviq_daten.hinweis(aktiv, verkauf.oeffnungs_satz())),
+        'hinweis': (['Stücke auf Anfrage'] + luviq_daten.hinweis(True, '')[1:]
+                    if anfrage else luviq_daten.hinweis(aktiv, verkauf.oeffnungs_satz())),
         'navigation': luviq_daten.navigation(aktiv or anfrage, motiv),
         'fuss_gruppen': luviq_daten.fuss(aktiv or anfrage, motiv),
         'leiste': {'satz': satz, 'knopf': knopf, 'route': route, 'anker': anker},
