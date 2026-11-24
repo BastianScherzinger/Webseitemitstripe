@@ -315,6 +315,203 @@ ANGEBOTE_ABNAHME = [
     ('Website redesign', "Hi, I noticed your website could use a redesign. I'm a web developer and could build you a faster site for your business."),
 ]
 
+#: Abnahme 3 (24.11.2026): 46 Kundinnen (kuerzel, name, email, betreff, nachricht, sprache). Alle müssen an Luisa gehen:
+#: unter der Spam-Schwelle (auch ohne Zeitstempel) und ``ist_angebot`` False.
+KUNDINNEN_ABNAHME_3 = [
+    # ── Deutsch ──
+    ('K01', 'Jana Becker', 'jana.becker@web.de', 'Gutscheine für Firmen?',
+     'Hallo! Bietet ihr auch Gutscheine für Firmen an? Wir sind ein kleines Marketing-Team (6 Leute) und suchen '
+     'was Besonderes zu Weihnachten. LG Jana', 'de'),
+    ('K02', 'Mia', 'mia.k@gmx.de', 'Vorbeikommen?',
+     'Hallo, ich hab euer Video auf Insta gesehen, mega! Ich biete an, dass ich am Samstag selbst nach Alsfeld '
+     'komme und mir die Sachen anschaue, wenn das passt? Liebe Grüße', 'de'),
+    ('K03', 'Tom Richter', 'tom@pixelwerk-giessen.de', 'Teamgeschenk',
+     'Hi, wir sind ein kleines Unternehmen (Webdesign-Agentur, 8 Leute) und würden gern für unser Team was '
+     'Handbemaltes verschenken. Habt ihr sowas wie Gutscheine?', 'de'),
+    ('K04', 'Selina', 'selina.style@gmail.com', 'Hallo :)',
+     'Hey! Ich bin Influencerin mit ca. 12k Followern und will mir unbedingt was von euch gönnen – zahl ich '
+     'natürlich ganz normal. Wie läuft das ab?', 'de'),
+    ('K05', 'lea', 'lea2003@t-online.de', 'frage',
+     'hallo, ich wolte fragen ob ihr auch gutscheine habt für mein freundin, sie macht marketing und liebt euren '
+     'style. danke!!', 'de'),
+    ('K06', 'Sabine Kraus', 'sabine.kraus@web.de', 'Ihr seid toll',
+     'Ich finde, eure Reichweite sollte viel größer sein, eure Videos sind so schön! Habt ihr einen Newsletter, '
+     'damit ich nichts verpasse?', 'de'),
+    ('K07', 'Concept Store Lahn', 'hallo@conceptstore-lahn.de', 'Zusammenarbeit Laden Marburg',
+     'Hallo, wir haben einen kleinen Concept Store in Marburg. Wir bieten dort ausgewählte Labels an, und eure '
+     'Instagram-Videos haben uns total überzeugt. Hättet ihr Lust, ein paar Sachen bei uns in Kommission zu '
+     'verkaufen? Viele Grüße, Anne', 'de'),
+    ('K08', 'Jonas', 'jonas.w@posteo.de', 'Kleiner Hinweis',
+     'Kleiner Hinweis: auf eurer Website lädt das Video auf der Startseite am Handy nicht. Wollte nur Bescheid '
+     'sagen!', 'de'),
+    ('K09', 'Kerstin Vogel', 'k.vogel@steuerbuero-vogel.de', 'Gutscheine',
+     'Gibt es bei euch Gutscheine für Firmen? Unsere Marketing-Abteilung möchte zu Weihnachten die Kolleginnen '
+     'beschenken. Freundliche Grüße', 'de'),
+    ('K10', 'Laura', 'laura.m@icloud.com', 'Neue Sachen?',
+     'Ich liebe, was du für deine Marke an Videos machst! Wann kommen neue Sachen online?', 'de'),
+    ('K11', 'Anna Schmidt', 'anna.schmidt@gmx.net', 'Gewinnspiel',
+     'Hallo, ich habe bei eurem Gewinnspiel auf Instagram gewonnen und wollte fragen, wie ich den Gewinn '
+     'bekomme :)', 'de'),
+    ('K12', 'Anna Schmidt', 'anna.schmidt@gmx.net', 'Gewinnspiel – mein Post',
+     'Hallo, ich habe bei eurem Gewinnspiel gewonnen, hier der Kommentar: https://www.instagram.com/p/C8xYz12/ '
+     'Wie bekomme ich den Gewinn?', 'de'),
+    ('K13', 'Ben', 'ben.h@gmail.com', 'Frage zu www.luviq-alsfeld.com/stuecke',
+     'Hi, ich finde auf der Seite nicht, wie man anfragt. Könnt ihr mir helfen?', 'de'),
+    ('K14', 'AnnaSchmidt', 'anna.s@gmx.de', 'Hallo',
+     'Hallo, ich hätte gern ein Foto von der Rückseite, hier mein Pinterest-Vorbild: https://pin.it/abc123', 'de'),
+    ('K15', 'Nadine', 'nadine.k@web.de', 'Reichweite',
+     'Hi, ich bin Social Media Managerin bei einem Café in Fulda. Wir würden euch gern in unserer Story zeigen, '
+     'weil ich eure Sachen liebe – einfach so. Wäre das ok für dich?', 'de'),
+    # ── Englisch ──
+    ('K16', 'Emily Carter', 'emily.carter@outlook.com', 'Vouchers?',
+     'Do you have vouchers for your store? My company wants to surprise our marketing team this Christmas.', 'en'),
+    ('K17', 'Grace', 'grace.lin@gmail.com', 'brand launch',
+     "Hi! I'm launching my own small brand next month and I'd love to wear one of your painted tops at the "
+     "launch party. Could you make something for my brand launch? Budget around 150 EUR.", 'en'),
+    ('K18', 'Olivia', 'olivia.r@yahoo.com', 'newsletter',
+     'Hey, love your reels! Is there a newsletter for your shop so I don\'t miss new drops?', 'en'),
+    ('K19', 'Sophie Bennett', 'sophie@sophiebennett.co.uk', 'Hello from London',
+     "Hi, I'm a lifestyle influencer (40k followers on Instagram). I'm not asking for anything free - I simply "
+     "want to pay for one of your painted denims and maybe post it. Your engagement must be crazy with those "
+     "videos!", 'en'),
+    ('K20', 'Marc Dubois', 'marc@brightlane-digital.com', 'Christmas idea',
+     "Hello, we're a small digital marketing agency in Frankfurt. For our Christmas party we'd love 9 matching "
+     "painted tote bags for the team. Is that something you do?", 'en'),
+    ('K21', 'Hannah', 'hannah.j@gmail.com', 'small feedback',
+     'Hi, quick feedback to improve your website: the contact page did not load on my phone at first. Also your '
+     'videos are lovely. Can I pay by PayPal?', 'en'),
+    ('K22', 'chloe', 'chloe.xx@hotmail.com', 'voucher',
+     'helo i saw ur video on tiktok, do u sell gift vouchers for ur shop?? want 1 for my sis birthday', 'en'),
+    ('K23', 'Ruby Café', 'hello@rubycafe.de', 'Display idea',
+     "Hi! We run a small cafe in Kassel and post daily Instagram reels. We'd love to display your work on our "
+     "wall for free to boost your visibility - no strings attached, we just like it. Interested?", 'en'),
+    ('K24', 'Priya', 'priya.n@gmail.com', 'business gift',
+     "Hi there! Our social media manager found your videos and we'd love to gift something unique to our "
+     "clients. Do you do vouchers for businesses?", 'en'),
+    ('K25', 'Jess', 'jess.w@gmail.com', 'question about traffic',
+     'Hi, your website seemed slow today, maybe lots of traffic after your TikTok went viral? Anyway, will the '
+     'painted cap come back?', 'en'),
+    ('K26', 'Daniel Moore', 'd.moore@moore-consulting.com', 'Team order',
+     'Hello Luviq team, I am the office manager at a small consulting company. We help businesses with '
+     'marketing strategy, and our team would love something handmade as a thank-you to our top clients. Could we '
+     'talk about 15 painted tote bags for your business customers... sorry, I mean for our clients? Thanks!', 'en'),
+    # ── Französisch ──
+    ('K27', 'Camille', 'camille.martin@orange.fr', 'Carte cadeau',
+     "Bonjour, j'adore vos vidéos ! Est-ce que vous proposez des cartes cadeaux pour votre boutique ? Merci", 'fr'),
+    ('K28', 'Julien Petit', 'julien@studio-petit.fr', 'Cadeau équipe',
+     "Bonjour, nous sommes une petite agence de communication à Strasbourg et nous aimerions offrir un cadeau "
+     "original à notre équipe. Faites-vous des bons d'achat ?", 'fr'),
+    ('K29', 'Léa', 'lea.b@free.fr', 'Question',
+     "Salut, je suis influenceuse mode (15k abonnés) et je voudrais acheter une de vos créations pour une vidéo, "
+     "je paye bien sûr. Vous envoyez en France ?", 'fr'),
+    # ── Spanisch ──
+    ('K30', 'Lucía', 'lucia.g@gmail.com', 'Tarjeta regalo',
+     '¡Hola! Trabajo en una agencia de marketing y quiero regalar algo a mis compañeras. ¿Tienes tarjetas regalo '
+     'para tu tienda?', 'es'),
+    ('K31', 'Carmen', 'carmen.r@hotmail.es', 'Envíos',
+     'Hola, vi un video tuyo en Instagram y me encantó. ¿Haces envíos a España? Gracias', 'es'),
+    ('K32', 'Valentina', 'vale.influ@gmail.com', 'Descuento',
+     '¡Hola! Soy influencer y me gustaría comprar una chaqueta pintada para un video. ¿Para tu tienda tienes '
+     'códigos de descuento?', 'es'),
+    # ── Italienisch ──
+    ('K33', 'Giulia Rossi', 'giulia.rossi@libero.it', 'Sconto aziende',
+     "Ciao! Lavoro in un'agenzia di comunicazione, fate sconti per aziende? Vorremmo 8 felpe dipinte per il team.",
+     'it'),
+    ('K34', 'Marco', 'marco.b@gmail.com', 'Buoni regalo',
+     'Buongiorno, ho visto il vostro video su Instagram. Fate anche buoni regalo? Grazie mille', 'it'),
+    # ── Niederländisch ──
+    ('K35', 'Sanne de Vries', 'sanne@devries-studio.nl', 'Cadeaubonnen',
+     'Hoi! Verkopen jullie ook cadeaubonnen voor bedrijven? Wij zijn een klein reclamebureau en zoeken een leuk '
+     'kerstcadeau.', 'nl'),
+    ('K36', 'Daan', 'daan.j@ziggo.nl', 'Verzenden',
+     'Hallo, ik zag jullie video op Instagram. Kunnen jullie ook naar Nederland verzenden? Groetjes', 'nl'),
+    # ── Polnisch ──
+    ('K37', 'Agnieszka', 'agnieszka.w@wp.pl', 'Bony',
+     'Dzień dobry, pracuję w agencji reklamowej. Czy macie bony podarunkowe dla firm? Pozdrawiam', 'pl'),
+    ('K38', 'Kasia', 'kasia92@onet.pl', 'pytanie',
+     'Dzien dobry, widzialam wasze wideo na instagramie, czy wysylacie paczki do Polski? dziekuje bardzo', 'pl'),
+    # ── Türkisch ──
+    ('K39', 'Elif', 'elif.y@gmail.com', 'Soru',
+     "Merhaba, Instagram'daki videonuzu gördüm, çok güzel! Siteniz için küçük bir öneri: beden tablosu "
+     "bulunmuyor. Türkiye'ye gönderim var mı?", 'tr'),
+    ('K40', 'Mehmet', 'mehmet.k@hotmail.com', 'Toplu alim',
+     'Merhaba, sirketimiz icin 10 tane boyali tisort almak istiyoruz, reklam ajansiyiz. Fiyat bilgisi alabilir '
+     'miyiz?', 'tr'),
+    # ── Russisch ──
+    ('K41', 'Ольга', 'olga.s@mail.ru', 'Заказ худи',
+     'Здравствуйте! Видела ваше видео в инстаграме. Мы занимаемся танцами и хотим заказать 10 худи для команды. '
+     'Есть скидка?', 'ru'),
+    ('K42', 'Ирина', 'irina.p@yandex.ru', 'Куртка',
+     'Здравствуйте, хочу такую же куртку как здесь: https://www.instagram.com/p/C8xYz12/ Можно заказать?', 'ru'),
+    ('K43', 'Наталья', 'natalia.v@gmail.com', 'Доставка',
+     'Здравствуйте, сколько стоит доставка в Россию? Видео классное, у вас красивый сайт.', 'ru'),
+    # ── weitere Randfälle ──
+    ('K44', 'Svenja', 'svenja.h@web.de', 'Für mein Label',
+     'Hi, ich gründe gerade mein eigenes kleines Label und mache dafür Marketing und Videos selbst. Ich würde '
+     'gern für mein Shooting ein bemaltes Oberteil von dir tragen – geht so was? Zahle natürlich.', 'de'),
+    ('K45', 'Lisa', 'lisa.b@gmx.de', 'Gutschein für deinen Shop',
+     'Hallo, gibt es für deinen Shop auch Gutscheine? Meine Schwester arbeitet im Online-Marketing und ist '
+     'großer Fan.', 'de'),
+    ('K46', 'Fatma', 'fatma.d@gmail.com', 'Gutschein',
+     'Hallo, ich mache Werbevideos beruflich und liebe eure Sachen. Für dein Unternehmen ist das bestimmt gerade '
+     'stressig vor Weihnachten 😊 Habt ihr Gutscheine?', 'de'),
+]
+
+#: Abnahme 3: 18 Angebote (gleiche Form); möglichst alle erkannt.
+ANGEBOTE_ABNAHME_3 = [
+    ('A01', 'Ryan | Clipforge', 'ryan@clipforge-media.com', 'Product videos?',
+     'Hi, we produce high-converting product videos for your brand. Our UGC creators can boost your sales within '
+     '30 days. Interested in a free sample?', 'en'),
+    ('A02', 'Kevin Mayer', 'kevin@reelboost-agentur.de', 'Mehr Reichweite für Luviq',
+     'Hallo, wir sind eine Werbeagentur aus Berlin und erstellen Reels für Onlineshops. Wir steigern deine '
+     'Reichweite garantiert. Darf ich dir unser Angebot schicken?', 'de'),
+    ('A03', 'Pierre Lambert', 'p.lambert@seo-visibilite.fr', 'Votre visibilité',
+     'Bonjour, notre agence de référencement peut améliorer votre visibilité sur Google. Nous proposons un audit '
+     'gratuit de votre site.', 'fr'),
+    ('A04', 'Diego', 'diego@crecemarketing.es', 'Marketing digital',
+     'Hola, somos una agencia de marketing digital. Ofrecemos posicionamiento SEO y publicidad para tu tienda '
+     'online.', 'es'),
+    ('A05', 'Luca Bianchi', 'luca@webitalia-seo.it', 'Posizionamento',
+     "Buongiorno, la nostra agenzia offre servizi di posizionamento SEO per aziende come la vostra. Offriamo "
+     "un'analisi gratuita.", 'it'),
+    ('A06', 'Pieter', 'pieter@groeimarketing.nl', 'SEO voor uw webshop',
+     'Goedendag, wij bieden SEO en online marketing voor webshops. Graag plannen wij een kort gesprek.', 'nl'),
+    ('A07', 'Tomasz', 'tomasz@seo-pro.pl', 'Pozycjonowanie',
+     'Dzień dobry, nasza agencja oferuje pozycjonowanie stron i reklamy Google dla sklepów internetowych. '
+     'Pozdrawiam', 'pl'),
+    ('A08', 'Burak', 'burak@dijitalajans.com.tr', 'Reklam videoları',
+     'Merhaba, ajansımız markanız için profesyonel reklam videoları ve sosyal medya yönetimi sunuyoruz.', 'tr'),
+    ('A09', 'Алексей', 'alexey@seo-promo.ru', 'Продвижение',
+     'Здравствуйте! Мы предлагаем продвижение сайта в Google и настройку рекламы для вашего бизнеса.', 'ru'),
+    ('A10', 'Sam Patel', 'sam@rankfixers.io', 'SEO issues on your site',
+     'Hello, I reviewed your website and found 14 SEO issues that are hurting your rankings. Can I send you a '
+     'free report?', 'en'),
+    ('A11', 'Nina', 'nina@ninadesigns.com', 'Website redesign',
+     "Hi, I'm a freelance web designer. Your site could use a redesign - I can rebuild your online shop and "
+     "increase your conversions by 30%.", 'en'),
+    ('A12', 'Kayla', 'kayla.ugc@gmail.com', 'Collab?',
+     "Hey! I'm a UGC creator and would love to make 3 TikTok videos for your brand in exchange for a free piece.",
+     'en'),
+    ('A13', 'Stefan Wolf', 's.wolf@adsbetreuung.de', 'Google Ads für Modelabels',
+     'Guten Tag, wir betreuen Google Ads und Meta Ads für kleine Modelabels und könnten auch Ihre Umsätze '
+     'deutlich steigern.', 'de'),
+    ('A14', 'AppNest', 'sales@appnest-dev.com', 'Shopping app',
+     'Hi, we are a mobile app development company. We can build a shopping app for your business at a low price.',
+     'en'),
+    ('A15', 'Grow Team', 'team@instagrow-pro.com', 'More followers',
+     'Want more followers? We grow your Instagram organically with targeted marketing. 1000 real followers in 2 '
+     'weeks.', 'en'),
+    ('A16', 'Filmhaus Nord', 'kontakt@filmhaus-nord.de', 'Imagefilm',
+     'Hallo, wir drehen Imagefilme für kleine Unternehmen und Marken. Wäre ein kurzer Werbefilm für dein Label '
+     'interessant?', 'de'),
+    ('A17', 'LeadPilot', 'hello@leadpilot.co', 'New clients',
+     'Hi, we are available to take on new clients: lead generation and email marketing for your business.', 'en'),
+    ('A18', 'Frank Berger', 'f.berger@seo-seite1.de', 'Google Seite 1',
+     'Ihre Website ist bei Google kaum sichtbar. Als SEO-Agentur bringen wir Sie auf Seite 1. Wann passt ein '
+     'Telefonat?', 'de'),
+]
+
+
 class Command(BaseCommand):
     """``python manage.py pruefe_abwehr``: Fälle aus ``faelle()`` gegen ``spamschutz.bewerte``, dazu die Mail-Obergrenze."""
     help = 'Prüft die Spam-Abwehr der Formulare in beide Richtungen (Bots geblockt, Menschen nicht).'
@@ -345,6 +542,19 @@ class Command(BaseCommand):
             if not ok:
                 fehler.append(f'Angebot in {kuerzel} nicht richtig behandelt (erkannt={erkannt}, '
                               f'Sprache={erkannte_sprache})')
+        for k, name, email, betreff, text, _sprache in KUNDINNEN_ABNAHME_3:
+            punkte, gruende = spamschutz.bewerte(dict(name=name, email=email, betreff=betreff, nachricht=text))
+            erkannt = angebote.ist_angebot(name, betreff, text)
+            ok = punkte < spamschutz.SCHWELLE and not erkannt
+            self.stdout.write(f'  {"OK    " if ok else "FEHLER"} {punkte:>2} Punkte  Kundin {k} '
+                              f'{"geht an Luisa" if ok else "WIRD ABGEWIESEN"}')
+            if not ok:
+                fehler.append(f'Kundin {k} würde abgewiesen (Punkte {punkte} {gruende}, Angebot {erkannt})')
+        for k, name, email, betreff, text, _sprache in ANGEBOTE_ABNAHME_3:
+            erkannt = angebote.ist_angebot(name, betreff, text)
+            self.stdout.write(f'  {"OK    " if erkannt else "FEHLER"}    Angebot {k} erkannt: {erkannt}')
+            if not erkannt:
+                fehler.append(f'Angebot {k} nicht erkannt')
         for name, text in KUNDINNEN_REGRESSION + KUNDINNEN_ABNAHME_1 + KUNDINNEN_ABNAHME_2:
             erkannt = angebote.ist_angebot('', name, text)
             self.stdout.write(f'  {"FEHLER" if erkannt else "OK    "}    Mensch: Kundin „{name}“ gilt '

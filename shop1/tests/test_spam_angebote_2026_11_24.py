@@ -21,7 +21,7 @@ from django.test import override_settings
 
 from .. import angebote, spamschutz
 from ..management.commands.pruefe_abwehr import (ANGEBOTE, ANGEBOTE_ABNAHME, KUNDINNEN_ABNAHME_1, KUNDINNEN_ABNAHME_2, CREATOR_ANGEBOTE, ECHTE_ANGEBOTE, KEINE_ANGEBOTE,
-                                                 KUNDINNEN_REGRESSION)
+                                                 KUNDINNEN_REGRESSION, KUNDINNEN_ABNAHME_3, ANGEBOTE_ABNAHME_3)
 from ..models import KontaktAnfrage
 from ._basis import LuviqTestCase
 
@@ -148,6 +148,7 @@ class MenschenTest(_Basis):
             self.assertEqual(KontaktAnfrage.objects.get().einstufung, 'anfrage', name)
 
 
+@mock.patch.dict('os.environ', {'ANGEBOT_ERKENNUNG': 'an'})
 @override_settings(**PROD)
 class AngebotTest(_Basis):
 
@@ -293,6 +294,139 @@ class AngebotTest(_Basis):
                                                         betreff=betreff, nachricht=text))
         self.assertRedirects(antwort, '/kontakt/danke/', fetch_redirect_response=False)
         self.assertEqual(KontaktAnfrage.objects.get().einstufung, 'angebot')
+
+
+@override_settings(**PROD)
+class SchalterTest(_Basis):
+    """``ANGEBOT_ERKENNUNG`` (Vorgabe aus, Abnahme 3): ohne den Schalter geht jede Nicht-Spam-Nachricht an Luisa."""
+
+    def test_vorgabe_ist_aus(self):
+        with mock.patch.dict('os.environ', clear=False) as env:
+            env.pop('ANGEBOT_ERKENNUNG', None)
+            self.assertFalse(angebote.erkennung_aktiv())
+        for wert in ('an', 'AN', 'ein', '1'):
+            with mock.patch.dict('os.environ', {'ANGEBOT_ERKENNUNG': wert}):
+                self.assertTrue(angebote.erkennung_aktiv(), wert)
+        with mock.patch.dict('os.environ', {'ANGEBOT_ERKENNUNG': 'aus'}):
+            self.assertFalse(angebote.erkennung_aktiv())
+
+    def test_aus_jede_der_46_kundinnen_erreicht_luisa(self):
+        for k, name, email, betreff, text, _s in KUNDINNEN_ABNAHME_3:
+            cache.clear()
+            KontaktAnfrage.objects.all().delete()
+            self.kopie_versand.reset_mock()
+            daten = _formular(name=name, email=email, betreff=betreff, nachricht=text)
+            del daten[spamschutz.FELD_ZEIT]      # auch ohne Zeitstempel
+            with mock.patch(_LUISA) as luisa, mock.patch(_ABSAGE) as absage:
+                antwort = self.sende('/kontakt/', daten)
+            self.assertRedirects(antwort, '/kontakt/danke/', fetch_redirect_response=False)
+            self.assertEqual(KontaktAnfrage.objects.get().einstufung, 'anfrage', k)
+            luisa.assert_called_once()
+            absage.assert_not_called()
+
+    def test_aus_ein_mutmassliches_angebot_geht_an_luisa_mit_praefix_und_ohne_absage(self):
+        for k, name, email, betreff, text, _s in ANGEBOTE_ABNAHME_3[:6]:
+            cache.clear()
+            KontaktAnfrage.objects.all().delete()
+            self.kopie_versand.reset_mock()
+            with mock.patch(_LUISA) as luisa, mock.patch(_ABSAGE) as absage:
+                self.sende('/kontakt/', _formular(name=name, email=email, betreff=betreff, nachricht=text))
+            luisa.assert_called_once()
+            self.assertTrue(luisa.call_args[0][0].startswith('[evtl. Angebot] Kontaktformular: '), k)
+            absage.assert_not_called()
+            a = KontaktAnfrage.objects.get()
+            self.assertEqual(a.einstufung, 'anfrage')
+            self.assertIn('evtl-angebot', a.einstufung_gruende)
+            self.kopie_versand.assert_called_once()    # Agentur-Kopie wie bisher
+
+    def test_aus_eine_kundin_hat_kein_praefix(self):
+        with mock.patch(_LUISA) as luisa, mock.patch(_ABSAGE):
+            self.sende('/kontakt/', _formular(betreff='Gutscheine für Firmen?',
+                                              nachricht='Bietet ihr Gutscheine für Firmen an? Marketing-Team.'))
+        self.assertEqual(luisa.call_args[0][0], 'Kontaktformular: Gutscheine für Firmen?')
+
+    @mock.patch.dict('os.environ', {'ANGEBOT_ERKENNUNG': 'an'})
+    def test_an_bisheriges_verhalten_angebot_wird_abgesagt(self):
+        k, name, email, betreff, text, _s = ANGEBOTE_ABNAHME_3[1]
+        with mock.patch(_LUISA) as luisa, mock.patch(_ABSAGE) as absage:
+            self.sende('/kontakt/', _formular(name=name, email=email, betreff=betreff, nachricht=text))
+        luisa.assert_not_called()
+        absage.assert_called_once()
+        self.assertEqual(KontaktAnfrage.objects.get().einstufung, 'angebot')
+
+    @mock.patch.dict('os.environ', {'ANGEBOT_ERKENNUNG': 'aus', 'ABSAGE_AKTIV': 'an'})
+    def test_absage_aktiv_wirkt_nur_bei_erkennung_an(self):
+        k, name, email, betreff, text, _s = ANGEBOTE_ABNAHME_3[1]
+        with mock.patch(_LUISA) as luisa, mock.patch(_ABSAGE) as absage:
+            self.sende('/kontakt/', _formular(name=name, email=email, betreff=betreff, nachricht=text))
+        luisa.assert_called_once()
+        absage.assert_not_called()
+
+    def test_datenschutz_absatz_folgt_dem_schalter(self):
+        with mock.patch.dict('os.environ', {'ANGEBOT_ERKENNUNG': 'aus'}):
+            seite = self.client.get('/datenschutz/', secure=True).content.decode()
+        self.assertIn('erkennbar automatisch erzeugt wurden (Spam)', seite)
+        self.assertNotIn('Werbeangebote von Dienstleistern', seite)
+        self.assertNotIn('automatische Absage', seite)
+        with mock.patch.dict('os.environ', {'ANGEBOT_ERKENNUNG': 'an'}):
+            seite = self.client.get('/datenschutz/', secure=True).content.decode()
+        self.assertIn('Werbeangebote von Dienstleistern', seite)
+        self.assertIn('automatische Absage', seite)
+
+
+@override_settings(**PROD)
+class Abnahme3Test(_Basis):
+
+    def test_46_kundinnen_unter_der_schwelle_auch_ohne_zeitstempel_und_kein_angebot(self):
+        for k, name, email, betreff, text, _s in KUNDINNEN_ABNAHME_3:
+            punkte, gruende = spamschutz.bewerte(dict(name=name, email=email, betreff=betreff, nachricht=text))
+            self.assertLess(punkte, spamschutz.SCHWELLE, (k, gruende))
+            self.assertFalse(angebote.ist_angebot(name, betreff, text), k)
+
+    def test_18_angebote_werden_erkannt(self):
+        for k, name, email, betreff, text, _s in ANGEBOTE_ABNAHME_3:
+            self.assertTrue(angebote.ist_angebot(name, betreff, text), k)
+
+    def test_ein_einziger_verkaufssatz_reicht_nicht(self):
+        self.assertFalse(angebote.ist_angebot('', 'Video', 'Hi, we produce videos for your brand. Nice shop!'))
+
+    def test_kundenwoerter_in_allen_sprachen_sperren(self):
+        for wort in ('Gutschein', 'voucher', 'gift card', 'carte cadeau', "bon d'achat", 'tarjeta regalo',
+                     'buono regalo', 'cadeaubon', 'bon podarunkowy', 'hediye çeki', 'Newsletter', 'заказ',
+                     'купить', 'худи', 'скидка', 'kaufen', 'bestellen'):
+            text = (f'{wort}: Hi, we help brands with video marketing, let me know if you are interested, '
+                    f'we offer a free audit and our clients love it.')
+            self.assertFalse(angebote.ist_angebot('', 'Video', text), wort)
+
+    def test_eigene_domain_und_kundenlinks_sind_keine_links(self):
+        def punkte(**felder):
+            d = dict(name='Ben', email='ben@gmail.com', betreff='Frage', nachricht='Hallo, eine Frage.')
+            d.update(felder)
+            return spamschutz.bewerte(d)
+        self.assertLess(punkte(betreff='Frage zu www.luviq-alsfeld.com/stuecke')[0], spamschutz.SCHWELLE)
+        self.assertNotIn('link-im-kopf', punkte(betreff='Frage zu https://www.luviq-luebeck.com/')[1])
+        for url in ('https://www.instagram.com/p/C8xYz12/', 'https://www.tiktok.com/@luviq', 'https://pin.it/abc',
+                    'https://de.pinterest.com/pin/123/', 'https://luviq-shop.example/x'):
+            p, g = punkte(nachricht=f'Gewinnspiel, mein Kommentar: {url} Wo ist mein Gewinn?')
+            self.assertLess(p, spamschutz.SCHWELLE, (url, g))
+        self.assertEqual(spamschutz.bewerte(dict(name='x', email='a@b.de', betreff='Hi',
+                                                 nachricht='Sieh https://www.fremd.example/a'))[1],
+                         ['ohne-zeit', 'link'])
+
+    def test_gewinnspiel_nur_mit_fremdem_link_ist_spam(self):
+        d = dict(name='Anna', email='a@gmx.de', betreff='Gewinnspiel',
+                 nachricht='Ich habe gewonnen, bitte hier klicken: https://fremd.example/x')
+        punkte, gruende = spamschutz.bewerte(d)
+        self.assertIn('spamwort', gruende)
+        self.assertGreaterEqual(punkte, spamschutz.SCHWELLE)
+        d['nachricht'] = 'Ich habe gewonnen, wie bekomme ich meinen Gewinn?'
+        self.assertLess(spamschutz.bewerte(d)[0], spamschutz.SCHWELLE)
+
+    def test_kyrillisch_allein_ist_kein_fremdschrift_link(self):
+        p, g = spamschutz.bewerte(dict(name='Алексей', email='a@mail.ru', betreff='Вопрос',
+                                       nachricht='Здравствуйте, хочу заказать худи, пишу в Instagram https://www.instagram.com/luviq'))
+        self.assertNotIn('fremdschrift-link', g)
+        self.assertLess(p, spamschutz.SCHWELLE)
 
 
 class SpracheTest(LuviqTestCase):

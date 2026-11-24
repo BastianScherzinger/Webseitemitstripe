@@ -17,6 +17,13 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 - **Warum:** Bastian 24.11.2026 „wir bekommen ständig spam anfragen bei luviq“. Auswertung: von 37 gespeicherten Kontaktnachrichten keine einzige echte Kundenanfrage; alle erhielten 0 bis 2 Punkte. Bericht `Buero/berichte/2026-11-24_LUVIQ-SPAM/BERICHT.md`.
 - **Nicht angefasst:** Datenschutzerklärung (Ergänzungsvorschlag im Bericht), Stückanfrage und Motivanfrage (verwerfen ab Schwelle weiterhin still, nutzen aber die neuen Merkmale), Gästebuch, Registrierung.
 
+## 24.11.2026 – Abnahme 3: Angebots-Erkennung hinter Schalter (Zweig `luviq/2026-11-24-spam-seo`, nicht gepusht)
+
+- `ANGEBOT_ERKENNUNG` (Vorgabe **aus**): bei aus keine Einstufung „angebot“ und keine Absage; jede Nicht-Spam-Nachricht geht an Luisa, ein vermutetes Angebot trägt nur „[evtl. Angebot]“ im Betreff (`einstufung_gruende` = `evtl-angebot`). `ABSAGE_AKTIV` wirkt nur bei an.
+- `angebote.ist_angebot`: Dienst-Stichwort + mindestens zwei Verkäufer-Formeln (`FORMELN`) + kein Kundenwort; `_KUNDE` mehrsprachig (Gutschein, voucher, Newsletter, Kauf-/Bestellwörter in elf Sprachen).
+- `spamschutz`: eigene Domain, Instagram, TikTok, Pinterest, luviq-* zählen nicht als Link; `https://www.x` = ein Link; Gewinnspiel/gewonnen nur mit fremdem Link.
+- Datenschutz Abschnitt 8: Werbeangebot-/Absage-Teil nur bei `{% if angebot_erkennung %}`.
+
 ## 24.11.2026 – SEO-Runde nach Search Console (Zweig `luviq/2026-11-24-seo`, nicht gepusht)
 
 - Anlass: GSC-Auswertung (28.10. bis 22.11.), alle 20 Sitemap-Seiten indexiert; Hebel sind die Ratgeber auf Platz 7 bis 9. Konzept: `doku/40-SEO.md`; Rohdaten und Bericht: `Buero\berichte\2026-11-24_LUVIQ-SEO\`.

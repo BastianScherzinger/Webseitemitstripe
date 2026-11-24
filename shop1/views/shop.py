@@ -280,8 +280,9 @@ def _kontakt_annehmen(request, name, email, betreff, nachricht):
 
     * **Spamverdacht** (Punkte ab ``SCHWELLE``): gespeichert, ``einstufung='spam'``, keine Mail.
       Früher wurde still verworfen – so konnte ein Mensch mit unglücklichen Merkmalen verloren gehen.
-    * **Dienstleistungs-Angebot** (``angebote.ist_angebot``, kein Bot-Hinweis): gespeichert,
-      ``einstufung='angebot'``, keine Mail an Luisa, **eine** freundliche Absage an den Absender.
+    * **Dienstleistungs-Angebot** (``angebote.ist_angebot``, kein Bot-Hinweis) – nur bei ``ANGEBOT_ERKENNUNG=an``:
+      gespeichert, ``einstufung='angebot'``, keine Mail an Luisa, **eine** freundliche Absage an den Absender.
+      Bei aus (Vorgabe) geht die Nachricht an Luisa, der Betreff beginnt mit „[evtl. Angebot]“.
     * sonst wie bisher: speichern, Mail an Luisa, Kopie an die Webagentur.
 
     Bei jedem Weg sieht der Absender dieselbe Danke-Seite."""
@@ -293,13 +294,21 @@ def _kontakt_annehmen(request, name, email, betreff, nachricht):
         return redirect('kontakt_danke')
     punkte, gruende = spamschutz.bewerte(request.POST)
     einstufung = 'anfrage'
+    evtl_angebot = False
     if punkte >= spamschutz.SCHWELLE:
         einstufung = 'spam'
         _log.warning('Kontaktformular: Spamverdacht gespeichert, keine Mail (%s: %s)',
                      punkte, ','.join(gruende))
     elif angebote.ist_angebot(name, betreff, nachricht):
-        einstufung = 'angebot'
-        _log.info('Kontaktformular: Dienstleistungs-Angebot erkannt, nicht an Luisa weitergeleitet')
+        if angebote.erkennung_aktiv():
+            einstufung = 'angebot'
+            _log.info('Kontaktformular: Dienstleistungs-Angebot erkannt, nicht an Luisa weitergeleitet')
+        else:
+            # ANGEBOT_ERKENNUNG aus (Vorgabe): keine Einstufung, keine Absage – die Nachricht geht an Luisa,
+            # nur der Betreff trägt den Hinweis.
+            evtl_angebot = True
+            gruende = list(gruende) + ['evtl-angebot']
+            _log.info('Kontaktformular: evtl. Angebot, Erkennung aus – geht an Luisa')
     safe_betreff = betreff.replace('\r', '').replace('\n', ' ')
     safe_name = name.replace('\r', '').replace('\n', ' ')
     safe_email = email.replace('\r', '').replace('\n', ' ')
@@ -336,7 +345,8 @@ def _kontakt_annehmen(request, name, email, betreff, nachricht):
     # die Anfrage gespeichert im Panel, nur die Mails entfallen.
     mail_erlaubt = spamschutz.mail_budget_ok('kontakt')
     gestartet = mail_erlaubt and _kontakt_mail(
-        anfrage, felder, recipient, safe_name, safe_email, safe_betreff, nachricht)
+        anfrage, felder, recipient, safe_name, safe_email, safe_betreff, nachricht,
+        praefix='[evtl. Angebot] ' if evtl_angebot else '')
     # Eigene Kopie an die Webagentur (26.09.2026) – wirft nie, ändert
     # nichts an Speichern, Mail an Luisa oder Antwort an den Besucher.
     if mail_erlaubt:
@@ -383,9 +393,9 @@ def _kontakt_speichern(name, email, betreff, nachricht, einstufung='anfrage', gr
         return None
 
 
-def _kontakt_mail(anfrage, felder, recipient, safe_name, safe_email, safe_betreff, nachricht):
+def _kontakt_mail(anfrage, felder, recipient, safe_name, safe_email, safe_betreff, nachricht, praefix=''):
     """Startet die Mail an Luisa; ``True``, wenn der Versand gestartet ist."""
-    subject = f"Kontaktformular: {safe_betreff}"
+    subject = f"{praefix}Kontaktformular: {safe_betreff}"
     message = f"Neue Nachricht von {safe_name} ({safe_email}):\n\n{nachricht}"
     try:
         # reply_to (MW21): „Antworten“ im Postfach der Betreiberin geht

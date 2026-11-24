@@ -65,35 +65,82 @@ _DIENST = re.compile(
     r'reklam ajans|arama motoru|продвижени|раскрутк|видео|реклам|сайт|сео\b|маркетинг|відео|просуванн|'
     r'розкрутк|рекламн', re.I)
 
-#: (b) Die Leistung richtet sich ausdrücklich an Luviqs Geschäft. Wörter, die auch Kundinnen benutzen (quote,
-#: pricing, price list, Preisliste, proposal, portfolio, „ich habe deine Seite gesehen“, „unser Team“,
-#: „wir können“) und Berufsangaben („I'm a designer“, „we create“) stehen hier bewusst **nicht**.
-_ZIEL = re.compile(
-    r'\bfor your (?:brand|business|shop|store|website|company|account|webshop|online ?shop)\b|'
-    r'\byour (?:\w+ ){0,2}(?:sales|traffic|rankings?|followers|engagement|online presence|conversions|visibility|'
-    r'organic reach|target keywords|keywords)\b|'
-    r'\b(?:grow|boost|increase|improve|strengthen) your\b|\brank (?:\w+ ){0,3}(?:on|higher|in) google\b|'
-    r'\brank (?:\w+ ){0,3}higher\b|\byour (?:website|site) on google\b|\bgoogle[\'’]?s? search index\b|'
-    r'\b(?:reviewed|audited|analy[sz]ed) your (?:website|site)\b|\b(?:issues|errors) (?:on|with) your (?:website|site)\b|'
-    r'\b(?:advertise|promote|market) your (?:business|brand|shop|store|company)\b|\bfor your (?:\w+ )?business\b|'
-    r'\b(?:videos?|reels?|content|ads|campaigns?) for (?:\w+ )?(?:brands?|businesses|companies|shops|stores|clients)\b|'
-    r'\btarget market\b|'
+#: (b) Verkäufer-Formeln aus der Kaltakquise. Jede Zeile ist EINE Formel (ein Treffer in der Zeile = 1). Ein Angebot
+#: braucht mindestens ``MIN_FORMELN`` verschiedene. Breite Wendungen („für dein Geschäft“, „deine Reichweite“) sind
+#: bewusst kein Signal mehr: die benutzen Kundinnen auch.
+FORMELN = (
+    # en
+    r"let me know if (?:you['’]?re|you are) interested|\binterested in (?:a|our|the)\b|\bwould you be interested\b",
+    r"\b(?:schedule|book|hop on|jump on|set up|arrange) (?:a|an) (?:quick |short |brief |free |15[- ]minute )?(?:call|chat|meeting|demo)\b|"
+    r"\b(?:quick|short|brief) (?:call|chat)\b",
+    r"\bfree (?:audit|consultation|trial|sample|quote for your|report|analysis|seo|proposal|demo|mockup)\b",
+    r"\bour (?:clients|customers|services|team of|portfolio|agency|creators|packages|experts|case stud)",
+    r"\bwe (?:help|helped|specialize|specialise|offer|provide|produce|create|build|grow|can (?:build|boost|help|grow|get|rank|improve|increase)|are (?:an?|available)|work with)\b",
+    r"\b(?:i|we) (?:specialize|specialise)\b|\bi['’]m an? (?:freelance|independent|professional)\b|\bi can (?:rebuild|build|boost|help|rank|improve|increase|grow|create|make)\b",
+    r"\bhire me\b|\bif (?:you['’]?re|you are) not interested\b|\breply (?:yes|with)\b|\bunsubscribe\b",
+    r"\b(?:rates|prices|packages|plans) (?:start|from)\b|\bstarting (?:at|from) [$€£]?\d|\bat a (?:low|great|special|competitive) price\b|\baffordable (?:price|rate)s?\b",
+    r"\b(?:boost|increase|improve|grow|skyrocket|double) your (?:\w+ ){0,2}(?:sales|traffic|rankings?|followers|engagement|conversions|visibility|revenue|reach|online presence)\b|"
+    r"\byour (?:site|website|shop|store|business) (?:could|can|would|needs?|is hurting|is invisible|is not|isn['’]t)\b|\bhurting your\b|\bwant more (?:followers|traffic|sales|clients|customers)\b",
+    r"\b(?:reviewed|audited|analy[sz]ed) (?:\w+ ){0,3}(?:your|that your) (?:website|site|shop|store)\b|\bfound \d+ (?:seo )?(?:issues|errors|problems)\b|"
+    r"\bcan i send you (?:a|an|our|the)\b|\bsend you (?:a|our) (?:free )?(?:report|proposal|quote|sample|portfolio|offer)\b",
+    r"\b(?:new|more) (?:clients|leads|customers)\b|\bguarantee[d]? (?:results|rankings?|traffic|sales|followers|first page)\b|\bfirst page (?:of|on) google\b|\bpage (?:1|one) (?:of|on) google\b|\bhigh[- ]converting\b|\b\d+ (?:real |organic )?followers in\b",
     # de
-    r'\bf[uü]r (?:dein|euer|ihr)\w* (?:unternehmen|gesch[aä]ft|shop|marke|website|webseite|firma|label)\b|'
-    r'\b(?:deine|eure|ihre) (?:reichweite|ums[aä]tze|sichtbarkeit|rankings?|besucher|follower)\b|'
-    r'\bf[uü]r (?:\w+ )?(?:shops|onlineshops|webshops|unternehmen|firmen|marken)\b|'
-    r'\bwir bieten\b|\bunsere agentur\b|\bich biete\b|'
-    # fr / es / it / nl / pt / pl / tr / ru / uk
-    r'\bpour (?:votre|vos|les|des) (?:marque|entreprise|boutiques?|sites?|activit[ée]|commerces?|marques|entreprises)\b|'
-    r'\bvotre (?:visibilit[ée]|trafic|r[ée]f[ée]rencement|chiffre d)\w*|\bnous (?:proposons|offrons)\b|\bnotre agence\b|'
-    r'\bpara (?:su|tu|sus|tus) (?:marca|negocio|tienda|web|empresa)\b|\bpara (?:tiendas|negocios|empresas|marcas)\b|'
-    r'\bofrecemos\b|\bnuestra agencia\b|\bper (?:negozi|aziende|brand|attivit[àa])\b|\bla vostra (?:azienda|attivit[àa]|visibilit[àa]|sito|marca)\b|'
-    r'\bofferiamo\b|\bla nostra agenzia\b|\bvoor (?:uw |jouw )?(?:webshops?|bedrijven|merken|winkels|website|bedrijf)\b|'
-    r'\bwij (?:bieden|maken)\b|\bpara (?:lojas|empresas|marcas|neg[óo]cios)\b|\bsua (?:marca|empresa|loja)\b|\boferecemos\b|'
-    r'\bdla (?:sklep[óo]w|firm|marek|pa[nń]stwa|twojej|twojego)\b|\boferujemy\b|\bnasza agencja\b|'
-    r'\b(?:siteniz|i[sş]letmeniz|markan[ıi]z) i[çc]in\b|\bsunuyoruz\b|\bajans[ıi]m[ıi]z\b|'
-    r'для (?:вашего|вашей|вашего бизнеса|интернет)|мы (?:предлагаем|занимаемся)|наша (?:компания|студия)|'
-    r'для (?:вашого|вашої|інтернет)|ми (?:пропонуємо|займаємося)|наша (?:студія)', re.I)
+    r"\bwir (?:sind eine|bieten|erstellen|steigern|betreuen|drehen|produzieren|helfen|bringen|k[öo]nnen auch|haben (?:uns|bereits)|arbeiten mit)\b|\bwir sind (?:eine|ein) (?:\w+ ){0,2}(?:agentur|firma|unternehmen|team|studio)\b|\bunsere (?:agentur|kunden|leistungen|dienstleistung\w*|referenzen|pakete)\b|\bich biete\b|\bich bin (?:freiberuflich|selbst[äa]ndig)\w*|\bals (?:\w+-)?agentur\b",
+    r"\bunverbindlich(?:es|e|en)? (?:angebot|gespr[äa]ch|beratung|analyse)\b|\bkostenlos(?:e|en|er)? (?:analyse|beratung|erstgespr[äa]ch|audit|test|probe|muster|bericht)\b|\b(?:darf|d[üu]rfte) ich (?:dir|ihnen|euch) (?:unser|ein|mal)\b|\bwann passt (?:ein|ihnen|dir)\b|\b(?:kurzes|kurzen|kurz) (?:telefonat|gespr[äa]ch|call)\b|\bstehen (?:wir|ich) gern(?:e)? zur verf[üu]gung\b",
+    r"\b(?:auf|bringen (?:sie|dich|euch) auf) seite (?:1|eins)\b|\b(?:deine|ihre|eure) (?:reichweite|ums[äa]tze|umsatz|sichtbarkeit|follower|besucherzahlen)\b.{0,40}\b(?:steigern|erh[öo]hen|verdoppeln|verbessern)|\b(?:steigern|erh[öo]hen|verdoppeln|verbessern) (?:wir |sie |du )?(?:\w+ ){0,2}(?:deine|ihre|eure|die) (?:reichweite|ums[äa]tze|umsatz|sichtbarkeit|follower|besucherzahlen)\b|\bgarantiert\b",
+    # fr
+    r"\bnous (?:proposons|offrons|sommes une|aidons|produisons|cr[ée]ons)\b|\bnotre (?:agence|[ée]quipe|portfolio|service)\b|\baudit gratuit\b|\b(?:devis|analyse|consultation|[ée]chantillon) gratuit\w*\b|\bappel (?:rapide|gratuit)\b|\bam[ée]liorer votre (?:visibilit|r[ée]f[ée]rencement|trafic)",
+    # es
+    r"\bofrecemos\b|\bsomos una (?:agencia|empresa)\b|\bnuestra (?:agencia|empresa|oferta|cartera)\b|\b(?:auditor[ií]a|consulta|an[áa]lisis|presupuesto|muestra) gratuit[ao]\b|\bllamada (?:r[áa]pida|breve|gratuita)\b|\bmejorar (?:su|tu) (?:visibilidad|posicionamiento|tr[áa]fico)\b",
+    # it
+    r"\bofferiamo\b|\bsiamo un['’]?(?:agenzia|azienda)\b|\bla nostra (?:agenzia|azienda|offerta)\b|\b(?:analisi|consulenza|preventivo|campione) gratuit[ao]\b|\bchiamata (?:veloce|breve|gratuita)\b|\bmigliorare la (?:vostra|tua) visibilit",
+    # nl
+    r"\bwij (?:bieden|maken|helpen|zijn een|leveren|verzorgen)\b|\bonze (?:diensten|klanten|agency|bureau|pakketten)\b|\b(?:gratis|vrijblijvende?) (?:analyse|offerte|adviesgesprek|audit|proef|advies)\b|\bkort (?:gesprek|telefoongesprek|belletje)\b|\bgraag plannen wij\b|\bhoger in google\b",
+    # pl
+    r"\b(?:oferujemy|proponujemy|zajmujemy si[ęe]|specjalizujemy si[ęe])\b|\bnasza (?:agencja|firma|oferta)\b|\b(?:bezp[łl]atn\w+|darmow\w+) (?:audyt|analiz\w+|wycen\w+|konsultacj\w+|pr[óo]bk\w+)|\bkr[óo]tk\w+ (?:rozmow|spotkani|telefon)\w*|\bpierwsz\w+ stron\w+ google\b",
+    # tr
+    r"\bsunuyoruz\b|\bajans[ıi]m[ıi]z\b|\bhizmet(?:ler)?imiz\b|\b(?:[üu]cretsiz|bedava) (?:analiz|denetim|dan[ıi][sş]manl[ıi]k|teklif|g[öo]r[üu][sş]me)\b|\bk[ıi]sa bir g[öo]r[üu][sş]me\b|\bsat[ıi][sş]lar[ıi]n[ıi]z[ıi] art[ıi]r\w*|\bm[üu][sş]terilerimiz\b",
+    # ru / uk
+    r"мы (?:предлагаем|занимаемся|поможем|создаём|создаем|делаем|продвигаем)|наша (?:компания|студия|команда|агентство)|наше агентство|бесплатн\w+ (?:аудит|анализ|консультац\w+|пробн\w+)|для (?:вашего )?бизнеса|в топ (?:google|гугл|10)|выведем|ми (?:пропонуємо|займаємося)|наша студія|безкоштовн\w+ (?:аудит|аналіз)",
+    # weitere Formeln (Abnahme 3): Verkäufer-Wendungen in den Sprachen und Prod-Pitches
+    r"\blet me know if you (?:want|would like|[''’]d like)\b|\bwould you like (?:me )?to (?:see|send|have|get|receive)\b|\bwant to see (?:some )?(?:samples|examples)\b|\bsamples of our (?:previous |past )?work\b|\bwondered if you\b|\bhave you (?:ever )?considered\b|\bwould love to (?:make|create|work|collaborate|help)\b",
+    r"\bour (?:videos|prices|rates|work|seo|plan|offer|team)\b|\b(?:seo|service) (?:packages?|proposal|action plan)\b|\bprice list\b|\bproposal and pricing\b|\bwould be happy to (?:share|send|help|discuss)\b|\b(?:advertise|promote|market) your (?:business|brand|shop|store|company)\b|\bgoogle (?:1st|first) page\b|\bimprove (?:the |your )?visibility\b|\bvisible in google\b|\bin google[\'’]?s? search index\b",
+    r"\bnoticed (?:\w+[- ]){0,6}issues?\b|\bi[\'’]m an? (?:\w+ ){0,3}(?:creator|editor|designer|developer|consultant|freelancer|photographer|videographer|influencer|producer)\b|\bi (?:make|create|produce|design|build) (?:authentic |high[- ]quality |engaging |professional )?\w* ?(?:videos|reels|websites|content)\b",
+    # de
+    r"\bgern(?:e)? (?:erstelle|schicke|sende) ich\b|\bein angebot (?:erstellen|schicken|senden|zusenden)\b|\bw[äa]re (?:ein|eine) (?:\w+ ){0,4}interessant\b|\bwir (?:drehen|produzieren|erstellen|bieten|betreuen)\b|\bkurzer (?:werbefilm|imagefilm)\b|\bunser (?:angebot|team|service)\b",
+    # es / pt / it / nl / pl / uk (3. Person, Preis, Beispiele)
+    r"\bnosotros (?:creamos|ofrecemos|hacemos)\b|\bnuestro equipo\b|\bprecios (?:empiezan|desde|comienzan)\b|\bpresupuesto (?:gratis|gratuito)\b|\b(?:le|te) interesa\b|\bgustar[ií]a ver ejemplos\b",
+    r"\bn[óo]s (?:criamos|oferecemos|fazemos)\b|\bnossa equipa\b|\bnossa equipe\b|\bpre[çc]os come[çc]am\b|\bor[çc]amento gr[áa]tis\b|\bgostaria de ver exemplos\b",
+    r"\bnoi (?:creiamo|offriamo|facciamo)\b|\bil nostro team\b|\bi prezzi partono\b|\bvolete vedere (?:degli )?esempi\b",
+    r"\bmogen wij u\b|\bkorte video\w*|\bwij maken\b|\bwilt u (?:een|graag)\b",
+    r"\boferuje\b|\boferujemy\b|\bdla sklep[óo]w\b|\bpozycjonowanie\b|\bpozycjonowania\b|\bdla firm\b|\bch[ęe]tnie (?:przygotujemy|wyślemy)",
+    r"наша команда|пропонує|ціни від|безкоштовн\w+ розрахунок|хочете побачити приклади|хотите увидеть примеры|цены от|реклам\w+ для (?:интернет|вашего)",
+    r"\bi[çc]in (?:profesyonel|reklam|video)\w*|\bsunar[ıi]z\b|\bs[uü]nar\b|\bfiyatlar[ıi]m[ıi]z\b",
+)
+_FORMELN = tuple(re.compile(f, re.I) for f in FORMELN)
+MIN_FORMELN = 2
+
+
+def tausch_angebot(text):
+    """Creator bietet Video/Reel für die Marke gegen ein Gratis-Stück an („for your brand … in exchange for a free
+    piece“). Ohne „für deine Marke“ (nur „featuring your pieces“) bleibt es eine normale Anfrage an Luisa."""
+    return bool(_TAUSCH.search(text) and _FUER_MARKE.search(text))
+
+
+_FUER_MARKE = re.compile(r"\bfor your (?:brand|business|shop|store|company|label|website)\b|"
+                         r"\bf[üu]r (?:dein|deine|euer|eure|ihr|ihre)\w* (?:marke|label|shop|firma|unternehmen)\b", re.I)
+
+
+def formeln_zaehlen(text):
+    """Anzahl der verschiedenen Verkäufer-Formeln im Text (jede verschiedene Wendung zählt einmal)."""
+    gefunden = set()
+    for f in _FORMELN:
+        for m in f.finditer(text):
+            gefunden.add(m.group(0).lower())
+    if tausch_angebot(text):
+        gefunden.add('tausch')
+    return len(gefunden)
+
 
 #: (c) Wer das schreibt, meint Luviq und seine Stücke oder will etwas kaufen: nie als Angebot behandeln.
 _KUNDE = re.compile(
@@ -103,12 +150,15 @@ _KUNDE = re.compile(
     r'\bsize\s+(?:xs|s|m|l|xl|xxl|\d{2})\b|\bin size\b|\bgr[öo](?:ß|ss)e\b|\bteil(?:e|en)?\b|\bpieces?\b|\bitems?\b|'
     r'\bbestell|\border(?:s|ed|ing)?\b|\bversand|\bship(?:s|ped|ping)?\b|\bliefer|\bdelivery|\blivr|\bspedizion|'
     r'\bsipari[sş]|\bwysy[łl]|\bretoure|\br[üu]cksendung|\bwiderruf|\brefund|\bnoch (?:frei|verf[üu]gbar|da)\b|'
-    r'\bstill available\b|\bavailable\b|\bverf[üu]gbar|\breserv|\banprobe|\bpassform|\bmotiv\b|\bengel\b|\bupcycl|\bbleach|'
+    r'\bstill available\b|\bavailable in\b|\bis (?:it|this|that) available\b|\bverf[üu]gbar|\breserv|\banprobe|\bpassform|\bmotiv\b|\bengel\b|\bupcycl|\bbleach|'
     r'\bgebleicht|\bluisa\b|\bluviq\.archive|\binstagram\.com/|\bkaufen\b|\bkupi[ćc]|\bbuy\b|\bpurchase\b|'
     r'\bcustom(?:ized|ised)?[ -](?:\w+ )?(?:coat|jacket|hoodie|shirt|sweatshirt|dress|vest|pants|trousers|jeans|sweater|'
     r'pullover|design|made|order|piece|print)\w*|\bcustom(?:er)?s? (?:order|piece)\w*|\bma[ßs]anfertig|\bgeschenk|\bgift\b|\bmerch\b|\blogo auf\b|'
     r'\barbeitskleidung|\bworkwear|\bsch[üu]ler|\bschule\b|\bklasse\b|\bschool\b|\bstudent\w*|\bstudent(?:in)?\b|\bthesis\b|'
     r'\bpresse\b|\bpress\b|\bmagazin|\bkooperation|\bcollab\w*|\bone like (?:that|this)\b|\bstorno|\brechnung\b|\binvoice\b|'
+    r'\bgutschein|\bvoucher|\bgift ?cards?|\bcartes? cadeau|\bbons? d.?achat|\btarjetas? regalo|\bbuon[oi] regalo|\bcadeaubon|\bbon(?:y|u)? podarunkow|\bhediye [çc]eki|'
+    r'\bnewsletter|\bзаказ|\bкупить|\bкупи\w*|\bхуди|\bскидк|\bдоставк|\bachet(?:er|e|ons)\b|\bcommander\b|\bcommande\w*|\bcomprar\b|\bpedido|\bpedir\b|\benv[ií]o\b|\bacquist\w+|\bcomprare\b|\bordinare\b|\bordine\b|'
+    r'\bkopen\b|\bbestellen\b|\bbezorg\w*|\bkupowa[ćc]\b|\bzam[óo]wi\w*|\bsatın al\w*|\bpaypal\b|\bzahl(?:e|en|ung)\b|'
     r'\bpaket\b|\bdhl\b|\bwhat(?:s|\'s| is) the price\b|\bwas kostet\b|\bhow much\b|\bworkshop\b|\binterview', re.I)
 
 #: Ausdrücklicher Tausch (Creator bietet Video/Reel gegen ein Gratis-Stück): hebt nur die Kundenwort-Sperre
@@ -122,14 +172,14 @@ _TAUSCH = re.compile(
 def ist_angebot(name='', betreff='', nachricht=''):
     """``True``, wenn jemand Luviq eine Dienstleistung für das eigene Geschäft verkaufen will (siehe Modulkopf).
 
-    Verlangt Dienst-Stichwort **und** Ziel „Luviqs Geschäft“, und kein Kundenwort (die Prüfung kommt zuerst;
+    Verlangt Dienst-Stichwort **und** mindestens zwei Verkäufer-Formeln (``FORMELN``), und kein Kundenwort (die Prüfung kommt zuerst;
     nur ein ausdrücklicher Tausch hebt sie auf). Im Zweifel ``False``: dann geht die Nachricht an Luisa."""
     text = ' '.join((betreff or '', nachricht or ''))
     if len(text.strip()) < 25:
         return False
-    if _KUNDE.search(text) and not _TAUSCH.search(text):
+    if _KUNDE.search(text) and not tausch_angebot(text):
         return False
-    return _DIENST.search(text) is not None and _ZIEL.search(text) is not None
+    return _DIENST.search(text) is not None and formeln_zaehlen(text) >= MIN_FORMELN
 
 
 # ─── Sprache ────────────────────────────────────────────────────────────────
@@ -245,6 +295,14 @@ ABSAGEN = {
 
 _ROLLEN = ('noreply', 'no-reply', 'donotreply', 'do-not-reply', 'mailer-daemon', 'postmaster', 'bounce',
            'abuse', 'root', 'admin', 'webmaster', 'hostmaster')
+
+
+def erkennung_aktiv():
+    """``ANGEBOT_ERKENNUNG`` (Vorgabe **aus**): nur bei „an“ gibt es Einstufung „angebot“ und Absage.
+
+    Aus: jede Nicht-Spam-Nachricht geht wie eine normale Anfrage an Luisa; erkennt ``ist_angebot`` ein Angebot,
+    steht nur „[evtl. Angebot]“ im Betreff der Mail."""
+    return (os.getenv('ANGEBOT_ERKENNUNG') or 'aus').strip().lower() in ('an', 'ein', 'on', '1', 'true', 'ja')
 
 
 def absage_aktiv():

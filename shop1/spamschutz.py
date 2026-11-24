@@ -53,11 +53,13 @@ FELD_FALLE_ALT = 'webseite'     # Name bis 02.10.2026: Formulare, die noch im Br
 FELD_ZEIT = 'formzeit'
 _SALZ = 'shop1.spamschutz'
 
-_LINK = re.compile(r'https?://|www\.|telegra\.ph|t\.me/|bit\.ly', re.I)
+_LINK = re.compile(r'https?://(?:www\.)?|www\.|telegra\.ph|t\.me/|bit\.ly', re.I)   # „https://www.x“ = EIN Link
 _WOERTER = re.compile(
     r'sweepstake|lamborghini|aventador|you are a snap away|claim your|winner|'
     r'jackpot|casino|crypto|bitcoin|forex|viagra|seo servic|backlinks?\b|'
-    r'gewinnspiel|gewonnen|перевод|руб\.', re.I)
+    r'перевод|руб\.', re.I)
+#: „Gewinnspiel/gewonnen“ sagen auch Kundinnen; als Spamwort zählt es nur zusammen mit einem fremden Link.
+_GEWINN = re.compile(r'gewinnspiel|gewonnen', re.I)
 # Adresse ohne ``http://`` und ohne ``www.``: „suchmaschine-eintrag.pro“. Das Muster oben
 # sucht ein Schema; wer keins schreibt, kam bis 02.10.2026 mit 0 Punkten durch.
 _NACKTE_DOMAIN = re.compile(
@@ -190,6 +192,20 @@ def markenimitation(email, text):
     return False
 
 
+#: Links, die eine Kundin setzen darf: eigene Domain, Instagram, TikTok, Pinterest, luviq-*.
+_KUNDEN_HOSTS = r'instagram\.com|tiktok\.com|pinterest\.[a-z.]+|pin\.it|luviq[\w-]*\.[a-z.]+'
+
+
+def ohne_kunden_links(text):
+    """Text ohne Links auf die eigene Domain, Instagram, TikTok, Pinterest und luviq-*-Seiten.
+
+    Nur damit zählen diese Links nicht als Link, nackte Domain oder link-im-kopf."""
+    hosts = '|'.join(re.escape(d) for d in sorted(eigene_domains()))
+    muster = (r'(?<![\w.@-])(?:https?://)?(?:[a-z0-9-]+\.)*(?:' + (hosts + '|' if hosts else '')
+              + _KUNDEN_HOSTS + r')(?![\w-])(?:[/?#]\S*)?')
+    return re.sub(muster, ' ', text or '', flags=re.I)
+
+
 def zeitstempel():
     """Signierter Ausgabezeitpunkt für das versteckte Feld."""
     return signing.dumps(int(time.time()), salt=_SALZ)
@@ -224,15 +240,18 @@ def bewerte(daten, jetzt=None):
     betreff = daten.get('betreff') or ''
     nachricht = daten.get('nachricht') or ''
     alles = ' '.join((name, betreff, nachricht))
+    # Eigene Domain und Kunden-Links (Instagram, TikTok, Pinterest, luviq-*) sind keine Spam-Links.
+    c_name, c_betreff, c_nachricht = (ohne_kunden_links(x) for x in (name, betreff, nachricht))
+    c_alles = ' '.join((c_name, c_betreff, c_nachricht))
 
-    if _LINK.search(name) or _LINK.search(betreff):
+    if _LINK.search(c_name) or _LINK.search(c_betreff):
         treffer(5, 'link-im-kopf')
-    links = len(_LINK.findall(nachricht))
+    links = len(_LINK.findall(c_nachricht))
     if links >= 2:
         treffer(3, 'links')
     elif links:
         treffer(2, 'link')
-    if not links and _NACKTE_DOMAIN.search(alles):
+    if not links and _NACKTE_DOMAIN.search(c_alles):
         treffer(1, 'nackte-domain')
     if markenimitation(daten.get('email') or '', alles):
         treffer(5, 'markenimitation')
@@ -240,7 +259,9 @@ def bewerte(daten, jetzt=None):
         treffer(4, 'spamwort')
     if _ZUSAMMEN.match(name.strip()):
         treffer(2, 'name-zusammen')
-    if _FREMDSCHRIFT.search(alles) and _LINK.search(alles):
+    if _GEWINN.search(alles) and _LINK.search(c_alles) and 'spamwort' not in gruende:
+        treffer(4, 'spamwort')
+    if _FREMDSCHRIFT.search(alles) and _LINK.search(c_alles):
         treffer(3, 'fremdschrift-link')
 
     # Seit 24.11.2026 – siehe Kopf der Datei.

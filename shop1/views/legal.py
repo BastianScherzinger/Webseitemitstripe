@@ -44,7 +44,9 @@ def impressum(request):
 
 
 def datenschutz(request):
-    return render(request, 'shop1/legal/datenschutz.html')
+    # Der Absatz zu Werbeangeboten und Absage gilt nur, wenn ANGEBOT_ERKENNUNG an ist.
+    from ..angebote import erkennung_aktiv
+    return render(request, 'shop1/legal/datenschutz.html', {'angebot_erkennung': erkennung_aktiv()})
 
 
 def agb(request):
