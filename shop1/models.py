@@ -19,6 +19,8 @@ _log = logging.getLogger('shop1')
 #: werden als das, was man von Hand eintragen dürfte.
 META_TITEL_MAX = 60
 META_BESCHREIBUNG_MAX = 160
+#: Kürzeste sinnvolle Beschreibung vor dem Zusatz; darunter gilt der Name (siehe ``Produkt.meta_description``).
+META_KERN_MIN = 70
 
 #: Zusätze der Ersatzfassung. Der Titel-Zusatz wird in dieser Reihenfolge
 #: probiert und entfällt, wenn er nicht mehr in die Grenze passt – er wird
@@ -462,7 +464,13 @@ class Produkt(models.Model):
         else:
             zusatz = META_BESCHREIBUNG_ZUSATZ_OHNE_VERKAUF_OHNE_ANFRAGE.format(nr=self.archiv_nummer)
         platz = META_BESCHREIBUNG_MAX - len(zusatz)
+        # SEO-Runde 24.11.2026: Bleibt neben dem langen Zusatz kaum Platz, wurde die Beschreibung mitten im
+        # Satz abgeschnitten („Schwarzer Hoodie mit schmalem – Nº 004 …“, live bei allen Archivstücken).
+        # Unter ``META_KERN_MIN`` Zeichen steht deshalb der Name als vollständiger Kern.
         kern = _kuerze_an_wortgrenze(self.beschreibung or self.name, platz)
+        abgeschnitten = len(' '.join((self.beschreibung or '').split())) > platz
+        if abgeschnitten and len(kern) < META_KERN_MIN and self.name:
+            kern = _kuerze_an_wortgrenze(self.name, platz)
         return f"{kern}{zusatz}"
 
     @property

@@ -353,7 +353,12 @@ def _llms_produktzeilen(basis, mit_preis):
     """Die Einzelstücke der llms.txt: mit Verkauf nur kaufbare Stücke samt Preis, das Archiv
     (vergeben, nicht bestellbar) getrennt und ohne Preis; ohne Verkauf alle als Archiv."""
     def beschrieben(produkt):
-        return ' '.join(produkt.beschreibung.split())[:160]
+        # SEO-Runde 24.11.2026: nicht mitten im Satz abschneiden (live: „… Jedes Shirt dieser“).
+        text = ' '.join(produkt.beschreibung.split())
+        if len(text) <= 300:
+            return text
+        satz = text[:301].rsplit('. ', 1)[0]
+        return (satz + '.') if len(satz) > 60 else text[:300].rsplit(' ', 1)[0].rstrip(' ,;:–-') + ' …'
 
     produkte = list(Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am')[:50])
     zeilen = []

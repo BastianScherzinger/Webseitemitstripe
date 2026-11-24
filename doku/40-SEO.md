@@ -1,7 +1,7 @@
 ---
 bereich: seo
 titel: SEO und GEO
-stand: 2026-11-04
+stand: 2026-11-24
 status: vollständig
 fortschritt: 98
 zusammenfassung: Stand 02.10.2026: Wissensbereich frei und indexierbar (17 Sitemap-URLs), llms.txt und llms-full.txt, Feed, sameAs mit Instagram, TikTok und Google-Profil, @id-Schema mit speakable, Apex-301; gemessen SEO-Inhalt 94, SEO-Technik 99, GEO 100. Offen: Indexierung beantragen (Bastian, TS46), zwei Entscheidungen (Stückseiten noindex, Pfad /ueber_uns/) und die Alt-Texte je Stück (später).
@@ -16,6 +16,102 @@ quellen: GOOGLE_SEO_GUIDE.md, LOGBUCH.md, DOCUMENTATION.md, shop1/views/legal.py
 > **Stand 02.10.2026 (geprüft, abends):** `main` = `origin/main` = `7ae67ab` und live. Alle Arbeitszweige des Tages (`fix/2026-10-02-luviq-fertig`, `-rest`, `-luisa`, `-recht`, `-wissen`, `fix/2026-10-02d-standard`) sind gemergt (`git log origin/main..<zweig>` leer, `git branch -r --no-merged origin/main` leer); die GitHub-Prüfungen auf `main` sind grün (Lauf 37040107996, 02.10.2026). Live belegt am 02.10.2026 (curl): Sitemap mit 17 Adressen samt der drei Wissensbeiträge, `/llms-full.txt` 200, „Aktualisiert am …“ (`<time>`) auf den Wissensbeiträgen (GE47), `Permissions-Policy` im Kopf, `/health/` 200, Apex 301 auf www. Wo unten „Zweig“ oder „nicht gemergt“ steht, ist das **Verlauf** des jeweiligen Tages und gilt seit dem Merge als live, sofern der Satz nichts anderes sagt. Der **Verkauf ist aus** (`VERKAUF_AKTIV` ohne Variable = aus: Marke im Aufbau, Archiv statt Shop); nach Angabe des Betreibers ist **kein Gewerbe angemeldet** — die Seite nennt deshalb keine Unternehmensangaben (Impressum nach § 5 DDG nur mit Luisa Brehler als Person, Alsfeld, E-Mail).
 
 > **23.10.2026 Schub 3:** Weiterlesen-Links zwischen den freigegebenen Wissensbeiträgen, Öffnungszeiten-Antwort auf `/liefergebiet/` (echte Suchanfrage), Entwurf `/wissen/so-entsteht-dein-motiv/` (noindex bis Freigabe). Einzelheiten `LOGBUCH.md`.
+
+## SEO-Konzept, Fassung 24.11.2026 (nach Search-Console-Auswertung)
+
+*Grundlage: Search Console, Property `https://www.luviq-luebeck.com/`, Abruf 24.11.2026 über die Search-Console-API (lesend; Chrome war nicht verbunden), Zeitraum 28.10. bis 22.11.2026 (die Domain ist erst seit 28.10. in den Daten; „16 Monate“ und „3 Monate“ liefern daher dasselbe). Zusätzlich die Vorgänger-Domain `luviq-alsfeld.com` (02.07. bis 22.11.2026). Rohdaten: `Buero\berichte\2026-11-24_LUVIQ-SEO\gsc_*.csv`. Bericht: `…\BERICHT.md`.*
+
+### 1. Lage in Zahlen (nur belegt)
+
+- **luviq-luebeck.com:** 8 Klicks, 363 Impressionen in 26 Tagen (Tagesschnitt zuletzt 21 bis 33 Impressionen, steigend; Oktober 14 gesamt). Klickrate gesamt 2,2 %, mittlere Position etwa 8. Handy 278 von 363 Impressionen. Deutschland 262, Österreich 47, Schweiz 33.
+- **Alle 20 Sitemap-Adressen sind indexiert** („Gesendet und indexiert“, URL-Prüfung 24.11.), Sitemap ohne Fehler und Warnungen, zuletzt gelesen 23.11. Es gibt keinen Indexierungsfehler zu beheben.
+- **Grenze der Daten:** Google nennt nur für 52 der 363 Impressionen die Suchanfrage (Datenschutzfilter bei seltenen Anfragen). Die Seitenzahlen sind vollständig, die Anfragezahlen nur ein Ausschnitt. Aussagen zu einzelnen Begriffen sind deshalb Hinweise, keine Messung der Nachfrage.
+- **luviq-alsfeld.com (alt):** 64 Klicks, 1.973 Impressionen (Juli bis November), davon allein „second hand alsfeld“ 468 Impressionen, 21 Klicks, Position 2,8, dazu „second hand alsfeld öffnungszeiten“, „second hand in der nähe“, „geschäfte“. Das ist **Ladensuche**. Luviq hat keinen Laden (llms.txt, Über-uns); diese Nachfrage ist verloren und wird **nicht** zurückgeholt. Seit dem Umzug ist alsfeld-seitig nur noch Auslauf (November 72 Impressionen).
+
+### 2. Wofür Luviq schon angezeigt wird („vorgeschlagen“)
+
+| Seite | Impr. | Klicks | Klickrate | Pos. | Anfragen (soweit genannt) |
+|---|---:|---:|---:|---:|---|
+| `/wissen/bleach-painting-anleitung/` | 131 | 2 | 1,5 % | 9,3 | kleidung mit bleiche bemalen (9), mit bleiche auf textilien malen (9,3), t-shirt bleichen/bleaching (23 bis 42), textilien bleichen (54), mit chlor malen |
+| `/wissen/bleach-painting/` | 73 | 0 | 0 % | 7,2 | was ist bleach (5,3), was heißt bleach (10), paint with bleach (18), bleaching paint (20) |
+| `/wissen/pflege-handbemalte-kleidung/` | 36 | 0 | 0 % | 6,0 | (keine genannt) |
+| `/wissen/upcycling-mode-second-hand-vintage/` | 33 | 1 | 3 % | 7,1 | (keine genannt) |
+| `/` (Marke) | 30 | 4 | 13 % | 3,1 | luviq (Pos. 2,7) |
+| `/?utm_source=google&utm_medium=organic&utm_campaign=gbp` | 32 | 0 | 0 % | 9,8 | second hand alsfeld, „in der nähe“ (Profil-Link, Ladensuche) |
+| `/produkte/` | 16 | 0 | 0 % | 5,5 | luviq |
+| `/kontakt/` | 10 | 0 | 0 % | 7,2 | luviq |
+| `/produkt/engel-shirt-handgebleicht/` | 5 | 0 | 0 % | 9,2 | luviq |
+| `/motiv-anfragen/` | 0 | 0 | | | nicht angezeigt |
+
+Befunde daraus:
+1. **Die Ratgeber tragen die Sichtbarkeit**, nicht die Verkaufsseiten. Genau dort liegt eine Marktlücke, die zu Luviq passt: Wer „mit Bleiche bemalen“ sucht, ist die Zielgruppe der handgebleichten Stücke.
+2. **Hebel Platz 5 bis 20 mit Impressionen:** Anleitung (131, Pos. 9,3), Bleach Painting (73, Pos. 7,2), Pflege (36, Pos. 6), Upcycling (33, Pos. 7,1). Zusammen 273 von 363 Impressionen bei 3 Klicks. Wer von Position 7 bis 9 auf 3 bis 5 kommt, verdoppelt bis verdreifacht die Klicks; wer im Snippet besser antwortet, gewinnt schon vorher.
+3. **Marke:** „luviq“ steht auf Platz 2,7 (Startseite). Kein Handlungsbedarf außer der Profil-Verlinkung (Punkt 5).
+4. **Verkaufsintention fehlt vollständig:** keine Anfrage mit „kaufen“, „bestellen“, „handbemalt“, „Bleach Shirt“ in den genannten Daten. Das Engel-Shirt wird kaum gezeigt (5 Impressionen). Es ist ein Aufbau-, kein Optimierungsproblem (Seite braucht Zugang über Ratgeber, Verlinkung, Bilder, Backlinks).
+5. **Profil-Link mit UTM:** Das Google-Profil verlinkt auf `/?utm_source=google…`; Google zählt die Variante getrennt (32 Impressionen, Pos. 9,8) und teilt damit die Sichtbarkeit der Startseite. Ändern nur durch Luisa/Bastian im Profil (Link ohne Parameter).
+
+### 3. Zielbegriffe nach Beleg (Seite × Suchanfrage)
+
+| Seite | Hauptbegriff | Nebenbegriffe | Beleg | Maßnahme |
+|---|---|---|---|---|
+| Anleitung | t-shirt mit bleiche bemalen | bleach painting anleitung, t-shirt bleichen, textilien bemalen | GSC-Anfragen Pos. 9 bis 54 | Title und Beschreibung umgestellt (24.11.) |
+| Bleach Painting | was ist bleach painting | bleichmalerei, was ist bleach, paint with bleach | GSC „was ist bleach“ Pos. 5,3 | Beschreibung beginnt mit Frage und deutschem Begriff (24.11.) |
+| Pflege | handbemaltes shirt waschen | bleach shirt waschen | Impressionen Pos. 6, keine Anfrage genannt | Titel bleibt; Messen, dann ggf. Antwort-Snippet |
+| Upcycling | upcycling mode second hand | | Impressionen Pos. 7,1 | Titel bleibt; messen |
+| Startseite | luviq, handbemalte shirts lübeck | | Marke Pos. 2,7 | unverändert |
+| Stückseite Engel-Shirt | handbemaltes shirt, bleach shirt, engel shirt | | keine Nachfrage in GSC | Vorschlag: Zugang über Ratgeber (Abschnitt 6) |
+| Motiv anfragen | shirt bemalen lassen, eigenes motiv | | 0 Impressionen | Vorschlag: Titel auf kurzen Nutzen kürzen („Shirt bemalen lassen: eigenes Motiv anfragen | Luviq“, 52 Zeichen); Test `test_direktkauf_texte` pinnt den alten Titel, daher nur mit Bastians OK |
+
+Nicht verfolgt: Ladensuchen („second hand alsfeld“, „in der nähe“, „öffnungszeiten“): kein Laden, falsche Erwartung, verschlechtert die Klickrate.
+
+### 4. Prioritäten nach Hebel
+
+1. **Snippets der vier Ratgeber mit Impressionen** (Title/Meta). Erledigt für Anleitung und Bleach Painting; Pflege und Upcycling erst nach Messung (keine genannten Anfragen, Raten wäre erfunden).
+2. **Beschreibungen der fünf Archivstücke** waren mitten im Satz abgeschnitten („Schwarzer Hoodie mit schmalem – Nº 004 …“). Behoben (24.11.). Betrifft alle fünf Stückseiten, indexiert.
+3. **llms.txt:** Stückbeschreibung des Engel-Shirts brach mitten im Satz ab („… Jedes Shirt dieser“). Behoben (24.11.).
+4. **Titel `/motiv-anfragen/`** hat 68 Zeichen (Google kürzt ab etwa 60 bis 65), die Seite hat noch keine Impressionen. Kürzung als Vorschlag, nicht umgesetzt.
+5. **Profil-Link ohne UTM** (Bastian/Luisa, Punkt 2.5).
+
+### 5. On-Page, interne Verlinkung, Snippet, GEO (Regeln)
+
+- Pro Seite ein Hauptbegriff im Title (≤ 60 Zeichen, Marke am Ende), Beschreibung 120 bis 160 Zeichen mit Antwort zuerst, nur Aussagen, die auf der Seite stehen.
+- Interne Links: Die Ratgeber mit Impressionen müssen von Seiten mit Stärke erreichbar sein (Startseite, Wissen-Übersicht, Stückseite, Über uns). Bestand: Anleitung wird von Übersicht, Bleichfleck-Ratgeber und Bleach-Painting-Ratgeber verlinkt; die Stückseite des Engel-Shirts verlinkt nur „Was ist Bleach Painting?“ (`produkt_detail.html`, Bedingung `bleach_artikel`). **Vorschlag:** dort zusätzlich die Anleitung verlinken. Das ist ein neues `<a>` und verlangt eine Nachführung der Designwache (`aufbau_referenz.json`), daher nicht ungefragt.
+- Schema: Organization, WebSite, WebPage, Person, BreadcrumbList, Article + FAQPage (Ratgeber), VisualArtwork (Archiv), Service. Alles gültig lesbar. Kein `Product`/`Offer` beim Anfrage-Shop, Absicht.
+- GEO: `llms.txt` und `llms-full.txt` stehen auf dem Anfrage-Stand; robots.txt erlaubt die KI-Crawler. Die Frage-Antwort-Form der Ratgeber (h2 als Frage, Antwort im ersten Absatz) bleibt Standard.
+
+### 6. Neue Seiten, nur Vorschlag (warten auf Bastians OK; Bremse seo-geo)
+
+Höchstzahl der indexierbaren Seiten beachten; derzeit 20.
+
+| Vorschlag | Begründung | Beleg | Risiko |
+|---|---|---|---|
+| Ratgeber „T-Shirt bleichen: Unterschied zwischen Bleichen und Bleach Painting“ | Anfragen „t-shirt bleichen/bleaching“ (Pos. 23 bis 42) treffen heute die Anleitung, die sie nur halb beantwortet | GSC | Kannibalisierung mit der Anleitung; erst bauen, wenn die Anleitung nach der Titelumstellung nicht steigt |
+| Keine Ortsseite Lübeck | Kein Laden, keine Nachfrage belegt | llms.txt „Einen Laden … gibt es nicht“ | Überwucherung |
+| Seite „Engel-Shirt“-Ratgeber / Kollektion | fehlende Verkaufsintention; erst Bilder und Material von Luisa nötig | | Dünn ohne Material |
+
+Bis zur nächsten Messung keine weiteren neuen Seiten.
+
+### 7. Offpage und Backlinks (Vorschlag)
+
+- Instagram und TikTok `luviq.archive`: Link in der Bio auf die Startseite **ohne UTM**; Beiträge zum Bleach-Painting mit Link auf die Anleitung (Verhalten der Zielgruppe: Bleach-Painting-Anleitungen laufen dort).
+- Google-Unternehmensprofil: Website-Link ohne Parameter, Beschreibung auf handbemalte Shirts aus Lübeck (online) statt Second-Hand-Laden; Profilkategorie prüfen (Ladensuche-Treffer „second hand alsfeld“ stammen vom Profil).
+- Verzeichnisse und Pinterest nur, wo das Motiv zeigbar ist (Bilder von Luisa); jeder Eintrag mit sauberem NAP wie im Impressum.
+- Frühere Backlink-Inventur: `Buero\berichte\2026-10-29_LUVIQ-BACKLINKS-LUISA.md`.
+
+### 8. Messplan
+
+| Datum | Was | Maßstab |
+|---|---|---|
+| 01.12.2026 | Änderungen live? URL-Prüfung der geänderten Seiten, Indexierung beantragen (Liste im Bericht) | Status „indexiert“, Crawl-Datum nach Livegang |
+| 08.12.2026 | Anleitung und Bleach Painting: Position, Klickrate gegen Stand 24.11. (Anleitung 9,3 / 1,5 %; Bleach 7,2 / 0 %) | Klickrate > 3 % oder Position < 8 |
+| 22.12.2026 | Gesamt: Impressionen je Woche, Anfragen mit „bleiche“, erste Verkaufsbegriffe | Impressionen > 600 in 4 Wochen |
+| 12.01.2027 | Entscheidung zu neuen Seiten (Abschnitt 6) | wenn die Anleitung stagniert, Ratgeber „Bleichen vs. Bleach Painting“ |
+
+Dieselbe Abfrage wie am 24.11.: Search-Console-API, siehe Bericht.
+
+---
+
+*Ab hier der frühere Stand (Verlauf bis 04.11.2026); wo er dem Konzept oben widerspricht, gilt das Konzept.*
 
 ## Stand
 
