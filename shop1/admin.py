@@ -56,10 +56,11 @@ class KontaktAnfrageAdmin(admin.ModelAdmin):
     """Anfragen aus dem Kontaktformular (MW18): hier steht jede angenommene
     Nachricht, auch wenn ihre Mail nie angekommen ist. Personenbezogene
     Daten – löschen lässt sich jede Anfrage einzeln."""
-    list_display = ('erstellt_am', 'name', 'email', 'betreff', 'mail_gestartet')
+    list_display = ('erstellt_am', 'name', 'email', 'betreff', 'einstufung', 'mail_gestartet', 'absage_am')
     search_fields = ('name', 'email', 'betreff', 'nachricht')
-    list_filter = ('mail_gestartet', 'erstellt_am')
-    readonly_fields = ('name', 'email', 'betreff', 'nachricht', 'mail_gestartet', 'erstellt_am')
+    list_filter = ('einstufung', 'mail_gestartet', 'erstellt_am')
+    readonly_fields = ('name', 'email', 'betreff', 'nachricht', 'mail_gestartet', 'erstellt_am',
+                       'einstufung', 'einstufung_gruende', 'absage_am', 'absage_sprache')
     ordering = ('-erstellt_am',)
 
     def has_add_permission(self, request):

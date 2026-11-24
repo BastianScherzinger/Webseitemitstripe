@@ -4,6 +4,7 @@ import hashlib
 import logging
 import os
 import re
+import datetime
 
 from django.templatetags.static import static
 from django.shortcuts import render, redirect, get_object_or_404
@@ -18,7 +19,7 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 
 from ..models import Produkt, Werbung, WerbungStat, KontaktAnfrage
-from .. import luviq_daten, mails, spamschutz, verkauf
+from .. import angebote, luviq_daten, mails, spamschutz, verkauf
 from ..utils import send_brevo_email
 from ..middleware import ist_bot
 from ._helpers import mail_ergebnis_vermerken, zu_viele_anfragen
@@ -273,26 +274,50 @@ def _kontakt_seite(request, werte, fehler, status=200):
 
 def _kontakt_annehmen(request, name, email, betreff, nachricht):
     """Geprüfte Anfrage annehmen: Weiterleitung auf die Danke-Seite, oder ``None``,
-    wenn sie weder gespeichert noch versandt werden konnte."""
-    # Bot-Spam still verwerfen: dieselbe Bestätigung, keine Mail
-    # (shop1/spamschutz.py, Anlass 16.09.2026).
-    punkte, gruende = spamschutz.bewerte(request.POST)
-    if punkte >= spamschutz.SCHWELLE:
-        _log.warning('Kontaktformular: Spam verworfen (%s: %s)',
-                     punkte, ','.join(gruende))
-        return redirect('kontakt_danke')
-    # Doppeltes Absenden (FO03): dieselbe Bestätigung, aber nur eine Mail.
-    if doppelt_abgeschickt(email, betreff, nachricht):
+    wenn sie weder gespeichert noch versandt werden konnte.
+
+    Drei Wege (seit 24.11.2026; Befund: von 37 Nachrichten war keine eine Kundenanfrage):
+
+    * **Spamverdacht** (Punkte ab ``SCHWELLE``): gespeichert, ``einstufung='spam'``, keine Mail.
+      Früher wurde still verworfen – so konnte ein Mensch mit unglücklichen Merkmalen verloren gehen.
+    * **Dienstleistungs-Angebot** (``angebote.ist_angebot``, kein Bot-Hinweis): gespeichert,
+      ``einstufung='angebot'``, keine Mail an Luisa, **eine** freundliche Absage an den Absender.
+    * sonst wie bisher: speichern, Mail an Luisa, Kopie an die Webagentur.
+
+    Bei jedem Weg sieht der Absender dieselbe Danke-Seite."""
+    # Doppeltes Absenden (FO03): dieselbe Bestätigung, aber nur eine Mail. Der Merker im Cache gilt je
+    # Gunicorn-Prozess; die Datenbankprüfung fängt auch die Wiederholung über den zweiten Prozess ab
+    # (am 23.11.2026 kamen so vier gleiche Einsendungen in 2 Sekunden durch).
+    if doppelt_abgeschickt(email, betreff, nachricht) or _bereits_gespeichert(email, betreff, nachricht):
         _log.info('Kontaktformular: doppelt abgeschickte Anfrage zusammengeführt')
         return redirect('kontakt_danke')
+    punkte, gruende = spamschutz.bewerte(request.POST)
+    einstufung = 'anfrage'
+    if punkte >= spamschutz.SCHWELLE:
+        einstufung = 'spam'
+        _log.warning('Kontaktformular: Spamverdacht gespeichert, keine Mail (%s: %s)',
+                     punkte, ','.join(gruende))
+    elif angebote.ist_angebot(name, betreff, nachricht):
+        einstufung = 'angebot'
+        _log.info('Kontaktformular: Dienstleistungs-Angebot erkannt, nicht an Luisa weitergeleitet')
     safe_betreff = betreff.replace('\r', '').replace('\n', ' ')
     safe_name = name.replace('\r', '').replace('\n', ' ')
     safe_email = email.replace('\r', '').replace('\n', ' ')
-    recipient = os.getenv('ADMIN_EMAIL', settings.DEFAULT_FROM_EMAIL)
     # Erst speichern, dann mailen (MW18): scheitert der Versand, steht
     # die Anfrage trotzdem in der Verwaltung (Kontaktanfragen).
-    anfrage = _kontakt_speichern(name, email, betreff, nachricht)
+    anfrage = _kontakt_speichern(name, email, betreff, nachricht, einstufung, ','.join(gruende))
+    if einstufung == 'spam':
+        return redirect('kontakt_danke')
+    if einstufung == 'angebot':
+        if anfrage is not None:
+            erlaubt, warum = angebote.darf_absage(email, gruende, spamschutz.eigene_domains())
+            if erlaubt:
+                angebote.absage_senden(anfrage, f'{betreff} {nachricht}')
+            else:
+                _log.info('Angebot: keine Absage (%s)', warum)
+        return redirect('kontakt_danke')
     felder = [('Name', safe_name), ('E-Mail', safe_email, 'mail'), ('Betreff', safe_betreff)]
+    recipient = os.getenv('ADMIN_EMAIL', settings.DEFAULT_FROM_EMAIL)
     # Mail-Obergrenze je Stunde und Tag (Missbrauchsschutz): darüber steht
     # die Anfrage gespeichert im Panel, nur die Mails entfallen.
     mail_erlaubt = spamschutz.mail_budget_ok('kontakt')
@@ -317,12 +342,24 @@ def _kontakt_annehmen(request, name, email, betreff, nachricht):
     return None
 
 
-def _kontakt_speichern(name, email, betreff, nachricht):
+def _bereits_gespeichert(email, betreff, nachricht):
+    """``True``, wenn dieselbe Einsendung in der letzten Stunde schon gespeichert wurde (zählt über
+    beide Gunicorn-Prozesse und Neustarts hinweg; bei Datenbankfehler ``False``)."""
+    try:
+        seit = timezone.now() - datetime.timedelta(hours=1)
+        return KontaktAnfrage.objects.filter(email__iexact=email, betreff=betreff, nachricht=nachricht,
+                                             erstellt_am__gte=seit).exists()
+    except DatabaseError:
+        return False
+
+
+def _kontakt_speichern(name, email, betreff, nachricht, einstufung='anfrage', gruende=''):
     """Die Anfrage als ``KontaktAnfrage`` speichern; ``None``, wenn die Datenbank scheitert."""
     try:
         with transaction.atomic():
             return KontaktAnfrage.objects.create(
-                name=name, email=email, betreff=betreff, nachricht=nachricht)
+                name=name, email=email, betreff=betreff, nachricht=nachricht,
+                einstufung=einstufung, einstufung_gruende=gruende[:200])
     except DatabaseError:
         _log.exception('Kontaktformular: Anfrage nicht gespeichert')
         return None

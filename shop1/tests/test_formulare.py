@@ -322,6 +322,10 @@ class DoppeltesAbsendenTest(LuviqTestCase):
             cache.delete(_doppelt_schluessel(GUELTIGE_ANFRAGE['email'],
                                              GUELTIGE_ANFRAGE['betreff'],
                                              GUELTIGE_ANFRAGE['nachricht']))
+            # Seit 24.11.2026 fängt zusätzlich die Datenbank Wiederholungen der letzten Stunde ab.
+            from datetime import timedelta
+            from django.utils import timezone
+            KontaktAnfrage.objects.update(erstellt_am=timezone.now() - timedelta(hours=2))
             self.sende('/kontakt/', GUELTIGE_ANFRAGE)
         self.assertEqual(versand.call_count, 2)
 

@@ -13,7 +13,7 @@ _log = logging.getLogger('shop1')
 
 
 def send_brevo_email(subject, html_content, recipient_email, recipient_name="", text_content="",
-                     reply_to="", danach=None):
+                     reply_to="", danach=None, auto_antwort=False):
     """
     Zentrale Funktion zum Versenden von Emails via Brevo API (asynchron).
     Bypass für Railway SMTP-Port-Sperren.
@@ -21,6 +21,10 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
     ``reply_to`` (MW21): die Adresse, an die „Antworten“ im Postfach geht.
     Ohne sie ginge die Antwort auf eine Kontaktanfrage an die eigene
     Versandadresse statt an den Anfragenden. Beide Wege setzen sie.
+
+    ``auto_antwort`` (24.11.2026): kennzeichnet die Mail als automatische Antwort
+    (``Auto-Submitted: auto-replied``), damit Postfächer keine Antwortschleife bauen;
+    so gehen die Absagen an Dienstleistungs-Angebote hinaus.
 
     ``danach`` (EIG10): ein Aufruf ``danach(ok)`` am Ende des Hintergrund-Threads, ``ok``
     ist ``True``, wenn Brevo bzw. der SMTP-Server die Mail angenommen hat. Damit kann
@@ -32,7 +36,7 @@ def send_brevo_email(subject, html_content, recipient_email, recipient_name="", 
         ok = False
         try:
             ok = _senden(subject, html_content, recipient_email, recipient_name,
-                         text_content, reply_to)
+                         text_content, reply_to, auto_antwort)
         finally:
             if danach is not None:
                 _nachbearbeiten(danach, ok)
@@ -55,18 +59,19 @@ def _nachbearbeiten(danach, ok):
             connections.close_all()
 
 
-def _senden(subject, html_content, recipient_email, recipient_name, text_content, reply_to):
+def _senden(subject, html_content, recipient_email, recipient_name, text_content, reply_to,
+            auto_antwort=False):
     """Ein Versandversuch: Brevo-API, wenn ``BREVO_API_KEY`` gesetzt ist, sonst SMTP.
     ``True``, wenn die Gegenseite die Mail angenommen hat."""
     api_key = os.getenv('BREVO_API_KEY')
     if api_key:
         return _ueber_brevo(api_key, subject, html_content, recipient_email, recipient_name,
-                            text_content, reply_to)
-    return _ueber_smtp(subject, html_content, recipient_email, text_content, reply_to)
+                            text_content, reply_to, auto_antwort)
+    return _ueber_smtp(subject, html_content, recipient_email, text_content, reply_to, auto_antwort)
 
 
 def _ueber_brevo(api_key, subject, html_content, recipient_email, recipient_name,
-                 text_content, reply_to):
+                 text_content, reply_to, auto_antwort=False):
     url = "https://api.brevo.com/v3/smtp/email"
     headers = {
         "accept": "application/json",
@@ -85,6 +90,8 @@ def _ueber_brevo(api_key, subject, html_content, recipient_email, recipient_name
         payload["textContent"] = text_content
     if reply_to:
         payload["replyTo"] = {"email": reply_to}
+    if auto_antwort:
+        payload["headers"] = {"Auto-Submitted": "auto-replied", "X-Auto-Response-Suppress": "All"}
     try:
         response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=10)
         if response.status_code < 300:
@@ -96,7 +103,7 @@ def _ueber_brevo(api_key, subject, html_content, recipient_email, recipient_name
     return False
 
 
-def _ueber_smtp(subject, html_content, recipient_email, text_content, reply_to):
+def _ueber_smtp(subject, html_content, recipient_email, text_content, reply_to, auto_antwort=False):
     try:
         # EmailMultiAlternatives statt send_mail: nur so lässt sich
         # die Antwortadresse (reply_to) mitgeben.
@@ -106,6 +113,7 @@ def _ueber_smtp(subject, html_content, recipient_email, text_content, reply_to):
             settings.DEFAULT_FROM_EMAIL,
             [recipient_email],
             reply_to=[reply_to] if reply_to else None,
+            headers={"Auto-Submitted": "auto-replied", "X-Auto-Response-Suppress": "All"} if auto_antwort else None,
         )
         mail.attach_alternative(html_content, "text/html")
         sent = mail.send(fail_silently=False)
