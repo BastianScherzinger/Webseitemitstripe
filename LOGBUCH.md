@@ -11,6 +11,12 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 24.11.2026 – Spam-Abwehr schärfen, Angebote freundlich absagen (Zweig `luviq/2026-11-24-spamschutz`, nicht gepusht)
+
+- **Was:** Neue Merkmale in `shop1/spamschutz.py` (Preisfrage-Vorlage, Kauderwelsch, Zahlenmuster, Wegwerf-Adressen). Kontaktformular speichert jetzt **jede** Einsendung (`KontaktAnfrage.einstufung` = anfrage / angebot / spam, Migration 0040); Spamverdacht und Angebote lösen keine Mail an Luisa aus. Neues Modul `shop1/angebote.py` erkennt Dienstleistungs-Angebote und schickt je Adresse höchstens eine Absage in elf Sprachen (30 Tage Pause, Tagesgrenze, nie an Bots). Doppelsperre jetzt auch über die Datenbank (zwei Gunicorn-Prozesse). `pruefe_abwehr` um die neuen Fälle erweitert, `spam_aufraeumen` für Löschfristen.
+- **Warum:** Bastian 24.11.2026 „wir bekommen ständig spam anfragen bei luviq“. Auswertung: von 37 gespeicherten Kontaktnachrichten keine einzige echte Kundenanfrage; alle erhielten 0 bis 2 Punkte. Bericht `Buero/berichte/2026-11-24_LUVIQ-SPAM/BERICHT.md`.
+- **Nicht angefasst:** Datenschutzerklärung (Ergänzungsvorschlag im Bericht), Stückanfrage und Motivanfrage (verwerfen ab Schwelle weiterhin still, nutzen aber die neuen Merkmale), Gästebuch, Registrierung.
+
 ## 15.11.2026 – Durchstarten: Wisch-Band, SEO/GEO, Datenschutz 8a (Zweig `luviq/2026-11-15-durchstarten`, nicht gepusht)
 
 - **Was:** Wisch-Band „Stücke“ (CSS Scroll-Snap, ohne Bibliothek) direkt unter dem Hero auf Start und `/produkte/` (Partials `teile/stueckband.html`, `teile/reihe_karte.html`; Klassen `lv-reihe*`): offenes Stück zuerst, dann vergebene; Status nur aus den Daten (`Produkt.status_wort`, `status_klasse`, `band_hinweis`). `VERKAUFT_WORT` heißt jetzt „Vergeben“. Hero am Handy kompakter (Preis und Knopf im ersten Bildschirm). Startfilm „Verkaufsstart“ aus (`STARTFILM = None`, alter Eintrag in `STARTFILM_ARCHIV`). `llms.txt` und `llms-full.txt` im Anfrage-Shop neu (`_llms_txt_anfrage`), Organization-Schema ohne „kein Verkauf“, FAQ der Engel-Stückseite im Anfrage-Shop (`engel_faq_anfrage`), Titel/Metas, Über-uns-H1, Versand-im-Preis-Sätze, Datenschutz Abschnitt 8a und Hinweis zu Abschnitt 5–7, `seiten_stand`.

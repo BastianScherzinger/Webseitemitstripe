@@ -94,7 +94,9 @@ class MarkenimitationTest(LuviqTestCase):
             antwort = self.sende('/kontakt/', dict(KONTAKT, email='domains@search-luviq-alsfeld.xyz'))
         self.assertRedirects(antwort, '/kontakt/danke/', fetch_redirect_response=False)
         versand.assert_not_called()
-        self.assertEqual(KontaktAnfrage.objects.count(), 0)
+        # Seit 24.11.2026 bleibt der Verdacht gespeichert (nur ohne Mail), statt still zu verschwinden.
+        self.assertEqual(KontaktAnfrage.objects.filter(einstufung='anfrage').count(), 0)
+        self.assertEqual(KontaktAnfrage.objects.filter(einstufung='spam').count(), 1)
 
 
 class MailObergrenzeTest(LuviqTestCase):

@@ -20,6 +20,18 @@ Seit 02.10.2026 (Bausteine der Agenturseite, ``doku/80-AUFGABEN.md`` „Missbrau
 * **Mail-Obergrenze je Tag** — :func:`mail_budget_ok`: was darüber liegt, steht trotzdem
   gespeichert im Panel, nur die Benachrichtigungsmail entfällt;
 * **Prüfbefehl** — ``python manage.py pruefe_abwehr`` rechnet Bot- und Menschenfälle durch.
+
+Seit 24.11.2026 (Analyse der Railway-Logs und aller 37 gespeicherten Kontaktnachrichten, Büro-Bericht
+2026-11-24_LUVIQ-SPAM): von 37 Nachrichten war keine einzige eine Kundenanfrage; die Abwehr ließ 0 Punkte
+durch, weil kein Merkmal der drei Bot-Arten gesucht wurde. Neu:
+
+* **Preisfrage-Bot** („Hi, i write about your price“ + ein Satz in einer Zufallssprache) — +5;
+* **Kauderwelsch** („Jfeuwgduwefhw fuhefyugewfhqwyfuewu …“) — Wörter ohne gebräuchliche Buchstabenpaare;
+* **Zahlenmuster** („NARTYTRYUT2173457NEWETREWT“, dieselbe Zahl in Name, Betreff und Text) — +5;
+* **Wegwerf-Adresse** (``belettersmail.com``, ``mailinator.com`` …) — +3;
+* Verdachtsfälle werden **gespeichert** (``KontaktAnfrage.einstufung = 'spam'``), nur ohne Mail.
+
+Dienstleistungs-Angebote (SEO, Video, Webdesign …) sind kein Bot-Spam: sie erkennt ``angebote.py``.
 """
 
 import os
@@ -56,10 +68,89 @@ _NACKTE_DOMAIN = re.compile(
 #: Der Markenkern, nach dem eine Nachahmer-Domain sucht. ``luviq`` steckt in keinem
 #: gebräuchlichen Wort; deshalb genügen fünf Zeichen (die Agenturseite verlangt sechs).
 MARKENKERN = 'luviq'
-_EIGENE_VORGABE = ('luviq-alsfeld.com',)
+_EIGENE_VORGABE = ('luviq-alsfeld.com', 'luviq-luebeck.com')
 
 _ZUSAMMEN = re.compile(r'^[A-Z][a-z]+[A-Z][a-z]+$')          # „RobertBoobe“
 _FREMDSCHRIFT = re.compile('[Ѐ-ӿ一-鿿぀-ヿ]')
+
+
+# ── Seit 24.11.2026: die drei Arten, die bis dahin mit 0 Punkten durchkamen ──
+
+#: „Hi, i write about your price for reseller“ – Vorlagenbetreff mit Doppelleerzeichen, dazu ein Satz
+#: in einer Zufallssprache („Sveiki, aš norėjau sužinoti jūsų kainą.“).
+_PREISFRAGE = re.compile(r'\b(?:writ\w*|wrote)\s+(?:about|to ask)\b.{0,40}\bpric', re.I)
+#: Die Vorlage lässt beim Füllen Wörter weg und hinterlässt zwei oder mehr Leerzeichen in Folge.
+_LUECKEN = re.compile(r'\S\s{2,}\S')
+#: Name/Betreff/Text wie „NARTYTRYUT2173457NEWETREWT“.
+_ZAHLENMUSTER = re.compile(r'[A-Za-z]{4,}(\d{5,})[A-Za-z]{3,}')
+
+#: Wegwerf- und Testadressen (Teilzeichenfolgen der Domain).
+_WEGWERF = ('belettersmail.', 'notlettersmail.', 'mailinator.', 'guerrillamail', 'sharklasers.',
+            '10minutemail', 'tempmail', 'temp-mail', 'trashmail', 'yopmail.', 'getnada.', 'dispostable.',
+            'maildrop.cc', 'throwawaymail', 'fakeinbox.', 'moakt.', 'mohmal.', 'emailondeck.', 'mintemail.',
+            'spambox.', 'tmpmail.', 'mailnesia.', 'burnermail.', 'inboxkitten.', 'lettersmail.')
+
+# Kauderwelsch: Tastaturgeklapper („Jfeuwgduwefhw fuhefyugewfhqwyfuewu“). Gelernt wird an einem kleinen
+# Text in den Sprachen, in denen Kundschaft schreibt; ein Wort fällt auf, wenn die Hälfte seiner
+# Buchstabenpaare in keinem davon vorkommt. Geprüft werden nur Wörter ab 8 Buchstaben aus reinen
+# ASCII-Buchstaben (Wörter mit Umlaut, Akzent oder anderer Schrift zählen nie), und erst ab zwei
+# auffälligen Wörtern, die zusammen mindestens die Hälfte aller langen Wörter ausmachen.
+_LERNTEXT = """
+Hallo Luisa, ich hätte gern eine Jacke mit einem Drachen auf dem Rücken. Geht das bis Dezember? Ist Nummer 006 noch frei?
+Ich möchte gern das Engel Shirt in Größe M bestellen und wüsste gern wie lange der Versand nach Österreich dauert.
+Könnten Sie mir bitte ein Foto oder ein kurzes Video von dem Stück schicken, damit ich die Farben besser sehen kann?
+Vielen Dank für Ihre Antwort und freundliche Grüße aus Hamburg. Das Material, die Verarbeitung und die Passform interessieren mich sehr.
+Entschuldigung, beschriftet, Schnittmuster, Strickjacke, Geschenkverpackung, Nachhaltigkeit, Unikate, handgemacht, Rücksendung,
+Zahlungsmöglichkeiten, Bestellnummer, Lieferzeit, Wochenende, Weihnachtsgeschenk, Kleidergröße, Schulterbreite, Zusammenarbeit,
+Kooperation, Anfrage, Werbung, Influencer, Fotoshooting, Marketing, Videoproduktion, Reißverschluss, Kapuzenpullover, Übergangsjacke.
+Hello, I would like to ask whether the jacket is still available and if you ship internationally. Thank you very much for your help,
+best regards. The shirt looks great, could you send me more pictures please? I follow you on Instagram and love the handmade bleached designs.
+Optimization, professional, information, development, communication, understand, something, business, together, wonderful, beautiful,
+interested, available, delivery, question, customers, strategy, advertising, collaboration, photography, wholesale, shipping, packaging.
+Bonjour, je voudrais savoir si la veste est encore disponible et quel est le délai de livraison. Merci beaucoup pour votre réponse.
+Hola, quería saber si la chaqueta todavía está disponible y cuánto cuesta el envío. Muchas gracias por su respuesta y un saludo.
+Ciao, vorrei sapere se la giacca è ancora disponibile e quanto costa la spedizione, grazie mille e buona giornata.
+Hallo, ik wil graag weten of het shirt nog beschikbaar is en hoe lang de verzending duurt, alvast bedankt voor uw antwoord.
+Olá, gostaria de saber se o casaco ainda está disponível e quanto custa o envio, muito obrigado pela resposta e cumprimentos.
+Dzień dobry, chciałbym zapytać czy kurtka jest jeszcze dostępna oraz ile kosztuje wysyłka, dziękuję bardzo za odpowiedź.
+Merhaba, ceketin hala satışta olup olmadığını ve kargo ücretini öğrenmek istiyorum, cevabınız için çok teşekkür ederim.
+"""
+
+
+def _paare(wort):
+    return [wort[i:i + 2] for i in range(len(wort) - 1)]
+
+
+def _gelernte_paare():
+    zaehler = {}
+    for w in re.findall(r'[a-zäöüßéèàáíóúñçêôâîûœąęłńśźżğşı]+', _LERNTEXT.lower()):
+        for p in _paare(w):
+            zaehler[p] = zaehler.get(p, 0) + 1
+    return frozenset(p for p, n in zaehler.items() if n >= 2)
+
+
+_PAARE = _gelernte_paare()
+
+
+def kauderwelsch(text, mindestens=3):
+    """``True`` bei Tastaturgeklapper: mindestens ``mindestens`` lange ASCII-Wörter, deren Buchstabenpaare
+    zu mehr als der Hälfte in keiner Kundensprache vorkommen, und diese Wörter sind die Hälfte oder mehr
+    aller langen Wörter. Ein Wort neben einem Umlaut oder Akzent zählt nicht (kein Teilwort von „ücretsiz“)."""
+    lange = re.findall(r'(?<![^\W_])[A-Za-z]{8,}(?![^\W_])', text or '')
+    lange = [w for w in lange if len(set(w.lower())) > 3]   # „xxxxxxxxx“ ist Füllung, kein Geklapper
+    if len(lange) < mindestens:
+        return False
+    auffaellig = [w for w in lange
+                  if sum(1 for p in _paare(w.lower()) if p not in _PAARE) / (len(w) - 1) > 0.55]
+    return len(auffaellig) >= mindestens and len(auffaellig) * 2 >= len(lange)
+
+
+def wegwerf_adresse(email):
+    """``True``, wenn die Domain der Adresse ein Wegwerfdienst ist."""
+    if '@' not in (email or ''):
+        return False
+    domain = email.rsplit('@', 1)[1].strip().lower()
+    return any(m in domain for m in _WEGWERF)
 
 
 def eigene_domains():
@@ -151,6 +242,23 @@ def bewerte(daten, jetzt=None):
         treffer(2, 'name-zusammen')
     if _FREMDSCHRIFT.search(alles) and _LINK.search(alles):
         treffer(3, 'fremdschrift-link')
+
+    # Seit 24.11.2026 – siehe Kopf der Datei.
+    if _PREISFRAGE.search(betreff) and len(nachricht) <= 120:
+        # Mit den Lücken der Vorlage ist es der Bot; ohne sie könnte ein Mensch nach dem Preis fragen.
+        if _LUECKEN.search(betreff) or re.search(r'\bfor resell', betreff, re.I):
+            treffer(5, 'preis-bot')
+        else:
+            treffer(2, 'preis-bot-schwach')
+    zahlen = [m.group(1) for m in _ZAHLENMUSTER.finditer(alles)]
+    if zahlen and (len(zahlen) >= 2 or _ZAHLENMUSTER.search(name)):
+        treffer(5, 'zahlenmuster')
+    if kauderwelsch(betreff + ' ' + nachricht):
+        treffer(4 + (2 if kauderwelsch(betreff, 2) else 0), 'kauderwelsch')
+    elif kauderwelsch(betreff, 2) and kauderwelsch(name, 1):
+        treffer(5, 'kauderwelsch')
+    if wegwerf_adresse(daten.get('email') or ''):
+        treffer(3, 'wegwerf-mail')
     return punkte, gruende
 
 

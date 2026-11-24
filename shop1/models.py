@@ -913,6 +913,14 @@ class KontaktAnfrage(models.Model):
     nachricht = models.TextField(verbose_name="Nachricht")
     mail_gestartet = models.BooleanField(default=False, verbose_name="Mailversand angestoßen")
     erstellt_am = models.DateTimeField(auto_now_add=True, verbose_name="Eingegangen am")
+    #: Seit 24.11.2026: jede Einsendung bleibt gespeichert, auch Spam und Angebote – nur die Mail an
+    #: Luisa entfällt. So geht nie still etwas verloren, das ein Mensch geschrieben haben könnte.
+    EINSTUFUNG = [('anfrage', 'Anfrage'), ('angebot', 'Dienstleistungs-Angebot'), ('spam', 'Spamverdacht')]
+    einstufung = models.CharField(max_length=10, choices=EINSTUFUNG, default='anfrage', db_index=True,
+                                  verbose_name="Einstufung")
+    einstufung_gruende = models.CharField(max_length=200, blank=True, verbose_name="Gründe der Einstufung")
+    absage_am = models.DateTimeField(null=True, blank=True, db_index=True, verbose_name="Absage verschickt am")
+    absage_sprache = models.CharField(max_length=5, blank=True, verbose_name="Sprache der Absage")
 
     class Meta:
         verbose_name = "Kontaktanfrage"

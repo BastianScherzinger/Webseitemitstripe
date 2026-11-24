@@ -38,6 +38,10 @@ python manage.py besucher_anonymisieren || echo "WARNING: besucher_anonymisieren
 # Löscht erst, wenn BESUCHER_AUFBEWAHRUNG_TAGE gesetzt ist; ohne Wert passiert nichts.
 python manage.py besucher_aufraeumen || echo "WARNING: besucher_aufraeumen failed"
 
+# ═══ SPAMVERDACHT UND ANGEBOTE DER KONTAKTNACHRICHTEN NACH FRIST LÖSCHEN (24.11.2026) ═══
+# Löscht erst, wenn SPAM_AUFBEWAHRUNG_TAGE / ANGEBOT_AUFBEWAHRUNG_TAGE gesetzt sind; echte Anfragen nie.
+python manage.py spam_aufraeumen || echo "WARNING: spam_aufraeumen failed"
+
 # ═══ BILDMASSE DER PRODUKTE NACHTRAGEN (PF25) ═══
 python manage.py bildmasse_nachtragen || echo "WARNING: bildmasse_nachtragen failed"
 
