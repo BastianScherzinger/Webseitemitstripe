@@ -20,7 +20,8 @@ from django.core.management import call_command
 from django.test import override_settings
 
 from .. import angebote, spamschutz
-from ..management.commands.pruefe_abwehr import ANGEBOTE, KEINE_ANGEBOTE
+from ..management.commands.pruefe_abwehr import (ANGEBOTE, CREATOR_ANGEBOTE, ECHTE_ANGEBOTE, KEINE_ANGEBOTE,
+                                                 KUNDINNEN_REGRESSION)
 from ..models import KontaktAnfrage
 from ._basis import LuviqTestCase
 
@@ -134,8 +135,17 @@ class MenschenTest(_Basis):
         self._kommt_an(betreff='Preis für das Engel-Shirt', nachricht='Ich schreibe wegen des Preises vom Shirt.')
 
     def test_keine_kundin_der_beispielliste_gilt_als_angebot(self):
-        for betreff, text in KEINE_ANGEBOTE:
+        for betreff, text in KEINE_ANGEBOTE + KUNDINNEN_REGRESSION:
             self.assertFalse(angebote.ist_angebot('', betreff, text), betreff)
+
+    def test_jede_kundin_der_regressionsliste_kommt_ueber_das_formular_an_luisa(self):
+        for name, text in KUNDINNEN_REGRESSION:
+            cache.clear()
+            KontaktAnfrage.objects.all().delete()
+            luisa, absage = self._senden(betreff=name, nachricht=text)
+            luisa.assert_called_once()
+            absage.assert_not_called()
+            self.assertEqual(KontaktAnfrage.objects.get().einstufung, 'anfrage', name)
 
 
 @override_settings(**PROD)
@@ -144,7 +154,10 @@ class AngebotTest(_Basis):
     def _angebot(self, kuerzel, betreff, text, email='agentur@example.org'):
         luisa, absage = self._senden(name='Sam Agentur', email=email, betreff=betreff, nachricht=text)
         luisa.assert_not_called()
-        self.kopie_versand.assert_not_called()
+        # Kopie an die Webagentur zur Kontrolle der Einordnung – Luisa bekommt nichts.
+        self.kopie_versand.assert_called_once()
+        self.assertIn('[Angebot – automatisch abgesagt]', self.kopie_versand.call_args[0][0])
+        self.kopie_versand.reset_mock()
         return absage
 
     def test_jede_sprache_bekommt_genau_eine_absage_in_ihrer_sprache(self):
@@ -169,6 +182,16 @@ class AngebotTest(_Basis):
             self.assertNotIn('@', text, kuerzel)
             self.assertTrue(text.rstrip().endswith('Luviq'), kuerzel)
             self.assertNotIn('<a ', angebote.absage_html(text))
+
+    def test_die_echten_verkaufsschreiben_und_der_creator_gegen_gratisstueck_werden_erkannt(self):
+        for name, betreff, text in ECHTE_ANGEBOTE + CREATOR_ANGEBOTE:
+            self.assertTrue(angebote.ist_angebot('', betreff, text), name)
+
+    def test_kundenwoerter_allein_oder_zusammen_loesen_nie_ein_angebot_aus(self):
+        for satz in ('Hi, send me a quote and your pricing, a proposal and your portfolio please, for the team.',
+                     'Habt ihr eine Preisliste? Wir können 20 abnehmen, unser Team freut sich über ein Angebot.',
+                     'I noticed your shop and came across your page, I make videos as a hobby, love your marketing.'):
+            self.assertFalse(angebote.ist_angebot('', 'Frage', satz), satz)
 
     def test_alle_elf_sprachen_haben_eine_absage(self):
         self.assertEqual(set(angebote.ABSAGEN), {'de', 'en', 'fr', 'es', 'it', 'nl', 'pt', 'pl', 'tr', 'ru', 'uk'})

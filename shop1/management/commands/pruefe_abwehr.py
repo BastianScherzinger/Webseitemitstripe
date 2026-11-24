@@ -117,8 +117,8 @@ def faelle(jetzt=None):
 
 #: Verkaufsschreiben in elf Sprachen: (Sprache, Betreff, Text). Alle müssen als Angebot gelten.
 ANGEBOTE = [
-    ('de', 'Videos für Ihre Website', 'Hallo, wir erstellen Werbevideos und Reels für Onlineshops. Unser Team '
-     'bietet Ihnen ein kostenloses Angebot an, die Preise starten bei 195 Euro. Möchten Sie Beispiele sehen?'),
+    ('de', 'Videos für Ihre Website', 'Hallo, wir bieten Werbevideos und Reels für Onlineshops an. Unsere Agentur '
+     'macht ein kostenloses Erstgespräch, die Preise starten bei 195 Euro. Möchten Sie Beispiele sehen?'),
     ('en', 'Explainer Video for your website?', 'Hi, I just visited your site and wondered if you have considered '
      'an impactful video to advertise your business? Our prices start from $195. Let me know if you want to see '
      'samples of our previous work.'),
@@ -166,6 +166,52 @@ KEINE_ANGEBOTE = [
 ]
 
 
+#: Kundinnen-Nachrichten, die die erste Fassung fälschlich als Angebot abgesagt hätte (Abnahme 24.11.2026):
+#: Kundenwörter wie quote, price list, Preisliste, „ich habe dein Reel gesehen“ lösen nie ein Angebot aus.
+KUNDINNEN_REGRESSION = [
+ ('Instagram', 'Hi, I noticed your shop on Instagram, love your videos! Do you ship to the UK?'),
+ ('Reels Preisliste', 'Hi, I saw your reels. Could you share your price list?'),
+ ('Reel gleiche', 'Hey, saw your reel!! can i get one like that? whats the price list'),
+ ('Seite gefunden', 'Hey I came across your page on Instagram and I love your videos. Can you make one for me? Please send me a quote'),
+ ('Quote', 'Hi, could you send me a quote and your pricing? Happy to get a proposal for a custom design.'),
+ ('Video gesehn', 'hallo, hab das video gesehn, was kostet die preisliste ab 50 euro?'),
+ ('Marketing-Kram', 'Hallo Luisa, meine Freundin mag Marketing-Kram nicht, sie hätte gern was Ruhiges zum Geburtstag. Habt ihr eine Preisliste?'),
+ ('Firmenlogo', 'Hallo, könnt ihr unser Firmenlogo (Branding für unser Team) auf Arbeitskleidung bringen? Wir können 20 Teile abnehmen.'),
+ ('Schulklasse', 'Hallo, wir sind eine 10. Klasse und machen ein Video über nachhaltige Mode für ein Schulprojekt. Unser Team sind 4 Schüler, dürfen wir euch ein paar Fragen stellen?'),
+ ('K1', 'Hello! I run a small boutique and would love to feature your hoodie in our marketing newsletter. Could you send your portfolio and a price list?'),
+ ('K2', 'Hallo, ich suche ein Geschenk. Kannst du mir ein kurzes Video vom Stück schicken? Danke!'),
+ ('K3', 'Hi, do you do custom designs? I would like a jacket with my dog on it. What would the pricing be?'),
+ ('K4', 'Guten Tag, wir sind ein Verein und möchten 15 Hoodies mit Logo bedrucken lassen. Bitte um ein Angebot mit Preisliste.'),
+ ('K5', 'Hey, I saw your reel on Instagram about the bleached jacket. Is it still available and what is the quote for shipping to Canada?'),
+ ('K6', 'Hallo Luisa, ich arbeite bei einer Zeitung und würde gern über euer Upcycling-Label berichten. Hättet ihr Zeit für ein Interview? Gern auch per Video.'),
+ ('K7', 'Hi! Love your brand. I do photography as a hobby, could I take photos of the pieces for you and pay for the shirt myself? Let me know the pricing.'),
+ ('K8', 'Hi, I am a student and need a video for a school project about slow fashion. Can I interview you? Our team has 3 members.'),
+ ('K9', 'Hello, we are planning a marketing event in Hamburg and would love to have your pieces at our pop-up. Can you send a proposal for the booth costs?'),
+ ('K10', 'Moin, ich habe euer Reel gesehen und finde die Jacke mega. Gibt es sie auch in L? Was ist der Preis?'),
+ ('K11', 'Hello, I came across your website while looking for a gift for my sister. Do you have a price list and do you ship to Austria?'),
+ ('K12', 'Hi Luisa, my brand needs branding merch for our team of 12. Can you make hoodies with our logo? Please send a quote.'),
+ ('K13', 'Hey, ich bin Fotografin und würde gern ein Shooting mit deinen Stücken machen, Größe M. Hast du Interesse an einer Kooperation?'),
+]
+
+#: Ein Creator bietet ein Video gegen ein Gratis-Stück an: ein Video-Angebot, also Absage.
+CREATOR_ANGEBOTE = [
+ ('C1', 'Collab: UGC video for a free piece', "Hi, I'm a UGC creator with 20k followers. I can make a reel and a TikTok video of your hoodie in exchange for a free piece."),
+]
+
+#: Die echten Verkaufsschreiben aus der Produktion (gekürzt, ohne Namen und Adressen), müssen erkannt werden.
+ECHTE_ANGEBOTE = [
+ ('Robin', 'Question about your Google visibility', 'Hello, The way people search online is changing. Along with Google, more people are using AI platforms. We offer a combined SEO + AEO strategy to improve visibility across Google, voice search. If youd like to strengthen your online presence, we would be happy to share our service proposal and pricing.'),
+ ('Valentina', 'Let’s Boost Your Website Traffic', 'Hello http://luviq-luebeck.com, We can place your website on Google 1st page. I can give you our Complete SEO Action Plan along with a customary reach and add great value to your product/ service. I may send you a SEO Packages & price list. If interested. Best Regards, Valentina Online SEO Consultant'),
+ ('Marco', 'Design & Performance Review for luviq-luebeck.com', 'Hello luviq-luebeck.com, I noticed a few design-related issues on your website luviq-luebeck.com that could impact its performance and user experience. Would you like me to send a screenshot highlighting these errors? I can also prepare a detailed audit report, along with a proposal and pricing to improve your website’s design and optimize its ranking.'),
+ ('Juliana', 'Let’s Boost Your Website Traffic', 'Hello http://luviq-luebeck.com, I hope you’re doing well. I found your business online and believe there’s potential to increase your search rankings and organic traffic. We specialize in practical SEO strategies designed for sustainable growth. Send me your target keywords and market,I’ll send over a complete proposal . Warm regards, Juliana Digital Marketing Expert'),
+ ('Rose', 'Let’s Boost Your Website Traffic', 'Hello http://luviq-luebeck.com, I hope you’re doing well. I came across your business online and thought you might be interested in improving your visibility and traffic on search engines. We specialize in helping businesses strengthen their online presence through effective SEO strategies. Once you share your target keywords and target market, I’ll send a full proposal.'),
+ ('Joanna', 'Explainer Video for your website?', "Hi, I just visited luviq-luebeck.com and wondered if you've ever considered an impactful video to advertise your business? Our videos can generate impressive results on both your website and across social media. Our prices start from just $195 (USD) / £145. Let me know if you're interested in seeing samples of our previous work. Regards, Joanna"),
+ ('Joanna alt', 'Video Promotion for your website', "Hi, I just visited luviq-alsfeld.com and wondered if you've ever considered an impactful video to advertise your business? Our videos can generate impressive results on both your website and across social media."),
+ ('Jase', 'SEO Improvements Identified for Your Website luviq-alsfeld.com', 'Hello, I recently reviewed your website luviq-alsfeld.com and noticed a few SEO-related issues that may be affecting your Google rankings, website traffic, and overall online visibility. Would you like me to send details?'),
+ ('Marylin', 'Results for luviq-alsfeld.com', "Hi Feature luviq-alsfeld.com in Google's Search Index to be visible in Google search results! List luviq-alsfeld.com here: indexhelp.pro"),
+]
+
+
 class Command(BaseCommand):
     """``python manage.py pruefe_abwehr``: Fälle aus ``faelle()`` gegen ``spamschutz.bewerte``, dazu die Mail-Obergrenze."""
     help = 'Prüft die Spam-Abwehr der Formulare in beide Richtungen (Bots geblockt, Menschen nicht).'
@@ -196,6 +242,17 @@ class Command(BaseCommand):
             if not ok:
                 fehler.append(f'Angebot in {kuerzel} nicht richtig behandelt (erkannt={erkannt}, '
                               f'Sprache={erkannte_sprache})')
+        for name, text in KUNDINNEN_REGRESSION:
+            erkannt = angebote.ist_angebot('', name, text)
+            self.stdout.write(f'  {"FEHLER" if erkannt else "OK    "}    Mensch: Kundin „{name}“ gilt '
+                              f'{"als Angebot" if erkannt else "nicht als Angebot"}')
+            if erkannt:
+                fehler.append(f'Kundin „{name}“ würde als Angebot abgesagt')
+        for name, betreff, text in CREATOR_ANGEBOTE + ECHTE_ANGEBOTE:
+            erkannt = angebote.ist_angebot('', betreff, text)
+            self.stdout.write(f'  {"OK    " if erkannt else "FEHLER"}    Angebot „{name}“ erkannt: {erkannt}')
+            if not erkannt:
+                fehler.append(f'Angebot „{name}“ nicht erkannt')
         for betreff, text in KEINE_ANGEBOTE:
             erkannt = angebote.ist_angebot('', betreff, text)
             self.stdout.write(f'  {"FEHLER" if erkannt else "OK    "}    Mensch: „{betreff}“ gilt '

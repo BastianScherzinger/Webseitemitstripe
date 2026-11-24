@@ -8,8 +8,8 @@ bekommt der Absender **eine** kurze, freundliche Absage in seiner Sprache.
 
 Drei Sicherungen gegen Fehlgriffe, in dieser Reihenfolge ihrer Wichtigkeit:
 
-1. **Falsch-Positive sind teurer als durchgelassener Spam.** Ein Text gilt nur als Angebot, wenn er
-   ein Dienstleistungs-Stichwort (Video, SEO, Webdesign, Marketing, Ads, Influencer, App …) **und** ein
+1. **Falsch-Positive sind teurer als durchgelassener Spam.** Ein Text gilt nur als Angebot, wenn der Absender
+   sich selbst anbietet: ein Dienstleistungs-Stichwort (Video, SEO, Webdesign, Marketing, Ads, Influencer, App …) **und** ein
    Anbieter-Satzmuster („we offer“, „I can create“, „our prices start“, „wir bieten“ …) enthält – oder
    mindestens zwei Anbieter-Satzmuster. Nennt der Text dagegen ein Stück, eine Größe, eine Bestellung oder
    Luviq-Wörter (Nº 006, Jacke, Hoodie, Versand …), ist es eine Kundin und geht wie bisher an Luisa.
@@ -45,7 +45,7 @@ PAUSE_TAGE_VORGABE = 30
 
 #: Wovon das Schreiben handelt: Dienstleistungen, die Luviq nicht braucht.
 _DIENST = re.compile(
-    r'\bseo\b|\baeo\b|\bsem\b|search engine|suchmaschin|google (?:1st|first|top|page|ranking|rank)|'
+    r'search index|\bseo\b|\baeo\b|\bsem\b|search engine|suchmaschin|google (?:1st|first|top|page|ranking|rank)|'
     r'\branking|\brankings\b|\bbacklink|\borganic (?:traffic|reach)|website traffic|web ?traffic|'
     r'\bvideos?\b|\bvideo ?(?:production|marketing|ads?|content|promotion)|explainer|\breels?\b|'
     r'\bimage ?film|\bimagefilm|\bwerbefilm|\bwerbevideo|\bvideoproduktion|\bvideograf|\bugc\b|'
@@ -61,54 +61,71 @@ _DIENST = re.compile(
     r'reklam ajans|arama motoru|продвижени|раскрутк|видео|реклам|сайт|сео\b|маркетинг|відео|просуванн|'
     r'розкрутк|рекламн', re.I)
 
-#: Anbieter-Satzmuster: wer so schreibt, verkauft etwas.
-_ANGEBOT = re.compile(
-    r'\bwe (?:offer|provide|specialize|specialise|create|make|produce|can (?:place|help|make|create|offer|give|boost|improve|rank|get))\b|'
-    r'\bi (?:can|could) (?:give|offer|prepare|provide|create|make|place|boost|improve|rank|help you|send you (?:a|our|the) (?:proposal|quote|audit|samples?|screenshot))|'
-    r'\bi (?:may|will) send you\b|\bi (?:would|\'d) like to offer\b|\bour (?:services?|prices?|pricing|team|videos?|packages?|clients?|agency|experts?|work)\b|'
-    r'\bprices? start|\bstarting (?:at|from) \$?[€£$]?\s?\d|\bproposal\b|\bpricing\b|\bprice list\b|\bquote\b|'
-    r'\bfree (?:audit|quote|sample|consultation|report|trial)\b|\bsamples? of our\b|\bprevious work\b|\bportfolio\b|'
-    r'\bi (?:just )?(?:visited|came across|found|noticed|reviewed|checked) (?:your|a few|some|the)?\s*(?:business|website|site|page|store|shop)|'
-    r'\b(?:send|share) (?:me )?your (?:target )?keywords\b|\btarget (?:keywords|market)\b|'
-    r'\byour (?:google )?(?:visibility|rankings?|online presence)\b|\bwould you like (?:me|us) to send\b|'
-    r'\bwe can place your website\b|'
+#: Der Absender bietet **sich selbst** an: eigene Leistung in der ersten Person. Wörter, die auch Kundinnen
+#: benutzen (quote, pricing, price list, Preisliste, proposal, portfolio, „ich habe deine Seite gesehen“,
+#: „unser Team“, „wir können“), stehen hier bewusst **nicht** – sie lösen nie ein Angebot aus.
+_SELBST = re.compile(
+    r'\bwe (?:offer|provide|specialize|specialise|create|produce|can (?:place|rank|boost|help (?:you|your)|get you))\b|'
+    r'\bwe(?: are|[\'’]re) an? (?:\w+ ){0,3}(?:agency|studio|company|team of)\b|'
+    r'\bour (?:agency|studio|company|experts?|services|videos?|packages|clients|prices start|prices are)\b|'
+    r'\bi(?: am|[\'’]m) an? (?:\w+ ){0,3}(?:video ?editor|videograph\w*|marketer|marketing (?:expert|consultant|specialist)|'
+    r'seo (?:expert|consultant|specialist)|web ?designer|web ?developer|freelanc\w+|ugc creator|content creator|'
+    r'digital marketing \w+|consultant|developer|designer)\b|'
+    r'\bi (?:can|could) (?:also )?(?:create|edit|make|produce|shoot|design|build|prepare|provide|offer|boost|rank)\b.{0,70}'
+    r'\b(?:for your (?:brand|business|shop|store|website|company|products?)|audit|proposal|samples?)\b|'
+    r'\b(?:increase|boost|grow|improve) your (?:sales|traffic|followers|revenue|visibility|rankings?|conversions?|website)\b|'
+    r'\brank (?:your \w+ )?(?:on|in) google\b|\bgoogle (?:1st|first) page\b|\bfirst page of google\b|'
+    r'\bplace your (?:website|site) on google\b|\b(?:reviewed|audited|analy[sz]ed) your (?:website|site)\b|'
+    r'\b(?:seo|design)[- ]related issues\b|\bsamples? of our\b|\bour previous work\b|\bgoogle[\'’]?s? search index\b|'
     # de
-    r'\bwir (?:bieten|erstellen|produzieren|machen|helfen|k[oö]nnen|spezialisieren)\b|\bich (?:biete|erstelle|produziere|k[oö]nnte|kann)\b.{0,60}\b(?:an|f[uü]r sie|f[uü]r euch|f[uü]r ihr)\b|'
-    r'\bunser (?:angebot|team|service|leistungen?)\b|\bunsere (?:leistungen|preise|referenzen)\b|\bkostenlos(?:e|er|es)? (?:analyse|angebot|beratung|erstgespr)|'
-    r'\bpreis(?:liste| ab)\b|\bangebot (?:f[uü]r|zu) (?:ihre|eure|deine)\b|\bmehr (?:kunden|reichweite|sichtbarkeit|anfragen)\b|'
+    r'\bwir (?:bieten|spezialisieren uns|produzieren)\b|\bunsere (?:agentur|firma|dienstleistungen|videos)\b|'
+    r'\bich (?:biete|bin (?:ein |eine )?(?:freiberufliche\w*\s+)?(?:videograf\w*|videoeditor\w*|webdesigner\w*|'
+    r'marketing[- ]?(?:experte|expertin|berater\w*)|seo[- ]?(?:experte|expertin|berater\w*)|content[- ]?creator\w*|ugc[- ]?creator\w*))\b|'
+    r'\bmehr (?:reichweite|kunden|sichtbarkeit) f[uü]r (?:ihr|euer|dein)\w*\b|'
     # fr / es / it / nl / pt / pl / tr / ru / uk
-    r'\bnous (?:proposons|offrons|cr[ée]ons|r[ée]alisons)\b|\bnotre (?:agence|[ée]quipe|offre)\b|\bofrecemos\b|\bcreamos\b|\bnuestro (?:equipo|servicio)\b|'
-    r'\bofferiamo\b|\bcreiamo\b|\bil nostro (?:team|servizio)\b|\bwij (?:bieden|maken|verzorgen)\b|\bons (?:team|aanbod)\b|'
-    r'\boferecemos\b|\bcriamos\b|\bnossa (?:equipe|ag[êe]ncia)\b|\boferujemy\b|\btworzymy\b|\bnasz zesp[óo][łl]\b|'
-    r'\bsunuyoruz\b|\bhizmet(?:imiz|lerimiz)\b|\bekibimiz\b|'
-    r'мы (?:предлагаем|создаём|создаем|делаем|занимаемся)|наша (?:компания|команда|студия)|наши (?:услуги|цены)|'
-    r'ми (?:пропонуємо|створюємо|робимо|займаємося)|наша (?:команда|студія)|наші (?:послуги|ціни)', re.I)
+    r'\bnous (?:proposons|offrons|cr[ée]ons|r[ée]alisons)\b|\bnotre agence\b|\bofrecemos\b|\bcreamos\b|\bnuestra agencia\b|'
+    r'\bofferiamo\b|\bcreiamo\b|\bla nostra agenzia\b|\bwij (?:bieden|maken|verzorgen)\b|\bons bureau\b|'
+    r'\boferecemos\b|\bcriamos\b|\bnossa ag[êe]ncia\b|\boferujemy\b|\btworzymy\b|\bnasza agencja\b|'
+    r'\bsunuyoruz\b|\bhizmetlerimiz\b|\bajans[ıi]m[ıi]z\b|'
+    r'мы (?:предлагаем|создаём|создаем|занимаемся)|наша (?:компания|студия|команда)|наши услуги|'
+    r'ми (?:пропонуємо|створюємо|займаємося)|наша (?:студія|команда)|наші послуги', re.I)
 
 #: Wer das schreibt, meint Luviq und seine Stücke: nie als Angebot behandeln.
 _KUNDE = re.compile(
-    r'n[º°o]\s?\.?\s?\d{2,4}\b|\bnummer\s?\d|\barchiv\s?nummer|\bst[üu]ck\b|\bst[üu]cke\b|\bunikat|\bjacke\b|\bshirt|\bhoodie|'
-    r'\bpullover|\bpulli\b|\bhose\b|\bjeans\b|\bkleid\b|\bmantel\b|\bweste\b|\bjacket\b|\bsweater\b|\bsize\s+(?:xs|s|m|l|xl|xxl|\d{2})\b|\bin size\b|\bgr[öo](?:ß|ss)e\b|'
-    r'\bbestell|\border(?:ed|ing)?\b|\bversand|\bshipping|\bliefer|\bdelivery|\bretoure|\br[üu]cksendung|\bwiderruf|\brefund|'
-    r'\bnoch (?:frei|verf[üu]gbar|da)\b|\bstill available\b|\bavailable\b|\bverf[üu]gbar|\breserv|\banprobe|\bpassform|'
-    r'\bmotiv\b|\bengel\b|\bupcycl|\bbleach|\bgebleicht|\bluisa\b|\bluviq\.archive|\binstagram\.com/|\bkaufen\b|\bbuy\b|'
-    r'\bstorno|\brechnung\b|\binvoice\b|\bpaket\b|\bpackage\b.{0,20}\b(?:arrived|received|angekommen)|\bdhl\b', re.I)
+    r'n[º°o]\s?\.?\s?\d{2,4}\b|\bnummer\s?\d|\barchiv\s?nummer|\bst[üu]ck(?:e|en)?\b|\bunikat|\bjacke\b|\bshirts?\b|\bt-shirt|\bhoodie|'
+    r'\bpullover|\bpulli\b|\bhose\b|\bjeans\b|\bkleid\b|\bmantel\b|\bweste\b|\bjacket\b|\bsweater\b|'
+    r'\bsize\s+(?:xs|s|m|l|xl|xxl|\d{2})\b|\bin size\b|\bgr[öo](?:ß|ss)e\b|\bteil(?:e|en)?\b|\bpieces?\b|\bitems?\b|'
+    r'\bbestell|\border(?:s|ed|ing)?\b|\bversand|\bship(?:s|ped|ping)?\b|\bliefer|\bdelivery|\bretoure|\br[üu]cksendung|'
+    r'\bwiderruf|\brefund|\bnoch (?:frei|verf[üu]gbar|da)\b|\bstill available\b|\bavailable\b|\bverf[üu]gbar|\breserv|'
+    r'\banprobe|\bpassform|\bmotiv\b|\bengel\b|\bupcycl|\bbleach|\bgebleicht|\bluisa\b|\bluviq\.archive|'
+    r'\binstagram\.com/|\bkaufen\b|\bbuy\b|\bcustom(?:ized|ised)?[ -](?:design|made|order|piece|shirt|jacket|hoodie|print)\w*|\bmaßanfertig|\bgeschenk|\bgift\b|\bmerch\b|\blogo auf\b|'
+    r'\barbeitskleidung|\bworkwear|\bsch[üu]ler|\bschule\b|\bklasse\b|\bschool\b|\bstudents?\b|\bpresse\b|\bpress\b|'
+    r'\bmagazin|\bkooperation|\bcollab\w*|\bone like (?:that|this)\b|\bstorno|\brechnung\b|\binvoice\b|\bpaket\b|\bdhl\b|'
+    r'\bwhat(?:s|\'s| is) the price\b|\bwas kostet\b|\bhow much\b', re.I)
+
+#: Ein Creator bietet Video/Reel/Content gegen ein Gratis-Stück an: ein Video-Angebot (Absage), auch wenn
+#: es „Stück“ oder „free“ sagt.
+_CREATOR = re.compile(
+    r'\bi(?: am|[\'’]m) an? (?:\w+ ){0,3}(?:ugc|content|video|tiktok|instagram)\b.{0,40}(?:creator|editor|maker)\b|'
+    r'\bich bin (?:ein |eine )?(?:\w+ )?(?:ugc|content|video)[- ]?(?:creator|editor|macher)', re.I)
+_TAUSCH = re.compile(r'\bfree\b|\bgratis\b|\bkostenlos|\bin exchange\b|\bim austausch\b|\bbarter\b|\bgegen ein\b', re.I)
+_VIDEO = re.compile(r'\bvideos?\b|\breels?\b|\bugc\b|\bcontent\b|\btiktok', re.I)
 
 
 def ist_angebot(name='', betreff='', nachricht=''):
-    """``True``, wenn das Schreiben ein Dienstleistungs-Angebot an Luviq ist (siehe Kopf des Moduls).
+    """``True``, wenn der Absender sich selbst mit einer Dienstleistung anbietet (siehe Kopf des Moduls).
 
-    Im Zweifel ``False``: dann geht die Nachricht normal an Luisa."""
+    Verlangt ein Dienst-Stichwort **und** ein Selbstanbieter-Muster, und kein Kundenwort darf vorkommen
+    (Ausnahme: Creator, die ein Video gegen ein Gratis-Stück anbieten). Im Zweifel ``False``: dann geht die
+    Nachricht normal an Luisa."""
     text = ' '.join((betreff or '', nachricht or ''))
     if len(text.strip()) < 25:
         return False
+    if _CREATOR.search(text) and _TAUSCH.search(text) and _VIDEO.search(text):
+        return True
     if _KUNDE.search(text):
         return False
-    muster = {m.group(0).lower() for m in _ANGEBOT.finditer(text)}
-    dienst = _DIENST.search(text) is not None
-    if dienst and muster:
-        return True
-    # Ohne Stichwort braucht es klar mehr als einen Zufallstreffer.
-    return len(muster) >= 3
+    return _DIENST.search(text) is not None and _SELBST.search(text) is not None
 
 
 # ─── Sprache ────────────────────────────────────────────────────────────────

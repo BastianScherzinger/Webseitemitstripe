@@ -309,12 +309,23 @@ def _kontakt_annehmen(request, name, email, betreff, nachricht):
     if einstufung == 'spam':
         return redirect('kontakt_danke')
     if einstufung == 'angebot':
+        absage = 'keine (Anfrage nicht gespeichert)'
         if anfrage is not None:
             erlaubt, warum = angebote.darf_absage(email, gruende, spamschutz.eigene_domains())
             if erlaubt:
-                angebote.absage_senden(anfrage, f'{betreff} {nachricht}')
+                gesendet = angebote.absage_senden(anfrage, f'{betreff} {nachricht}')
+                absage = 'gesendet' if gesendet else 'Versand nicht gestartet'
             else:
+                absage = f'nicht gesendet ({warum})'
                 _log.info('Angebot: keine Absage (%s)', warum)
+        # Kopie an die Webagentur zur Kontrolle der Einordnung (Luisa bekommt nichts). Wirft nie.
+        mails.betreiber_kopie(
+            art='Kontaktanfrage', name=safe_name, felder=[('Name', safe_name), ('E-Mail', safe_email, 'mail'),
+                                                          ('Betreff', safe_betreff)],
+            antwort_an=safe_email, langtext_titel='Nachricht', langtext=nachricht, objekt=anfrage,
+            gespeichert=anfrage is not None, admin_mail=None, kunden_mail=f'Absage: {absage}',
+            herkunft='als Dienstleistungs-Angebot eingestuft, nicht an Luisa weitergeleitet',
+            betreff=einzeilig_betreff(f'[Luviq] [Angebot – automatisch abgesagt] {safe_name or "ohne Namen"}'))
         return redirect('kontakt_danke')
     felder = [('Name', safe_name), ('E-Mail', safe_email, 'mail'), ('Betreff', safe_betreff)]
     recipient = os.getenv('ADMIN_EMAIL', settings.DEFAULT_FROM_EMAIL)
@@ -340,6 +351,10 @@ def _kontakt_annehmen(request, name, email, betreff, nachricht):
     # Versuch darf nicht als Doppel gelten.
     cache.delete(_doppelt_schluessel(email, betreff, nachricht))
     return None
+
+
+def einzeilig_betreff(text):
+    return ' '.join(str(text).split())
 
 
 def _bereits_gespeichert(email, betreff, nachricht):

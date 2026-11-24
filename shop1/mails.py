@@ -179,7 +179,7 @@ def _felder(felder):
 
 def betreiber_kopie(*, art, name, felder, antwort_an='', langtext_titel='', langtext='',
                     objekt=None, gespeichert=True, admin_mail=None, kunden_mail='keine (bewusst)',
-                    herkunft='', schon=()):
+                    herkunft='', schon=(), betreff=None):
     """Eigene Kopie jeder echten Anfrage an die Webagentur. Wirft nie.
 
     ``admin_mail``: ``True``/``False`` – ob die Mail an Luisa angestoßen wurde
@@ -188,7 +188,7 @@ def betreiber_kopie(*, art, name, felder, antwort_an='', langtext_titel='', lang
         empfaenger = betreiber_empfaenger(schon)
         if not empfaenger:
             return 0
-        betreff = einzeilig(f'[{SEITENNAME}] Neue {art} – {name or "ohne Namen"}')
+        betreff = einzeilig(betreff or f'[{SEITENNAME}] Neue {art} – {name or "ohne Namen"}')
         status = [
             ('Gespeichert', 'ja' if gespeichert else 'NEIN – nur in dieser Mail'),
             ('Mail an Luisa', {True: 'angestoßen', False: 'fehlgeschlagen', None: '–'}[admin_mail]),
