@@ -17,6 +17,12 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 - **Warum:** Bastian 24.11.2026 „wir bekommen ständig spam anfragen bei luviq“. Auswertung: von 37 gespeicherten Kontaktnachrichten keine einzige echte Kundenanfrage; alle erhielten 0 bis 2 Punkte. Bericht `Buero/berichte/2026-11-24_LUVIQ-SPAM/BERICHT.md`.
 - **Nicht angefasst:** Datenschutzerklärung (Ergänzungsvorschlag im Bericht), Stückanfrage und Motivanfrage (verwerfen ab Schwelle weiterhin still, nutzen aber die neuen Merkmale), Gästebuch, Registrierung.
 
+## 24.11.2026 – SEO-Runde nach Search Console (Zweig `luviq/2026-11-24-seo`, nicht gepusht)
+
+- Anlass: GSC-Auswertung (28.10. bis 22.11.), alle 20 Sitemap-Seiten indexiert; Hebel sind die Ratgeber auf Platz 7 bis 9. Konzept: `doku/40-SEO.md`; Rohdaten und Bericht: `Buero\berichte\2026-11-24_LUVIQ-SEO\`.
+- Titel und Beschreibung `/wissen/bleach-painting-anleitung/` und Beschreibung `/wissen/bleach-painting/` auf die belegten Suchanfragen („mit Bleiche bemalen“, „was ist bleach“); `seiten_stand.py` nachgezogen.
+- Fehler behoben: Beschreibungen der fünf Archivstücke endeten mitten im Satz (`Produkt.meta_description`, `META_KERN_MIN`); `llms.txt` schnitt die Stückbeschreibung mitten im Satz ab (`_llms_produktzeilen`).
+
 ## 15.11.2026 – Durchstarten: Wisch-Band, SEO/GEO, Datenschutz 8a (Zweig `luviq/2026-11-15-durchstarten`, nicht gepusht)
 
 - **Was:** Wisch-Band „Stücke“ (CSS Scroll-Snap, ohne Bibliothek) direkt unter dem Hero auf Start und `/produkte/` (Partials `teile/stueckband.html`, `teile/reihe_karte.html`; Klassen `lv-reihe*`): offenes Stück zuerst, dann vergebene; Status nur aus den Daten (`Produkt.status_wort`, `status_klasse`, `band_hinweis`). `VERKAUFT_WORT` heißt jetzt „Vergeben“. Hero am Handy kompakter (Preis und Knopf im ersten Bildschirm). Startfilm „Verkaufsstart“ aus (`STARTFILM = None`, alter Eintrag in `STARTFILM_ARCHIV`). `llms.txt` und `llms-full.txt` im Anfrage-Shop neu (`_llms_txt_anfrage`), Organization-Schema ohne „kein Verkauf“, FAQ der Engel-Stückseite im Anfrage-Shop (`engel_faq_anfrage`), Titel/Metas, Über-uns-H1, Versand-im-Preis-Sätze, Datenschutz Abschnitt 8a und Hinweis zu Abschnitt 5–7, `seiten_stand`.
