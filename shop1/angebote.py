@@ -351,7 +351,7 @@ def adresse_brauchbar(email, eigene_domains=()):
 KEINE_ANTWORT = frozenset({
     'falle', 'zu-schnell', 'zeit-gefaelscht', 'links', 'link-im-kopf', 'spamwort', 'fremdschrift-link',
     'kauderwelsch', 'wegwerf-mail', 'preis-bot', 'zahlenmuster', 'markenimitation', 'name-zusammen',
-    'ohne-zeit', 'wiederholung',
+    'ohne-zeit', 'wiederholung', 'linkflut', 'kurzlink', 'zeit-abgelaufen', 'flirt-bot', 'kaltakquise-bot',
 })
 
 

@@ -53,7 +53,12 @@ FELD_FALLE_ALT = 'webseite'     # Name bis 02.10.2026: Formulare, die noch im Br
 FELD_ZEIT = 'formzeit'
 _SALZ = 'shop1.spamschutz'
 
-_LINK = re.compile(r'https?://(?:www\.)?|www\.|telegra\.ph|t\.me/|bit\.ly', re.I)   # „https://www.x“ = EIN Link
+_LINK = re.compile(r'https?://(?:www\.)?|www\.|(?<![/.])(?:telegra\.ph|t\.me/|bit\.ly)', re.I)   # „https://www.x“ = EIN Link
+#: Kurzlink-Dienste und Telegraph-Seiten: in Kundennachrichten nie.
+_KURZ = re.compile(r'telegra\.ph|t\.me/|bit\.ly', re.I)
+_FLIRT = re.compile(r'hi beautiful|check my (?:profile|page)|hot singles|\bdating\b|💋', re.I)
+_KALT = re.compile(r'talkwithweb|web ?visitor|quick (?:thought|question) about your (?:web)?site|hello \S+ owner', re.I)
+_WIEDERHOLT = re.compile(r'\b(\w{6,})[!?.]*\s+\1\b', re.I)
 _WOERTER = re.compile(
     r'sweepstake|lamborghini|aventador|you are a snap away|claim your|winner|'
     r'jackpot|casino|crypto|bitcoin|forex|viagra|seo servic|backlinks?\b|'
@@ -172,6 +177,10 @@ def eigene_domains():
     return ergebnis
 
 
+_BILLIG_ENDUNG = frozenset({'pro', 'xyz', 'top', 'icu', 'club', 'live', 'click', 'link', 'buzz', 'cyou', 'rest',
+                          'monster', 'quest', 'site', 'online', 'info', 'biz'})
+
+
 def markenimitation(email, text):
     """``True``, wenn eine FREMDE Domain den eigenen Markennamen trägt.
 
@@ -183,7 +192,13 @@ def markenimitation(email, text):
     kandidaten = []
     if '@' in (email or ''):
         kandidaten.append(email.rsplit('@', 1)[1].strip().lower())
-    kandidaten += [d.lower() for d in _NACKTE_DOMAIN.findall(text or '')]
+    # Im Text schreibt eine Kundin über die Seite (luviq.de, luviq-luebeck.de, luviq.shop): nur eine Domain, die
+    # NICHT mit luviq beginnt (search-luviq-alsfeld.xyz) oder eine billige Spam-Endung hat, ist verdächtig.
+    for d in _NACKTE_DOMAIN.findall(text or ''):
+        d = d.lower()
+        if d.startswith(MARKENKERN) and d.rsplit('.', 1)[-1] not in _BILLIG_ENDUNG:
+            continue
+        kandidaten.append(d)
     for domain in kandidaten:
         if any(domain == e or domain.endswith('.' + e) for e in eigene):
             continue
@@ -193,7 +208,7 @@ def markenimitation(email, text):
 
 
 #: Links, die eine Kundin setzen darf: eigene Domain, Instagram, TikTok, Pinterest, luviq-*.
-_KUNDEN_HOSTS = r'instagram\.com|tiktok\.com|pinterest\.[a-z.]+|pin\.it|luviq[\w-]*\.[a-z.]+'
+_KUNDEN_HOSTS = r'instagram\.com|facebook\.com|fb\.com|fb\.me|tiktok\.com|pinterest\.[a-z.]+|pin\.it|luviq[\w-]*\.[a-z.]+'
 
 
 def ohne_kunden_links(text):
@@ -230,6 +245,8 @@ def bewerte(daten, jetzt=None):
     else:
         try:
             ausgegeben = int(signing.loads(roh, salt=_SALZ, max_age=HOECHSTALTER))
+        except signing.SignatureExpired:
+            treffer(2, 'zeit-abgelaufen')   # Tab länger als 24 h offen: wie „ohne Zeit“, nicht gefälscht
         except (signing.BadSignature, ValueError, TypeError):
             treffer(4, 'zeit-gefaelscht')
         else:
@@ -247,16 +264,27 @@ def bewerte(daten, jetzt=None):
     if _LINK.search(c_name) or _LINK.search(c_betreff):
         treffer(5, 'link-im-kopf')
     links = len(_LINK.findall(c_nachricht))
-    if links >= 2:
-        treffer(3, 'links')
+    if links >= 3:
+        treffer(4, 'linkflut')
+    elif links >= 2:
+        treffer(2, 'links')
     elif links:
         treffer(2, 'link')
+    if _KURZ.search(c_alles):
+        treffer(3, 'kurzlink')
     if not links and _NACKTE_DOMAIN.search(c_alles):
         treffer(1, 'nackte-domain')
+    # Nur die Absender-Adresse: eine luviq-Domain im Text (luviq.de, luviq.shop) schreibt eine Kundin über die Seite.
     if markenimitation(daten.get('email') or '', alles):
         treffer(5, 'markenimitation')
     if _WOERTER.search(alles):
         treffer(4, 'spamwort')
+    if any(len(set(m.group(1).lower())) >= 4 for m in _WIEDERHOLT.finditer(nachricht)):   # nicht „xxxxxxxx“ als Füllung
+        treffer(3, 'wiederholung')
+    if _KALT.search(alles):
+        treffer(4, 'kaltakquise-bot')
+    if _FLIRT.search(alles):
+        treffer(3, 'flirt-bot')
     if _ZUSAMMEN.match(name.strip()):
         treffer(2, 'name-zusammen')
     if _GEWINN.search(alles) and _LINK.search(c_alles) and 'spamwort' not in gruende:

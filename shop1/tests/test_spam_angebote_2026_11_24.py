@@ -429,6 +429,70 @@ class Abnahme3Test(_Basis):
         self.assertLess(p, spamschutz.SCHWELLE)
 
 
+@override_settings(**PROD)
+class Abnahme4Test(_Basis):
+    """Abnahme 4 (Live-Zustand aus): luviq-Domain im Text, abgelaufener Zeitstempel, Linkflut, Facebook."""
+
+    def _punkte(self, mit_zeit=True, **felder):
+        d = dict(name='Carina', email='carina@outlook.de', betreff='Frage', nachricht='Hallo, eine Frage.')
+        d.update(felder)
+        if mit_zeit:
+            d[spamschutz.FELD_ZEIT] = signing.dumps(int(time.time()) - 60, salt=spamschutz._SALZ)
+        return spamschutz.bewerte(d)
+
+    def test_luviq_domain_im_text_oder_betreff_wird_nicht_bestraft_und_geht_an_luisa(self):
+        for adresse in ('https://www.luviq.de/shop/', 'www.luviq.com', 'luviq-luebeck.de', 'luviq.shop'):
+            for mit_zeit in (True, False):
+                for feld in ('nachricht', 'betreff'):
+                    p, g = self._punkte(mit_zeit, **{feld: f'Ich hab auf eurer Seite {adresse} das Shirt gesehen, gibt es XL?'})
+                    self.assertNotIn('markenimitation', g, (adresse, feld))
+                    self.assertLess(p, spamschutz.SCHWELLE, (adresse, mit_zeit, feld, g))
+                cache.clear()
+                KontaktAnfrage.objects.all().delete()
+                daten = _formular(nachricht=f'Ich hab auf eurer Seite {adresse} das Shirt gesehen, gibt es XL?')
+                if not mit_zeit:
+                    del daten[spamschutz.FELD_ZEIT]
+                with mock.patch(_LUISA) as luisa, mock.patch(_ABSAGE):
+                    self.sende('/kontakt/', daten)
+                luisa.assert_called_once()
+
+    def test_die_absender_adresse_mit_luviq_bleibt_markenimitation(self):
+        p, g = self._punkte(email='info@search-luviq-alsfeld.xyz')
+        self.assertIn('markenimitation', g)
+        self.assertGreaterEqual(p, spamschutz.SCHWELLE)
+
+    def test_abgelaufener_zeitstempel_zaehlt_wie_ohne_zeit(self):
+        alt = signing.dumps(int(time.time()), salt=spamschutz._SALZ)
+        with mock.patch('django.core.signing.time.time', return_value=time.time() + 3 * 86400):
+            p, g = spamschutz.bewerte(dict(name='Ben', email='b@gmx.de', betreff='Hi', nachricht='Hallo', formzeit=alt))
+        self.assertEqual((p, g), (2, ['zeit-abgelaufen']))
+        p, g = spamschutz.bewerte(dict(name='Ben', email='b@gmx.de', betreff='Hi', nachricht='Hallo', formzeit='kaputt'))
+        self.assertEqual(g, ['zeit-gefaelscht'])
+
+    def test_zwei_fremde_links_ohne_zeitstempel_sind_kein_spam_aber_eine_linkflut(self):
+        zwei = 'Meine Fotos: https://drive.google.com/file/d/1Ab/view https://drive.google.com/file/d/2Cd/view'
+        p, g = self._punkte(False, nachricht=zwei)
+        self.assertLess(p, spamschutz.SCHWELLE, g)
+        p, g = self._punkte(False, nachricht=zwei + ' https://drive.google.com/file/d/3Ef/view')
+        self.assertGreaterEqual(p, spamschutz.SCHWELLE, g)
+        p, g = self._punkte(False, nachricht='Hello https://telegra.ph/a-11 https://telegra.ph/b-11')
+        self.assertGreaterEqual(p, spamschutz.SCHWELLE, g)
+
+    def test_facebook_links_sind_kundenlinks(self):
+        for url in ('https://www.facebook.com/luviq', 'https://m.facebook.com/p/1', 'https://fb.com/x'):
+            p, g = self._punkte(False, nachricht=f'Hier mein Profil {url} und mein Wunsch.')
+            self.assertNotIn('link', g, url)
+            self.assertLess(p, spamschutz.SCHWELLE, (url, g))
+
+    def test_bots_ohne_zeit_werden_gefangen(self):
+        for name, text in (('Insta Bot', 'Hi beautiful 😘 check my profile https://www.instagram.com/anna.private.1997 💋💋'),
+                           ('Gewinnspiel', 'Gewinnspiel! Gewinnspiel! Mitmachen und gewinnen!'),
+                           ('Eric Jones', 'Hello luviq.de Owner! Eric here with a quick thought about your website luviq.de... '
+                                          'Visit https://talkwithwebvisitor.com to try it out')):
+            p, g = self._punkte(False, name=name, email='x@gmail.com', nachricht=text)
+            self.assertGreaterEqual(p, spamschutz.SCHWELLE, (name, g))
+
+
 class SpracheTest(LuviqTestCase):
 
     def test_rueckfall_ist_englisch(self):
