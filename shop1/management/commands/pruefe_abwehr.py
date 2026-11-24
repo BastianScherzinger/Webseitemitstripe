@@ -195,7 +195,7 @@ KUNDINNEN_REGRESSION = [
 
 #: Ein Creator bietet ein Video gegen ein Gratis-Stück an: ein Video-Angebot, also Absage.
 CREATOR_ANGEBOTE = [
- ('C1', 'Collab: UGC video for a free piece', "Hi, I'm a UGC creator with 20k followers. I can make a reel and a TikTok video of your hoodie in exchange for a free piece."),
+ ('C1', 'Collab: UGC video for a free piece', "Hi, I'm a UGC creator with 20k followers. I can make a reel and a TikTok video for your brand in exchange for a free piece."),
 ]
 
 #: Die echten Verkaufsschreiben aus der Produktion (gekürzt, ohne Namen und Adressen), müssen erkannt werden.
@@ -211,6 +211,109 @@ ECHTE_ANGEBOTE = [
  ('Marylin', 'Results for luviq-alsfeld.com', "Hi Feature luviq-alsfeld.com in Google's Search Index to be visible in Google search results! List luviq-alsfeld.com here: indexhelp.pro"),
 ]
 
+
+#: Zweite Abnahme 24.11.2026: unbekannte Kundinnen-Nachrichten (de/en/fr/es/it/nl/tr/pl; Creator, Studentinnen, Vereine,
+#: Agenturen als Kundinnen, „free shipping“, Berufsangaben) – nie ein Angebot. Erste Liste: Fälle der ersten Abnahme.
+KUNDINNEN_ABNAHME_1 = [
+    ('Video', 'Hallo, kannst du mir ein kurzes Video von der Jacke schicken?'),
+    ('Frage', 'Hi! I love your videos on Instagram. Do you do custom orders? What would a piece cost?'),
+    ('Price', 'Hi, I saw your reels. Could you share your price list?'),
+    ('Custom piece', 'Hey I came across your page on Instagram and I love your videos. Can you make one for me? Please send me a quote'),
+    ('Anfrage', 'Hallo, ich habe dein Reel gesehen und wollte fragen, ob du auch Auftragsarbeiten machst. Was kostet sowas?'),
+    ('Kooperation', 'Hallo, ich bin Fotografin aus Lübeck und würde gern ein Fotoshooting mit deinen Teilen machen, kostenlos für dich.'),
+    ('Marketing Studentin', 'Hallo, ich studiere Marketing und schreibe meine Bachelorarbeit über nachhaltige Mode. Hättest du Zeit für ein kurzes Interview?'),
+    ('Geschenk', 'hallo ich wolte fragen ob man bei dir auch was für meinen freund machen lassn kann, er mag videospiele und anime'),
+    ('custom', 'hii can u make smth with a dragon on the back?? how much would it cost'),
+    ('Instagram', 'Hey, I found you on Instagram (@luviq) - can I order a custom design? My portfolio of ideas is attached in my head lol'),
+    ('Question', 'Hello, we are a small team from a theatre and we would like to make costumes with you. Could you send us a quote for 10 pieces?'),
+    ('Hochzeit', 'Hallo Luisa, wir können uns vorstellen, für unsere Hochzeit etwas Besonderes zu machen. Wir hätten gern ein Angebot für zwei Teile.'),
+    ('Laden', 'Hallo, ich betreibe einen kleinen Laden in Hamburg und würde deine Sachen gern verkaufen. Wie sind deine Konditionen für Wiederverkäufer?'),
+    ('Website', 'Hallo, auf deiner Website geht der Warenkorb nicht, ich wollte was kaufen'),
+    ('Website kaputt', 'Hi, your website shows an error when I click on the product. I wanted to buy something'),
+    ('Event', 'Hi! We are organizing a sustainable fashion market in Kiel and would like to offer you a stand. Our prices start at 30 € for the weekend.'),
+    ('Presse', 'Hallo, ich bin Journalistin bei der Lübecker Zeitung und würde gern über dich berichten. Hast du Zeit für ein Gespräch und ein paar Fotos?'),
+    ('Merch for band', 'Hello! Our band would love custom merch shirts... we can pay. What is your pricing?'),
+    ('Merch', 'Hello! Our band would love custom merch, we can pay. What is your pricing? Please send a proposal.'),
+    ('Kurse', 'Hallo, bietest du auch Workshops an? Wir bieten im Jugendzentrum Kurse an und suchen jemand für Bleichtechnik'),
+    ('Workshop', 'Hallo, wir sind ein Jugendzentrum. Wir bieten Kurse an und würden gern einen Upcycling-Workshop mit dir machen. Unser Team freut sich!'),
+    ('Tiktok', 'Hey, ich hab dein TikTok gesehen, kannst du mir sowas auf meinen eigenen Pulli machen?'),
+    ('own clothes', 'Hi, can you bleach my own sweatshirt? I can send it to you.'),
+    ('Hallo', 'Hallo, ich möchte gerne meine alte Lederjacke umgestalten lassen. Geht das?'),
+    ('Foto', 'Hallo, hast du noch mehr Fotos von dem schwarzen Teil mit den Flügeln?'),
+    ('Collab', "Hi Luisa! I'm a small content creator (5k followers) and I'd love to collab - I can create a reel featuring your pieces in exchange for one item."),
+    ('Collab ohne Name', "Hi! I'm a small content creator (5k followers) and I'd love to collab - I can create a reel featuring your designs in exchange for a free item."),
+    ('Anfrage', 'Bonjour, je voudrais une veste personnalisée avec une vidéo de fabrication si possible. Combien ça coûte ?'),
+    ('Pregunta', 'Hola! Vi tu video en Instagram, ¿haces envíos a España? ¿cuánto cuesta?'),
+    ('Frage', 'Hallo, ich hab bei dir ein Teil gekauft und es ist noch nicht angekommen, kannst du nachschauen?'),
+    ('Geburtstag', 'Hi, ich will meiner Schwester was schenken. Sie mag Marketing-Kram nicht, eher Kunst. Kannst du was empfehlen? Habt ihr eine Preisliste?'),
+    ('Preise', 'Hallo, gibt es eine Preisliste ab wann man individuelle Sachen bekommt? Danke'),
+    ('Quote', 'Hello, I would like a quote for a custom piece please. I saw your work on your website.'),
+    ('Shop', "Hi, I just visited your website and noticed there's no way to pay with PayPal. I would like to purchase the black piece."),
+    ('Hi', 'Hi I just found your page and love the vibe. We offer nothing lol just wanted to say hi and ask if you sell online'),
+    ('Schulprojekt', 'Hallo, wir sind eine Schulklasse und machen ein Video über nachhaltige Mode. Dürfen wir dich interviewen? Unser Team sind 4 Schüler.'),
+    ('Photography', 'Hi, I am a photographer, we can create content together, free of charge for you, just for my portfolio. Would you like that?'),
+    ('Wholesale', 'Hello, we are a boutique in Copenhagen. We would like to offer your designs in our store. Could you send us your wholesale pricing?'),
+    ('Custom', 'Hi, could you send me a quote and your pricing? Happy to get a proposal for a custom design.'),
+    ('Logo', 'Hallo, ich brauche ein Logo-Design auf meinem Pulli, geht das?'),
+    ('Logo2', 'Hallo, könnt ihr unser Firmenlogo (Branding für unser Team) auf Arbeitskleidung bringen? Wir können 20 Teile abnehmen.'),
+    ('Reel', 'Hey, saw your reel!! can i get one like that? whats the price list'),
+    ('Hi', 'Hi, I noticed your shop on Instagram, love your videos! Do you ship to the UK?'),
+    ('videoo', 'hallo wie lang dauert das bis was fertig is? hab das video gesehn, was kostet die preisliste ab 50 euro?'),
+]
+KUNDINNEN_ABNAHME_2 = [
+    ('Question', "Hi! I'm a student and I love your work. I saw your videos on TikTok - do you sell online or only in Lübeck?"),
+    ('Hello', "I'm a photographer and love your work! Could I buy something for my partner? Seen your reels."),
+    ('Small brand', 'Hi, we are a small brand from Berlin. Can you make 30 shirts with a bleach design for our team? We can pay upfront.'),
+    ('Kauf', 'Hallo, ich bin Influencerin und möchte ein Shirt kaufen. Gibt es die Sachen aus deinen Videos noch?'),
+    ('Influencerin', 'Hi, ich bin Content Creatorin auf TikTok und würde gern etwas von dir kaufen, habe deine Videos gesehen und bin verliebt. Machst du kostenlosen Versand?'),
+    ('creator buy', "Hey! I'm a content creator on Instagram and I want to buy one of your designs, do you offer free shipping? Your videos are amazing"),
+    ('Verein', 'Hallo, wir sind ein Sportverein aus Lübeck und würden gern Trikots im Bleach-Stil für 15 Leute machen lassen. Geht sowas?'),
+    ('Firma', 'Guten Tag, wir sind eine kleine Agentur und suchen ein Weihnachtsgeschenk für unser Team. Machen Sie auch Firmenaufträge?'),
+    ('Agentur kauft', 'Hallo, wir sind eine Werbeagentur und möchten für unsere Mitarbeiter 10 individuelle Pullover bestellen. Was wäre möglich?'),
+    ('Marketing team', "Hi, we are a marketing agency in Hamburg and we'd love to get custom hoodies for our staff. Do you do bulk?"),
+    ('Demande', "Bonjour, j'adore vos vidéos sur Instagram ! Est-ce que vous livrez en France ? Je voudrais une veste."),
+    ('Pregunta', 'Hola, me encantan tus vídeos. ¿Puedes hacer una sudadera personalizada para mi hermana? ¿Cuánto costaría?'),
+    ('Domanda', 'Ciao! Ho visto i tuoi video e vorrei sapere se fai spedizioni in Italia. Grazie mille!'),
+    ('Vraag', 'Hoi, ik zag je video op Instagram. Maak je ook iets op maat? Wat kost dat ongeveer?'),
+    ('Soru', 'Merhaba, videolarınızı çok beğendim. Almanya içinde bir sweatshirt sipariş vermek istiyorum, mümkün mü?'),
+    ('Pytanie', 'Dzień dobry, widziałam Pani filmy na Instagramie. Czy wysyła Pani do Polski? Chciałabym kupić bluzę.'),
+    ('Hi', "hey luv ur stuff!! do u take requests? i want smth for my bf's bday, he loves anime"),
+    ('hello', "Hello, I'm a web designer myself and I just love what you do. Could you make me a sweatshirt with my cat on it?"),
+    ('Anfrage', 'Hallo, ich bin selbst Videografin und finde deine Arbeit toll. Könntest du mir eine Weste gestalten?'),
+    ('Anfrage Fotografin', 'Hallo, ich bin Fotografin und würde dich gern für ein Fotoshooting buchen, also deine Sachen als Model tragen. Was kostet das?'),
+    ('Event', 'Hallo, wir organisieren einen Designmarkt in Kiel und wir bieten dir einen Stand an. Hast du Interesse?'),
+    ('Uni', "Hi, I'm a fashion student writing my thesis about upcycling and SEO for small brands. Could I interview you?"),
+    ('Uni2', "Hi, I'm a marketing student writing my thesis about small fashion labels and their Instagram videos. Could I interview you for 20 minutes?"),
+    ('Collab shop', 'Hello, we are a concept store in Amsterdam and we offer local designers a place in our shop. Would you like to sell with us?'),
+    ('Reparatur', 'Hallo, mein Hoodie von dir hat nach dem Waschen einen Fleck, kann man das reparieren?'),
+    ('Kinder', 'hallo ich hab ihre seite gefunden und wollte fragen ob sie auch kinder sachen machen fur meine tochter 8 jare'),
+    ('Video call', 'Hi, could we do a short video call so I can see the colours? I am thinking about a custom coat.'),
+    ('Website', 'Hallo, eure Website lädt auf dem Handy sehr langsam, wollte nur Bescheid sagen. Liebe Grüße'),
+    ('Ads', 'Hi, I saw your ad on Instagram and I want to know more about your designs'),
+    ('Weihnachten', "Hi, I'm a freelancer and I'd like to order a gift for my client - something with a bleach painting. Can you do it by December?"),
+    ('Bar', 'Hallo, ich kann leider nur bar zahlen, geht das bei dir? Habe dein Video auf Instagram gesehen'),
+    ('Theater', 'Hi, we create costumes for a theatre and would love to use your videos as inspiration - could you do a workshop for our team?'),
+    ('Musikvideo', "Hello, I'm a designer from a small studio. Our studio would like to commission a coat for a music video shoot. Is that possible?"),
+    ('Videograf kauft', "Hi, I'm a videographer and I want a custom coat for my wedding shoot next year. I can also make a free video of you wearing your designs if you like!"),
+    ('Studentin Gratis', "Hi! I'm a content creator student and I'd love to buy a coat. Is there a free gift wrap option? I watch all your videos."),
+]
+#: Verkaufsschreiben der Abnahme (Dienst-Stichwort plus Ziel „dein Geschäft“): müssen erkannt werden.
+ANGEBOTE_ABNAHME = [
+    ('Explainer video', "Hi there, I'm a video editor and I can create engaging explainer videos for your brand. Would you like to see samples?"),
+    ('SEO', 'Hello, I reviewed your website and found several SEO issues. We offer affordable SEO services to rank your site on Google first page.'),
+    ('Google Ads', 'Hi, we are a digital marketing agency. We can help you increase your sales with Google Ads and Meta Ads campaigns.'),
+    ('Webdesign', 'Guten Tag, wir bieten professionelles Webdesign und Suchmaschinenoptimierung für kleine Shops. Gern erstelle ich Ihnen ein Angebot.'),
+    ('UGC', "Hey! I'm a UGC creator and I make authentic TikTok videos for brands. My rates start at $150 per video."),
+    ('Vidéo', 'Bonjour, nous proposons la création de vidéos publicitaires pour votre marque. Notre agence travaille avec des boutiques de mode.'),
+    ('Video marketing', 'Hola, ofrecemos producción de video y marketing en redes sociales para tiendas online. ¿Le interesa?'),
+    ('Agenzia', 'Buongiorno, la nostra agenzia offre servizi di posizionamento SEO e pubblicità online. Offeriamo una consulenza gratuita.'),
+    ('Reclame', "Hallo, wij maken korte video's en reclame voor webshops. Mogen wij u een voorbeeld sturen?"),
+    ('Reklam', 'Merhaba, ajansımız sosyal medya reklam ve video hizmetleri sunuyoruz. Web siteniz için teklif hazırlayabiliriz.'),
+    ('Pozycjonowanie', 'Dzień dobry, oferujemy pozycjonowanie stron i reklamy Google dla sklepów internetowych.'),
+    ('Traffic', "Let's boost your website traffic! Our experts will grow your organic reach within 30 days."),
+    ('Influencer', "Hi, I'm a fashion influencer with 50k followers. I can create a reel for your brand in exchange for a free piece."),
+    ('Website redesign', "Hi, I noticed your website could use a redesign. I'm a web developer and could build you a faster site for your business."),
+]
 
 class Command(BaseCommand):
     """``python manage.py pruefe_abwehr``: Fälle aus ``faelle()`` gegen ``spamschutz.bewerte``, dazu die Mail-Obergrenze."""
@@ -242,13 +345,13 @@ class Command(BaseCommand):
             if not ok:
                 fehler.append(f'Angebot in {kuerzel} nicht richtig behandelt (erkannt={erkannt}, '
                               f'Sprache={erkannte_sprache})')
-        for name, text in KUNDINNEN_REGRESSION:
+        for name, text in KUNDINNEN_REGRESSION + KUNDINNEN_ABNAHME_1 + KUNDINNEN_ABNAHME_2:
             erkannt = angebote.ist_angebot('', name, text)
             self.stdout.write(f'  {"FEHLER" if erkannt else "OK    "}    Mensch: Kundin „{name}“ gilt '
                               f'{"als Angebot" if erkannt else "nicht als Angebot"}')
             if erkannt:
                 fehler.append(f'Kundin „{name}“ würde als Angebot abgesagt')
-        for name, betreff, text in CREATOR_ANGEBOTE + ECHTE_ANGEBOTE:
+        for name, betreff, text in CREATOR_ANGEBOTE + ECHTE_ANGEBOTE + [(b, b, t) for b, t in ANGEBOTE_ABNAHME]:
             erkannt = angebote.ist_angebot('', betreff, text)
             self.stdout.write(f'  {"OK    " if erkannt else "FEHLER"}    Angebot „{name}“ erkannt: {erkannt}')
             if not erkannt:

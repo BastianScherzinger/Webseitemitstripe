@@ -20,7 +20,7 @@ from django.core.management import call_command
 from django.test import override_settings
 
 from .. import angebote, spamschutz
-from ..management.commands.pruefe_abwehr import (ANGEBOTE, CREATOR_ANGEBOTE, ECHTE_ANGEBOTE, KEINE_ANGEBOTE,
+from ..management.commands.pruefe_abwehr import (ANGEBOTE, ANGEBOTE_ABNAHME, KUNDINNEN_ABNAHME_1, KUNDINNEN_ABNAHME_2, CREATOR_ANGEBOTE, ECHTE_ANGEBOTE, KEINE_ANGEBOTE,
                                                  KUNDINNEN_REGRESSION)
 from ..models import KontaktAnfrage
 from ._basis import LuviqTestCase
@@ -156,7 +156,7 @@ class AngebotTest(_Basis):
         luisa.assert_not_called()
         # Kopie an die Webagentur zur Kontrolle der Einordnung – Luisa bekommt nichts.
         self.kopie_versand.assert_called_once()
-        self.assertIn('[Angebot – automatisch abgesagt]', self.kopie_versand.call_args[0][0])
+        self.assertIn('[Angebot – ', self.kopie_versand.call_args[0][0])
         self.kopie_versand.reset_mock()
         return absage
 
@@ -192,6 +192,23 @@ class AngebotTest(_Basis):
                      'Habt ihr eine Preisliste? Wir können 20 abnehmen, unser Team freut sich über ein Angebot.',
                      'I noticed your shop and came across your page, I make videos as a hobby, love your marketing.'):
             self.assertFalse(angebote.ist_angebot('', 'Frage', satz), satz)
+
+    def test_alle_unbekannten_kundinnen_der_abnahme_sind_keine_angebote(self):
+        for betreff, text in KUNDINNEN_ABNAHME_1 + KUNDINNEN_ABNAHME_2:
+            self.assertFalse(angebote.ist_angebot('', betreff, text), (betreff, text[:60]))
+
+    def test_alle_verkaufsschreiben_der_abnahme_werden_erkannt(self):
+        for betreff, text in ANGEBOTE_ABNAHME:
+            self.assertTrue(angebote.ist_angebot('', betreff, text), (betreff, text[:60]))
+
+    def test_ein_beliebiges_free_ist_kein_tausch_und_berufsangaben_allein_kein_angebot(self):
+        for satz in ("Hi! I'm a content creator and want to buy a coat. Do you offer free shipping? I love your videos.",
+                     "I'm a web designer myself and love your work, could you make me a sweatshirt with my cat?",
+                     "We create costumes for a theatre and would like to commission a coat for a music video."):
+            self.assertFalse(angebote.ist_angebot('', 'Frage', satz), satz)
+        # ausdrücklicher Tausch plus Ziel „für deine Marke“: Absage
+        self.assertTrue(angebote.ist_angebot('', 'Collab', "I'm a UGC creator and can make a reel for your brand "
+                                                           "in exchange for a free piece."))
 
     def test_alle_elf_sprachen_haben_eine_absage(self):
         self.assertEqual(set(angebote.ABSAGEN), {'de', 'en', 'fr', 'es', 'it', 'nl', 'pt', 'pl', 'tr', 'ru', 'uk'})
@@ -231,6 +248,24 @@ class AngebotTest(_Basis):
         self._angebot(kuerzel, betreff, text).assert_not_called()
         self.assertEqual(KontaktAnfrage.objects.get().einstufung, 'angebot')
 
+    def test_die_absage_hat_einen_rueckweg_zu_luisa_und_in_jeder_sprache_den_hinweis(self):
+        for kuerzel, (betreff, text) in angebote.ABSAGEN.items():
+            self.assertIn('Luisa', text.replace('Луиза', 'Luisa').replace('Луїза', 'Luisa'), kuerzel)
+            self.assertGreaterEqual(text.count(chr(10) * 2), 3, kuerzel)   # Gruß, Absatz, Rückweg, Schluss
+        kuerzel, betreff, text = ANGEBOTE[1]
+        with mock.patch.dict('os.environ', {'ADMIN_EMAIL': 'luisa@example.org'}):
+            absage = self._angebot(kuerzel, betreff, text)
+        self.assertEqual(absage.call_args.kwargs['reply_to'], 'luisa@example.org')
+
+    def test_die_agentur_kopie_nennt_den_wirklichen_stand_im_betreff(self):
+        kuerzel, betreff, text = ANGEBOTE[1]
+        self._senden(name='Sam', email='noreply@firma.example', betreff=betreff, nachricht=text)
+        self.assertIn('[Angebot – keine Absage: adresse]', self.kopie_versand.call_args[0][0])
+        self.kopie_versand.reset_mock()
+        cache.clear()
+        self._senden(name='Sam', email='ok@example.org', betreff=betreff, nachricht=text)
+        self.assertIn('[Angebot – abgesagt]', self.kopie_versand.call_args[0][0])
+
     def test_keine_absage_ohne_zeitstempel_an_wegwerfadresse_oder_noreply(self):
         kuerzel, betreff, text = ANGEBOTE[1]
         for email in ('x@mailinator.com', 'noreply@firma.example', 'no-reply@firma.example',
@@ -266,6 +301,13 @@ class SpracheTest(LuviqTestCase):
         self.assertEqual(angebote.sprache(''), 'en')
         self.assertEqual(angebote.sprache('qwertz'), 'en')
         self.assertEqual(angebote.sprache('你好 我们提供视频服务'), 'en')
+
+    def test_unsicher_heisst_englisch_nicht_polnisch(self):
+        for t in ("Hi, I noticed your website could use a redesign. I'm a web developer and could build you a faster site.",
+                  "Hello, I'm a web designer myself and I just love what you do. Could you make me a z do na sweatshirt?",
+                  "Hi, do you do custom designs? I would like it in time for a gift, thanks"):
+            self.assertEqual(angebote.sprache(t), 'en', t)
+        self.assertEqual(angebote.sprache('Dzień dobry, oferujemy pozycjonowanie stron i reklamy Google dla sklepów'), 'pl')
 
     def test_ukrainisch_und_russisch_werden_getrennt(self):
         self.assertEqual(angebote.sprache('Ми пропонуємо відео та рекламу'), 'uk')

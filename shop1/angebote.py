@@ -8,11 +8,15 @@ bekommt der Absender **eine** kurze, freundliche Absage in seiner Sprache.
 
 Drei Sicherungen gegen Fehlgriffe, in dieser Reihenfolge ihrer Wichtigkeit:
 
-1. **Falsch-Positive sind teurer als durchgelassener Spam.** Ein Text gilt nur als Angebot, wenn der Absender
-   sich selbst anbietet: ein Dienstleistungs-Stichwort (Video, SEO, Webdesign, Marketing, Ads, Influencer, App …) **und** ein
-   Anbieter-Satzmuster („we offer“, „I can create“, „our prices start“, „wir bieten“ …) enthält – oder
-   mindestens zwei Anbieter-Satzmuster. Nennt der Text dagegen ein Stück, eine Größe, eine Bestellung oder
-   Luviq-Wörter (Nº 006, Jacke, Hoodie, Versand …), ist es eine Kundin und geht wie bisher an Luisa.
+1. **Falsch-Positive sind teurer als durchgelassener Spam.** Ein Text gilt nur als Angebot, wenn **drei**
+   Dinge zugleich zutreffen: (a) ein Dienst-Stichwort (Video, Reel, UGC, SEO, Marketing, Webdesign, Ads,
+   App …), (b) eine Leistung, die sich ausdrücklich an Luviqs Geschäft richtet („for your brand/business/
+   shop“, „your sales/traffic/rankings“, „grow your …“, „für dein Unternehmen/deine Reichweite“ …) und
+   (c) **kein** Kauf- oder Kundenwort (Nº 006, Jacke, coat, sweatshirt, custom hoodie, Versand, ship, order,
+   Schüler, Presse …). Die Kundenwort-Prüfung kommt immer zuerst. Berufsangaben („I'm a designer“, „we
+   create“) zählen nie. Einzige Ausnahme: ein ausdrücklicher Tausch („in exchange for a free piece“,
+   „gegen ein Stück“) hebt nur die Kundenwort-Sperre auf, Dienst-Stichwort und Ziel brauchen weiterhin beide.
+   Im Zweifel geht die Nachricht an Luisa.
 2. **Keine Absage an Bots.** Die Absage geht nur, wenn die Punktwertung (``spamschutz``) keinen
    Bot-Hinweis zeigt (Honigtopf, Zeitfalle, Linkflut, Spamwörter, Kauderwelsch, Wegwerf-Adresse …) und die
    Adresse brauchbar ist (keine ``noreply``, keine eigene Domain, keine Wegwerf-Domain).
@@ -61,71 +65,71 @@ _DIENST = re.compile(
     r'reklam ajans|arama motoru|продвижени|раскрутк|видео|реклам|сайт|сео\b|маркетинг|відео|просуванн|'
     r'розкрутк|рекламн', re.I)
 
-#: Der Absender bietet **sich selbst** an: eigene Leistung in der ersten Person. Wörter, die auch Kundinnen
-#: benutzen (quote, pricing, price list, Preisliste, proposal, portfolio, „ich habe deine Seite gesehen“,
-#: „unser Team“, „wir können“), stehen hier bewusst **nicht** – sie lösen nie ein Angebot aus.
-_SELBST = re.compile(
-    r'\bwe (?:offer|provide|specialize|specialise|create|produce|can (?:place|rank|boost|help (?:you|your)|get you))\b|'
-    r'\bwe(?: are|[\'’]re) an? (?:\w+ ){0,3}(?:agency|studio|company|team of)\b|'
-    r'\bour (?:agency|studio|company|experts?|services|videos?|packages|clients|prices start|prices are)\b|'
-    r'\bi(?: am|[\'’]m) an? (?:\w+ ){0,3}(?:video ?editor|videograph\w*|marketer|marketing (?:expert|consultant|specialist)|'
-    r'seo (?:expert|consultant|specialist)|web ?designer|web ?developer|freelanc\w+|ugc creator|content creator|'
-    r'digital marketing \w+|consultant|developer|designer)\b|'
-    r'\bi (?:can|could) (?:also )?(?:create|edit|make|produce|shoot|design|build|prepare|provide|offer|boost|rank)\b.{0,70}'
-    r'\b(?:for your (?:brand|business|shop|store|website|company|products?)|audit|proposal|samples?)\b|'
-    r'\b(?:increase|boost|grow|improve) your (?:sales|traffic|followers|revenue|visibility|rankings?|conversions?|website)\b|'
-    r'\brank (?:your \w+ )?(?:on|in) google\b|\bgoogle (?:1st|first) page\b|\bfirst page of google\b|'
-    r'\bplace your (?:website|site) on google\b|\b(?:reviewed|audited|analy[sz]ed) your (?:website|site)\b|'
-    r'\b(?:seo|design)[- ]related issues\b|\bsamples? of our\b|\bour previous work\b|\bgoogle[\'’]?s? search index\b|'
+#: (b) Die Leistung richtet sich ausdrücklich an Luviqs Geschäft. Wörter, die auch Kundinnen benutzen (quote,
+#: pricing, price list, Preisliste, proposal, portfolio, „ich habe deine Seite gesehen“, „unser Team“,
+#: „wir können“) und Berufsangaben („I'm a designer“, „we create“) stehen hier bewusst **nicht**.
+_ZIEL = re.compile(
+    r'\bfor your (?:brand|business|shop|store|website|company|account|webshop|online ?shop)\b|'
+    r'\byour (?:\w+ ){0,2}(?:sales|traffic|rankings?|followers|engagement|online presence|conversions|visibility|'
+    r'organic reach|target keywords|keywords)\b|'
+    r'\b(?:grow|boost|increase|improve|strengthen) your\b|\brank (?:\w+ ){0,3}(?:on|higher|in) google\b|'
+    r'\brank (?:\w+ ){0,3}higher\b|\byour (?:website|site) on google\b|\bgoogle[\'’]?s? search index\b|'
+    r'\b(?:reviewed|audited|analy[sz]ed) your (?:website|site)\b|\b(?:issues|errors) (?:on|with) your (?:website|site)\b|'
+    r'\b(?:advertise|promote|market) your (?:business|brand|shop|store|company)\b|\bfor your (?:\w+ )?business\b|'
+    r'\b(?:videos?|reels?|content|ads|campaigns?) for (?:\w+ )?(?:brands?|businesses|companies|shops|stores|clients)\b|'
+    r'\btarget market\b|'
     # de
-    r'\bwir (?:bieten|spezialisieren uns|produzieren)\b|\bunsere (?:agentur|firma|dienstleistungen|videos)\b|'
-    r'\bich (?:biete|bin (?:ein |eine )?(?:freiberufliche\w*\s+)?(?:videograf\w*|videoeditor\w*|webdesigner\w*|'
-    r'marketing[- ]?(?:experte|expertin|berater\w*)|seo[- ]?(?:experte|expertin|berater\w*)|content[- ]?creator\w*|ugc[- ]?creator\w*))\b|'
-    r'\bmehr (?:reichweite|kunden|sichtbarkeit) f[uü]r (?:ihr|euer|dein)\w*\b|'
+    r'\bf[uü]r (?:dein|euer|ihr)\w* (?:unternehmen|gesch[aä]ft|shop|marke|website|webseite|firma|label)\b|'
+    r'\b(?:deine|eure|ihre) (?:reichweite|ums[aä]tze|sichtbarkeit|rankings?|besucher|follower)\b|'
+    r'\bf[uü]r (?:\w+ )?(?:shops|onlineshops|webshops|unternehmen|firmen|marken)\b|'
+    r'\bwir bieten\b|\bunsere agentur\b|\bich biete\b|'
     # fr / es / it / nl / pt / pl / tr / ru / uk
-    r'\bnous (?:proposons|offrons|cr[ée]ons|r[ée]alisons)\b|\bnotre agence\b|\bofrecemos\b|\bcreamos\b|\bnuestra agencia\b|'
-    r'\bofferiamo\b|\bcreiamo\b|\bla nostra agenzia\b|\bwij (?:bieden|maken|verzorgen)\b|\bons bureau\b|'
-    r'\boferecemos\b|\bcriamos\b|\bnossa ag[êe]ncia\b|\boferujemy\b|\btworzymy\b|\bnasza agencja\b|'
-    r'\bsunuyoruz\b|\bhizmetlerimiz\b|\bajans[ıi]m[ıi]z\b|'
-    r'мы (?:предлагаем|создаём|создаем|занимаемся)|наша (?:компания|студия|команда)|наши услуги|'
-    r'ми (?:пропонуємо|створюємо|займаємося)|наша (?:студія|команда)|наші послуги', re.I)
+    r'\bpour (?:votre|vos|les|des) (?:marque|entreprise|boutiques?|sites?|activit[ée]|commerces?|marques|entreprises)\b|'
+    r'\bvotre (?:visibilit[ée]|trafic|r[ée]f[ée]rencement|chiffre d)\w*|\bnous (?:proposons|offrons)\b|\bnotre agence\b|'
+    r'\bpara (?:su|tu|sus|tus) (?:marca|negocio|tienda|web|empresa)\b|\bpara (?:tiendas|negocios|empresas|marcas)\b|'
+    r'\bofrecemos\b|\bnuestra agencia\b|\bper (?:negozi|aziende|brand|attivit[àa])\b|\bla vostra (?:azienda|attivit[àa]|visibilit[àa]|sito|marca)\b|'
+    r'\bofferiamo\b|\bla nostra agenzia\b|\bvoor (?:uw |jouw )?(?:webshops?|bedrijven|merken|winkels|website|bedrijf)\b|'
+    r'\bwij (?:bieden|maken)\b|\bpara (?:lojas|empresas|marcas|neg[óo]cios)\b|\bsua (?:marca|empresa|loja)\b|\boferecemos\b|'
+    r'\bdla (?:sklep[óo]w|firm|marek|pa[nń]stwa|twojej|twojego)\b|\boferujemy\b|\bnasza agencja\b|'
+    r'\b(?:siteniz|i[sş]letmeniz|markan[ıi]z) i[çc]in\b|\bsunuyoruz\b|\bajans[ıi]m[ıi]z\b|'
+    r'для (?:вашего|вашей|вашего бизнеса|интернет)|мы (?:предлагаем|занимаемся)|наша (?:компания|студия)|'
+    r'для (?:вашого|вашої|інтернет)|ми (?:пропонуємо|займаємося)|наша (?:студія)', re.I)
 
-#: Wer das schreibt, meint Luviq und seine Stücke: nie als Angebot behandeln.
+#: (c) Wer das schreibt, meint Luviq und seine Stücke oder will etwas kaufen: nie als Angebot behandeln.
 _KUNDE = re.compile(
     r'n[º°o]\s?\.?\s?\d{2,4}\b|\bnummer\s?\d|\barchiv\s?nummer|\bst[üu]ck(?:e|en)?\b|\bunikat|\bjacke\b|\bshirts?\b|\bt-shirt|\bhoodie|'
-    r'\bpullover|\bpulli\b|\bhose\b|\bjeans\b|\bkleid\b|\bmantel\b|\bweste\b|\bjacket\b|\bsweater\b|'
+    r'\bpullover|\bpulli\b|\bhose\b|\bjeans\b|\bkleid\b|\bmantel\b|\bweste\b|\bjacket\b|\bsweater\b|sweatshirt|\bcoats?\b|'
+    r'\bcostumes?\b|\bkost[üu]m|\bcommission\w*|\btrikots?\b|\bsudadera|\bveste\b|\bgiacca\b|\bbluz\w*|'
     r'\bsize\s+(?:xs|s|m|l|xl|xxl|\d{2})\b|\bin size\b|\bgr[öo](?:ß|ss)e\b|\bteil(?:e|en)?\b|\bpieces?\b|\bitems?\b|'
-    r'\bbestell|\border(?:s|ed|ing)?\b|\bversand|\bship(?:s|ped|ping)?\b|\bliefer|\bdelivery|\bretoure|\br[üu]cksendung|'
-    r'\bwiderruf|\brefund|\bnoch (?:frei|verf[üu]gbar|da)\b|\bstill available\b|\bavailable\b|\bverf[üu]gbar|\breserv|'
-    r'\banprobe|\bpassform|\bmotiv\b|\bengel\b|\bupcycl|\bbleach|\bgebleicht|\bluisa\b|\bluviq\.archive|'
-    r'\binstagram\.com/|\bkaufen\b|\bbuy\b|\bcustom(?:ized|ised)?[ -](?:design|made|order|piece|shirt|jacket|hoodie|print)\w*|\bmaßanfertig|\bgeschenk|\bgift\b|\bmerch\b|\blogo auf\b|'
-    r'\barbeitskleidung|\bworkwear|\bsch[üu]ler|\bschule\b|\bklasse\b|\bschool\b|\bstudents?\b|\bpresse\b|\bpress\b|'
-    r'\bmagazin|\bkooperation|\bcollab\w*|\bone like (?:that|this)\b|\bstorno|\brechnung\b|\binvoice\b|\bpaket\b|\bdhl\b|'
-    r'\bwhat(?:s|\'s| is) the price\b|\bwas kostet\b|\bhow much\b', re.I)
+    r'\bbestell|\border(?:s|ed|ing)?\b|\bversand|\bship(?:s|ped|ping)?\b|\bliefer|\bdelivery|\blivr|\bspedizion|'
+    r'\bsipari[sş]|\bwysy[łl]|\bretoure|\br[üu]cksendung|\bwiderruf|\brefund|\bnoch (?:frei|verf[üu]gbar|da)\b|'
+    r'\bstill available\b|\bavailable\b|\bverf[üu]gbar|\breserv|\banprobe|\bpassform|\bmotiv\b|\bengel\b|\bupcycl|\bbleach|'
+    r'\bgebleicht|\bluisa\b|\bluviq\.archive|\binstagram\.com/|\bkaufen\b|\bkupi[ćc]|\bbuy\b|\bpurchase\b|'
+    r'\bcustom(?:ized|ised)?[ -](?:\w+ )?(?:coat|jacket|hoodie|shirt|sweatshirt|dress|vest|pants|trousers|jeans|sweater|'
+    r'pullover|design|made|order|piece|print)\w*|\bcustom(?:er)?s? (?:order|piece)\w*|\bma[ßs]anfertig|\bgeschenk|\bgift\b|\bmerch\b|\blogo auf\b|'
+    r'\barbeitskleidung|\bworkwear|\bsch[üu]ler|\bschule\b|\bklasse\b|\bschool\b|\bstudent\w*|\bstudent(?:in)?\b|\bthesis\b|'
+    r'\bpresse\b|\bpress\b|\bmagazin|\bkooperation|\bcollab\w*|\bone like (?:that|this)\b|\bstorno|\brechnung\b|\binvoice\b|'
+    r'\bpaket\b|\bdhl\b|\bwhat(?:s|\'s| is) the price\b|\bwas kostet\b|\bhow much\b|\bworkshop\b|\binterview', re.I)
 
-#: Ein Creator bietet Video/Reel/Content gegen ein Gratis-Stück an: ein Video-Angebot (Absage), auch wenn
-#: es „Stück“ oder „free“ sagt.
-_CREATOR = re.compile(
-    r'\bi(?: am|[\'’]m) an? (?:\w+ ){0,3}(?:ugc|content|video|tiktok|instagram)\b.{0,40}(?:creator|editor|maker)\b|'
-    r'\bich bin (?:ein |eine )?(?:\w+ )?(?:ugc|content|video)[- ]?(?:creator|editor|macher)', re.I)
-_TAUSCH = re.compile(r'\bfree\b|\bgratis\b|\bkostenlos|\bin exchange\b|\bim austausch\b|\bbarter\b|\bgegen ein\b', re.I)
-_VIDEO = re.compile(r'\bvideos?\b|\breels?\b|\bugc\b|\bcontent\b|\btiktok', re.I)
+#: Ausdrücklicher Tausch (Creator bietet Video/Reel gegen ein Gratis-Stück): hebt nur die Kundenwort-Sperre
+#: auf. Ein beliebiges „free“ oder „kostenlos“ (free shipping, kostenloser Versand) zählt **nicht**.
+_TAUSCH = re.compile(
+    r'\bin exchange for\b|\bim austausch (?:f[üu]r|gegen)\b|\bgegen (?:ein|einen|eine) (?:kostenlos\w* |gratis )?'
+    r'(?:st[üu]ck|teil|shirt|hoodie|jacke|produkt)\b|\bfor (?:a|an) free (?:item|piece|product|shirt|hoodie|jacket)\b|'
+    r'\bfor free (?:items?|pieces?|products?)\b', re.I)
 
 
 def ist_angebot(name='', betreff='', nachricht=''):
-    """``True``, wenn der Absender sich selbst mit einer Dienstleistung anbietet (siehe Kopf des Moduls).
+    """``True``, wenn jemand Luviq eine Dienstleistung für das eigene Geschäft verkaufen will (siehe Modulkopf).
 
-    Verlangt ein Dienst-Stichwort **und** ein Selbstanbieter-Muster, und kein Kundenwort darf vorkommen
-    (Ausnahme: Creator, die ein Video gegen ein Gratis-Stück anbieten). Im Zweifel ``False``: dann geht die
-    Nachricht normal an Luisa."""
+    Verlangt Dienst-Stichwort **und** Ziel „Luviqs Geschäft“, und kein Kundenwort (die Prüfung kommt zuerst;
+    nur ein ausdrücklicher Tausch hebt sie auf). Im Zweifel ``False``: dann geht die Nachricht an Luisa."""
     text = ' '.join((betreff or '', nachricht or ''))
     if len(text.strip()) < 25:
         return False
-    if _CREATOR.search(text) and _TAUSCH.search(text) and _VIDEO.search(text):
-        return True
-    if _KUNDE.search(text):
+    if _KUNDE.search(text) and not _TAUSCH.search(text):
         return False
-    return _DIENST.search(text) is not None and _SELBST.search(text) is not None
+    return _DIENST.search(text) is not None and _ZIEL.search(text) is not None
 
 
 # ─── Sprache ────────────────────────────────────────────────────────────────
@@ -138,7 +142,7 @@ _WOERTER = {
     'it': r'\b(?:il|lo|gli|le|una?|e|voi|vostro|vostra|noi|nostro|per|con|[èe]|sono|ciao|buongiorno|cordiali|saluti|che|del|della|sul|sito)\b',
     'nl': r'\b(?:de|het|een|en|u|uw|wij|ons|onze|voor|met|is|zijn|hallo|goedendag|groeten|van|dat|ook|naar|website)\b',
     'pt': r'\b(?:o|os|as|um|uma|e|voc[êe]|seu|sua|n[óo]s|nosso|nossa|para|com|[ée]|s[ãa]o|ol[áa]|obrigado|atenciosamente|do|da|no|na|que)\b',
-    'pl': r'\b(?:i|oraz|nie|jest|s[aą]|dla|na|do|z|si[ęe]|pa[nń]stwa|dzie[nń] dobry|witam|pozdrawiam|ofert|strona|strony|mo[żz]emy|nasz|nasza)\b',
+    'pl': r'\b(?:nie|jest|s[aą]|dla|si[ęe]|oraz|pa[nń]stwa|dzie[nń] dobry|witam|pozdrawiam|oferuj\w+|sklep\w*|strony|mo[żz]emy|nasz\w*|dzi[ęe]kuj\w*|prosz[ęe]|czy)\b',
     'tr': r'\b(?:ve|bir|bu|i[çc]in|ile|sizin|bizim|merhaba|selam|te[şs]ekk[üu]r|de[ğg]erli|web sitesi|olarak|daha|var|sunuyoruz|hizmet)\b',
 }
 _ZEICHEN = {
@@ -169,6 +173,10 @@ def sprache(text):
     # Englisch ist Rückfall und hat viele Kurzwörter, die auch in anderen Sprachen vorkommen.
     wertung['en'] = wertung.get('en', 0) * 0.9
     beste = max(wertung, key=lambda k: wertung[k])
+    # Bei Unsicherheit Englisch: eine andere Sprache nur mit klarem Abstand zum Englischen (zwei englische
+    # Texte wurden einmal für Polnisch gehalten, weil „i“ und „z“ als polnische Wörter zählten).
+    if beste != 'en' and wertung[beste] < wertung['en'] + 4:
+        return 'en'
     if wertung[beste] < 4:
         return 'en'
     return beste
@@ -178,39 +186,61 @@ def sprache(text):
 
 # Je Sprache (Betreff, Text). Keine Namen, keine Links, keine Werbung. Deutsch im Luviq-Du-Stil.
 ABSAGEN = {
-    'de': ('Danke für dein Angebot',
-           'Hallo,\n\ndanke für dein Angebot – wir brauchen gerade keine Unterstützung bei Videos, Marketing '
-           'oder Webseiten und melden uns deshalb nicht weiter dazu.\n\nViele Grüße\nLuviq'),
-    'en': ('Thank you for your offer',
-           'Hello,\n\nthank you for your offer – we do not need any help with videos, marketing or websites '
-           'right now, so we will not follow up on this.\n\nBest wishes\nLuviq'),
-    'fr': ('Merci pour votre proposition',
-           'Bonjour,\n\nmerci pour votre proposition – nous n\'avons pas besoin d\'aide pour les vidéos, le '
-           'marketing ou les sites web en ce moment et ne donnerons donc pas de suite.\n\nCordialement\nLuviq'),
-    'es': ('Gracias por tu propuesta',
-           'Hola,\n\ngracias por tu propuesta – ahora mismo no necesitamos ayuda con vídeos, marketing o '
-           'páginas web, así que no responderemos más sobre este tema.\n\nUn saludo\nLuviq'),
-    'it': ('Grazie per la tua proposta',
-           'Ciao,\n\ngrazie per la tua proposta – al momento non abbiamo bisogno di supporto per video, '
-           'marketing o siti web e quindi non daremo seguito.\n\nCordiali saluti\nLuviq'),
-    'nl': ('Bedankt voor je aanbod',
-           'Hallo,\n\nbedankt voor je aanbod – we hebben op dit moment geen hulp nodig bij video\'s, marketing '
-           'of websites en komen er daarom niet meer op terug.\n\nGroeten\nLuviq'),
-    'pt': ('Obrigado pela sua proposta',
-           'Olá,\n\nobrigado pela sua proposta – de momento não precisamos de apoio com vídeos, marketing ou '
-           'sites e, por isso, não voltaremos a responder sobre este assunto.\n\nCumprimentos\nLuviq'),
-    'pl': ('Dziękujemy za ofertę',
-           'Dzień dobry,\n\ndziękujemy za ofertę – obecnie nie potrzebujemy wsparcia przy filmach, marketingu '
-           'ani stronach internetowych, dlatego nie będziemy już w tej sprawie odpisywać.\n\nPozdrawiamy\nLuviq'),
-    'tr': ('Teklifiniz için teşekkürler',
-           'Merhaba,\n\nteklifiniz için teşekkür ederiz – şu anda video, pazarlama veya web sitesi konusunda '
-           'desteğe ihtiyacımız yok, bu yüzden bu konuda tekrar dönüş yapmayacağız.\n\nSevgiler\nLuviq'),
-    'ru': ('Спасибо за ваше предложение',
-           'Здравствуйте!\n\nСпасибо за ваше предложение. Сейчас нам не нужна помощь с видео, маркетингом '
-           'или сайтами, поэтому мы не будем отвечать на него дальше.\n\nВсего доброго\nLuviq'),
-    'uk': ('Дякуємо за вашу пропозицію',
-           'Вітаємо!\n\nДякуємо за вашу пропозицію. Зараз нам не потрібна допомога з відео, маркетингом '
-           'або сайтами, тому ми не відповідатимемо на неї далі.\n\nГарного дня\nLuviq'),
+    'de': ('Danke für deine Nachricht',
+           'Hallo,\n\ndanke für deine Nachricht! Falls du uns eine Dienstleistung anbietest (zum Beispiel Videos, '
+           'Marketing oder Webdesign): Das brauchen wir gerade nicht, und wir melden uns dazu nicht weiter.\n\n'
+           'Falls du etwas von Luviq möchtest, antworte einfach kurz auf diese Mail, dann meldet sich Luisa '
+           'persönlich.\n\nViele Grüße\nLuviq'),
+    'en': ('Thank you for your message',
+           'Hello,\n\nthank you for your message! If you are offering us a service (for example videos, marketing '
+           'or web design): we do not need that right now, and we will not follow up on it.\n\nIf you would like '
+           'something from Luviq, simply reply briefly to this email and Luisa will get back to you '
+           'personally.\n\nBest wishes\nLuviq'),
+    'fr': ('Merci pour votre message',
+           'Bonjour,\n\nmerci pour votre message ! Si vous nous proposez un service (par exemple des vidéos, du '
+           'marketing ou du web design) : nous n\'en avons pas besoin pour le moment et nous ne donnerons pas '
+           'suite.\n\nSi vous souhaitez quelque chose de Luviq, répondez simplement brièvement à cet e-mail, '
+           'et Luisa vous répondra personnellement.\n\nCordialement\nLuviq'),
+    'es': ('Gracias por tu mensaje',
+           'Hola,\n\n¡gracias por tu mensaje! Si nos ofreces un servicio (por ejemplo vídeos, marketing o diseño '
+           'web): ahora mismo no lo necesitamos y no responderemos más sobre ello.\n\nSi quieres algo de Luviq, '
+           'responde brevemente a este correo y Luisa se pondrá en contacto contigo personalmente.\n\n'
+           'Un saludo\nLuviq'),
+    'it': ('Grazie per il tuo messaggio',
+           'Ciao,\n\ngrazie per il tuo messaggio! Se ci stai proponendo un servizio (ad esempio video, marketing '
+           'o web design): al momento non ne abbiamo bisogno e non daremo seguito.\n\nSe desideri qualcosa da '
+           'Luviq, rispondi brevemente a questa e-mail e Luisa ti risponderà personalmente.\n\n'
+           'Cordiali saluti\nLuviq'),
+    'nl': ('Bedankt voor je bericht',
+           'Hallo,\n\nbedankt voor je bericht! Als je ons een dienst aanbiedt (bijvoorbeeld video\'s, marketing '
+           'of webdesign): die hebben we nu niet nodig en we komen er niet meer op terug.\n\nWil je iets van '
+           'Luviq? Antwoord dan kort op deze e-mail, dan neemt Luisa persoonlijk contact met je op.\n\n'
+           'Groeten\nLuviq'),
+    'pt': ('Obrigado pela sua mensagem',
+           'Olá,\n\nobrigado pela sua mensagem! Se está a oferecer-nos um serviço (por exemplo vídeos, marketing '
+           'ou web design): de momento não precisamos e não voltaremos a responder sobre isso.\n\nSe quiser '
+           'algo da Luviq, responda brevemente a este e-mail e a Luisa entrará em contacto consigo '
+           'pessoalmente.\n\nCumprimentos\nLuviq'),
+    'pl': ('Dziękujemy za wiadomość',
+           'Dzień dobry,\n\ndziękujemy za wiadomość! Jeśli oferują nam Państwo usługę (na przykład filmy, '
+           'marketing lub projektowanie stron): obecnie jej nie potrzebujemy i nie będziemy w tej sprawie '
+           'odpisywać.\n\nJeśli chcą Państwo czegoś od Luviq, wystarczy krótko odpowiedzieć na tę wiadomość, '
+           'a Luisa odpisze osobiście.\n\nPozdrawiamy\nLuviq'),
+    'tr': ('Mesajınız için teşekkürler',
+           'Merhaba,\n\nmesajınız için teşekkürler! Bize bir hizmet sunuyorsanız (örneğin video, pazarlama veya '
+           'web tasarımı): şu anda buna ihtiyacımız yok ve bu konuda tekrar dönüş yapmayacağız.\n\nLuviq\'ten '
+           'bir şey istiyorsanız bu e-postayı kısaca yanıtlamanız yeterli, Luisa size kişisel olarak '
+           'dönecektir.\n\nSevgiler\nLuviq'),
+    'ru': ('Спасибо за ваше сообщение',
+           'Здравствуйте!\n\nСпасибо за ваше сообщение! Если вы предлагаете нам услугу (например, видео, '
+           'маркетинг или веб-дизайн): сейчас она нам не нужна, и мы не будем отвечать на это дальше.\n\n'
+           'Если вам нужно что-то от Luviq, просто коротко ответьте на это письмо, и Луиза ответит вам '
+           'лично.\n\nВсего доброго\nLuviq'),
+    'uk': ('Дякуємо за ваше повідомлення',
+           'Вітаємо!\n\nДякуємо за ваше повідомлення! Якщо ви пропонуєте нам послугу (наприклад, відео, '
+           'маркетинг або веб-дизайн): зараз вона нам не потрібна, і ми не відповідатимемо на це далі.\n\n'
+           'Якщо вам потрібно щось від Luviq, просто коротко дайте відповідь на цей лист, і Луїза відповість '
+           'вам особисто.\n\nГарного дня\nLuviq'),
 }
 
 _ROLLEN = ('noreply', 'no-reply', 'donotreply', 'do-not-reply', 'mailer-daemon', 'postmaster', 'bounce',
@@ -287,6 +317,12 @@ def darf_absage(email, gruende, eigene_domains=()):
     return True, ''
 
 
+def antwort_adresse():
+    """Reply-To der Absage: Luisas Adresse (``ADMIN_EMAIL``, sonst ``DEFAULT_FROM_EMAIL``)."""
+    from django.conf import settings
+    return os.getenv('ADMIN_EMAIL') or settings.DEFAULT_FROM_EMAIL
+
+
 def absage_senden(anfrage, text_fuer_sprache):
     """Schickt die Absage und trägt Zeit und Sprache an der gespeicherten Anfrage ein.
 
@@ -298,8 +334,10 @@ def absage_senden(anfrage, text_fuer_sprache):
         kuerzel = sprache(text_fuer_sprache)
         betreff, text = absage_text(kuerzel)
         KontaktAnfrage.objects.filter(pk=anfrage.pk).update(absage_am=timezone.now(), absage_sprache=kuerzel)
+        # Rückweg: Absender (From) ist Luisas Postfach (DEFAULT_FROM_EMAIL), und Reply-To zeigt ausdrücklich
+        # auf dieselbe Adresse wie die Mails an sie (ADMIN_EMAIL) – eine Antwort landet bei Luisa.
         send_brevo_email(betreff, absage_html(text), anfrage.email, recipient_name='', text_content=text,
-                         auto_antwort=True)
+                         reply_to=antwort_adresse(), auto_antwort=True)
         _log.info('Angebot abgesagt (%s) an eine Absenderadresse', kuerzel)
         return True
     except Exception:

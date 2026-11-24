@@ -310,12 +310,15 @@ def _kontakt_annehmen(request, name, email, betreff, nachricht):
         return redirect('kontakt_danke')
     if einstufung == 'angebot':
         absage = 'keine (Anfrage nicht gespeichert)'
+        stand = '[Angebot – keine Absage: nicht gespeichert]'
         if anfrage is not None:
             erlaubt, warum = angebote.darf_absage(email, gruende, spamschutz.eigene_domains())
             if erlaubt:
                 gesendet = angebote.absage_senden(anfrage, f'{betreff} {nachricht}')
                 absage = 'gesendet' if gesendet else 'Versand nicht gestartet'
+                stand = '[Angebot – abgesagt]' if gesendet else '[Angebot – keine Absage: Versand nicht gestartet]'
             else:
+                stand = f'[Angebot – keine Absage: {warum}]'
                 absage = f'nicht gesendet ({warum})'
                 _log.info('Angebot: keine Absage (%s)', warum)
         # Kopie an die Webagentur zur Kontrolle der Einordnung (Luisa bekommt nichts). Wirft nie.
@@ -325,7 +328,7 @@ def _kontakt_annehmen(request, name, email, betreff, nachricht):
             antwort_an=safe_email, langtext_titel='Nachricht', langtext=nachricht, objekt=anfrage,
             gespeichert=anfrage is not None, admin_mail=None, kunden_mail=f'Absage: {absage}',
             herkunft='als Dienstleistungs-Angebot eingestuft, nicht an Luisa weitergeleitet',
-            betreff=einzeilig_betreff(f'[Luviq] [Angebot – automatisch abgesagt] {safe_name or "ohne Namen"}'))
+            betreff=einzeilig_betreff(f'[Luviq] {stand} {safe_name or "ohne Namen"}'))
         return redirect('kontakt_danke')
     felder = [('Name', safe_name), ('E-Mail', safe_email, 'mail'), ('Betreff', safe_betreff)]
     recipient = os.getenv('ADMIN_EMAIL', settings.DEFAULT_FROM_EMAIL)
