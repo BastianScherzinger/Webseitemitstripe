@@ -180,7 +180,7 @@ class RechtstextTest(LuviqTestCase):
             with self.subTest(feld=feld):
                 self.assertIn(feld, abschnitt)
         self.assertNotIn('gmail', abschnitt.lower())
-        self.assertIn('Stand: 15. November 2026', html)
+        self.assertIn('Stand: 24. November 2026', html)  # Spam/Angebote-Absatz 24.11.
 
     def test_formularfelder_sind_die_in_8a_genannten(self):
         formular = open('shop1/templates/shop1/teile/stueckanfrage_formular.html', encoding='utf-8').read()

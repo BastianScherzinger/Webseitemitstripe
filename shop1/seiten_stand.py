@@ -36,7 +36,7 @@ SEITEN_STAND = {
     'liefergebiet': '2026-11-15',  # Versand im Preis, Lieferzeit nennt Luisa
     'kontakt':      '2026-11-15',  # Beschreibung ohne Verkaufsstart
     'impressum':    '2026-10-30',  # VSBG-Satz (Rechts-Runde 30.10.)
-    'datenschutz':  '2026-11-15',  # + Abschnitt 8a Stückanfrage;  # + Rabattcode-Abgleich (01.11.)
+    'datenschutz':  '2026-11-24',  # + Spam/Angebote (24.11.); + Abschnitt 8a Stückanfrage;  # + Rabattcode-Abgleich (01.11.)
     'agb':          '2026-11-04',  # AGB §§ 1–14 + Widerrufsbelehrung (Rechts-Runde 30.10.)
     # IS19 (27.09.2026): Erklärsätze der Stationen, Dauer, Bestätigungshinweis.
     # 02.10.2026 (L1-B1): Titel, Beschreibung, Vorschaubild und Twitter-Angaben neu
