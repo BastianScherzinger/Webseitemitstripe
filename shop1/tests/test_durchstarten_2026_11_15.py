@@ -129,7 +129,8 @@ class LlmsAnfrageTest(LuviqTestCase):
         self.assertIn('auf Anfrage', text)
         self.assertIn('keine Bestellung', text)
         self.assertIn('Engel-Shirt', text)
-        self.assertIn('69.00 EUR', text)
+        self.assertNotIn('69.00 EUR', text)  # Paket 2 (26.11.2026): llms.txt nennt im Anfrage-Shop keinen Preis
+        self.assertNotIn('EUR', text)
         self.assertIn('Archiv (vergeben', text)
         self.assertIn('Lübeck', text)
 
@@ -166,7 +167,7 @@ class LlmsAnfrageTest(LuviqTestCase):
         text = json.dumps(faq[0], ensure_ascii=False)
         for weg in ('Zahlungslink', 'Revolut', 'Überweisung', 'ohne Konto', 'Rechnung'):
             self.assertNotIn(weg, text)
-        self.assertIn('69 €', text)
+        self.assertNotIn('69 €', text)  # Paket 2 (26.11.2026): Preis aus der FAQ entfernt
 
     def test_stueckseite_ohne_offer_im_anfrage_shop(self):
         html = self.hole(self.engel.get_absolute_url()).content.decode()

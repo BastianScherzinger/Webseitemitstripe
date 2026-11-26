@@ -191,6 +191,9 @@ body.lv-v9{--rand:var(--s3);--abschnitt:80px;margin:0;background:var(--grund);co
 .lv-v9 .fragen dl > div{border-bottom:1px solid var(--linie);padding:var(--s3) 0}
 .lv-v9 .fragen dt{font-weight:700;font-size:17px;line-height:24px}
 .lv-v9 .fragen dd{color:var(--leise);padding-top:var(--s1);max-width:40ch}
+.lv-v9 .fragen dt h3{font:inherit;letter-spacing:inherit}
+.lv-v9 .fragen dd .nr{white-space:normal;font-weight:400;color:var(--text);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--linie-stark)}
+.lv-v9 .bleach .textlink{margin-top:var(--s2)}
 
 /* ---------- Kontakt ---------- */
 .lv-v9 .kontakt{position:relative;isolation:isolate;padding-bottom:var(--abschnitt);text-align:center}
@@ -202,17 +205,20 @@ body.lv-v9{--rand:var(--s3);--abschnitt:80px;margin:0;background:var(--grund);co
 .lv-v9 .kontakt .mail a{color:var(--text)}
 
 /* ---------- Fuß ---------- */
-.lv-v9 .fuss{container-type:inline-size;position:relative;background:var(--tief);border-top:1px solid var(--linie);padding:var(--s5) var(--rand) 96px;overflow:hidden}
-.lv-v9 .f-spalten{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5) var(--s3)}
-.lv-v9 .f-spalten > div:first-child,.lv-v9 .f-spalten > div:nth-child(2),.lv-v9 .f-spalten > div:nth-child(5),.lv-v9 .f-spalten > div:nth-child(6){grid-column:1 / -1}
+.lv-v9 .fuss{container-type:inline-size;position:relative;background:var(--tief);border-top:1px solid var(--linie);padding:var(--s5) var(--rand) 72px;overflow:hidden}
+.lv-v9 .f-spalten{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4) var(--s3)}
+.lv-v9 .f-spalten > div:first-child,.lv-v9 .f-spalten > div:nth-child(2),.lv-v9 .f-spalten > div:nth-child(5){grid-column:1 / -1}
+.lv-v9 .f-spalten > div:nth-child(5) ul{columns:2;column-gap:var(--s3)}
+.lv-v9 .f-spalten > div:nth-child(6){display:none}
 .lv-v9 .f-spalten p,.lv-v9 .f-spalten li{font-size:14px;line-height:20px;color:var(--leise)}
 .lv-v9 .f-spalten li{min-height:36px;display:flex;align-items:center}
 .lv-v9 .f-spalten li a{display:inline-flex;min-height:44px;align-items:center;text-decoration:none;color:var(--text)}
 .lv-v9 .f-spalten li a:hover{color:var(--akzent-hell)}
 .lv-v9 .f-spalten .f-marke{font-weight:700;letter-spacing:.26em;color:var(--text);font-size:16px;line-height:24px;margin-bottom:var(--s1)}
 .lv-v9 .f-spalten .f-kopf{font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);margin-bottom:var(--s1)}
-.lv-v9 .f-unten{margin-top:var(--s5);padding-top:var(--s2);border-top:1px solid var(--linie);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0 var(--s3);font-size:14px;line-height:20px;color:var(--leise)}
+.lv-v9 .f-unten{margin-top:var(--s4);padding-top:var(--s2);border-top:1px solid var(--linie);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0 var(--s3);font-size:14px;line-height:20px;color:var(--leise)}
 .lv-v9 .f-unten a{display:inline-flex;min-height:44px;align-items:center;margin-right:var(--s3);color:var(--text);text-decoration:none}
+.lv-v9 .f-unten p:last-child{display:flex;flex-wrap:wrap}
 .lv-v9 .f-unten a:hover{color:var(--akzent-hell)}
 .lv-v9 .f-gross{display:none}
 
@@ -342,8 +348,11 @@ body.lv-v9{--rand:var(--s3);--abschnitt:80px;margin:0;background:var(--grund);co
 
   /* Fuß */
   .lv-v9 .fuss{padding:var(--s7) var(--rand) 0}
-  .lv-v9 .f-spalten{grid-template-columns:1.5fr 1.5fr 1.25fr 1fr 1.4fr 1.3fr;gap:var(--s5) var(--s4)}
-  .lv-v9 .f-spalten > div:first-child,.lv-v9 .f-spalten > div:nth-child(2),.lv-v9 .f-spalten > div:nth-child(5),.lv-v9 .f-spalten > div:nth-child(6){grid-column:auto}
+  .lv-v9 .f-spalten{grid-template-columns:1.3fr 1.5fr 1.2fr 1fr 1.4fr 1.6fr;gap:var(--s5) var(--s4)}
+  .lv-v9 .f-spalten > div:first-child,.lv-v9 .f-spalten > div:nth-child(2),.lv-v9 .f-spalten > div:nth-child(5){grid-column:auto}
+  .lv-v9 .f-spalten > div:nth-child(5) ul{columns:1}
+  .lv-v9 .f-spalten > div:nth-child(6){display:block}
+  .lv-v9 .f-spalten li{white-space:nowrap}
   .lv-v9 [id]{scroll-margin-top:88px}
   .lv-v9 .f-spalten > div:first-child p:last-child{max-width:30ch}
   .lv-v9 .f-spalten p,.lv-v9 .f-spalten li{font-size:15px;line-height:22px}

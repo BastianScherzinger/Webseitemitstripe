@@ -5,7 +5,7 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
 <fieldset>/<legend>. Honeypot und Zeitfalle wie beim Kontaktformular.
 {% endcomment %}
 
-{% block title %}Shirt bemalen lassen: sag, was du willst, kostenlos anfragen | Luviq{% endblock %}
+{% block title %}Motiv anfragen per Formular: kostenlos | Luviq{% endblock %}
 {% block meta_description %}Eigenes Motiv auf Shirt, Hoodie oder Jeans: Luisa Brehler von Luviq schickt dir Vorschläge, kostenlos und ohne Bestellung. Jetzt dein Motiv anfragen.{% endblock %}
 {% block og_title %}Motiv anfragen – Luviq Universe aus Lübeck{% endblock %}
 {% block og_description %}Beschreib dein Motiv, Luisa schickt dir Vorschläge, und ihr entscheidet zusammen. Kostet nichts und ist keine Bestellung.{% endblock %}
@@ -51,8 +51,8 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
             <p class="lv-nr">Motiv anfragen</p>
             <h1 class="lv-serif lv-satz" id="anfrage-titel">Sag mir, was du willst — ich mal’s dir.</h1>
             {% if geschlossen %}
-            <p class="lv-lead">Gerade nehme ich keine neuen Motivanfragen an. Trag dich auf der Startseite in die Warteliste ein, dann erfährst du als Erstes, wann es wieder geht.</p>
-            <p><a class="lv-knopf" href="{% url 'home' %}#warteliste">Zur Warteliste</a></p>
+            <p class="lv-lead">Gerade nehme ich keine neuen Motivanfragen an. Schreib Luisa einfach per WhatsApp oder E-Mail, sie meldet sich persönlich.</p>
+            <p><a class="lv-knopf" href="{% url 'home' %}#kontakt">Schreib Luisa</a></p>
             {% else %}
             <p class="lv-lead">Beschreib mir kurz, was dir vorschwebt. Ich bin Luisa aus Lübeck, ich schick dir Vorschläge, und wir entscheiden zusammen. Das kostet nichts und ist keine Bestellung. Jedes Stück ist von Hand gemalt, keins gleicht dem anderen. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.</p>
             <ol class="lv-stationen" aria-label="So geht es weiter">

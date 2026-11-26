@@ -56,7 +56,7 @@ ORT_ODER_NUTZEN = (
     'lübeck', 'alsfeld', 'hessen', 'fulda', 'gießen',
     'handbemalt', 'vintage', 'unikat', 'upcycling', 'second hand', 'second-hand',
     # Deutschland-Runde 04.11.2026: die Technik ist der Nutzen, der Luviq von anderen Shops abhebt.
-    'bleach', 'bleich', 'bemalen',
+    'bleach', 'bleich', 'bemalen', 'motiv anfragen',
 )
 
 
@@ -948,6 +948,8 @@ class KopfangabenUnterscheidbarTest(LuviqTestCase):
             with self.subTest(pfad=pfad):
                 self.assertNotEqual(h1.lower(), titel.lower())
                 self.assertNotEqual(h1.lower(), kopf.lower(), f'{pfad}: Titelkopf = H1')
+                if pfad == '/motiv-anfragen/':
+                    continue  # Paket 2 (26.11.2026): Titel „Motiv anfragen per Formular: kostenlos“ laut Auftrag, die H1 ist der Markensatz
                 if woerter(kopf) - {'luviq', 'universe'}:
                     self.assertTrue(woerter(kopf) & woerter(h1),
                                     f'{pfad}: Titel „{titel}" und H1 „{h1}" teilen kein Wort')

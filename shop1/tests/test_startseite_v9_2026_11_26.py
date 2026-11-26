@@ -104,3 +104,46 @@ class StartseiteV9Test(LuviqTestCase):
         from django.contrib.staticfiles import finders
         for m in re.findall(r'src="/static/(shop1/images/start/[^"]+?)\.[0-9a-f]{12}(\.webp)"', self.html):
             self.assertTrue(finders.find(m[0] + m[1]), m)
+
+
+class StartseiteV9Paket2Test(LuviqTestCase):
+    """Paket 2 und 3 (26.11.2026): Text, tote Warteliste-Verweise, Preise, Referenzstücke, Fuß."""
+
+    def setUp(self):
+        super().setUp()
+        self.html = self.hole('/').content.decode()
+        self.text = sichtbarer_text(self.html)
+
+    def test_keine_tageszahl_und_luisa_text(self):
+        self.assertNotIn('2 bis 5 Tage', self.text)
+        self.assertIn('auf ein Shirt, einen Hoodie oder Pullover', self.text)
+        self.assertNotIn('dein Shirt', self.text)
+
+    def test_fragen_sind_h3_und_ratgeberlinks_stehen(self):
+        self.assertEqual(len(re.findall(r'<dt><h3>', self.html)), 8)
+        self.assertIn('href="/wissen/bleach-painting/"', self.html)
+        self.assertIn('href="/wissen/pflege-handbemalte-kleidung/"', self.html)
+
+    def test_keine_toten_wartelisteverweise_mehr(self):
+        for pfad in ('/', '/produkte/', '/ueber_uns/', '/kontakt/', '/liefergebiet/', '/motiv-anfragen/'):
+            seite = self.hole(pfad).content.decode()
+            with self.subTest(pfad=pfad):
+                self.assertNotIn('#warteliste', seite)
+                self.assertNotIn('#newsletter-form', seite)
+
+    def test_fuss_ohne_doppelte_links(self):
+        fuss = self.html[self.html.index('<footer class="fuss">'):]
+        self.assertEqual(fuss.count('href="/ueber_uns/"'), 1)
+        self.assertEqual(fuss.count('href="/kontakt/"'), 1)
+        self.assertIn('Bleach Painting erklärt', fuss)
+
+    def test_llms_ohne_preis_und_referenzstuecke_ohne_index(self):
+        from ._basis import erzeuge_produkt
+        ref = erzeuge_produkt('Custom Referenz', nummer=1, vergeben=True)
+        text = self.hole('/llms.txt').content.decode()
+        self.assertNotIn(' EUR', text)
+        sitemap = self.hole('/sitemap.xml').content.decode()
+        self.assertNotIn(ref.get_absolute_url(), sitemap)
+        seite = self.hole(ref.get_absolute_url())
+        self.assertEqual(seite.status_code, 200)
+        self.assertIn('<meta name="robots" content="noindex, follow">', seite.content.decode())

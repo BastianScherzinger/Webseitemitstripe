@@ -235,7 +235,7 @@ def _llms_txt_anfrage(basis):
     vergebene Stücke als Archiv ohne Preis, der Ablauf einer Anfrage. Keine Lieferfrist in Tagen (die Zahl bestätigt
     Luisa), keine Zahlungsarten, keine Warteliste."""
     zeilen = (_llms_kopf_anfrage(basis)
-              + _llms_produktzeilen(basis, mit_preis=True)
+              + _llms_produktzeilen(basis, mit_preis=True, ohne_betrag=True)
               + _llms_wissenzeilen(basis)
               + _llms_fragen_anfrage(basis))
     return HttpResponse("\n".join(zeilen) + "\n",
@@ -258,18 +258,18 @@ def _llms_kopf_anfrage(basis):
         "",
         _betreiber_zeile("Betreiberin"),
         "- Sitz: Lübeck · Herkunft: Alsfeld (Hessen)",
-        "- Angebot: Stücke auf Anfrage; offene Stücke stehen mit Preis auf der Stückseite, vergebene im Archiv",
+        "- Angebot: Bleach Art auf Shirts, Hoodies und Pullovern nach Wunschmotiv, von Hand gemalt; Stücke und Motive auf Anfrage",
+        "- Anfrage: kostenlos und unverbindlich per WhatsApp 0176 2490 8402 oder über die Kontaktseite",
+        "- Den Preis nennt Luisa, bevor sie anfängt",
         "- Engel-Shirt: Serienstück, Second-Hand-Shirt in Größe M, von Hand mit Bleiche gemalt; jedes Shirt wird neu",
         "  gemalt und gleicht nie 1:1 dem anderen",
-        "- Preise sind Endpreise, der Versand innerhalb Deutschlands ist im Preis enthalten; nach § 19 UStG wird",
-        "  keine Umsatzsteuer berechnet (Kleinunternehmerstatus)",
         "- Instagram: https://www.instagram.com/luviq.archive/",
         "- TikTok: https://www.tiktok.com/@luviq.archive",
         "- Google-Unternehmensprofil: https://www.google.com/maps?cid=13899750731019902000",
         "",
         "## Seiten",
         "",
-        f"- [Startseite]({basis}{reverse('home')}): Überblick, offenes Stück und Archiv",
+        f"- [Startseite]({basis}{reverse('home')}): Bleach Art, Dein Motiv von Hand gemalt: Arbeiten, Ablauf, Fragen, Anfrage per WhatsApp oder E-Mail",
         f"- [Stücke ansehen]({basis}{reverse('produkte')}): offene Stücke zur Anfrage, vergebene Stücke als Archiv",
         f"- [Über uns]({basis}{reverse('ueber_uns')}): Luisa Brehler und die Arbeitsweise",
         f"- [Motiv anfragen]({basis}{reverse('motiv_anfragen')}): eigenes Motiv beschreiben, "
@@ -295,8 +295,7 @@ def _llms_fragen_anfrage(basis):
         f"Stücke: {basis}{reverse('produkte')}",
         "",
         "### Was kostet ein Stück?",
-        "Der Preis steht auf der Seite des Stücks (zum Beispiel das Engel-Shirt, siehe oben). Es sind Endpreise;",
-        "der Versand innerhalb Deutschlands ist im Preis enthalten, nach § 19 UStG wird keine Umsatzsteuer berechnet.",
+        "Das hängt von Stück und Motiv ab. Den Preis nennt Luisa, bevor sie anfängt; die Anfrage kostet nichts.",
         "",
         "### Was ist Luviq Universe?",
         "Eine Marke für handbemalte Second-Hand-Kleidung aus Lübeck. Gründerin Luisa Brehler malt jedes Stück von Hand",
@@ -351,7 +350,7 @@ def _llms_txt_ohne_verkauf(basis):
                         content_type="text/plain; charset=utf-8")
 
 
-def _llms_produktzeilen(basis, mit_preis):
+def _llms_produktzeilen(basis, mit_preis, ohne_betrag=False):
     """Die Einzelstücke der llms.txt: mit Verkauf nur kaufbare Stücke samt Preis, das Archiv
     (vergeben, nicht bestellbar) getrennt und ohne Preis; ohne Verkauf alle als Archiv."""
     def beschrieben(produkt):
@@ -377,6 +376,10 @@ def _llms_produktzeilen(basis, mit_preis):
         if produkt.serie:
             beschreibung = (f"Serienstück, {produkt.masse or 'Größe M'}, Bearbeitung ca. "
                             f"{produkt.bearbeitungstage or 3} Werktage – ") + beschreibung
+        if ohne_betrag:  # Anfrage-Shop (26.11.2026): llms.txt nennt keinen Preis
+            zeilen.append(f"- [{produkt.name}]({basis}{produkt.get_absolute_url()})"
+                          + (f": {beschreibung}" if beschreibung else ""))
+            continue
         zeilen.append(f"- [{produkt.name}]({basis}{produkt.get_absolute_url()}): {produkt.preis} EUR"
                       + (f" – {beschreibung}" if beschreibung else ""))
     if not zeilen:
@@ -765,6 +768,8 @@ def sitemap_xml(request):
     for page in _sitemap_seiten():
         xml += _seite_xml(page, base_url)
     for produkt in Produkt.objects.filter(aktiv=True).order_by('-aktualisiert_am'):
+        if produkt.ist_referenz:
+            continue  # Referenzstücke (vergeben, Archiv): noindex, nicht in der Sitemap (26.11.2026, W13)
         xml += _produkt_xml(produkt, base_url)
     xml += '</urlset>'
     return HttpResponse(xml, content_type='application/xml; charset=utf-8')
@@ -1029,7 +1034,7 @@ def _newsletter_fehler(request, klassisch, text, status):
     """Fehler: ohne JavaScript Meldung und Weiterleitung, sonst JSON mit Status."""
     if klassisch:
         messages.error(request, text)
-        return redirect(reverse('home') + '#warteliste')
+        return redirect(reverse('home'))
     return JsonResponse({'error': text}, status=status)
 
 
@@ -1040,7 +1045,7 @@ def _newsletter_ok(request, klassisch, neu):
     Abschluss zählt (FO08); eine Wiederholung zählt nicht."""
     if klassisch:
         messages.success(request, _NEWSLETTER_TEXT_OK)
-        return redirect(reverse('home') + '#warteliste')
+        return redirect(reverse('home'))
     antwort = {'message': _NEWSLETTER_TEXT_OK}
     if neu:
         antwort['neu'] = True

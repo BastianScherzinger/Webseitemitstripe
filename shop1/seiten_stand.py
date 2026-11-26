@@ -30,10 +30,10 @@ SEITEN_STAND = {
     # 23.10.2026: Sitz Lübeck laut Gewerbeanmeldung, Alsfeld als Herkunft – Titel,
     # Beschreibungen und Texte aller Seiten; deshalb tragen alle dieses Datum.
     'home':         '2026-11-26',  # Startseite v9 Bleach Art (Hero-Galerie, Fragen, Kontakt per WhatsApp)
-    'produkte':     '2026-11-15',  # Wisch-Band, Titel/Beschreibung für den Anfrage-Shop
+    'produkte':     '2026-11-26',  # Wisch-Band, Titel/Beschreibung für den Anfrage-Shop
     'gaestebuch':   '2026-11-01',
-    'ueber_uns':    '2026-11-15',  # H1 mit Name und Ort;  # Unikat/Serie: keine zweite Auflage nur für Einzelstücke
-    'liefergebiet': '2026-11-15',  # Versand im Preis, Lieferzeit nennt Luisa
+    'ueber_uns':    '2026-11-26',  # H1 mit Name und Ort;  # Unikat/Serie: keine zweite Auflage nur für Einzelstücke
+    'liefergebiet': '2026-11-26',  # Versand im Preis, Lieferzeit nennt Luisa
     'kontakt':      '2026-11-15',  # Beschreibung ohne Verkaufsstart
     'impressum':    '2026-10-30',  # VSBG-Satz (Rechts-Runde 30.10.)
     'datenschutz':  '2026-11-24',  # + Spam/Angebote (24.11.); + Abschnitt 8a Stückanfrage;  # + Rabattcode-Abgleich (01.11.)
@@ -42,11 +42,11 @@ SEITEN_STAND = {
     # 02.10.2026 (L1-B1): Titel, Beschreibung, Vorschaubild und Twitter-Angaben neu
     # (IS03/06/07/09/10/11/13/36/39, EIG137) — home, produkte, gaestebuch, ueber_uns,
     # liefergebiet, kontakt, datenschutz und motiv_anfragen tragen deshalb dieses Datum.
-    'motiv_anfragen': '2026-11-04',
+    'motiv_anfragen': '2026-11-26',
     # Wissensbereich (Welle 6, Schritte 26–29): Routennamen aus views/wissen.py.
-    'wissen':           '2026-11-04',
+    'wissen':           '2026-11-26',
     'wissen_pflege':    '2026-11-08',
-    'wissen_upcycling': '2026-11-08',
+    'wissen_upcycling': '2026-11-26',
     'wissen_groesse':   '2026-11-15',
     'wissen_motiv':     '2026-10-23',  # Entwurf, noindex
     # Ratgeber (30.10.2026, C8), seit Runde 3 veröffentlicht; ISO 8601 mit Uhrzeit und Zone:

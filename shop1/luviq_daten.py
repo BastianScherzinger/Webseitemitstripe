@@ -549,7 +549,7 @@ FUSS = [
     ('Stücke', [
         ('produkte', '', 'Archiv', 'Shop', False),
         ('motiv_anfragen', '', 'Motiv anfragen', 'Motiv anfragen', True),
-        ('home', '#warteliste', 'Warteliste', 'Für das nächste Stück vormerken', False),
+        ('home', '#kontakt', 'Schreib Luisa', 'Schreib Luisa', False),
     ]),
     ('Hilfe', [
         ('liefergebiet', '', 'Versand & Abholung', 'Versand & Abholung', False),
@@ -598,7 +598,7 @@ def leiste(verkauf_aktiv, tag=None, heute=None):
         satz = f'Shop öffnet frühestens am {tag.day}. {_MONATE[tag.month - 1]}'
     else:
         satz = 'Der Shop ist noch nicht geöffnet'
-    return (satz, 'Vormerken', 'home', '#warteliste')
+    return (satz, 'Schreib Luisa', 'home', '#kontakt')
 
 
 #: Routennamen, auf denen es keine Handy-Leiste gibt: Rechtsseiten, Konto, Kasse,
@@ -682,8 +682,8 @@ def engel_faq_anfrage(bearbeitung, preis_euro):
          'Luisa antwortet dir persönlich per E-Mail, danach klärt ihr Zahlung und Lieferzeit. Die Anfrage kostet '
          'nichts und ist keine Bestellung; nichts wird bezahlt oder reserviert.'),
         ('Was kostet das Engel-Shirt?',
-         f'{preis_euro} €. Der Versand innerhalb Deutschlands ist im Preis enthalten; nach § 19 UStG wird keine '
-         'Umsatzsteuer berechnet.'),
+         'Den Preis nennt Luisa dir auf Anfrage, bevor etwas gemalt oder verschickt wird. Die Anfrage kostet '
+         'nichts und ist keine Bestellung.'),
         ('Welche Größe hat das Engel-Shirt?',
          f'Das Engel-Shirt ist ein Second-Hand-Shirt in Größe M aus {ENGEL_STUECK["material"]}. Die genauen '
          'Maße nennt Luisa auf Anfrage über das Kontaktformular.'),
@@ -837,7 +837,7 @@ START_SCHRITTE = [
     ('Du erzählst mir deine Idee', 'Ein Foto, eine Skizze oder ein paar Worte reichen. Ein fertiges Motiv brauchst du noch nicht.'),
     ('Wir entwickeln dein Motiv', 'Ich schick dir Vorschläge und wir besprechen, was zu dir und deinem Stück passt. Dann suchen wir zusammen eins aus.'),
     ('Ich male dein Stück', 'Wenn Motiv, Stück und Preis passen, zeichne ich vor und male mit Pinsel und Bleiche.'),
-    ('Dein Unikat kommt zu dir', 'Gewaschen, verpackt und verschickt. Von der Anfrage bis zum Versand dauert es meistens 2 bis 5 Tage.'),
+    ('Dein Unikat kommt zu dir', 'Gewaschen, verpackt und verschickt.'),
 ]
 START_MOTIVE = ['Engel', 'Rosen', 'Tiere', 'Symbole', 'Schrift', 'etwas ganz Persönliches']
 START_FRAGEN = [

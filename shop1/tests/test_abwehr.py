@@ -186,7 +186,7 @@ class NewsletterOhneSkriptTest(LuviqTestCase):
         with mock.patch(_NEWSLETTER):
             antwort = self.sende('/newsletter/subscribe/', {'email': 'neu@example.invalid'},
                                  HTTP_ACCEPT='text/html,application/xhtml+xml')
-        self.assertRedirects(antwort, '/#warteliste', fetch_redirect_response=False)
+        self.assertRedirects(antwort, '/', fetch_redirect_response=False)  # Paket 2 (26.11.2026): Startseite ohne Anker, die Warteliste hat dort kein Formular mehr
         self.assertEqual(Subscriber.objects.filter(email='neu@example.invalid').count(), 1)
         seite = self.hole('/').content.decode()
         self.assertIn('Fast geschafft', seite)
@@ -194,7 +194,7 @@ class NewsletterOhneSkriptTest(LuviqTestCase):
     def test_eine_ungueltige_adresse_ohne_skript_bekommt_eine_meldung_statt_json(self):
         antwort = self.sende('/newsletter/subscribe/', {'email': 'keine-adresse'},
                              HTTP_ACCEPT='text/html')
-        self.assertRedirects(antwort, '/#warteliste', fetch_redirect_response=False)
+        self.assertRedirects(antwort, '/', fetch_redirect_response=False)  # Paket 2 (26.11.2026): Startseite ohne Anker, die Warteliste hat dort kein Formular mehr
         self.assertEqual(Subscriber.objects.count(), 0)
 
     def test_der_honigtopf_verwirft_still_mit_derselben_antwort(self):

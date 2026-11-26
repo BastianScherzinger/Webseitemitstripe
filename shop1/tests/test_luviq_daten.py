@@ -184,12 +184,12 @@ class RahmenTest(SimpleTestCase):
         gruppen = dict(luviq_daten.fuss(False, True))
         self.assertEqual(list(gruppen), ['Stücke', 'Hilfe'])
         self.assertIn('Versand & Abholung', [w['name'] for w in gruppen['Hilfe']])
-        self.assertIn('#warteliste', [w['anker'] for w in gruppen['Stücke']])
+        self.assertIn('#kontakt', [w['anker'] for w in gruppen['Stücke']])  # Paket 2: Schreib Luisa statt Warteliste
 
     def test_die_leiste_nennt_den_tag_nur_vor_dem_tag(self):
         from datetime import date
         vor = luviq_daten.leiste(False, date(2026, 11, 1), date(2026, 10, 30))
-        self.assertEqual(vor, ('Shop öffnet frühestens am 1. November', 'Vormerken', 'home', '#warteliste'))
+        self.assertEqual(vor, ('Shop öffnet frühestens am 1. November', 'Schreib Luisa', 'home', '#kontakt'))
         nach = luviq_daten.leiste(False, date(2026, 11, 1), date(2026, 11, 2))
         self.assertNotIn('November', nach[0])
         self.assertEqual(luviq_daten.leiste(True)[1], 'Stücke ansehen')
