@@ -218,6 +218,7 @@ body.lv-v9{--rand:var(--s3);--abschnitt:80px;margin:0;background:var(--grund);co
 .lv-v9 .f-spalten .f-kopf{font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);margin-bottom:var(--s1)}
 .lv-v9 .f-unten{margin-top:var(--s4);padding-top:var(--s2);border-top:1px solid var(--linie);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0 var(--s3);font-size:14px;line-height:20px;color:var(--leise)}
 .lv-v9 .f-unten a{display:inline-flex;min-height:44px;align-items:center;margin-right:var(--s3);color:var(--text);text-decoration:none}
+.lv-v9 .f-unten p:first-child a{margin:0;text-decoration:underline;text-decoration-color:var(--linie-stark);text-underline-offset:3px;min-height:0;display:inline}
 .lv-v9 .f-unten p:last-child{display:flex;flex-wrap:wrap}
 .lv-v9 .f-unten a:hover{color:var(--akzent-hell)}
 .lv-v9 .f-gross{display:none}
@@ -367,3 +368,10 @@ body.lv-v9{--rand:var(--s3);--abschnitt:80px;margin:0;background:var(--grund);co
 }
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}.lv-v9 [data-auf].wartet{opacity:1;transform:none}}
+
+/* Einwilligungs-Banner auf der Startseite (26.11.2026, Paket 4): einwilligung.css bringt die Farben und die
+   Schrift über --lv-* mit, die es auf dieser Seite nicht gibt (luviq.css lädt hier nicht). Hier werden sie auf die
+   v9-Werte gelegt, damit der Banner in Hausschrift und Seitenfarben steht. Logik und Texte unverändert. */
+body.lv-v9 .lv-einwilligung{--lv-sans:var(--sans);--lv-grund:var(--grund);--lv-grund-2:var(--flaeche);--lv-text:var(--text);--lv-leise:var(--leise);--lv-linie-2:var(--linie-stark)}
+/* Nie zwei Leisten übereinander: die Daumenleiste (.leiste) weicht, solange der Hinweis offen ist */
+body.lv-v9:has(.lv-einwilligung:not([hidden])) .leiste{display:none}

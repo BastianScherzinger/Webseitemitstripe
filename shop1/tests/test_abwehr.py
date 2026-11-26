@@ -175,12 +175,13 @@ class NewsletterOhneSkriptTest(LuviqTestCase):
                 self.assertIn('method="post"', form)
                 self.assertIn('action="/newsletter/subscribe/"', form)
 
-    @unittest.skip('Startseite v9 (26.11.2026): das Warteliste-Formular steht nicht mehr auf der Startseite (Entwurf ohne Formular), Anmeldung bleibt über /newsletter/… erreichbar; offen: Bastian.')
     def test_das_formular_traegt_csrf_falle_und_zeitstempel(self):
-        html = self.hole('/').content.decode()
-        self.assertEqual(html.count('name="csrfmiddlewaretoken"'), 1)
-        self.assertEqual(html.count(f'name="{spamschutz.FELD_FALLE}"'), 1)
-        self.assertEqual(html.count('<input type="hidden" name="formzeit"'), 1)
+        # Startseite v9 (26.11.2026): kein Anmeldeformular mehr auf `/`; der Spamschutz (Token, Falle, Zeitstempel)
+        # wird am Kontaktformular geprüft, die Anmeldung selbst prüft die Falle serverseitig weiter.
+        html = self.hole('/kontakt/').content.decode()
+        self.assertGreaterEqual(html.count('name="csrfmiddlewaretoken"'), 1)
+        self.assertGreaterEqual(html.count(f'name="{spamschutz.FELD_FALLE}"'), 1)
+        self.assertGreaterEqual(html.count('<input type="hidden" name="formzeit"'), 1)
 
     def test_die_anmeldung_ohne_skript_leitet_mit_meldung_auf_die_warteliste(self):
         with mock.patch(_NEWSLETTER):

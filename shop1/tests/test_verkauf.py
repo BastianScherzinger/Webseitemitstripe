@@ -189,16 +189,12 @@ class OhneVerkaufTest(_Grundlage):
         self.assertIn('Mühlenkamp 5', html)
         self.assertIn('brehlerluisa@gmail.com', html)
 
-    @unittest.skip('Startseite v9 (26.11.2026): das Warteliste-Formular steht nicht mehr auf der Startseite (Entwurf ohne Formular), Anmeldung bleibt über /newsletter/… erreichbar; offen: Bastian.')
     def test_die_warteliste_ist_das_ziel(self):
-        """Ziel „Auf die Warteliste" ist die vorhandene Newsletter-Anmeldung
-        mit Double-Opt-in – kein zweites Formular."""
-        self.assertContains(self.hole('/'), 'id="newsletter-form"')
-        self.assertContains(self.hole(self.produktseite), 'href="/#newsletter-form"')
-        # Seit dem Umbau „Nachtausgabe" (19.09.2026) heißt der Knopf auf der
-        # Startseite „Eintragen" (Vorlage); „Auf die Warteliste" steht auf
-        # der Stückseite, dort ist es die Haupthandlung.
-        self.assertContains(self.hole(self.produktseite), 'Auf die Warteliste')
+        """Startseite v9 (26.11.2026): Die Startseite hat kein Anmeldeformular mehr; die Stückseite führt
+        ohne Verkauf auf den Kontaktbereich der Startseite (`/#kontakt`, „Schreib Luisa") statt auf `/#newsletter-form`."""
+        self.assertNotContains(self.hole(self.produktseite), 'href="/#newsletter-form"')
+        self.assertContains(self.hole(self.produktseite), 'href="/#kontakt"')
+        self.assertContains(self.hole(self.produktseite), 'Schreib Luisa')
 
     def test_datenschutz_beschreibt_den_zustand_ohne_verkauf(self):
         html = self.hole('/datenschutz/').content.decode()
@@ -262,9 +258,9 @@ class AdminBleibtTest(_Grundlage):
 class MitVerkaufTest(_Grundlage):
     """``VERKAUF_AKTIV=1``: der bisherige Shop ist unverändert zurück."""
 
-    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_preise_und_steuerhinweis_sind_zurueck(self):
-        for pfad in ('/', '/produkte/', self.produktseite):
+        # Startseite v9 (26.11.2026): ohne Preis, geprüft werden /produkte/ und die Stückseite (§ 19 UStG bleibt bewacht).
+        for pfad in ('/produkte/', self.produktseite):
             with self.subTest(pfad=pfad):
                 self.assertRegex(self.hole(pfad).content.decode(), r'87[.,]50 €')
         self.assertContains(self.hole('/produkte/'), '§ 19 UStG')
@@ -338,13 +334,13 @@ class ArchivOhneVerkaufTest(_Grundlage):
         self.produkt.vergeben = True
         self.produkt.save()
 
-    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_karten_karussell_und_produktseite_zeigen_das_archiv(self):
         # Archivnummer aus dem Feld ``nummer`` (Migration 0024), auf den
         # Karten als „Nº 001" + „vergeben", auf der Stückseite zusätzlich
         # „Nº 001 · Archiv · Bereits vergeben …".
         nummer = f'Nº {self.produkt.archiv_nummer}'
-        for pfad in ('/', '/produkte/', self.produktseite):
+        # Startseite v9 (26.11.2026): ohne Archivkarten, geprüft werden /produkte/ und die Stückseite.
+        for pfad in ('/produkte/', self.produktseite):
             with self.subTest(pfad=pfad):
                 self.assertContains(self.hole(pfad), nummer)
                 self.assertContains(self.hole(pfad), 'Vergeben')
@@ -370,11 +366,9 @@ class ArchivOhneVerkaufTest(_Grundlage):
         self.assertIn('Archiv', re.search(r'<title>(.*?)</title>',
                                           self.hole('/produkte/').content.decode(), re.S).group(1))
 
-    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_ueberschriften_heissen_archiv(self):
+        # Startseite v9 (26.11.2026): die Archiv-Überschriften der Startseite entfallen, /produkte/ bleibt bewacht.
         self.assertContains(self.hole('/produkte/'), 'id="archiv-titel">Das Archiv</h1>')
-        self.assertContains(self.hole('/'), 'id="archiv-titel">Frühere Stücke</h2>')
-        self.assertContains(self.hole('/'), 'zeigen als Referenz, wie Luviq aussieht')
 
     def test_llms_txt_nennt_das_archiv(self):
         llms = self.hole('/llms.txt').content.decode()
@@ -395,15 +389,14 @@ class ArchivOhneVerkaufTest(_Grundlage):
 class ArchivMitVerkaufTest(_Grundlage):
     """Mit Verkauf ist alles wie vor dem Archiv-Umbau."""
 
-    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_preis_statt_archivnummer(self):
-        for pfad in ('/', '/produkte/', self.produktseite):
+        # Startseite v9 (26.11.2026): ohne Preis und Archivkarten, geprüft werden /produkte/ und die Stückseite.
+        for pfad in ('/produkte/', self.produktseite):
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
                 self.assertNotIn('· Archiv', html)
                 self.assertNotIn('<span>vergeben</span>', html)
                 self.assertRegex(html, r'87[.,]50 €')
-        self.assertContains(self.hole('/'), 'Jedes Stück ist von Hand mit Bleiche gemalt – keins gleicht dem anderen.')
 
     def test_titel_mit_kaufen_und_antwortsatz_mit_preis(self):
         html = self.hole(self.produktseite).content.decode()

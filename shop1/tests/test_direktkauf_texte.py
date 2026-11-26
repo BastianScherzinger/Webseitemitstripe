@@ -79,9 +79,9 @@ class DirektkaufTexteTest(LuviqTestCase):
         konto = sichtbarer_text(self.hole('/wissen/konto-und-daten/').content.decode())
         self.assertIn('Nein. Bestellt wird ohne Konto', konto)
 
-    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_stueckkarten_tragen_den_kaufknopf(self):
-        for pfad in ('/', '/produkte/'):
+        # Startseite v9 (26.11.2026): ohne Stückkarten, geprüft wird nur noch /produkte/.
+        for pfad in ('/produkte/',):
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
                 self.assertIn(f'href="/produkt/{self.stueck.slug}/#bestellen"', html)

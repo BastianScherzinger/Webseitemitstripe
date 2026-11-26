@@ -12,7 +12,7 @@ darunter Nº, Name, ehrliche Kurzzeile (produkt.band_hinweis: Serie, „Unikat �
         {% if produkt.band_hinweis %}<p class="lv-reihehinweis">{{ produkt.band_hinweis }}</p>{% endif %}
         {% if not produkt.verkauft %}
         {% if not shop_sichtbar %}<p class="lv-reihehinweis">{% if produkt.masse %}{{ produkt.masse }} · {% endif %}{% if produkt.material %}{{ produkt.material }} · {% endif %}{% if verkauf_ab %}Preis ab {{ verkauf_ab }}{% else %}Preis folgt{% endif %}</p>{% endif %}
-        {% if shop_sichtbar and produkt.kaufbar %}<p class="lv-reihepreis">{{ produkt.preis|floatformat:2 }} € <span>{{ versand_preissatz }}</span></p>{% endif %}
+        {% if shop_sichtbar and produkt.kaufbar and not anfrage_shop %}<p class="lv-reihepreis">{{ produkt.preis|floatformat:2 }} € <span>{{ versand_preissatz }}</span></p>{% endif %}
         {% if anfrage_shop %}<p class="lv-reiheknopf"><a class="lv-knopf" href="{{ produkt.get_absolute_url }}#anfragen" data-ereignis="band_anfragen">Stück anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
         {% elif shop_sichtbar and direktkauf_aktiv and produkt.kaufbar %}<p class="lv-reiheknopf"><a class="lv-knopf" href="{{ produkt.get_absolute_url }}#bestellen" data-ereignis="band_bestellen">Jetzt bestellen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
         {% else %}<p class="lv-reiheknopf"><a class="lv-knopf linie" href="{{ produkt.get_absolute_url }}">Ansehen</a></p>{% endif %}

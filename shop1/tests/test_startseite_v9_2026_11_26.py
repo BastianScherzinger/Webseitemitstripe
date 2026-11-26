@@ -147,3 +147,56 @@ class StartseiteV9Paket2Test(LuviqTestCase):
         seite = self.hole(ref.get_absolute_url())
         self.assertEqual(seite.status_code, 200)
         self.assertIn('<meta name="robots" content="noindex, follow">', seite.content.decode())
+
+
+from django.test import override_settings  # noqa: E402
+
+
+class StartseiteV9Paket4Test(LuviqTestCase):
+    """Paket 4 (26.11.2026): Anfrage-Shop zeigt auf /produkte/ und der Stückseite keinen Preis (Bastian 20.11.).
+    Nur Darstellung: Datenmodell, Kaufweg und Mails bleiben unverändert."""
+    SATZ = 'Den Preis nennt Luisa dir auf Anfrage, bevor etwas gemalt oder verschickt wird'
+
+    def setUp(self):
+        super().setUp()
+        # _basis.setUp schaltet ANFRAGESHOP aus; hier läuft der Anfrage-Shop wie live
+        self.enterContext(self.settings(ANFRAGESHOP=True, VERKAUF_AKTIV=False))
+        from ._basis import erzeuge_produkt
+        self.stueck = erzeuge_produkt('Preisstueck', preis=69, lagerbestand=1)
+
+    def test_kein_preis_auf_produkte_und_stueckseite(self):
+        for pfad in ('/produkte/', self.stueck.get_absolute_url()):
+            text = sichtbarer_text(self.hole(pfad).content.decode())
+            with self.subTest(pfad=pfad):
+                self.assertNotRegex(text, r'\d\s*(€|EUR)')
+                self.assertNotIn('Endpreis', text)
+                self.assertNotIn('kostet 69', text)
+
+    def test_stueckseite_nennt_den_satz_und_knopf_ohne_preis(self):
+        html = self.hole(self.stueck.get_absolute_url()).content.decode()
+        text = sichtbarer_text(html)
+        self.assertIn(self.SATZ, text)
+        self.assertIn('Stück anfragen', text)
+        self.assertNotIn('Stück anfragen ·', text)
+        # Das Stück bleibt anfragbar und die § 19-Angabe bleibt stehen
+        self.assertIn('§ 19 UStG', text)
+
+    def test_llms_ohne_preis(self):
+        for pfad in ('/llms.txt', '/llms-full.txt'):
+            text = self.hole(pfad).content.decode()
+            with self.subTest(pfad=pfad):
+                self.assertNotRegex(text, r'(?<!\d)69([.,]\d\d)?\s*(€|EUR)')
+                self.assertNotIn('€', text)
+                self.assertNotIn(' EUR', text)
+
+    def test_startseite_fuss_hat_den_agenturlink(self):
+        html = self.hole('/').content.decode()
+        fuss = html[html.index('<footer class="fuss">'):]
+        self.assertIn('Website: <a href="https://webagentur-scherzinger.com/referenzen/luviq-universe/">Webagentur Scherzinger</a>', fuss)
+
+    @override_settings(EINWILLIGUNG_DIENST='Google Analytics')
+    def test_banner_auf_der_startseite_ist_im_hausstil(self):
+        html = self.hole('/').content.decode()
+        self.assertIn('id="lv-einwilligung"', html)
+        css = open(__import__('django.contrib.staticfiles.finders', fromlist=['x']).find('shop1/startseite.css'), encoding='utf-8').read()
+        self.assertIn('body.lv-v9 .lv-einwilligung{--lv-sans:var(--sans)', css)

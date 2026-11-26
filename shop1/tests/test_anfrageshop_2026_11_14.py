@@ -52,7 +52,9 @@ class AnfrageShopTest(LuviqTestCase):
 
     def test_stueckseite_zeigt_preis_und_anfrage_statt_kaufweg(self):
         html = self.hole(self.stueck).content.decode()
-        self.assertIn('69,00', html)
+        # 26.11.2026: kein Preis auf der Seite (Bastians Regel seit 20.11.), Luisa nennt ihn auf Anfrage
+        self.assertNotIn('69,00', html)
+        self.assertIn('Den Preis nennt Luisa dir auf Anfrage, bevor etwas gemalt oder verschickt wird', html)
         self.assertIn('id="anfragen"', html)
         self.assertIn('Stück anfragen', html)
         for weg in ('Zahlungspflichtig bestellen', 'Jetzt bestellen', 'id="bestellen"', 'Rabattcode',

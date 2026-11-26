@@ -34,7 +34,9 @@ class AnfrageTexteTest(LuviqTestCase):
         with self.settings(ANFRAGESHOP=True, VERKAUF_AKTIV=False, DIREKTKAUF=True):
             html = self.hole(f'/produkt/{self.engel.slug}/').content.decode()
         self.assertIn('data-anfrage-knopf', html)
-        self.assertIn('Stück anfragen · 69 €', html)
+        # 26.11.2026: im Anfrage-Shop steht kein Preis mehr im Knopf (Bastians Regel seit 20.11.)
+        self.assertIn('>Stück anfragen</a>', html)
+        self.assertNotIn('Stück anfragen ·', html)
         self.assertIn('data-kaufleiste', html)
 
     def test_danke_knopf_und_leiste_auf_produkte(self):

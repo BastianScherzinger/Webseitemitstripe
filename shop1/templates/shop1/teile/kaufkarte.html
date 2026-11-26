@@ -8,7 +8,7 @@ sonst bleibt es bei archiv_karte.html. Serienstück: Bearbeitungszeit aus `produ
     <div class="lv-kaufkarte-text">
         <p class="lv-nr">Nº {{ produkt.archiv_nummer }} · Jetzt im Shop</p>
         <h3 class="lv-serif"><a href="{{ produkt.get_absolute_url }}">{{ produkt.name }}</a></h3>
-        <p class="lv-kaufkarte-preis">{{ produkt.preis|floatformat:0 }} € <span>{{ versand_preissatz }}</span></p>
+        {% if not anfrage_shop %}<p class="lv-kaufkarte-preis">{{ produkt.preis|floatformat:0 }} € <span>{{ versand_preissatz }}</span></p>{% endif %}
         <ul class="lv-kaufkarte-fakten">
             {% if produkt.masse %}<li>{{ produkt.masse }}</li>{% endif %}
             {% if produkt.material %}<li>{{ produkt.material }}</li>{% endif %}
