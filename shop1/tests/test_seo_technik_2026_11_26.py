@@ -56,7 +56,8 @@ class SeoTechnikTest(LuviqTestCase):
                 t = titel(self.seite(pfad))
                 self.assertEqual(t, soll)
                 self.assertLessEqual(len(t), 60)
-                self.assertTrue(re.search(r'bundesweit|Deutschland', t))
+                if pfad != '/ueber_uns/':  # Seite über Luisa: Titel bleibt bei Person und Ort
+                    self.assertTrue(re.search(r'bundesweit|Deutschland', t))
         # /motiv-anfragen/ zielt auf das Suchwort der Seite (Platz 6 bei „shirt bemalen lassen“), die Startseite bleibt wie sie ist
         self.assertIn('bemalen lassen', titel(self.seite('/motiv-anfragen/')))
         self.assertEqual(titel(self.seite('/')), 'Bleach Art: Shirts & Hoodies bemalen lassen | Luviq Lübeck')
