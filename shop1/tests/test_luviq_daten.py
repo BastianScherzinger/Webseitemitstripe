@@ -6,6 +6,7 @@ Zeitpunkt oder ``None`` (nie ein Fehler), die Nummer kollidiert nie mit dem
 Archiv, und die Auswahllisten der Motivanfrage haben stabile Schlüssel.
 """
 
+import unittest
 from datetime import datetime, timedelta, timezone as utc
 from unittest import mock
 
@@ -208,7 +209,8 @@ class RahmenSeitenTest(LuviqTestCase):
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
                 self.assertNotIn('lv-band', html)
-                self.assertEqual(html.count('class="lv-hinweis"'), 1)
+                # Startseite v9 (26.11.2026) hat keine Ankündigungszeile (der Entwurf kennt sie nicht).
+                self.assertEqual(html.count('class="lv-hinweis"'), 0 if pfad == '/' else 1)
 
     def test_das_logo_im_kopf_hat_masse_und_ist_nicht_vorgeladen_mit_prioritaet(self):
         import re
@@ -241,6 +243,7 @@ class StartseiteP3Test(LuviqTestCase):
         self.assertNotIn('id="film"', html)
         self.assertNotIn('autoplay', html)
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_mit_filmen_steht_ein_video_mit_poster_und_ohne_vorladen(self):
         # Das Manifest kennt nur vorhandene Dateien; für den noch nicht vorhandenen Film
         # genügt hier der einfache Speicher ohne Hash.
@@ -256,6 +259,7 @@ class StartseiteP3Test(LuviqTestCase):
         self.assertIn('data-src="', html)
         self.assertIn('muted', html)
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_der_hero_laedt_pc_quer_und_handy_hochkant_vor(self):
         import re
         html = self.hole('/').content.decode()
@@ -265,6 +269,7 @@ class StartseiteP3Test(LuviqTestCase):
         self.assertTrue(any('max-width: 899px' in v and 'hero-engel-45' in v for v in vorlade))
         self.assertIn('data-leiste-ab', html)
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_echtfotos_kommen_aus_der_liste_und_ohne_liste_entfaellt_der_abschnitt(self):
         html = self.hole('/').content.decode()
         self.assertIn('id="echt-titel">So sieht es in echt aus</h2>', html)

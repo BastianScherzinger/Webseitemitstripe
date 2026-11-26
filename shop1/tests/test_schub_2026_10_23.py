@@ -1,10 +1,12 @@
 """Schub 23.10.2026: Archivkarte ohne Foto, Lübeck als Sitz, Schema und FAQ."""
 
+import unittest
 from ._basis import LuviqTestCase, erzeuge_produkt
 
 
 class ArchivkarteOhneFotoTest(LuviqTestCase):
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_stueck_ohne_foto_zeigt_hinweis_statt_leerer_kachel(self):
         erzeuge_produkt(name='Stück ohne Foto')
         html = self.hole('/').content.decode()

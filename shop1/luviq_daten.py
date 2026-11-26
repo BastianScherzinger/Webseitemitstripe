@@ -785,3 +785,73 @@ LUISA_FOTO = {
     'masse': (570, 570),
     'alt': 'Luisa Brehler, die Malerin hinter Luviq',
 }
+
+
+# ── Startseite v9 (26.11.2026) ───────────────────────────────────────────────
+# Entwurf: Design/luviq/redesign-2026-11-24/v9 (von Bastian am 26.11.2026 freigegeben, Texte
+# wörtlich aus v9bau.py). Die Startseite zeigt keinen Preis und kein Formular: Anfragen laufen
+# über WhatsApp oder E-Mail an Luisa. Die Telefonnummer ist für die Website freigegeben
+# (Bastian 25.11.2026). Bilder unter shop1/images/start/.
+
+START_WHATSAPP_NR = '0176 2490 8402'
+START_WHATSAPP_TEL = '+49 176 24908402'
+START_WHATSAPP = ('https://wa.me/4917624908402?text=Hallo%20Luisa%2C%20ich%20h%C3%A4tte%20gern'
+                  '%20ein%20Motiv%20auf%20%E2%80%A6')
+START_MAIL_ADRESSE = 'brehlerluisa@gmail.com'
+START_MAIL = ('mailto:brehlerluisa@gmail.com?subject=Motiv%20anfragen&body=Hallo%20Luisa%2C%0A%0Aich'
+              '%20h%C3%A4tte%20gern%20ein%20Motiv%20auf%20%28Shirt%2C%20Pullover%20oder%20Hoodie%29%3A%20'
+              '%0AMeine%20Idee%3A%20%0AGr%C3%B6%C3%9Fe%3A%20%0A%0AViele%20Gr%C3%BC%C3%9Fe')
+START_TITEL = 'Bleach Art: Shirts & Hoodies bemalen lassen | Luviq Lübeck'
+START_BESCHREIBUNG = ('Luisa malt dein Motiv von Hand mit Bleiche auf Shirts, Hoodies und Pullover. '
+                      'Aus Lübeck, Versand in ganz Deutschland. Kostenlos anfragen.')
+
+#: Hero-Galerie: (Datei ohne .webp, Alt-Text, Seite „vorne“/„ruecken“, Bildunterschrift fett, Rest, Breiten der
+#: verkleinerten Fassungen). Breite/Höhe des Originals: 1040 × 1300.
+START_SLIDES = [
+    ('ganz-vorne-luviq', 'Schwarzes T-Shirt von vorne, flach liegend: kleiner von Hand gebleichter LUVIQ-Schriftzug mit Stern-Pfeil auf der linken Brust', 'vorne', 'Vorne.', 'LUVIQ auf der Herzseite'),
+    ('ganz-ruecken-engel', 'Schwarzes T-Shirt von hinten: betender Engel mit Sternen und Rosenranke, von Hand mit Bleiche gemalt', 'ruecken', 'Rücken.', 'Betender Engel'),
+    ('ganz-ruecken-pilze', 'Schwarzes T-Shirt von hinten: Pilze, Sterne und Rauchlinien, von Hand mit Bleiche gemalt', 'ruecken', 'Rücken.', 'Pilze und Rauch'),
+    ('ganz-ruecken-luviq', 'Schwarzes T-Shirt von hinten: großer LUVIQ-Schriftzug mit Stern-Pfeil, von Hand gebleicht', 'ruecken', 'Rücken.', 'LUVIQ groß'),
+]
+#: Verkleinerte Fassungen (nur herunterskaliert, nichts retuschiert), erzeugt mit Pillow: Datei -> Breiten.
+START_BREITEN = {
+    'ganz-vorne-luviq': (520, 780), 'ganz-ruecken-luviq': (520, 780), 'ganz-ruecken-pilze': (520, 780),
+    'ganz-ruecken-engel': (520, 780), 'hero-2-handarbeit': (513, 770),
+    'nah-engel-betend': (400, 600), 'nah-pilze': (400, 600),
+}
+START_STUECKE = [
+    ('stueck-engel-rose', 'Schwarzes T-Shirt von hinten mit gebleichtem Engel, der eine Rose hält, daneben ein Stern', 'Engel mit Rose', 'T-Shirt'),
+    ('stueck-drache', 'Schwarzer Hoodie von hinten getragen, rechts unten ein feiner gebleichter Drache', 'Drache', 'Hoodie'),
+    ('stueck-fluegel', 'Schwarzer Pullover von hinten getragen: Stern, zwei Flügelpaare und drei Augen, gebleicht', 'Flügel und Augen', 'Pullover'),
+    ('stueck-eclipse', 'Navyblauer Sweater von vorne getragen: Mondfinsternis mit Tropfen, gebleicht', 'Eclipse', 'Sweater'),
+    ('stueck-dornen', 'Verwaschener schwarzer Hoodie von hinten: Dornenranke mit Augen über den ganzen Rücken', 'Dornen und Augen', 'Hoodie'),
+]
+START_BAND = [
+    ('nah-engel-betend', 800, 1000, 'Nahaufnahme: Flügel und gefaltete Hände des betenden Engels, feine gebleichte Linien auf schwarzem Stoff', 'Betender Engel'),
+    ('nah-pilze', 800, 1000, 'Nahaufnahme: Pilze, Rauchschwaden und Sterne, mit Bleiche gemalt', 'Pilze und Rauch'),
+    ('hoodie-dornenaugen-detail-1x1', 680, 680, 'Nahaufnahme: Dornenranke mit Auge, die Bleiche hat den Stoff braun aufgehellt', 'Dornen und Augen'),
+]
+START_MERKMALE = ['Shirts, Hoodies und Pullover', 'Dein Motiv, gemeinsam entwickelt',
+                  'Von Hand mit Pinsel und Bleiche', 'Versand in ganz Deutschland']
+START_SCHRITTE = [
+    ('Du erzählst mir deine Idee', 'Ein Foto, eine Skizze oder ein paar Worte reichen. Ein fertiges Motiv brauchst du noch nicht.'),
+    ('Wir entwickeln dein Motiv', 'Ich schick dir Vorschläge und wir besprechen, was zu dir und deinem Stück passt. Dann suchen wir zusammen eins aus.'),
+    ('Ich male dein Stück', 'Wenn Motiv, Stück und Preis passen, zeichne ich vor und male mit Pinsel und Bleiche.'),
+    ('Dein Unikat kommt zu dir', 'Gewaschen, verpackt und verschickt. Von der Anfrage bis zum Versand dauert es meistens 2 bis 5 Tage.'),
+]
+START_MOTIVE = ['Engel', 'Rosen', 'Tiere', 'Symbole', 'Schrift', 'etwas ganz Persönliches']
+START_FRAGEN = [
+    ('Kann ich ein T-Shirt bemalen lassen?', 'Ja. Du schickst mir deine Idee, wir entwickeln das Motiv zusammen, und ich male es dir mit Bleiche auf ein Shirt.'),
+    ('Kann ich einen Hoodie bleichen lassen?', 'Ja, Hoodies und Pullover gehen genauso. Die Bleiche braucht dunklen Stoff, dann werden die Linien hell.'),
+    ('Welche Motive gehen?', 'Alles, was sich mit Linien zeichnen lässt: Engel, Rosen, Tiere, Symbole, Schrift oder etwas ganz Persönliches.'),
+    ('Ist das ein Druck?', 'Nein. Jede Linie ist mit dem Pinsel gemalt, die Bleiche nimmt dem Stoff dort die Farbe. Darum gibt es jedes Stück nur einmal.'),
+    ('Was kostet das?', 'Hängt von Stück und Motiv ab. Den Preis bekommst du, bevor ich anfange.'),
+    ('Kostet die Anfrage was?', 'Nein. Gemalt wird erst nach deinem Ja.'),
+    ('Geht das auch außerhalb von Lübeck?', 'Ja. Ich male in Lübeck und verschicke überall in Deutschland.'),
+    ('Wie wasch ich das?', 'Auf links bei 30 °C, ohne Trockner und Weichspüler.'),
+]
+#: Der Begriffsabschnitt „Was ist Bleach Art?“: (Anfang, hervorgehobener Teil, Rest). Zusammengesetzt ist er
+#: auch die Beschreibung des Service im Schema.
+START_BLEACH = ('Bei Bleach Art male ich ', 'mit Bleiche statt mit Farbe',
+                '. Wo der Pinsel war, nimmt die Bleiche dem dunklen Stoff die Farbe, so entstehen die hellen '
+                'Linien. Das ist kein Druck, jedes Motiv ist von Hand gemalt und deshalb ein Einzelstück.')

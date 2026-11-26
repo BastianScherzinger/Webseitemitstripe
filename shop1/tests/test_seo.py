@@ -959,7 +959,8 @@ class KopfangabenUnterscheidbarTest(LuviqTestCase):
             if pfad == '/':
                 # P3: Startseite = Marke vorn („Luviq: …“, SEO-Analyse C1), kein Abschluss mit Trennstrich.
                 # Deutschland-Runde 04.11.2026: Marke am Ende wie bei allen Seiten, vorn steht der Kaufbegriff.
-                self.assertTrue(titel.startswith('Luviq') or titel.endswith('| Luviq'), titel)
+                # Startseite v9 (26.11.2026): Titel laut Freigabe „… | Luviq Lübeck“.
+                self.assertTrue(titel.startswith('Luviq') or titel.endswith('| Luviq') or titel.endswith('| Luviq Lübeck'), titel)
                 continue
             with self.subTest(pfad=pfad):
                 self.assertTrue(_TRENNER.search(titel), titel)

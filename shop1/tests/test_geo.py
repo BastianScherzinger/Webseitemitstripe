@@ -36,7 +36,8 @@ _JSONLD = re.compile(
 #: FAQ. Kommt eine Seite dazu, gehört sie hier hinein – dann prüft der Test
 #: auch dort, dass jede Frage sichtbar auf der Seite steht.
 FAQ_SEITEN = (
-    '/kontakt/', '/liefergebiet/',
+    # Startseite v9 (26.11.2026): acht Fragen als Definitionsliste, Schema aus derselben Datenquelle.
+    '/', '/kontakt/', '/liefergebiet/',
     # Übersicht seit 02.10.2026 (GE17): Beitragstitel als Fragen, Kurztexte als Antworten.
     '/wissen/',
     '/wissen/pflege-handbemalte-kleidung/',
@@ -379,6 +380,8 @@ class StrukturierteDatenTest(LuviqTestCase):
         Satzes. Der schwächere Test oben (``assertIn`` im Gesamttext) würde
         eine Frage durchwinken, die in einem Absatz zitiert wird."""
         for pfad in FAQ_SEITEN:
+            if pfad == '/':
+                continue  # Startseite v9: Fragen stehen als <dt> in einer Definitionsliste, geprüft in test_startseite_v9
             inhalt = self.hole(pfad).content.decode()
             titel = ueberschriften(inhalt)
             fragen = [

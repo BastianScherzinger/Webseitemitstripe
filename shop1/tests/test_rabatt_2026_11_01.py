@@ -3,6 +3,7 @@
 python manage.py test shop1.tests.test_rabatt_2026_11_01
 """
 
+import unittest
 import time
 from datetime import date, timedelta
 from decimal import Decimal
@@ -154,12 +155,14 @@ class RabattDirektkaufTest(LuviqTestCase):
         antwort = self.hole('/rabatt/HAFENWIND-10/?weiter=https://boese.example/')
         self.assertRedirects(antwort, self.stueck + '#bestellen', fetch_redirect_response=False)
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_startseite_hero_zeigt_code_und_knopf(self):
         seite = self.hole('/')
         self.assertContains(seite, '/rabatt/HAFENWIND-10/')
         self.assertContains(seite, 'HAFENWIND-10')
         self.assertNotContains(seite, 'TRAVEWIND')
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_ohne_oeffentlichen_code_hero_wie_vorher(self):
         self.zehn.oeffentlich = False
         self.zehn.save()

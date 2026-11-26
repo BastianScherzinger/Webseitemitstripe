@@ -1,344 +1,210 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load custom_tags %}
 {% comment %}
-Startseite im Look „Nachtausgabe", Umbau P3 am 29.10.2026 nach dem Masterplan
-(Analysen/luviq-2026-10-29, § 6): Hero als Zweispalter mit dem Engel-Shirt ·
-Vertrauensleiste · Wege · Motiv anfragen · Entstehung (ohne Bilder) · Film (nur mit
-FILME) · Luisa · Archiv · Warteliste. Alle Texte aus shop1/luviq_daten.py (über
-View und Kontextprozessor), kein Datum hier.
+Startseite v9 (26.11.2026, von Bastian freigegeben): Hero-Galerie mit Shirt im Licht · Ich bin Luisa ·
+Arbeiten · So entsteht dein Unikat · Aus der Nähe · Was ist Bleach Art? · Fragen · Kontakt. Eigener Kopf,
+eigener Fuß und eigene Daumenleiste (Blöcke seitenkopf, seitenfuss, seitenleiste aus base.html). Kein Preis, kein
+Formular: Anfragen gehen per WhatsApp oder E-Mail an Luisa. Texte und Bildangaben aus shop1/luviq_daten.py
+(START_*), Stil in shop1/static/shop1/startseite.css, Skript in startseite.js. Der Entwurf liegt unter
+Webagentur Scherzinger/Design/luviq/redesign-2026-11-24/v9. Alle Bilder laden sofort (Bastian 26.11.: "die Bilder
+müssen auch direkt laden"), nur das erste Hero-Bild trägt fetchpriority="high".
 {% endcomment %}
 
-{% block title %}{% if anfrage_shop %}Handbemalte Shirts &amp; Unikate aus Lübeck anfragen | Luviq{% else %}Handbemalte Shirts &amp; Unikate online kaufen in Lübeck | Luviq{% endif %}{% endblock %}
-{% block meta_description %}{% if anfrage_shop %}Handbemalte Shirts aus Lübeck: Luisa malt jedes Stück von Hand mit Bleiche. Das Engel-Shirt ist zur Anfrage offen, frühere Stücke stehen im Archiv. Versand deutschlandweit.{% elif shop_sichtbar %}Luviq aus Lübeck: handbemalte Second-Hand-Shirts und Unikate, von Hand mit Bleiche gemalt. Versand inklusive, Lieferung in ganz Deutschland. Jetzt ansehen.{% else %}Luviq aus Lübeck: handbemalte Second-Hand-Shirts und Unikate, von Hand mit Bleiche gemalt. Versand deutschlandweit. Eigenes Motiv jetzt anfragen.{% endif %}{% endblock %}
-{% block og_title %}Luviq Universe – Sag mir, was du willst, ich mal’s dir{% endblock %}
-{% block og_description %}Handbemalte Stücke aus Lübeck, gebraucht oder neu, immer hochwertig. Du sagst Luisa, was drauf soll, sie schickt dir Vorschläge, und dann entsteht dein Stück. Jedes Stück ist von Hand gemalt, keins gleicht dem anderen.{% endblock %}
+{% block title %}Bleach Art: Shirts &amp; Hoodies bemalen lassen | Luviq Lübeck{% endblock %}
+{% block meta_description %}{{ start_beschreibung }}{% endblock %}
+{% block og_title %}Bleach Art: Shirts &amp; Hoodies bemalen lassen | Luviq Lübeck{% endblock %}
+{% block og_description %}{{ start_beschreibung }}{% endblock %}
 {% block og_image_tag %}
-{% comment %}Vorschaubild 1200 × 630 als JPEG (IS39): aus dem Engel-Shirt-Foto zugeschnitten (P0); WhatsApp, LinkedIn und Facebook lesen JPEG sicherer als WebP.{% endcomment %}
+{% comment %}Vorschaubild 1200 × 630 als JPEG (IS39): WhatsApp, LinkedIn und Facebook lesen JPEG sicherer als WebP.{% endcomment %}
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/luviq/og-start-1200x630.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 {% endblock %}
-{% block twitter_title %}Luviq Universe – Handbemalte Mode aus Lübeck{% endblock %}
-{% block twitter_description %}Handbemalte Stücke aus Lübeck, gebraucht oder neu. Motiv anfragen, Vorschläge bekommen, dein Stück tragen.{% endblock %}
+{% block twitter_title %}Bleach Art: Shirts &amp; Hoodies bemalen lassen | Luviq Lübeck{% endblock %}
+{% block twitter_description %}{{ start_beschreibung }}{% endblock %}
 {% block twitter_image_tag %}
 <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}/static/shop1/images/luviq/og-start-1200x630.jpg">
 {% endblock %}
 
+{% comment %}Schema (SEO-GEO.md von v8): ein @graph aus base.html, hier angepasst statt verdoppelt. Der Service ersetzt den
+Motivanfrage-Service der Basis (gleiche Aufgabe, ohne offers, ohne Preis); Organization bekommt Telefon, E-Mail und
+Gebiet (die E-Mail-Adresse steht bewusst nicht im Schema, test_seo_upgrade_2026_11_02), Person die Rolle und das Porträt dieser Seite, die WebPage verweist mit about auf den Service. Die FAQPage steht
+darunter und gibt die acht sichtbaren Fragen wortgleich wieder (beide aus luviq_daten.START_FRAGEN).{% endcomment %}
+{% block org_zusatz_ld %}
+          "telephone": "{{ wa_tel }}",{% if not kaufweg %}
+          "areaServed": {"@type": "Country", "name": "Deutschland"},{% endif %}{% endblock %}
+{% block org_kontakt_ld %}
+            "telephone": "{{ wa_tel }}",
+            "areaServed": "DE",{% endblock %}
+{% block service_ld %}
+        {
+          "@type": "Service",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#bleach-art",
+          "name": "Bleach Art auf Kleidung nach Wunschmotiv",
+          "serviceType": "Bleach Art, Kleidung bemalen lassen",
+          "description": "{{ bleach_text|escapejs }}",
+          "provider": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
+          "areaServed": {"@type": "Country", "name": "Deutschland"},
+          "url": "{{ request.scheme }}://{{ request.get_host }}/"
+        },{% endblock %}
+{% block person_ld %}"jobTitle": "Bleach-Art-Malerin",
+          "worksFor": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},
+          "image": "{{ request.scheme }}://{{ request.get_host }}{{ luisa_bild.src }}",
+          "homeLocation": {"@type": "Place", "name": "Lübeck"},{% endblock %}
+{% block webpage_zusatz_ld %}
+          "about": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#bleach-art"},{% endblock %}
 {% block schema_ld %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "ItemList",
-  "@id": "{{ request.scheme }}://{{ request.get_host }}/#archiv",
-  "name": "{% if shop_sichtbar %}Aktuelle Stücke – Luviq Universe Lübeck{% else %}Bisherige Stücke – Archiv von Luviq Universe Lübeck{% endif %}",
-  "description": "{% if shop_sichtbar %}Handbemalte Upcycling-Mode aus Lübeck – von Hand mit Bleiche gemalt, keins gleicht dem anderen.{% else %}Handbemalte Upcycling-Mode aus Lübeck – bisherige Stücke als Referenz.{% endif %}",
-  "url": "{{ request.scheme }}://{{ request.get_host }}/",
-  "itemListElement": [{% for produkt in produkte_galerie %}
-    {"@type": "ListItem", "position": {{ forloop.counter }}, "name": "{{ produkt.name|escapejs }}", "url": "{{ request.scheme }}://{{ request.get_host }}{{ produkt.get_absolute_url }}"}{% if not forloop.last %},{% endif %}{% endfor %}
+  "@type": "FAQPage",
+  "@id": "{{ request.scheme }}://{{ request.get_host }}/#faq",
+  "inLanguage": "de-DE",
+  "mainEntity": [{% for frage, antwort in fragen %}
+    {"@type": "Question", "name": "{{ frage|escapejs }}", "acceptedAnswer": {"@type": "Answer", "text": "{{ antwort|escapejs }}"}}{% if not forloop.last %},{% endif %}{% endfor %}
   ]
 }
 </script>
-{% if startfilm %}<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "VideoObject",
-  "@id": "{{ request.scheme }}://{{ request.get_host }}/#startfilm",
-  "name": "Luviq: {{ startfilm.titel|escapejs }} ({{ startfilm.datum }})",
-  "description": "{{ startfilm.beschreibung|escapejs }}",
-  "thumbnailUrl": ["{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/images/luviq/'|add:startfilm.poster_jpg %}"],
-  "uploadDate": "2026-11-01",
-  "duration": "{{ startfilm.dauer_iso }}",
-  "contentUrl": "{{ request.scheme }}://{{ request.get_host }}{% static 'shop1/video/'|add:startfilm.datei %}",
-  "inLanguage": "de",
-  "publisher": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"}
-}
-</script>{% endif %}
 {% endblock %}
 
 {% block alte_stile %}{% endblock %}
-{% block alpine %}{% endblock %}
-{% block seitenart %}lv-seite{% endblock %}
-{% block hauptstil %}{% include 'shop1/teile/stil_kritisch.html' with profil='start' %}{% endblock %}
+{% block seitenart %}lv-seite lv-v9{% endblock %}
+{% block hauptstil %}<link rel="stylesheet" href="{% static 'shop1/startseite.css' %}">{% endblock %}
 
 {% block preload %}
-{# Hero-Bild vorladen, je nach Bildschirm: ab 900 px das Querformat (3:2), darunter der 4:5-Ausschnitt; je als AVIF mit WebP-Rückfall im <picture>. imagesrcset/imagesizes wörtlich wie die AVIF-Quelle unten, sonst lädt der Browser zwei Fassungen. href = Rückfall für Prüfwerkzeuge. #}
-<link rel="preload" as="image" type="image/avif" media="(min-width: 900px)" fetchpriority="high"
-      href="{% static 'shop1/images/luviq/hero-engel-quer-1536.avif' %}"
-      imagesrcset="{% static 'shop1/images/luviq/hero-engel-quer-768.avif' %} 768w, {% static 'shop1/images/luviq/hero-engel-quer-1024.avif' %} 1024w, {% static 'shop1/images/luviq/hero-engel-quer-1536.avif' %} 1536w"
-      imagesizes="100vw">
-<link rel="preload" as="image" type="image/avif" media="(max-width: 899px)" fetchpriority="high"
-      href="{% static 'shop1/images/luviq/hero-engel-45-800.avif' %}"
-      imagesrcset="{% static 'shop1/images/luviq/hero-engel-45-480.avif' %} 480w, {% static 'shop1/images/luviq/hero-engel-45-640.avif' %} 640w, {% static 'shop1/images/luviq/hero-engel-45-800.avif' %} 800w"
-      imagesizes="100vw">
+{# Erstes Hero-Bild (das sichtbare Shirt) vorladen; imagesrcset/imagesizes wörtlich wie am <img>, sonst lädt der Browser zwei Fassungen. #}
+{% with erstes=slides.0 %}
+<link rel="preload" as="image" type="image/webp" fetchpriority="high" href="{{ erstes.src }}"{% if erstes.srcset %} imagesrcset="{{ erstes.srcset }}" imagesizes="(min-width: 1000px) 560px, calc((100vw - 48px) * .86)"{% endif %}>
+{% endwith %}
+{% endblock %}
+
+{% block seitenkopf %}
+    <header class="kopf"><a class="marke" href="{% url 'home' %}" id="top">LUVIQ</a>
+      <nav class="k-nav" aria-label="Seitenbereiche"><a href="#arbeiten">Arbeiten</a><a href="#ablauf">So läuft's</a><a href="#luisa">Über Luisa</a><a href="#fragen">Fragen</a></nav>
+      <a class="k-wa" href="{{ wa }}">WhatsApp <span>{{ wa_nr }}</span></a></header>
 {% endblock %}
 
 {% block content %}
-<div class="lv-seite lv-start">
-
-    <!-- ═══ Hero: ab 900 px vollflächig das Querformat, Text links auf dem Bild (Verlauf, Kontrast geprüft); am Handy der 4:5-Ausschnitt, Text darunter auf Anthrazit. Kein Formular. ═══ -->
-    <section class="lv-hero" id="start" data-leiste-ab aria-labelledby="markensatz">
-        <figure class="lv-hero-figur">
-            <picture class="lv-hero-bild">
-                <source media="(min-width: 900px)" type="image/avif"
-                        srcset="{% static 'shop1/images/luviq/hero-engel-quer-768.avif' %} 768w, {% static 'shop1/images/luviq/hero-engel-quer-1024.avif' %} 1024w, {% static 'shop1/images/luviq/hero-engel-quer-1536.avif' %} 1536w"
-                        sizes="100vw">
-                <source media="(min-width: 900px)" type="image/webp"
-                        srcset="{% static 'shop1/images/luviq/hero-engel-quer-768.webp' %} 768w, {% static 'shop1/images/luviq/hero-engel-quer-1024.webp' %} 1024w, {% static 'shop1/images/luviq/hero-engel-quer-1536.webp' %} 1536w"
-                        sizes="100vw">
-                <source type="image/avif"
-                        srcset="{% static 'shop1/images/luviq/hero-engel-45-480.avif' %} 480w, {% static 'shop1/images/luviq/hero-engel-45-640.avif' %} 640w, {% static 'shop1/images/luviq/hero-engel-45-800.avif' %} 800w"
-                        sizes="100vw">
-                <img src="{% static 'shop1/images/luviq/hero-engel-45-800.webp' %}"
-                     srcset="{% static 'shop1/images/luviq/hero-engel-45-480.webp' %} 480w, {% static 'shop1/images/luviq/hero-engel-45-640.webp' %} 640w, {% static 'shop1/images/luviq/hero-engel-45-800.webp' %} 800w"
-                     sizes="100vw"
-                     alt="{{ hero.alt }}" width="800" height="999"
-                     loading="eager" fetchpriority="high" decoding="async">
-            </picture>
-            <figcaption><span>{{ hero.bildunterschrift }}</span></figcaption>
-        </figure>
-        <div class="lv-hero-text">
-            <p class="lv-nr">{% if hero.nummer %}Nº {{ hero.nummer }} · {% endif %}{{ hero.kurzname }}{% if verkauf_ab %} · ab {{ verkauf_ab }}{% endif %}</p>
-            <h1 class="lv-serif lv-satz" id="markensatz">{{ hero_h1 }}</h1>
-            <p class="lv-lead">{{ lead }}</p>
-            <div class="lv-hero-knoepfe">
-                {% if hero.kaufbar and willkommenscode and not anfrage_shop %}<a class="lv-knopf" href="{% url 'rabatt_einloesen' willkommenscode.code %}" data-ereignis="hero_rabatt">Jetzt bestellen · {{ willkommenscode.prozent }} % sparen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-                {% elif hero.kaufbar and anfrage_shop %}<a class="lv-knopf" href="{{ hero.url }}#anfragen" data-ereignis="hero_anfragen">Stück anfragen · {{ hero.preis|floatformat:0 }} € <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-                {% elif hero.kaufbar %}<a class="lv-knopf" href="{{ hero.url }}#bestellen" data-ereignis="hero_bestellen">Jetzt bestellen · {{ hero.preis|floatformat:0 }} € <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-                {% else %}<a class="lv-knopf" href="{{ hero.url }}" data-ereignis="hero_engel">{{ hero.kurzname }} ansehen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{% endif %}
-                {% if motivanfrage_aktiv %}
-                <a class="lv-knopf linie" href="{% url 'motiv_anfragen' %}" data-ereignis="hero_motiv">Eigenes Motiv anfragen</a>
-                {% else %}
-                <a class="lv-knopf linie" href="#warteliste" data-ereignis="hero_motiv">Vormerken</a>
-                {% endif %}
-            </div>
-            {% if hero.kaufbar and willkommenscode and not anfrage_shop %}<p class="lv-hero-rabatt">{{ willkommenscode.prozent }} % auf {% if willkommenscode.nur_erstbestellung %}deine erste Bestellung{% else %}deine Bestellung{% endif %} mit dem Code <b>{{ willkommenscode.code }}</b>, der Knopf trägt ihn automatisch ein. <a href="{% url 'agb' %}#agb-3">Bedingungen</a></p>{% endif %}
+    <section class="hero raster">
+      <div class="galerie auto" tabindex="0" aria-roledescription="Galerie" aria-label="Neue Stücke, erst vorne, dann Rücken. Wischen oder Pfeiltasten">
+        <div class="seiten" role="group" aria-label="Seite wählen"><button type="button" data-ziel="0" aria-pressed="true">Vorne</button><button type="button" data-ziel="1" aria-pressed="false">Rücken</button></div>
+        <div class="spur">{% for s in slides %}
+          <figure class="dia" data-seite="{{ s.seite }}" role="group" aria-roledescription="Bild" aria-label="{{ forloop.counter }} von {{ slides|length }}">
+            <div class="feld"><img loading="eager" decoding="async" src="{{ s.src }}"{% if s.srcset %} srcset="{{ s.srcset }}" sizes="(min-width: 1000px) 560px, calc((100vw - 48px) * .86)"{% endif %} width="{{ s.width }}" height="{{ s.height }}" alt="{{ s.alt }}"{% if forloop.first %} fetchpriority="high"{% endif %}></div>
+            <figcaption><b>{{ s.fett }}</b>&nbsp;{{ s.rest }}</figcaption>
+          </figure>{% endfor %}
         </div>
+        <div class="steuer">
+          <button type="button" class="pfeil" data-weg="zurueck" aria-label="Vorheriges Bild"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+          <div class="punkte">{% for s in slides %}<button type="button" aria-label="Bild {{ forloop.counter }} zeigen"{% if forloop.counter == 2 %} class="grenze"{% endif %}><i></i></button>{% endfor %}</div>
+          <button type="button" class="pfeil" data-weg="vor" aria-label="Nächstes Bild"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+        </div>
+      </div>
+      <div class="hero-text">
+        <p class="dachzeile">Handgemalt in Lübeck</p>
+        <h1 class="h1"><span class="ton">Bleach Art.</span><span>Dein Motiv,</span><span>von Hand gemalt.</span></h1>
+        <p class="lead">Sag mir, was du willst, ich mal's dir.</p>
+        <ul class="merkmale">{% for m in merkmale %}<li data-nr="{{ forloop.counter }}">{{ m }}</li>{% endfor %}</ul>
+        <div class="aktion"><a class="knopf" href="{{ wa }}" data-ereignis="hero_whatsapp">Per WhatsApp anfragen<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a><a class="textlink" href="{{ mail }}" data-ereignis="hero_mail">oder per E-Mail</a></div>
+        <p class="h-hinweis">Kostenlos und unverbindlich. WhatsApp <a class="nr" href="{{ wa }}">{{ wa_nr }}</a></p>
+      </div>
     </section>
 
-    <!-- ═══ Wisch-Band direkt unter dem Hero (15.11.2026): offenes Stück zuerst, dann die vergebenen; Handyfoto "So sieht es in echt aus" folgt weiter unten ═══ -->
-    {% include 'shop1/teile/stueckband.html' %}
-
-    {% if vertrauen %}
-    <!-- ═══ Vertrauensleiste: nur belegte Aussagen aus luviq_daten ═══ -->
-    <section class="lv-vertrauen-leiste" id="vertrauen" aria-label="Das Wichtigste in Kürze">
-        <ul class="lv-vertrauen">
-            {% for aussage in vertrauen %}<li><span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span><span>{{ aussage }}</span></li>{% endfor %}
-        </ul>
-    </section>
-    {% endif %}
-
-    {% if echt_fotos %}
-    <!-- ═══ Echtes Handyfoto (jetzt unter dem Stück-Band, nicht mehr dreimal hintereinander): echte Handyfotos neben dem Studiobild; weitere Fotos kommen über ECHT_FOTOS ═══ -->
-    <section class="lv-echt" id="echt" aria-labelledby="echt-titel">
-        <div class="lv-echt-text">
-            <h2 class="lv-serif" id="echt-titel">{{ echt_titel }}</h2>
-            <p>{{ echt_text }}</p>
+    <section class="abschnitt luisa raster" id="luisa">
+      <figure class="l-foto"><div class="bild"><img loading="eager" decoding="async" src="{{ luisa_bild.src }}" width="{{ luisa_bild.width }}" height="{{ luisa_bild.height }}" alt="Luisa Brehler, die Malerin hinter Luviq, lächelnd in weißer Bluse"></div></figure>
+      <div class="l-text" data-auf>
+        <h2 class="h2">Ich bin Luisa.</h2>
+        <p class="lead">Ich male jedes Stück selbst, mit Pinsel und Bleiche, hier in Lübeck.</p>
+        <p class="text">Du sagst mir, in welche Richtung es gehen soll. Ich schick dir ein paar Ideen, wir suchen zusammen eine aus, und dann mal ich sie dir auf dein Shirt, deinen Hoodie oder Pullover. Gemalt wird erst, wenn du Ja gesagt hast.</p>
+        <div class="wege">
+          <a href="{{ wa }}"><span class="w-art">WhatsApp</span><span class="w-wert">{{ wa_nr }}</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a>
+          <a href="{{ mail }}"><span class="w-art">E-Mail</span><span class="w-wert">{{ mail_adresse }}</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a>
+          <a href="{{ ig }}" rel="noopener"><span class="w-art">Instagram</span><span class="w-wert">{{ ig_name }}</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a>
         </div>
-        <div class="lv-echt-fotos{% if echt_fotos|length > 1 %} lv-echt-mehr" tabindex="0" role="region" aria-label="Weitere Handyfotos, seitlich wischen{% endif %}">
-            {% for foto in echt_fotos %}
-            <figure>
-                <img src="{{ foto.src }}" srcset="{{ foto.srcset }}" sizes="(min-width: 900px) 520px, 100vw" alt="{{ foto.alt }}" width="{{ foto.width }}" height="{{ foto.height }}" loading="lazy" decoding="async">
-                <figcaption>{{ foto.unterschrift }}</figcaption>
-            </figure>
-            {% endfor %}
-        </div>
-    </section>
-    {% endif %}
-
-    {% if startfilm %}
-    <!-- ═══ Startfilm: erst nach Klick abspielen (preload=none), Poster als Bild, Ton nur auf Wunsch ═══ -->
-    <section class="lv-startfilm" id="startfilm" aria-labelledby="startfilm-titel">
-        <div class="lv-startfilm-text">
-            <p class="lv-nr">{{ startfilm.datum }}</p>
-            <h2 class="lv-serif" id="startfilm-titel">{{ startfilm.titel }}</h2>
-            <p>{{ startfilm.text }}</p>
-            <p class="lv-klein">{{ startfilm.hinweis }}</p>
-        </div>
-        <figure class="lv-startfilm-rahmen">
-            <video controls preload="none" playsinline width="960" height="540" poster="{% static 'shop1/images/luviq/'|add:startfilm.poster %}" aria-label="{{ startfilm.titel }}">
-                <source src="{% static 'shop1/video/'|add:startfilm.datei %}" type="video/mp4">
-                Dein Browser kann das Video nicht abspielen.
-            </video>
-            <figcaption>{{ startfilm.laenge }}, mit Ton. Startet erst, wenn du auf Abspielen drückst.</figcaption>
-        </figure>
-    </section>
-    {% endif %}
-    <!-- ═══ Motiv anfragen: Luisas Anfrage-System ═══ -->
-    <section class="lv-anfragen" id="anfragen" aria-labelledby="anfragen-titel">
-        <div>
-            <p class="lv-nr">Motiv anfragen</p>
-            <h2 class="lv-serif" id="anfragen-titel">{{ markensatz }}</h2>
-            <ol class="lv-ablauf">
-                {% for titel, text in ablauf %}<li><b>{{ titel }}</b><span>{{ text }}</span></li>{% endfor %}
-            </ol>
-        </div>
-        <div class="lv-anfragekasten">
-            {% if motivanfrage_aktiv %}
-            <p class="lv-frage" id="richtung-frage">In welche Richtung soll es gehen?</p>
-            <ul class="lv-chips" aria-labelledby="richtung-frage">
-                {% for schluessel, name in richtungen %}<li><a class="lv-chip" href="{% url 'motiv_anfragen' %}?richtung={{ schluessel }}">{{ name }}</a></li>{% endfor %}
-            </ul>
-            <a class="lv-knopf" href="{% url 'motiv_anfragen' %}">Motiv anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-            <p class="lv-klein">Kostet nichts und ist keine Bestellung. Ich melde mich persönlich.</p>
-            {% else %}
-            <p class="lv-frage">Gerade nehme ich keine neuen Anfragen an.</p>
-            <p class="lv-klein">Trag dich unten in die Liste ein, dann erfährst du als Erstes, wann es wieder geht.</p>
-            {% endif %}
-        </div>
+      </div>
     </section>
 
-    <!-- ═══ Wie ein Stück entsteht: nummerierte Linienliste, ohne Bilder ═══ -->
-    <section class="lv-abschnitt dunkel" id="entstehung" aria-labelledby="entstehung-titel">
-        <div class="lv-abschnittskopf">
-            <h2 class="lv-serif" id="entstehung-titel">Wie ein Stück entsteht</h2>
-            <p>Fünf Schritte, von der Anfrage bis zum Paket. Meistens dauert das {{ dauer }}, je nach Motiv.</p>
-        </div>
-        <ol class="lv-entstehung">
-            {% for titel, text, bild, alt in schritte %}
-            <li>
-                <span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span>
-                <h3 class="lv-serif">{{ titel }}</h3>
-                <p>{{ text }}</p>
-            </li>
-            {% endfor %}
+    <section class="abschnitt arbeiten" id="arbeiten">
+      <div class="kopfzeile raster" data-auf>
+        <h2 class="h2">Was schon entstanden ist</h2>
+        <p class="text">Ein paar Stücke, die ich schon gemalt habe. Jedes gibt es nur einmal.</p>
+      </div>
+      <div class="reihe">{% for s in stuecke %}
+        <figure><div class="stueck"><img loading="eager" decoding="async" src="{{ s.src }}" width="{{ s.width }}" height="{{ s.height }}" alt="{{ s.alt }}"></div><figcaption><b>{{ s.name }}</b><span>{{ s.art }}</span></figcaption></figure>{% endfor %}
+        <a class="einladung" href="{{ wa }}" data-auf><p class="e-titel">Dein Motiv fehlt noch.</p><p class="e-text">Erzähl mir deine Idee, ich schick dir Vorschläge.</p><span class="e-los">Per WhatsApp anfragen<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
+      </div>
+      <a class="textlink mehr" href="{{ ig }}" rel="noopener">Mehr Stücke auf Instagram</a>
+    </section>
+
+    <section class="ablauf" id="ablauf">
+      <figure class="a-foto">
+        <div class="bild"><img loading="eager" decoding="async" src="{{ ablauf_foto.src }}" srcset="{{ ablauf_foto.srcset }}" sizes="(min-width: 1000px) 480px, calc(100vw - 48px)" width="{{ ablauf_foto.width }}" height="{{ ablauf_foto.height }}" alt="Luisas Hände in Handschuhen malen mit Pinsel und Bleiche einen Engel auf ein schwarzes Shirt"></div>
+        <figcaption><b>Engel-Shirt Nr. 2.</b> Gerade in Arbeit.</figcaption>
+      </figure>
+      <div class="a-text" data-auf>
+        <h2 class="h2">So entsteht dein Unikat</h2>
+        <p class="lead">Du brauchst noch keine fertige Idee. Genau dafür bin ich da.</p>
+        <ol class="schritte">{% for titel, text in schritte %}
+          <li><span class="ziffer" aria-hidden="true">{{ forloop.counter }}</span><div><strong>{{ titel }}</strong><span class="s-text">{{ text }}</span></div></li>{% endfor %}
         </ol>
+        <div class="motive"><p class="klein">Ideen für den Anfang</p><ul>{% for m in motive %}<li>{{ m }}</li>{% endfor %}</ul></div>
+        <p class="ausblick">Bald kommt auch Textilfarbe dazu, eher gedämpft als bunt.</p>
+      </div>
     </section>
 
-    {% if filme %}
-    <!-- ═══ Film: nur mit Einträgen in FILME. Die Quelle wird erst im Bild gesetzt (Skript unten), bis dahin das Poster. ═══ -->
-    {% for datei, poster, titel, untertitel in filme|slice:":1" %}
-    <section class="lv-film" id="film" aria-labelledby="film-titel">
-        <figure>
-            <div class="lv-film-rahmen">
-                <video data-film data-src="{% static 'shop1/video/'|add:datei %}" poster="{% static 'shop1/images/luviq/'|add:poster %}" width="1080" height="1920" muted playsinline loop preload="none" aria-label="{{ titel }}"></video>
-                <button type="button" class="lv-film-pause" data-film-pause>Pause</button>
-            </div>
-        </figure>
-        <div class="lv-film-text">
-            <h2 class="lv-serif" id="film-titel">{{ titel }}</h2>
-            {% if untertitel %}<p>{{ untertitel }}</p>{% endif %}
-        </div>
-    </section>
-    {% endfor %}
-    {% endif %}
-
-    <!-- ═══ Luisa ═══ -->
-    <section class="lv-luisa lv-luisa-start" id="luisa" aria-label="Luisa Brehler">
-        <blockquote>
-            <p class="lv-serif">„{{ zitat }}“</p>
-            <footer>{{ zitat_quelle }}</footer>
-        </blockquote>
-        <div class="lv-luisa-text">
-            <p>Luviq ist ein Ein-Personen-Atelier, <a href="{% url 'liefergebiet' %}#alsfeld">angefangen in Alsfeld, heute in Lübeck</a>. Einen Laden zum Anschauen gibt es nicht{% if shop_sichtbar and not anfrage_shop %}: Luviq ist ein Online-Shop, bestellt wird auf dieser Seite, geliefert wird in ganz Deutschland{% elif anfrage_shop %}: Stücke werden auf dieser Seite angefragt, Luisa meldet sich persönlich{% endif %}. Die Teile sind hochwertig, gebraucht oder neu, die Motive freihand, mit Pinsel und Bleiche, bald auch mit Textilfarbe.</p>
-            <a class="lv-link" href="{% url 'ueber_uns' %}">Mehr über Luisa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        </div>
+    <section class="abschnitt band">
+      <div class="kopfzeile raster" data-auf>
+        <h2 class="h2">Aus der Nähe</h2>
+        <p class="text">Jede Linie ist mit dem Pinsel gezogen. Darum sieht kein Stück aus wie das andere.</p>
+      </div>
+      <div class="streifen" tabindex="0" aria-label="Nahaufnahmen, seitlich wischen">{% for b in band %}
+        <figure><div class="bild"><img loading="eager" decoding="async" src="{{ b.src }}"{% if b.srcset %} srcset="{{ b.srcset }}" sizes="(min-width: 1000px) 480px, 78vw"{% endif %} width="{{ b.width }}" height="{{ b.height }}" alt="{{ b.alt }}"></div><figcaption>{{ b.unterschrift }}</figcaption></figure>{% endfor %}
+      </div>
     </section>
 
-    <!-- ═══ Warteliste = Newsletter mit Double-Opt-in, das einzige Formular der Seite ═══ -->
-    <section class="lv-warteliste" id="warteliste" aria-labelledby="warteliste-titel">
-        <h2 class="lv-serif" id="warteliste-titel">{% if shop_sichtbar %}Für das nächste Stück vormerken{% else %}Neue Stücke zuerst per Mail{% endif %}</h2>
-        {% comment %}Ohne JavaScript schickt das Formular klassisch per POST (EIG89/EIG129); mit JavaScript übernimmt das Skript unten. Honigtopf und Zeitfalle wie beim Kontaktformular (shop1/spamschutz.py). Der Datenschutzhinweis gehört zum Formular (KV05). Die Sprungmarke #newsletter-form sitzt auf der Feldzeile.{% endcomment %}
-        <form class="lv-warteliste-form" method="post" action="{% url 'newsletter_subscribe' %}" data-newsletter novalidate>
-            {% csrf_token %}
-            <div id="newsletter-form" class="lv-feldzeile">
-                <label class="sr-only" for="newsletter-email">Deine E-Mail-Adresse für neue Stücke</label>
-                <input type="email" id="newsletter-email" name="email" autocomplete="email" placeholder="deine@mail.de" required maxlength="254" aria-describedby="newsletter-message">
-                <div class="lv-falle" aria-hidden="true">
-                    <label for="newsletter-website">Webseite (bitte leer lassen)</label>
-                    <input class="lv-falle" id="newsletter-website" name="{{ feld_falle }}" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
-                </div>
-                <input type="hidden" name="formzeit" value="{{ formzeit }}">
-                <button type="submit">Eintragen</button>
-            </div>
-            <p id="newsletter-message" class="lv-antwort" role="status" aria-live="polite"></p>
-            <p class="lv-klein">Du bestätigst deine Adresse per Link, abmelden geht über den Link in jeder Mail. Was mit der Adresse geschieht, steht in der <a href="{% url 'datenschutz' %}">Datenschutzerklärung</a>.</p>
-        </form>
+    <section class="abschnitt bleach" id="bleach" data-auf>
+      <h2 class="h2">Was ist Bleach Art?</h2>
+      <p class="b-text">{{ bleach.0 }}<b>{{ bleach.1 }}</b>{{ bleach.2 }}</p>
     </section>
-</div>
+
+    <section class="abschnitt fragen" id="fragen">
+      <div class="f-links" data-auf><h2 class="h2">Bevor du schreibst</h2><p class="text">Deine Frage ist nicht dabei? Schreib mir einfach, <a class="nr" href="{{ wa }}">WhatsApp {{ wa_nr }}</a>.</p></div>
+      <dl data-auf>{% for frage, antwort in fragen %}
+        <div><dt>{{ frage }}</dt><dd>{{ antwort }}</dd></div>{% endfor %}
+      </dl>
+    </section>
+
+    <section class="abschnitt kontakt" id="kontakt" data-auf>
+      <h2 class="h2">Schreib mir, was du dir vorstellst</h2>
+      <p class="text">Kostenlos und unverbindlich. Ich melde mich bei dir.</p>
+      <a class="knopf" href="{{ wa }}" data-ereignis="kontakt_whatsapp">Per WhatsApp anfragen<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a>
+      <p class="mail">WhatsApp <a class="textlink" href="{{ wa }}">{{ wa_nr }}</a> oder per Mail an <a class="textlink" href="{{ mail }}">{{ mail_adresse }}</a></p>
+    </section>
+{% endblock %}
+
+{% block seitenfuss %}
+    <footer class="fuss">
+      <div class="f-spalten">
+        <div><p class="f-marke">LUVIQ</p><p>Bleach Art auf Shirts, Hoodies und Pullovern, von Hand gemalt von Luisa Brehler.</p></div>
+        <div><p class="f-kopf">Kontakt</p><ul><li><a href="{{ wa }}">WhatsApp {{ wa_nr }}</a></li><li><a href="{{ mail }}">{{ mail_adresse }}</a></li><li><a href="{{ ig }}" rel="noopener">Instagram {{ ig_name }}</a></li></ul></div>
+        <div><p class="f-kopf">Entdecken</p><ul><li><a href="#arbeiten">Arbeiten</a></li><li><a href="#ablauf">So läuft's</a></li><li><a href="#luisa">Über Luisa</a></li><li><a href="#bleach">Was ist Bleach Art?</a></li><li><a href="#fragen">Fragen</a></li></ul></div>
+        {% comment %}Die bestehenden Unterseiten bleiben verlinkt (nichts verwaist): die Gruppen kommen aus luviq_daten.fuss() wie im alten Fuß, nur ohne den Sprung zur Warteliste, die diese Startseite nicht mehr hat.{% endcomment %}
+        {% for titel, wege in fuss_gruppen %}
+        <div><p class="f-kopf">{{ titel }}</p><ul>{% for weg in wege %}{% if weg.route != 'home' %}<li><a href="{% url weg.route %}{{ weg.anker }}">{{ weg.name }}</a></li>{% endif %}{% endfor %}{% if forloop.first %}<li><a href="{% url 'ueber_uns' %}">Luisa</a></li>{% endif %}</ul></div>{% endfor %}
+        <div><p class="f-kopf">Luviq</p><ul><li>Lübeck</li><li>Motive auf Anfrage</li><li>Versand deutschlandweit</li></ul></div>
+      </div>
+      <div class="f-unten"><p>© {% now "Y" %} Luviq, Luisa Brehler{% if shop_oeffnet %} · {{ shop_oeffnet }}{% endif %}</p><p>{% if widerruf_knopf %}<a class="lv-fuss-widerruf" href="{% url 'vertrag_widerrufen' %}">Vertrag widerrufen</a>{% endif %}<a href="{% url 'impressum' %}">Impressum</a><a href="{% url 'datenschutz' %}">Datenschutz</a>{% if kaufweg %}<a href="{% url 'agb' %}">AGB</a>{% endif %}{% if einwilligung %}<a href="{% url 'datenschutz' %}" data-einwilligung-aendern>Cookie-Einstellungen</a>{% endif %}</p></div>
+      <p class="f-gross" aria-hidden="true">LUVIQ</p>
+    </footer>
+{% endblock %}
+
+{% block seitenleiste %}
+    <nav class="leiste" aria-label="Schnellkontakt">
+      <a class="l-wa" href="{{ wa }}" data-ereignis="leiste_whatsapp">Per WhatsApp anfragen</a>
+      <a class="l-mail" href="{{ mail }}" data-ereignis="leiste_mail">E-Mail</a>
+    </nav>
 {% endblock %}
 
 {% block extra_js %}
-<script nonce="{{ csp_nonce }}">
-(function () {
-    'use strict';
-    // Film (nur vorhanden, wenn FILME Einträge hat): die Quelle wird erst gesetzt,
-    // wenn das Video ins Bild kommt; abgespielt wird nur ohne „Bewegung reduzieren“.
-    document.querySelectorAll('video[data-film]').forEach(function (video) {
-        var knopf = video.parentNode.querySelector('[data-film-pause]');
-        var ruhig = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        var geladen = false;
-        function beschrifte() { if (knopf) { knopf.textContent = video.paused ? 'Abspielen' : 'Pause'; } }
-        function laden() {
-            if (!geladen) { video.src = video.getAttribute('data-src'); video.load(); geladen = true; }
-        }
-        if (knopf) {
-            knopf.addEventListener('click', function () {
-                laden();
-                if (video.paused) { video.play().catch(function () {}); } else { video.pause(); }
-                beschrifte();
-            });
-        }
-        video.addEventListener('play', beschrifte);
-        video.addEventListener('pause', beschrifte);
-        if (ruhig) { beschrifte(); return; }
-        if (!('IntersectionObserver' in window)) { beschrifte(); return; }
-        new IntersectionObserver(function (eintraege) {
-            eintraege.forEach(function (e) {
-                if (e.isIntersecting) { laden(); video.play().catch(function () {}); }
-                else if (geladen) { video.pause(); }
-            });
-        }, { threshold: 0.35 }).observe(video);
-    });
-
-    // Warteliste: dieselbe Anmeldung mit Double-Opt-in
-    // (/newsletter/subscribe/). Absendesperre (FO03): solange die Anmeldung
-    // läuft, schickt ein zweiter Klick keine zweite Anfrage.
-    document.querySelectorAll('form[data-newsletter]').forEach(function (form) {
-        form.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            var knopf = form.querySelector('button[type="submit"]');
-            if (knopf.disabled) { return; }
-            var feld = form.querySelector('input[name="email"]');
-            // Die Antwortzeile steht im Formular; gefunden über aria-describedby des Felds.
-            var antwort = document.getElementById(feld.getAttribute('aria-describedby'));
-            var email = feld.value;
-            var falle = form.querySelector('.lv-falle input');
-            var zeit = form.querySelector('input[name="formzeit"]');
-            knopf.disabled = true;
-            form.setAttribute('aria-busy', 'true');
-            try {
-                // Token aus dem <meta> von base.html, nicht aus dem Cookie: das
-                // CSRF-Cookie ist HttpOnly (SI16) und für Skripte unsichtbar.
-                var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-                var response = await fetch('/newsletter/subscribe/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
-                    body: JSON.stringify({ email: email, website: falle ? falle.value : '', formzeit: zeit ? zeit.value : '' })
-                });
-                var data = await response.json();
-                antwort.textContent = data.message || data.error;
-                antwort.className = 'lv-antwort ' + (response.ok ? 'gut' : 'schlecht');
-                // Fehler auch am Feld kenntlich machen (BF24): Hilfsmittel lesen die Meldung über aria-describedby.
-                if (response.ok) { feld.removeAttribute('aria-invalid'); } else { feld.setAttribute('aria-invalid', 'true'); }
-                if (response.ok) { form.reset(); }
-                // Zählbarer Abschluss (FO08): die Anmeldung bleibt auf der Seite,
-                // deshalb ein Ereignis statt einer Danke-Seite. Ohne Adresse
-                // oder andere Personendaten.
-                if (response.ok && data.neu) {
-                    window.dataLayer = window.dataLayer || [];
-                    window.dataLayer.push({ event: 'generate_lead', lead_quelle: 'newsletter' });
-                }
-            } catch (err) {
-                antwort.textContent = 'Das hat gerade nicht geklappt. Versuch es bitte gleich noch einmal.';
-                antwort.className = 'lv-antwort schlecht';
-                feld.setAttribute('aria-invalid', 'true');
-            } finally {
-                knopf.disabled = false;
-                form.removeAttribute('aria-busy');
-            }
-        });
-    });
-})();
-</script>
+<script src="{% static 'shop1/startseite.js' %}" defer></script>
 {% endblock %}

@@ -128,7 +128,7 @@ class CsrfCookieTest(LuviqTestCase):
     def test_die_startseite_traegt_das_token_im_meta(self):
         html = self.hole('/').content.decode()
         self.assertRegex(html, r'<meta name="csrf-token" content="[A-Za-z0-9]{20,}">')
-        self.assertIn("meta[name=\"csrf-token\"]", html)
+        # Startseite v9: das Newsletter-Skript (das den Token las) steht nicht mehr auf der Startseite; das Meta bleibt in base.html.
 
 
 class GesundheitsadresseTest(LuviqTestCase):
@@ -259,5 +259,7 @@ class UrheberrechtTest(LuviqTestCase):
         for pfad in OEFFENTLICHE_SEITEN:
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
-                fuss = html[html.index('class="lv-fuss"'):]
+                # Startseite v9 (26.11.2026) hat ihren eigenen Fuß (class="fuss"), alle anderen Seiten den Basis-Fuß.
+                marke = 'class="lv-fuss"' if 'class="lv-fuss"' in html else 'class="fuss"'
+                fuss = html[html.index(marke):]
                 self.assertRegex(fuss, rf'©\s*{jahr}\s+Luviq\b')

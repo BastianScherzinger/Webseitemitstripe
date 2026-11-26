@@ -1,5 +1,6 @@
 """Schub 30.10.2026 (Analyse-Umsetzung): Banner, Schema, Gästebuch, Entwurfsartikel."""
 
+import unittest
 import json
 import re
 
@@ -52,6 +53,7 @@ class SchemaProfileTest(LuviqTestCase):
 
 class KiBildEhrlichTest(LuviqTestCase):
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_hero_alt_nennt_das_ki_studiobild(self):
         from .. import luviq_daten
         self.assertTrue(luviq_daten.HERO_STUECK['alt'].startswith('Studiobild (KI) aus dem echten Foto'))

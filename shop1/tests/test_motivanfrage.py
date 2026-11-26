@@ -8,6 +8,7 @@ nie an die eingetippte Adresse, Spam still verworfen, Schalter wirkt.
 Der Mailversand wird in jedem Test ersetzt (siehe ``test_formulare``).
 """
 
+import unittest
 from unittest import mock
 
 from django.test import override_settings
@@ -66,6 +67,7 @@ class AnzeigeTest(LuviqTestCase):
             with self.subTest(wort=wort):
                 self.assertNotIn(wort, html)
 
+    @unittest.skip('Startseite v9 (26.11.2026): die Richtungs-Chips des Anfrageabschnitts entfallen, Anfragen laufen per WhatsApp oder Mail; /motiv-anfragen/ bleibt im Fuß verlinkt.')
     def test_die_startseite_verlinkt_jede_richtung(self):
         html = self.hole('/').content.decode()
         for wert in ('tier', 'symbol', 'pflanze', 'himmel', 'abstrakt', 'offen'):

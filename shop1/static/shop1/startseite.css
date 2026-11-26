@@ -1,0 +1,360 @@
+/* Startseite v9 (Entwurf 24.-26.11.2026, von Bastian am 26.11. freigegeben). Nur auf der Startseite geladen,
+   alles an body.lv-v9 gebunden. Schriften liegen in fonts/ (dieselben Dateien wie luviq.css, OFL-Texte dort). */
+
+@font-face{font-family:"Cormorant Garamond";font-style:italic;font-weight:500;font-display:swap;src:url("fonts/cormorant-garamond-italic.woff2") format("woff2")}
+@font-face{font-family:"Schibsted Grotesk";font-style:normal;font-weight:400 700;font-display:swap;src:url("fonts/schibsted-grotesk-latin-normal.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212,U+FEFF,U+FFFD}
+@font-face{font-family:"Schibsted Grotesk";font-style:normal;font-weight:400 700;font-display:swap;src:url("fonts/schibsted-grotesk-latin-ext-normal.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2020,U+20A0-20AB,U+20AD-20C0}
+
+:root{
+  color-scheme:dark;
+  --grund:#0A0A0A;--tief:#070707;--flaeche:#11100F;--feld:#302D28;
+  --text:#F2EEE6;--leise:#A8A297;--linie:rgba(242,238,230,.13);--linie-stark:rgba(242,238,230,.28);
+  --akzent:#C8763F;--akzent-hell:#DE9159;--auf-akzent:#140C06;--akzent-tief:#8A4520;
+  --creme:#EFE9DF;--tinte:#1B1916;--tinte-leise:#5C554C;--linie-creme:rgba(27,25,22,.16);
+  --serif:"Cormorant Garamond",Georgia,serif;
+  --sans:"Schibsted Grotesk",Arial,sans-serif;
+  --s1:8px;--s2:16px;--s3:24px;--s4:32px;--s5:48px;--s6:64px;--s7:96px;--s8:128px;--s9:160px;
+}
+
+html{background:var(--grund)}
+:where(.lv-v9) *,:where(.lv-v9) *::before,:where(.lv-v9) *::after{box-sizing:border-box}
+:where(.lv-v9) img{display:block;max-width:100%;height:auto}
+:where(.lv-v9) a{color:inherit}
+.lv-v9 :focus-visible{outline:2px solid var(--akzent-hell);outline-offset:3px}
+/* Sprunglink und Systemmeldungen aus base.html, ohne luviq.css */
+.lv-v9 .lv-sprung{position:absolute;left:8px;top:-60px;z-index:100;min-height:44px;display:inline-flex;align-items:center;padding:10px 14px;background:var(--text);color:var(--grund);font-weight:700}
+.lv-v9 .lv-sprung:focus{top:8px}
+.lv-v9 .lv-meldungen{padding:var(--s2) var(--rand) 0}
+.lv-v9 .lv-meldung{display:flex;justify-content:space-between;align-items:center;gap:var(--s2);padding:var(--s2);border:1px solid var(--linie-stark);background:var(--flaeche)}
+.lv-v9 .lv-meldung.fehler{border-color:var(--akzent)}
+.lv-v9 .lv-meldung button{min-width:44px;min-height:44px;border:0;background:none;color:var(--text);font:inherit;font-size:24px;cursor:pointer}
+.lv-v9 [id]{scroll-margin-top:16px}
+
+/* =====================================================================
+   SEITE v9. Handy zuerst.
+   Typo Handy: H1 42/44 · H2 34/38 · Lead 20/28 · Text 16/24 · Klein 14/20
+   Abstand: Rand 24, Abschnitt 80
+   ===================================================================== */
+body.lv-v9{--rand:var(--s3);--abschnitt:80px;margin:0;background:var(--grund);color:var(--text);font-family:var(--sans);font-size:16px;line-height:24px;overflow-x:clip;-webkit-font-smoothing:antialiased}
+.lv-v9 main{overflow-x:clip}
+.lv-v9 :where(h1,h2,h3,p,ol,ul,dl,dd,figure){margin:0}
+.lv-v9 :where(main,.kopf,.fuss,.leiste) :where(ol,ul){list-style:none;padding:0}
+.lv-v9 :where(main,.fuss) :where(p,dd,figcaption){text-wrap:pretty}
+.lv-v9 .abschnitt{padding:var(--abschnitt) var(--rand) 0}
+
+.lv-v9 .h1,.lv-v9 .h2{font-family:var(--serif);font-style:italic;font-weight:500;letter-spacing:-.012em;text-wrap:balance}
+.lv-v9 .h1{font-size:42px;line-height:44px}
+.lv-v9 .h1 span{display:block}
+.lv-v9 .h1 .ton{color:var(--akzent-hell)}
+.lv-v9 .h2{font-size:34px;line-height:38px}
+.lv-v9 .lead{font-size:20px;line-height:28px}
+.lv-v9 .text{color:var(--leise);max-width:36ch}
+.lv-v9 .klein{font-size:14px;line-height:20px;color:var(--leise)}
+
+/* Einblenden beim Scrollen: sichtbar ist Standard, nur was unter dem Rand liegt, wartet */
+.lv-v9 [data-auf]{transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+.lv-v9 [data-auf].wartet{opacity:0;transform:translateY(18px)}
+
+/* Kopf */
+.lv-v9 .kopf{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--rand);position:relative;z-index:6}
+.lv-v9 .marke{font-weight:700;letter-spacing:.26em;font-size:16px;line-height:24px;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
+.lv-v9 .k-nav{display:none}
+.lv-v9 .k-wa{display:inline-flex;align-items:center;gap:var(--s1);min-height:44px;font-size:14px;line-height:20px;font-weight:700;text-decoration:none;color:var(--text)}
+.lv-v9 .k-wa::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--akzent)}
+.lv-v9 .k-wa span{display:none}
+
+/* Knöpfe und Links */
+.lv-v9 .knopf{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:54px;padding:0 var(--s3);border-radius:3px;
+  background:var(--akzent);color:var(--auf-akzent);font-weight:700;font-size:16px;line-height:24px;text-decoration:none;
+  box-shadow:0 10px 36px -12px rgba(200,118,63,.7);transition:background-color .15s ease,transform .15s ease,box-shadow .2s ease}
+.lv-v9 .knopf svg{width:18px;height:18px;flex:none;transition:transform .2s ease}
+.lv-v9 .knopf:hover{background:var(--akzent-hell);box-shadow:0 14px 44px -12px rgba(222,145,89,.85)}
+.lv-v9 .knopf:hover svg{transform:translateX(3px)}
+.lv-v9 .knopf:active{transform:translateY(1px)}
+.lv-v9 .textlink{display:inline-flex;align-items:center;min-height:44px;font-weight:700;text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1px;text-decoration-color:var(--linie-stark);transition:text-decoration-color .15s ease}
+.lv-v9 .textlink:hover{text-decoration-color:var(--akzent-hell)}
+
+/* ---------- Hero ---------- */
+.lv-v9 .hero{position:relative;isolation:isolate;padding-bottom:var(--s3)}
+.lv-v9 .galerie{position:relative}
+/* weiches Licht hinter dem Shirt, ohne Kasten: warmer Kern, läuft randlos ins Schwarz aus */
+.lv-v9 .galerie::before{content:"";position:absolute;z-index:-1;left:-30%;right:-30%;top:-16%;bottom:-12%;pointer-events:none;
+  background:
+    radial-gradient(ellipse 46% 44% at 50% 50%, rgba(214,132,76,.30), rgba(200,118,63,.12) 48%, rgba(200,118,63,0) 100%),
+    radial-gradient(ellipse 50% 50% at 50% 50%, #4a4037 0%, #3a332c 34%, #26221e 62%, rgba(10,10,10,0) 100%)}
+.lv-v9 .seiten{display:flex;gap:var(--s3);padding:0 var(--rand)}
+.lv-v9 .seiten button{min-height:44px;padding:0;border:0;background:none;font:inherit;font-size:14px;line-height:20px;letter-spacing:.04em;color:var(--leise);cursor:pointer;position:relative}
+.lv-v9 .seiten button[aria-pressed="true"]{color:var(--text);font-weight:700}
+.lv-v9 .seiten button[aria-pressed="true"]::after{content:"";position:absolute;left:0;right:0;bottom:8px;height:1px;background:var(--akzent)}
+.lv-v9 .spur{display:grid;grid-auto-flow:column;grid-auto-columns:100%;gap:var(--s3);padding:0 var(--rand);
+  overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 var(--rand);scrollbar-width:none}
+.lv-v9 .spur.gleitet{scroll-snap-type:none}
+.lv-v9 .spur::-webkit-scrollbar{display:none}
+.lv-v9 .dia{scroll-snap-align:start;scroll-snap-stop:always}
+.lv-v9 .feld{aspect-ratio:1/1.08;overflow:hidden}
+.lv-v9 .feld img{width:100%;height:100%;object-fit:contain}
+.lv-v9 .dia figcaption{font-size:14px;line-height:20px;color:var(--leise);margin-top:var(--s1);min-height:24px}
+.lv-v9 figcaption b{font-weight:600;color:var(--text)}
+.lv-v9 .steuer{position:absolute;right:calc(var(--rand) - 4px);bottom:0;display:flex;align-items:center}
+.lv-v9 .pfeil{display:none}
+.lv-v9 .punkte{display:flex}
+.lv-v9 .punkte button{width:24px;height:24px;padding:0 4px;margin:0;border:0;background:none;cursor:pointer;display:flex;align-items:center}
+.lv-v9 .punkte i{position:relative;display:block;width:16px;height:2px;background:var(--linie-stark);overflow:hidden}
+.lv-v9 .punkte i::after{content:"";position:absolute;inset:0;background:var(--akzent-hell);transform:scaleX(0);transform-origin:left}
+.lv-v9 .punkte .an i::after{transform:scaleX(1)}
+.lv-v9 .galerie.laeuft .punkte .an i::after{animation:fuellen 3.5s linear both}
+.lv-v9 .punkte .grenze{margin-left:12px}
+@keyframes fuellen{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+.lv-v9 .hero-text{display:flex;flex-direction:column;padding:var(--s3) var(--rand) 0}
+.lv-v9 .dachzeile{font-size:14px;line-height:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);margin-bottom:12px}
+.lv-v9 .hero-text .lead{margin-top:12px}
+.lv-v9 .aktion{margin-top:20px}
+.lv-v9 .aktion .textlink{display:none}
+.lv-v9 .h-hinweis{margin-top:12px;font-size:14px;line-height:20px;color:var(--leise)}
+.lv-v9 .nr{color:var(--text);font-weight:700;text-decoration:none;white-space:nowrap}
+.lv-v9 .merkmale{order:9;margin-top:var(--s5);border-top:1px solid var(--linie)}
+.lv-v9 .merkmale li{display:flex;align-items:baseline;gap:var(--s2);padding:14px 0;border-bottom:1px solid var(--linie)}
+.lv-v9 .merkmale li::before{content:attr(data-nr);font-family:var(--serif);font-style:italic;font-size:20px;line-height:24px;color:var(--akzent-hell);min-width:20px}
+
+/* ---------- Ich bin Luisa ---------- */
+.lv-v9 .luisa .l-foto{position:relative;max-width:300px}
+.lv-v9 .luisa .l-foto .bild{aspect-ratio:4/5;overflow:hidden;background:var(--feld)}
+.lv-v9 .luisa .l-foto img{width:100%;height:100%;object-fit:cover}
+.lv-v9 .luisa .l-foto::after{content:"";position:absolute;right:-12px;bottom:-12px;width:55%;height:55%;border-right:1px solid var(--akzent);border-bottom:1px solid var(--akzent);pointer-events:none}
+.lv-v9 .luisa .l-text{margin-top:var(--s5)}
+.lv-v9 .luisa .lead{margin-top:var(--s2)}
+.lv-v9 .luisa .text{margin-top:var(--s2)}
+/* Kontaktwege als ruhige Liste: Weg links, Angabe rechts */
+.lv-v9 .wege{margin-top:var(--s4);border-top:1px solid var(--linie)}
+.lv-v9 .wege a{display:grid;grid-template-columns:96px 1fr auto;align-items:center;gap:var(--s2);min-height:56px;border-bottom:1px solid var(--linie);text-decoration:none;transition:border-color .15s ease}
+.lv-v9 .wege a .w-art{font-size:14px;line-height:20px;color:var(--leise)}
+.lv-v9 .wege a .w-wert{font-weight:700;overflow-wrap:anywhere}
+.lv-v9 .wege a svg{width:16px;height:16px;color:var(--akzent-hell);transition:transform .2s ease}
+.lv-v9 .wege a:hover{border-bottom-color:var(--akzent)}
+.lv-v9 .wege a:hover svg{transform:translateX(4px)}
+
+/* ---------- Arbeiten ---------- */
+.lv-v9 .kopfzeile .text{margin-top:var(--s2)}
+.lv-v9 .reihe{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s4) var(--s2);margin-top:var(--s4)}
+.lv-v9 .stueck{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--feld)}
+.lv-v9 .stueck img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.lv-v9 .stueck::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
+  background:radial-gradient(ellipse 70% 60% at 50% 42%, rgba(200,118,63,.16), rgba(200,118,63,0) 70%)}
+.lv-v9 .reihe figcaption{font-size:14px;line-height:20px;color:var(--leise);margin-top:12px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:0 var(--s2)}
+.lv-v9 .reihe figure:first-child{grid-column:1 / -1}
+.lv-v9 .einladung{grid-column:1 / -1;min-height:220px;display:flex;flex-direction:column;justify-content:flex-end;padding:var(--s3);border:1px solid var(--linie-stark);text-decoration:none;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse 90% 70% at 50% 0%, rgba(200,118,63,.22), rgba(200,118,63,0) 70%);transition:border-color .2s ease}
+.lv-v9 .einladung:hover{border-color:var(--akzent)}
+.lv-v9 .e-titel{font-family:var(--serif);font-style:italic;font-weight:500;font-size:34px;line-height:38px}
+.lv-v9 .e-text{margin-top:var(--s1);color:var(--leise);font-size:14px;line-height:20px}
+.lv-v9 .e-los{margin-top:var(--s2);font-size:14px;line-height:20px;font-weight:700;color:var(--akzent-hell);display:inline-flex;align-items:center;gap:var(--s1)}
+.lv-v9 .e-los svg{width:16px;height:16px}
+.lv-v9 .mehr{margin-top:var(--s3)}
+
+/* ---------- Ablauf: das helle Band ---------- */
+.lv-v9 .ablauf{background:var(--creme);color:var(--tinte);margin-top:var(--abschnitt);padding:var(--abschnitt) var(--rand)}
+.lv-v9 .ablauf .a-foto .bild{aspect-ratio:4/5;overflow:hidden}
+.lv-v9 .ablauf .a-foto img{width:100%;height:100%;object-fit:cover}
+.lv-v9 .ablauf figcaption{font-size:14px;line-height:20px;color:var(--tinte-leise);margin-top:12px}
+.lv-v9 .ablauf figcaption b{color:var(--tinte)}
+.lv-v9 .ablauf .a-text{margin-top:var(--s5)}
+.lv-v9 .ablauf .lead{margin-top:var(--s2);color:var(--tinte-leise)}
+.lv-v9 .schritte{margin-top:var(--s4);border-top:1px solid var(--linie-creme)}
+.lv-v9 .schritte li{display:grid;grid-template-columns:56px 1fr;align-items:start;padding:var(--s3) 0;border-bottom:1px solid var(--linie-creme)}
+.lv-v9 .schritte .ziffer{font-family:var(--serif);font-style:italic;font-weight:500;font-size:40px;line-height:32px;color:var(--akzent-tief)}
+.lv-v9 .schritte strong{display:block;font-size:18px;line-height:28px}
+.lv-v9 .schritte span.s-text{display:block;color:var(--tinte-leise);margin-top:4px}
+.lv-v9 .motive{margin-top:var(--s4)}
+.lv-v9 .motive .klein{color:var(--tinte-leise)}
+.lv-v9 .motive ul{display:flex;flex-wrap:wrap;gap:4px 0;margin-top:var(--s1);font-family:var(--serif);font-style:italic;font-size:26px;line-height:34px}
+.lv-v9 .motive li:not(:last-child)::after{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--akzent);margin:0 12px;vertical-align:middle}
+.lv-v9 .ausblick{margin-top:var(--s3);color:var(--tinte-leise);font-size:14px;line-height:20px}
+.lv-v9 .ablauf + .abschnitt{padding-top:var(--abschnitt)}
+
+/* ---------- Aus der Nähe ---------- */
+.lv-v9 .streifen{display:grid;grid-auto-flow:column;grid-auto-columns:78%;gap:var(--s1);margin:var(--s4) calc(-1 * var(--rand)) 0;padding:0 var(--rand);
+  overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 var(--rand);scrollbar-width:none}
+.lv-v9 .streifen::-webkit-scrollbar{display:none}
+.lv-v9 .streifen figure{scroll-snap-align:start;position:relative}
+.lv-v9 .streifen .bild{aspect-ratio:4/5;overflow:hidden;background:var(--feld)}
+.lv-v9 .streifen img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.lv-v9 .streifen figcaption{position:absolute;left:var(--s2);bottom:var(--s2);font-size:14px;line-height:20px;color:var(--text);text-shadow:0 1px 12px rgba(0,0,0,.9)}
+
+/* ---------- Was ist Bleach Art ---------- */
+.lv-v9 .bleach{position:relative}
+.lv-v9 .bleach .b-text{margin-top:var(--s3);font-size:20px;line-height:30px;max-width:34ch}
+.lv-v9 .bleach .b-text b{font-weight:400;color:var(--akzent-hell)}
+
+/* ---------- Fragen ---------- */
+.lv-v9 .fragen dl{margin-top:var(--s4);border-top:1px solid var(--linie)}
+.lv-v9 .fragen dl > div{border-bottom:1px solid var(--linie);padding:var(--s3) 0}
+.lv-v9 .fragen dt{font-weight:700;font-size:17px;line-height:24px}
+.lv-v9 .fragen dd{color:var(--leise);padding-top:var(--s1);max-width:40ch}
+
+/* ---------- Kontakt ---------- */
+.lv-v9 .kontakt{position:relative;isolation:isolate;padding-bottom:var(--abschnitt);text-align:center}
+.lv-v9 .kontakt::before{content:"";position:absolute;z-index:-1;left:-20%;right:-20%;top:0;bottom:-20%;pointer-events:none;
+  background:radial-gradient(ellipse 50% 56% at 50% 72%, rgba(200,118,63,.26), rgba(200,118,63,.08) 50%, rgba(200,118,63,0) 100%)}
+.lv-v9 .kontakt .text{margin:var(--s2) auto 0}
+.lv-v9 .kontakt .knopf{margin-top:var(--s4)}
+.lv-v9 .kontakt .mail{margin-top:var(--s2);color:var(--leise);font-size:14px;line-height:20px}
+.lv-v9 .kontakt .mail a{color:var(--text)}
+
+/* ---------- Fuß ---------- */
+.lv-v9 .fuss{container-type:inline-size;position:relative;background:var(--tief);border-top:1px solid var(--linie);padding:var(--s5) var(--rand) 96px;overflow:hidden}
+.lv-v9 .f-spalten{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5) var(--s3)}
+.lv-v9 .f-spalten > div:first-child,.lv-v9 .f-spalten > div:nth-child(2),.lv-v9 .f-spalten > div:nth-child(5),.lv-v9 .f-spalten > div:nth-child(6){grid-column:1 / -1}
+.lv-v9 .f-spalten p,.lv-v9 .f-spalten li{font-size:14px;line-height:20px;color:var(--leise)}
+.lv-v9 .f-spalten li{min-height:36px;display:flex;align-items:center}
+.lv-v9 .f-spalten li a{display:inline-flex;min-height:44px;align-items:center;text-decoration:none;color:var(--text)}
+.lv-v9 .f-spalten li a:hover{color:var(--akzent-hell)}
+.lv-v9 .f-spalten .f-marke{font-weight:700;letter-spacing:.26em;color:var(--text);font-size:16px;line-height:24px;margin-bottom:var(--s1)}
+.lv-v9 .f-spalten .f-kopf{font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);margin-bottom:var(--s1)}
+.lv-v9 .f-unten{margin-top:var(--s5);padding-top:var(--s2);border-top:1px solid var(--linie);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0 var(--s3);font-size:14px;line-height:20px;color:var(--leise)}
+.lv-v9 .f-unten a{display:inline-flex;min-height:44px;align-items:center;margin-right:var(--s3);color:var(--text);text-decoration:none}
+.lv-v9 .f-unten a:hover{color:var(--akzent-hell)}
+.lv-v9 .f-gross{display:none}
+
+/* ---------- Daumenleiste (nur Handy) ---------- */
+.lv-v9 .leiste{position:sticky;bottom:0;z-index:5;display:grid;grid-template-columns:1fr auto;gap:var(--s1);align-items:center;
+  padding:var(--s1) var(--rand) calc(var(--s1) + env(safe-area-inset-bottom,0px));background:rgba(10,10,10,.92);border-top:1px solid var(--linie);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:opacity .2s ease,visibility .2s;margin-top:-65px}
+.lv-v9 .leiste.weg{opacity:0;visibility:hidden;pointer-events:none}
+.lv-v9 .leiste a{min-height:48px;display:flex;align-items:center;justify-content:center;border-radius:3px;font-weight:700;text-decoration:none}
+.lv-v9 .leiste .l-wa{background:var(--akzent);color:var(--auf-akzent)}
+.lv-v9 .leiste .l-mail{padding:0 var(--s2);color:var(--text);font-weight:400;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--linie-stark)}
+
+/* =====================================================================
+   PC ab 1000 px Seitenbreite. Inhalt 1200, 12 Spalten, Rinne 24, Abschnitt 160
+   Typo PC: H1 86/88 · H2 60/64 · Lead 22/32 · Text 18/28 · Klein 15/22
+   ===================================================================== */
+@media (min-width:1000px){
+  body.lv-v9{--rand:max(48px, calc((100vw - 1200px) / 2));--abschnitt:var(--s9);font-size:18px;line-height:28px}
+  .lv-v9 .raster{display:grid;grid-template-columns:repeat(12, minmax(0, 1fr));column-gap:var(--s3)}
+  .lv-v9 .h1{font-size:86px;line-height:88px;letter-spacing:-.018em}
+  .lv-v9 .h2{font-size:60px;line-height:64px;letter-spacing:-.015em}
+  .lv-v9 .lead{font-size:22px;line-height:32px}
+  .lv-v9 .text{max-width:44ch}
+  .lv-v9 .klein{font-size:15px;line-height:22px}
+  .lv-v9 .knopf{width:auto;display:inline-flex;min-width:272px;min-height:58px;padding:0 var(--s4);font-size:17px}
+
+  .lv-v9 .kopf{position:sticky;top:0;height:72px;display:grid;grid-template-columns:1fr auto 1fr;gap:var(--s4);background:rgba(10,10,10,.78);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--linie)}
+  .lv-v9 .k-nav{display:flex;gap:var(--s5)}
+  .lv-v9 .k-nav a{display:inline-flex;align-items:center;min-height:44px;font-size:15px;line-height:22px;color:var(--leise);text-decoration:none;transition:color .15s ease}
+  .lv-v9 .k-nav a:hover{color:var(--text)}
+  .lv-v9 .k-wa{justify-self:end;padding:0 18px;border:1px solid var(--linie-stark);border-radius:3px;font-size:15px;line-height:22px;transition:border-color .15s ease,background-color .15s ease}
+  .lv-v9 .k-wa span{display:inline;font-weight:400;color:var(--leise)}
+  .lv-v9 .k-wa:hover{border-color:var(--akzent);background:rgba(200,118,63,.08)}
+
+  /* Hero: Text links 6 Spalten, Shirt rechts frei im Licht */
+  .lv-v9 .hero{padding:var(--s4) var(--rand) var(--s6);align-items:center}
+  .lv-v9 .hero-text{grid-column:1 / span 6;grid-row:1;padding:0}
+  .lv-v9 .galerie{grid-column:7 / span 6;grid-row:1;justify-self:end;width:560px}
+  .lv-v9 .galerie::before{left:-34%;right:-34%;top:-14%;bottom:-10%}
+  .lv-v9 .seiten{padding:0;justify-content:center;gap:var(--s4)}
+  .lv-v9 .seiten button{font-size:15px;line-height:22px}
+  .lv-v9 .spur{padding:0;scroll-padding:0}
+  .lv-v9 .feld{aspect-ratio:4/5}
+  .lv-v9 .dia figcaption{font-size:15px;line-height:22px;margin-top:0;min-height:44px;display:flex;align-items:center}
+  .lv-v9 .steuer{right:0;bottom:0}
+  .lv-v9 .pfeil{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid var(--linie);background:none;color:var(--text);cursor:pointer;border-radius:50%;transition:border-color .15s ease,background-color .15s ease}
+  .lv-v9 .pfeil:hover{border-color:var(--akzent);background:rgba(200,118,63,.1)}
+  .lv-v9 .pfeil svg{width:18px;height:18px}
+  .lv-v9 .punkte{margin:0 var(--s2)}
+  .lv-v9 .punkte button{width:32px}
+  .lv-v9 .punkte i{width:24px}
+
+  .lv-v9 .dachzeile{display:flex;align-items:center;gap:var(--s2);font-size:14px;margin-bottom:var(--s3)}
+  .lv-v9 .dachzeile::before{content:"";width:40px;height:1px;background:var(--akzent)}
+  .lv-v9 .hero-text .lead{margin-top:var(--s3);font-size:24px;line-height:32px}
+  .lv-v9 .merkmale{order:0;margin-top:var(--s4);display:grid;grid-template-columns:1fr 1fr;column-gap:var(--s3);border-top:0;max-width:540px}
+  .lv-v9 .merkmale li{padding:14px 0;border-top:1px solid var(--linie);border-bottom:0;font-size:16px;line-height:24px}
+  .lv-v9 .aktion{display:flex;align-items:center;gap:var(--s4);margin-top:var(--s4)}
+  .lv-v9 .aktion .textlink{display:inline-flex}
+  .lv-v9 .h-hinweis{margin-top:var(--s2);font-size:15px;line-height:22px}
+
+  /* Luisa: Porträt links, Text und Kontaktliste rechts */
+  .lv-v9 .luisa{align-items:center;padding-top:var(--s8)}
+  .lv-v9 .luisa .l-foto{grid-column:1 / span 5;grid-row:1;max-width:none}
+  .lv-v9 .luisa .l-foto::after{right:-20px;bottom:-20px}
+  .lv-v9 .luisa .l-text{grid-column:7 / span 6;grid-row:1;margin:0}
+  .lv-v9 .luisa .lead{margin-top:var(--s3);font-size:24px;line-height:34px;max-width:24ch}
+  .lv-v9 .luisa .text{margin-top:var(--s3)}
+  .lv-v9 .wege{margin-top:var(--s5);max-width:520px}
+  .lv-v9 .wege a{grid-template-columns:120px 1fr auto;min-height:64px}
+  .lv-v9 .wege a .w-art{font-size:15px}
+
+  /* Arbeiten: 3 Spalten */
+  .lv-v9 .kopfzeile{align-items:end}
+  .lv-v9 .kopfzeile .h2{grid-column:1 / span 7}
+  .lv-v9 .kopfzeile .text{grid-column:9 / span 4;margin:0 0 6px}
+  .lv-v9 .reihe{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s6) var(--s3);margin-top:var(--s6)}
+  .lv-v9 .reihe figure:hover .stueck img{transform:scale(1.03)}
+  .lv-v9 .reihe figcaption{font-size:15px;line-height:22px;margin-top:var(--s2)}
+  .lv-v9 .reihe figure:first-child{grid-column:auto}
+  .lv-v9 .einladung{grid-column:auto;aspect-ratio:4/5;min-height:0;padding:var(--s4)}
+  .lv-v9 .e-titel{font-size:40px;line-height:42px}
+  .lv-v9 .e-text{font-size:16px;line-height:24px;margin-top:var(--s2);max-width:24ch}
+  .lv-v9 .e-los{font-size:16px;line-height:24px;margin-top:var(--s3)}
+  .lv-v9 .mehr{margin-top:var(--s5)}
+
+  /* Ablauf: Foto links, Schritte 2 x 2 rechts */
+  .lv-v9 .ablauf{padding:var(--s8) var(--rand);display:grid;grid-template-columns:repeat(12, minmax(0, 1fr));column-gap:var(--s3);align-items:start}
+  .lv-v9 .ablauf .a-foto{grid-column:1 / span 5;grid-row:1;position:sticky;top:104px}
+  .lv-v9 .ablauf .a-text{grid-column:7 / span 6;grid-row:1;margin:0}
+  .lv-v9 .ablauf .lead{margin-top:var(--s3)}
+  .lv-v9 .ablauf figcaption{font-size:15px;line-height:22px}
+  .lv-v9 .schritte{display:grid;grid-template-columns:1fr 1fr;column-gap:var(--s4);margin-top:var(--s5);border-top:0}
+  .lv-v9 .schritte li{grid-template-columns:1fr;border-top:1px solid var(--linie-creme);border-bottom:0;padding:var(--s3) 0 var(--s4)}
+  .lv-v9 .schritte .ziffer{font-size:52px;line-height:48px;margin-bottom:var(--s2)}
+  .lv-v9 .schritte strong{font-size:20px;line-height:28px}
+  .lv-v9 .schritte span.s-text{font-size:16px;line-height:24px;margin-top:var(--s1)}
+  .lv-v9 .motive{margin-top:var(--s2);padding-top:var(--s3);border-top:1px solid var(--linie-creme)}
+  .lv-v9 .motive ul{font-size:32px;line-height:42px}
+  .lv-v9 .ausblick{font-size:15px;line-height:22px}
+
+  /* Aus der Nähe: Kopf im Raster, Bilder randlos über die ganze Breite */
+  .lv-v9 .streifen{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);gap:var(--s1);margin:var(--s6) calc(-1 * var(--rand)) 0;padding:0;overflow:hidden}
+  .lv-v9 .streifen figure{overflow:hidden}
+  .lv-v9 .streifen figure:hover img{transform:scale(1.04)}
+  .lv-v9 .streifen figcaption{left:var(--s3);bottom:var(--s3);font-size:15px}
+
+  /* Bleach Art: Frage links, Antwort groß rechts */
+  .lv-v9 .bleach{text-align:center}
+  .lv-v9 .bleach .b-text{margin:var(--s4) auto 0;font-size:28px;line-height:44px;max-width:34em;max-width:min(860px,100%)}
+
+  /* Fragen: Überschrift links (bleibt stehen), Fragen rechts */
+  .lv-v9 .fragen{display:grid;grid-template-columns:repeat(12, minmax(0, 1fr));column-gap:var(--s3);align-items:start}
+  .lv-v9 .fragen .f-links{grid-column:1 / span 5;position:sticky;top:120px}
+  .lv-v9 .fragen .f-links .text{margin-top:var(--s3);max-width:30ch}
+  .lv-v9 .fragen dl{grid-column:7 / span 6;margin:0}
+  .lv-v9 .fragen dl > div{padding:var(--s3) 0 28px}
+  .lv-v9 .fragen dt{font-size:20px;line-height:28px}
+  .lv-v9 .fragen dd{max-width:none;font-size:17px;line-height:26px}
+
+  /* Kontakt */
+  .lv-v9 .kontakt{padding-top:var(--s9);padding-bottom:var(--s9)}
+  .lv-v9 .kontakt .h2{font-size:84px;line-height:86px;max-width:13ch;margin:0 auto}
+  .lv-v9 .kontakt .text{margin-top:var(--s3)}
+  .lv-v9 .kontakt .knopf{margin-top:var(--s5)}
+  .lv-v9 .kontakt .mail{margin-top:var(--s3);font-size:16px;line-height:24px}
+
+  /* Fuß */
+  .lv-v9 .fuss{padding:var(--s7) var(--rand) 0}
+  .lv-v9 .f-spalten{grid-template-columns:1.5fr 1.5fr 1.25fr 1fr 1.4fr 1.3fr;gap:var(--s5) var(--s4)}
+  .lv-v9 .f-spalten > div:first-child,.lv-v9 .f-spalten > div:nth-child(2),.lv-v9 .f-spalten > div:nth-child(5),.lv-v9 .f-spalten > div:nth-child(6){grid-column:auto}
+  .lv-v9 [id]{scroll-margin-top:88px}
+  .lv-v9 .f-spalten > div:first-child p:last-child{max-width:30ch}
+  .lv-v9 .f-spalten p,.lv-v9 .f-spalten li{font-size:15px;line-height:22px}
+  .lv-v9 .f-spalten .f-kopf{font-size:13px;margin-bottom:var(--s2)}
+  .lv-v9 .f-unten{margin-top:var(--s7);font-size:15px}
+  .lv-v9 .f-unten a{margin:0 0 0 var(--s4)}
+  /* große, leise Wortmarke als Abschluss */
+  .lv-v9 .f-gross{display:block;margin:var(--s5) 0 0;padding-bottom:var(--s5);font-weight:700;font-size:calc(100cqw * .215);line-height:1;letter-spacing:.08em;text-indent:.08em;text-align:center;white-space:nowrap;
+    color:transparent;-webkit-text-stroke:1px rgba(242,238,230,.2);user-select:none}
+
+  .lv-v9 .leiste{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}.lv-v9 [data-auf].wartet{opacity:1;transform:none}}

@@ -11,6 +11,18 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 26.11.2026 – Neue Startseite v9 „Bleach Art“ (Zweig `luviq/2026-11-26-startseite-v9`, nicht gepusht)
+
+- **Was:** Die Startseite (`shop1/index.html`, `views/shop.py::startseite`) ist der von Bastian am 26.11.2026 freigegebene Entwurf v9 (Design/luviq/redesign-2026-11-24/v9): Hero-Galerie, „Ich bin Luisa“, Arbeiten, Ablauf, Aus der Nähe, „Was ist Bleach Art?“, acht Fragen, Kontakt. Texte und Bildangaben in `luviq_daten.START_*`, Stil `static/shop1/startseite.css` (nur dort geladen, kein luviq.css), Skript `startseite.js`, Bilder `static/shop1/images/start/` (alle ohne `loading="lazy"`, erstes Hero-Bild `fetchpriority="high"` und per Preload). Kein Preis, kein Formular, Anfrage per WhatsApp oder Mail.
+- **Basis-Vorlage:** `base.html` bekam die Blöcke `seitenkopf`, `seitenfuss`, `seitenleiste` (Startseite hat eigenen Kopf, Fuß, Daumenleiste) und fünf JSON-LD-Blöcke (`org_zusatz_ld`, `org_kontakt_ld`, `service_ld`, `person_ld`, `webpage_zusatz_ld`); ohne Überschreibung bleibt die Ausgabe aller anderen Seiten unverändert.
+- **Schema:** nach `v8/SEO-GEO.md`: Service „Bleach Art auf Kleidung nach Wunschmotiv“ (ohne Preis) ersetzt auf der Startseite den Motivanfrage-Service, Organization mit Telefon, E-Mail und Gebiet, Person „Bleach-Art-Malerin“, `WebPage.about`, FAQPage mit den acht sichtbaren Fragen aus derselben Datenquelle. Der alte ItemList-Knoten entfällt (die Seite zeigt keine Stücke mehr).
+- **Fuß:** behält die Verlinkung aller Unterseiten (Stücke, Motiv anfragen, Luisa, Hilfe, Wissen, Kontakt, Gästebuch, Impressum, Datenschutz, AGB/Widerruf/Cookie-Einstellungen unter den alten Bedingungen).
+- **Warum:** Bastian 26.11.2026 „Passt, bau das genau so ein“. Die Warteliste (Newsletter-Formular) steht auf der Startseite nicht mehr; Anmeldung und Bestätigung (`/newsletter/…`) laufen unverändert.
+- `seiten_stand.py` `home` auf 2026-11-26.
+- **Tests:** Designwache-Referenz nur für `/` neu gesetzt; 38 Tests, die den alten Startseiteninhalt prüften (Hero Engel-Shirt, Stückband, Rabatt-Knopf, Preise, Warteliste), sind mit `@unittest.skip` und Begründung stillgelegt statt gelöscht; der Rest angepasst (Urheberrechts-Fuß, FAQ-Seiten, Titel, Person-Bild, höchstens 2 eager-Bilder nicht für `/`); neu `test_startseite_v9_2026_11_26.py` (11 Tests).
+- **Offen für Bastian:** Die Warteliste (Newsletter-Anmeldung) hat jetzt kein Formular mehr auf der Website (nur die Startseite trug es); `/newsletter/…` läuft weiter. Rabatt-Knopf und Kaufweg-Hero der Startseite entfielen, sie müssen vor dem Verkaufsstart neu entschieden werden.
+
+
 ## 24.11.2026 – Spam-Abwehr schärfen, Angebote freundlich absagen (Zweig `luviq/2026-11-24-spamschutz`, nicht gepusht)
 
 - **Was:** Neue Merkmale in `shop1/spamschutz.py` (Preisfrage-Vorlage, Kauderwelsch, Zahlenmuster, Wegwerf-Adressen). Kontaktformular speichert jetzt **jede** Einsendung (`KontaktAnfrage.einstufung` = anfrage / angebot / spam, Migration 0040); Spamverdacht und Angebote lösen keine Mail an Luisa aus. Neues Modul `shop1/angebote.py` erkennt Dienstleistungs-Angebote und schickt je Adresse höchstens eine Absage in elf Sprachen (30 Tage Pause, Tagesgrenze, nie an Bots). Doppelsperre jetzt auch über die Datenbank (zwei Gunicorn-Prozesse). `pruefe_abwehr` um die neuen Fälle erweitert, `spam_aufraeumen` für Löschfristen.

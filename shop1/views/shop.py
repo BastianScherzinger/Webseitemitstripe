@@ -53,8 +53,6 @@ def startseite(request):
     mit den letzten Beiträgen ist entfallen (Bauplan § 2); ``betreiber_konten``
     bleibt stehen für den Fall, dass es zurückkommt – dann gilt wieder: keine
     Beiträge der Betreiberin als Stimmen anderer (UWG Anh. Nr. 23b/23c)."""
-    produkte_galerie = Produkt.objects.filter(aktiv=True).order_by('nummer', 'erstellt_am')[:10]
-
     # Impressionen für aktive Werbung zählen (nur auf der Startseite). Die
     # Startseite zeigt seit dem Umbau keine Werbung mehr; die Zählung bleibt,
     # weil das pystore-Projekt sie liest.
@@ -76,84 +74,46 @@ def startseite(request):
     except Exception:
         _log.exception('Werbe-Impressionen auf der Startseite konnten nicht gezählt werden')
 
-    hero = dict(luviq_daten.HERO_STUECK)
-    # nummer=None heißt „keine festgelegt“; filter(nummer=None) würde sonst
-    # Stücke ohne Nummer treffen.
-    treffer = (Produkt.objects.filter(aktiv=True, nummer=hero['nummer']).first()
-               if hero['nummer'] is not None else None)
-    if not treffer:
-        for begriff in hero['suche']:
-            treffer = (Produkt.objects.filter(aktiv=True, name__icontains=begriff)
-                       .order_by('nummer').first())
-            if treffer:
-                break
-    # Name und Nummer aus dem Archiv, damit Hero und Karte dasselbe Stück
-    # gleich nennen (EIG134); ohne Treffer bleibt die Beschreibung des Fotos.
-    hero['nummer'] = treffer.archiv_nummer if treffer else ''
-    if treffer:
-        hero['name'] = treffer.name
-    # P5b: Zeile über der H1 nennt den Kurznamen (vor dem Komma); der Hauptknopf führt auf die
-    # Stückseite des Engel-Shirts (Slug aus ENGEL_STUECK), ohne das Stück auf /produkte/.
-    hero['kurzname'] = hero['name'].split(',')[0].strip()
-    engel = Produkt.objects.filter(aktiv=True, slug=luviq_daten.ENGEL_STUECK['slug']).first()
-    hero['url'] = engel.get_absolute_url() if engel else reverse('produkte')
-    hero['bildunterschrift'] = luviq_daten.HERO_BILDUNTERSCHRIFT
-    from .direktkauf import direktkauf_aktiv as _dk
-    hero['kaufbar'] = bool(engel and engel.kaufbar and (_dk() or verkauf.anfrageshop_aktiv()))
-    hero['preis'] = engel.preis if engel else None
+    return render(request, 'shop1/index.html', _start_kontext())
 
-    # Mit Verkauf stehen die verfügbaren Stücke in einem eigenen Abschnitt, das
-    # Archiv zeigt dann nur die vergebenen; ohne Verkauf zeigt das Archiv alles.
-    alle = list(Produkt.objects.filter(aktiv=True).order_by('nummer', 'erstellt_am')
-                .prefetch_related('zusatzbilder'))
-    verfuegbare = [p for p in alle if not p.verkauft][:8]
-    # Redesign 01.11.2026: kaufbare Stücke bekommen die große Kaufkarte, alle anderen die ruhige Karte.
-    from .direktkauf import direktkauf_aktiv as _dk0
-    kaufkarten = [p for p in verfuegbare if p.kaufbar] if _dk0() else []
-    karten_ruhig = [p for p in verfuegbare if p not in kaufkarten]
-    vergebene = [p for p in alle if p.verkauft][:10]
-    # 15.11.2026: Wisch-Band direkt unter dem Hero – offene Stücke zuerst, dann die vergebenen (Archiv).
-    # Der Status kommt aus den Daten (Produkt.status_klasse), nie aus dem Template.
-    band_stuecke = [p for p in alle if not p.verkauft][:8] + vergebene
 
-    echt = []
-    for name, breiten, (breite, hoehe), alt, unterschrift in luviq_daten.ECHT_FOTOS:
-        adressen = {b: static(f'shop1/images/luviq/{name}-{b}.webp') for b in breiten}
-        echt.append({'src': adressen[max(breiten)], 'width': breite, 'height': hoehe, 'alt': alt,
-                     'unterschrift': unterschrift,
-                     'srcset': ', '.join(f'{a} {b}w' for b, a in adressen.items())})
+def _start_bild(name, breite, hoehe, ordner='shop1/images/start/'):
+    """Ein Bild der Startseite v9: Adresse des Originals, ``srcset`` mit den verkleinerten Fassungen
+    (``luviq_daten.START_BREITEN``) und Maße. Alle Fassungen sind nur herunterskaliert."""
+    kleiner = luviq_daten.START_BREITEN.get(name, ())
+    adressen = [(b, static(f'{ordner}{name}-{b}.webp')) for b in sorted(kleiner)]
+    adressen.append((breite, static(f'{ordner}{name}.webp')))
+    return {'src': static(f'{ordner}{name}.webp'), 'width': breite, 'height': hoehe,
+            'srcset': ', '.join(f'{a} {b}w' for b, a in adressen) if kleiner else ''}
 
-    return render(request, 'shop1/index.html', {
+
+def _start_kontext():
+    """Texte und Bilder der Startseite v9 (Daten: ``luviq_daten.START_*``). Kein Preis, kein Formular."""
+    slides = []
+    for name, alt, seite, fett, rest in luviq_daten.START_SLIDES:
+        slides.append({**_start_bild(name, 1040, 1300), 'alt': alt, 'seite': seite, 'fett': fett, 'rest': rest})
+    stuecke = [{**_start_bild(name, 800, 1000), 'alt': alt, 'name': titel, 'art': art}
+               for name, alt, titel, art in luviq_daten.START_STUECKE]
+    band = [{**_start_bild(name, w, h), 'alt': alt, 'unterschrift': unter}
+            for name, w, h, alt, unter in luviq_daten.START_BAND]
+    return {
         'titel': 'Luviq-Shop',
-        'produkte_galerie': produkte_galerie,
-        # P4: das verfügbare Stück steht auch vor dem Verkaufsstart da (ohne Preis, ohne Kaufweg).
-        'verfuegbare': verfuegbare,
-        'kaufkarten': kaufkarten,
-        'karten_ruhig': karten_ruhig,
-        'archiv_liste': vergebene,
-        'band_stuecke': band_stuecke,
-        'band_offen': len([p for p in band_stuecke if not p.verkauft]),
-        'echt_titel': luviq_daten.ECHT_TITEL,
-        'echt_text': luviq_daten.ECHT_TEXT,
-        'echt_fotos': echt,
-        'wege': luviq_daten.WEGE,
-        'vertrauen': luviq_daten.VERTRAUEN,
-        'filme': luviq_daten.FILME,
-        'startfilm': luviq_daten.STARTFILM,
-        'hero': hero,
-        'lead': luviq_daten.LEAD,
-        'markensatz': luviq_daten.MARKENSATZ,
-        'hero_h1': luviq_daten.HERO_H1,
-        'richtungen': luviq_daten.RICHTUNGEN,
-        'ablauf': luviq_daten.ANFRAGE_ABLAUF,
-        'schritte': luviq_daten.SCHRITTE,
-        'dauer': luviq_daten.DAUER,
-        'zitat': luviq_daten.ZITAT,
-        'zitat_quelle': luviq_daten.ZITAT_QUELLE,
-        # Spamschutz der beiden Wartelisten-Formulare (shop1/spamschutz.py).
-        'formzeit': spamschutz.zeitstempel(),
-        'feld_falle': spamschutz.FELD_FALLE,
-    })
+        'start_titel': luviq_daten.START_TITEL,
+        'start_beschreibung': luviq_daten.START_BESCHREIBUNG,
+        'wa': luviq_daten.START_WHATSAPP, 'wa_nr': luviq_daten.START_WHATSAPP_NR,
+        'wa_tel': luviq_daten.START_WHATSAPP_TEL,
+        'mail': luviq_daten.START_MAIL, 'mail_adresse': luviq_daten.START_MAIL_ADRESSE,
+        'ig': luviq_daten.INSTAGRAM, 'ig_name': luviq_daten.INSTAGRAM_NAME,
+        'slides': slides, 'stuecke': stuecke, 'band': band,
+        'ablauf_foto': _start_bild('hero-2-handarbeit', 1026, 1284),
+        'luisa_bild': _start_bild('luisa-4x5', 560, 700),
+        'merkmale': luviq_daten.START_MERKMALE,
+        'schritte': luviq_daten.START_SCHRITTE,
+        'motive': luviq_daten.START_MOTIVE,
+        'fragen': luviq_daten.START_FRAGEN,
+        'bleach': luviq_daten.START_BLEACH,
+        'bleach_text': ''.join(luviq_daten.START_BLEACH),
+    }
 
 
 # offen-ok: der Klick auf eine Anzeige kommt von einem Besucher ohne Konto.

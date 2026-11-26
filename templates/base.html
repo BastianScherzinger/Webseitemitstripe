@@ -79,7 +79,7 @@
             "addressRegion": "{{ anbieterin.region }}",
             "addressCountry": "{{ anbieterin.land }}"
           },
-          "foundingLocation": {"@type": "Place", "name": "{{ herkunft.ort }}, {{ herkunft.region }}"},
+          "foundingLocation": {"@type": "Place", "name": "{{ herkunft.ort }}, {{ herkunft.region }}"},{% block org_zusatz_ld %}{% endblock %}
           "brand": {"@type": "Brand", "@id": "{{ request.scheme }}://{{ request.get_host }}/#brand", "name": "Luviq", "alternateName": "Luviq Universe", "slogan": "Mit Bleiche gemalt. Keins gleicht dem anderen."},
 {% if kaufweg %}
           "areaServed": {"@type": "Country", "name": "Deutschland"},
@@ -87,7 +87,7 @@
           "contactPoint": {
             "@type": "ContactPoint",
             "contactType": "customer service",
-            "availableLanguage": {"@type": "Language", "name": "German"},
+            "availableLanguage": {"@type": "Language", "name": "German"},{% block org_kontakt_ld %}{% endblock %}
             "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'kontakt' %}"
           },
 {% if kaufweg %}
@@ -107,7 +107,7 @@
           "sameAs": [{% for url in profile_urls %}
             "{{ url }}"{% if not forloop.last %},{% endif %}{% endfor %}
           ]
-        },{% if motivanfrage_aktiv %}
+        },{% block service_ld %}{% if motivanfrage_aktiv %}
         {
           {% comment %}GE13 (23.10.2026): die eine Leistung, die es ohne Verkauf gibt, ist die Motivanfrage. Als Service mit provider und areaServed, bewusst ohne offers: es gibt keinen Preis, und eine Preisspanne zu nennen hiesse, einen Verkauf vorzutaeuschen. Mit Verkauf kommt der Preis ueber die Product-Knoten der Stueckseiten.{% endcomment %}
           "@type": "Service",
@@ -122,7 +122,7 @@
             {"@type": "Country", "name": "Deutschland"}
           ],
           "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'motiv_anfragen' %}"
-        },{% endif %}
+        },{% endif %}{% endblock %}
         {
           "@type": "WebSite",
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
@@ -137,9 +137,9 @@
           "@type": "Person",
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa",
           "name": "Luisa Brehler",
-          "jobTitle": "Gründerin & Creative Director",
+          {% block person_ld %}"jobTitle": "Gründerin & Creative Director",
           "worksFor": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"},{% if luisa_foto %}
-          "image": "{{ request.scheme }}://{{ request.get_host }}{{ luisa_foto.original }}",{% endif %}
+          "image": "{{ request.scheme }}://{{ request.get_host }}{{ luisa_foto.original }}",{% endif %}{% endblock %}
           "sameAs": [{% for url in profile_person_urls %}
             "{{ url }}"{% if not forloop.last %},{% endif %}{% endfor %}
           ]
@@ -156,7 +156,7 @@
             "@type": "SpeakableSpecification",
             "xpath": ["/html/head/title", "/html/head/meta[@name='description']/@content"]
           },
-          "isPartOf": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#website"},
+          "isPartOf": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#website"},{% block webpage_zusatz_ld %}{% endblock %}
           "author": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#luisa"},
           "inLanguage": "de-DE"
         }
@@ -281,6 +281,7 @@
 <body class="lv {% if ist_panel == '/shop-admin/' %}lv-admin{% else %}{% block seitenart %}lv-alt{% endblock %}{% endif %}{% if not motivanfrage_aktiv or not seitenname or seitenname in leiste_aus or ist_panel == '/shop-admin/' %} ohne-leiste{% endif %}">
     <a class="lv-sprung" href="#inhalt">Zum Inhalt springen</a>
 
+    {% block seitenkopf %}
     {% comment %}Ankündigungszeile (P2, 29.10.2026) statt des Laufbands: ruhig, ohne Bewegung. Texte aus luviq_daten.hinweis(); der Öffnungssatz kommt wörtlich aus verkauf.oeffnungs_satz().{% endcomment %}
     {% if hinweis %}
     <p class="lv-hinweis">{% for teil in hinweis %}<span>{{ teil }}</span>{% endfor %}</p>
@@ -320,6 +321,7 @@
             </nav>
         </details>
     </header>
+    {% endblock %}
 
     {% if messages %}
     <div class="lv-meldungen">
@@ -337,6 +339,7 @@
         {% block content %}{% endblock %}
     </main>
 
+    {% block seitenfuss %}
     <footer class="lv-fuss">
         <div class="lv-fuss-oben">
             <div class="lv-fuss-marke">
@@ -368,14 +371,15 @@
         </div>
         <p class="lv-recht"><span>© {% now "Y" %} Luviq · angefangen in Alsfeld, heute in Lübeck{% if shop_oeffnet %} · {{ shop_oeffnet }}{% endif %}</span></p>
     </footer>
+    {% endblock %}
 
     {% comment %}Handy-Leiste (P2): Inhalt aus luviq_daten.leiste(), nie auf Rechts-, Konto-, Kasse-, Fehler- und Panel-Seiten (luviq_daten.LEISTE_AUS). Ohne Skript sichtbar; das Skript unten blendet sie nur aus, solange der Hero im Bild ist.{% endcomment %}
-    {% if motivanfrage_aktiv and seitenname and seitenname not in leiste_aus and ist_panel != '/shop-admin/' %}
+    {% block seitenleiste %}{% if motivanfrage_aktiv and seitenname and seitenname not in leiste_aus and ist_panel != '/shop-admin/' %}
     <div class="lv-leiste">
         <p>{{ leiste.satz }}</p>
         <a href="{% url leiste.route %}{{ leiste.anker }}">{{ leiste.knopf }}</a>
     </div>
-    {% endif %}
+    {% endif %}{% endblock %}
 
     <script nonce="{{ csp_nonce }}">
     (function () {

@@ -87,8 +87,9 @@ class BildladenTest(LuviqTestCase):
             with self.subTest(pfad=pfad):
                 bilder = _sammle(self.hole(pfad).content.decode()).bilder
                 sofort = [b for b in bilder if b.get('loading') == 'eager']
+                # Startseite v9 (26.11.2026): Bastian will, dass alle Bilder direkt laden ("die Bilder müssen auch direkt laden").
                 self.assertLessEqual(
-                    len(sofort), 2,
+                    len(sofort), 99 if pfad == '/' else 2,
                     f'{pfad}: {len(sofort)} Bilder mit loading="eager"',
                 )
 
@@ -174,7 +175,7 @@ class BildformatTest(LuviqTestCase):
         adresse = 'https://res.cloudinary.com/demo/image/upload/v1/media/produkte/IMG_1.jpg'
         with mock.patch.object(Produkt.bild.field.storage, 'url', return_value=adresse):
             Produkt.objects.update(bild='produkte/IMG_1.jpg')
-            bilder = _sammle(self.hole('/').content.decode()).bilder
+            bilder = _sammle(self.hole('/produkte/').content.decode()).bilder  # Startseite v9 zeigt keine Produktbilder
         cloudinary = [b['src'] for b in bilder if '/image/upload/' in b.get('src', '')]
         self.assertTrue(cloudinary, 'Die Startseite zeigt kein Produktbild')
         for quelle in cloudinary:
@@ -330,7 +331,7 @@ class BildgroessenTest(LuviqTestCase):
 
     def test_jede_karte_bietet_mehrere_groessen_an(self):
         with self._archiv_mit_bildern():
-            for pfad in ('/produkte/', '/'):
+            for pfad in ('/produkte/',):  # Startseite v9 zeigt keine Karten
                 with self.subTest(pfad=pfad):
                     bilder = _sammle(self.hole(pfad).content.decode()).bilder
                     karten = [b for b in bilder if 'IMG_' in b.get('src', '')]
@@ -344,11 +345,9 @@ class BildgroessenTest(LuviqTestCase):
         """Auf der Startseite ist das Hero-Foto das LCP-Bild, nicht die Karte."""
         with self._archiv_mit_bildern():
             bilder = _sammle(self.hole('/').content.decode()).bilder
-        karten = [b for b in bilder if 'IMG_' in b.get('src', '')]
-        self.assertTrue(karten)
-        for bild in karten:
-            self.assertEqual(bild.get('loading'), 'lazy')
-            self.assertIsNone(bild.get('fetchpriority'))
+        # Startseite v9 (26.11.2026): keine Karten; alle Bilder laden sofort (Bastian), nur das erste trägt Vorrang.
+        self.assertFalse([b for b in bilder if 'IMG_' in b.get('src', '')])
+        self.assertEqual([b.get('fetchpriority') for b in bilder].count('high'), 1)
 
     def test_vorladen_nennt_eine_adresse_als_rueckfall(self):
         """Ein Vorladen ohne ``href`` lesen Prüfwerkzeuge (und Browser ohne
@@ -466,7 +465,7 @@ class KritischesCssTest(LuviqTestCase):
 
     #: Seite → Seitentyp (Datei ``shop1/stile/kritisch-<typ>.html``).
     SEITEN = {
-        '/': 'start',
+        # '/' (Startseite v9, 26.11.2026) lädt startseite.css blockierend statt Critical CSS inline; geprüft in test_startseite_v9.
         '/produkte/': 'archiv',
         '/ueber_uns/': 'luisa',
         '/motiv-anfragen/': 'anfrage',
@@ -524,7 +523,6 @@ class KritischesCssTest(LuviqTestCase):
                     r'<link rel="stylesheet" href="[^"]*luviq[^"]*\.css" media="print" data-schrift-nachladen>')
                 self.assertRegex(
                     kopf, r'<noscript><link rel="stylesheet" href="[^"]*luviq[^"]*\.css"></noscript>')
-        self.assertIn('.lv-hero{', self.hole('/').content.decode())
         self.assertNotIn('.lv-hero{', self.hole('/produkte/').content.decode().split('</head>')[0])
         self.assertIn('.lv-fuss{', self.hole('/motiv-anfragen/danke/').content.decode())
 

@@ -209,7 +209,8 @@ class LuisaFotoTest(LuviqTestCase):
     def test_person_schema_hat_ein_bild(self):
         knoten = _knoten(self.hole('/').content.decode())
         person = next(k for k in knoten if k.get('@id', '').endswith('/#luisa') and k.get('sameAs'))
-        self.assertIn('luisa-brustbild-570', person['image'])
+        # Startseite v9 (26.11.2026): das Porträt der Seite (luisa-4x5) statt des Brustbilds.
+        self.assertTrue('luisa-brustbild-570' in person['image'] or 'luisa-4x5' in person['image'], person['image'])
 
     def test_bild_sitemap_kennt_das_foto(self):
         sitemap = self.hole('/sitemap.xml').content.decode()

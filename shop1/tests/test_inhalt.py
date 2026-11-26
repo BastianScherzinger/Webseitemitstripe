@@ -11,6 +11,7 @@ messen am ausgelieferten HTML, und ``MINDESTWOERTER`` hält den erreichten
 Stand fest, damit er nicht still wieder abschmilzt.
 """
 
+import unittest
 import re
 from html.parser import HTMLParser
 
@@ -382,7 +383,9 @@ class AntwortZuerstTest(LuviqTestCase):
         Schritt 24), und ihre Unterzeile ist eine Bereichsbezeichnung über
         dem vorgeschriebenen Aufbau."""
         rechtstexte = {'/datenschutz/', '/agb/'}
-        for pfad in [p for p in INHALTSSEITEN if p not in rechtstexte]:
+        # Startseite v9 (26.11.2026): Bastians freigegebener Entwurf beginnt mit dem Satz „Sag mir, was du willst, ich mal's dir.“;
+        # die sachliche Antwort steht im Abschnitt „Was ist Bleach Art?“ und in den acht Fragen (test_startseite_v9).
+        for pfad in [p for p in INHALTSSEITEN if p not in rechtstexte and p != '/']:
             with self.subTest(pfad=pfad):
                 absatz = erster_absatz(self.hole(pfad).content.decode())
                 self.assertGreaterEqual(
@@ -630,11 +633,13 @@ class Widersprueche02102026Test(LuviqTestCase):
         self.assertIn('Sag mir, was du willst', text)
 
     # EIG134 -------------------------------------------------------------
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_hero_und_archivkarte_nennen_das_stueck_gleich(self):
         text = self._text('/')
         self.assertIn('Nº 002 · Custom print engel', text)
         self.assertNotIn('Nº 005 · Custom Pants', text)
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_hero_behaelt_seine_nummer_nach_einer_umbenennung(self):
         """Die Nummer hängt an der Archivnummer, nicht am Namen (EIG134)."""
         self.dornen.name = 'Engel Shirt'
@@ -664,7 +669,7 @@ class Widersprueche02102026Test(LuviqTestCase):
 
     def test_nur_luisas_eigene_worte_nennen_textilfarbe_als_spaeter(self):
         """Startseite und Luisa-Seite: Textilfarbe nur als „bald“/„später“."""
-        self.assertIn('bald auch mit Textilfarbe', self._text('/'))
+        self.assertIn('Bald kommt auch Textilfarbe dazu', self._text('/'))  # Startseite v9
         self.assertIn('Später kommen Textilfarben dazu', self._text('/ueber_uns/'))
 
     # EIG12 / EIG128 -----------------------------------------------------

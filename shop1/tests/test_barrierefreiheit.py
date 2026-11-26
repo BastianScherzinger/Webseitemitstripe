@@ -240,6 +240,10 @@ class AlternativtexteTest(LuviqTestCase):
         Namen trägt der Link: Marke und Ziel, nicht nur der Dateizweck."""
         for pfad in INHALTSSEITEN:
             html = self.hole(pfad).content.decode()
+            if pfad == '/':
+                # Startseite v9: die Wortmarke ist Text (LUVIQ) und trägt ihren Namen selbst.
+                self.assertRegex(html, r'<a class="marke" href="/" id="top">LUVIQ</a>')
+                continue
             with self.subTest(pfad=pfad):
                 treffer = re.search(r'<a class="lv-logo"[^>]*aria-label="([^"]+)"[^>]*><img[^>]*alt=""', html)
                 self.assertTrue(treffer, f'{pfad}: Wortmarke ohne aria-label oder mit Alternativtext am Bild')
@@ -384,7 +388,7 @@ class AngemeldeteBedienungTest(LuviqTestCase):
             antwort = self.hole(pfad)
             self.assertEqual(antwort.status_code, 200, f'{pfad} nicht erreichbar')
             erhebung = _erhebe(antwort.content.decode())
-            self.assertTrue(erhebung.felder or pfad not in ('/', '/kontakt/', '/gaestebuch/', '/checkout/'),
+            self.assertTrue(erhebung.felder or pfad not in ('/kontakt/', '/gaestebuch/', '/checkout/'),
                             f'{pfad}: kein einziges Formularfeld gefunden – der Test läuft ins Leere')
             for tag, werte in erhebung.felder:
                 with self.subTest(pfad=pfad, feld=werte.get('name', tag)):

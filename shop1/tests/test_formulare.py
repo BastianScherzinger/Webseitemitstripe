@@ -7,6 +7,7 @@ Verhalten benutzt, wäre langsam, netzabhängig und würde tatsächlich Post
 verschicken.
 """
 
+import unittest
 import json
 from unittest import mock
 
@@ -355,9 +356,7 @@ class DoppeltesAbsendenTest(LuviqTestCase):
         kontakt = self.hole('/kontakt/').content.decode()
         self.assertIn('data-einmal-absenden', kontakt.split('name="formzeit"')[0].rsplit('<form', 1)[1])
         self.assertIn("attr(form, 'data-einmal-absenden')", kontakt)
-        startseite = self.hole('/').content.decode()
-        self.assertIn('knopf.disabled = true;', startseite)
-        self.assertIn("form.setAttribute('aria-busy', 'true');", startseite)
+        # Startseite v9 (26.11.2026): kein Newsletter-Formular mehr auf der Startseite, die Sperre dort entfällt.
 
 
 class KontaktDankeTest(LuviqTestCase):
@@ -445,6 +444,7 @@ class NewsletterTest(LuviqTestCase):
         self.assertIs(erste.json().get('neu'), True)
         self.assertNotIn('neu', zweite.json())
 
+    @unittest.skip('Startseite v9 (26.11.2026): das Warteliste-Formular steht nicht mehr auf der Startseite (Entwurf ohne Formular), Anmeldung bleibt über /newsletter/… erreichbar; offen: Bastian.')
     def test_die_startseite_zaehlt_die_anmeldung_ohne_personendaten(self):
         """Verhindert, dass die Anmeldung wieder unzählbar auf der Seite
         endet (FO08) – und dass das Ereignis die Adresse mitschickt."""

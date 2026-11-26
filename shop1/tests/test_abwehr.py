@@ -8,6 +8,7 @@ Mailversand (EIG10) und die kleinen Strukturkorrekturen (VL17, KV15, FO04).
 Der Mailversand wird in jedem Test ersetzt (siehe ``test_formulare``).
 """
 
+import unittest
 import re
 import time
 from io import StringIO
@@ -163,6 +164,7 @@ class PruefbefehlTest(LuviqTestCase):
 class NewsletterOhneSkriptTest(LuviqTestCase):
     """EIG89/EIG129: ohne JavaScript ging die Adresse per GET in die Adresszeile."""
 
+    @unittest.skip('Startseite v9 (26.11.2026): das Warteliste-Formular steht nicht mehr auf der Startseite (Entwurf ohne Formular), Anmeldung bleibt über /newsletter/… erreichbar; offen: Bastian.')
     def test_das_formular_sendet_per_post_an_die_anmeldung(self):
         html = self.hole('/').content.decode()
         formulare = re.findall(r'<form[^>]*data-newsletter[^>]*>', html)
@@ -173,6 +175,7 @@ class NewsletterOhneSkriptTest(LuviqTestCase):
                 self.assertIn('method="post"', form)
                 self.assertIn('action="/newsletter/subscribe/"', form)
 
+    @unittest.skip('Startseite v9 (26.11.2026): das Warteliste-Formular steht nicht mehr auf der Startseite (Entwurf ohne Formular), Anmeldung bleibt über /newsletter/… erreichbar; offen: Bastian.')
     def test_das_formular_traegt_csrf_falle_und_zeitstempel(self):
         html = self.hole('/').content.decode()
         self.assertEqual(html.count('name="csrfmiddlewaretoken"'), 1)
@@ -229,6 +232,7 @@ class NewsletterOhneSkriptTest(LuviqTestCase):
         self.assertEqual(Subscriber.objects.count(), 1)
         versand.assert_not_called()
 
+    @unittest.skip('Startseite v9 (26.11.2026): das Warteliste-Formular steht nicht mehr auf der Startseite (Entwurf ohne Formular), Anmeldung bleibt über /newsletter/… erreichbar; offen: Bastian.')
     def test_die_startseite_nennt_die_echten_abmeldewege(self):
         """EIG121: die Startseite verspricht nur, was es gibt – den Abmeldelink in
         jeder Newsletter-Mail (``newsletter_abmelden``, ``utils.send_newsletter_email``)
@@ -349,6 +353,7 @@ class UeberschriftenfolgeTest(LuviqTestCase):
                         self.assertLessEqual(ebene, letzte + 1, f'{pfad}: h{letzte} -> h{ebene}')
                     letzte = ebene
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_das_archiv_setzt_die_namen_der_karten_als_h2_die_startseite_als_h3(self):
         erzeuge_produkt('Stueck', vergeben=True)
         archiv = self.hole('/produkte/').content.decode()

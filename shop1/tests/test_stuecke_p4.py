@@ -4,6 +4,7 @@ Prüft: das Band „Verkauft“ (Text im DOM) auf Karte, Startseite und Stückse
 die Galerie (mehrere Bilder, Zähler, Skript mit Nonce, ohne Zusatzbild keine Steuerung); das Anlegen des
 Engel-Shirts per Management-Befehl (idempotent, überschreibt nichts); die Product-Daten mit und ohne Verkauf.
 """
+import unittest
 import json
 import re
 from decimal import Decimal
@@ -37,6 +38,7 @@ class VerkauftBandTest(LuviqTestCase):
         self.assertNotIn('Verkauft', seite)
         self.assertNotIn('lv-verkauft', self.hole(self.neu.get_absolute_url()).content.decode())
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_band_auf_uebersicht_und_startseite(self):
         for pfad in ('/produkte/', '/'):
             html = self.hole(pfad).content.decode()
@@ -44,6 +46,7 @@ class VerkauftBandTest(LuviqTestCase):
             self.assertEqual(html.count('lv-reihestatus vergeben'), 1, pfad)
             self.assertIn('Vergeben', html)
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_verfuegbares_stueck_steht_vor_dem_archiv(self):
         html = self.hole('/').content.decode()
         self.assertIn('id="stuecke"', html)
@@ -213,6 +216,7 @@ class EngelAnlegenTest(LuviqTestCase):
         self.assertEqual(produkt['offers']['priceCurrency'], 'EUR')
         self.assertEqual(produkt['offers']['availability'], 'https://schema.org/InStock')
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_startseite_zeigt_engel_vor_dem_archiv_mit_ansehen_link(self):
         self.anlegen()
         html = self.hole('/').content.decode()

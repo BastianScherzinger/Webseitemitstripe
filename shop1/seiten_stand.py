@@ -29,7 +29,7 @@ SEITEN_STAND = {
     # (home, produkte, ueber_uns, liefergebiet, kontakt, motiv_anfragen, wissen*, agb, datenschutz).
     # 23.10.2026: Sitz Lübeck laut Gewerbeanmeldung, Alsfeld als Herkunft – Titel,
     # Beschreibungen und Texte aller Seiten; deshalb tragen alle dieses Datum.
-    'home':         '2026-11-15',  # Wisch-Band mit echtem Status, kompakter Hero, Startfilm raus
+    'home':         '2026-11-26',  # Startseite v9 Bleach Art (Hero-Galerie, Fragen, Kontakt per WhatsApp)
     'produkte':     '2026-11-15',  # Wisch-Band, Titel/Beschreibung für den Anfrage-Shop
     'gaestebuch':   '2026-11-01',
     'ueber_uns':    '2026-11-15',  # H1 mit Name und Ort;  # Unikat/Serie: keine zweite Auflage nur für Einzelstücke
@@ -67,7 +67,7 @@ SEITEN_STAND = {
 #: keinem Menü; ihr Name ist der Text ihrer ``h1`` (die Übersicht: die
 #: Bereichsbezeichnung „Wissen", die dort als Kicker über der ``h1`` steht).
 SEITEN_NAME = {
-    'home':         'Startseite',
+    'home':         'Bleach Art',
     'produkte':     'Archiv',
     'gaestebuch':   'Gästebuch',
     'ueber_uns':    'Luisa',

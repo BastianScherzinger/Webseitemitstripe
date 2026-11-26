@@ -10,6 +10,7 @@ Prüft:
 - FAQ der Stückseite im Anfrage-Shop (sichtbar und als FAQPage, ohne Zahlungsart);
 - der Datenschutz-Abschnitt 8a gegen die Felder des Formulars.
 """
+import unittest
 import json
 import re
 from decimal import Decimal
@@ -55,6 +56,7 @@ class BandTest(LuviqTestCase):
         self.assertEqual(self.einzeln.band_hinweis, 'Unikat')
         self.assertTrue(self.archiv.band_hinweis.startswith('Archiv'))
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_band_auf_der_startseite_offene_zuerst(self):
         html = self.hole('/').content.decode()
         self.assertIn('class="lv-reihe"', html)
@@ -69,6 +71,7 @@ class BandTest(LuviqTestCase):
         self.assertNotIn('Verkauft', html)
         self.assertNotIn('Jetzt im Shop', html)
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_offene_karte_hat_preis_und_anfrageknopf_vergebene_nicht(self):
         html = self.hole('/').content.decode()
         offen = re.search(r'<li class="lv-reihekarte ist-offen">.*?</li>', html, re.S).group(0)
@@ -78,6 +81,7 @@ class BandTest(LuviqTestCase):
         self.assertNotIn('Stück anfragen', vergeben)
         self.assertNotIn(' €', vergeben)
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_kein_vergeben_ohne_daten(self):
         Produkt.objects.filter(pk__in=[self.archiv.pk, self.leer.pk]).delete()
         html = self.hole('/').content.decode()

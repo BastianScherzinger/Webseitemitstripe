@@ -3,6 +3,7 @@
 Der Kaufweg-Test fängt, was P5 übersah: eine Vorlage oder ein Stück mit kaputtem Bild
 (``bild_statisch`` ohne Datei im Manifest) legte Startseite und Warenkorb mit 500 lahm.
 """
+import unittest
 import os
 from decimal import Decimal
 from unittest import mock
@@ -29,6 +30,7 @@ class HeroSiegerTest(LuviqTestCase):
     def text(self):
         return self.hole('/').content.decode()
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_hero_text_knoepfe_und_ereignisse(self):
         html = self.text()
         self.assertIn('Mit Bleiche gemalt. Keins gleicht dem anderen.', html)
@@ -41,25 +43,30 @@ class HeroSiegerTest(LuviqTestCase):
         self.assertIn(f'href="{self.engel.get_absolute_url()}" data-ereignis="hero_engel"', html)
         self.assertIn('Studiobild (KI) aus dem echten Foto', html)
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_datum_nur_vor_dem_verkaufsstart(self):
         self.assertIn('Nº 006 · Engel-Shirt · ab ', self.text())
         with override_settings(VERKAUF_AKTIV=True):
             kopf = self.text().split('<h1')[0]
             self.assertNotIn('Engel-Shirt · ab', kopf)
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_ohne_engel_stueck_fuehrt_der_knopf_auf_die_uebersicht(self):
         self.engel.delete()
         self.assertIn('href="/produkte/" data-ereignis="hero_engel"', self.text())
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_markensatz_ist_die_ueberschrift_des_anfrageabschnitts(self):
         html = self.text()
         self.assertIn(f'id="anfragen-titel">{luviq_daten.MARKENSATZ}</h2>', html)
         self.assertNotIn(f'id="markensatz">{luviq_daten.MARKENSATZ}', html)
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_echt_text_ehrlich_zum_studiobild(self):
         self.assertIn('Handyfoto vom echten Stück. Das Bild oben ist daraus als Studiobild '
                       'erstellt (KI).', self.text())
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_karte_vor_verkauf_zeigt_groesse_material_und_datum_ohne_preis(self):
         for pfad in ('/', '/produkte/'):
             with self.subTest(pfad=pfad):
@@ -67,6 +74,7 @@ class HeroSiegerTest(LuviqTestCase):
                 self.assertRegex(html, r'Größe M · 100 % Baumwolle · Preis ab \d\d\.\d\d\.')
                 self.assertNotIn('49,90', html)
 
+    @unittest.skip('Startseite v9 (26.11.2026): Hero mit Engel-Shirt, Stückband, Archivkarten, Rabatt-Knopf und Preise stehen nicht mehr auf der Startseite (Bastians Entwurf: kein Preis, keine Stücke).')
     def test_alsfeld_satz(self):
         self.assertIn('angefangen in Alsfeld, heute in Lübeck', self.text())
 
