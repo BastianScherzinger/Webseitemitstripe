@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load static custom_tags %}
 
-{% block title %}{% if anfrage_shop %}Handbemalte Stücke auf Anfrage aus Lübeck | Luviq{% elif shop_sichtbar %}Shop: handbemalte Shirts und Unikate online aus Lübeck | Luviq{% else %}Archiv: handbemalte Unikate aus Lübeck | Luviq{% endif %}{% endblock %}
+{% block title %}{% if anfrage_shop %}Handbemalte Stücke aus Lübeck, bundesweit | Luviq{% elif shop_sichtbar %}Shop: handbemalte Shirts und Unikate online aus Lübeck | Luviq{% else %}Archiv: handbemalte Unikate aus Lübeck | Luviq{% endif %}{% endblock %}
 {% block meta_description %}{% if anfrage_shop %}Handbemalte Stücke von Luviq aus Lübeck: das Engel-Shirt zum Anfragen, frühere Stücke als Referenz. Mit Bleiche von Hand gemalt, Versand deutschlandweit.{% elif shop_sichtbar %}Handbemalte Shirts von Luviq: Unikate und die Engel-Serie, mit Bleiche von Hand gemalt. Versand inklusive, deutschlandweit. Jetzt bestellen.{% else %}Archiv von Luviq aus Lübeck: bisherige handbemalte Unikate als Referenz. Jetzt für den ersten Drop in die Warteliste eintragen.{% endif %}{% endblock %}
-{% block og_title %}Handbemalte Stücke | Luviq Universe Lübeck{% endblock %}
+{% block og_title %}{% if anfrage_shop %}Handbemalte Stücke aus Lübeck, bundesweit | Luviq{% elif shop_sichtbar %}Shop: handbemalte Shirts und Unikate online aus Lübeck | Luviq{% else %}Archiv: handbemalte Unikate aus Lübeck | Luviq{% endif %}{% endblock %}
 {% block og_description %}Handbemalte Stücke aus Lübeck, gebraucht oder neu, immer hochwertig. Von Hand mit Bleiche gemalt, keins gleicht dem anderen. Jetzt bei Luviq Universe entdecken.{% endblock %}
 {% block twitter_title %}{% if shop_sichtbar %}Handbemalte Stücke – Luviq Universe{% else %}Archiv: handbemalte Stücke – Luviq Universe{% endif %}{% endblock %}
 {% block twitter_description %}{% if shop_sichtbar %}Handbemalte Stücke aus Lübeck, gebraucht oder neu, jedes Stück von Hand gemalt, keins gleicht dem anderen.{% else %}Bisherige handbemalte Stücke aus Lübeck als Referenz. Neue Stücke gibt es mit dem ersten Drop.{% endif %}{% endblock %}
@@ -16,7 +16,7 @@
   "@id": "{{ seiten_url }}#breadcrumb",
   "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
-    {"@type": "ListItem", "position": 2, "name": "{{ krume }}", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}"}
+    {"@type": "ListItem", "position": 2, "name": "{{ krume_name }}", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'produkte' %}"}
   ]
 }
 </script>
@@ -72,7 +72,7 @@
 {% block content %}
 {% comment %}P4 (29.10.2026): Verfügbare Unikate zuerst (auch vor dem Verkaufsstart, dann ohne Preis), darunter das Archiv der vergebenen Stücke. Raster 2 Spalten am Handy, 4 am PC; jede Karte auf derselben dunklen Kachel (teile/archiv_karte.html). Der lange Text steht gekürzt sichtbar, der Rest in <details> (bleibt indexierbar).{% endcomment %}
 <div class="lv-seite">
-    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">{{ krume }}</li></ol></nav>
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">{{ krume_name }}</li></ol></nav>
     <section class="lv-abschnitt lv-ohne-linie" aria-labelledby="archiv-titel">
         <div class="lv-abschnittskopf lv-kopf-eins">
             <h1 class="lv-serif" id="archiv-titel">{% if anfrage_shop %}Stücke von Luviq{% elif krume == 'Shop' %}Shop{% else %}Das Archiv{% endif %}</h1>

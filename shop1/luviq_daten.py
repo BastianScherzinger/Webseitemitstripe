@@ -804,7 +804,7 @@ START_MAIL = ('mailto:brehlerluisa@gmail.com?subject=Motiv%20anfragen&body=Hallo
               '%0AMeine%20Idee%3A%20%0AGr%C3%B6%C3%9Fe%3A%20%0A%0AViele%20Gr%C3%BC%C3%9Fe')
 START_TITEL = 'Bleach Art: Shirts & Hoodies bemalen lassen | Luviq Lübeck'
 START_BESCHREIBUNG = ('Luisa malt dein Motiv von Hand mit Bleiche auf Shirts, Hoodies und Pullover. '
-                      'Aus Lübeck, Versand in ganz Deutschland. Kostenlos anfragen.')
+                      'Aus Lübeck, Versand in ganz Deutschland. Kostenlos und ohne Bestellung anfragen.')
 
 #: Hero-Galerie: (Datei ohne .webp, Alt-Text, Seite „vorne“/„ruecken“, Bildunterschrift fett, Rest, Breiten der
 #: verkleinerten Fassungen). Breite/Höhe des Originals: 1040 × 1300.

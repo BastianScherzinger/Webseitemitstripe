@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% comment %}Fehlerfall der Stückanfrage: dieselbe Seite wie die Stückseite im Formularteil, mit der Fehlermeldung. noindex.{% endcomment %}
 {% block title %}{{ produkt.name }} anfragen – Luviq Universe{% endblock %}
+{% block og_title %}{{ produkt.name }} anfragen – Luviq Universe{% endblock %}
 {% block meta_description %}{{ produkt.name }} bei Luviq Universe anfragen.{% endblock %}
 {% block meta_robots %}noindex, follow{% endblock %}
 {% block alte_stile %}{% endblock %}

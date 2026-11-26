@@ -450,6 +450,8 @@ def produkte(request):
         # Erste Karte in der Anzeigereihenfolge = LCP-Bild (Preload in produkte.html).
         'erstes_stueck': (verfuegbare or vergebene or [None])[0],
         'krume': 'Shop' if (verfuegbare or verkauf.shop_sichtbar()) else 'Archiv',
+        # Paket 8 (W16): Name in Brotkrume und BreadcrumbList wie die Navigation („Stücke“), nicht „Shop“
+        'krume_name': 'Stücke' if (verfuegbare or verkauf.shop_sichtbar()) else 'Archiv',
     })
 
 

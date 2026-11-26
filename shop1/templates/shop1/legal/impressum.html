@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Impressum – Luviq Universe | {{ anbieterin.ort }}{% endblock %}
+{% block og_title %}Impressum – Luviq Universe | {{ anbieterin.ort }}{% endblock %}
 {% block meta_description %}Anbieterkennzeichnung von Luviq Universe: {{ anbieterin.name }}, {{ anbieterin.strasse }}, {{ anbieterin.plz }} {{ anbieterin.ort }}. Kontaktdaten, Verantwortliche und rechtliche Hinweise hier nachlesen.{% endblock %}
 {% block meta_robots %}noindex, follow{% endblock %}
 {% block brotkrume_ld %}
@@ -16,30 +17,17 @@
 }
 </script>
 {% endblock %}
-{% block schema_ld %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  {% comment %}Verkaufsschalter wie in base.html: ohne Verkauf keine Geschaeftsbehauptung (LocalBusiness), geo haengt dann am Place unter location.{% endcomment %}
-  "@type": {% if verkauf_aktiv %}"LocalBusiness"{% else %}"Organization"{% endif %},
-  "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
-  "name": "Luviq Universe",
-  {% comment %}legalName einer Einzelunternehmerin ist ihr Name (Gewerbeanmeldung 22.10.2026, luviq_daten.ANBIETERIN). Ohne Verkauf bleibt er weg: die Seite tritt bis dahin nicht als Geschäft auf.{% endcomment %}
-  {% if verkauf_aktiv %}"legalName": "{{ anbieterin.name }}",{% endif %}
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "{{ anbieterin.strasse }}",
-    "addressLocality": "{{ anbieterin.ort }}",
-    "postalCode": "{{ anbieterin.plz }}",
-    "addressRegion": "{{ anbieterin.region }}",
-    "addressCountry": "{{ anbieterin.land }}"
-  },
-  {% comment %}Keine Koordinaten: die Anschrift ist eine Wohnung, kein Laden (23.10.2026). Die früheren Alsfelder Koordinaten stimmen nicht mehr.{% endcomment %}
-  "email": "{{ anbieterin.email }}",
-  "url": "{{ request.scheme }}://{{ request.get_host }}/"
-}
-</script>
-{% endblock %}
+{% comment %}Paket 8 (W1): kein zweiter Unternehmensknoten mehr. Der Organization-Knoten aus base.html (#organization, name „Luviq“, „Luviq Universe“ als alternateName) trägt auf dieser Seite die volle Anschrift des Impressums und die E-Mail; so gibt es je @id einen Knoten. Keine Koordinaten: die Anschrift ist eine Wohnung, kein Laden (23.10.2026). legalName einer Einzelunternehmerin ist ihr Name; ohne Verkauf bleibt er weg.{% endcomment %}
+{% block org_adresse_ld %}{% if verkauf_aktiv %}"legalName": "{{ anbieterin.name }}",{% endif %}
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "{{ anbieterin.strasse }}",
+            "addressLocality": "{{ anbieterin.ort }}",
+            "postalCode": "{{ anbieterin.plz }}",
+            "addressRegion": "{{ anbieterin.region }}",
+            "addressCountry": "{{ anbieterin.land }}"
+          },
+          "email": "{{ anbieterin.email }}",{% endblock %}
 {% block alte_stile %}{% endblock %}
 {% block alpine %}{% endblock %}
 {% block seitenart %}lv-seite{% endblock %}
