@@ -1,0 +1,14 @@
+{# Fuß der v9-Seiten (Startseite: p leer, Unterseiten: p="/"). #}
+    <footer class="fuss">
+      <div class="f-spalten">
+        <div><p class="f-marke">LUVIQ</p><p>Bleach Art auf Shirts, Hoodies und Pullovern, von Hand gemalt von Luisa Brehler.</p></div>
+        <div><p class="f-kopf">Kontakt</p><ul><li><a href="{{ wa }}" data-ereignis="fuss_whatsapp">WhatsApp {{ wa_nr }}</a></li><li><a href="{{ mail }}" data-ereignis="fuss_mail">{{ mail_adresse }}</a></li><li><a href="{{ ig }}" rel="noopener" data-ereignis="fuss_instagram">Instagram {{ ig_name }}</a></li><li><a href="{% url 'kontakt' %}">Kontaktformular</a></li></ul></div>
+        <div><p class="f-kopf">Entdecken</p><ul><li><a href="{{ p }}#arbeiten">Arbeiten</a></li><li><a href="{{ p }}#ablauf">So läuft's</a></li><li><a href="{{ p }}#bleach">Was ist Bleach Art?</a></li><li><a href="{{ p }}#fragen">Fragen</a></li><li><a href="{% url 'ueber_uns' %}">Über Luisa</a></li></ul></div>
+        {% comment %}Die bestehenden Unterseiten bleiben verlinkt (nichts verwaist): die Gruppen kommen aus luviq_daten.fuss() wie im alten Fuß. Nur hier gefiltert: kein Sprung zu #kontakt (steht schon auf der Seite) und kein zweiter Kontakt-Link (steht in der Spalte Kontakt als Kontaktformular).{% endcomment %}
+        {% for titel, wege in fuss_gruppen %}
+        <div><p class="f-kopf">{{ titel }}</p><ul>{% for weg in wege %}{% if weg.route != 'home' and weg.route != 'kontakt' %}<li><a href="{% url weg.route %}{{ weg.anker }}">{% if weg.route == 'wissen_bleach' %}Bleach Painting erklärt{% else %}{{ weg.name }}{% endif %}</a></li>{% endif %}{% endfor %}</ul></div>{% endfor %}
+        <div><p class="f-kopf">Luviq</p><ul><li>Lübeck</li><li>Motive auf Anfrage</li><li>Versand deutschlandweit</li></ul></div>
+      </div>
+      <div class="f-unten"><p>© {% now "Y" %} Luviq, Luisa Brehler{% if shop_oeffnet %} · {{ shop_oeffnet }}{% endif %} · Website: <a href="https://webagentur-scherzinger.com/referenzen/luviq-universe/">Webagentur Scherzinger</a></p><p>{% if widerruf_knopf %}<a class="lv-fuss-widerruf" href="{% url 'vertrag_widerrufen' %}">Vertrag widerrufen</a>{% endif %}<a href="{% url 'impressum' %}">Impressum</a><a href="{% url 'datenschutz' %}">Datenschutz</a>{% if kaufweg %}<a href="{% url 'agb' %}">AGB</a>{% endif %}{% if einwilligung %}<a href="{% url 'datenschutz' %}" data-einwilligung-aendern>Cookie-Einstellungen</a>{% endif %}</p></div>
+      <p class="f-gross" aria-hidden="true">LUVIQ</p>
+    </footer>

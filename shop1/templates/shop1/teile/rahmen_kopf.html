@@ -1,0 +1,4 @@
+{# Kopf der v9-Seiten (Startseite: p leer, Unterseiten: p="/"). #}
+    <header class="kopf"><a class="marke" href="{% url 'home' %}" {% if not p %}id="top"{% endif %}>LUVIQ</a>
+      <nav class="k-nav" aria-label="Seitenbereiche"><a href="{{ p }}#arbeiten">Arbeiten</a><a href="{{ p }}#ablauf">So läuft's</a><a href="{{ p }}#luisa">Über Luisa</a><a href="{{ p }}#fragen">Fragen</a></nav>
+      <a class="k-wa" href="{{ wa }}" data-ereignis="kopf_whatsapp">WhatsApp <span>{{ wa_nr }}</span></a></header>

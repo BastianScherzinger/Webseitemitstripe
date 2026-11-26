@@ -156,7 +156,7 @@ MINDESTWOERTER = {
     '/produkte/': 380,
     '/kontakt/': 235,
     # P1 (29.10.2026): „Dein Motiv“ auf die Hälfte gekürzt, PLZ aus dem Fließtext; gemessen 336.
-    '/ueber_uns/': 330,
+    '/ueber_uns/': 300,  # Paket 5 (26.11.2026): Absätze gekürzt (Mittelsatz im Einstieg, zweiter Absatz „Dein Motiv“ nur noch im Kaufweg, Kooperationssatz)
     '/liefergebiet/': 270,
     '/gaestebuch/': 490,
     '/impressum/': 70,
@@ -575,8 +575,10 @@ class AntwortAbsatzUndListenTest(LuviqTestCase):
         Kiel, Hamburg und Flensburg stehen als ein Absatz da, nicht als Liste."""
         html = self.hole('/liefergebiet/').content.decode()
         self.assertNotIn('<ul class="lv-orte"', html)
+        # Paket 5 (26.11.2026): der Abschnitt „Auch nach Kiel, Hamburg, Flensburg?“ entfiel (doppelte Aussage, die Seite
+        # sagt schon oben „Versand nach ganz Deutschland“); die FAQ beantwortet den Laden und die Orte weiter.
         for h2 in ('Versand nach ganz Deutschland', 'Persönliche Übergabe in Lübeck',
-                   'Auch nach Kiel, Hamburg, Flensburg?', 'Angefangen in Alsfeld',
+                   'Angefangen in Alsfeld',
                    'Fragen zu Versand und Übergabe'):
             with self.subTest(h2=h2):
                 self.assertRegex(html, rf'<h2[^>]*>{re.escape(h2)}</h2>')

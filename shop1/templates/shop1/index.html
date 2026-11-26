@@ -69,6 +69,9 @@ darunter und gibt die acht sichtbaren Fragen wortgleich wieder (beide aus luviq_
 
 {% block alte_stile %}{% endblock %}
 {% block seitenart %}lv-seite lv-v9{% endblock %}
+{% block rahmenklasse %}{% endblock %}
+{% block rahmen_css %}{% endblock %}
+{% block rahmen_js %}{% endblock %}
 {% block hauptstil %}<link rel="stylesheet" href="{% static 'shop1/startseite.css' %}">{% endblock %}
 
 {% block preload %}
@@ -79,9 +82,7 @@ darunter und gibt die acht sichtbaren Fragen wortgleich wieder (beide aus luviq_
 {% endblock %}
 
 {% block seitenkopf %}
-    <header class="kopf"><a class="marke" href="{% url 'home' %}" id="top">LUVIQ</a>
-      <nav class="k-nav" aria-label="Seitenbereiche"><a href="#arbeiten">Arbeiten</a><a href="#ablauf">So läuft's</a><a href="#luisa">Über Luisa</a><a href="#fragen">Fragen</a></nav>
-      <a class="k-wa" href="{{ wa }}">WhatsApp <span>{{ wa_nr }}</span></a></header>
+{% include 'shop1/teile/rahmen_kopf.html' with p='' %}
 {% endblock %}
 
 {% block content %}
@@ -106,7 +107,7 @@ darunter und gibt die acht sichtbaren Fragen wortgleich wieder (beide aus luviq_
         <p class="lead">Sag mir, was du willst, ich mal's dir.</p>
         <ul class="merkmale">{% for m in merkmale %}<li data-nr="{{ forloop.counter }}">{{ m }}</li>{% endfor %}</ul>
         <div class="aktion"><a class="knopf" href="{{ wa }}" data-ereignis="hero_whatsapp">Per WhatsApp anfragen<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a><a class="textlink" href="{{ mail }}" data-ereignis="hero_mail">oder per E-Mail</a></div>
-        <p class="h-hinweis">Kostenlos und unverbindlich. WhatsApp <a class="nr" href="{{ wa }}">{{ wa_nr }}</a></p>
+        <p class="h-hinweis">Kostenlos und unverbindlich. WhatsApp <a class="nr" href="{{ wa }}" data-ereignis="hero_nummer">{{ wa_nr }}</a></p>
       </div>
     </section>
 
@@ -117,9 +118,9 @@ darunter und gibt die acht sichtbaren Fragen wortgleich wieder (beide aus luviq_
         <p class="lead">Ich male jedes Stück selbst, mit Pinsel und Bleiche, hier in Lübeck.</p>
         <p class="text">Du sagst mir, in welche Richtung es gehen soll. Ich schick dir ein paar Ideen, wir suchen zusammen eine aus, und dann mal ich sie dir auf ein Shirt, einen Hoodie oder Pullover. Gemalt wird erst, wenn du Ja gesagt hast.</p>
         <div class="wege">
-          <a href="{{ wa }}"><span class="w-art">WhatsApp</span><span class="w-wert">{{ wa_nr }}</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a>
-          <a href="{{ mail }}"><span class="w-art">E-Mail</span><span class="w-wert">{{ mail_adresse }}</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a>
-          <a href="{{ ig }}" rel="noopener"><span class="w-art">Instagram</span><span class="w-wert">{{ ig_name }}</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a>
+          <a href="{{ wa }}" data-ereignis="luisa_whatsapp"><span class="w-art">WhatsApp</span><span class="w-wert">{{ wa_nr }}</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a>
+          <a href="{{ mail }}" data-ereignis="luisa_mail"><span class="w-art">E-Mail</span><span class="w-wert">{{ mail_adresse }}</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a>
+          <a href="{{ ig }}" rel="noopener" data-ereignis="luisa_instagram"><span class="w-art">Instagram</span><span class="w-wert">{{ ig_name }}</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a>
         </div>
       </div>
     </section>
@@ -131,9 +132,9 @@ darunter und gibt die acht sichtbaren Fragen wortgleich wieder (beide aus luviq_
       </div>
       <div class="reihe">{% for s in stuecke %}
         <figure><div class="stueck"><img loading="eager" decoding="async" src="{{ s.src }}" width="{{ s.width }}" height="{{ s.height }}" alt="{{ s.alt }}"></div><figcaption><b>{{ s.name }}</b><span>{{ s.art }}</span></figcaption></figure>{% endfor %}
-        <a class="einladung" href="{{ wa }}" data-auf><p class="e-titel">Dein Motiv fehlt noch.</p><p class="e-text">Erzähl mir deine Idee, ich schick dir Vorschläge.</p><span class="e-los">Per WhatsApp anfragen<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
+        <a class="einladung" href="{{ wa }}" data-auf data-ereignis="galerie_whatsapp"><p class="e-titel">Dein Motiv fehlt noch.</p><p class="e-text">Erzähl mir deine Idee, ich schick dir Vorschläge.</p><span class="e-los">Per WhatsApp anfragen<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
       </div>
-      <a class="textlink mehr" href="{{ ig }}" rel="noopener">Mehr Stücke auf Instagram</a>
+      <a class="textlink mehr" href="{{ ig }}" rel="noopener" data-ereignis="galerie_instagram">Mehr Stücke auf Instagram</a>
     </section>
 
     <section class="ablauf" id="ablauf">
@@ -169,7 +170,7 @@ darunter und gibt die acht sichtbaren Fragen wortgleich wieder (beide aus luviq_
     </section>
 
     <section class="abschnitt fragen" id="fragen">
-      <div class="f-links" data-auf><h2 class="h2">Bevor du schreibst</h2><p class="text">Deine Frage ist nicht dabei? Schreib mir einfach, <a class="nr" href="{{ wa }}">WhatsApp {{ wa_nr }}</a>.</p></div>
+      <div class="f-links" data-auf><h2 class="h2">Bevor du schreibst</h2><p class="text">Deine Frage ist nicht dabei? Schreib mir einfach, <a class="nr" href="{{ wa }}" data-ereignis="fragen_whatsapp">WhatsApp {{ wa_nr }}</a>.</p></div>
       <dl data-auf>{% for frage, antwort in fragen %}
         <div><dt><h3>{{ frage }}</h3></dt><dd>{{ antwort }}{% if forloop.last %} <a class="nr" href="{% url 'wissen_pflege' %}">Mehr zur Pflege im Ratgeber</a>{% endif %}</dd></div>{% endfor %}
       </dl>
@@ -179,31 +180,16 @@ darunter und gibt die acht sichtbaren Fragen wortgleich wieder (beide aus luviq_
       <h2 class="h2">Schreib mir, was du dir vorstellst</h2>
       <p class="text">Kostenlos und unverbindlich. Ich melde mich bei dir.</p>
       <a class="knopf" href="{{ wa }}" data-ereignis="kontakt_whatsapp">Per WhatsApp anfragen<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a>
-      <p class="mail">WhatsApp <a class="textlink" href="{{ wa }}">{{ wa_nr }}</a> oder per Mail an <a class="textlink" href="{{ mail }}">{{ mail_adresse }}</a></p>
+      <p class="mail">WhatsApp <a class="textlink" href="{{ wa }}" data-ereignis="kontakt_nummer">{{ wa_nr }}</a> oder per Mail an <a class="textlink" href="{{ mail }}" data-ereignis="kontakt_mail">{{ mail_adresse }}</a></p>
     </section>
 {% endblock %}
 
 {% block seitenfuss %}
-    <footer class="fuss">
-      <div class="f-spalten">
-        <div><p class="f-marke">LUVIQ</p><p>Bleach Art auf Shirts, Hoodies und Pullovern, von Hand gemalt von Luisa Brehler.</p></div>
-        <div><p class="f-kopf">Kontakt</p><ul><li><a href="{{ wa }}">WhatsApp {{ wa_nr }}</a></li><li><a href="{{ mail }}">{{ mail_adresse }}</a></li><li><a href="{{ ig }}" rel="noopener">Instagram {{ ig_name }}</a></li><li><a href="{% url 'kontakt' %}">Kontaktformular</a></li></ul></div>
-        <div><p class="f-kopf">Entdecken</p><ul><li><a href="#arbeiten">Arbeiten</a></li><li><a href="#ablauf">So läuft's</a></li><li><a href="#bleach">Was ist Bleach Art?</a></li><li><a href="#fragen">Fragen</a></li><li><a href="{% url 'ueber_uns' %}">Über Luisa</a></li></ul></div>
-        {% comment %}Die bestehenden Unterseiten bleiben verlinkt (nichts verwaist): die Gruppen kommen aus luviq_daten.fuss() wie im alten Fuß. Nur hier gefiltert: kein Sprung zu #kontakt (steht schon auf der Seite) und kein zweiter Kontakt-Link (steht in der Spalte Kontakt als Kontaktformular).{% endcomment %}
-        {% for titel, wege in fuss_gruppen %}
-        <div><p class="f-kopf">{{ titel }}</p><ul>{% for weg in wege %}{% if weg.route != 'home' and weg.route != 'kontakt' %}<li><a href="{% url weg.route %}{{ weg.anker }}">{% if weg.route == 'wissen_bleach' %}Bleach Painting erklärt{% else %}{{ weg.name }}{% endif %}</a></li>{% endif %}{% endfor %}</ul></div>{% endfor %}
-        <div><p class="f-kopf">Luviq</p><ul><li>Lübeck</li><li>Motive auf Anfrage</li><li>Versand deutschlandweit</li></ul></div>
-      </div>
-      <div class="f-unten"><p>© {% now "Y" %} Luviq, Luisa Brehler{% if shop_oeffnet %} · {{ shop_oeffnet }}{% endif %} · Website: <a href="https://webagentur-scherzinger.com/referenzen/luviq-universe/">Webagentur Scherzinger</a></p><p>{% if widerruf_knopf %}<a class="lv-fuss-widerruf" href="{% url 'vertrag_widerrufen' %}">Vertrag widerrufen</a>{% endif %}<a href="{% url 'impressum' %}">Impressum</a><a href="{% url 'datenschutz' %}">Datenschutz</a>{% if kaufweg %}<a href="{% url 'agb' %}">AGB</a>{% endif %}{% if einwilligung %}<a href="{% url 'datenschutz' %}" data-einwilligung-aendern>Cookie-Einstellungen</a>{% endif %}</p></div>
-      <p class="f-gross" aria-hidden="true">LUVIQ</p>
-    </footer>
+{% include 'shop1/teile/rahmen_fuss.html' with p='' %}
 {% endblock %}
 
 {% block seitenleiste %}
-    <nav class="leiste" aria-label="Schnellkontakt">
-      <a class="l-wa" href="{{ wa }}" data-ereignis="leiste_whatsapp">Per WhatsApp anfragen</a>
-      <a class="l-mail" href="{{ mail }}" data-ereignis="leiste_mail">E-Mail</a>
-    </nav>
+{% include 'shop1/teile/rahmen_leiste.html' %}
 {% endblock %}
 
 {% block extra_js %}

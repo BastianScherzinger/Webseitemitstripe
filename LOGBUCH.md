@@ -11,6 +11,14 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ---
 
 
+## 26.11.2026 – Unterseiten im v9-Rahmen, Paket 5 (Zweig `luviq/2026-11-26-unterseiten-v9`, nicht gepusht)
+
+- **Was:** Alle öffentlichen Seiten (Produkte, Stückseite, Luisa, Motiv anfragen, Versand, Kontakt, Wissen und Ratgeber, Gästebuch, Rechtsseiten, 404) tragen Kopf, Fuß und Daumenleiste der Startseite v9 (`teile/rahmen_kopf|fuss|leiste.html`, eingebunden über die Blöcke in `base.html`; die Startseite nutzt dieselben Includes mit `p=''`). Stil: neue Datei `rahmen.css` (Auszug aus `startseite.css`, gebaut mit `tools/rahmen_css_bauen.py`, Test hält beide gleich) plus Unterseiten-Schrift (Überschriften in Cormorant Garamond kursiv, Text Schibsted Grotesk, 1200 px Container); `rahmen.js` blendet die Daumenleiste bei Hauptknopf, Formular und Fuß aus. Fünf Kurzseiten (Luisa, Versand, Motiv anfragen, Kontakt, Produkte) mit Antwortsatz, genau einem Hauptknopf „Per WhatsApp anfragen“ und Mail-Link (`teile/rahmen_aktion.html`), Text gekürzt (nur gestrichen). Panel unter /shop-admin/ behält den alten Rahmen.
+- **Messpunkte:** alle WhatsApp-, Mail- und Instagram-Links auf Startseite und im Rahmen tragen `data-ereignis` (Muster `ort_kanal`, wie `hero_whatsapp`); keine neue Verarbeitung, `einwilligung.js` zählt nur nach „Akzeptieren“.
+- **Banner:** ab 1000 px kompakter Kasten unten rechts (Hauptknopf im Hero frei), am Handy etwas flacher (117 statt 123 px, Knöpfe 44 px). WhatsApp-Vorlage endet mit Punkt. Gedankenstriche in /motiv-anfragen/ (Überschrift, Stationen), /kontakt/ (Anschrift), /liefergebiet/ und /produkte/ entfernt.
+- **Warum:** Bastian 26.11.2026 „die ganzen Unterseiten genauso qualitativ“, „kurze, knackige Unterseiten“; Conversion-Prüfung (`v9/einbau/CONVERSION.md`).
+- **Tests:** Designwache für 27 Unterseiten bewusst neu (Startseite unverändert), Tests zu altem Kopf/Fuß/Leiste auf den neuen Rahmen umgestellt; neue Datei `test_unterseiten_v9_2026_11_26.py`.
+
 ## 26.11.2026 – Neue Startseite v9 „Bleach Art“ (Zweig `luviq/2026-11-26-startseite-v9`, nicht gepusht)
 
 - **Was:** Die Startseite (`shop1/index.html`, `views/shop.py::startseite`) ist der von Bastian am 26.11.2026 freigegebene Entwurf v9 (Design/luviq/redesign-2026-11-24/v9): Hero-Galerie, „Ich bin Luisa“, Arbeiten, Ablauf, Aus der Nähe, „Was ist Bleach Art?“, acht Fragen, Kontakt. Texte und Bildangaben in `luviq_daten.START_*`, Stil `static/shop1/startseite.css` (nur dort geladen, kein luviq.css), Skript `startseite.js`, Bilder `static/shop1/images/start/` (alle ohne `loading="lazy"`, erstes Hero-Bild `fetchpriority="high"` und per Preload). Kein Preis, kein Formular, Anfrage per WhatsApp oder Mail.

@@ -276,5 +276,9 @@ def _rahmen():
         'navigation': luviq_daten.navigation(aktiv or anfrage, motiv),
         'fuss_gruppen': luviq_daten.fuss(aktiv or anfrage, motiv),
         'leiste': {'satz': satz, 'knopf': knopf, 'route': route, 'anker': anker},
-        'leiste_aus': sorted(luviq_daten.LEISTE_AUS | ({'produkte'} if anfrage else set())),
+        # Kontaktwege des v9-Rahmens (Kopf, Fuß, Daumenleiste aller öffentlichen Seiten), eine Quelle wie die Startseite.
+        'wa': luviq_daten.START_WHATSAPP, 'wa_nr': luviq_daten.START_WHATSAPP_NR,
+        'mail': luviq_daten.START_MAIL, 'mail_adresse': luviq_daten.START_MAIL_ADRESSE,
+        'ig': luviq_daten.INSTAGRAM, 'ig_name': luviq_daten.INSTAGRAM_NAME,
+        'leiste_aus': sorted(luviq_daten.LEISTE_AUS),
     }

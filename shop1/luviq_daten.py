@@ -795,8 +795,9 @@ LUISA_FOTO = {
 
 START_WHATSAPP_NR = '0176 2490 8402'
 START_WHATSAPP_TEL = '+49 176 24908402'
-START_WHATSAPP = ('https://wa.me/4917624908402?text=Hallo%20Luisa%2C%20ich%20h%C3%A4tte%20gern'
-                  '%20ein%20Motiv%20auf%20%E2%80%A6')
+# Vorbefüllter Text (26.11.2026): endet mit einem Punkt statt auf „…“, damit nichts gelöscht werden muss.
+START_WHATSAPP = ('https://wa.me/4917624908402?text='
+                  'Hallo%20Luisa%2C%20ich%20h%C3%A4tte%20gern%20ein%20Motiv%20auf%20einem%20Shirt%2C%20Hoodie%20oder%20Pullover.')
 START_MAIL_ADRESSE = 'brehlerluisa@gmail.com'
 START_MAIL = ('mailto:brehlerluisa@gmail.com?subject=Motiv%20anfragen&body=Hallo%20Luisa%2C%0A%0Aich'
               '%20h%C3%A4tte%20gern%20ein%20Motiv%20auf%20%28Shirt%2C%20Pullover%20oder%20Hoodie%29%3A%20'

@@ -46,17 +46,19 @@ Kein Preis, keine Zahlung, keine Zusage. Auswahl als echte Radio-Kacheln in
 
 {% block content %}
 <div class="lv-seite">
+    <nav class="lv-brotkrume" aria-label="Brotkrume"><ol><li><a href="{% url 'home' %}">Startseite</a></li><li aria-current="page">Motiv anfragen</li></ol></nav>
     <section class="lv-anfrageseite" aria-labelledby="anfrage-titel">
         <div>
             <p class="lv-nr">Motiv anfragen</p>
-            <h1 class="lv-serif lv-satz" id="anfrage-titel">Sag mir, was du willst — ich mal’s dir.</h1>
+            <h1 class="lv-serif lv-satz" id="anfrage-titel">Sag mir, was du willst, ich mal’s dir.</h1>
             {% if geschlossen %}
             <p class="lv-lead">Gerade nehme ich keine neuen Motivanfragen an. Schreib Luisa einfach per WhatsApp oder E-Mail, sie meldet sich persönlich.</p>
             <p><a class="lv-knopf" href="{% url 'home' %}#kontakt">Schreib Luisa</a></p>
             {% else %}
-            <p class="lv-lead">Beschreib mir kurz, was dir vorschwebt. Ich bin Luisa aus Lübeck, ich schick dir Vorschläge, und wir entscheiden zusammen. Das kostet nichts und ist keine Bestellung. Jedes Stück ist von Hand gemalt, keins gleicht dem anderen. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.</p>
+            <p class="lv-lead">Beschreib mir kurz, was dir vorschwebt. Ich bin Luisa aus Lübeck, ich schick dir Vorschläge, und wir entscheiden zusammen. Das kostet nichts und ist keine Bestellung. Von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv.</p>
+            {% include 'shop1/teile/rahmen_aktion.html' with ereignis='motiv_anfragen' %}
             <ol class="lv-stationen" aria-label="So geht es weiter">
-                {% for titel, beschreibung in stationen %}<li><span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span>{{ titel }} — {{ beschreibung }}</li>{% endfor %}
+                {% for titel, beschreibung in stationen %}<li><span class="lv-nr">{{ forloop.counter|stringformat:"02d" }}</span>{{ titel }}: {{ beschreibung }}</li>{% endfor %}
             </ol>
             {% endif %}
         </div>

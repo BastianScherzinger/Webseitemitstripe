@@ -333,7 +333,8 @@ class FormularResteTest(LuviqTestCase):
     def test_das_logo_auf_dem_gaestebuch_fuehrt_zur_startseite(self):
         html = self.hole('/gaestebuch/').content.decode()
         # P5 (30.10.2026): der Logo-Kasten der Karte ist entfallen; das Logo im Kopf führt zur Startseite.
-        self.assertRegex(html, r'<a class="lv-logo" href="/" aria-label="Luviq, zur Startseite">\s*<img')
+        # Paket 5 (26.11.2026): Textmarke der Startseite statt Bildlogo
+        self.assertRegex(html, r'<a class="marke" href="/" >LUVIQ</a>')
 
 
 class UeberschriftenfolgeTest(LuviqTestCase):

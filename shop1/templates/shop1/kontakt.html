@@ -53,7 +53,7 @@
           "name": "{% if kaufweg %}Zahlungsmethoden?{% elif anfrage_shop %}Wie geht es nach der Anfrage weiter?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if kaufweg %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% elif anfrage_shop %}Luisa Brehler antwortet persönlich per E-Mail und klärt mit dir Größe, Zahlung und Lieferzeit. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
+            "text": "{% if kaufweg %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% elif anfrage_shop %}Luisa Brehler antwortet persönlich per E-Mail und klärt mit dir Größe, Zahlung und Lieferzeit. Den Preis nennt Luisa dir auf Anfrage, bevor etwas gemalt oder verschickt wird.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}"
           }
         }{% if abholung.text %},
         {
@@ -83,15 +83,15 @@
     <section class="lv-kontaktseite" aria-labelledby="kontakt-titel">
         <div class="lv-kontakt-text">
             <h1 class="lv-serif lv-satz" id="kontakt-titel">Kontakt</h1>
-            <p class="lv-lead">Luviq ist {% if kaufweg %}ein reiner Online-Shop{% elif anfrage_shop %}ein kleines Label{% else %}ein Label im Aufbau{% endif %} aus Lübeck. Ein Ladengeschäft gibt es nicht, deshalb auch keine Öffnungszeiten.</p>
             <p class="lv-lead">Luisa Brehler erreichst du über das Formular oder per E-Mail an brehlerluisa@gmail.com; geantwortet wird in der Regel {{ antwort }}{% if motivanfrage_aktiv %}; wer ein eigenes Motiv möchte, fragt es über die <a href="{% url 'motiv_anfragen' %}">Motivanfrage</a> an, von der Anfrage bis zum fertigen Stück dauert es meistens {{ dauer }}, je nach Motiv{% endif %}.</p>
-            <p>Kooperation, Laden, Presse? Schreib mir über das Kontaktformular, gleiche Adresse wie für alles andere.</p>
+            {% include 'shop1/teile/rahmen_aktion.html' with ereignis='kontakt_seite' %}
+            <p class="lv-lead">Luviq ist {% if kaufweg %}ein reiner Online-Shop{% elif anfrage_shop %}ein kleines Label{% else %}ein Label im Aufbau{% endif %} aus Lübeck. Ein Ladengeschäft gibt es nicht, deshalb auch keine Öffnungszeiten.</p>
 
             {% include 'shop1/teile/luisa_foto.html' %}
             <dl class="lv-daten lv-kontaktdaten">
-                <dt>Anschrift</dt><dd>Luviq Universe – {{ anbieterin.name }}<br>{{ anbieterin.strasse }}<br>{{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.land }}</dd>
+                <dt>Anschrift</dt><dd>Luviq Universe, {{ anbieterin.name }}<br>{{ anbieterin.strasse }}<br>{{ anbieterin.plz }} {{ anbieterin.ort }}, {{ anbieterin.land }}</dd>
                 {# Hier stand eine Platzhalter-Telefonnummer. Es gibt keine belegte Nummer im Projekt - auch das Impressum nennt keine -, und eine zu erfinden ist ausgeschlossen. Der Verweis fuehrt auf die Anbieterangaben; sobald eine Nummer vorliegt, wird daraus wieder ein tel:-Link. #}
-                <dt>E-Mail</dt><dd><a href="mailto:brehlerluisa@gmail.com">brehlerluisa@gmail.com</a></dd>
+                <dt>E-Mail</dt><dd><a href="mailto:brehlerluisa@gmail.com" data-ereignis="kontakt_seite_adresse_mail">brehlerluisa@gmail.com</a></dd>
                 <dt>Anbieter</dt><dd><a href="{% url 'impressum' %}">Anbieterangaben im Impressum</a></dd>
                 <dt>Status</dt><dd>Anfragen jederzeit möglich</dd>
             </dl>
@@ -174,7 +174,7 @@
             </div>
             <div>
                 <h3>{% if kaufweg %}Zahlungsmethoden?{% elif anfrage_shop %}Wie geht es nach der Anfrage weiter?{% else %}Wie erfahre ich vom ersten Drop?{% endif %}</h3>
-                <p>{% if kaufweg %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% elif anfrage_shop %}Luisa Brehler antwortet persönlich per E-Mail und klärt mit dir Größe, Zahlung und Lieferzeit. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
+                <p>{% if kaufweg %}Bezahlt wird {% if direktkauf_aktiv %}im Voraus über einen Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung; Rechnung und Zahlungslink kommen innerhalb von {{ rechnung_frist }} per E-Mail{% else %}per PayPal oder Vorab-Überweisung{% endif %}. Die angegebenen Preise sind Endpreise; nach § 19 UStG wird keine Umsatzsteuer berechnet.{% elif anfrage_shop %}Luisa Brehler antwortet persönlich per E-Mail und klärt mit dir Größe, Zahlung und Lieferzeit. Den Preis nennt Luisa dir auf Anfrage, bevor etwas gemalt oder verschickt wird.{% else %}Über die Warteliste auf der Startseite: Eine E-Mail-Adresse genügt, ein Konto ist nicht nötig. Nach der Bestätigung über den Link in der E-Mail bekommst du Bescheid, sobald es losgeht.{% endif %}</p>
             </div>
             {% if abholung.text %}
             <div>

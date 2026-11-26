@@ -29,3 +29,18 @@ body:has(.lv-einwilligung:not([hidden])) .lv-kaufleiste{display:none!important}
 @media (max-width:639px){.lv-einwilligung .lv-einwilligung-mehr{display:none}.lv-einwilligung p.lv-einwilligung-titel+p::after{height:4px}.lv-einwilligung-knopf{min-height:44px}}
 body:has(.lv-einwilligung:not([hidden])){padding-bottom:104px}
 @media (min-width:640px){body:has(.lv-einwilligung:not([hidden])){padding-bottom:130px}}
+
+/* 26.11.2026 (Paket 5, Conversion-Prüfung): Der Hinweis verdeckte am PC den Hauptknopf im Hero.
+   Ab 1000 px ein kompakter Kasten unten rechts (links läge er auf dem Hauptknopf des Heros, gemessen) (Texte, Logik und beide gleich großen Knöpfe unverändert);
+   am Handy bleibt er unten, mit etwas weniger Innenabstand (Knöpfe weiter 44 px hoch). */
+@media (min-width:1000px){
+  .lv-einwilligung{left:auto;right:24px;bottom:24px;width:min(400px,calc(100vw - 48px));border:1px solid var(--lv-linie-2,rgba(242,238,230,.28));padding:16px 18px 18px;font-size:14px;line-height:1.5}
+  .lv-einwilligung p{max-width:none}
+  .lv-einwilligung-knopf{max-width:none}
+  body:has(.lv-einwilligung:not([hidden])){padding-bottom:0}
+}
+@media (max-width:639px){
+  .lv-einwilligung{padding:5px 10px 6px;line-height:1.25}
+  .lv-einwilligung p{margin-bottom:4px}
+  .lv-einwilligung p.lv-einwilligung-titel+p::after{height:3px}
+}

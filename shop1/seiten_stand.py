@@ -34,7 +34,7 @@ SEITEN_STAND = {
     'gaestebuch':   '2026-11-01',
     'ueber_uns':    '2026-11-26',  # H1 mit Name und Ort;  # Unikat/Serie: keine zweite Auflage nur für Einzelstücke
     'liefergebiet': '2026-11-26',  # Versand im Preis, Lieferzeit nennt Luisa
-    'kontakt':      '2026-11-15',  # Beschreibung ohne Verkaufsstart
+    'kontakt':      '2026-11-26',  # Antwortsatz zuerst, Hauptknopf WhatsApp (Paket 5); vorher Beschreibung ohne Verkaufsstart
     'impressum':    '2026-10-30',  # VSBG-Satz (Rechts-Runde 30.10.)
     'datenschutz':  '2026-11-24',  # + Spam/Angebote (24.11.); + Abschnitt 8a Stückanfrage;  # + Rabattcode-Abgleich (01.11.)
     'agb':          '2026-11-04',  # AGB §§ 1–14 + Widerrufsbelehrung (Rechts-Runde 30.10.)

@@ -240,9 +240,9 @@ class AlternativtexteTest(LuviqTestCase):
         Namen trägt der Link: Marke und Ziel, nicht nur der Dateizweck."""
         for pfad in INHALTSSEITEN:
             html = self.hole(pfad).content.decode()
-            if pfad == '/':
-                # Startseite v9: die Wortmarke ist Text (LUVIQ) und trägt ihren Namen selbst.
-                self.assertRegex(html, r'<a class="marke" href="/" id="top">LUVIQ</a>')
+            if True:
+                # Startseite v9 und seit Paket 5 alle öffentlichen Seiten: die Wortmarke ist Text (LUVIQ) und trägt ihren Namen selbst.
+                self.assertRegex(html, r'<a class="marke" href="/"( id="top"| )>LUVIQ</a>')
                 continue
             with self.subTest(pfad=pfad):
                 treffer = re.search(r'<a class="lv-logo"[^>]*aria-label="([^"]+)"[^>]*><img[^>]*alt=""', html)

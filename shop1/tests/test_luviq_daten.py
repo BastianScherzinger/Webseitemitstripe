@@ -209,29 +209,34 @@ class RahmenSeitenTest(LuviqTestCase):
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
                 self.assertNotIn('lv-band', html)
-                # Startseite v9 (26.11.2026) hat keine Ankündigungszeile (der Entwurf kennt sie nicht).
-                self.assertEqual(html.count('class="lv-hinweis"'), 0 if pfad == '/' else 1)
+                # Startseite v9 (26.11.2026) und seit Paket 5 alle öffentlichen Seiten: keine Ankündigungszeile
+                # (der v9-Rahmen kennt sie nicht).
+                self.assertEqual(html.count('class="lv-hinweis"'), 0)
 
     def test_das_logo_im_kopf_hat_masse_und_ist_nicht_vorgeladen_mit_prioritaet(self):
         import re
         html = self.hole('/kontakt/').content.decode()
-        logo = re.search(r'<a class="lv-logo".*?</a>', html, re.S).group(0)
-        for teil in ('width="420"', 'height="180"', 'loading="eager"', 'alt=""', 'luviq-wortmarke-420'):
-            self.assertIn(teil, logo)
-        self.assertNotIn('fetchpriority', logo)
+        # Paket 5 (26.11.2026): der Kopf trägt die Textmarke der Startseite statt des Bildes (kein Bild, keine Maße nötig).
+        self.assertRegex(html, r'<a class="marke" href="/" >LUVIQ</a>')
+        self.assertNotIn('class="lv-logo"', html)
 
     def test_die_leiste_fehlt_auf_rechts_und_kontoseiten(self):
         for pfad in ('/impressum/', '/datenschutz/', '/login/', '/register/'):
             with self.subTest(pfad=pfad):
-                self.assertNotContains(self.hole(pfad), 'class="lv-leiste"')
-        self.assertContains(self.hole('/kontakt/'), 'class="lv-leiste"')
+                self.assertNotContains(self.hole(pfad), '<nav class="leiste"')
+        # Paket 5: die Daumenleiste der Startseite (nav.leiste) ersetzt die alte lv-leiste
+        self.assertContains(self.hole('/kontakt/'), '<nav class="leiste"')
 
     def test_das_menue_nennt_alle_wege(self):
         import re
         html = self.hole('/kontakt/').content.decode()
-        menue = re.search(r'<details class="lv-menue">.*?</details>', html, re.S).group(0)
-        for text in ('Stücke', 'Motiv anfragen', 'Wissen', 'Luisa', 'Kontakt', 'Instagram', 'Anmelden'):
-            self.assertIn(f'>{text}</a>', menue)
+        # Paket 5 (26.11.2026): Kopf mit den Bereichen der Startseite, die übrigen Wege stehen im Fuß (Anmelden gibt es im Anfrage-Shop nicht).
+        kopf = re.search(r'<header class="kopf">.*?</header>', html, re.S).group(0)
+        for text, ziel in (('Arbeiten', '/#arbeiten'), ('Über Luisa', '/#luisa'), ('Fragen', '/#fragen')):
+            self.assertIn(f'href="{ziel}">{text}</a>', kopf)
+        fuss = html[html.index('<footer class="fuss">'):]
+        for text in ('Shop', 'Motiv anfragen', 'Wissen', 'Über Luisa', 'Kontaktformular', 'Instagram'):
+            self.assertIn(text, fuss)
 
 
 class StartseiteP3Test(LuviqTestCase):

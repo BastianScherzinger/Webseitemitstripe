@@ -43,7 +43,7 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
           "name": "Gibt es einen Luviq-Laden in Lübeck oder Alsfeld, mit Öffnungszeiten?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "{% if kaufweg %}Nein. Luviq ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Stück wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% else %}Nein. Luviq ist ein Label mit Sitz in Lübeck. Jedes Stück wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% endif %}{% if abholung.text %} {{ abholung.text }}{% endif %} Luisa erreichst du über das Kontaktformular oder per E-Mail."
+            "text": "{% if kaufweg %}Nein. Luviq ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Stück wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% else %}Nein. Luviq ist ein Label mit Sitz in Lübeck. Jedes Stück wird dort von Luisa Brehler von Hand bemalt, einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% endif %}{% if abholung.text %} {{ abholung.text }}{% endif %} Luisa erreichst du über das Kontaktformular oder per E-Mail."
           }
         },
         {
@@ -97,7 +97,8 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
     <section class="lv-seitenkopf" aria-labelledby="versand-titel">
         <p class="lv-nr">Versand &amp; Abholung</p>
         <h1 class="lv-serif lv-satz" id="versand-titel">Versand nach ganz Deutschland{% if abholung.text %}, Übergabe in Lübeck{% endif %}</h1>
-        <p class="lv-lead">Luviq verschickt handbemalte Stücke nach {{ versand.gebiet }}{% if kaufweg %}, Lieferung innerhalb von {{ lieferfrist }} Werktagen{% endif %}.{% if abholung.text %} In Lübeck ist die persönliche Übergabe nach Absprache möglich.{% endif %} Die ersten Stücke, Nº 001 bis 005, sind noch in Alsfeld entstanden, heute malt Luisa Brehler in Lübeck.</p>
+        <p class="lv-lead">Luviq verschickt handbemalte Stücke nach {{ versand.gebiet }}{% if kaufweg %}, Lieferung innerhalb von {{ lieferfrist }} Werktagen{% endif %}.{% if abholung.text %} In Lübeck ist die persönliche Übergabe nach Absprache möglich.{% endif %}</p>
+        {% include 'shop1/teile/rahmen_aktion.html' with ereignis='liefergebiet' %}
     </section>
 
     <section class="lv-abschnitt" aria-labelledby="versand-ganz-deutschland">
@@ -117,17 +118,10 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
     </section>
     {% endif %}
 
-    <section class="lv-abschnitt" aria-labelledby="versand-norden">
-        <h2 class="lv-serif lv-abschnittstitel" id="versand-norden">Auch nach Kiel, Hamburg, Flensburg?</h2>
-        <div class="lv-prosa">
-            <p>Ja. Für Kiel, Hamburg, Flensburg und jeden anderen Ort in Deutschland gilt dasselbe: Luviq hat keinen Laden, die Stücke kommen per Versand{% if abholung.text %}; in Lübeck selbst geht auch die persönliche Übergabe nach Absprache{% endif %}.</p>
-        </div>
-    </section>
-
     <section class="lv-abschnitt" aria-labelledby="alsfeld">
         <h2 class="lv-serif lv-abschnittstitel" id="alsfeld">Angefangen in Alsfeld</h2>
         <div class="lv-prosa">
-            <p>{{ herkunft_satz }} Ein Laden in Alsfeld ist daraus nicht geworden: Auch nach Alsfeld und ganz Hessen kommt ein Stück per Versand, wie überall in Deutschland. Luisa erzählt auf ihrer Seite, <a href="{% url 'ueber_uns' %}">wie Luviq angefangen hat</a>.</p>
+            <p>{{ herkunft_satz }} Luisa erzählt auf ihrer Seite, <a href="{% url 'ueber_uns' %}">wie Luviq angefangen hat</a>.</p>
         </div>
     </section>
 
@@ -136,7 +130,7 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
         <div class="lv-faq">
             <div>
                 <h3>Gibt es einen Luviq-Laden in Lübeck oder Alsfeld, mit Öffnungszeiten?</h3>
-                <p>{% if kaufweg %}Nein. Luviq ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Stück wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% else %}Nein. Luviq ist ein Label mit Sitz in Lübeck. Jedes Stück wird dort von Luisa Brehler von Hand bemalt – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% endif %}{% if abholung.text %} {{ abholung.text }}{% endif %} Luisa erreichst du über das Kontaktformular oder per E-Mail.</p>
+                <p>{% if kaufweg %}Nein. Luviq ist ein reiner Online-Shop mit Sitz in Lübeck. Jedes Stück wird dort von Luisa Brehler von Hand bemalt, verpackt und versendet – einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% else %}Nein. Luviq ist ein Label mit Sitz in Lübeck. Jedes Stück wird dort von Luisa Brehler von Hand bemalt, einen Laden zum Reinschauen gibt es weder in Lübeck noch in Alsfeld, und damit auch keine Öffnungszeiten.{% endif %}{% if abholung.text %} {{ abholung.text }}{% endif %} Luisa erreichst du über das Kontaktformular oder per E-Mail.</p>
             </div>
             <div>
                 <h3>{% if kaufweg %}Wie schnell kommt eine Bestellung an?{% elif anfrage_shop %}Wie komme ich an ein Stück?{% else %}Kann ich schon bestellen?{% endif %}</h3>
@@ -161,8 +155,5 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
         </div>
     </section>
 
-    <section class="lv-abschnitt lv-abschluss" aria-label="Weiter">
-        <a class="lv-knopf" href="{% url 'produkte' %}">Kollektion entdecken <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-    </section>
 </div>
 {% endblock %}

@@ -77,6 +77,7 @@
         <div class="lv-abschnittskopf lv-kopf-eins">
             <h1 class="lv-serif" id="archiv-titel">{% if anfrage_shop %}Stücke von Luviq{% elif krume == 'Shop' %}Shop{% else %}Das Archiv{% endif %}</h1>
             <p>{% if anfrage_shop %}Luviq Universe ist die Marke von Luisa Brehler aus Lübeck für handbemalte Stücke. {% if verfuegbare_liste|length == 1 %}Zurzeit ist ein Stück offen für deine Anfrage{% elif verfuegbare_liste %}Zurzeit sind {{ verfuegbare_liste|length }} Stücke offen für deine Anfrage{% else %}Zurzeit ist kein Stück offen{% endif %}, daneben stehen frühere Stücke als Referenz.{% elif shop_sichtbar %}Luviq Universe ist die Marke von Luisa Brehler aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig; auf dieser Seite stehen zurzeit {{ verfuegbare_liste|length }} Stück{{ verfuegbare_liste|length|pluralize:"e" }} zum Kauf, darunter die ersten Stücke als Referenz.{% elif verfuegbare_liste %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig; jedes Stück ist von Hand gemalt und keins gleicht dem anderen. Oben steht das neue Stück, darunter die ersten Stücke als Referenz.{% else %}Luviq Universe ist die Modemarke von Luisa Brehler aus Lübeck für handbemalte Stücke, gebraucht oder neu, immer hochwertig; auf dieser Seite stehen zurzeit {{ produkte_liste|length }} Einzelstück{{ produkte_liste|length|pluralize:"e" }} aus dem Archiv – bisherige Arbeiten als Referenz, nicht zu kaufen.{% endif %}</p>
+            {% include 'shop1/teile/rahmen_aktion.html' with ereignis='produkte' %}
         </div>
         {% if not shop_sichtbar and verfuegbare_liste %}<p class="lv-raster-hinweis">{{ shop_oeffnet }} Bis dahin kannst du dich vormerken.</p>{% endif %}
         {% if band_stuecke %}
@@ -94,13 +95,11 @@
     <section class="lv-abschnitt dunkel" aria-labelledby="archiv-text">
         <div class="lv-prosa">
             <h2 class="lv-serif" id="archiv-text">Was ein Luviq-Stück ausmacht</h2>
-            <p>Jedes Stück ist von Hand mit Bleiche gemalt, keins gleicht dem anderen. Luisa Brehler malt das Motiv von Hand mit Pinsel und Bleiche – die Farbe wird aus dem Stoff gezogen, nichts ist aufgedruckt. Wie ein Motiv entsteht, steht <a href="{% url 'ueber_uns' %}#schritte-titel">in den fünf Schritten</a>, wie man ein Stück pflegt <a href="{% url 'wissen_pflege' %}">im Wissensbereich</a>, und Übergabe in Lübeck oder Versand erklärt <a href="{% url 'liefergebiet' %}">Versand &amp; Abholung</a>.</p>
+            <p>Luisa Brehler malt das Motiv von Hand mit Pinsel und Bleiche: Die Farbe wird aus dem Stoff gezogen, nichts ist aufgedruckt. Wie ein Motiv entsteht, steht <a href="{% url 'ueber_uns' %}#schritte-titel">in den fünf Schritten</a>, wie man ein Stück pflegt <a href="{% url 'wissen_pflege' %}">im Wissensbereich</a>, und Übergabe in Lübeck oder Versand erklärt <a href="{% url 'liefergebiet' %}">Versand &amp; Abholung</a>.</p>
             <details class="lv-mehr">
                 <summary>Mehr zum Archiv</summary>
 {% if shop_sichtbar and anfrage_shop %}
-                <p>Jedes Stück entsteht aus einem gebrauchten oder neuen Basisteil, das Luisa Brehler auswählt und von Hand bemalt, mit Pinsel und Bleiche.</p>
                 <p>Stücke werden hier angefragt, nicht gekauft: Auf der Seite des Stücks Name, E-Mail-Adresse und gewünschte Größe angeben und die Anfrage senden. Luisa Brehler antwortet persönlich per E-Mail, und erst dann klärt ihr Zahlung und Lieferung. Eine Anfrage ist keine Bestellung; nichts wird bezahlt oder reserviert. Den Preis nennt Luisa dir auf Anfrage, bevor etwas gemalt oder verschickt wird; nach § 19 UStG wird keine Umsatzsteuer berechnet.</p>
-                <p>So ist diese Übersicht aufgebaut: Die Stücke stehen in der Reihenfolge ihrer Nummer, Nº 001 zuerst; jede Karte nennt den Namen und die Größe und führt auf die Detailseite des Stücks. Erst dort stehen die Beschreibung und das Anfrageformular. Bei Einzelstücken zeigen die Fotos genau das Teil, das verschickt wird. Beim Engel-Shirt (Serie) zeigen sie ein fertiges Shirt der Serie, deins wird danach neu gemalt. Fragen zu Maßen, Material oder Zustand eines einzelnen Stücks beantwortet Luisa Brehler über das <a href="{% url 'kontakt' %}">Kontaktformular</a>.</p>
 {% elif shop_sichtbar and direktkauf_aktiv %}
                 <p>Jedes Stück entsteht aus einem gebrauchten oder neuen Basisteil, das Luisa Brehler auswählt und von Hand bemalt, mit Pinsel und Bleiche.</p>
                 <p>Bestellt wird ohne Konto direkt auf der Seite des Stücks: Name, E-Mail-Adresse und Lieferanschrift angeben (oder die Übergabe in {{ anbieterin.ort }} nach Absprache wählen) und „Zahlungspflichtig bestellen“ wählen. Ein Einzelstück ist dann für dich reserviert, ein Serienstück wie das Engel-Shirt bleibt weiter bestellbar; die Rechnung mit dem Zahlungslink kommt innerhalb von {{ rechnung_frist }} per E-Mail, bezahlt wird im Voraus mit dem Zahlungslink von {{ zahlung.anbieter }} ({{ zahlung.wege_kurz }}) oder per Überweisung innerhalb von {{ reservierung_tage }} Tagen nach Rechnungsdatum. Alle Preise sind Endpreise, der Versand innerhalb Deutschlands ist enthalten, nach § 19 UStG wird keine Umsatzsteuer berechnet. Geliefert wird deutschlandweit innerhalb von {{ lieferfrist }} Werktagen (AGB § 5). Ein verkauftes Einzelstück wird nicht neu aufgelegt; Serienstücke malt Luisa für jede Bestellung neu, mit ca. 3 Werktagen Bearbeitung, die in der Lieferfrist enthalten sind.</p>
@@ -124,7 +123,7 @@
                 <p>Wenn du ein Stück oder ein eigenes Motiv willst, <a href="{% url 'home' %}#kontakt">schreib Luisa</a>. Hintergrund zu Upcycling, Second Hand und Vintage steht im <a href="{% url 'wissen' %}">Wissensbereich</a>.</p>
 {% endif %}
             </details>
-            {% include 'shop1/teile/motivanfrage.html' with frage='Du willst ein eigenes Motiv?' zusatz='– kostet nichts und ist keine Bestellung.' %}
+            {% include 'shop1/teile/motivanfrage.html' with frage='Du willst ein eigenes Motiv?' zusatz='(kostet nichts und ist keine Bestellung).' %}
         </div>
     </section>
 </div>

@@ -268,6 +268,7 @@
     {% endblock %}
     {% comment %}Neue Seiten (lv-seite) setzen den Block mit shop1/teile/stil_kritisch.html: kritisches CSS inline, luviq.css ohne Blockierung.{% endcomment %}
     {% block hauptstil %}<link rel="stylesheet" href="{% static 'shop1/luviq.css' %}">{% endblock %}
+    {% block rahmen_css %}{% if request.path|slice:":12" != '/shop-admin/' %}<link rel="stylesheet" href="{% static 'shop1/rahmen.css' %}">{% endif %}{% endblock %}
 
     {% comment %}Seit 02.10.2026 (PF31, SI09) keine Bibliothek mehr: Alpine.js (Fremdabruf bei einem CDN und 'unsafe-eval' in der CSP) ist durch luviq.js ersetzt - Einblenden beim Scrollen, Antwortfeld im Gästebuch, "Alle auswählen" im Panel. Die Datei liegt auf der eigenen Adresse und läuft nach dem Aufbau der Seite.{% endcomment %}
     <script defer src="{% static 'shop1/luviq.js' %}"></script>
@@ -278,10 +279,12 @@
     {% block extra_css %}{% endblock %}
 </head>
 {% with ist_panel=request.path|slice:":12" seitenname=request.resolver_match.url_name %}
-<body class="lv {% if ist_panel == '/shop-admin/' %}lv-admin{% else %}{% block seitenart %}lv-alt{% endblock %}{% endif %}{% if not motivanfrage_aktiv or not seitenname or seitenname in leiste_aus or ist_panel == '/shop-admin/' %} ohne-leiste{% endif %}">
+<body class="lv {% if ist_panel == '/shop-admin/' %}lv-admin{% else %}{% block seitenart %}lv-alt{% endblock %}{% block rahmenklasse %} lv-rahmen{% endblock %}{% endif %}{% if not motivanfrage_aktiv or not seitenname or seitenname in leiste_aus or ist_panel == '/shop-admin/' %} ohne-leiste{% endif %}">
     <a class="lv-sprung" href="#inhalt">Zum Inhalt springen</a>
 
     {% block seitenkopf %}
+    {% comment %}Seit 26.11.2026 (Paket 5): alle öffentlichen Seiten tragen den Kopf der Startseite v9; der alte Kopf bleibt nur für das Panel unter /shop-admin/.{% endcomment %}
+    {% if ist_panel != '/shop-admin/' %}{% include 'shop1/teile/rahmen_kopf.html' with p='/' %}{% else %}
     {% comment %}Ankündigungszeile (P2, 29.10.2026) statt des Laufbands: ruhig, ohne Bewegung. Texte aus luviq_daten.hinweis(); der Öffnungssatz kommt wörtlich aus verkauf.oeffnungs_satz().{% endcomment %}
     {% if hinweis %}
     <p class="lv-hinweis">{% for teil in hinweis %}<span>{{ teil }}</span>{% endfor %}</p>
@@ -321,6 +324,7 @@
             </nav>
         </details>
     </header>
+    {% endif %}
     {% endblock %}
 
     {% if messages %}
@@ -340,6 +344,7 @@
     </main>
 
     {% block seitenfuss %}
+    {% if ist_panel != '/shop-admin/' %}{% include 'shop1/teile/rahmen_fuss.html' with p='/' %}{% else %}
     <footer class="lv-fuss">
         <div class="lv-fuss-oben">
             <div class="lv-fuss-marke">
@@ -371,14 +376,12 @@
         </div>
         <p class="lv-recht"><span>© {% now "Y" %} Luviq · angefangen in Alsfeld, heute in Lübeck{% if shop_oeffnet %} · {{ shop_oeffnet }}{% endif %}</span></p>
     </footer>
+    {% endif %}
     {% endblock %}
 
     {% comment %}Handy-Leiste (P2): Inhalt aus luviq_daten.leiste(), nie auf Rechts-, Konto-, Kasse-, Fehler- und Panel-Seiten (luviq_daten.LEISTE_AUS). Ohne Skript sichtbar; das Skript unten blendet sie nur aus, solange der Hero im Bild ist.{% endcomment %}
     {% block seitenleiste %}{% if motivanfrage_aktiv and seitenname and seitenname not in leiste_aus and ist_panel != '/shop-admin/' %}
-    <div class="lv-leiste">
-        <p>{{ leiste.satz }}</p>
-        <a href="{% url leiste.route %}{{ leiste.anker }}">{{ leiste.knopf }}</a>
-    </div>
+    {% include 'shop1/teile/rahmen_leiste.html' %}
     {% endif %}{% endblock %}
 
     <script nonce="{{ csp_nonce }}">
@@ -441,6 +444,7 @@
     </script>
     {% comment %}Einwilligungs-Gerüst (29.10.2026): nur mit EINWILLIGUNG_DIENST, sonst kein Element und kein Skript.{% endcomment %}
     {% if einwilligung %}{% include 'shop1/teile/einwilligung.html' %}{% endif %}
+    {% block rahmen_js %}{% if ist_panel != '/shop-admin/' %}<script defer src="{% static 'shop1/rahmen.js' %}"></script>{% endif %}{% endblock %}
     {% block extra_js %}{% endblock %}
 </body>
 {% endwith %}
