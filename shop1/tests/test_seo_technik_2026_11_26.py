@@ -48,7 +48,7 @@ class SeoTechnikTest(LuviqTestCase):
         erwartet = {
             '/produkte/': 'Handbemalte Stücke aus Lübeck, bundesweit | Luviq',
             '/motiv-anfragen/': 'Shirt bemalen lassen: Motiv anfragen, bundesweit | Luviq',
-            '/ueber_uns/': 'Luisa Brehler: Malerin aus Lübeck, bundesweit | Luviq',
+            '/ueber_uns/': 'Luisa Brehler: Malerin hinter Luviq in Lübeck | Luviq',
             '/liefergebiet/': 'Versand in Deutschland, Übergabe in Lübeck | Luviq',
         }
         for pfad, soll in erwartet.items():
