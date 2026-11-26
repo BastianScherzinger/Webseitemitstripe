@@ -64,6 +64,10 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 - **Nicht gelöscht:** Warenkorb, Direktkauf, Rabattcodes, PayPal, Mails, Django-Admin und `/shop-admin/` (Luisa) bleiben im Code. `ANFRAGESHOP=0` bringt den Direktkauf unverändert zurück (für Mollie später).
 - **Warum:** Bastian 14.11.2026: „mollie aber später, aber das ganze admin zeug da muss raus, wir wollen einen einfachen shop mit anfragen wie rümpelwerk erstmal“.
 - **Offen (nicht angefasst, Rechtstexte):** AGB, Widerrufsbelehrung, Datenschutz, Impressum, Versand-/Zahlungssätze in FAQ, Kontakt, Liefergebiet, `llms-full.txt`, Meta-Texte. Liste im Bericht `Bueroerichte6-11-14_LUVIQ-ANFRAGESHOP.md`.
+## 10.11.2026 – Shop-IBAN berichtigt (nur Railway-Variable, kein Code)
+
+- **Was:** Railway `BANK_IBAN` von `DE92 1001 0178 0592 4509 50` auf `DE21 1001 0178 0592 5160 54` (Revolut **Pro**, Prüfziffer geprüft).
+- **Warum:** Die …50 ist Luisas **privates** Revolut-Konto; sie war am 29.10. irrtümlich als Pro-IBAN notiert worden (Eintrag 04.11. unten). Festgestellt von Luisa und Bastian in der Revolut-App. Lexware ebenfalls umgestellt, Details `Buero\luisa\arbeitsplatz\buchhaltung\LIESMICH.md` §9.
 
 ## 08.11.2026 – Unikat/Serie angleichen (Zweig `recht/unikat-serie-2026-11-08`, nicht gepusht)
 
@@ -74,7 +78,7 @@ ein Satz *was*, ein Satz *warum*. Keine Aussage ohne Beleg im Code.
 ## 04.11.2026 abends – Livegang Zahlungslink, Feinschliff, SEO (Merge `da2c351`, gepusht)
 
 - **Was:** Die drei Stränge des Tages (Zahlungslink `6805ccc`, Feinschliff `831060a`, SEO `28dae9c`/`edb8de4`) plus `163dc90`: Archivstücke Nº 001–005 auf Deutsch (Migration 0037, Slugs unverändert, nur wo noch der englische Text stand), Zahlungssatz auf der Stückseite nur noch einmal (Block „So bezahlst du“), „Versand & Abholung“ in voller Breite.
-- **Railway:** `BANK_IBAN` = Revolut Pro von Luisa (`DE92 1001 0178 0592 4509 50`, gegen `Buero\luisa\arbeitsplatz\buchhaltung\LIESMICH.md` geprüft); vorher stand ein altes Konto (`DE05 5185 …`) drin.
+- **Railway:** `BANK_IBAN` = ~~Revolut Pro~~ **privates** Revolut-Konto von Luisa (`DE92 1001 0178 0592 4509 50`, am 10.11. berichtigt, siehe oben; gegen `Buero\luisa\arbeitsplatz\buchhaltung\LIESMICH.md` geprüft); vorher stand ein altes Konto (`DE05 5185 …`) drin.
 - **Prüfung:** 995 Tests grün; live nach ~1 Min.; alle Hauptseiten 200 unter 1 s; Testkauf #15 („TEST Zahlungslink-bitte-ignorieren“, Abholung) → Danke-Seite, Kundenmail „Deine Bestellung #15 ist reserviert – Luviq“ und Kopie „[Luviq] Neue Bestellung“ im Posteingang von Bastian (nicht Spam), Absender Luisas Gmail. Storno von #15 im Shop-Admin macht Luisa.
 - **Warum:** Auftrag Bastian 04.11.: Revolut-Zahlungslinks angeben, sauber bestellen am PC und Handy, Mails „reserviert, Link und Rechnung separat in 1–2 Tagen“, alles auf Deutsch, deutschlandweit gefunden werden.
 
