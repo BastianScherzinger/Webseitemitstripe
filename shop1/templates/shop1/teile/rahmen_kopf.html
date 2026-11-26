@@ -1,4 +1,6 @@
 {# Kopf der v9-Seiten (Startseite: p leer, Unterseiten: p="/"). #}
     <header class="kopf"><a class="marke" href="{% url 'home' %}" {% if not p %}id="top"{% endif %}>LUVIQ</a>
       <nav class="k-nav" aria-label="Seitenbereiche"><a href="{{ p }}#arbeiten">Arbeiten</a><a href="{{ p }}#ablauf">So läuft's</a><a href="{{ p }}#luisa">Über Luisa</a><a href="{{ p }}#fragen">Fragen</a></nav>
-      <a class="k-wa" href="{{ wa }}" data-ereignis="kopf_whatsapp">WhatsApp <span>{{ wa_nr }}</span></a></header>
+      {% comment %}Kaufweg (Paket 6): Warenkorb und Konto/Anmelden im Kopf. Im Anfrage-Shop (heute live) und ohne Verkauf entfällt der ganze Block, die Ausgabe bleibt wie vorher.{% endcomment %}{% if kaufweg %}<div class="k-rechts"><nav class="k-konto" aria-label="Konto">{% if verkauf_aktiv and not direktkauf_aktiv %}<a href="{% url 'warenkorb' %}">Warenkorb{% if cart_count %} ({{ cart_count }}){% endif %}</a>{% endif %}{% if user.is_authenticated %}<a href="{% url 'profil' %}">Konto</a>{% elif not direktkauf_aktiv %}<a href="{% url 'login' %}">Anmelden</a>{% endif %}</nav>
+      <a class="k-wa" href="{{ wa }}" data-ereignis="kopf_whatsapp">WhatsApp <span>{{ wa_nr }}</span></a></div>{% else %}
+      <a class="k-wa" href="{{ wa }}" data-ereignis="kopf_whatsapp">WhatsApp <span>{{ wa_nr }}</span></a>{% endif %}</header>

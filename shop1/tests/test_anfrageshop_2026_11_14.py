@@ -72,9 +72,13 @@ class AnfrageShopTest(LuviqTestCase):
         self.client.force_login(admin)
         # HTML-Kommentare (Entwicklernotizen im Quelltext) zählen nicht als sichtbarer Text.
         html = re.sub(r'<!--.*?-->', '', self.hole('/').content.decode(), flags=re.S)
+        # Paket 6: Konto, Abmelden und Panel stehen für Angemeldete dezent in der unteren Fußzeile (nicht im Kopf, nicht im Menü).
+        oben, unten = html.split('<div class="f-unten">', 1)
         for wort in ('class="lv-konto"', 'lv-menue-klein" href="/profil/', '/shop-admin/dashboard/', '/warenkorb/'):
             with self.subTest(wort=wort):
-                self.assertNotIn(wort, html)
+                self.assertNotIn(wort, oben)
+        self.assertNotIn('/warenkorb/', unten)
+        self.assertIn('/shop-admin/dashboard/', unten)
         self.assertNotIn('Jetzt bestellen', html)
 
     def test_kaufrouten_und_rabattlinks_leiten_um(self):

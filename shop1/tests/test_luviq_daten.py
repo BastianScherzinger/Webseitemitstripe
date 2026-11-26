@@ -228,15 +228,46 @@ class RahmenSeitenTest(LuviqTestCase):
         self.assertContains(self.hole('/kontakt/'), '<nav class="leiste"')
 
     def test_das_menue_nennt_alle_wege(self):
+        """Je Modus: fehlt ein Link, schlägt der Test an (Paket 6; im Paket 5 war er abgeschwächt)."""
         import re
-        html = self.hole('/kontakt/').content.decode()
-        # Paket 5 (26.11.2026): Kopf mit den Bereichen der Startseite, die übrigen Wege stehen im Fuß (Anmelden gibt es im Anfrage-Shop nicht).
-        kopf = re.search(r'<header class="kopf">.*?</header>', html, re.S).group(0)
-        for text, ziel in (('Arbeiten', '/#arbeiten'), ('Über Luisa', '/#luisa'), ('Fragen', '/#fragen')):
-            self.assertIn(f'href="{ziel}">{text}</a>', kopf)
-        fuss = html[html.index('<footer class="fuss">'):]
-        for text in ('Shop', 'Motiv anfragen', 'Wissen', 'Über Luisa', 'Kontaktformular', 'Instagram'):
-            self.assertIn(text, fuss)
+        from ._basis import erzeuge_benutzer
+        bereiche = (('Arbeiten', '/#arbeiten'), ("So läuft's", '/#ablauf'), ('Über Luisa', '/#luisa'), ('Fragen', '/#fragen'))
+        fuss_texte = ('Shop', 'Motiv anfragen', 'Wissen', 'Über Luisa', 'Kontaktformular', 'Instagram')
+
+        def teile(pfad):
+            html = self.hole(pfad).content.decode()
+            return (re.search(r'<header class="kopf">.*?</header>', html, re.S).group(0),
+                    html[html.index('<footer class="fuss">'):html.index('</footer>')])
+
+        modi = (('anfrage', dict(ANFRAGESHOP=True, VERKAUF_AKTIV=False)),
+                ('kaufweg', dict(ANFRAGESHOP=False, VERKAUF_AKTIV=True)))
+        for name, einst in modi:
+            with self.settings(**einst):
+                kopf, fuss = teile('/kontakt/')
+                with self.subTest(modus=name, nutzer='anonym'):
+                    for text, ziel in bereiche:
+                        self.assertIn(f'href="{ziel}">{text}</a>', kopf)
+                    for text in fuss_texte:
+                        self.assertIn(text, fuss)
+                    if name == 'kaufweg':
+                        self.assertIn('href="/warenkorb/">Warenkorb', kopf)
+                        self.assertIn('href="/login/">Anmelden</a>', kopf)
+                    else:
+                        for weg in ('/warenkorb/', '/login/', '/profil/', '/logout/'):
+                            self.assertNotIn(f'href="{weg}', kopf + fuss)
+        self.client.force_login(erzeuge_benutzer('menuekundin'))
+        for name, einst in modi:
+            with self.settings(**einst):
+                kopf, fuss = teile('/kontakt/')
+                with self.subTest(modus=name, nutzer='angemeldet'):
+                    self.assertIn('href="/profil/">Konto</a>', fuss)
+                    self.assertIn('href="/logout/">Abmelden</a>', fuss)
+                    self.assertEqual('href="/profil/">Konto</a>' in kopf, name == 'kaufweg')
+        self.client.force_login(erzeuge_benutzer('menuechefin', is_superuser=True, is_staff=True))
+        for name, einst in modi:
+            with self.settings(**einst):
+                with self.subTest(modus=name, nutzer='personal'):
+                    self.assertRegex(teile('/kontakt/')[1], r'href="/shop-admin/[^"]*">Panel</a>')
 
 
 class StartseiteP3Test(LuviqTestCase):

@@ -139,3 +139,120 @@ class BannerPcTest(LuviqTestCase):
     def test_banner_am_pc_kompakter_kasten_unten_rechts(self):
         css = (STATIC / 'einwilligung.css').read_text(encoding='utf-8')
         self.assertRegex(css, r'@media \(min-width:1000px\)\{\s*\.lv-einwilligung\{left:auto;right:24px;bottom:24px')
+
+
+class FaqLiefergebietTest(LuviqTestCase):
+    """Paket 6: Auch nach Kiel, Hamburg, Flensburg? ist ein FAQ-Eintrag, sichtbar und im Schema gleich."""
+    FRAGE = 'Auch nach Kiel, Hamburg, Flensburg?'
+
+    def test_faq_eintrag_sichtbar_und_im_schema_wortgleich(self):
+        import json
+        html = self.hole('/liefergebiet/').content.decode()
+        bloecke = re.findall(r'<script type="application/ld\+json"[^>]*>(.*?)</script>', html, re.S)
+        antwort_schema = None
+        for b in bloecke:
+            daten = json.loads(b)
+            for knoten in (daten.get('@graph', [daten]) if isinstance(daten, dict) else daten):
+                if knoten.get('@type') == 'FAQPage':
+                    for f in knoten['mainEntity']:
+                        if f['name'] == self.FRAGE:
+                            antwort_schema = f['acceptedAnswer']['text']
+        self.assertTrue(antwort_schema, 'Frage fehlt im FAQPage-Schema')
+        sicht = sichtbarer_text(html)
+        self.assertIn(self.FRAGE, sicht)
+        self.assertIn(antwort_schema, sicht, 'Antwort im Schema weicht vom sichtbaren Text ab')
+        self.assertIn('Kiel, Hamburg, Flensburg', antwort_schema)
+        self.assertNotIn('€', antwort_schema)
+
+    def test_kein_eigener_abschnitt_mit_dieser_ueberschrift(self):
+        html = self.hole('/liefergebiet/').content.decode()
+        self.assertNotRegex(html, r'<h2[^>]*>\s*Auch nach Kiel')
+
+
+class KopfJeModusTest(LuviqTestCase):
+    """Paket 6: Warenkorb, Konto, Anmelden, Abmelden und Panel im Rahmen, je Modus; Live-Zustand unverändert."""
+    SEITEN = ('/', '/kontakt/', '/produkte/')
+
+    def kopf(self, pfad):
+        html = self.hole(pfad).content.decode()
+        return (re.search(r'<header class="kopf">.*?</header>', html, re.S).group(0),
+                html[html.index('<footer class="fuss">'):html.index('</footer>')])
+
+    def test_anfrage_shop_nicht_angemeldet_zeigt_keinen_konto_link(self):
+        with self.settings(ANFRAGESHOP=True, VERKAUF_AKTIV=False):
+            for pfad in self.SEITEN:
+                kopf, fuss = self.kopf(pfad)
+                with self.subTest(pfad=pfad):
+                    for weg in ('/warenkorb/', '/profil/', '/login/', '/logout/', '/shop-admin/'):
+                        self.assertNotIn(f'href="{weg}', kopf + fuss)
+                    self.assertNotIn('k-konto', kopf)
+
+    def test_kaufweg_nicht_angemeldet_hat_warenkorb_und_anmelden_im_kopf(self):
+        with self.settings(ANFRAGESHOP=False, VERKAUF_AKTIV=True):
+            for pfad in self.SEITEN:
+                kopf, fuss = self.kopf(pfad)
+                with self.subTest(pfad=pfad):
+                    self.assertRegex(kopf, r'<a href="/warenkorb/">Warenkorb</a>')
+                    self.assertRegex(kopf, r'<a href="/login/">Anmelden</a>')
+                    self.assertIn('class="k-wa"', kopf)
+                    self.assertNotIn('/logout/', kopf + fuss)
+
+    def test_kaufweg_angemeldet_hat_konto_im_kopf_und_abmelden_im_fuss(self):
+        from ._basis import erzeuge_benutzer
+        self.client.force_login(erzeuge_benutzer('kundin2'))
+        with self.settings(ANFRAGESHOP=False, VERKAUF_AKTIV=True):
+            for pfad in self.SEITEN:
+                kopf, fuss = self.kopf(pfad)
+                with self.subTest(pfad=pfad):
+                    self.assertIn('<a href="/profil/">Konto</a>', kopf)
+                    self.assertNotIn('/login/', kopf)
+                    self.assertIn('href="/logout/">Abmelden</a>', fuss)
+                    self.assertNotIn('shop-admin', fuss)
+
+    def test_anfrage_shop_angemeldet_hat_konto_und_abmelden_nur_im_fuss(self):
+        from ._basis import erzeuge_benutzer
+        self.client.force_login(erzeuge_benutzer('kundin3'))
+        with self.settings(ANFRAGESHOP=True, VERKAUF_AKTIV=False):
+            for pfad in self.SEITEN:
+                kopf, fuss = self.kopf(pfad)
+                with self.subTest(pfad=pfad):
+                    self.assertNotIn('k-konto', kopf)
+                    self.assertIn('href="/profil/">Konto</a>', fuss)
+                    self.assertIn('href="/logout/">Abmelden</a>', fuss)
+
+    def test_personal_sieht_den_panel_link_im_fuss_in_beiden_modi(self):
+        from ._basis import erzeuge_benutzer
+        self.client.force_login(erzeuge_benutzer('chefin', is_superuser=True, is_staff=True))
+        for einst in ({'ANFRAGESHOP': True, 'VERKAUF_AKTIV': False}, {'ANFRAGESHOP': False, 'VERKAUF_AKTIV': True}):
+            with self.settings(**einst):
+                for pfad in self.SEITEN:
+                    kopf, fuss = self.kopf(pfad)
+                    with self.subTest(pfad=pfad, einst=einst):
+                        self.assertRegex(fuss, r'href="/shop-admin/[^"]*">Panel</a>')
+
+    def test_kopf_css_fuer_den_kaufweg_in_beiden_stilen(self):
+        for name in ('startseite.css', 'rahmen.css'):
+            css = (STATIC / name).read_text(encoding='utf-8')
+            self.assertIn('.k-konto a{', css, name)
+            self.assertIn('.k-rechts{', css, name)
+
+
+class StationenUndStueckzahlTest(LuviqTestCase):
+    """Paket 6: Stationenliste 2 x 2 mit fettem Titel, kein doppelter Doppelpunkt; Stückzahl-Feld wie die Textfelder."""
+
+    def test_stationen_ohne_doppelten_doppelpunkt_mit_fettem_titel(self):
+        with self.settings(ANFRAGESHOP=True, VERKAUF_AKTIV=False):
+            html = self.hole('/motiv-anfragen/').content.decode()
+        liste = re.search(r'<ol class="lv-stationen".*?</ol>', html, re.S).group(0)
+        eintraege = re.findall(r'<li>(.*?)</li>', liste, re.S)
+        self.assertEqual(len(eintraege), 4)
+        for e in eintraege:
+            self.assertRegex(e, r'<strong>[^<]+</strong>')
+            self.assertLessEqual(re.sub(r'<[^>]+>', '', e).count(':'), 1)
+        self.assertNotIn(':', re.sub(r'<[^>]+>', '', eintraege[0]))
+
+    def test_css_stationen_zwei_spalten_und_stueckzahl_feld(self):
+        css = (STATIC / 'rahmen.css').read_text(encoding='utf-8')
+        self.assertRegex(css, r'body\.lv-rahmen \.lv-stationen\{display:grid;grid-template-columns:1fr 1fr')
+        self.assertRegex(css, r'body\.lv-rahmen \.lv-stationen li strong\{[^}]*font-weight:700')
+        self.assertRegex(css, r'body\.lv-rahmen \.lv-feld select\{[^}]*min-height:44px[^}]*border:1px solid')

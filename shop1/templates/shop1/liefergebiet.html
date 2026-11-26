@@ -72,6 +72,14 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
         },{% endif %}
         {
           "@type": "Question",
+          "name": "Auch nach Kiel, Hamburg, Flensburg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja. Für Kiel, Hamburg, Flensburg und jeden anderen Ort in Deutschland gilt dasselbe: Luviq hat keinen Laden, die Stücke kommen per Versand{% if abholung.text %}; in Lübeck selbst geht auch die persönliche Übergabe nach Absprache{% endif %}."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Woher kommt Luviq?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -148,6 +156,10 @@ Das FAQ-Schema bleibt an den sichtbaren Fragen und Antworten (test_geo): keine L
                 <p>{{ abholung.text }} Wann und wo, klärst du vorher mit Luisa über das Kontaktformular.</p>
             </div>
             {% endif %}
+            <div>
+                <h3>Auch nach Kiel, Hamburg, Flensburg?</h3>
+                <p>Ja. Für Kiel, Hamburg, Flensburg und jeden anderen Ort in Deutschland gilt dasselbe: Luviq hat keinen Laden, die Stücke kommen per Versand{% if abholung.text %}; in Lübeck selbst geht auch die persönliche Übergabe nach Absprache{% endif %}.</p>
+            </div>
             <div>
                 <h3>Woher kommt Luviq?</h3>
                 <p>{{ herkunft_satz }} Einen Laden in Alsfeld gibt es nicht.</p>

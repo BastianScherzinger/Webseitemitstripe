@@ -65,6 +65,12 @@ body.lv-rahmen{--grund:#0A0A0A;--tief:#070707;--flaeche:#11100F;--text:#F2EEE6;-
   .lv-rahmen .leiste{display:none}
 }
 /* ==== ENDE AUSZUG ==== */
+/* Kaufweg (Paket 6): Warenkorb und Konto im Kopf; im Anfrage-Shop nicht im HTML */
+body.lv-rahmen .k-rechts{display:flex;align-items:center;gap:var(--s2)}
+body.lv-rahmen .k-konto{display:flex;align-items:center;gap:var(--s2)}
+body.lv-rahmen .k-konto a{display:inline-flex;align-items:center;min-height:44px;font-size:13px;line-height:20px;color:var(--leise);text-decoration:none;white-space:nowrap}
+body.lv-rahmen .k-konto a:hover{color:var(--text)}
+@media (min-width:1000px){body.lv-rahmen .k-rechts{justify-self:end;gap:var(--s3)}body.lv-rahmen .k-konto{gap:var(--s3)}body.lv-rahmen .k-konto a{font-size:15px}}
 
 /* ---- Rahmen: Kleinkram, der auf der Startseite aus startseite.css kommt ---- */
 :where(.lv-rahmen) :where(.kopf,.fuss,.leiste) a{color:inherit}
@@ -114,3 +120,11 @@ body.lv-rahmen .lv-reihekarte :is(h2,h3).lv-serif{font-size:28px;line-height:32p
 body.lv-rahmen main h2:not([class]){font-family:var(--serif);font-style:italic;font-weight:500;font-size:30px;line-height:34px;letter-spacing:-.01em;margin:var(--s5) 0 var(--s2)}
 body.lv-rahmen main h3:not([class]){font-size:19px;line-height:26px;font-weight:700;margin:var(--s4) 0 var(--s1)}
 @media (min-width:1000px){body.lv-rahmen main h2:not([class]){font-size:38px;line-height:42px}}
+/* /motiv-anfragen/ (Paket 6): Stationen 2 x 2 auch am PC, Titel fett, Text normal und grau */
+body.lv-rahmen .lv-stationen{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3) var(--s4);list-style:none;padding:0;margin:var(--s4) 0 0}
+body.lv-rahmen .lv-stationen li{flex:none;padding:var(--s2) 0 0;border-top:1px solid var(--linie);font-weight:400;font-size:15px;line-height:24px;color:var(--leise)}
+body.lv-rahmen .lv-stationen li strong{display:block;font-weight:700;font-size:16px;color:var(--text)}
+body.lv-rahmen .lv-stationen .lv-nr{display:block;margin-bottom:6px}
+/* Stückzahl-Auswahl wie die Textfelder daneben (Paket 6) */
+body.lv-rahmen .lv-feld select{width:100%;min-height:44px;background-color:transparent;border:1px solid var(--lv-linie-2);border-radius:0;color:var(--lv-text);font:inherit;font-size:max(16px,calc(var(--u)*1.05));padding:calc(var(--u)*1) calc(var(--u)*1.2);cursor:pointer}
+body.lv-rahmen .lv-feld select option{background:var(--grund);color:var(--text)}

@@ -235,20 +235,18 @@ class AlternativtexteTest(LuviqTestCase):
     )
 
     def test_die_wortmarke_im_kopf_hat_einen_sprechbaren_namen(self):
-        """Seit P2 (29.10.2026) steht im Kopf wieder die Wortmarke als Bild mit
-        Alpha (``alt=""``, ein wiederholter Alternativtext gilt als Schablone). Den
-        Namen trägt der Link: Marke und Ziel, nicht nur der Dateizweck."""
+        """Seit Paket 5 (26.11.2026) steht auf allen öffentlichen Seiten die Textmarke der Startseite v9 im Kopf
+        (vorher ein Bild mit ``alt=""`` und aria-label). Den Namen trägt der Linktext selbst: Marke, nicht nur ein
+        Dateizweck; der Link führt auf die Startseite."""
         for pfad in INHALTSSEITEN:
             html = self.hole(pfad).content.decode()
-            if True:
-                # Startseite v9 und seit Paket 5 alle öffentlichen Seiten: die Wortmarke ist Text (LUVIQ) und trägt ihren Namen selbst.
-                self.assertRegex(html, r'<a class="marke" href="/"( id="top"| )>LUVIQ</a>')
-                continue
             with self.subTest(pfad=pfad):
-                treffer = re.search(r'<a class="lv-logo"[^>]*aria-label="([^"]+)"[^>]*><img[^>]*alt=""', html)
-                self.assertTrue(treffer, f'{pfad}: Wortmarke ohne aria-label oder mit Alternativtext am Bild')
-                self.assertIn('Luviq', treffer.group(1))
-                self.assertIsNone(self._NUR_ZWECK.match(treffer.group(1)))
+                treffer = re.search(r'<a class="marke" href="(/)"[^>]*>(.*?)</a>', html, re.S)
+                self.assertTrue(treffer, f'{pfad}: keine Textmarke im Kopf, die zur Startseite führt')
+                name = re.sub(r'<[^>]+>', '', treffer.group(2)).strip()
+                self.assertTrue(name, f'{pfad}: Wortmarke ohne Namen (Bild ohne Text?)')
+                self.assertIn('luviq', name.lower())
+                self.assertIsNone(self._NUR_ZWECK.match(name))
 
 
 class BedienelementeTest(LuviqTestCase):

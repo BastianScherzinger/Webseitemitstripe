@@ -575,8 +575,9 @@ class AntwortAbsatzUndListenTest(LuviqTestCase):
         Kiel, Hamburg und Flensburg stehen als ein Absatz da, nicht als Liste."""
         html = self.hole('/liefergebiet/').content.decode()
         self.assertNotIn('<ul class="lv-orte"', html)
-        # Paket 5 (26.11.2026): der Abschnitt „Auch nach Kiel, Hamburg, Flensburg?“ entfiel (doppelte Aussage, die Seite
-        # sagt schon oben „Versand nach ganz Deutschland“); die FAQ beantwortet den Laden und die Orte weiter.
+        # Paket 5/6 (26.11.2026): „Auch nach Kiel, Hamburg, Flensburg?“ ist kein eigener Abschnitt mehr, sondern ein
+        # FAQ-Eintrag („Fragen zu Versand und Übergabe“, sichtbar und im FAQPage-Schema gleich); der Test dazu steht in
+        # test_unterseiten_v9_2026_11_26 (FaqLiefergebietTest).
         for h2 in ('Versand nach ganz Deutschland', 'Persönliche Übergabe in Lübeck',
                    'Angefangen in Alsfeld',
                    'Fragen zu Versand und Übergabe'):

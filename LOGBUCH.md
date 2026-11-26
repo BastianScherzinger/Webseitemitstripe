@@ -2977,3 +2977,7 @@ Aufbau berührt.**
 Absenderdomain bestätigen (DKIM-/SPF-Einträge beim Domainanbieter), sonst lehnt
 Brevo auch diese Adresse ab. Ist in Railway `DEFAULT_FROM_EMAIL` gesetzt, gilt
 weiter dieser Wert — dann dort auf eine Adresse von `luviq-alsfeld.com` stellen.
+
+## 26.11.2026 Paket 6 (Unterseiten v9, Nacharbeit)
+
+FAQ „Auch nach Kiel, Hamburg, Flensburg?“ auf /liefergebiet/ (sichtbar und Schema), ehrlicher Wortmarken-Test, Kaufweg-Kopf (Warenkorb, Konto/Anmelden) und Konto/Abmelden/Panel in der unteren Fußzeile (Live-Zustand unverändert), Stationenliste 2 x 2, Stückzahl-Feld wie die Textfelder, zwei Wörter „mit Preis“ in Upcycling und /wissen/ entfernt, tote elif-Zweige in ueber_uns.html. Designwache: 5 Seiten erneuert, `/` unverändert.
