@@ -34,7 +34,7 @@ Plan und Belege: `Analysen\luviq-2026-10-29\` (MASTERPLAN, NACHTPLAN-2, KUNDENPA
 ## Runde 3 30.10.2026: Engel-Galerie, Foto von Luisa (Zweig `bau/2026-10-30-luviq-runde3`, nicht gepusht)
 
 - **Engel-Galerie:** Rücken KI (Studiobild, Hauptbild) → Rücken echt → *(Platz 2: KI-Studiobild vorne, gibt es noch nicht)* → Vorne echt (Nahaufnahme Luviq-Zeichen) → Arbeitstisch. Jedes Bild trägt unten links eine kleine Unterschrift („Studiobild (KI) aus dem echten Foto“ / „Echtes Foto: …“), aber nur in Galerien mit mindestens einem KI-Bild (`Produkt.galerie()`); Archivstücke ohne KI bleiben ohne. Wischen/Pfeile/Tastatur wie bisher (P4).
-- **Foto von Luisa:** altes freigestelltes Porträt als quadratisches Brustbild (240 px) auf `/kontakt/` (über der Anschrift) und `/ueber_uns/` (neben dem Zitat), `teile/luisa_foto.html`, Klasse `.lv-luisa-foto`; Rand weich ins Schwarz verlaufen, damit die Reste der alten Freistellung nicht stören.
+- **Foto von Luisa (neu seit 26.11.2026):** von Luisa selbst geschickt (Strandkorb), Quelle `Webagentur Scherzinger/Design/luviq/fotos-neu/2026-11-26/`. Quadratisch (260 px) auf `/kontakt/` und `/ueber_uns/` (`teile/luisa_foto.html`, `.lv-luisa-foto`), 4:5 auf der Startseite (`#luisa .l-foto`). Überall 1 px Kupferrand, 3 px Radius und warmer Schein dahinter; keine Maske mehr. Tauschen: neue Quelle ablegen, `python -X utf8 tools/bilder_zuschneiden.py luisa_brustbild`.
 
 ### Stückbilder und Luisas Foto tauschen
 

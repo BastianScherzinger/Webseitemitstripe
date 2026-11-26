@@ -122,7 +122,7 @@ Weitere Lübeck-Punkte (23.10.2026, Schub 2):
 ## Offen
 
 - **Nach dem Livegang 04.11.2026 (`da2c351`):** Testbestellung **#15** („TEST Zahlungslink-bitte-ignorieren“) im Shop-Admin auf „Abgebrochen“ setzen (Luisa; Claude hat keinen Admin-Zugang). Indexierung der geänderten Seiten beantragen (Startseite, `/produkte/`, Engel-Shirt, `/liefergebiet/`, `/motiv-anfragen/`). SEO nachmessen am **18.11.** und **02.12.2026** (Messplan: `Webagentur Scherzinger\Analysen\luviq-2026-11-04-seo\02-UMSETZUNG.md`).
-- **Entscheidung Bastian:** Kontaktfoto mit weicher Randmaske (seit 04.11. live) behalten oder neues, sauber freigestelltes Foto; Kontaktseite „Antwort in der Regel innerhalb von 2 Stunden“ eventuell auf „meist innerhalb eines Tages“.
+- **Erledigt 26.11.2026:** neues Foto von Luisa mit Kupferrand und Schein ersetzt das Kontaktfoto mit Randmaske. **Entscheidung Bastian (noch offen):** Kontaktseite „Antwort in der Regel innerhalb von 2 Stunden“ eventuell auf „meist innerhalb eines Tages“.
 - **Rechtliche Prüfpunkte aus dem Zahlungsumbau:** AGB § 2 sagt jetzt verbindlich „Rechnung mit Zahlungslink innerhalb von 1 bis 2 Werktagen“ (Luisa muss das halten); Datenschutz Abschnitt 6 (Revolut Bank UAB, Litauen) selbst geschrieben, Anbietergesellschaft und Datenschutzlink von Revolut nicht verifiziert; Einzelstück ist zwischen Bestellung und Rechnung ohne Frist reserviert.
 
 - **Umbau 30.10.2026 (Zweig `design/2026-10-29-luviq-start`):** Merge nach `main`, Push, Live-Prüfung PC und Handy; danach `llms.txt`/Sitemap prüfen und Indexierung der geänderten Seiten beantragen.

@@ -149,3 +149,7 @@ body.lv-rahmen .lv-abschnitt.lv-kompakt{padding-block:var(--s5)}
   body.lv-rahmen .lv-reihe>li:nth-child(2):last-child figure{aspect-ratio:4/3;height:100%}
   body.lv-rahmen .lv-reihe>li:nth-child(2):last-child .lv-reihetext{padding:var(--lv-raum-6)}
 }
+
+/* ---- Luisas neues Foto (26.11.2026): echtes Bild ohne Maske, Kupferrand und warmer Schein wie auf der Startseite ---- */
+body.lv-rahmen .lv-luisa-foto{gap:var(--s2);margin-block:var(--s2)}
+body.lv-rahmen .lv-seite .lv-luisa-foto img{width:260px;background:none;-webkit-mask-image:none;mask-image:none;border-radius:3px;box-shadow:0 0 0 1px rgba(222,145,89,.5),0 0 70px -8px rgba(200,118,63,.55),0 26px 60px -28px rgba(200,118,63,.5)}

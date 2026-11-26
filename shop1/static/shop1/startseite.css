@@ -381,3 +381,6 @@ body.lv-v9{--rand:var(--s3);--abschnitt:80px;margin:0;background:var(--grund);co
 body.lv-v9 .lv-einwilligung{--lv-sans:var(--sans);--lv-grund:var(--grund);--lv-grund-2:var(--flaeche);--lv-text:var(--text);--lv-leise:var(--leise);--lv-linie-2:var(--linie-stark)}
 /* Nie zwei Leisten übereinander: die Daumenleiste (.leiste) weicht, solange der Hinweis offen ist */
 body.lv-v9:has(.lv-einwilligung:not([hidden])) .leiste{display:none}
+
+/* Luisas neues Foto (26.11.2026): feiner Kupferrand und warmer Schein hinter dem Bild */
+.lv-v9 .luisa .l-foto .bild{border-radius:3px;box-shadow:0 0 0 1px rgba(222,145,89,.5),0 0 80px -8px rgba(200,118,63,.55),0 30px 70px -30px rgba(200,118,63,.5)}

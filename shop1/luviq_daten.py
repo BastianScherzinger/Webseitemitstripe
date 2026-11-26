@@ -775,7 +775,8 @@ ENGEL_STUECK = {
 KI_UNTERSCHRIFT = HERO_BILDUNTERSCHRIFT
 ECHT_UNTERSCHRIFT = 'Echtes Foto'
 
-#: Foto von Luisa (Runde 3, Bastian 30.10.2026: das alte freigestellte Porträt „clean, ganz
+#: Foto von Luisa. Seit 26.11.2026 ihr eigenes neues Foto (Strandkorb), Rahmen und Schein im CSS.
+#: Davor (Runde 3, Bastian 30.10.2026: das alte freigestellte Porträt „clean, ganz
 #: einfach“ wieder nutzen, ein neues Foto kommt nach). Brustbild, erzeugt von
 #: ``tools/bilder_zuschneiden.py luisa_brustbild``. Tauschen: neue Quelle ablegen, Funktion laufen
 #: lassen; bei anderem Seitenverhältnis ``masse`` anpassen. Leer (``None``) ⇒ kein Foto auf den Seiten.
@@ -783,7 +784,7 @@ LUISA_FOTO = {
     'muster': 'shop1/images/luisa/luisa-brustbild-{w}.webp',
     'breiten': (280, 420, 570),
     'masse': (570, 570),
-    'alt': 'Luisa Brehler, die Malerin hinter Luviq',
+    'alt': 'Luisa Brehler, die Malerin hinter Luviq, am Strand vor einem Strandkorb',
 }
 
 

@@ -83,7 +83,8 @@ def stueck_engel_echt():
 RUNDE3 = Path(r"C:\Users\basti\Desktop\Webagentur Scherzinger\Analysen\luviq-2026-10-30-runde3\quellbilder")
 QUELLE_VORNE = RUNDE3 / "engel-vorne-echt-nah.jpg"          # Vorderseite, Luviq-Zeichen, Nahaufnahme
 QUELLE_ARBEITSPLATZ = RUNDE3 / "arbeitsplatz-engel-vorne.jpg"  # Vorderseite auf Luisas Arbeitstisch
-QUELLE_LUISA = RUNDE3 / "luisa-portrait-alt.jpg"             # freigestelltes Portraet (900 x 1350)
+#: Von Luisa am 26.11.2026 selbst geschickt (720 x 1280, Strandkorb). Davor: RUNDE3 / "luisa-portrait-alt.jpg".
+QUELLE_LUISA = RUNDE3.parents[2] / "Design" / "luviq" / "fotos-neu" / "2026-11-26" / "luisa-strandkorb-2.jpg"
 
 
 def _stueck_45(quelle, box, name, qualitaet=80):
@@ -110,21 +111,21 @@ def stueck_engel_arbeitsplatz():
 
 
 def luisa_brustbild():
-    """Portraet von Luisa als Brustbild (Kopf bis Schultern), quadratisch 570 x 570, schwarzer
-    Grund wie die Seite. Nach shop1/images/luisa/luisa-brustbild-{280,420,570}.webp."""
+    """Foto von Luisa (neu am 26.11.2026, von ihr selbst geschickt: Strandkorb, Abendlicht).
+
+    Quelle 720 x 1280, unbearbeitet bis auf den Zuschnitt. Zwei Fassungen:
+    - quadratisch nach shop1/images/luisa/luisa-brustbild-{280,420,570}.webp (Kontakt, Über Luisa)
+    - 4:5 (560 x 700) nach shop1/images/start/luisa-4x5.webp (Startseite)
+    Rahmen und Glow kommen aus dem CSS, das Bild selbst bleibt ohne Maske."""
+    quelle = Image.open(QUELLE_LUISA).convert("RGB")
+    assert quelle.size == (720, 1280), quelle.size
     ziel = BILDER / "luisa"
     ziel.mkdir(parents=True, exist_ok=True)
-    bild = Image.open(QUELLE_LUISA).convert("RGB").crop((165, 150, 735, 720))
-    # Weicher Randverlauf ins Schwarz der Seite: nimmt die farbigen Reste der alten Freistellung
-    # an Haarkante und Rand, Gesicht und Oberkoerper bleiben unberuehrt (Ellipse um die Mitte).
-    maske = Image.new("L", bild.size, 0)
-    from PIL import ImageDraw
-    ImageDraw.Draw(maske).ellipse((70, 10, 500, 640), fill=255)
-    maske = maske.filter(ImageFilter.GaussianBlur(40))
-    bild = Image.composite(bild, Image.new("RGB", bild.size, SCHWARZ), maske)
+    quadrat = quelle.crop((30, 190, 690, 850))
     for breite in (280, 420, 570):
-        fassung = bild if breite == bild.width else verkleinern(bild, breite)
-        fassung.save(ziel / f"luisa-brustbild-{breite}.webp", "WEBP", quality=82, method=6)
+        verkleinern(quadrat, breite).save(ziel / f"luisa-brustbild-{breite}.webp", "WEBP", quality=82, method=6)
+    hoch = quelle.crop((0, 150, 720, 1050)).resize((560, 700), Image.LANCZOS)
+    hoch.save(BILDER / "start" / "luisa-4x5.webp", "WEBP", quality=82, method=6)
 
 
 def og_start():

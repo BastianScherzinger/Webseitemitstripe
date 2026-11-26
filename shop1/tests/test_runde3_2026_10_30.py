@@ -204,7 +204,7 @@ class LuisaFotoTest(LuviqTestCase):
             with self.subTest(pfad=pfad):
                 html = self.hole(pfad).content.decode()
                 self.assertRegex(html, r'<img src="[^"]*luisa-brustbild-420[^"]*" srcset="[^"]*280w[^"]*570w"')
-                self.assertIn('alt="Luisa Brehler, die Malerin hinter Luviq"', html)
+                self.assertIn('alt="Luisa Brehler, die Malerin hinter Luviq, am Strand vor einem Strandkorb"', html)  # neues Foto 26.11.2026
 
     def test_person_schema_hat_ein_bild(self):
         knoten = _knoten(self.hole('/').content.decode())
