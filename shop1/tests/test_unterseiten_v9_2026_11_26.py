@@ -256,3 +256,44 @@ class StationenUndStueckzahlTest(LuviqTestCase):
         self.assertRegex(css, r'body\.lv-rahmen \.lv-stationen\{display:grid;grid-template-columns:1fr 1fr')
         self.assertRegex(css, r'body\.lv-rahmen \.lv-stationen li strong\{[^}]*font-weight:700')
         self.assertRegex(css, r'body\.lv-rahmen \.lv-feld select\{[^}]*min-height:44px[^}]*border:1px solid')
+
+
+class Feinschliff7Test(LuviqTestCase):
+    """Paket 7 (26.11.2026): reine Darstellung, an body.lv-rahmen gebunden, keine Textänderung."""
+
+    def css(self, name='rahmen.css'):
+        return (STATIC / name).read_text(encoding='utf-8')
+
+    def test_kaufleiste_kupfer_statt_hell_und_weicht_dem_fuss(self):
+        css = self.css()
+        self.assertRegex(css, r'body\.lv-rahmen \.lv-kaufleiste:not\(\[hidden\]\)\{background:var\(--akzent\);color:var\(--auf-akzent\)')
+        with self.settings(ANFRAGESHOP=True, VERKAUF_AKTIV=False):
+            html = self.hole(erzeuge_produkt('Leistenstueck', preis=69, lagerbestand=1).get_absolute_url()).content.decode()
+        # Der Fuß steht erst nach dem Skript im Dokument: er wird erst nach DOMContentLoaded gesucht
+        self.assertIn("addEventListener('DOMContentLoaded'", html)
+        self.assertIn('leiste.hidden = sichtbar || !oben || amFuss', html)
+
+    def test_hervorhebung_ohne_balken_zitatband_und_impressum_abstaende(self):
+        css = self.css()
+        self.assertRegex(css, r'\.lv-stueck-text>p\.lv-technik\{border-left:0;padding:0;')
+        self.assertRegex(css, r'body\.lv-rahmen \.lv-luisa\{background:var\(--flaeche\)')
+        self.assertRegex(css, r'\.lv-abschnitt\.lv-kompakt\{padding-block:var\(--s5\)\}')
+        html = self.hole('/impressum/').content.decode()
+        self.assertGreaterEqual(html.count('lv-abschnitt lv-kompakt'), 3)
+
+    def test_stueckgalerie_sticky_und_einzelne_archivkarte_breiter(self):
+        css = self.css()
+        self.assertRegex(css, r'@media \(min-width:768px\)\{body\.lv-rahmen \.lv-stueck-bild\{align-self:stretch\}\}')
+        self.assertIn('.lv-reihe>li:nth-child(2):last-child{grid-column:1/-1}', css)
+
+    def test_banner_am_handy_mindestens_13_px(self):
+        css = self.css('einwilligung.css')
+        bloecke = re.findall(r'@media \(max-width:639px\)\{(.*?)\n\}', css, re.S)
+        self.assertTrue(any('font-size:13px' in b for b in bloecke))
+
+    def test_critical_css_ohne_alten_kopf_der_alt_schicht(self):
+        from tools import kritisches_css
+        for profil in kritisches_css.PROFILE:
+            text = kritisches_css.ziel(profil).read_text(encoding='utf-8')
+            for tot in ('.lv-kopf{', '.lv-hinweis{', '.lv-logo{', '.lv-menue{', '.lv-nav{'):
+                self.assertNotIn(tot, text, f'{tot} im Critical CSS {profil}')

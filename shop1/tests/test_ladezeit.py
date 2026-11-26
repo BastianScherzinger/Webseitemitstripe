@@ -502,7 +502,7 @@ class KritischesCssTest(LuviqTestCase):
             with self.subTest(profil=profil):
                 text = modul.ziel(profil).read_text(encoding='utf-8')
                 self.assertLess(len(text.encode('utf-8')), 20_000)
-                for stueck in ('@font-face', ':root{', '.lv-kopf{') + muster:
+                for stueck in ('@font-face', ':root{', '.lv-seite a') + muster:
                     self.assertIn(stueck, text)
                 self.assertNotIn('latin-ext', text)
                 self.assertNotIn('.lv-alt main', text)
@@ -514,7 +514,10 @@ class KritischesCssTest(LuviqTestCase):
             with self.subTest(pfad=pfad):
                 kopf = self.hole(pfad).content.decode().split('</head>')[0]
                 self.assertIn('<style>', kopf)
-                self.assertIn('.lv-kopf{', kopf)
+                self.assertIn('.lv-seite a', kopf)
+                # Paket 7: der alte Kopf der Alt-Schicht (nur im Panel) steht nicht mehr im Critical CSS der öffentlichen Seiten
+                self.assertNotIn('.lv-kopf{', kopf)
+                self.assertNotIn('.lv-hinweis{', kopf)
                 self.assertNotIn('{%', kopf)
                 self.assertNotIn('url("fonts/', kopf, 'Schriftadressen müssen gehasht sein')
                 self.assertRegex(kopf, r'url\("/static/shop1/fonts/[^"]+\.woff2"\)')
@@ -588,11 +591,11 @@ class WerkzeugeTest(LuviqTestCase):
 
     def test_kritisches_css_laesst_andere_seiten_und_die_alt_schicht_draussen(self):
         css = (
-            '.lv-kopf{color:red}.lv-alt main p{margin:0}.lv-warteliste{padding:1px}'
+            '.lv-knopf{color:red}.lv-alt main p{margin:0}.lv-warteliste{padding:1px}'
             '.lv-hero,.lv-teaser{gap:2px}@media (max-width:1023px){.lv-hero{x:1}.lv-chip{x:2}}'
         )
         start = kritisches_css.kritisch(css, 'start')
-        self.assertIn('.lv-kopf{color:red}', start)
+        self.assertIn('.lv-knopf{color:red}', start)
         self.assertIn('.lv-hero,.lv-teaser{gap:2px}', start)  # eine erlaubte Auswahl genügt
         self.assertIn('@media (max-width:1023px){.lv-hero{x:1}', start)
         self.assertNotIn('.lv-alt', start)
@@ -601,7 +604,7 @@ class WerkzeugeTest(LuviqTestCase):
 
     def test_kritisches_css_haelt_zeichenketten_und_calc_ganz(self):
         css = ('@font-face{font-family:"Cormorant Garamond";src:url("fonts/a.woff2") format("woff2")}'
-               '.lv-kopf{padding:calc(100vw - 10px) 2px; content: "a  b" }')
+               '.lv-knopf{padding:calc(100vw - 10px) 2px; content: "a  b" }')
         text = kritisches_css.vorlage(css, 'archiv')
         self.assertIn('font-family:"Cormorant Garamond"', text)
         self.assertIn("{% static 'shop1/fonts/a.woff2' %}", text)
@@ -610,4 +613,4 @@ class WerkzeugeTest(LuviqTestCase):
 
     def test_kritisches_css_lehnt_vorlagensyntax_im_css_ab(self):
         with self.assertRaises(ValueError):
-            kritisches_css.vorlage('.lv-kopf{content:"{{ x }}"}', 'start')
+            kritisches_css.vorlage('.lv-knopf{content:"{{ x }}"}', 'start')

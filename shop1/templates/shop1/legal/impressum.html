@@ -59,7 +59,7 @@
         <div class="lv-prosa lv-rechtstext">{% include 'shop1/legal/generator/impressum.html' %}{% if not verkauf_aktiv %}<p>Luviq Universe ist eine Marke im Aufbau. Derzeit findet kein Verkauf statt. {{ shop_oeffnet }}</p>{% endif %}</div>
     </section>
     {% else %}
-    <section class="lv-abschnitt" aria-labelledby="impressum-angaben">
+    <section class="lv-abschnitt lv-kompakt" aria-labelledby="impressum-angaben">
         <h2 class="lv-serif lv-abschnittstitel" id="impressum-angaben">Angaben gemäß § 5 DDG</h2>
         <div class="lv-prosa">
             <p><strong>Anbieterin: {{ anbieterin.name }}</strong><br>{{ anbieterin.strasse }}<br>{{ anbieterin.plz }} {{ anbieterin.ort }}<br>{{ anbieterin.land_name }}</p>
@@ -70,7 +70,7 @@
         </div>
     </section>
 
-    <section class="lv-abschnitt" aria-labelledby="impressum-kontakt">
+    <section class="lv-abschnitt lv-kompakt" aria-labelledby="impressum-kontakt">
         <h2 class="lv-serif lv-abschnittstitel" id="impressum-kontakt">Kontakt</h2>
         <div class="lv-prosa">
             <p>E-Mail: <a href="mailto:{{ anbieterin.email }}">{{ anbieterin.email }}</a></p>
@@ -79,14 +79,14 @@
         </div>
     </section>
 
-    <section class="lv-abschnitt" aria-labelledby="impressum-verantwortlich">
+    <section class="lv-abschnitt lv-kompakt" aria-labelledby="impressum-verantwortlich">
         <h2 class="lv-serif lv-abschnittstitel" id="impressum-verantwortlich">Redaktionell verantwortlich</h2>
         <div class="lv-prosa">
             <p>Verantwortlich für den Inhalt: {{ anbieterin.name }}<br>{{ anbieterin.strasse }}<br>{{ anbieterin.plz }} {{ anbieterin.ort }}</p>
         </div>
     </section>
 
-    <section class="lv-abschnitt" aria-labelledby="impressum-streit">
+    <section class="lv-abschnitt lv-kompakt" aria-labelledby="impressum-streit">
         <h2 class="lv-serif lv-abschnittstitel" id="impressum-streit">Streitschlichtung</h2>
         <div class="lv-prosa">
             {# Die EU-Plattform zur Online-Streitbeilegung ist seit dem 20.07.2025 abgeschaltet; der Link darauf ist entfernt. Der Knopf führt zum Kontaktformular. #}

@@ -40,7 +40,8 @@ body:has(.lv-einwilligung:not([hidden])){padding-bottom:104px}
   body:has(.lv-einwilligung:not([hidden])){padding-bottom:0}
 }
 @media (max-width:639px){
-  .lv-einwilligung{padding:5px 10px 6px;line-height:1.25}
+  .lv-einwilligung{padding:6px 12px 8px;line-height:1.3;font-size:13px}
+  .lv-einwilligung-titel,.lv-einwilligung p.lv-einwilligung-titel{font-size:13px}
   .lv-einwilligung p{margin-bottom:4px}
   .lv-einwilligung p.lv-einwilligung-titel+p::after{height:3px}
 }

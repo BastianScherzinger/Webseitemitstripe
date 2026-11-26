@@ -27,15 +27,17 @@ WURZEL = Path(__file__).resolve().parent.parent
 QUELLE = WURZEL / "shop1" / "static" / "shop1" / "luviq.css"
 ZIEL_ORDNER = WURZEL / "shop1" / "templates" / "shop1" / "stile"
 
-#: Klassen, die auf jeder neu gebauten Seite oben stehen: Kopf, Ankündigungszeile, Knöpfe,
-#: Meldungen, Abschnittsrahmen und die feste Leiste am Handy. Den Fuß trägt nur die
+#: Klassen, die auf jeder neu gebauten Seite oben stehen: Knöpfe, Meldungen, Abschnittsrahmen.
+#: Kopf, Ankündigungszeile und Handy-Leiste der alten Schicht (lv-kopf, lv-hinweis, lv-leiste, lv-logo, lv-nav, ...)
+#: stehen seit Paket 7 (26.11.2026) nicht mehr hier: alle öffentlichen Seiten tragen den Rahmen der Startseite
+#: (.kopf, .fuss, .leiste aus rahmen.css), der alte Kopf rendert nur noch im Panel unter /shop-admin/ (ohne Critical CSS).
+#: Den Fuß trägt nur die
 #: kurze Danke-Seite (Seitentyp „danke“): auf langen steht er weit unterhalb des ersten
 #: Bildschirms, und jedes Kilobyte Critical CSS geht bei jedem Abruf mit (PF20).
 BASIS = {
-    "lv-seite", "lv-kopf", "lv-leiste", "lv-hinweis",
+    "lv-seite",
     "lv-serif", "lv-nr", "lv-klein", "lv-versteckt", "lv-sprung", "lv-knopf", "lv-link",
-    "lv-logo", "lv-nav", "lv-nav-anfrage", "lv-kopf-rechts", "lv-ig", "lv-konto", "lv-menue",
-    "lv-menue-klein", "lv-meldungen", "lv-meldung", "lv-brotkrume", "lv-abschnitt",
+    "lv-meldungen", "lv-meldung", "lv-brotkrume", "lv-abschnitt",
     "lv-abschnittskopf", "lv-ohne-linie",
 }
 

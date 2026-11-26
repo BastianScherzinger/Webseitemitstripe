@@ -128,3 +128,24 @@ body.lv-rahmen .lv-stationen .lv-nr{display:block;margin-bottom:6px}
 /* Stückzahl-Auswahl wie die Textfelder daneben (Paket 6) */
 body.lv-rahmen .lv-feld select{width:100%;min-height:44px;background-color:transparent;border:1px solid var(--lv-linie-2);border-radius:0;color:var(--lv-text);font:inherit;font-size:max(16px,calc(var(--u)*1.05));padding:calc(var(--u)*1) calc(var(--u)*1.2);cursor:pointer}
 body.lv-rahmen .lv-feld select option{background:var(--grund);color:var(--text)}
+
+/* ---- Feinschliff Paket 7 (26.11.2026): nur Darstellung, alles an body.lv-rahmen gebunden ---- */
+/* Kaufleiste „Stück anfragen“ am Handy: Kupferknopf statt heller Fläche (einzige helle Fläche im Rahmen); blendet am Fuß aus (rahmen.js / Inline-Skript setzt hidden) */
+body.lv-rahmen .lv-kaufleiste:not([hidden]){background:var(--akzent);color:var(--auf-akzent);border-top:1px solid var(--akzent-hell);font-family:var(--sans)}
+/* Stückseite: der Hinweis „Mit Bleiche gemalt“ ist ein normaler Absatz, kein Balken (Marker wirken wie Werbung) */
+body.lv-rahmen .lv-stueck-text>p.lv-technik{border-left:0;padding:0;font:400 17px/1.55 var(--sans);letter-spacing:0;color:var(--text)}
+body.lv-rahmen .lv-stueck-text>p.lv-technik a{font-weight:600}
+/* Stückseite PC: die Galerie bleibt neben dem langen Formular stehen (sticky braucht eine Spalte in voller Höhe) */
+@media (min-width:768px){body.lv-rahmen .lv-stueck-bild{align-self:stretch}}
+/* Über Luisa: Zitatband in der Flächenfarbe der Startseite statt hellem Grau */
+body.lv-rahmen .lv-luisa{background:var(--flaeche);border-block:1px solid var(--linie)}
+/* Impressum: kurze Blöcke ohne 120 px Abstand oben und unten */
+body.lv-rahmen .lv-abschnitt.lv-kompakt{padding-block:var(--s5)}
+@media (max-width:767px){body.lv-rahmen .lv-abschnitt.lv-kompakt{padding-block:var(--s4)}}
+/* /produkte/ PC: steht neben dem offenen Stück nur ein einziges Archivstück, bekommt es wie dieses eine ganze Reihe (Bild links, Text rechts) statt einer 195-px-Karte in 1060 px Leere */
+@media (min-width:900px){
+  body.lv-rahmen .lv-reihe>li:nth-child(2):last-child{grid-column:1/-1}
+  body.lv-rahmen .lv-reihe>li:nth-child(2):last-child .lv-reihekarte,body.lv-rahmen .lv-reihe>li:nth-child(2):last-child.lv-reihekarte{grid-template-columns:minmax(0,5fr) minmax(0,7fr);align-items:center}
+  body.lv-rahmen .lv-reihe>li:nth-child(2):last-child figure{aspect-ratio:4/3;height:100%}
+  body.lv-rahmen .lv-reihe>li:nth-child(2):last-child .lv-reihetext{padding:var(--lv-raum-6)}
+}

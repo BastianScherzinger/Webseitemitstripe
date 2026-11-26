@@ -184,8 +184,10 @@ SEO-Upgrade 02.11.2026 (A2): Archiv-/Referenzstücke (`vergeben`) sind nie verka
                 var leiste = document.querySelector('[data-kaufleiste]'), ziel = document.getElementById('anfragen');
                 if (!leiste || !ziel || !('IntersectionObserver' in window)) { return; }
                 var knopf = document.querySelector('[data-anfrage-knopf]'), sichtbar = false, oben = false;
-                function zeige() { leiste.hidden = sichtbar || !oben; }
+                var amFuss = false; /* am Seitenende weicht die Leiste dem Fuß wie die Daumenleiste */
+                function zeige() { leiste.hidden = sichtbar || !oben || amFuss; }
                 new IntersectionObserver(function (e) { sichtbar = e[0].isIntersecting; zeige(); }).observe(ziel);
+                document.addEventListener('DOMContentLoaded', function () { var fuss = document.querySelector('.fuss'); if (fuss) { new IntersectionObserver(function (e) { amFuss = e[0].isIntersecting; zeige(); }).observe(fuss); } }); /* der Fuß steht erst nach diesem Skript im Dokument */
                 if (knopf) { new IntersectionObserver(function (e) { oben = !e[0].isIntersecting; zeige(); }).observe(knopf); }
             })();
             </script>
@@ -200,8 +202,10 @@ SEO-Upgrade 02.11.2026 (A2): Archiv-/Referenzstücke (`vergeben`) sind nie verka
                 var leiste = document.querySelector('[data-kaufleiste]'), ziel = document.getElementById('bestellen');
                 if (!leiste || !ziel || !('IntersectionObserver' in window)) { return; }
                 var knopf = document.querySelector('.lv-stueck-knoepfe .lv-knopf'), sichtbar = false, oben = false;
-                function zeige() { leiste.hidden = sichtbar || !oben; }
+                var amFuss = false; /* am Seitenende weicht die Leiste dem Fuß wie die Daumenleiste */
+                function zeige() { leiste.hidden = sichtbar || !oben || amFuss; }
                 new IntersectionObserver(function (e) { sichtbar = e[0].isIntersecting; zeige(); }).observe(ziel);
+                document.addEventListener('DOMContentLoaded', function () { var fuss = document.querySelector('.fuss'); if (fuss) { new IntersectionObserver(function (e) { amFuss = e[0].isIntersecting; zeige(); }).observe(fuss); } }); /* der Fuß steht erst nach diesem Skript im Dokument */
                 if (knopf) { new IntersectionObserver(function (e) { oben = !e[0].isIntersecting; zeige(); }).observe(knopf); }
             })();
             </script>{% endif %}
